@@ -227,14 +227,14 @@ class QM9(InMemoryDataset):
         types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
         bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             target = [[float(x) for x in line.split(',')[1:20]]
                       for line in f.read().split('\n')[1:-1]]
             y = torch.tensor(target, dtype=torch.float)
             y = torch.cat([y[:, 3:], y[:, :3]], dim=-1)
             y = y * conversion.view(1, -1)
 
-        with open(self.raw_paths[2], 'r') as f:
+        with open(self.raw_paths[2]) as f:
             skip = [int(x.split()[0]) - 1 for x in f.read().split('\n')[9:-2]]
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,

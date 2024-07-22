@@ -3,7 +3,12 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import Node2Vec
-from torch_geometric.testing import is_full_test, withDevice, withPackage
+from torch_geometric.testing import (
+    has_package,
+    is_full_test,
+    withDevice,
+    withPackage,
+)
 
 
 @withDevice
@@ -27,9 +32,10 @@ def test_node2vec(device, p, q):
     pos_rw, neg_rw = model.sample(torch.arange(3))
     assert float(model.loss(pos_rw.to(device), neg_rw.to(device))) >= 0
 
-    acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
-                     torch.ones(20, 16), torch.randint(10, (20, )))
-    assert 0 <= acc and acc <= 1
+    if has_package('sklearn'):
+        acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
+                         torch.ones(20, 16), torch.randint(10, (20, )))
+        assert 0 <= acc and acc <= 1
 
     if is_full_test():
         jit = torch.jit.script(model)

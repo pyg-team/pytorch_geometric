@@ -156,8 +156,7 @@ class TemporalData(BaseData):
         return self.num_events
 
     def __call__(self, *args: List[str]) -> Iterable:
-        for key, value in self._store.items(*args):
-            yield key, value
+        yield from self._store.items(*args)
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)

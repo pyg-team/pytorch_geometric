@@ -87,7 +87,7 @@ def run(args: argparse.ArgumentParser):
             raise ValueError("Layer-wise inference requires `steps=-1`")
 
         if args.device == 'cuda':
-            amp = torch.cuda.amp.autocast(enabled=False)
+            amp = torch.amp.autocast('cuda', enabled=False)
         elif args.device == 'xpu':
             amp = torch.xpu.amp.autocast(enabled=False)
         else:

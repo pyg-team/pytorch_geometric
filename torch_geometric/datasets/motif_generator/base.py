@@ -10,7 +10,6 @@ class MotifGenerator(ABC):
     @abstractmethod
     def __call__(self) -> Data:
         r"""To be implemented by :class:`Motif` subclasses."""
-        pass
 
     @staticmethod
     def resolve(query: Any, *args: Any, **kwargs: Any) -> 'MotifGenerator':

@@ -115,11 +115,9 @@ class Database(ABC):
         r"""Connects to the database.
         Databases will automatically connect on instantiation.
         """
-        pass
 
     def close(self) -> None:
         r"""Closes the connection to the database."""
-        pass
 
     @abstractmethod
     def insert(self, index: int, data: Any) -> None:

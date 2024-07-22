@@ -139,7 +139,7 @@ class ZINC(InMemoryDataset):
             indices = list(range(len(mols)))
 
             if self.subset:
-                with open(osp.join(self.raw_dir, f'{split}.index'), 'r') as f:
+                with open(osp.join(self.raw_dir, f'{split}.index')) as f:
                     indices = [int(x) for x in f.read()[:-1].split(',')]
 
             pbar = tqdm(total=len(indices))

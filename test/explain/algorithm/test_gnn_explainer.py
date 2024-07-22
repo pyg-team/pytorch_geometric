@@ -10,11 +10,17 @@ from torch_geometric.explain.config import (
     ModelReturnType,
     ModelTaskLevel,
 )
-from torch_geometric.nn import AttentiveFP, ChebConv, GCNConv, global_add_pool
+from torch_geometric.nn import (
+    AttentiveFP,
+    ChebConv,
+    GCNConv,
+    TransformerConv,
+    global_add_pool,
+)
 
 
-class GCN(torch.nn.Module):
-    def __init__(self, model_config: ModelConfig):
+class GNN(torch.nn.Module):
+    def __init__(self, Conv, model_config: ModelConfig):
         super().__init__()
         self.model_config = model_config
 
@@ -23,8 +29,8 @@ class GCN(torch.nn.Module):
         else:
             out_channels = 1
 
-        self.conv1 = GCNConv(3, 16)
-        self.conv2 = GCNConv(16, out_channels)
+        self.conv1 = Conv(3, 16)
+        self.conv2 = Conv(16, out_channels)
 
         # Add unused parameter:
         self.param = torch.nn.Parameter(torch.empty(1))
@@ -71,6 +77,7 @@ batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 
 
+@pytest.mark.parametrize('Conv', [GCNConv, TransformerConv])
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('explanation_type', explanation_types)
@@ -81,6 +88,7 @@ edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 ])
 @pytest.mark.parametrize('index', indices)
 def test_gnn_explainer_binary_classification(
+    Conv,
     edge_mask_type,
     node_mask_type,
     explanation_type,
@@ -95,7 +103,7 @@ def test_gnn_explainer_binary_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config)
+    model = GNN(Conv, model_config)
 
     target = None
     if explanation_type == ExplanationType.phenomenon:
@@ -130,6 +138,7 @@ def test_gnn_explainer_binary_classification(
     check_explanation(explanation, node_mask_type, edge_mask_type)
 
 
+@pytest.mark.parametrize('Conv', [GCNConv])
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('explanation_type', explanation_types)
@@ -141,6 +150,7 @@ def test_gnn_explainer_binary_classification(
 ])
 @pytest.mark.parametrize('index', indices)
 def test_gnn_explainer_multiclass_classification(
+    Conv,
     edge_mask_type,
     node_mask_type,
     explanation_type,
@@ -155,7 +165,7 @@ def test_gnn_explainer_multiclass_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config)
+    model = GNN(Conv, model_config)
 
     target = None
     if explanation_type == ExplanationType.phenomenon:
@@ -186,12 +196,14 @@ def test_gnn_explainer_multiclass_classification(
     check_explanation(explanation, node_mask_type, edge_mask_type)
 
 
+@pytest.mark.parametrize('Conv', [GCNConv])
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('explanation_type', explanation_types)
 @pytest.mark.parametrize('task_level', task_levels)
 @pytest.mark.parametrize('index', indices)
 def test_gnn_explainer_regression(
+    Conv,
     edge_mask_type,
     node_mask_type,
     explanation_type,
@@ -204,7 +216,7 @@ def test_gnn_explainer_regression(
         task_level=task_level,
     )
 
-    model = GCN(model_config)
+    model = GNN(Conv, model_config)
 
     target = None
     if explanation_type == ExplanationType.phenomenon:

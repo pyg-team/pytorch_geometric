@@ -58,13 +58,13 @@ runs:
     - name: Install faiss-cpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os != 'macOS' }}
       run: |
-        pip install faiss-cpu
+        pip install faiss-cpu==1.7.2
       shell: bash
 
     - name: Install faiss-gpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' }}
       run: |
-        pip install faiss-gpu
+        pip install faiss-gpu==1.7.2
       shell: bash
 
     - name: Install torchvision

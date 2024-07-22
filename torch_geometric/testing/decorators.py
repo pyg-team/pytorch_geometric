@@ -9,6 +9,7 @@ import torch
 from packaging.requirements import Requirement
 from packaging.version import Version
 
+import torch_geometric
 from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
@@ -113,13 +114,8 @@ def onlyCUDA(func: Callable) -> Callable:
 def onlyXPU(func: Callable) -> Callable:
     r"""A decorator to skip tests if XPU is not found."""
     import pytest
-    try:
-        import intel_extension_for_pytorch as ipex
-        xpu_available = ipex.xpu.is_available()
-    except ImportError:
-        xpu_available = False
     return pytest.mark.skipif(
-        not xpu_available,
+        not torch_geometric.is_xpu_available(),
         reason="XPU not available",
     )(func)
 
@@ -177,19 +173,23 @@ def has_package(package: str) -> bool:
     req = Requirement(package)
     if find_spec(req.name) is None:
         return False
-    module = import_module(req.name)
-    if not hasattr(module, '__version__'):
-        return True
 
-    version = Version(module.__version__).base_version
-    return version in req.specifier
+    try:
+        module = import_module(req.name)
+        if not hasattr(module, '__version__'):
+            return True
+
+        version = Version(module.__version__).base_version
+        return version in req.specifier
+    except Exception:
+        return False
 
 
 def withPackage(*args: str) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification.
     """
-    na_packages = set(package for package in args if not has_package(package))
+    na_packages = {package for package in args if not has_package(package)}
 
     if len(na_packages) == 1:
         reason = f"Package {list(na_packages)[0]} not found"
@@ -223,23 +223,10 @@ def withDevice(func: Callable) -> Callable:
     if torch.cuda.is_available():
         devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
-    if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-        try:  # Github CI may not have access to MPS hardware. Confirm:
-            torch.empty(1, device='mps')
-            devices.append(pytest.param(torch.device('mps:0'), id='mps'))
-        except RuntimeError:
-            pass
+    if torch_geometric.is_mps_available():
+        devices.append(pytest.param(torch.device('mps:0'), id='mps'))
 
-    if not hasattr(torch, 'xpu'):
-        try:
-            import intel_extension_for_pytorch as ipex
-            xpu_available = ipex.xpu.is_available()
-        except ImportError:
-            xpu_available = False
-    else:
-        xpu_available = torch.xpu.is_available()
-
-    if xpu_available:
+    if torch_geometric.is_xpu_available():
         devices.append(pytest.param(torch.device('xpu:0'), id='xpu'))
 
     # Additional devices can be registered through environment variables:
