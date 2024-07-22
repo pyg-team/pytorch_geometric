@@ -37,7 +37,7 @@ parser.add_argument(
 parser.add_argument(
     "--use_gat",
     action='store_true',
-    help="Wether or not to use graphsage model",
+    help="Whether or not to use graphsage model",
 )
 parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument("-e", "--epochs", type=int, default=10,
@@ -65,7 +65,7 @@ parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
     "--use_directed_graph",
     action='store_true',
-    help="Weather or not to use directed graph",
+    help="Whether or not to use directed graph",
 )
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
