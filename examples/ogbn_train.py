@@ -11,7 +11,7 @@ from torch.nn import Linear as Lin
 from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import SAGEConv, GATConv
+from torch_geometric.nn import GATConv, SAGEConv
 from torch_geometric.utils import to_undirected
 
 parser = argparse.ArgumentParser()
@@ -258,7 +258,7 @@ class GAT(torch.nn.Module):
 <<<<<<< HEAD:examples/ogbn_train.py
 if args.use_gat:
     print("GAT model")
-    model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes, 
+    model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes,
             num_layers=num_layers, dropout=args.dropout, heads=args.num_heads)
 else:
     print("GraphSage model")
