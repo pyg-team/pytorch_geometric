@@ -302,6 +302,7 @@ def test_lightning_hetero_node_data(get_dataset):
     assert torch.all(data['paper'].x > original_x)  # Ensure shared data.
     assert trainer.validate_loop._data_source.is_defined()
     assert trainer.test_loop._data_source.is_defined()
+    torch.distributed.destroy_process_group()
 
 
 @withPackage('pytorch_lightning')
