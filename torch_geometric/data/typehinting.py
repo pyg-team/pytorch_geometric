@@ -42,7 +42,8 @@ T = TypeVar("T")
 
 
 def _check(hint: Any, argument_name: str, value: Any) -> None:
-    """Checks if the value matches the type hint and raises an error if does not.
+    """Checks if the value matches the type hint and raises an error if it
+    does not.
 
     Args:
         hint (Any): The expected type hint.
