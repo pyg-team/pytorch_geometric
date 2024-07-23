@@ -58,21 +58,15 @@ def _check(hint: Any, argument_name: str, value: Any) -> None:
 
     # Check if all required attributes are present
     def _check_attributes(hint: Any, attributes: Dict[str, Any]) -> None:
-        if (
-            hint.check_only_specified
-            and set(attributes.keys()) != hint.attributes
-        ):
+        if hint.check_only_specified and set(attributes.keys()) != hint.attributes:
             raise TypeError(
                 f"{argument_name} Data attributes  {set(attributes.keys())} "
                 f" do not match required set {hint.attributes}"
             )
 
-        if not hint.check_only_specified and not hint.attributes.issubset(
-            attributes
-        ):
+        if not hint.check_only_specified and not hint.attributes.issubset(attributes):
             raise TypeError(
-                f"{argument_name} is missing some attributes from "
-                f"{hint.attributes}"
+                f"{argument_name} is missing some attributes from " f"{hint.attributes}"
             )
 
     # If dtype annotations are provided, check them
@@ -132,11 +126,7 @@ def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
                 is_data_or_batch_meta = isinstance(hint, (DataMeta, BatchMeta))
                 if argument_name in hints and is_data_or_batch_meta:
                     _check(hint, argument_name, value)
-                elif (
-                    argument_name in hints
-                    and not is_data_or_batch_meta
-                    and strict
-                ):
+                elif argument_name in hints and not is_data_or_batch_meta and strict:
                     if isinstance(hint, NewType):
                         if not isinstance(value, hint.__supertype__):
                             raise TypeError(
