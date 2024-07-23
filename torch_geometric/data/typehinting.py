@@ -21,8 +21,6 @@ from typing import (
 import numpy as np
 from beartype.door import is_bearable
 
-from torch_geometric.sampler.base import DataType
-
 try:
     from jaxtyping._array_types import _MetaAbstractArray, _MetaAbstractDtype
 except ImportError:
@@ -40,7 +38,8 @@ T = TypeVar("T")
 
 
 def _check(hint: Any, argument_name: str, value: Any) -> None:
-    """Checks if the value matches the type hint and raises an error if does not.
+    """
+    Checks if the value matches the type hint and raises an error if does not.
 
     Args:
         hint (Any): The expected type hint.
@@ -59,15 +58,21 @@ def _check(hint: Any, argument_name: str, value: Any) -> None:
 
     # Check if all required attributes are present
     def _check_attributes(hint: Any, attributes: Dict[str, Any]) -> None:
-        if hint.check_only_specified and set(attributes.keys()) != hint.attributes:
+        if (
+            hint.check_only_specified
+            and set(attributes.keys()) != hint.attributes
+        ):
             raise TypeError(
-                f"{argument_name} Data attributes  {set(attributes.keys())} do not match \
-                    required set {hint.attributes}"
+                f"{argument_name} Data attributes  {set(attributes.keys())} "
+                f" do not match required set {hint.attributes}"
             )
 
-        if not hint.check_only_specified and not hint.attributes.issubset(attributes):
+        if not hint.check_only_specified and not hint.attributes.issubset(
+            attributes
+        ):
             raise TypeError(
-                f"{argument_name} is missing some attributes from {hint.attributes}"
+                f"{argument_name} is missing some attributes from "
+                f"{hint.attributes}"
             )
 
     # If dtype annotations are provided, check them
@@ -79,7 +84,8 @@ def _check(hint: Any, argument_name: str, value: Any) -> None:
             ):  # Check for a jaxtyping annotation and use its typechecker
                 if not is_bearable(getattr(value, colname), dt):
                     raise TypeError(
-                        f"{value} attribute `{colname}` is not a valid instance of {dt}"
+                        f"{value} attribute `{colname}` is not a valid "
+                        f"instance of {dt}"
                     )
             # Otherwise just check type
             else:
@@ -102,9 +108,11 @@ def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
     """Typechecking decorator for functions.
 
     Args:
-        _f (Optional[Callable], optional): The function to be typechecked. Defaults to ``None``.
-        strict (bool, optional): Whether to enforce strict typechecking. Defaults to ``False``.
-            Strict typechecking will perform typechecking for non-Data/Batch types as well.
+        _f (Optional[Callable], optional): The function to be typechecked.
+            Defaults to ``None``.
+        strict (bool, optional): Whether to enforce strict typechecking.
+            Strict typechecking will perform typechecking or non-Data/Batch
+            types as well. Defaults to ``False``.
 
     Returns:
         Callable: The typechecking decorator.
@@ -121,21 +129,24 @@ def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
             bound = signature.bind(*args, **kwargs)
             for argument_name, value in bound.arguments.items():
                 hint = hints[argument_name]
-                if argument_name in hints and (isinstance(hint, (DataMeta, BatchMeta))):
+                is_data_or_batch_meta = isinstance(hint, (DataMeta, BatchMeta))
+                if argument_name in hints and is_data_or_batch_meta:
                     _check(hint, argument_name, value)
                 elif (
                     argument_name in hints
-                    and not (isinstance(hint, (DataMeta, BatchMeta)))
+                    and not is_data_or_batch_meta
                     and strict
                 ):
                     if isinstance(hint, NewType):
                         if not isinstance(value, hint.__supertype__):
                             raise TypeError(
-                                f"{argument_name} of type {type(hint)} is not of hinted type: {hint}"
+                                f"{argument_name} of type {type(hint)} is not "
+                                f"of hinted type: {hint}"
                             )
                     elif not isinstance(value, hint):
                         raise TypeError(
-                            f"{argument_name} of type {type(hint)} is not of hinted type: {hint}"
+                            f"{argument_name} of type {type(hint)} is not of"
+                            f" hinted type: {hint}"
                         )
             # Check return values
             if "return" in hints.keys():
@@ -190,15 +201,18 @@ def _resolve_type(t: Any) -> Any:
 
 
 class DataMeta(GenericMeta, ABCMeta):
-    """Metaclass for the `DataT` type, combining generic type support and dynamic inheritance.
+    """Metaclass for the `DataT` type, combining generic type support and
+    dynamic inheritance.
 
-    This metaclass is used to define the `DataT` type, which serves as an annotation for
-    `torch_geometric.data.Data`. It combines the functionality of `GenericMeta` for generic
-    type support and `DynamicInheritance` for dynamic inheritance capabilities.
+    This metaclass is used to define the `DataT` type, which serves as an
+    annotation for `torch_geometric.data.Data`. It combines the functionality
+    of `GenericMeta` for generic type support and `DynamicInheritance` for
+    dynamic inheritance capabilities.
 
     Inherits from:
         GenericMeta: Provides support for generic types.
-        DynamicInheritance: Allows dynamic inheritance of attributes and methods.
+        DynamicInheritance: Allows dynamic inheritance of attributes and
+            methods.
 
     Attributes:
         None specific to DataMeta.
@@ -237,15 +251,19 @@ class DataMeta(GenericMeta, ABCMeta):
 
 
 class BatchMeta(GenericMeta, DynamicInheritance):
-    """Metaclass for the `BatchT` type, combining generic type support and dynamic inheritance.
+    """
+    Metaclass for the `BatchT` type, combining generic type support and dynamic
+    inheritance.
 
-    This metaclass is used to define the `BatchT` type, which serves as an annotation for
-    `torch_geometric.data.Batch`. It combines the functionality of `GenericMeta` for generic
-    type support and `DynamicInheritance` for dynamic inheritance capabilities.
+    This metaclass is used to define the `BatchT` type, which serves as an
+    annotation for `torch_geometric.data.Batch`. It combines the functionality
+    of `GenericMeta` for generic type support and `DynamicInheritance` for
+    dynamic inheritance capabilities.
 
     Inherits from:
         GenericMeta: Provides support for generic types.
-        DynamicInheritance: Allows dynamic inheritance of attributes and methods.
+        DynamicInheritance: Allows dynamic inheritance of attributes and
+            methods.
 
     Attributes:
         None specific to BatchMeta.
@@ -286,15 +304,18 @@ class BatchMeta(GenericMeta, DynamicInheritance):
 def _get_attribute_dtypes(
     p: Union[str, slice, list, set, DataMeta, BatchMeta]
 ) -> Tuple[Set[str], Dict[str, Any]]:
-    """Recursively extracts attribute names and their corresponding data types from the input.
+    """
+    Recursively extracts attribute names and their corresponding data types
+    from the input.
 
     Args:
-        p (Union[str, slice, list, set, DataMeta]): The input parameter which can be a string,
-            slice, list, set, or an instance of DataMeta.
+        p (Union[str, slice, list, set, DataMeta]): The input parameter which
+            can be a string, slice, list, set, or an instance of DataMeta.
 
     Returns:
-        Tuple[Set[str], Dict[str, Any]]: A tuple containing a set of attribute names and a
-            dictionary mapping attribute names to their data types.
+        Tuple[Set[str], Dict[str, Any]]: A tuple containing a set of attribute
+            names and a dictionary mapping attribute names to their data
+            types.
 
     Raises:
         TypeError: If the input parameter `p` is not of the expected types.
@@ -324,8 +345,9 @@ def _get_attribute_dtypes(
     return attributes, dtypes
 
 
-class DataType(Data, extra=Generic, metaclass=DataMeta):
-    """Defines type DataT to serve as annotation for `torch_geometric.data.Data`.
+class _DataType(Data, extra=Generic, metaclass=DataMeta):
+    """
+    Defines type to serve as annotation for `torch_geometric.data.Data`.
 
 
     Examples:
@@ -363,7 +385,8 @@ class DataType(Data, extra=Generic, metaclass=DataMeta):
         >>> def forward(d: DataT["x" : Int[Tensor "1 2 3"], ...]):
         >>>     return d
         >>> forward(d)
-        TypeError: Data(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3]) attribute `x` is not a valid instance of <class 'jaxtyping.Int[Tensor, '1 2 3']'>
+        TypeError: Data(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3]) attribute `x`
+        is not a valid instance of <class 'jaxtyping.Int[Tensor, '1 2 3']'>
     """
 
     __slots__ = ()
@@ -381,8 +404,9 @@ class DataType(Data, extra=Generic, metaclass=DataMeta):
     def __class_getitem__(cls, type_: T, /) -> T: ...
 
 
-class BatchType(Batch, extra=Generic, metaclass=BatchMeta):
-    """Defines type BatchT to serve as annotation for `torch_geometric.data.Batch`.
+class _BatchType(Batch, extra=Generic, metaclass=BatchMeta):
+    """
+    Defines type to serve as annotation for `torch_geometric.data.Batch`.
 
     Examples:
         >>> from torch_geometric.data.typehinting import BatchT, typecheck
@@ -419,7 +443,8 @@ class BatchType(Batch, extra=Generic, metaclass=BatchMeta):
         >>> def forward(b: BatchT["x" : Int[Tensor "1 2 3"], ...]):
         >>>     return b
         >>> forward(b)
-        TypeError: Batch(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3]) attribute `x` is not a valid instance of <class 'jaxtyping.Int[Tensor, '1 2 3']'>
+        TypeError: Batch(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3]) attribute `x`
+        is not a valid instance of <class 'jaxtyping.Int[Tensor, '1 2 3']'>
     """
 
     __slots__ = ()
@@ -437,5 +462,5 @@ class BatchType(Batch, extra=Generic, metaclass=BatchMeta):
     def __class_getitem__(cls, type_: T, /) -> T: ...
 
 
-DataT: TypeAlias = DataType
-BatchT: TypeAlias = BatchType
+DataT: TypeAlias = _DataType
+BatchT: TypeAlias = _BatchType
