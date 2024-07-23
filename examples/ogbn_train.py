@@ -65,11 +65,7 @@ parser.add_argument("--dropout", type=float, default=0.5)
 parser.add_argument(
     "--use_directed_graph",
     action='store_true',
-<<<<<<< HEAD:examples/ogbn_train.py
     help="Whether or not to use directed graph",
-=======
-    help="Wether or not to use directed graph",
->>>>>>> 8857f082c72ef6e77a58b1596b7b18d1ff717ec9:examples/ogbn_papers_100m_gat.py
 )
 args = parser.parse_args()
 wall_clock_start = time.perf_counter()
@@ -255,7 +251,6 @@ class GAT(torch.nn.Module):
 
         return x_all
 
-<<<<<<< HEAD:examples/ogbn_train.py
 if args.use_gat:
     print("GAT model")
     model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes,
@@ -264,12 +259,10 @@ else:
     print("GraphSage model")
     model = SAGE(dataset.num_features, num_hidden_channels, dataset.num_classes,
              num_layers=num_layers, dropout=args.dropout)
-=======
 
 model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes,
             num_layers=num_layers, dropout=args.dropout,
             heads=args.num_heads).to(device)
->>>>>>> 8857f082c72ef6e77a58b1596b7b18d1ff717ec9:examples/ogbn_papers_100m_gat.py
 
 model = model.to(device)
 
