@@ -42,7 +42,8 @@ T = TypeVar("T")
 
 
 def _check(hint: Any, argument_name: str, value: Any) -> None:
-    """Checks if the value matches the type hint and raises an error if does not.
+    """
+    Checks if the value matches the type hint and raises an error if does not.
 
     Args:
         hint (Any): The expected type hint.
@@ -123,7 +124,7 @@ def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
                 is_data_or_batch_meta = isinstance(hint, (DataMeta, BatchMeta))
                 if arg_name in hints and is_data_or_batch_meta:
                     _check(hint, arg_name, value)
-                elif arg_name in hints and not is_data_or_batch_meta and strict:
+                elif arg_name in hints and not is_data_or_batch_meta and strict: # noqa: E501
                     if isinstance(hint, NewType):
                         if not isinstance(value, hint.__supertype__):
                             raise TypeError(
@@ -233,8 +234,8 @@ class DataMeta(GenericMeta, ABCMeta):
 
 
 class BatchMeta(GenericMeta, DynamicInheritance):
-    """Metaclass for the `BatchT` type, combining generic type support and dynamic
-    inheritance.
+    """Metaclass for the `BatchT` type, combining generic type support and
+    dynamic inheritance.
 
     This metaclass is used to define the `BatchT` type, which serves as an
     annotation for `torch_geometric.data.Batch`. It combines the functionality
