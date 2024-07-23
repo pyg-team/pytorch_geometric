@@ -95,7 +95,6 @@ def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
     Returns:
         Callable: The typechecking decorator.
     """
-
     def _typecheck(f: Callable) -> Callable:
         """Typechecking decorator."""
         signature = inspect.signature(f)
@@ -303,8 +302,7 @@ def _get_attribute_dtypes(
 
 
 class DataT(Data, extra=Generic, metaclass=DataMeta):
-    """
-    Defines type DataT to serve as annotation for `torch_geometric.data.Data`.
+    """Defines type DataT to serve as annotation for `torch_geometric.data.Data`.
 
 
     Examples:
