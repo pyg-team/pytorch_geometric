@@ -67,7 +67,7 @@ def test_typecheck_attribute():
     d = get_sample_tensor_data()
 
     @typecheck
-    def forward(d: DataT["x"]):
+    def forward(d: DataT["x"]):  # noqa: F821
         return d
 
     assert d == forward(d), "return value does not match."
@@ -239,7 +239,7 @@ def test_nested_data():
     outer.data = inner
 
     @typecheck
-    def forward(x: DataT["data" : DataT["x" : Float[Tensor, "... 3"]]]):
+    def forward(x: DataT["data" : DataT["x" : Float[Tensor, "... 3"]]]):  # noqa
         return x
 
     assert outer == forward(outer), "Return value does not match"
