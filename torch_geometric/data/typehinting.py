@@ -10,13 +10,17 @@ from typing import (
     Optional,
     Set,
     Tuple,
-    TypeAlias,
     TypeVar,
     Union,
     _tp_cache,
     _TypingEmpty,
     get_type_hints,
 )
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 import numpy as np
 from beartype.door import is_bearable
