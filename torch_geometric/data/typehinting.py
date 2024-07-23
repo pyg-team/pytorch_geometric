@@ -10,6 +10,8 @@ from typing import (
     Optional,
     Set,
     Tuple,
+    TypeAlias,
+    TypeVar,
     Union,
     _tp_cache,
     _TypingEmpty,
@@ -18,6 +20,8 @@ from typing import (
 
 import numpy as np
 from beartype.door import is_bearable
+
+from torch_geometric.sampler.base import DataType
 
 try:
     from jaxtyping._array_types import _MetaAbstractArray, _MetaAbstractDtype
@@ -30,6 +34,9 @@ from torch_geometric.data.batch import DynamicInheritance
 
 class GenericMeta(type):
     pass
+
+
+T = TypeVar("T")
 
 
 def _check(hint: Any, argument_name: str, value: Any) -> None:
@@ -102,6 +109,7 @@ def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
     Returns:
         Callable: The typechecking decorator.
     """
+
     def _typecheck(f: Callable) -> Callable:
         """Typechecking decorator."""
         signature = inspect.signature(f)
@@ -316,7 +324,7 @@ def _get_attribute_dtypes(
     return attributes, dtypes
 
 
-class DataT(Data, extra=Generic, metaclass=DataMeta):
+class DataType(Data, extra=Generic, metaclass=DataMeta):
     """Defines type DataT to serve as annotation for `torch_geometric.data.Data`.
 
 
@@ -370,8 +378,10 @@ class DataT(Data, extra=Generic, metaclass=DataMeta):
                 "It is intended to be used as a type annotation only."
             )
 
+    def __class_getitem__(cls, type_: T, /) -> T: ...
 
-class BatchT(Batch, extra=Generic, metaclass=BatchMeta):
+
+class BatchType(Batch, extra=Generic, metaclass=BatchMeta):
     """Defines type BatchT to serve as annotation for `torch_geometric.data.Batch`.
 
     Examples:
@@ -423,3 +433,9 @@ class BatchT(Batch, extra=Generic, metaclass=BatchMeta):
                 "Type 'BatchT' cannot be instantiated directly. "
                 "It is intended to be used as a type annotation only."
             )
+
+    def __class_getitem__(cls, type_: T, /) -> T: ...
+
+
+DataT: TypeAlias = DataType
+BatchT: TypeAlias = BatchType
