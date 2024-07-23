@@ -86,7 +86,7 @@ dataset = PygNodePropPredDataset(name=args.dataset, root=root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name=args.dataset)
 
-data=dataset[0]
+data = dataset[0]
 if not args.use_directed_graph:
     start_undirected = time.time()
     print("use undirected graph")
@@ -186,6 +186,7 @@ class SAGE(torch.nn.Module):
 
         return x_all
 
+
 class GAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
                  dropout, heads):
@@ -194,8 +195,7 @@ class GAT(torch.nn.Module):
         self.num_layers = num_layers
 
         self.convs = torch.nn.ModuleList()
-        self.convs.append(GATConv(in_channels, hidden_channels,
-                                  heads))
+        self.convs.append(GATConv(in_channels, hidden_channels, heads))
         for _ in range(num_layers - 2):
             self.convs.append(
                 GATConv(heads * hidden_channels, hidden_channels, heads))
@@ -251,14 +251,17 @@ class GAT(torch.nn.Module):
 
         return x_all
 
+
 if args.use_gat:
     print("GAT model")
     model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes,
-            num_layers=num_layers, dropout=args.dropout, heads=args.num_heads)
+                num_layers=num_layers, dropout=args.dropout,
+                heads=args.num_heads)
 else:
     print("GraphSage model")
-    model = SAGE(dataset.num_features, num_hidden_channels, dataset.num_classes,
-             num_layers=num_layers, dropout=args.dropout)
+    model = SAGE(dataset.num_features, num_hidden_channels,
+                 dataset.num_classes, num_layers=num_layers,
+                 dropout=args.dropout)
 
 model = GAT(dataset.num_features, num_hidden_channels, dataset.num_classes,
             num_layers=num_layers, dropout=args.dropout,
