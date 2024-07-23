@@ -125,21 +125,21 @@ def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
         def wrapper(*args, **kwargs) -> Any:  # type: ignore
             # Check input arguments
             bound = signature.bind(*args, **kwargs)
-            for argument_name, value in bound.arguments.items():
-                hint = hints[argument_name]
+            for arg_name, value in bound.arguments.items():
+                hint = hints[arg_name]
                 is_data_or_batch_meta = isinstance(hint, (DataMeta, BatchMeta))
-                if argument_name in hints and is_data_or_batch_meta:
-                    _check(hint, argument_name, value)
-                elif argument_name in hints and not is_data_or_batch_meta and strict:
+                if arg_name in hints and is_data_or_batch_meta:
+                    _check(hint, arg_name, value)
+                elif arg_name in hints and not is_data_or_batch_meta and strict:
                     if isinstance(hint, NewType):
                         if not isinstance(value, hint.__supertype__):
                             raise TypeError(
-                                f"{argument_name} of type {type(hint)} is not "
+                                f"{arg_name} of type {type(hint)} is not "
                                 f"of hinted type: {hint}"
                             )
                     elif not isinstance(value, hint):
                         raise TypeError(
-                            f"{argument_name} of type {type(hint)} is not of"
+                            f"{arg_name} of type {type(hint)} is not of"
                             f" hinted type: {hint}"
                         )
             # Check return values
