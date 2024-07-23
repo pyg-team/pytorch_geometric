@@ -275,12 +275,16 @@ class LinearHeteroNodeModule(LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
+@pytest.fixture
+def destroy_pg():
+     yield
+     torch.distributed.destroy_process_group()
 
 @onlyCUDA
 @onlyFullTest
 @onlyNeighborSampler
 @withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
-def test_lightning_hetero_node_data(get_dataset):
+def test_lightning_hetero_node_data(destroy_pg, get_dataset):
     import pytorch_lightning as pl
 
     data = get_dataset(name='hetero')[0]
@@ -302,7 +306,6 @@ def test_lightning_hetero_node_data(get_dataset):
     assert torch.all(data['paper'].x > original_x)  # Ensure shared data.
     assert trainer.validate_loop._data_source.is_defined()
     assert trainer.test_loop._data_source.is_defined()
-    torch.distributed.destroy_process_group()
 
 
 @withPackage('pytorch_lightning')
