@@ -42,8 +42,7 @@ T = TypeVar("T")
 
 
 def _check(hint: Any, argument_name: str, value: Any) -> None:
-    """
-    Checks if the value matches the type hint and raises an error if does not.
+    """Checks if the value matches the type hint and raises an error if does not.
 
     Args:
         hint (Any): The expected type hint.
@@ -245,8 +244,7 @@ class DataMeta(GenericMeta, ABCMeta):
 
 
 class BatchMeta(GenericMeta, DynamicInheritance):
-    """
-    Metaclass for the `BatchT` type, combining generic type support and dynamic
+    """Metaclass for the `BatchT` type, combining generic type support and dynamic
     inheritance.
 
     This metaclass is used to define the `BatchT` type, which serves as an
@@ -298,8 +296,7 @@ class BatchMeta(GenericMeta, DynamicInheritance):
 def _get_attribute_dtypes(
     p: Union[str, slice, list, set, DataMeta, BatchMeta]
 ) -> Tuple[Set[str], Dict[str, Any]]:
-    """
-    Recursively extracts attribute names and their corresponding data types
+    """Recursively extracts attribute names and their corresponding data types
     from the input.
 
     Args:
@@ -340,8 +337,7 @@ def _get_attribute_dtypes(
 
 
 class _DataType(Data, extra=Generic, metaclass=DataMeta):
-    """
-    Defines type to serve as annotation for `torch_geometric.data.Data`.
+    """Defines type to serve as annotation for `torch_geometric.data.Data`.
 
 
     Examples:
@@ -399,8 +395,7 @@ class _DataType(Data, extra=Generic, metaclass=DataMeta):
 
 
 class _BatchType(Batch, extra=Generic, metaclass=BatchMeta):
-    """
-    Defines type to serve as annotation for `torch_geometric.data.Batch`.
+    """Defines type to serve as annotation for `torch_geometric.data.Batch`.
 
     Examples:
         >>> from torch_geometric.data.typehinting import BatchT, typecheck
