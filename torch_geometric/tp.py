@@ -95,7 +95,7 @@ def typecheck(f: Callable, strict: bool = False) -> Callable:
     hints = get_type_hints(f)
 
     @wraps(f)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs) -> Any:  # type: ignore
         # Check input arguments
         bound = signature.bind(*args, **kwargs)
         for argument_name, value in bound.arguments.items():
@@ -307,7 +307,7 @@ class DataT(Data, extra=Generic, metaclass=DataMeta):
     attributes = set()
     dtypes = {}
 
-    def __new__(cls, *args, **kwds):
+    def __new__(cls, *args, **kwds):  # type: ignore
         if not hasattr(cls, "_gorg") or cls._gorg is DataT:
             raise TypeError(
                 "Type 'GraphT' cannot be instantiated directly. "
@@ -323,7 +323,7 @@ class BatchT(Batch, extra=Generic, metaclass=BatchMeta):
     attributes = set()
     dtypes = {}
 
-    def __new__(cls, *args, **kwds):
+    def __new__(cls, *args, **kwds):  # type: ignore
         if not hasattr(cls, "_gorg") or cls._gorg is BatchT:
             raise TypeError(
                 "Type 'BatchT' cannot be instantiated directly. "
