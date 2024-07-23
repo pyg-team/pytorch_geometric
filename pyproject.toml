@@ -57,6 +57,7 @@ benchmark=[
     "wandb",
 ]
 test=[
+    "beartype",
     "jaxtyping",
     "onnx",
     "onnxruntime",
