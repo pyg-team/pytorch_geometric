@@ -5,7 +5,7 @@ import pytest
 import torch
 
 try:
-    from jaxtyping import Bool, Float, Int
+    from jaxtyping import Float
 
     JAXTYPING_AVAILABLE = True
 except ImportError:
@@ -83,7 +83,7 @@ def test_typecheck_attribute_type():
     d = get_sample_tensor_data()
 
     @typecheck
-    def forward(d: DataT["x" : torch.Tensor]):  # noqa
+    def forward(d: DataT["x":torch.Tensor]):  # noqa
         return d
 
     assert d == forward(d), "Return value is not the same as input"
@@ -96,7 +96,7 @@ def test_fully_specified():
     d = get_sample_mixed_data()
 
     @typecheck
-    def forward(d: DataT["x" : torch.Tensor]):  # noqa
+    def forward(d: DataT["x":torch.Tensor]):  # noqa
         return d
 
     with pytest.raises(TypeError):
@@ -107,7 +107,7 @@ def test_fuzzy_specification():
     d = get_sample_mixed_data()
 
     @typecheck
-    def forward(d: DataT["x" : torch.Tensor, ...]):  # noqa
+    def forward(d: DataT["x":torch.Tensor, ...]):  # noqa
         return d
 
     assert d == forward(d)
@@ -118,13 +118,13 @@ def test_tensor_shape_specification():
     d = get_sample_mixed_data()
 
     @typecheck
-    def forward(d: DataT["x" : Float[Tensor, "... 3"], ...]):  # noqa
+    def forward(d: DataT["x":Float[Tensor, "... 3"], ...]):  # noqa
         return d
 
     assert d == forward(d)
 
     @typecheck
-    def forward(d: DataT["x" : Float[Tensor, "... 20 3"], ...]):  # noqa
+    def forward(d: DataT["x":Float[Tensor, "... 20 3"], ...]):  # noqa
         return d
 
     with pytest.raises(TypeError):
@@ -137,7 +137,7 @@ def test_batch_shape_specification():
     b = Batch.from_data_list([d])
 
     @typecheck
-    def forward(d: BatchT["x" : Float[Tensor, "... 3"], ...]):  # noqa
+    def forward(d: BatchT["x":Float[Tensor, "... 3"], ...]):  # noqa
         return d
 
     assert b == forward(b)
@@ -149,8 +149,8 @@ def test_return_types():
 
     @typecheck
     def forward(
-        x: DataT["x" : torch.Tensor],  # noqa
-    ) -> DataT["x" : Float[Tensor, "... 3"]]:  # noqa
+            x: DataT["x":torch.Tensor],  # noqa
+    ) -> DataT["x":Float[Tensor, "... 3"]]:  # noqa
         return x
 
     forward(d)
@@ -159,8 +159,8 @@ def test_return_types():
 
     @typecheck
     def forward(
-        x: DataT["x" : torch.Tensor],  # noqa
-    ) -> DataT["x" : Float[Tensor, "... 30"]]:  # noqa
+            x: DataT["x":torch.Tensor],  # noqa
+    ) -> DataT["x":Float[Tensor, "... 30"]]:  # noqa
         return x
 
     with pytest.raises(TypeError):
@@ -199,8 +199,8 @@ def test_non_torch_type():
 
     @typecheck
     def forward(
-        x: DataT["x" : torch.Tensor, "dictionary":Dict]  # noqa
-    ) -> DataT["x" : torch.Tensor, "dictionary":Dict]:  # noqa
+        x: DataT["x":torch.Tensor, "dictionary":Dict]  # noqa
+    ) -> DataT["x":torch.Tensor, "dictionary":Dict]:  # noqa
         return x
 
     forward(d)
@@ -239,7 +239,7 @@ def test_nested_data():
     outer.data = inner
 
     @typecheck
-    def forward(x: DataT["data" : DataT["x" : Float[Tensor, "... 3"]]]):
+    def forward(x: DataT["data":DataT["x":Float[Tensor, "... 3"]]]):
         return x
 
     assert outer == forward(outer), "Return value does not match"
