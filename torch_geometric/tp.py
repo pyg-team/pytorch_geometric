@@ -15,7 +15,7 @@ from typing import (
 )
 
 import numpy as np
-from jaxtyping._array_types import _MetaAbstractDtype
+from jaxtyping._array_types import _MetaAbstractArray, _MetaAbstractDtype
 from typing_extensions import get_args
 
 from torch_geometric.data import Batch, Data
@@ -64,8 +64,8 @@ def _check(hint: Any, argument_name: str, value: Any) -> None:
     def _check_dtypes(hint: Any, value: Any) -> None:
         dtypes = {k: type(v) for k, v in value._store.items()}
         for colname, dt in hint.dtypes.items():
-            if isinstance(
-                dt, _MetaAbstractDtype
+            if isinstance(dt, _MetaAbstractDtype) or isinstance(
+                dt, _MetaAbstractArray
             ):  # Check for a jaxtyping annotation and use its typechecker
                 base_cls, *all_metadata = get_args(dt)
                 for metadata in all_metadata:
@@ -145,7 +145,9 @@ def _resolve_type(t: Any) -> Any:
         >>> _resolve_type(UserId)
         <class 'int'>
     """
-    if isinstance(t, _MetaAbstractDtype):  # support for NewType in type hinting
+    if isinstance(t, _MetaAbstractDtype) or isinstance(
+        t, _MetaAbstractDtype
+    ):  # support for NewType in type hinting
         return t
     if hasattr(t, "__supertype__"):
         return _resolve_type(t.__supertype__)
