@@ -97,7 +97,8 @@ def typecheck(f: Callable, strict: bool = False) -> Callable:
 
 def _resolve_type(t: Any) -> Any:
     """Adapted from dataenforce contib by @martijnentink:
-    https://github.com/CedricFR/dataenforce/pull/5"""
+    https://github.com/CedricFR/dataenforce/pull/5
+    """
     # support for NewType in type hinting
     if isinstance(t, _AnnotatedType):
         return t
