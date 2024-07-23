@@ -16,10 +16,10 @@ class RGCNConv(torch.nn.Module):
         self.num_relations = num_relations
         self.num_bases = num_bases
 
-        self.basis = Param(torch.Tensor(num_bases, in_channels, out_channels))
-        self.att = Param(torch.Tensor(num_relations, num_bases))
-        self.root = Param(torch.Tensor(in_channels, out_channels))
-        self.bias = Param(torch.Tensor(out_channels))
+        self.basis = Param(torch.empty(num_bases, in_channels, out_channels))
+        self.att = Param(torch.empty(num_relations, num_bases))
+        self.root = Param(torch.empty(in_channels, out_channels))
+        self.bias = Param(torch.empty(out_channels))
 
         self.reset_parameters()
 
@@ -88,10 +88,10 @@ class RGCNSPMVConv(torch.nn.Module):
         self.num_relations = num_relations
         self.num_bases = num_bases
 
-        self.basis = Param(torch.Tensor(num_bases, in_channels, out_channels))
-        self.att = Param(torch.Tensor(num_relations, num_bases))
-        self.root = Param(torch.Tensor(in_channels, out_channels))
-        self.bias = Param(torch.Tensor(out_channels))
+        self.basis = Param(torch.empty(num_bases, in_channels, out_channels))
+        self.att = Param(torch.empty(num_relations, num_bases))
+        self.root = Param(torch.empty(in_channels, out_channels))
+        self.bias = Param(torch.empty(out_channels))
 
         self.reset_parameters()
 

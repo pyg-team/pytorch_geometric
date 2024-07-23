@@ -9,20 +9,20 @@ from torch.nn import Conv1d
 from torch.nn import Linear as L
 from torch.nn import Sequential as S
 
+import torch_geometric.typing
 from torch_geometric.nn import Reshape
+from torch_geometric.nn.inits import reset
 
-from ..inits import reset
-
-try:
+if torch_geometric.typing.WITH_TORCH_CLUSTER:
     from torch_cluster import knn_graph
-except ImportError:
+else:
     knn_graph = None
 
 
 class XConv(torch.nn.Module):
     r"""The convolutional operator on :math:`\mathcal{X}`-transformed points
     from the `"PointCNN: Convolution On X-Transformed Points"
-    <https://arxiv.org/abs/1801.07791>`_ paper
+    <https://arxiv.org/abs/1801.07791>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathrm{Conv}\left(\mathbf{K},
@@ -124,12 +124,13 @@ class XConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.mlp1)
         reset(self.mlp2)
         reset(self.conv)
 
     def forward(self, x: Tensor, pos: Tensor, batch: Optional[Tensor] = None):
-        """"""
+        r"""Runs the forward pass of the module."""
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
         (N, D), K = pos.size(), self.kernel_size
 

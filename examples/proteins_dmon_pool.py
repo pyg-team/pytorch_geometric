@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 from math import ceil
 
 import torch
@@ -12,7 +13,7 @@ from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
-avg_num_nodes = int(dataset.data.x.size(0) / len(dataset))
+avg_num_nodes = int(dataset._data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]
 val_dataset = dataset[n:2 * n]
@@ -45,18 +46,18 @@ class Net(torch.nn.Module):
         x, mask = to_dense_batch(x, batch)
         adj = to_dense_adj(edge_index, batch)
 
-        _, x, adj, sp1, o1, c1 = self.pool1(x, adj, mask)
+        _, x, adj, sp1, _, c1 = self.pool1(x, adj, mask)
 
         x = self.conv2(x, adj).relu()
 
-        _, x, adj, sp2, o2, c2 = self.pool2(x, adj)
+        _, x, adj, sp2, _, c2 = self.pool2(x, adj)
 
         x = self.conv3(x, adj)
 
         x = x.mean(dim=1)
         x = self.lin1(x).relu()
         x = self.lin2(x)
-        return F.log_softmax(x, dim=-1), sp1 + sp2 + o1 + o2 + c1 + c2
+        return F.log_softmax(x, dim=-1), sp1 + sp2 + c1 + c2
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -95,7 +96,9 @@ def test(loader):
     return loss_all / len(loader.dataset), correct / len(loader.dataset)
 
 
+times = []
 for epoch in range(1, 101):
+    start = time.time()
     train_loss = train(train_loader)
     _, train_acc = test(train_loader)
     val_loss, val_acc = test(val_loader)
@@ -104,3 +107,5 @@ for epoch in range(1, 101):
           f'Train Acc: {train_acc:.3f}, Val Loss: {val_loss:.3f}, '
           f'Val Acc: {val_acc:.3f}, Test Loss: {test_loss:.3f}, '
           f'Test Acc: {test_acc:.3f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

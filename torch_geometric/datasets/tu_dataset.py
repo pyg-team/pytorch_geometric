@@ -1,17 +1,14 @@
-import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
-import torch
-
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
-from torch_geometric.io import read_tu_data
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.io import fs, read_tu_data
 
 
 class TUDataset(InMemoryDataset):
-    r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
-    "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
+    r"""A variety of graph kernel benchmark datasets, *.e.g.*,
+    :obj:`"IMDB-BINARY"`, :obj:`"REDDIT-BINARY"` or :obj:`"PROTEINS"`,
+    collected from the `TU Dortmund University
     <https://chrsmrrs.github.io/datasets>`_.
     In addition, this dataset wrapper provides `cleaned dataset versions
     <https://github.com/nd7141/graph_datasets>`_ as motivated by the
@@ -24,12 +21,12 @@ class TUDataset(InMemoryDataset):
         You can then either make use of the argument :obj:`use_node_attr`
         to load additional continuous node attributes (if present) or provide
         synthetic node features using transforms such as
-        like :class:`torch_geometric.transforms.Constant` or
+        :class:`torch_geometric.transforms.Constant` or
         :class:`torch_geometric.transforms.OneHotDegree`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The `name
+        root (str): Root directory where the dataset should be saved.
+        name (str): The `name
             <https://chrsmrrs.github.io/datasets/docs/datasets/>`_ of the
             dataset.
         transform (callable, optional): A function/transform that takes in an
@@ -44,6 +41,8 @@ class TUDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
         use_node_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous node attributes (if present).
             (default: :obj:`False`)
@@ -53,84 +52,104 @@ class TUDataset(InMemoryDataset):
         cleaned (bool, optional): If :obj:`True`, the dataset will
             contain only non-isomorphic graphs. (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - MUTAG
-              - 188
-              - ~17.9
-              - ~39.6
-              - 7
-              - 2
-            * - ENZYMES
-              - 600
-              - ~32.6
-              - ~124.3
-              - 3
-              - 6
-            * - PROTEINS
-              - 1,113
-              - ~39.1
-              - ~145.6
-              - 3
-              - 2
-            * - COLLAB
-              - 5,000
-              - ~74.5
-              - ~4914.4
-              - 0
-              - 3
-            * - IMDB-BINARY
-              - 1,000
-              - ~19.8
-              - ~193.1
-              - 0
-              - 2
-            * - REDDIT-BINARY
-              - 2,000
-              - ~429.6
-              - ~995.5
-              - 0
-              - 2
-            * - ...
-              -
-              -
-              -
-              -
-              -
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - MUTAG
+          - 188
+          - ~17.9
+          - ~39.6
+          - 7
+          - 2
+        * - ENZYMES
+          - 600
+          - ~32.6
+          - ~124.3
+          - 3
+          - 6
+        * - PROTEINS
+          - 1,113
+          - ~39.1
+          - ~145.6
+          - 3
+          - 2
+        * - COLLAB
+          - 5,000
+          - ~74.5
+          - ~4914.4
+          - 0
+          - 3
+        * - IMDB-BINARY
+          - 1,000
+          - ~19.8
+          - ~193.1
+          - 0
+          - 2
+        * - REDDIT-BINARY
+          - 2,000
+          - ~429.6
+          - ~995.5
+          - 0
+          - 2
+        * - ...
+          -
+          -
+          -
+          -
+          -
     """
 
     url = 'https://www.chrsmrrs.com/graphkerneldatasets'
     cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
                    'graph_datasets/master/datasets')
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None,
-                 use_node_attr: bool = False, use_edge_attr: bool = False,
-                 cleaned: bool = False):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+        use_node_attr: bool = False,
+        use_edge_attr: bool = False,
+        cleaned: bool = False,
+    ) -> None:
         self.name = name
         self.cleaned = cleaned
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
-        out = torch.load(self.processed_paths[0])
-        if not isinstance(out, tuple) or len(out) != 3:
+        out = fs.torch_load(self.processed_paths[0])
+        if not isinstance(out, tuple) or len(out) < 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
                 "root folder and try again.")
-        self.data, self.slices, self.sizes = out
+        assert len(out) == 3 or len(out) == 4
 
+        if len(out) == 3:  # Backward compatibility.
+            data, self.slices, self.sizes = out
+            data_cls = Data
+        else:
+            data, self.slices, self.sizes, data_cls = out
+
+        if not isinstance(data, dict):  # Backward compatibility.
+            self.data = data
+        else:
+            self.data = data_cls.from_dict(data)
+
+        assert isinstance(self._data, Data)
         if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
             self._data.x = self._data.x[:, num_node_attributes:]
@@ -173,16 +192,14 @@ class TUDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = self.cleaned_url if self.cleaned else self.url
-        folder = osp.join(self.root, self.name)
-        path = download_url(f'{url}/{self.name}.zip', folder)
-        extract_zip(path, folder)
-        os.unlink(path)
-        shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(folder, self.name), self.raw_dir)
+        fs.cp(f'{url}/{self.name}.zip', self.raw_dir, extract=True)
+        for filename in fs.ls(osp.join(self.raw_dir, self.name)):
+            fs.mv(filename, osp.join(self.raw_dir, osp.basename(filename)))
+        fs.rm(osp.join(self.raw_dir, self.name))
 
-    def process(self):
+    def process(self) -> None:
         self.data, self.slices, sizes = read_tu_data(self.raw_dir, self.name)
 
         if self.pre_filter is not None or self.pre_transform is not None:
@@ -197,7 +214,11 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self._data, self.slices, sizes), self.processed_paths[0])
+        assert isinstance(self._data, Data)
+        fs.torch_save(
+            (self._data.to_dict(), self.slices, sizes, self._data.__class__),
+            self.processed_paths[0],
+        )
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'

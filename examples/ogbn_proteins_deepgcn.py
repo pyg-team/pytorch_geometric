@@ -2,11 +2,11 @@ import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from torch.nn import LayerNorm, Linear, ReLU
-from torch_scatter import scatter
 from tqdm import tqdm
 
 from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import DeepGCNLayer, GENConv
+from torch_geometric.utils import scatter
 
 dataset = PygNodePropPredDataset('ogbn-proteins', root='../data')
 splitted_idx = dataset.get_idx_split()
@@ -16,7 +16,7 @@ data.y = data.y.to(torch.float)
 
 # Initialize features of nodes by aggregating edge features.
 row, col = data.edge_index
-data.x = scatter(data.edge_attr, col, 0, dim_size=data.num_nodes, reduce='add')
+data.x = scatter(data.edge_attr, col, dim_size=data.num_nodes, reduce='sum')
 
 # Set split indices to masks.
 for split in ['train', 'valid', 'test']:

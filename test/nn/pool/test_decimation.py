@@ -9,7 +9,6 @@ def test_decimation_basic():
     ptr = torch.tensor([0, N_1, N_1 + N_2])
 
     idx_decim, ptr_decim = decimation_indices(ptr, decimation_factor)
-    print(idx_decim, ptr_decim)
 
     expected_size = (N_1 // decimation_factor) + (N_2 // decimation_factor)
     assert idx_decim.size(0) == expected_size

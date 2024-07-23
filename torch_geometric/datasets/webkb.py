@@ -18,9 +18,9 @@ class WebKB(InMemoryDataset):
     project, course, staff, and faculty.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cornell"`,
-            :obj:`"Texas"`, :obj:`"Wisconsin"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cornell"`, :obj:`"Texas"`,
+            :obj:`"Wisconsin"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -29,6 +29,35 @@ class WebKB(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cornell
+          - 183
+          - 298
+          - 1,703
+          - 5
+        * - Texas
+          - 183
+          - 325
+          - 1,703
+          - 5
+        * - Wisconsin
+          - 251
+          - 515
+          - 1,703
+          - 5
     """
 
     url = 'https://raw.githubusercontent.com/graphdml-uiuc-jlu/geom-gcn/master'
@@ -39,12 +68,14 @@ class WebKB(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         assert self.name in ['cornell', 'texas', 'wisconsin']
 
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -64,30 +95,32 @@ class WebKB(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for f in self.raw_file_names[:2]:
             download_url(f'{self.url}/new_data/{self.name}/{f}', self.raw_dir)
         for f in self.raw_file_names[2:]:
             download_url(f'{self.url}/splits/{f}', self.raw_dir)
 
-    def process(self):
-        with open(self.raw_paths[0], 'r') as f:
-            data = f.read().split('\n')[1:-1]
-            x = [[float(v) for v in r.split('\t')[1].split(',')] for r in data]
-            x = torch.tensor(x, dtype=torch.float)
+    def process(self) -> None:
+        with open(self.raw_paths[0]) as f:
+            lines = f.read().split('\n')[1:-1]
+            xs = [[float(value) for value in line.split('\t')[1].split(',')]
+                  for line in lines]
+            x = torch.tensor(xs, dtype=torch.float)
 
-            y = [int(r.split('\t')[2]) for r in data]
-            y = torch.tensor(y, dtype=torch.long)
+            ys = [int(line.split('\t')[2]) for line in lines]
+            y = torch.tensor(ys, dtype=torch.long)
 
-        with open(self.raw_paths[1], 'r') as f:
-            data = f.read().split('\n')[1:-1]
-            data = [[int(v) for v in r.split('\t')] for r in data]
-            edge_index = torch.tensor(data, dtype=torch.long).t().contiguous()
+        with open(self.raw_paths[1]) as f:
+            lines = f.read().split('\n')[1:-1]
+            edge_indices = [[int(value) for value in line.split('\t')]
+                            for line in lines]
+            edge_index = torch.tensor(edge_indices).t().contiguous()
             edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         train_masks, val_masks, test_masks = [], [], []
-        for f in self.raw_paths[2:]:
-            tmp = np.load(f)
+        for path in self.raw_paths[2:]:
+            tmp = np.load(path)
             train_masks += [torch.from_numpy(tmp['train_mask']).to(torch.bool)]
             val_masks += [torch.from_numpy(tmp['val_mask']).to(torch.bool)]
             test_masks += [torch.from_numpy(tmp['test_mask']).to(torch.bool)]
@@ -98,7 +131,7 @@ class WebKB(InMemoryDataset):
         data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask,
                     val_mask=val_mask, test_mask=test_mask)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}()'

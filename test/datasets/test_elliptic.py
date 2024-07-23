@@ -1,6 +1,7 @@
-from torch_geometric.testing import onlyFullTest
+from torch_geometric.testing import onlyFullTest, onlyOnline
 
 
+@onlyOnline
 @onlyFullTest
 def test_elliptic_bitcoin_dataset(get_dataset):
     dataset = get_dataset(name='EllipticBitcoinDataset')

@@ -1,9 +1,11 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.logging import init_wandb, log
@@ -18,7 +20,13 @@ parser.add_argument('--epochs', type=int, default=200)
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
+
 init_wandb(name=f'GAT-{args.dataset}', heads=args.heads, epochs=args.epochs,
            hidden_channels=args.hidden_channels, lr=args.lr, device=device)
 
@@ -69,11 +77,15 @@ def test():
     return accs
 
 
+times = []
 best_val_acc = final_test_acc = 0
 for epoch in range(1, args.epochs + 1):
+    start = time.time()
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

@@ -4,12 +4,14 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.utils import cumsum
 
 
 class QuantileAggregation(Aggregation):
     r"""An aggregation operator that returns the feature-wise :math:`q`-th
-    quantile of a set :math:`\mathcal{X}`. That is, for every feature
-    :math:`d`, it computes
+    quantile of a set :math:`\mathcal{X}`.
+
+    That is, for every feature :math:`d`, it computes
 
     .. math::
         {\mathrm{Q}_q(\mathcal{X})}_d = \begin{cases}
@@ -62,7 +64,7 @@ class QuantileAggregation(Aggregation):
                              f"got ('{interpolation}')")
 
         self._q = q
-        self.register_buffer('q', torch.Tensor(qs).view(-1, 1))
+        self.register_buffer('q', torch.tensor(qs).view(-1, 1))
         self.interpolation = interpolation
         self.fill_value = fill_value
 
@@ -76,9 +78,14 @@ class QuantileAggregation(Aggregation):
         assert index is not None  # Required for TorchScript.
 
         count = torch.bincount(index, minlength=dim_size or 0)
-        cumsum = torch.cumsum(count, dim=0) - count
+        ptr = cumsum(count)[:-1]
 
-        q_point = self.q * (count - 1) + cumsum
+        # In case there exists dangling indices (`dim_size > index.max()`), we
+        # need to clamp them to prevent out-of-bound issues:
+        if dim_size is not None:
+            ptr = ptr.clamp(max=x.size(dim) - 1)
+
+        q_point = self.q * (count - 1) + ptr
         q_point = q_point.t().reshape(-1)
 
         shape = [1] * x.dim()
@@ -110,7 +117,9 @@ class QuantileAggregation(Aggregation):
                 quantile = 0.5 * l_quant + 0.5 * r_quant
 
         # If the number of elements is zero, fill with pre-defined value:
-        mask = (count == 0).repeat_interleave(self.q.numel()).view(shape)
+        repeats = self.q.numel()
+        mask = (count == 0).repeat_interleave(
+            repeats, output_size=repeats * count.numel()).view(shape)
         out = quantile.masked_fill(mask, self.fill_value)
 
         if self.q.numel() > 1:
@@ -127,6 +136,7 @@ class QuantileAggregation(Aggregation):
 
 class MedianAggregation(QuantileAggregation):
     r"""An aggregation operator that returns the feature-wise median of a set.
+
     That is, for every feature :math:`d`, it computes
 
     .. math::

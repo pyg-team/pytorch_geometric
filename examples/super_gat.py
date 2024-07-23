@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -50,18 +51,23 @@ def train(data):
     optimizer.step()
 
 
+@torch.no_grad()
 def test(data):
     model.eval()
-    logits, accs = model(data.x, data.edge_index)[0], []
+    out, accs = model(data.x, data.edge_index)[0], []
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
-        pred = logits[mask].max(1)[1]
+        pred = out[mask].argmax(1)
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
         accs.append(acc)
     return accs
 
 
+times = []
 for epoch in range(1, 501):
+    start = time.time()
     train(data)
     train_acc, val_acc, test_acc = test(data)
     print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

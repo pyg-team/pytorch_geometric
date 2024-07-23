@@ -23,11 +23,8 @@ def test_sort_aggregation():
     assert out[0, -1].tolist() == [0, 0, 0, 0]
 
     # Nodes are sorted.
-    expected = 3 - torch.arange(4)
-    assert out[0, :4, -1].argsort().tolist() == expected.tolist()
-
-    expected = 4 - torch.arange(5)
-    assert out[1, :, -1].argsort().tolist() == expected.tolist()
+    assert torch.equal(out[0, :4, -1].argsort(), 3 - torch.arange(4))
+    assert torch.equal(out[1, :, -1].argsort(), 4 - torch.arange(5))
 
 
 def test_sort_aggregation_smaller_than_k():
@@ -52,11 +49,8 @@ def test_sort_aggregation_smaller_than_k():
     assert out[1, -1].tolist() == [0, 0, 0, 0]
 
     # Nodes are sorted.
-    expected = 3 - torch.arange(4)
-    assert out[0, :4, -1].argsort().tolist() == expected.tolist()
-
-    expected = 5 - torch.arange(6)
-    assert out[1, :6, -1].argsort().tolist() == expected.tolist()
+    assert torch.equal(out[0, :4, -1].argsort(), 3 - torch.arange(4))
+    assert torch.equal(out[1, :6, -1].argsort(), 5 - torch.arange(6))
 
 
 def test_sort_aggregation_dim_size():

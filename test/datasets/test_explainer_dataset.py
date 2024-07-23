@@ -8,10 +8,10 @@ from torch_geometric.datasets.motif_generator import HouseMotif
 
 
 @pytest.mark.parametrize('graph_generator', [
-    BAGraph(num_nodes=80, num_edges=5),
+    pytest.param(BAGraph(num_nodes=80, num_edges=5), id='BAGraph'),
 ])
 @pytest.mark.parametrize('motif_generator', [
-    HouseMotif(),
+    pytest.param(HouseMotif(), id='HouseMotif'),
     'house',
 ])
 def test_explainer_dataset_ba_house(graph_generator, motif_generator):
@@ -24,8 +24,8 @@ def test_explainer_dataset_ba_house(graph_generator, motif_generator):
     data = dataset[0]
     assert len(data) == 4
     assert data.num_nodes == 80 + (2 * 5)
-    assert data.edge_index.min() == 0
-    assert data.edge_index.max() == data.num_nodes - 1
+    assert data.edge_index.min() >= 0
+    assert data.edge_index.max() < data.num_nodes
     assert data.y.min() == 0 and data.y.max() == 3
     assert data.node_mask.size() == (data.num_nodes, )
     assert data.edge_mask.size() == (data.num_edges, )

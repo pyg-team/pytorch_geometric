@@ -6,7 +6,7 @@ torch_geometric.explain
 .. warning::
 
     This module is in active development and may not be stable.
-    Access requires installing PyTorch Geometric from master.
+    Access requires installing :pyg:`PyG` from master.
 
 .. contents:: Contents
     :local:
@@ -20,7 +20,6 @@ We represent explanations using the :class:`torch_geometric.explain.Explanation`
 
 The :class:`torch_geometric.explain.Explainer` class is designed to handle all explainability parameters (see the :class:`torch_geometric.explain.config.ExplainerConfig` class for more details):
 
-
 - which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (*e.g.*, :class:`~torch_geometric.explain.algorithm.GNNExplainer`)
 - the type of explanation to compute (*e.g.*, :obj:`explanation_type="phenomenon"` or :obj:`explanation_type="model"`)
 - the different type of masks for node and edges (*e.g.*, :obj:`mask="object"` or :obj:`mask="attributes"`)
@@ -32,9 +31,9 @@ Explainer
 ---------
 
 .. autoclass:: torch_geometric.explain.Explainer
+   :show-inheritance:
    :members:
-
-   .. automethod:: __call__
+   :special-members: __call__
 
 .. autoclass:: torch_geometric.explain.config.ExplainerConfig
    :members:
@@ -49,6 +48,11 @@ Explanations
 ------------
 
 .. autoclass:: torch_geometric.explain.Explanation
+   :show-inheritance:
+   :members:
+
+.. autoclass:: torch_geometric.explain.HeteroExplanation
+   :show-inheritance:
    :members:
 
 Explainer Algorithms
@@ -58,16 +62,11 @@ Explainer Algorithms
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.explain.algorithm.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.explain.algorithm.classes %}
+     {{ name }}
    {% endfor %}
-
-.. autoclass:: torch_geometric.explain.algorithm.ExplainerAlgorithm
-   :members:
-
-.. automodule:: torch_geometric.explain.algorithm
-   :members:
-   :exclude-members: ExplainerAlgorithm, forward, loss, supports
 
 Explanation Metrics
 -------------------
@@ -78,10 +77,9 @@ PyG supports the following metrics out-of-the-box:
 .. currentmodule:: torch_geometric.explain.metric
 
 .. autosummary::
-    :nosignatures:
-    {% for cls in torch_geometric.explain.metric.classes %}
-      {{ cls }}
-    {% endfor %}
+   :nosignatures:
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.explain.metric
-    :members:
+   {% for name in torch_geometric.explain.metric.classes %}
+     {{ name }}
+   {% endfor %}

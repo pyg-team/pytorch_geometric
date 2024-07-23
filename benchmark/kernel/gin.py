@@ -13,6 +13,7 @@ class GIN0(torch.nn.Module):
             Sequential(
                 Linear(dataset.num_features, hidden),
                 ReLU(),
+                BN(hidden),
                 Linear(hidden, hidden),
                 ReLU(),
                 BN(hidden),
@@ -24,6 +25,7 @@ class GIN0(torch.nn.Module):
                     Sequential(
                         Linear(hidden, hidden),
                         ReLU(),
+                        BN(hidden),
                         Linear(hidden, hidden),
                         ReLU(),
                         BN(hidden),
@@ -60,6 +62,7 @@ class GIN0WithJK(torch.nn.Module):
             Sequential(
                 Linear(dataset.num_features, hidden),
                 ReLU(),
+                BN(hidden),
                 Linear(hidden, hidden),
                 ReLU(),
                 BN(hidden),
@@ -71,6 +74,7 @@ class GIN0WithJK(torch.nn.Module):
                     Sequential(
                         Linear(hidden, hidden),
                         ReLU(),
+                        BN(hidden),
                         Linear(hidden, hidden),
                         ReLU(),
                         BN(hidden),
@@ -115,6 +119,7 @@ class GIN(torch.nn.Module):
             Sequential(
                 Linear(dataset.num_features, hidden),
                 ReLU(),
+                BN(hidden),
                 Linear(hidden, hidden),
                 ReLU(),
                 BN(hidden),
@@ -126,6 +131,7 @@ class GIN(torch.nn.Module):
                     Sequential(
                         Linear(hidden, hidden),
                         ReLU(),
+                        BN(hidden),
                         Linear(hidden, hidden),
                         ReLU(),
                         BN(hidden),
@@ -162,6 +168,7 @@ class GINWithJK(torch.nn.Module):
             Sequential(
                 Linear(dataset.num_features, hidden),
                 ReLU(),
+                BN(hidden),
                 Linear(hidden, hidden),
                 ReLU(),
                 BN(hidden),
@@ -173,6 +180,7 @@ class GINWithJK(torch.nn.Module):
                     Sequential(
                         Linear(hidden, hidden),
                         ReLU(),
+                        BN(hidden),
                         Linear(hidden, hidden),
                         ReLU(),
                         BN(hidden),

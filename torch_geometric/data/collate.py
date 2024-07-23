@@ -1,23 +1,47 @@
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from typing import Any, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
-from torch_geometric.typing import SparseTensor
+from torch_geometric.edge_index import SortOrder
+from torch_geometric.typing import (
+    SparseTensor,
+    TensorFrame,
+    torch_frame,
+    torch_sparse,
+)
+from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils.sparse import cat
+
+T = TypeVar('T')
+SliceDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
+IncDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
 
 
 def collate(
-    cls,
+    cls: Type[T],
     data_list: List[BaseData],
     increment: bool = True,
     add_batch: bool = True,
-    follow_batch: Optional[List[str]] = None,
-    exclude_keys: Optional[List[str]] = None,
-) -> Tuple[BaseData, Mapping, Mapping]:
+    follow_batch: Optional[Iterable[str]] = None,
+    exclude_keys: Optional[Iterable[str]] = None,
+) -> Tuple[T, SliceDictType, IncDictType]:
     # Collates a list of `data` objects into a single object of type `cls`.
     # `collate` can handle both homogeneous and heterogeneous data objects by
     # individually collating all their stores.
@@ -28,19 +52,19 @@ def collate(
         # Materialize `data_list` to keep the `_parent` weakref alive.
         data_list = list(data_list)
 
-    if cls != data_list[0].__class__:
-        out = cls(_base_cls=data_list[0].__class__)  # Dynamic inheritance.
+    if cls != data_list[0].__class__:  # Dynamic inheritance.
+        out = cls(_base_cls=data_list[0].__class__)  # type: ignore
     else:
         out = cls()
 
     # Create empty stores:
-    out.stores_as(data_list[0])
+    out.stores_as(data_list[0])  # type: ignore
 
     follow_batch = set(follow_batch or [])
     exclude_keys = set(exclude_keys or [])
 
     # Group all storage objects of every data object in the `data_list` by key,
-    # i.e. `key_to_store_list = { key: [store_1, store_2, ...], ... }`:
+    # i.e. `key_to_stores = { key: [store_1, store_2, ...], ... }`:
     key_to_stores = defaultdict(list)
     for data in data_list:
         for store in data.stores:
@@ -57,9 +81,10 @@ def collate(
     #   We also need to make use of `inc_dict` when re-constructuing individual
     #   elements as attributes that got incremented need to be decremented
     #   while separating to obtain original values.
-    device = None
-    slice_dict, inc_dict = defaultdict(dict), defaultdict(dict)
-    for out_store in out.stores:
+    device: Optional[torch.device] = None
+    slice_dict: SliceDictType = {}
+    inc_dict: IncDictType = {}
+    for out_store in out.stores:  # type: ignore
         key = out_store._key
         stores = key_to_stores[key]
         for attr in stores[0].keys():
@@ -84,14 +109,24 @@ def collate(
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
 
+            # If parts of the data are already on GPU, make sure that auxiliary
+            # data like `batch` or `ptr` are also created on GPU:
             if isinstance(value, Tensor) and value.is_cuda:
                 device = value.device
 
             out_store[attr] = value
-            if key is not None:
-                slice_dict[key][attr] = slices
-                inc_dict[key][attr] = incs
-            else:
+
+            if key is not None:  # Heterogeneous:
+                store_slice_dict = slice_dict.get(key, {})
+                assert isinstance(store_slice_dict, dict)
+                store_slice_dict[attr] = slices
+                slice_dict[key] = store_slice_dict
+
+                store_inc_dict = inc_dict.get(key, {})
+                assert isinstance(store_inc_dict, dict)
+                store_inc_dict[attr] = incs
+                inc_dict[key] = store_inc_dict
+            else:  # Homogeneous:
                 slice_dict[attr] = slices
                 inc_dict[attr] = incs
 
@@ -101,10 +136,10 @@ def collate(
                 out_store[f'{attr}_batch'] = batch
                 out_store[f'{attr}_ptr'] = ptr
 
-        # In case the storage holds node, we add a top-level batch vector it:
+        # In case of node-level storages, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
                 and stores[0].can_infer_num_nodes):
-            repeats = [store.num_nodes for store in stores]
+            repeats = [store.num_nodes or 0 for store in stores]
             out_store.batch = repeat_interleave(repeats, device=device)
             out_store.ptr = cumsum(torch.tensor(repeats, device=device))
 
@@ -121,14 +156,15 @@ def _collate(
 
     elem = values[0]
 
-    if isinstance(elem, Tensor):
+    if isinstance(elem, Tensor) and not is_sparse(elem):
         # Concatenate a list of `torch.Tensor` along the `cat_dim`.
         # NOTE: We need to take care of incrementing elements appropriately.
         key = str(key)
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
         if cat_dim is None or elem.dim() == 0:
             values = [value.unsqueeze(0) for value in values]
-        slices = cumsum([value.size(cat_dim or 0) for value in values])
+        sizes = torch.tensor([value.size(cat_dim or 0) for value in values])
+        slices = cumsum(sizes)
         if increment:
             incs = get_incs(key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
@@ -139,33 +175,69 @@ def _collate(
         else:
             incs = None
 
-        if torch.utils.data.get_worker_info() is not None:
+        if getattr(elem, 'is_nested', False):
+            tensors = []
+            for nested_tensor in values:
+                tensors.extend(nested_tensor.unbind())
+            value = torch.nested.nested_tensor(tensors)
+
+            return value, slices, incs
+
+        out = None
+        if (torch.utils.data.get_worker_info() is not None
+                and not isinstance(elem, (Index, EdgeIndex))):
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
-            storage = elem.storage()._new_shared(numel)
+            if torch_geometric.typing.WITH_PT20:
+                storage = elem.untyped_storage()._new_shared(
+                    numel * elem.element_size(), device=elem.device)
+            elif torch_geometric.typing.WITH_PT112:
+                storage = elem.storage()._new_shared(numel, device=elem.device)
+            else:
+                storage = elem.storage()._new_shared(numel)
             shape = list(elem.size())
             if cat_dim is None or elem.dim() == 0:
                 shape = [len(values)] + shape
             else:
                 shape[cat_dim] = int(slices[-1])
             out = elem.new(storage).resize_(*shape)
-        else:
-            out = None
 
         value = torch.cat(values, dim=cat_dim or 0, out=out)
+
+        if increment and isinstance(value, Index) and values[0].is_sorted:
+            # Check whether the whole `Index` is sorted:
+            if (value.diff() >= 0).all():
+                value._is_sorted = True
+
+        if increment and isinstance(value, EdgeIndex) and values[0].is_sorted:
+            # Check whether the whole `EdgeIndex` is sorted by row:
+            if values[0].is_sorted_by_row and (value[0].diff() >= 0).all():
+                value._sort_order = SortOrder.ROW
+            # Check whether the whole `EdgeIndex` is sorted by column:
+            elif values[0].is_sorted_by_col and (value[1].diff() >= 0).all():
+                value._sort_order = SortOrder.COL
+
         return value, slices, incs
 
-    elif isinstance(elem, SparseTensor) and increment:
-        from torch_sparse import cat
+    elif isinstance(elem, TensorFrame):
+        key = str(key)
+        sizes = torch.tensor([value.num_rows for value in values])
+        slices = cumsum(sizes)
+        value = torch_frame.cat(values, dim=0)
+        return value, slices, None
 
+    elif is_sparse(elem) and increment:
         # Concatenate a list of `SparseTensor` along the `cat_dim`.
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
         key = str(key)
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
-        slices = cumsum(repeats)
-        value = cat(values, dim=cat_dim)
+        slices = cumsum(torch.tensor(repeats))
+        if is_torch_sparse_tensor(elem):
+            value = cat(values, dim=cat_dim)
+        else:
+            value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
 
     elif isinstance(elem, (int, float)):
@@ -248,15 +320,6 @@ def repeat_interleave(
 ) -> Tensor:
     outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
     return torch.cat(outs, dim=0)
-
-
-def cumsum(value: Union[Tensor, List[int]]) -> Tensor:
-    if not isinstance(value, Tensor):
-        value = torch.tensor(value)
-    out = value.new_empty((value.size(0) + 1, ) + value.size()[1:])
-    out[0] = 0
-    torch.cumsum(value, 0, out=out[1:])
-    return out
 
 
 def get_incs(key, values: List[Any], data_list: List[BaseData],

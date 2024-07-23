@@ -1,13 +1,9 @@
 # Shameless steal from: https://github.com/klicperajo/dimenet
 
 import numpy as np
+import sympy as sym
 from scipy import special as sp
 from scipy.optimize import brentq
-
-try:
-    import sympy as sym
-except ImportError:
-    sym = None
 
 
 def Jn(r, n):
@@ -71,6 +67,7 @@ def sph_harm_prefactor(k, m):
 
 
 def associated_legendre_polynomials(k, zero_m_only=True):
+    r"""Helper function to calculate Y_l^m."""
     z = sym.symbols('z')
     P_l_m = [[0] * (j + 1) for j in range(k)]
 
@@ -79,15 +76,22 @@ def associated_legendre_polynomials(k, zero_m_only=True):
         P_l_m[1][0] = z
 
         for j in range(2, k):
+            # Use the property of Eq (7) in
+            # https://mathworld.wolfram.com/AssociatedLegendrePolynomial.html:
             P_l_m[j][0] = sym.simplify(((2 * j - 1) * z * P_l_m[j - 1][0] -
                                         (j - 1) * P_l_m[j - 2][0]) / j)
         if not zero_m_only:
             for i in range(1, k):
-                P_l_m[i][i] = sym.simplify((1 - 2 * i) * P_l_m[i - 1][i - 1])
+                P_l_m[i][i] = sym.simplify(
+                    (1 - 2 * i) * P_l_m[i - 1][i - 1] * (1 - z**2)**0.5)
                 if i + 1 < k:
+                    # Use the property of Eq (11) in
+                    # https://mathworld.wolfram.com/AssociatedLegendrePolynomial.html:
                     P_l_m[i + 1][i] = sym.simplify(
                         (2 * i + 1) * z * P_l_m[i][i])
                 for j in range(i + 2, k):
+                    # Use the property of Eq (7) in
+                    # https://mathworld.wolfram.com/AssociatedLegendrePolynomial.html:
                     P_l_m[j][i] = sym.simplify(
                         ((2 * j - 1) * z * P_l_m[j - 1][i] -
                          (i + j - 1) * P_l_m[j - 2][i]) / (j - i))
@@ -111,7 +115,7 @@ def real_sph_harm(k, zero_m_only=True, spherical_coordinates=True):
         z = sym.symbols('z')
         for i in range(len(P_l_m)):
             for j in range(len(P_l_m[i])):
-                if type(P_l_m[i][j]) != int:
+                if not isinstance(P_l_m[i][j], int):
                     P_l_m[i][j] = P_l_m[i][j].subs(z, sym.cos(theta))
         if not zero_m_only:
             phi = sym.symbols('phi')

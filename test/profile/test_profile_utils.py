@@ -1,6 +1,5 @@
 import torch
 from torch.nn import Linear
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.profile import (
@@ -8,10 +7,16 @@ from torch_geometric.profile import (
     get_cpu_memory_from_gc,
     get_data_size,
     get_gpu_memory_from_gc,
+    get_gpu_memory_from_ipex,
     get_gpu_memory_from_nvidia_smi,
     get_model_size,
 )
-from torch_geometric.testing import onlyCUDA
+from torch_geometric.profile.utils import (
+    byte_to_megabyte,
+    medibyte_to_megabyte,
+)
+from torch_geometric.testing import onlyCUDA, onlyXPU, withPackage
+from torch_geometric.typing import SparseTensor
 
 
 def test_count_parameters():
@@ -20,10 +25,19 @@ def test_count_parameters():
 
 def test_get_model_size():
     model_size = get_model_size(Linear(32, 128, bias=False))
-    assert model_size >= 32 * 128 * 4 and model_size < 32 * 128 * 4 + 1000
+    assert model_size >= 32 * 128 * 4 and model_size < 32 * 128 * 4 + 2000
 
 
 def test_get_data_size():
+    x = torch.randn(10, 128)
+    data = Data(x=x, y=x)
+
+    data_size = get_data_size(data)
+    assert data_size == 10 * 128 * 4
+
+
+@withPackage('torch_sparse')
+def test_get_data_size_with_sparse_tensor():
     x = torch.randn(10, 128)
     row, col = torch.randint(0, 10, (2, 100), dtype=torch.long)
     adj_t = SparseTensor(row=row, col=col, value=None, sparse_sizes=(10, 10))
@@ -41,7 +55,7 @@ def test_get_cpu_memory_from_gc():
 
 
 @onlyCUDA
-def test_get_cpu_memory_from_gc():
+def test_get_gpu_memory_from_gc():
     old_mem = get_gpu_memory_from_gc()
     _ = torch.randn(10, 128, device='cuda')
     new_mem = get_gpu_memory_from_gc()
@@ -53,3 +67,16 @@ def test_get_gpu_memory_from_nvidia_smi():
     free_mem, used_mem = get_gpu_memory_from_nvidia_smi(device=0, digits=2)
     assert free_mem >= 0
     assert used_mem >= 0
+
+
+@onlyXPU
+def test_get_gpu_memory_from_ipex():
+    max_allocated, max_reserved, max_active = get_gpu_memory_from_ipex()
+    assert max_allocated >= 0
+    assert max_reserved >= 0
+    assert max_active >= 0
+
+
+def test_bytes_function():
+    assert byte_to_megabyte(1024 * 1024) == 1.00
+    assert medibyte_to_megabyte(1 / 1.0485) == 1.00

@@ -19,6 +19,7 @@ def test_transe():
         loss = model.loss(h, r, t)
         assert loss >= 0.
 
-        mean_rank, hits_at_10 = model.test(h, r, t, batch_size=5)
-        assert mean_rank <= 10
-        assert hits_at_10 == 1.0
+        mean_rank, mrr, hits = model.test(h, r, t, batch_size=5, log=False)
+        assert 0 <= mean_rank <= 10
+        assert 0 < mrr <= 1
+        assert hits == 1.0

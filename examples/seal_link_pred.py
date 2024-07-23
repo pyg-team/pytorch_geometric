@@ -1,5 +1,6 @@
 import math
 import os.path as osp
+import time
 from itertools import chain
 
 import numpy as np
@@ -12,18 +13,18 @@ from torch.nn import BCEWithLogitsLoss, Conv1d, MaxPool1d, ModuleList
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, GCNConv, global_sort_pool
+from torch_geometric.nn import MLP, GCNConv, SortAggregation
 from torch_geometric.transforms import RandomLinkSplit
 from torch_geometric.utils import k_hop_subgraph, to_scipy_sparse_matrix
 
 
 class SEALDataset(InMemoryDataset):
     def __init__(self, dataset, num_hops, split='train'):
-        self.data = dataset[0]
+        self._data = dataset[0]
         self.num_hops = num_hops
         super().__init__(dataset.root)
         index = ['train', 'val', 'test'].index(split)
-        self.data, self.slices = torch.load(self.processed_paths[index])
+        self.load(self.processed_paths[index])
 
     @property
     def processed_file_names(self):
@@ -32,7 +33,7 @@ class SEALDataset(InMemoryDataset):
     def process(self):
         transform = RandomLinkSplit(num_val=0.05, num_test=0.1,
                                     is_undirected=True, split_labels=True)
-        train_data, val_data, test_data = transform(self.data)
+        train_data, val_data, test_data = transform(self._data)
 
         self._max_z = 0
 
@@ -59,12 +60,12 @@ class SEALDataset(InMemoryDataset):
             # We solely learn links from structure, dropping any node features:
             data.x = F.one_hot(data.z, self._max_z + 1).to(torch.float)
 
-        torch.save(self.collate(train_pos_data_list + train_neg_data_list),
-                   self.processed_paths[0])
-        torch.save(self.collate(val_pos_data_list + val_neg_data_list),
-                   self.processed_paths[1])
-        torch.save(self.collate(test_pos_data_list + test_neg_data_list),
-                   self.processed_paths[2])
+        train_data_list = train_pos_data_list + train_neg_data_list
+        self.save(train_data_list, self.processed_paths[0])
+        val_data_list = val_pos_data_list + val_neg_data_list
+        self.save(val_data_list, self.processed_paths[1])
+        test_data_list = test_pos_data_list + test_neg_data_list
+        self.save(test_data_list, self.processed_paths[2])
 
     def extract_enclosing_subgraphs(self, edge_index, edge_label_index, y):
         data_list = []
@@ -82,7 +83,7 @@ class SEALDataset(InMemoryDataset):
             z = self.drnl_node_labeling(sub_edge_index, src, dst,
                                         num_nodes=sub_nodes.size(0))
 
-            data = Data(x=self.data.x[sub_nodes], z=z,
+            data = Data(x=self._data.x[sub_nodes], z=z,
                         edge_index=sub_edge_index, y=y)
             data_list.append(data)
 
@@ -142,8 +143,7 @@ class DGCNN(torch.nn.Module):
         if k < 1:  # Transform percentile to number.
             num_nodes = sorted([data.num_nodes for data in train_dataset])
             k = num_nodes[int(math.ceil(k * len(num_nodes))) - 1]
-            k = max(10, k)
-        self.k = int(k)
+            k = int(max(10, k))
 
         self.convs = ModuleList()
         self.convs.append(GNN(train_dataset.num_features, hidden_channels))
@@ -156,10 +156,11 @@ class DGCNN(torch.nn.Module):
         conv1d_kws = [total_latent_dim, 5]
         self.conv1 = Conv1d(1, conv1d_channels[0], conv1d_kws[0],
                             conv1d_kws[0])
+        self.pool = SortAggregation(k)
         self.maxpool1d = MaxPool1d(2, 2)
         self.conv2 = Conv1d(conv1d_channels[0], conv1d_channels[1],
                             conv1d_kws[1], 1)
-        dense_dim = int((self.k - 2) / 2 + 1)
+        dense_dim = int((k - 2) / 2 + 1)
         dense_dim = (dense_dim - conv1d_kws[1] + 1) * conv1d_channels[1]
         self.mlp = MLP([dense_dim, 128, 1], dropout=0.5, norm=None)
 
@@ -170,7 +171,7 @@ class DGCNN(torch.nn.Module):
         x = torch.cat(xs[1:], dim=-1)
 
         # Global pooling.
-        x = global_sort_pool(x, batch, self.k)
+        x = self.pool(x, batch)
         x = x.unsqueeze(1)  # [num_graphs, 1, k * hidden]
         x = self.conv1(x).relu()
         x = self.maxpool1d(x)
@@ -216,8 +217,10 @@ def test(loader):
     return roc_auc_score(torch.cat(y_true), torch.cat(y_pred))
 
 
+times = []
 best_val_auc = test_auc = 0
 for epoch in range(1, 51):
+    start = time.time()
     loss = train()
     val_auc = test(val_loader)
     if val_auc > best_val_auc:
@@ -225,3 +228,5 @@ for epoch in range(1, 51):
         test_auc = test(test_loader)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

@@ -4,14 +4,15 @@ import os.path as osp
 import random
 import subprocess as sp
 import sys
+import warnings
 from collections.abc import Mapping, Sequence
 from typing import Any, Tuple
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData
+from torch_geometric.typing import SparseTensor
 
 
 def count_parameters(model: torch.nn.Module) -> int:
@@ -66,37 +67,41 @@ def get_data_size(data: BaseData) -> int:
 
 
 def get_cpu_memory_from_gc() -> int:
-    r"""Returns the used CPU memory in bytes, as reported by the Python garbage
-    collector.
+    r"""Returns the used CPU memory in bytes, as reported by the
+    :python:`Python` garbage collector.
     """
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
+
     mem = 0
     for obj in gc.get_objects():
         try:
             if isinstance(obj, Tensor) and not obj.is_cuda:
                 mem += obj.numel() * obj.element_size()
-        except:  # noqa
+        except Exception:
             pass
     return mem
 
 
-def get_gpu_memory_from_gc(device: int = 0) -> int:
-    r"""Returns the used GPU memory in bytes, as reported by the Python garbage
-    collector.
+def get_gpu_memory_from_gc(device: int = 0) -> int:  # pragma: no cover
+    r"""Returns the used GPU memory in bytes, as reported by the
+    :python:`Python` garbage collector.
 
     Args:
         device (int, optional): The GPU device identifier. (default: :obj:`1`)
     """
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
+
     mem = 0
     for obj in gc.get_objects():
         try:
             if isinstance(obj, Tensor) and obj.get_device() == device:
                 mem += obj.numel() * obj.element_size()
-        except:  # noqa
+        except Exception:
             pass
     return mem
 
 
-def get_gpu_memory_from_nvidia_smi(
+def get_gpu_memory_from_nvidia_smi(  # pragma: no cover
     device: int = 0,
     digits: int = 2,
 ) -> Tuple[float, float]:
@@ -128,6 +133,28 @@ def get_gpu_memory_from_nvidia_smi(
     used_mem = medibyte_to_megabyte(int(used_out[device].split()[0]), digits)
 
     return free_mem, used_mem
+
+
+def get_gpu_memory_from_ipex(
+        device: int = 0,
+        digits=2) -> Tuple[float, float, float]:  # pragma: no cover
+    r"""Returns the XPU memory statistics.
+
+    Args:
+        device (int, optional): The GPU device identifier. (default: :obj:`0`)
+        digits (int): The number of decimals to use for megabytes.
+            (default: :obj:`2`)
+    """
+    import intel_extension_for_pytorch as ipex
+    stats = ipex.xpu.memory_stats_as_nested_dict(device)
+    max_allocated = stats['allocated_bytes']['all']['peak']
+    max_reserved = stats['reserved_bytes']['all']['peak']
+    max_active = stats['active_bytes']['all']['peak']
+    max_allocated = byte_to_megabyte(max_allocated, digits)
+    max_reserved = byte_to_megabyte(max_reserved, digits)
+    max_active = byte_to_megabyte(max_active, digits)
+    ipex.xpu.reset_peak_memory_stats(device)
+    return max_allocated, max_reserved, max_active
 
 
 ###############################################################################

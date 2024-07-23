@@ -6,9 +6,15 @@ def normalize_string(s: str) -> str:
     return s.lower().replace('-', '').replace('_', '').replace(' ', '')
 
 
-def resolver(classes: List[Any], class_dict: Dict[str, Any],
-             query: Union[Any, str], base_cls: Optional[Any],
-             base_cls_repr: Optional[str], *args, **kwargs):
+def resolver(
+    classes: List[Any],
+    class_dict: Dict[str, Any],
+    query: Union[Any, str],
+    base_cls: Optional[Any],
+    base_cls_repr: Optional[str],
+    *args: Any,
+    **kwargs: Any,
+) -> Any:
 
     if not isinstance(query, str):
         return query
@@ -22,9 +28,7 @@ def resolver(classes: List[Any], class_dict: Dict[str, Any],
         if query_repr == key_repr:
             if inspect.isclass(cls):
                 obj = cls(*args, **kwargs)
-                assert callable(obj)
                 return obj
-            assert callable(cls)
             return cls
 
     for cls in classes:
@@ -32,10 +36,8 @@ def resolver(classes: List[Any], class_dict: Dict[str, Any],
         if query_repr in [cls_repr, cls_repr.replace(base_cls_repr, '')]:
             if inspect.isclass(cls):
                 obj = cls(*args, **kwargs)
-                assert callable(obj)
                 return obj
-            assert callable(cls)
             return cls
 
-    choices = set(cls.__name__ for cls in classes) | set(class_dict.keys())
+    choices = {cls.__name__ for cls in classes} | set(class_dict.keys())
     raise ValueError(f"Could not resolve '{query}' among choices {choices}")

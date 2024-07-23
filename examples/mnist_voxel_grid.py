@@ -7,6 +7,10 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SplineConv, max_pool, max_pool_x, voxel_grid
+from torch_geometric.typing import WITH_TORCH_SPLINE_CONV
+
+if not WITH_TORCH_SPLINE_CONV:
+    quit("This example requires 'torch-spline-conv'")
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
@@ -28,17 +32,20 @@ class Net(torch.nn.Module):
 
     def forward(self, data):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
-        cluster = voxel_grid(data.pos, data.batch, size=5, start=0, end=28)
+        cluster = voxel_grid(data.pos, batch=data.batch, size=5, start=0,
+                             end=28)
         data.edge_attr = None
         data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
-        cluster = voxel_grid(data.pos, data.batch, size=7, start=0, end=28)
+        cluster = voxel_grid(data.pos, batch=data.batch, size=7, start=0,
+                             end=28)
         data.edge_attr = None
         data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv3(data.x, data.edge_index, data.edge_attr))
-        cluster = voxel_grid(data.pos, data.batch, size=14, start=0, end=27.99)
+        cluster = voxel_grid(data.pos, batch=data.batch, size=14, start=0,
+                             end=27.99)
         x, _ = max_pool_x(cluster, data.x, data.batch, size=4)
 
         x = x.view(-1, self.fc1.weight.size(1))

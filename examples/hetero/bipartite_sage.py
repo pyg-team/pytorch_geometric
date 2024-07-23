@@ -110,7 +110,7 @@ class Model(torch.nn.Module):
         self.user_emb = Embedding(num_users, hidden_channels)
         self.user_encoder = UserGNNEncoder(hidden_channels, out_channels)
         self.movie_encoder = MovieGNNEncoder(hidden_channels, out_channels)
-        self.decoder = EdgeDecoder(hidden_channels)
+        self.decoder = EdgeDecoder(out_channels)
 
     def forward(self, x_dict, edge_index_dict, edge_label_index):
         z_dict = {}

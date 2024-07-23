@@ -1,25 +1,38 @@
 from collections.abc import Mapping
-from typing import List, Optional, Sequence, Union
+from typing import Any, List, Optional, Sequence, Union
 
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate
 
 from torch_geometric.data import Batch, Dataset
 from torch_geometric.data.data import BaseData
+from torch_geometric.data.datapipes import DatasetAdapter
+from torch_geometric.typing import TensorFrame, torch_frame
 
 
 class Collater:
-    def __init__(self, follow_batch, exclude_keys):
+    def __init__(
+        self,
+        dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
+        follow_batch: Optional[List[str]] = None,
+        exclude_keys: Optional[List[str]] = None,
+    ):
+        self.dataset = dataset
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
-    def __call__(self, batch):
+    def __call__(self, batch: List[Any]) -> Any:
         elem = batch[0]
         if isinstance(elem, BaseData):
-            return Batch.from_data_list(batch, self.follow_batch,
-                                        self.exclude_keys)
+            return Batch.from_data_list(
+                batch,
+                follow_batch=self.follow_batch,
+                exclude_keys=self.exclude_keys,
+            )
         elif isinstance(elem, torch.Tensor):
             return default_collate(batch)
+        elif isinstance(elem, TensorFrame):
+            return torch_frame.cat(batch, dim=0)
         elif isinstance(elem, float):
             return torch.tensor(batch, dtype=torch.float)
         elif isinstance(elem, int):
@@ -33,10 +46,7 @@ class Collater:
         elif isinstance(elem, Sequence) and not isinstance(elem, str):
             return [self(s) for s in zip(*batch)]
 
-        raise TypeError(f'DataLoader found invalid type: {type(elem)}')
-
-    def collate(self, batch):  # Deprecated...
-        return self(batch)
+        raise TypeError(f"DataLoader found invalid type: '{type(elem)}'")
 
 
 class DataLoader(torch.utils.data.DataLoader):
@@ -60,16 +70,15 @@ class DataLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        dataset: Union[Dataset, Sequence[BaseData]],
+        dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
         batch_size: int = 1,
         shuffle: bool = False,
         follow_batch: Optional[List[str]] = None,
         exclude_keys: Optional[List[str]] = None,
         **kwargs,
     ):
-
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('collate_fn', None)
 
         # Save for PyTorch Lightning < 1.6:
         self.follow_batch = follow_batch
@@ -79,6 +88,6 @@ class DataLoader(torch.utils.data.DataLoader):
             dataset,
             batch_size,
             shuffle,
-            collate_fn=Collater(follow_batch, exclude_keys),
+            collate_fn=Collater(dataset, follow_batch, exclude_keys),
             **kwargs,
         )

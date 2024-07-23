@@ -8,7 +8,13 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import negative_sampling
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 transform = T.Compose([
     T.NormalizeFeatures(),
     T.ToDevice(device),

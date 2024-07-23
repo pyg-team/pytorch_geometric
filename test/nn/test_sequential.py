@@ -3,18 +3,21 @@ from collections import OrderedDict
 import torch
 import torch.fx
 from torch.nn import Dropout, Linear, ReLU
-from torch_sparse import SparseTensor
 
+import torch_geometric.typing
 from torch_geometric.nn import (
     GCNConv,
     JumpingKnowledge,
     MessagePassing,
+    SAGEConv,
     Sequential,
     global_mean_pool,
+    to_hetero,
 )
+from torch_geometric.typing import SparseTensor
 
 
-def test_sequential():
+def test_sequential_basic():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     batch = torch.zeros(4, dtype=torch.long)
@@ -25,17 +28,17 @@ def test_sequential():
         (GCNConv(64, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
         Linear(64, 7),
-    ])
+    ]).cpu()
     model.reset_parameters()
 
     assert len(model) == 5
     assert str(model) == (
         'Sequential(\n'
-        '  (0): GCNConv(16, 64)\n'
-        '  (1): ReLU(inplace=True)\n'
-        '  (2): GCNConv(64, 64)\n'
-        '  (3): ReLU(inplace=True)\n'
-        '  (4): Linear(in_features=64, out_features=7, bias=True)\n'
+        '  (0) - GCNConv(16, 64): x, edge_index -> x\n'
+        '  (1) - ReLU(inplace=True): x -> x\n'
+        '  (2) - GCNConv(64, 64): x, edge_index -> x\n'
+        '  (3) - ReLU(inplace=True): x -> x\n'
+        '  (4) - Linear(in_features=64, out_features=7, bias=True): x -> x\n'
         ')')
 
     assert isinstance(model[0], GCNConv)
@@ -64,28 +67,30 @@ def test_sequential():
     assert out.size() == (1, 7)
 
 
-def test_sequential_jittable():
+def test_sequential_jit():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
-    adj_t = SparseTensor(row=edge_index[0], col=edge_index[1]).t()
 
     model = Sequential('x: Tensor, edge_index: Tensor', [
-        (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
+        (GCNConv(16, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
-        (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
+        (GCNConv(64, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
         Linear(64, 7),
     ])
     torch.jit.script(model)(x, edge_index)
 
-    model = Sequential('x: Tensor, edge_index: SparseTensor', [
-        (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
-        ReLU(inplace=True),
-        (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
-        ReLU(inplace=True),
-        Linear(64, 7),
-    ])
-    torch.jit.script(model)(x, adj_t)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t = SparseTensor.from_edge_index(edge_index).t()
+
+        model = Sequential('x: Tensor, edge_index: SparseTensor', [
+            (GCNConv(16, 64), 'x, edge_index -> x'),
+            ReLU(inplace=True),
+            (GCNConv(64, 64), 'x, edge_index -> x'),
+            ReLU(inplace=True),
+            Linear(64, 7),
+        ])
+        torch.jit.script(model)(x, adj_t)
 
 
 def symbolic_trace(module):
@@ -139,3 +144,33 @@ def test_sequential_with_ordered_dict():
 
     x = model(x, edge_index)
     assert x.size() == (4, 64)
+
+
+def test_sequential_to_hetero():
+    model = Sequential('x, edge_index', [
+        (SAGEConv((-1, -1), 32), 'x, edge_index -> x1'),
+        ReLU(),
+        (SAGEConv((-1, -1), 64), 'x1, edge_index -> x2'),
+        ReLU(),
+    ])
+
+    x_dict = {
+        'paper': torch.randn(100, 16),
+        'author': torch.randn(100, 16),
+    }
+    edge_index_dict = {
+        ('paper', 'cites', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+    }
+    metadata = list(x_dict.keys()), list(edge_index_dict.keys())
+
+    model = to_hetero(model, metadata, debug=False)
+
+    out_dict = model(x_dict, edge_index_dict)
+    assert isinstance(out_dict, dict) and len(out_dict) == 2
+    assert out_dict['paper'].size() == (100, 64)
+    assert out_dict['author'].size() == (100, 64)

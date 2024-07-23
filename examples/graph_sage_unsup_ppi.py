@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -7,6 +8,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import f1_score
 from sklearn.multioutput import MultiOutputClassifier
 
+import torch_geometric
 from torch_geometric.data import Batch
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader, LinkNeighborLoader
@@ -28,7 +30,12 @@ train_loader = DataLoader(train_dataset, batch_size=2)
 val_loader = DataLoader(val_dataset, batch_size=2)
 test_loader = DataLoader(test_dataset, batch_size=2)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 model = GraphSAGE(
     in_channels=train_dataset.num_features,
     hidden_channels=64,
@@ -78,7 +85,7 @@ def test():
     # Train classifier on training set:
     x, y = encode(train_loader)
 
-    clf = MultiOutputClassifier(SGDClassifier(loss='log', penalty='l2'))
+    clf = MultiOutputClassifier(SGDClassifier(loss='log_loss', penalty='l2'))
     clf.fit(x, y)
 
     train_f1 = f1_score(y, clf.predict(x), average='micro')
@@ -94,9 +101,13 @@ def test():
     return train_f1, val_f1, test_f1
 
 
+times = []
 for epoch in range(1, 6):
+    start = time.time()
     loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
     train_f1, val_f1, test_f1 = test()
     print(f'Train F1: {train_f1:.4f}, Val F1: {val_f1:.4f}, '
           f'Test F1: {test_f1:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

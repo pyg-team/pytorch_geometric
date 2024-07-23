@@ -3,6 +3,7 @@ import re
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -11,8 +12,8 @@ from torch_geometric.transforms import BaseTransform
 
 @functional_transform('fixed_points')
 class FixedPoints(BaseTransform):
-    r"""Samples a fixed number of :obj:`num` points and features from a point
-    cloud (functional name: :obj:`fixed_points`).
+    r"""Samples a fixed number of points and features from a point cloud
+    (functional name: :obj:`fixed_points`).
 
     Args:
         num (int): The number of points to sample.
@@ -37,12 +38,13 @@ class FixedPoints(BaseTransform):
         self.replace = replace
         self.allow_duplicates = allow_duplicates
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         num_nodes = data.num_nodes
+        assert num_nodes is not None
 
         if self.replace:
-            choice = np.random.choice(num_nodes, self.num, replace=True)
-            choice = torch.from_numpy(choice).to(torch.long)
+            choice = torch.from_numpy(
+                np.random.choice(num_nodes, self.num, replace=True)).long()
         elif not self.allow_duplicates:
             choice = torch.randperm(num_nodes)[:self.num]
         else:
@@ -51,14 +53,14 @@ class FixedPoints(BaseTransform):
                 for _ in range(math.ceil(self.num / num_nodes))
             ], dim=0)[:self.num]
 
-        for key, item in data:
+        for key, value in data.items():
             if key == 'num_nodes':
                 data.num_nodes = choice.size(0)
             elif bool(re.search('edge', key)):
                 continue
-            elif (torch.is_tensor(item) and item.size(0) == num_nodes
-                  and item.size(0) != 1):
-                data[key] = item[choice]
+            elif (isinstance(value, Tensor) and value.size(0) == num_nodes
+                  and value.size(0) != 1):
+                data[key] = value[choice]
 
         return data
 

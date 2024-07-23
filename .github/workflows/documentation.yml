@@ -13,14 +13,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 40
 
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v34
+        uses: tj-actions/changed-files@v41
         with:
           files: |
             benchmark/**
@@ -28,17 +28,19 @@ jobs:
             docker/**
             examples/**
             graphgym/**
+            README.md
             CHANGELOG.md
 
       - name: Setup packages
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
-          python-version: 3.8
+          full_install: false
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
+          pip install nbsphinx
           pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
           pip install -e .
 

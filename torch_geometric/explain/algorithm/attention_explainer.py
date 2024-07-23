@@ -27,23 +27,6 @@ class AttentionExplainer(ExplainerAlgorithm):
         super().__init__()
         self.reduce = reduce
 
-    def supports(self) -> bool:
-        explanation_type = self.explainer_config.explanation_type
-        if explanation_type != ExplanationType.model:
-            logging.error(f"'{self.__class__.__name__}' only supports "
-                          f"model explanations "
-                          f"got (`explanation_type={explanation_type.value}`)")
-            return False
-
-        node_mask_type = self.explainer_config.node_mask_type
-        if node_mask_type is not None:
-            logging.error(f"'{self.__class__.__name__}' does not support "
-                          f"explaining input node features "
-                          f"got (`node_mask_type={node_mask_type.value}`)")
-            return False
-
-        return True
-
     def forward(
         self,
         model: torch.nn.Module,
@@ -75,7 +58,8 @@ class AttentionExplainer(ExplainerAlgorithm):
 
         hook_handles = []
         for module in model.modules():  # Register message forward hooks:
-            if isinstance(module, MessagePassing):
+            if (isinstance(module, MessagePassing)
+                    and module.explain is not False):
                 hook_handles.append(module.register_message_forward_hook(hook))
 
         model(x, edge_index, **kwargs)
@@ -111,3 +95,20 @@ class AttentionExplainer(ExplainerAlgorithm):
                                         apply_sigmoid=False)
 
         return Explanation(edge_mask=alpha)
+
+    def supports(self) -> bool:
+        explanation_type = self.explainer_config.explanation_type
+        if explanation_type != ExplanationType.model:
+            logging.error(f"'{self.__class__.__name__}' only supports "
+                          f"model explanations "
+                          f"got (`explanation_type={explanation_type.value}`)")
+            return False
+
+        node_mask_type = self.explainer_config.node_mask_type
+        if node_mask_type is not None:
+            logging.error(f"'{self.__class__.__name__}' does not support "
+                          f"explaining input node features "
+                          f"got (`node_mask_type={node_mask_type.value}`)")
+            return False
+
+        return True

@@ -8,23 +8,23 @@ def test_diff_group_norm():
     x = torch.randn(6, 16)
 
     norm = DiffGroupNorm(16, groups=4, lamda=0)
-    assert norm.__repr__() == 'DiffGroupNorm(16, groups=4)'
+    assert str(norm) == 'DiffGroupNorm(16, groups=4)'
 
-    assert norm(x).tolist() == x.tolist()
+    assert torch.allclose(norm(x), x)
 
     if is_full_test():
         jit = torch.jit.script(norm)
-        assert jit(x).tolist() == x.tolist()
+        assert torch.allclose(jit(x), x)
 
     norm = DiffGroupNorm(16, groups=4, lamda=0.01)
-    assert norm.__repr__() == 'DiffGroupNorm(16, groups=4)'
+    assert str(norm) == 'DiffGroupNorm(16, groups=4)'
 
     out = norm(x)
     assert out.size() == x.size()
 
     if is_full_test():
         jit = torch.jit.script(norm)
-        assert jit(x).tolist() == out.tolist()
+        assert torch.allclose(jit(x), out)
 
 
 def test_group_distance_ratio():

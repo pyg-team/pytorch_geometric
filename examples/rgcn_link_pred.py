@@ -7,6 +7,7 @@ Caution: This script is executed in a full-batch fashion, and therefore needs
 to run on CPU (following the experimental setup in the official paper).
 """
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -16,15 +17,17 @@ from tqdm import tqdm
 from torch_geometric.datasets import RelLinkPredDataset
 from torch_geometric.nn import GAE, RGCNConv
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'RLPD')
 dataset = RelLinkPredDataset(path, 'FB15k-237')
-data = dataset[0]
+data = dataset[0].to(device)
 
 
 class RGCNEncoder(torch.nn.Module):
     def __init__(self, num_nodes, hidden_channels, num_relations):
         super().__init__()
-        self.node_emb = Parameter(torch.Tensor(num_nodes, hidden_channels))
+        self.node_emb = Parameter(torch.empty(num_nodes, hidden_channels))
         self.conv1 = RGCNConv(hidden_channels, hidden_channels, num_relations,
                               num_blocks=5)
         self.conv2 = RGCNConv(hidden_channels, hidden_channels, num_relations,
@@ -47,7 +50,7 @@ class RGCNEncoder(torch.nn.Module):
 class DistMultDecoder(torch.nn.Module):
     def __init__(self, num_relations, hidden_channels):
         super().__init__()
-        self.rel_emb = Parameter(torch.Tensor(num_relations, hidden_channels))
+        self.rel_emb = Parameter(torch.empty(num_relations, hidden_channels))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -60,10 +63,10 @@ class DistMultDecoder(torch.nn.Module):
 
 
 model = GAE(
-    RGCNEncoder(data.num_nodes, hidden_channels=500,
-                num_relations=dataset.num_relations),
-    DistMultDecoder(dataset.num_relations // 2, hidden_channels=500),
-)
+    RGCNEncoder(data.num_nodes, 500, dataset.num_relations),
+    DistMultDecoder(dataset.num_relations // 2, 500),
+).to(device)
+
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -73,8 +76,10 @@ def negative_sampling(edge_index, num_nodes):
     mask_2 = ~mask_1
 
     neg_edge_index = edge_index.clone()
-    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(), ))
-    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(), ))
+    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(), ),
+                                              device=neg_edge_index.device)
+    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(), ),
+                                              device=neg_edge_index.device)
     return neg_edge_index
 
 
@@ -170,9 +175,13 @@ def compute_mrr(z, edge_index, edge_type):
     return (1. / torch.tensor(ranks, dtype=torch.float)).mean()
 
 
+times = []
 for epoch in range(1, 10001):
+    start = time.time()
     loss = train()
     print(f'Epoch: {epoch:05d}, Loss: {loss:.4f}')
     if (epoch % 500) == 0:
         valid_mrr, test_mrr = test()
         print(f'Val MRR: {valid_mrr:.4f}, Test MRR: {test_mrr:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

@@ -7,7 +7,7 @@ from torch_geometric.datasets.motif_generator import CustomMotif
 class CycleMotif(CustomMotif):
     r"""Generates the cycle motif from the `"GNNExplainer:
     Generating Explanations for Graph Neural Networks"
-    <https://arxiv.org/pdf/1903.03894.pdf>`_ paper.
+    <https://arxiv.org/abs/1903.03894>`__ paper.
 
     Args:
         num_nodes (int): The number of nodes in the cycle.
@@ -24,7 +24,6 @@ class CycleMotif(CustomMotif):
             num_nodes=num_nodes,
             edge_index=torch.stack([row, col], dim=0),
         )
-
         super().__init__(structure)
 
     def __repr__(self) -> str:

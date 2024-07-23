@@ -1,5 +1,6 @@
 import copy
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -108,9 +109,13 @@ def test():
     return accs
 
 
+times = []
 for epoch in range(1, 11):
+    start = time.time()
     loss, acc = train(epoch)
     print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
     train_acc, val_acc, test_acc = test()
     print(f'Epoch: {epoch:02d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

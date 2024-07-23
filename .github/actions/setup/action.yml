@@ -3,40 +3,79 @@ name: Setup
 inputs:
   python-version:
     required: false
-    default: '3.7'
+    default: '3.8'
   torch-version:
     required: false
-    default: '1.13.0'
+    default: '2.3.0'
   cuda-version:
     required: false
     default: cpu
   torchvision-version:
     required: false
-    default: '0.14.0'
+    default: '0.18.0'
+  full_install:
+    required: false
+    default: true
 
 runs:
   using: composite
 
   steps:
     - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v4.3.0
       with:
         python-version: ${{ inputs.python-version }}
+        check-latest: true
+        cache: pip
+        cache-dependency-path: |
+          pyproject.toml
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
+      if: ${{ inputs.torch-version != 'nightly' }}
       run: |
-        pip install torch==${{ inputs.torch-version }} torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
         python -c "import torch; print('PyTorch:', torch.__version__)"
+        python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
         python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
-    - name: Install extension packages
+    - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
+      if: ${{ inputs.torch-version == 'nightly' }}
       run: |
-        pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
+        python -c "import torch; print('PyTorch:', torch.__version__)"
+        python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+        python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
     - name: Install pyg-lib
-      if: ${{ runner.os == 'Linux' }}  # pyg-lib is currently only available on Linux.
+      if: ${{ inputs.torch-version != 'nightly' }}
       run: |
-        pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        pip uninstall -y pyg-lib
+        pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+      shell: bash
+
+    - name: Install faiss-cpu
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os != 'macOS' }}
+      run: |
+        pip install faiss-cpu==1.7.2
+      shell: bash
+
+    - name: Install faiss-gpu
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' }}
+      run: |
+        pip install faiss-gpu==1.7.2
+      shell: bash
+
+    - name: Install torchvision
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
+      run: |
+        pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+      shell: bash
+
+    - name: Install extension packages
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' && (runner.os != 'macOS' || inputs.torch-version == '2.3.0') }}
+      run: |
+        pip install scipy
+        pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash

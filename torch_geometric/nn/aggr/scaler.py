@@ -17,7 +17,7 @@ class DegreeScalerAggregation(Aggregation):
     See :class:`torch_geometric.nn.conv.PNAConv` for more information.
 
     Args:
-        aggr (string or list or Aggregation): The aggregation scheme to use.
+        aggr (str or [str] or Aggregation): The aggregation scheme to use.
             See :class:`~torch_geometric.nn.conv.MessagePassing` for more
             information.
         scaler (str or list): Set of scaling function identifiers, namely one
@@ -25,7 +25,7 @@ class DegreeScalerAggregation(Aggregation):
             :obj:`"attenuation"`, :obj:`"linear"` and :obj:`"inverse_linear"`.
         deg (Tensor): Histogram of in-degrees of nodes in the training set,
             used by scalers to normalize.
-        train_norm (bool, optional) Whether normalization parameters
+        train_norm (bool, optional): Whether normalization parameters
             are trainable. (default: :obj:`False`)
         aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective aggregation function in case it gets automatically
@@ -60,11 +60,11 @@ class DegreeScalerAggregation(Aggregation):
         self.init_avg_deg_log = float(((bin_degree + 1).log() * deg).sum()) / N
 
         if train_norm:
-            self.avg_deg_lin = torch.nn.Parameter(torch.Tensor(1))
-            self.avg_deg_log = torch.nn.Parameter(torch.Tensor(1))
+            self.avg_deg_lin = torch.nn.Parameter(torch.empty(1))
+            self.avg_deg_log = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('avg_deg_lin', torch.Tensor(1))
-            self.register_buffer('avg_deg_log', torch.Tensor(1))
+            self.register_buffer('avg_deg_lin', torch.empty(1))
+            self.register_buffer('avg_deg_log', torch.empty(1))
 
         self.reset_parameters()
 
@@ -82,7 +82,7 @@ class DegreeScalerAggregation(Aggregation):
         out = self.aggr(x, index, ptr, dim_size, dim)
 
         assert index is not None
-        deg = degree(index, num_nodes=dim_size, dtype=out.dtype).clamp_(1)
+        deg = degree(index, num_nodes=dim_size, dtype=out.dtype)
         size = [1] * len(out.size())
         size[dim] = -1
         deg = deg.view(size)
@@ -94,11 +94,14 @@ class DegreeScalerAggregation(Aggregation):
             elif scaler == 'amplification':
                 out_scaler = out * (torch.log(deg + 1) / self.avg_deg_log)
             elif scaler == 'attenuation':
-                out_scaler = out * (self.avg_deg_log / torch.log(deg + 1))
+                # Clamp minimum degree to one to avoid dividing by zero:
+                out_scaler = out * (self.avg_deg_log /
+                                    torch.log(deg.clamp(min=1) + 1))
             elif scaler == 'linear':
                 out_scaler = out * (deg / self.avg_deg_lin)
             elif scaler == 'inverse_linear':
-                out_scaler = out * (self.avg_deg_lin / deg)
+                # Clamp minimum degree to one to avoid dividing by zero:
+                out_scaler = out * (self.avg_deg_lin / deg.clamp(min=1))
             else:
                 raise ValueError(f"Unknown scaler '{scaler}'")
             outs.append(out_scaler)

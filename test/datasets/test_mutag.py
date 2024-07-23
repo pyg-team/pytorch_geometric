@@ -1,3 +1,7 @@
+from torch_geometric.testing import onlyOnline
+
+
+@onlyOnline
 def test_mutag(get_dataset):
     dataset = get_dataset(name='MUTAG')
     assert len(dataset) == 188
@@ -9,6 +13,7 @@ def test_mutag(get_dataset):
     assert dataset[0].edge_attr.size(1) == 4
 
 
+@onlyOnline
 def test_mutag_with_node_attr(get_dataset):
     dataset = get_dataset(name='MUTAG', use_node_attr=True)
     assert dataset.num_features == 7

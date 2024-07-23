@@ -4,66 +4,85 @@ import re
 import sys
 import warnings
 from collections.abc import Sequence
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch.utils.data
 from torch import Tensor
 
-from torch_geometric.data import Data
-from torch_geometric.data.makedirs import makedirs
+from torch_geometric.data.data import BaseData
+from torch_geometric.io import fs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+MISSING = '???'
 
 
 class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (optional: :obj:`None`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
-            version. The data object will be transformed before every access.
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
+        transform (callable, optional): A function/transform that takes in a
+            :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            transformed version.
+            The data object will be transformed before every access.
             (default: :obj:`None`)
         pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
-            transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
+            a :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            transformed version.
+            The data object will be transformed before being saved to disk.
+            (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in a
+            :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            boolean value, indicating whether the data object should be
+            included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     @property
-    def raw_file_names(self) -> Union[str, List[str], Tuple]:
+    def raw_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.raw_dir` folder that must
-        be present in order to skip downloading."""
+        be present in order to skip downloading.
+        """
         raise NotImplementedError
 
     @property
-    def processed_file_names(self) -> Union[str, List[str], Tuple]:
+    def processed_file_names(self) -> Union[str, List[str], Tuple[str, ...]]:
         r"""The name of the files in the :obj:`self.processed_dir` folder that
-        must be present in order to skip processing."""
+        must be present in order to skip processing.
+        """
         raise NotImplementedError
 
-    def download(self):
+    def download(self) -> None:
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
-    def process(self):
+    def process(self) -> None:
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
     def len(self) -> int:
-        r"""Returns the number of graphs stored in the dataset."""
+        r"""Returns the number of data objects stored in the dataset."""
         raise NotImplementedError
 
-    def get(self, idx: int) -> Data:
+    def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
@@ -74,23 +93,25 @@ class Dataset(torch.utils.data.Dataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         log: bool = True,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         super().__init__()
 
         if isinstance(root, str):
-            root = osp.expanduser(osp.normpath(root))
+            root = osp.expanduser(fs.normpath(root))
 
-        self.root = root
+        self.root = root or MISSING
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
         self.log = log
         self._indices: Optional[Sequence] = None
+        self.force_reload = force_reload
 
-        if self.download.__qualname__.split('.')[0] != 'Dataset':
+        if self.has_download:
             self._download()
 
-        if self.process.__qualname__.split('.')[0] != 'Dataset':
+        if self.has_process:
             self._process()
 
     def indices(self) -> Sequence:
@@ -120,7 +141,8 @@ class Dataset(torch.utils.data.Dataset):
     @property
     def num_features(self) -> int:
         r"""Returns the number of features per node in the dataset.
-        Alias for :py:attr:`~num_node_features`."""
+        Alias for :py:attr:`~num_node_features`.
+        """
         return self.num_node_features
 
     @property
@@ -142,14 +164,29 @@ class Dataset(torch.utils.data.Dataset):
         elif y.numel() == y.size(0) and not torch.is_floating_point(y):
             return int(y.max()) + 1
         elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
+            num_classes = torch.unique(y).numel()
+            if num_classes > 2:
+                warnings.warn("Found floating-point labels while calling "
+                              "`dataset.num_classes`. Returning the number of "
+                              "unique elements. Please make sure that this "
+                              "is expected before proceeding.")
+            return num_classes
         else:
             return y.size(-1)
 
     @property
     def num_classes(self) -> int:
         r"""Returns the number of classes in the dataset."""
-        y = torch.cat([data.y for data in self], dim=0)
+        # We iterate over the dataset and collect all labels to determine the
+        # maximum number of classes. Importantly, in rare cases, `__getitem__`
+        # may produce a tuple of data objects (e.g., when used in combination
+        # with `RandomLinkSplit`, so we take care of this case here as well:
+        data_list = _get_flattened_data_list([data for data in self])
+        if 'y' in data_list[0] and isinstance(data_list[0].y, Tensor):
+            y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+        else:
+            y = torch.as_tensor([data.y for data in data_list if 'y' in data])
+
         # Do not fill cache for `InMemoryDataset`:
         if hasattr(self, '_data_list') and self._data_list is not None:
             self._data_list = self.len() * [None]
@@ -158,7 +195,8 @@ class Dataset(torch.utils.data.Dataset):
     @property
     def raw_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
-        downloading."""
+        downloading.
+        """
         files = self.raw_file_names
         # Prevent a common source of error in which `file_names` are not
         # defined as a property.
@@ -169,7 +207,8 @@ class Dataset(torch.utils.data.Dataset):
     @property
     def processed_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
-        processing."""
+        processing.
+        """
         files = self.processed_file_names
         # Prevent a common source of error in which `file_names` are not
         # defined as a property.
@@ -177,45 +216,55 @@ class Dataset(torch.utils.data.Dataset):
             files = files()
         return [osp.join(self.processed_dir, f) for f in to_list(files)]
 
+    @property
+    def has_download(self) -> bool:
+        r"""Checks whether the dataset defines a :meth:`download` method."""
+        return overrides_method(self.__class__, 'download')
+
     def _download(self):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        makedirs(self.raw_dir)
+        fs.makedirs(self.raw_dir, exist_ok=True)
         self.download()
+
+    @property
+    def has_process(self) -> bool:
+        r"""Checks whether the dataset defines a :meth:`process` method."""
+        return overrides_method(self.__class__, 'process')
 
     def _process(self):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_transform):
             warnings.warn(
-                f"The `pre_transform` argument differs from the one used in "
-                f"the pre-processed version of this dataset. If you want to "
-                f"make use of another pre-processing technique, make sure to "
-                f"delete '{self.processed_dir}' first")
+                "The `pre_transform` argument differs from the one used in "
+                "the pre-processed version of this dataset. If you want to "
+                "make use of another pre-processing technique, pass "
+                "`force_reload=True` explicitly to reload the dataset.")
 
         f = osp.join(self.processed_dir, 'pre_filter.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
             warnings.warn(
                 "The `pre_filter` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
-                "make use of another pre-fitering technique, make sure to "
-                "delete '{self.processed_dir}' first")
+                "make use of another pre-fitering technique, pass "
+                "`force_reload=True` explicitly to reload the dataset.")
 
-        if files_exist(self.processed_paths):  # pragma: no cover
+        if not self.force_reload and files_exist(self.processed_paths):
             return
 
-        if self.log:
+        if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
-        makedirs(self.processed_dir)
+        fs.makedirs(self.processed_dir, exist_ok=True)
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
-        torch.save(_repr(self.pre_transform), path)
+        fs.torch_save(_repr(self.pre_transform), path)
         path = osp.join(self.processed_dir, 'pre_filter.pt')
-        torch.save(_repr(self.pre_filter), path)
+        fs.torch_save(_repr(self.pre_filter), path)
 
-        if self.log:
+        if self.log and 'pytest' not in sys.modules:
             print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:
@@ -225,13 +274,14 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(
         self,
         idx: Union[int, np.integer, IndexType],
-    ) -> Union['Dataset', Data]:
+    ) -> Union['Dataset', BaseData]:
         r"""In case :obj:`idx` is of type integer, will return the data object
         at index :obj:`idx` (and transforms it in case :obj:`transform` is
         present).
         In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
         tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type long or
-        bool, will return a subset of the dataset at the specified indices."""
+        bool, will return a subset of the dataset at the specified indices.
+        """
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
@@ -243,14 +293,27 @@ class Dataset(torch.utils.data.Dataset):
         else:
             return self.index_select(idx)
 
+    def __iter__(self) -> Iterator[BaseData]:
+        for i in range(len(self)):
+            yield self[i]
+
     def index_select(self, idx: IndexType) -> 'Dataset':
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.
         Indices :obj:`idx` can be a slicing object, *e.g.*, :obj:`[2:5]`, a
         list, a tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type
-        long or bool."""
+        long or bool.
+        """
         indices = self.indices()
 
         if isinstance(idx, slice):
+            start, stop, step = idx.start, idx.stop, idx.step
+            # Allow floating-point slicing, e.g., dataset[:0.9]
+            if isinstance(start, float):
+                start = round(start * len(self))
+            if isinstance(stop, float):
+                stop = round(stop * len(self))
+            idx = slice(start, stop, step)
+
             indices = indices[idx]
 
         elif isinstance(idx, Tensor) and idx.dtype == torch.long:
@@ -263,7 +326,7 @@ class Dataset(torch.utils.data.Dataset):
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
             return self.index_select(idx.flatten().tolist())
 
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
             idx = idx.flatten().nonzero()[0]
             return self.index_select(idx.flatten().tolist())
 
@@ -299,20 +362,26 @@ class Dataset(torch.utils.data.Dataset):
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
 
-    def get_summary(self):
+    def get_summary(self) -> Any:
         r"""Collects summary statistics for the dataset."""
         from torch_geometric.data.summary import Summary
         return Summary.from_dataset(self)
 
-    def print_summary(self):
-        r"""Prints summary statistics of the dataset to the console."""
-        print(str(self.get_summary()))
+    def print_summary(self, fmt: str = "psql") -> None:
+        r"""Prints summary statistics of the dataset to the console.
 
-    def to_datapipe(self):
+        Args:
+            fmt (str, optional): Summary tables format. Available table formats
+                can be found `here <https://github.com/astanin/python-tabulate?
+                tab=readme-ov-file#table-format>`__. (default: :obj:`"psql"`)
+        """
+        print(self.get_summary().format(fmt=fmt))
+
+    def to_datapipe(self) -> Any:
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
-        The returned instance can then be used with PyG's built-in DataPipes
-        for baching graphs as follows:
+        The returned instance can then be used with :pyg:`PyG's` built-in
+        :class:`DataPipes` for baching graphs as follows:
 
         .. code-block:: python
 
@@ -333,6 +402,19 @@ class Dataset(torch.utils.data.Dataset):
         return DatasetAdapter(self)
 
 
+def overrides_method(cls, method_name: str) -> bool:
+    from torch_geometric.data import InMemoryDataset
+
+    if method_name in cls.__dict__:
+        return True
+
+    out = False
+    for base in cls.__bases__:
+        if base != Dataset and base != InMemoryDataset:
+            out |= overrides_method(base, method_name)
+    return out
+
+
 def to_list(value: Any) -> Sequence:
     if isinstance(value, Sequence) and not isinstance(value, str):
         return value
@@ -343,10 +425,22 @@ def to_list(value: Any) -> Sequence:
 def files_exist(files: List[str]) -> bool:
     # NOTE: We return `False` in case `files` is empty, leading to a
     # re-processing of files on every instantiation.
-    return len(files) != 0 and all([osp.exists(f) for f in files])
+    return len(files) != 0 and all([fs.exists(f) for f in files])
 
 
 def _repr(obj: Any) -> str:
     if obj is None:
         return 'None'
-    return re.sub('(<.*?)\\s.*(>)', r'\1\2', obj.__repr__())
+    return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))
+
+
+def _get_flattened_data_list(data_list: Iterable[Any]) -> List[BaseData]:
+    outs: List[BaseData] = []
+    for data in data_list:
+        if isinstance(data, BaseData):
+            outs.append(data)
+        elif isinstance(data, (tuple, list)):
+            outs.extend(_get_flattened_data_list(data))
+        elif isinstance(data, dict):
+            outs.extend(_get_flattened_data_list(data.values()))
+    return outs

@@ -2,15 +2,14 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import Adj
-
-from ..inits import reset
 
 
 class PointGNNConv(MessagePassing):
     r"""The PointGNN operator from the `"Point-GNN: Graph Neural Network for
     3D Object Detection in a Point Cloud" <https://arxiv.org/abs/2003.01251>`_
-    paper
+    paper.
 
     .. math::
 
@@ -65,14 +64,14 @@ class PointGNNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.mlp_h)
         reset(self.mlp_f)
         reset(self.mlp_g)
 
     def forward(self, x: Tensor, pos: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         # propagate_type: (x: Tensor, pos: Tensor)
-        out = self.propagate(edge_index, x=x, pos=pos, size=None)
+        out = self.propagate(edge_index, x=x, pos=pos)
         out = self.mlp_g(out)
         return x + out
 

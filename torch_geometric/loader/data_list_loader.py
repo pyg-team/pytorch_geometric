@@ -12,7 +12,7 @@ def collate_fn(data_list):
 
 class DataListLoader(torch.utils.data.DataLoader):
     r"""A data loader which batches data objects from a
-    :class:`torch_geometric.data.dataset` to a Python list.
+    :class:`torch_geometric.data.dataset` to a :python:`Python` list.
     Data objects can be either of type :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData`.
 
@@ -33,8 +33,8 @@ class DataListLoader(torch.utils.data.DataLoader):
     """
     def __init__(self, dataset: Union[Dataset, List[BaseData]],
                  batch_size: int = 1, shuffle: bool = False, **kwargs):
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('collate_fn', None)
 
         super().__init__(dataset, batch_size=batch_size, shuffle=shuffle,
                          collate_fn=collate_fn, **kwargs)

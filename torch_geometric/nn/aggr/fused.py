@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
@@ -18,6 +19,7 @@ from torch_geometric.utils import scatter
 
 class FusedAggregation(Aggregation):
     r"""Helper class to fuse computation of multiple aggregations together.
+
     Used internally in :class:`~torch_geometric.nn.aggr.MultiAggregation` to
     speed-up computation.
     Currently, the following optimizations are performed:
@@ -121,67 +123,70 @@ class FusedAggregation(Aggregation):
         # Determine which reduction to use for each aggregator:
         # An entry of `None` means that this operator re-uses intermediate
         # outputs from other aggregators.
-        self.reduce_ops: List[Optional[str]] = []
+        reduce_ops: List[Optional[str]] = []
         # Determine which `(Aggregator, index)` to use as intermediate output:
-        self.lookup_ops: List[Optional[Tuple[str, int]]] = []
+        lookup_ops: List[Optional[Tuple[str, int]]] = []
 
         for name in self.aggr_names:
             if name == 'MeanAggregation':
                 # Directly use output of `SumAggregation`:
                 if 'SumAggregation' in self.aggr_index:
-                    self.reduce_ops.append(None)
-                    self.lookup_ops.append((
+                    reduce_ops.append(None)
+                    lookup_ops.append((
                         'SumAggregation',
                         self.aggr_index['SumAggregation'],
                     ))
                 else:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append(None)
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append(None)
 
             elif name == 'VarAggregation':
                 if 'MeanAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'MeanAggregation',
                         self.aggr_index['MeanAggregation'],
                     ))
                 elif 'SumAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'SumAggregation',
                         self.aggr_index['SumAggregation'],
                     ))
                 else:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append(None)
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append(None)
 
             elif name == 'StdAggregation':
                 # Directly use output of `VarAggregation`:
                 if 'VarAggregation' in self.aggr_index:
-                    self.reduce_ops.append(None)
-                    self.lookup_ops.append((
+                    reduce_ops.append(None)
+                    lookup_ops.append((
                         'VarAggregation',
                         self.aggr_index['VarAggregation'],
                     ))
                 elif 'MeanAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'MeanAggregation',
                         self.aggr_index['MeanAggregation'],
                     ))
                 elif 'SumAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'SumAggregation',
                         self.aggr_index['SumAggregation'],
                     ))
                 else:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append(None)
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append(None)
 
             else:
-                self.reduce_ops.append(self.REDUCE[name])
-                self.lookup_ops.append(None)
+                reduce_ops.append(self.REDUCE[name])
+                lookup_ops.append(None)
+
+        self.reduce_ops: List[Optional[str]] = reduce_ops
+        self.lookup_ops: List[Optional[Tuple[str, int]]] = lookup_ops
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -249,8 +254,9 @@ class FusedAggregation(Aggregation):
             outs[i] = sum_ / count
 
         # Compute `VarAggregation` second to be able to re-use it:
-        i = self.aggr_index.get('VarAggregation')
-        if i is not None:
+        if 'VarAggregation' in self.aggr_index:
+            i = self.aggr_index['VarAggregation']
+
             assert count is not None
 
             if self.lookup_ops[i] is None:
@@ -277,8 +283,9 @@ class FusedAggregation(Aggregation):
             outs[i] = (pow_sum / count) - (mean * mean)
 
         # Compute `StdAggregation` last:
-        i = self.aggr_index.get('StdAggregation')
-        if i is not None:
+        if 'StdAggregation' in self.aggr_index:
+            i = self.aggr_index['StdAggregation']
+
             var: Optional[Tensor] = None
             pow_sum: Optional[Tensor] = None
             mean: Optional[Tensor] = None
@@ -313,7 +320,11 @@ class FusedAggregation(Aggregation):
                 assert mean is not None
                 var = (pow_sum / count) - (mean * mean)
 
-            outs[i] = var.clamp(min=1e-5).sqrt()
+            # Allow "undefined" gradient at `sqrt(0.0)`:
+            out = var.clamp(min=1e-5).sqrt()
+            out = out.masked_fill(out <= math.sqrt(1e-5), 0.0)
+
+            outs[i] = out
 
         #######################################################################
 

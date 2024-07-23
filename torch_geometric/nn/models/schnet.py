@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import warnings
 from math import pi as PI
-from typing import Callable, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -11,12 +11,11 @@ from torch import Tensor
 from torch.nn import Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.data import Dataset, download_url, extract_zip
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import MessagePassing, SumAggregation, radius_graph
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
 
-qm9_target_dict = {
+qm9_target_dict: Dict[int, str] = {
     0: 'dipole_moment',
     1: 'isotropic_polarizability',
     2: 'homo',
@@ -36,7 +35,7 @@ class SchNet(torch.nn.Module):
     r"""The continuous-filter convolutional neural network SchNet from the
     `"SchNet: A Continuous-filter Convolutional Neural Network for Modeling
     Quantum Interactions" <https://arxiv.org/abs/1706.08566>`_ paper that uses
-    the interactions blocks of the form
+    the interactions blocks of the form.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \odot
@@ -61,7 +60,7 @@ class SchNet(torch.nn.Module):
             (default: :obj:`6`)
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
-        interaction_graph (Callable, optional): The function used to compute
+        interaction_graph (callable, optional): The function used to compute
             the pairwise interaction graph and interatomic distances. If set to
             :obj:`None`, will construct a graph based on :obj:`cutoff` and
             :obj:`max_num_neighbors` properties.
@@ -73,8 +72,8 @@ class SchNet(torch.nn.Module):
         max_num_neighbors (int, optional): The maximum number of neighbors to
             collect for each node within the :attr:`cutoff` distance.
             (default: :obj:`32`)
-        readout (string, optional): Whether to apply :obj:`"add"` or
-            :obj:`"mean"` global aggregation. (default: :obj:`"add"`)
+        readout (str, optional): Whether to apply :obj:`"add"` or :obj:`"mean"`
+            global aggregation. (default: :obj:`"add"`)
         dipole (bool, optional): If set to :obj:`True`, will use the magnitude
             of the dipole moment to make the final prediction, *e.g.*, for
             target 0 of :class:`torch_geometric.datasets.QM9`.
@@ -156,6 +155,7 @@ class SchNet(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
         for interaction in self.interactions:
             interaction.reset_parameters()
@@ -171,7 +171,11 @@ class SchNet(torch.nn.Module):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:
+    ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:  # pragma: no cover
+        r"""Returns a pre-trained :class:`SchNet` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`.
+        """
         import ase
         import schnetpack as spk  # noqa
 
@@ -184,7 +188,7 @@ class SchNet(torch.nn.Module):
         units[5] = ase.units.Bohr**2
 
         root = osp.expanduser(osp.normpath(root))
-        makedirs(root)
+        os.makedirs(root, exist_ok=True)
         folder = 'trained_schnet_models'
         if not osp.exists(osp.join(root, folder)):
             path = download_url(SchNet.url, root)
@@ -214,9 +218,15 @@ class SchNet(torch.nn.Module):
             warnings.simplefilter('ignore')
             state = torch.load(path, map_location='cpu')
 
-        net = SchNet(hidden_channels=128, num_filters=128, num_interactions=6,
-                     num_gaussians=50, cutoff=10.0, dipole=is_dipole,
-                     atomref=dataset.atomref(target))
+        net = SchNet(
+            hidden_channels=128,
+            num_filters=128,
+            num_interactions=6,
+            num_gaussians=50,
+            cutoff=10.0,
+            dipole=is_dipole,
+            atomref=dataset.atomref(target),
+        )
 
         net.embedding.weight = state.representation.embedding.weight
 
@@ -239,7 +249,7 @@ class SchNet(torch.nn.Module):
         net.lin2.bias = state.output_modules[0].out_net[1].out_net[1].bias
 
         mean = state.output_modules[0].atom_pool.average
-        net.readout = 'mean' if mean is True else 'add'
+        net.readout = aggr_resolver('mean' if mean is True else 'add')
 
         dipole = state.output_modules[0].__class__.__name__ == 'DipoleMoment'
         net.dipole = dipole
@@ -252,20 +262,21 @@ class SchNet(torch.nn.Module):
         else:
             net.atomref = None
 
-        net.scale = 1. / units[target]
+        net.scale = 1.0 / units[target]
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
     def forward(self, z: Tensor, pos: Tensor,
                 batch: OptTensor = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
-            z (LongTensor): Atomic number of each atom with shape
+            z (torch.Tensor): Atomic number of each atom with shape
                 :obj:`[num_atoms]`.
-            pos (Tensor): Coordinates of each atom with shape
+            pos (torch.Tensor): Coordinates of each atom with shape
                 :obj:`[num_atoms, 3]`.
-            batch (LongTensor, optional): Batch indices assigning each atom to
-                a separate molecule with shape :obj:`[num_atoms]`.
+            batch (torch.Tensor, optional): Batch indices assigning each atom
+                to a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
         """
         batch = torch.zeros_like(z) if batch is None else batch
@@ -331,7 +342,8 @@ class RadiusInteractionGraph(torch.nn.Module):
         self.max_num_neighbors = max_num_neighbors
 
     def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
-        r"""
+        r"""Forward pass.
+
         Args:
             pos (Tensor): Coordinates of each atom.
             batch (LongTensor, optional): Batch indices assigning each atom to
@@ -380,8 +392,14 @@ class InteractionBlock(torch.nn.Module):
 
 
 class CFConv(MessagePassing):
-    def __init__(self, in_channels: int, out_channels: int, num_filters: int,
-                 nn: Sequential, cutoff: float):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_filters: int,
+        nn: Sequential,
+        cutoff: float,
+    ):
         super().__init__(aggr='add')
         self.lin1 = Linear(in_channels, num_filters, bias=False)
         self.lin2 = Linear(num_filters, out_channels)
@@ -410,8 +428,12 @@ class CFConv(MessagePassing):
 
 
 class GaussianSmearing(torch.nn.Module):
-    def __init__(self, start: float = 0.0, stop: float = 5.0,
-                 num_gaussians: int = 50):
+    def __init__(
+        self,
+        start: float = 0.0,
+        stop: float = 5.0,
+        num_gaussians: int = 50,
+    ):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
         self.coeff = -0.5 / (offset[1] - offset[0]).item()**2

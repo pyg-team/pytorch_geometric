@@ -1,51 +1,27 @@
 import torch
 
-from torch_geometric.nn.pool.topk_pool import TopKPooling, filter_adj, topk
+import torch_geometric.typing
+from torch_geometric.nn.pool import TopKPooling
+from torch_geometric.nn.pool.connect.filter_edges import filter_adj
 from torch_geometric.testing import is_full_test
-
-
-def test_topk():
-    x = torch.Tensor([2, 4, 5, 6, 2, 9])
-    batch = torch.tensor([0, 0, 1, 1, 1, 1])
-
-    perm1 = topk(x, 0.5, batch)
-    assert perm1.tolist() == [1, 5, 3]
-    assert x[perm1].tolist() == [4, 9, 6]
-    assert batch[perm1].tolist() == [0, 1, 1]
-
-    perm2 = topk(x, 2, batch)
-    assert perm2.tolist() == [1, 0, 5, 3]
-    assert x[perm2].tolist() == [4, 2, 9, 6]
-    assert batch[perm2].tolist() == [0, 0, 1, 1]
-
-    perm3 = topk(x, 3, batch)
-    assert perm3.tolist() == [1, 0, 5, 3, 2]
-    assert x[perm3].tolist() == [4, 2, 9, 6, 5]
-    assert batch[perm3].tolist() == [0, 0, 1, 1, 1]
-
-    if is_full_test():
-        jit = torch.jit.script(topk)
-        assert torch.equal(jit(x, 0.5, batch), perm1)
-        assert torch.equal(jit(x, 2, batch), perm2)
-        assert torch.equal(jit(x, 3, batch), perm3)
 
 
 def test_filter_adj():
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3],
                                [1, 3, 0, 2, 1, 3, 0, 2]])
-    edge_attr = torch.Tensor([1, 2, 3, 4, 5, 6, 7, 8])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
     perm = torch.tensor([2, 3])
 
     out = filter_adj(edge_index, edge_attr, perm)
     assert out[0].tolist() == [[0, 1], [1, 0]]
-    assert out[1].tolist() == [6, 8]
+    assert out[1].tolist() == [6.0, 8.0]
 
     if is_full_test():
         jit = torch.jit.script(filter_adj)
 
         out = jit(edge_index, edge_attr, perm)
         assert out[0].tolist() == [[0, 1], [1, 0]]
-        assert out[1].tolist() == [6, 8]
+        assert out[1].tolist() == [6.0, 8.0]
 
 
 def test_topk_pooling():
@@ -73,7 +49,7 @@ def test_topk_pooling():
     assert out3[0].size() == (2, in_channels)
     assert out3[1].size() == (2, 2)
 
-    if is_full_test():
+    if torch_geometric.typing.WITH_PT113 and is_full_test():
         jit1 = torch.jit.script(pool1)
         assert torch.allclose(jit1(x, edge_index)[0], out1[0])
 

@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 
@@ -21,9 +21,8 @@ class MalNetTiny(InMemoryDataset):
     call graphs across 5 different types. Each graph contains at most 5k nodes.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"trainval"`, loads the training and validation dataset.
             If :obj:`"test"`, loads the test dataset.
@@ -41,8 +40,9 @@ class MalNetTiny(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
-
     data_url = ('http://malnet.cc.gatech.edu/'
                 'graph-data/malnet-graphs-tiny.tar.gz')
     split_url = 'http://malnet.cc.gatech.edu/split-info/split_info_tiny.zip'
@@ -55,12 +55,14 @@ class MalNetTiny(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         if split not in {'train', 'val', 'trainval', 'test', None}:
             raise ValueError(f'Split "{split}" found, but expected either '
                              f'"train", "val", "trainval", "test" or None')
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
         if split is not None:
             split_slices = torch.load(self.processed_paths[1])
@@ -81,7 +83,7 @@ class MalNetTiny(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['data.pt', 'split_slices.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.data_url, self.raw_dir)
         extract_tar(path, self.raw_dir)
         os.unlink(path)
@@ -90,13 +92,13 @@ class MalNetTiny(InMemoryDataset):
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
-        y_map = {}
+    def process(self) -> None:
+        y_map: Dict[str, int] = {}
         data_list = []
         split_slices = [0]
 
         for split in ['train', 'val', 'test']:
-            with open(osp.join(self.raw_paths[1], f'{split}.txt'), 'r') as f:
+            with open(osp.join(self.raw_paths[1], f'{split}.txt')) as f:
                 filenames = f.read().split('\n')[:-1]
                 split_slices.append(split_slices[-1] + len(filenames))
 
@@ -105,11 +107,11 @@ class MalNetTiny(InMemoryDataset):
                 malware_type = filename.split('/')[0]
                 y = y_map.setdefault(malware_type, len(y_map))
 
-                with open(path, 'r') as f:
+                with open(path) as f:
                     edges = f.read().split('\n')[5:-1]
 
-                edge_index = [[int(s) for s in edge.split()] for edge in edges]
-                edge_index = torch.tensor(edge_index).t().contiguous()
+                edge_indices = [[int(s) for s in e.split()] for e in edges]
+                edge_index = torch.tensor(edge_indices).t().contiguous()
                 num_nodes = int(edge_index.max()) + 1
                 data = Data(edge_index=edge_index, y=y, num_nodes=num_nodes)
                 data_list.append(data)
@@ -120,5 +122,5 @@ class MalNetTiny(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
         torch.save(split_slices, self.processed_paths[1])

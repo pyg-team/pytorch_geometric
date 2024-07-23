@@ -12,7 +12,7 @@ def GNNLayer(dim_in, dim_out, has_act=True):
 
 @register_stage('example')
 class GNNStackStage(nn.Module):
-    '''Simple Stage that stack GNN layers'''
+    r"""Simple stage that stacks GNN layers."""
     def __init__(self, dim_in, dim_out, num_layers):
         super().__init__()
         for i in range(num_layers):

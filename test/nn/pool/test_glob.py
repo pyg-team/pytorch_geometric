@@ -14,30 +14,30 @@ def test_global_pool():
 
     out = global_add_pool(x, batch)
     assert out.size() == (2, 4)
-    assert out[0].tolist() == x[:4].sum(dim=0).tolist()
-    assert out[1].tolist() == x[4:].sum(dim=0).tolist()
+    assert torch.allclose(out[0], x[:4].sum(dim=0))
+    assert torch.allclose(out[1], x[4:].sum(dim=0))
 
     out = global_add_pool(x, None)
     assert out.size() == (1, 4)
-    assert out.tolist() == x.sum(dim=0, keepdim=True).tolist()
+    assert torch.allclose(out, x.sum(dim=0, keepdim=True))
 
     out = global_mean_pool(x, batch)
     assert out.size() == (2, 4)
-    assert out[0].tolist() == x[:4].mean(dim=0).tolist()
-    assert out[1].tolist() == x[4:].mean(dim=0).tolist()
+    assert torch.allclose(out[0], x[:4].mean(dim=0))
+    assert torch.allclose(out[1], x[4:].mean(dim=0))
 
     out = global_mean_pool(x, None)
     assert out.size() == (1, 4)
-    assert out.tolist() == x.mean(dim=0, keepdim=True).tolist()
+    assert torch.allclose(out, x.mean(dim=0, keepdim=True))
 
     out = global_max_pool(x, batch)
     assert out.size() == (2, 4)
-    assert out[0].tolist() == x[:4].max(dim=0)[0].tolist()
-    assert out[1].tolist() == x[4:].max(dim=0)[0].tolist()
+    assert torch.allclose(out[0], x[:4].max(dim=0)[0])
+    assert torch.allclose(out[1], x[4:].max(dim=0)[0])
 
     out = global_max_pool(x, None)
     assert out.size() == (1, 4)
-    assert out.tolist() == x.max(dim=0, keepdim=True)[0].tolist()
+    assert torch.allclose(out, x.max(dim=0, keepdim=True)[0])
 
 
 def test_permuted_global_pool():

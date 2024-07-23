@@ -4,13 +4,15 @@ from typing import Optional, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import OptPairTensor  # noqa
 from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor
 
-try:
+if torch_geometric.typing.WITH_TORCH_CLUSTER:
     from torch_cluster import knn
-except ImportError:
+else:
     knn = None
 
 
@@ -76,21 +78,21 @@ class GravNetConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_s.reset_parameters()
         self.lin_h.reset_parameters()
         self.lin_out1.reset_parameters()
         self.lin_out2.reset_parameters()
 
     def forward(
-            self, x: Union[Tensor, PairTensor],
-            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
-        # type: (Tensor, OptTensor) -> Tensor  # noqa
-        # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
-        """"""
+        self,
+        x: Union[Tensor, PairTensor],
+        batch: Union[OptTensor, Optional[PairTensor]] = None,
+    ) -> Tensor:
 
         is_bipartite: bool = True
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
             is_bipartite = False
 
         if x[0].dim() != 2:

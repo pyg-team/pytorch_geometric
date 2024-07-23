@@ -3,10 +3,11 @@ import copy
 import pytest
 import torch
 import torch.multiprocessing as mp
-import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.storage import AttrType
+from torch_geometric.testing import get_random_tensor_frame, withPackage
 
 
 def test_data():
@@ -28,10 +29,19 @@ def test_data():
     assert data.get('x').tolist() == x.tolist()
     assert data.get('y', 2) == 2
     assert data.get('y', None) is None
+    assert data.num_edge_types == 1
+    assert data.num_node_types == 1
+    assert next(data('x')) == ('x', x)
 
-    assert sorted(data.keys) == ['edge_index', 'x']
+    assert sorted(data.keys()) == ['edge_index', 'x']
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
+
+    data.apply_(lambda x: x.mul_(2), 'x')
+    assert torch.allclose(data.x, x)
+
+    data.requires_grad_('x')
+    assert data.x.requires_grad is True
 
     D = data.to_dict()
     assert len(D) == 2
@@ -62,7 +72,7 @@ def test_data():
     assert clone.edge_index.data_ptr() != data.edge_index.data_ptr()
     assert clone.edge_index.tolist() == data.edge_index.tolist()
 
-    # Test `data.to_heterogenous()`:
+    # Test `data.to_heterogeneous()`:
     out = data.to_heterogeneous()
     assert torch.allclose(data.x, out['0'].x)
     assert torch.allclose(data.edge_index, out['0', '0'].edge_index)
@@ -80,7 +90,7 @@ def test_data():
 
     dictionary = {'x': data.x, 'edge_index': data.edge_index}
     data = Data.from_dict(dictionary)
-    assert sorted(data.keys) == ['edge_index', 'x']
+    assert sorted(data.keys()) == ['edge_index', 'x']
 
     assert not data.has_isolated_nodes()
     assert not data.has_self_loops()
@@ -138,6 +148,49 @@ def test_data():
     torch_geometric.set_debug(False)
 
 
+def test_data_attr_cache():
+    x = torch.randn(3, 16)
+    edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
+    edge_attr = torch.randn(5, 4)
+    y = torch.tensor([0])
+
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
+
+    assert data.is_node_attr('x')
+    assert 'x' in data._store._cached_attr[AttrType.NODE]
+    assert 'x' not in data._store._cached_attr[AttrType.EDGE]
+    assert 'x' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert not data.is_node_attr('edge_index')
+    assert 'edge_index' not in data._store._cached_attr[AttrType.NODE]
+    assert 'edge_index' in data._store._cached_attr[AttrType.EDGE]
+    assert 'edge_index' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert data.is_edge_attr('edge_attr')
+    assert 'edge_attr' not in data._store._cached_attr[AttrType.NODE]
+    assert 'edge_attr' in data._store._cached_attr[AttrType.EDGE]
+    assert 'edge_attr' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert not data.is_edge_attr('y')
+    assert 'y' not in data._store._cached_attr[AttrType.NODE]
+    assert 'y' not in data._store._cached_attr[AttrType.EDGE]
+    assert 'y' in data._store._cached_attr[AttrType.OTHER]
+
+
+def test_data_attr_cache_not_shared():
+    x = torch.rand((4, 4))
+    edge_index = torch.tensor([[0, 1, 2, 3, 0, 1], [0, 1, 2, 3, 0, 1]])
+    time = torch.arange(edge_index.size(1))
+    data = Data(x=x, edge_index=edge_index, time=time)
+    assert data.is_node_attr('x')
+
+    out = data.up_to(3.5)
+    # This is expected behavior due to the ambiguity of between node-level and
+    # edge-level tensors when they share the same number of nodes/edges.
+    assert out.is_node_attr('time')
+    assert not data.is_node_attr('time')
+
+
 def test_to_heterogeneous_empty_edge_index():
     data = Data(
         x=torch.randn(5, 10),
@@ -178,6 +231,15 @@ def test_data_subgraph():
     assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
     assert out.num_nodes == 3
 
+    # Test unordered selection:
+    out = data.subgraph(torch.tensor([3, 1, 2]))
+    assert len(out) == 5
+    assert torch.equal(out.x, torch.tensor([3, 1, 2]))
+    assert torch.equal(out.y, data.y)
+    assert out.edge_index.tolist() == [[1, 2, 2, 0], [2, 1, 0, 2]]
+    assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
+    assert out.num_nodes == 3
+
     out = data.subgraph(torch.tensor([False, False, False, True, True]))
     assert len(out) == 5
     assert torch.equal(out.x, torch.arange(3, 5))
@@ -202,6 +264,32 @@ def test_data_subgraph():
     assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[1, 1, 2], [0, 2, 1]]
     assert torch.equal(out.edge_weight, edge_weight[torch.tensor([1, 2, 3])])
+
+
+def test_data_subgraph_with_list_field():
+    x = torch.arange(5)
+    y = list(range(5))
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4],
+                               [1, 0, 2, 1, 3, 2, 4, 3]])
+    data = Data(x=x, y=y, edge_index=edge_index)
+
+    out = data.subgraph(torch.tensor([1, 2, 3]))
+    assert len(out) == 3
+    assert out.x.tolist() == out.y == [1, 2, 3]
+
+    out = data.subgraph(torch.tensor([False, True, True, True, False]))
+    assert len(out) == 3
+    assert out.x.tolist() == out.y == [1, 2, 3]
+
+
+def test_data_empty_subgraph():
+    data = Data(x=torch.arange(5), y=torch.tensor(0.0))
+
+    out = data.subgraph(torch.tensor([1, 2, 3]))
+    assert 'edge_index' not in out
+    assert torch.equal(out.x, torch.arange(1, 4))
+    assert torch.equal(out.y, data.y)
+    assert out.num_nodes == 3
 
 
 def test_copy_data():
@@ -229,6 +317,36 @@ def test_copy_data():
     assert data.x.tolist() == out.x.tolist()
 
 
+def test_data_sort():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 2, 1, 3], [1, 2, 3, 0, 0, 0]])
+    edge_attr = torch.randn(6, 8)
+
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    assert not data.is_sorted(sort_by_row=True)
+    assert not data.is_sorted(sort_by_row=False)
+
+    out = data.sort(sort_by_row=True)
+    assert out.is_sorted(sort_by_row=True)
+    assert not out.is_sorted(sort_by_row=False)
+    assert torch.equal(out.x, data.x)
+    assert out.edge_index.tolist() == [[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]
+    assert torch.equal(
+        out.edge_attr,
+        data.edge_attr[torch.tensor([0, 1, 2, 4, 3, 5])],
+    )
+
+    out = data.sort(sort_by_row=False)
+    assert not out.is_sorted(sort_by_row=True)
+    assert out.is_sorted(sort_by_row=False)
+    assert torch.equal(out.x, data.x)
+    assert out.edge_index.tolist() == [[1, 2, 3, 0, 0, 0], [0, 0, 0, 1, 2, 3]]
+    assert torch.equal(
+        out.edge_attr,
+        data.edge_attr[torch.tensor([4, 3, 5, 0, 1, 2])],
+    )
+
+
 def test_debug_data():
     torch_geometric.set_debug(True)
 
@@ -254,12 +372,13 @@ def test_data_share_memory():
 
     for data in data_list:
         assert not data.x.is_shared()
+        assert torch.all(data.x == 0.0)
 
     mp.spawn(run, args=(data_list, ), nprocs=4, join=True)
 
     for data in data_list:
         assert data.x.is_shared()
-        assert torch.allclose(data.x, torch.full((8, ), 4.))
+        assert torch.all(data.x > 0.0)
 
 
 def test_data_setter_properties():
@@ -337,12 +456,10 @@ def test_basic_feature_store():
 # Graph Store #################################################################
 
 
+@withPackage('torch_sparse')
 def test_basic_graph_store():
     r"""Test the core graph store API."""
     data = Data()
-
-    edge_index = torch.LongTensor([[0, 1], [1, 2]])
-    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1])
 
     def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
@@ -351,9 +468,9 @@ def test_basic_graph_store():
 
     # We put all three tensor types: COO, CSR, and CSC, and we get them back
     # to confirm that `GraphStore` works as intended.
-    coo = adj.coo()[:-1]
-    csr = adj.csr()[:-1]
-    csc = adj.csc()[-2::-1]  # (row, colptr)
+    coo = (torch.tensor([0, 1]), torch.tensor([1, 2]))
+    csr = (torch.tensor([0, 1, 2, 2]), torch.tensor([1, 2]))
+    csc = (torch.tensor([0, 1]), torch.tensor([0, 0, 1, 2]))
 
     # Put:
     data.put_edge_index(coo, layout='coo', size=(3, 3))
@@ -369,6 +486,13 @@ def test_basic_graph_store():
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
 
+    # Remove:
+    coo, csr, csc = edge_attrs
+    data.remove_edge_index(coo)
+    data.remove_edge_index(csr)
+    data.remove_edge_index(csc)
+    assert len(data.get_all_edge_attrs()) == 0
+
 
 def test_data_generate_ids():
     x = torch.randn(3, 8)
@@ -381,3 +505,80 @@ def test_data_generate_ids():
     assert len(data) == 4
     assert data.n_id.tolist() == [0, 1, 2]
     assert data.e_id.tolist() == [0, 1, 2, 3, 4]
+
+
+@withPackage('torch_frame')
+def test_data_with_tensor_frame():
+    tf = get_random_tensor_frame(num_rows=10)
+    data = Data(tf=tf, edge_index=torch.randint(0, 10, size=(2, 20)))
+
+    # Test basic attributes:
+    assert data.is_node_attr('tf')
+    assert data.num_nodes == tf.num_rows
+    assert data.num_edges == 20
+    assert data.num_node_features == tf.num_cols
+
+    # Test subgraph:
+    index = torch.tensor([1, 2, 3])
+    sub_data = data.subgraph(index)
+    assert sub_data.num_nodes == 3
+    for key, value in sub_data.tf.feat_dict.items():
+        assert torch.allclose(value, tf.feat_dict[key][index])
+
+    mask = torch.tensor(
+        [False, True, True, True, False, False, False, False, False, False])
+    data_sub = data.subgraph(mask)
+    assert data_sub.num_nodes == 3
+    for key, value in sub_data.tf.feat_dict.items():
+        assert torch.allclose(value, tf.feat_dict[key][mask])
+
+
+@pytest.mark.parametrize('num_nodes', [4])
+@pytest.mark.parametrize('num_edges', [8])
+def test_data_time_handling(num_nodes, num_edges):
+    data = Data(
+        x=torch.randn(num_nodes, 12),
+        edge_index=torch.randint(0, num_nodes, (2, num_edges)),
+        edge_attr=torch.rand((num_edges, 16)),
+        time=torch.arange(num_edges),
+        num_nodes=num_nodes,
+    )
+
+    assert data.is_edge_attr('time')
+    assert not data.is_node_attr('time')
+    assert data.is_sorted_by_time()
+
+    out = data.up_to(5)
+    assert out.num_edges == 6
+    assert torch.allclose(out.x, data.x)
+    assert torch.equal(out.edge_index, data.edge_index[:, :6])
+    assert torch.allclose(out.edge_attr, data.edge_attr[:6])
+    assert torch.equal(out.time, data.time[:6])
+
+    out = data.snapshot(2, 5)
+    assert out.num_edges == 4
+    assert torch.allclose(out.x, data.x)
+    assert torch.equal(out.edge_index, data.edge_index[:, 2:6])
+    assert torch.allclose(out.edge_attr, data.edge_attr[2:6, :])
+    assert torch.equal(out.time, data.time[2:6])
+
+    out = data.sort_by_time()
+    assert data.is_sorted_by_time()
+
+    out = data.concat(data)
+    assert out.num_nodes == 8
+    assert not out.is_sorted_by_time()
+
+    assert torch.allclose(out.x, torch.cat([data.x, data.x], dim=0))
+    assert torch.equal(
+        out.edge_index,
+        torch.cat([data.edge_index, data.edge_index], dim=1),
+    )
+    assert torch.allclose(
+        out.edge_attr,
+        torch.cat([data.edge_attr, data.edge_attr], dim=0),
+    )
+    assert torch.allclose(out.time, torch.cat([data.time, data.time], dim=0))
+
+    out = out.sort_by_time()
+    assert torch.equal(out.time, data.time.repeat_interleave(2))

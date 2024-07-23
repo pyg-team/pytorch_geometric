@@ -1,11 +1,13 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import LaplacianLambdaMax
 
 
+@withPackage('scipy')
 def test_laplacian_lambda_max():
-    out = LaplacianLambdaMax().__repr__()
+    out = str(LaplacianLambdaMax())
     assert out == 'LaplacianLambdaMax(normalization=None)'
 
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], dtype=torch.long)

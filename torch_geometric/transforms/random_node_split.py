@@ -18,7 +18,7 @@ class RandomNodeSplit(BaseTransform):
     (functional name: :obj:`random_node_split`).
 
     Args:
-        split (string): The type of dataset split (:obj:`"train_rest"`,
+        split (str, optional): The type of dataset split (:obj:`"train_rest"`,
             :obj:`"test_rest"`, :obj:`"random"`).
             If set to :obj:`"train_rest"`, all nodes except those in the
             validation and test sets will be used for training (as in the
@@ -60,7 +60,7 @@ class RandomNodeSplit(BaseTransform):
         num_val: Union[int, float] = 500,
         num_test: Union[int, float] = 1000,
         key: Optional[str] = "y",
-    ):
+    ) -> None:
         assert split in ['train_rest', 'test_rest', 'random']
         self.split = split
         self.num_splits = num_splits
@@ -69,7 +69,7 @@ class RandomNodeSplit(BaseTransform):
         self.num_test = num_test
         self.key = key
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
@@ -88,6 +88,7 @@ class RandomNodeSplit(BaseTransform):
 
     def _split(self, store: NodeStorage) -> Tuple[Tensor, Tensor, Tensor]:
         num_nodes = store.num_nodes
+        assert num_nodes is not None
 
         train_mask = torch.zeros(num_nodes, dtype=torch.bool)
         val_mask = torch.zeros(num_nodes, dtype=torch.bool)
@@ -109,6 +110,7 @@ class RandomNodeSplit(BaseTransform):
             test_mask[perm[num_val:num_val + num_test]] = True
             train_mask[perm[num_val + num_test:]] = True
         else:
+            assert self.key is not None
             y = getattr(store, self.key)
             num_classes = int(y.max().item()) + 1
             for c in range(num_classes):

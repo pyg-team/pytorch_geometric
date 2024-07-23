@@ -6,6 +6,10 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import SplineConv
+from torch_geometric.typing import WITH_TORCH_SPLINE_CONV
+
+if not WITH_TORCH_SPLINE_CONV:
+    quit("This example requires 'torch-spline-conv'")
 
 dataset = 'Cora'
 transform = T.Compose([

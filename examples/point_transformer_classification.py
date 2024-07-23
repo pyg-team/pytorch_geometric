@@ -3,15 +3,23 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear as Lin
-from torch_cluster import fps, knn_graph
-from torch_scatter import scatter_max
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, global_mean_pool
-from torch_geometric.nn.conv import PointTransformerConv
-from torch_geometric.nn.pool import knn
+from torch_geometric.nn import (
+    MLP,
+    PointTransformerConv,
+    fps,
+    global_mean_pool,
+    knn,
+    knn_graph,
+)
+from torch_geometric.typing import WITH_TORCH_CLUSTER
+from torch_geometric.utils import scatter
+
+if not WITH_TORCH_CLUSTER:
+    quit("This example requires 'torch-cluster'")
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
@@ -44,10 +52,9 @@ class TransformerBlock(torch.nn.Module):
 
 
 class TransitionDown(torch.nn.Module):
-    '''
-        Samples the input point cloud by a ratio percentage to reduce
-        cardinality and uses an mlp to augment features dimensionnality
-    '''
+    """Samples the input point cloud by a ratio percentage to reduce
+    cardinality and uses an mlp to augment features dimensionnality.
+    """
     def __init__(self, in_channels, out_channels, ratio=0.25, k=16):
         super().__init__()
         self.k = k
@@ -69,8 +76,8 @@ class TransitionDown(torch.nn.Module):
         x = self.mlp(x)
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
-                               dim_size=id_clusters.size(0), dim=0)
+        x_out = scatter(x[id_k_neighbor[1]], id_k_neighbor[0], dim=0,
+                        dim_size=id_clusters.size(0), reduce='max')
 
         # keep only the clusters and their max-pooled features
         sub_pos, out = pos[id_clusters], x_out

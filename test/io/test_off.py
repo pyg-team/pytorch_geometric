@@ -10,12 +10,14 @@ from torch_geometric.io import read_off, write_off
 
 
 def test_read_off():
-    data = read_off(osp.join('test', 'io', 'example1.off'))
+    root_dir = osp.join(osp.dirname(osp.realpath(__file__)))
+
+    data = read_off(osp.join(root_dir, 'example1.off'))
     assert len(data) == 2
     assert data.pos.tolist() == [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]]
     assert data.face.tolist() == [[0, 1], [1, 2], [2, 3]]
 
-    data = read_off(osp.join('test', 'io', 'example2.off'))
+    data = read_off(osp.join(root_dir, 'example2.off'))
     assert len(data) == 2
     assert data.pos.tolist() == [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]]
     assert data.face.tolist() == [[0, 0], [1, 2], [2, 3]]

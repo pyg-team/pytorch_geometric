@@ -8,7 +8,7 @@ def test_dense_sage_conv():
     channels = 16
     sparse_conv = SAGEConv(channels, channels, normalize=True)
     dense_conv = DenseSAGEConv(channels, channels, normalize=True)
-    assert dense_conv.__repr__() == 'DenseSAGEConv(16, 16)'
+    assert str(dense_conv) == 'DenseSAGEConv(16, 16)'
 
     # Ensure same weights and bias.
     dense_conv.lin_rel = sparse_conv.lin_l
@@ -22,16 +22,16 @@ def test_dense_sage_conv():
     assert sparse_out.size() == (5, channels)
 
     x = torch.cat([x, x.new_zeros(1, channels)], dim=0).view(2, 3, channels)
-    adj = torch.Tensor([
+    adj = torch.tensor([
         [
-            [0, 1, 1],
-            [1, 0, 1],
-            [1, 1, 0],
+            [0.0, 1.0, 1.0],
+            [1.0, 0.0, 1.0],
+            [1.0, 1.0, 0.0],
         ],
         [
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 0, 0],
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
         ],
     ])
     mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
@@ -53,10 +53,10 @@ def test_dense_sage_conv_with_broadcasting():
     conv = DenseSAGEConv(channels, channels)
 
     x = torch.randn(batch_size, num_nodes, channels)
-    adj = torch.Tensor([
-        [0, 1, 1],
-        [1, 0, 1],
-        [1, 1, 0],
+    adj = torch.tensor([
+        [0.0, 1.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [1.0, 1.0, 0.0],
     ])
 
     assert conv(x, adj).size() == (batch_size, num_nodes, channels)

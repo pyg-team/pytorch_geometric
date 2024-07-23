@@ -1,9 +1,9 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import (
     Data,
@@ -11,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class S3DIS(InMemoryDataset):
@@ -21,7 +22,7 @@ class S3DIS(InMemoryDataset):
     buildings with 12 semantic elements (and one clutter class).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         test_area (int, optional): Which area to use for testing (1-6).
             (default: :obj:`6`)
         train (bool, optional): If :obj:`True`, loads the training dataset,
@@ -38,10 +39,16 @@ class S3DIS(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = ('https://shapenet.cs.stanford.edu/media/'
            'indoor3d_sem_seg_hdf5_data.zip')
+
+    # In case `shapenet.cs.stanford.edu` is offline, try to download the data
+    # from here:
+    # https://cvg-data.inf.ethz.ch/s3dis/
 
     def __init__(
         self,
@@ -51,12 +58,14 @@ class S3DIS(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         assert test_area >= 1 and test_area <= 6
         self.test_area = test_area
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -66,28 +75,29 @@ class S3DIS(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'{split}_{self.test_area}.pt' for split in ['train', 'test']]
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         name = self.url.split('/')[-1].split('.')[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import h5py
 
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             filenames = [x.split('/')[-1] for x in f.read().split('\n')[:-1]]
 
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             rooms = f.read().split('\n')[:-1]
 
-        xs, ys = [], []
+        xs: List[Tensor] = []
+        ys: List[Tensor] = []
         for filename in filenames:
-            f = h5py.File(osp.join(self.raw_dir, filename))
-            xs += torch.from_numpy(f['data'][:]).unbind(0)
-            ys += torch.from_numpy(f['label'][:]).to(torch.long).unbind(0)
+            h5 = h5py.File(osp.join(self.raw_dir, filename))
+            xs += torch.from_numpy(h5['data'][:]).unbind(0)
+            ys += torch.from_numpy(h5['label'][:]).to(torch.long).unbind(0)
 
         test_area = f'Area_{self.test_area}'
         train_data_list, test_data_list = [], []
@@ -104,5 +114,5 @@ class S3DIS(InMemoryDataset):
             else:
                 test_data_list.append(data)
 
-        torch.save(self.collate(train_data_list), self.processed_paths[0])
-        torch.save(self.collate(test_data_list), self.processed_paths[1])
+        self.save(train_data_list, self.processed_paths[0])
+        self.save(test_data_list, self.processed_paths[1])

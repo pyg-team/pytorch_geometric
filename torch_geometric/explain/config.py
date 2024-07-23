@@ -95,13 +95,17 @@ class ExplainerConfig(CastMixin):
         if edge_mask_type is not None:
             edge_mask_type = MaskType(edge_mask_type)
 
+        if edge_mask_type is not None and edge_mask_type != MaskType.object:
+            raise ValueError(f"'edge_mask_type' needs be None or of type "
+                             f"'object' (got '{edge_mask_type.value}')")
+
+        if node_mask_type is None and edge_mask_type is None:
+            raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
+                             "must be provided")
+
         self.explanation_type = ExplanationType(explanation_type)
         self.node_mask_type = node_mask_type
         self.edge_mask_type = edge_mask_type
-
-        if self.node_mask_type is None and self.edge_mask_type is None:
-            raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
-                             "must be provided.")
 
 
 @dataclass

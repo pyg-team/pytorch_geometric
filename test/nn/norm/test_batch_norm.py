@@ -1,16 +1,20 @@
 import pytest
 import torch
 
-from torch_geometric.nn import BatchNorm
-from torch_geometric.testing import is_full_test
+from torch_geometric.nn import BatchNorm, HeteroBatchNorm
+from torch_geometric.testing import is_full_test, withDevice
 
 
+@withDevice
 @pytest.mark.parametrize('conf', [True, False])
-def test_batch_norm(conf):
-    x = torch.randn(100, 16)
+def test_batch_norm(device, conf):
+    x = torch.randn(100, 16, device=device)
 
-    norm = BatchNorm(16, affine=conf, track_running_stats=conf)
-    assert norm.__repr__() == 'BatchNorm(16)'
+    norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
+    norm.reset_running_stats()
+    norm.reset_parameters()
+    assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
+                         f'affine={conf}, track_running_stats={conf})')
 
     if is_full_test():
         torch.jit.script(norm)
@@ -33,3 +37,37 @@ def test_batch_norm_single_element():
     norm = BatchNorm(16, track_running_stats=True, allow_single_element=True)
     out = norm(x)
     assert torch.allclose(out, x)
+
+
+@withDevice
+@pytest.mark.parametrize('conf', [True, False])
+def test_hetero_batch_norm(device, conf):
+    x = torch.randn((100, 16), device=device)
+
+    # Test single type:
+    norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
+    expected = norm(x)
+
+    type_vec = torch.zeros(100, dtype=torch.long, device=device)
+    norm = HeteroBatchNorm(16, num_types=1, affine=conf,
+                           track_running_stats=conf).to(device)
+    norm.reset_running_stats()
+    norm.reset_parameters()
+    assert str(norm) == 'HeteroBatchNorm(16, num_types=1)'
+
+    out = norm(x, type_vec)
+    assert out.size() == (100, 16)
+    assert torch.allclose(out, expected, atol=1e-3)
+
+    # Test multiple types:
+    type_vec = torch.randint(5, (100, ), device=device)
+    norm = HeteroBatchNorm(16, num_types=5, affine=conf,
+                           track_running_stats=conf).to(device)
+    out = norm(x, type_vec)
+    assert out.size() == (100, 16)
+
+    for i in range(5):  # Check that mean=0 and std=1 across all types:
+        mean = out[type_vec == i].mean()
+        std = out[type_vec == i].std(unbiased=False)
+        assert torch.allclose(mean, torch.zeros_like(mean), atol=1e-7)
+        assert torch.allclose(std, torch.ones_like(std), atol=1e-7)

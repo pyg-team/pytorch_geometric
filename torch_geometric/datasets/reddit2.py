@@ -1,13 +1,11 @@
 import json
-import os
 import os.path as osp
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import Data, InMemoryDataset, download_google_url
 
 
 class Reddit2(InMemoryDataset):
@@ -24,7 +22,7 @@ class Reddit2(InMemoryDataset):
         `GraphSAINT <https://arxiv.org/abs/1907.04931>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -33,23 +31,24 @@ class Reddit2(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 232,965
-              - 23,213,838
-              - 602
-              - 41
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 232,965
+          - 23,213,838
+          - 602
+          - 41
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-
     adj_full_id = '1sncK996BM5lpuDf75lDFqCiDZyErc1c2'
     feats_id = '1ZsHaJ0ussP1W722krmEIp_8pwKAoi5b3'
     class_map_id = '1JF3Pjv9OboMNYs2aXRQGbJbc4t_nDd5u'
@@ -60,9 +59,11 @@ class Reddit2(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -72,20 +73,15 @@ class Reddit2(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
-        path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
+    def download(self) -> None:
+        download_google_url(self.adj_full_id, self.raw_dir, 'adj_full.npz')
+        download_google_url(self.feats_id, self.raw_dir, 'feats.npy')
+        download_google_url(self.class_map_id, self.raw_dir, 'class_map.json')
+        download_google_url(self.role_id, self.raw_dir, 'role.json')
 
-        path = download_url(self.url.format(self.feats_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
+    def process(self) -> None:
+        import scipy.sparse as sp
 
-        path = download_url(self.url.format(self.class_map_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
-
-        path = download_url(self.url.format(self.role_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'role.json'))
-
-    def process(self):
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()
@@ -120,4 +116,4 @@ class Reddit2(InMemoryDataset):
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

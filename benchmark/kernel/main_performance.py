@@ -32,11 +32,18 @@ parser.add_argument('--goal_accuracy', type=int, default=1,
 parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
 parser.add_argument('--bf16', action='store_true')
+parser.add_argument('--compile', action='store_true')
 args = parser.parse_args()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 if torch.cuda.is_available():
-    amp = torch.cuda.amp.autocast(enabled=False)
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
+if torch.cuda.is_available():
+    amp = torch.amp.autocast('cuda', enabled=False)
 else:
     amp = torch.cpu.amp.autocast(enabled=args.bf16)
 
@@ -77,7 +84,8 @@ def run_train():
 
             model = Model(dataset, num_layers, hidden).to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-
+            if args.compile:
+                model = torch.compile(model)
             loss_list = []
             acc_list = []
             for epoch in range(1, args.epochs + 1):
@@ -116,7 +124,8 @@ def run_inference():
             print(f'{dataset_name} - {model_name}- {num_layers} - {hidden}')
 
             model = Model(dataset, num_layers, hidden).to(device)
-
+            if args.compile:
+                model = torch.compile(model)
             with amp:
                 for epoch in range(1, args.epochs + 1):
                     if epoch == args.epochs:

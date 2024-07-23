@@ -2,10 +2,10 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
-from torch_scatter import scatter
 
 from torch_geometric.nn import GCNConv
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import scatter
 
 
 class RECT_L(torch.nn.Module):
@@ -25,7 +25,7 @@ class RECT_L(torch.nn.Module):
         in_channels (int): Size of each input sample.
         hidden_channels (int): Intermediate size of each sample.
         normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
+            symmetric normalization coefficients on-the-fly.
             (default: :obj:`True`)
         dropout (float, optional): The dropout probability.
             (default: :obj:`0.0`)
@@ -43,29 +43,44 @@ class RECT_L(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.conv.reset_parameters()
         self.lin.reset_parameters()
         torch.nn.init.xavier_uniform_(self.lin.weight.data)
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
-        """"""
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
+        """"""  # noqa: D419
         x = self.conv(x, edge_index, edge_weight)
         x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin(x)
 
-    @torch.no_grad()
-    def embed(self, x: Tensor, edge_index: Adj,
-              edge_weight: OptTensor = None) -> Tensor:
-        return self.conv(x, edge_index, edge_weight)
+    @torch.jit.export
+    def embed(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
+        with torch.no_grad():
+            return self.conv(x, edge_index, edge_weight)
 
-    @torch.no_grad()
-    def get_semantic_labels(self, x: Tensor, y: Tensor,
-                            mask: Tensor) -> Tensor:
-        """Replaces the original labels by their class-centers."""
-        y = y[mask]
-        mean = scatter(x[mask], y, dim=0, reduce='mean')
-        return mean[y]
+    @torch.jit.export
+    def get_semantic_labels(
+        self,
+        x: Tensor,
+        y: Tensor,
+        mask: Tensor,
+    ) -> Tensor:
+        r"""Replaces the original labels by their class-centers."""
+        with torch.no_grad():
+            y = y[mask]
+            mean = scatter(x[mask], y, dim=0, reduce='mean')
+            return mean[y]
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

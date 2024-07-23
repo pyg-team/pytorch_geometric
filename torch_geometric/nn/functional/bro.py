@@ -10,27 +10,23 @@ def bro(
 ) -> torch.Tensor:
     r"""The Batch Representation Orthogonality penalty from the `"Improving
     Molecular Graph Neural Network Explainability with Orthonormalization
-    and Induced Sparsity" <https://arxiv.org/abs/2105.04854>`_ paper
+    and Induced Sparsity" <https://arxiv.org/abs/2105.04854>`_ paper.
 
-    Computes a regularization for each graph representation in a minibatch
-    according to:
+    Computes a regularization for each graph representation in a mini-batch
+    according to
 
     .. math::
         \mathcal{L}_{\textrm{BRO}}^\mathrm{graph} =
           || \mathbf{HH}^T - \mathbf{I}||_p
 
-    And returns an average over all graphs in the batch.
+    and returns an average over all graphs in the batch.
 
     Args:
-        x (torch.Tensor): node-wise feature tensor
-        batch (torch.Tensor): one-dimensional tensor indicating node membership
-         within batch
-        p (str or int): order of the norm. See `torch.norm documentation
-         <https://pytorch.org/docs/stable/generated/torch.norm.html>`_
-
-    Returns:
-        average BRO penalty in the minibatch
-
+        x (torch.Tensor): The node feature matrix.
+        batch (torch.Tensor): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+            each node to a specific example.
+        p (int or str, optional): The norm order to use. (default: :obj:`2`)
     """
     _, counts = torch.unique(batch, return_counts=True)
     diags = torch.stack([

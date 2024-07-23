@@ -1,10 +1,12 @@
+import time
+
 import torch
 import torch.nn.functional as F
 from torch.nn import ModuleList
 from tqdm import tqdm
 
 from torch_geometric.datasets import Reddit
-from torch_geometric.loader import ClusterData, ClusterLoader, NeighborSampler
+from torch_geometric.loader import ClusterData, ClusterLoader, NeighborLoader
 from torch_geometric.nn import SAGEConv
 
 dataset = Reddit('../data/Reddit')
@@ -15,8 +17,8 @@ cluster_data = ClusterData(data, num_parts=1500, recursive=False,
 train_loader = ClusterLoader(cluster_data, batch_size=20, shuffle=True,
                              num_workers=12)
 
-subgraph_loader = NeighborSampler(data.edge_index, sizes=[-1], batch_size=1024,
-                                  shuffle=False, num_workers=12)
+subgraph_loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1024,
+                                 shuffle=False, num_workers=12)
 
 
 class Net(torch.nn.Module):
@@ -43,16 +45,16 @@ class Net(torch.nn.Module):
         # immediately computing the final representations of each batch.
         for i, conv in enumerate(self.convs):
             xs = []
-            for batch_size, n_id, adj in subgraph_loader:
-                edge_index, _, size = adj.to(device)
-                x = x_all[n_id].to(device)
-                x_target = x[:size[1]]
+            for batch in subgraph_loader:
+                edge_index = batch.edge_index.to(device)
+                x = x_all[batch.n_id].to(device)
+                x_target = x[:batch.batch_size]
                 x = conv((x, x_target), edge_index)
                 if i != len(self.convs) - 1:
                     x = F.relu(x)
                 xs.append(x.cpu())
 
-                pbar.update(batch_size)
+                pbar.update(batch.batch_size)
 
             x_all = torch.cat(xs, dim=0)
 
@@ -99,7 +101,9 @@ def test():  # Inference should be performed on the full graph.
     return accs
 
 
+times = []
 for epoch in range(1, 31):
+    start = time.time()
     loss = train()
     if epoch % 5 == 0:
         train_acc, val_acc, test_acc = test()
@@ -107,3 +111,5 @@ for epoch in range(1, 31):
               f'Val: {val_acc:.4f}, test: {test_acc:.4f}')
     else:
         print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

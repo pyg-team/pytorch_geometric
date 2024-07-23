@@ -1,12 +1,15 @@
 from torch_geometric.loader import DataLoader
+from torch_geometric.testing import onlyOnline, withPackage
 
 
+@onlyOnline
+@withPackage('scipy')
 def test_citeseer(get_dataset):
     dataset = get_dataset(name='CiteSeer')
     loader = DataLoader(dataset, batch_size=len(dataset))
 
     assert len(dataset) == 1
-    assert dataset.__repr__() == 'CiteSeer()'
+    assert str(dataset) == 'CiteSeer()'
 
     for batch in loader:
         assert batch.num_graphs == len(batch) == 1
@@ -28,6 +31,8 @@ def test_citeseer(get_dataset):
         assert batch.is_undirected()
 
 
+@onlyOnline
+@withPackage('scipy')
 def test_citeseer_with_full_split(get_dataset):
     dataset = get_dataset(name='CiteSeer', split='full')
     data = dataset[0]
@@ -37,10 +42,23 @@ def test_citeseer_with_full_split(get_dataset):
     assert (data.train_mask & data.val_mask & data.test_mask).sum() == 0
 
 
+@onlyOnline
+@withPackage('scipy')
 def test_citeseer_with_random_split(get_dataset):
-    dataset = get_dataset(name='CiteSeer', split='random',
-                          num_train_per_class=11, num_val=29, num_test=41)
+    dataset = get_dataset(
+        name='CiteSeer',
+        split='random',
+        num_train_per_class=11,
+        num_val=29,
+        num_test=41,
+    )
     data = dataset[0]
+    # from torch_geometric import EdgeIndex
+    # assert isinstance(data.edge_index, EdgeIndex)
+    # assert data.edge_index.sparse_size() == (data.num_nodes, data.num_nodes)
+    # assert data.edge_index.is_undirected
+    # assert data.edge_index.is_sorted_by_col
+
     assert data.train_mask.sum() == dataset.num_classes * 11
     assert data.val_mask.sum() == 29
     assert data.test_mask.sum() == 41

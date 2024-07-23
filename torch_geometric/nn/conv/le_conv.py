@@ -10,9 +10,10 @@ from torch_geometric.typing import Adj, OptTensor, PairTensor
 class LEConv(MessagePassing):
     r"""The local extremum graph neural network operator from the
     `"ASAP: Adaptive Structure Aware Pooling for Learning Hierarchical Graph
-    Representations" <https://arxiv.org/abs/1911.07979>`_ paper, which finds
-    the importance of nodes with respect to their neighbors using the
-    difference operator:
+    Representations" <https://arxiv.org/abs/1911.07979>`_ paper.
+
+    :class:`LEConv` finds the importance of nodes with respect to their
+    neighbors using the difference operator:
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{x}_i \cdot \mathbf{\Theta}_1 +
@@ -61,13 +62,14 @@ class LEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
         self.lin3.reset_parameters()
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x = (x, x)
 
@@ -75,8 +77,7 @@ class LEConv(MessagePassing):
         b = self.lin2(x[1])
 
         # propagate_type: (a: Tensor, b: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, a=a, b=b, edge_weight=edge_weight,
-                             size=None)
+        out = self.propagate(edge_index, a=a, b=b, edge_weight=edge_weight)
 
         return out + self.lin3(x[1])
 

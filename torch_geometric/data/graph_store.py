@@ -1,5 +1,4 @@
-r"""
-This class defines the abstraction for a backend-agnostic graph store. The
+r"""This class defines the abstraction for a backend-agnostic graph store. The
 goal of the graph store is to abstract away all graph edge index memory
 management so that varying implementations can allow for independent scale-out.
 
@@ -7,7 +6,7 @@ This particular graph store abstraction makes a few key assumptions:
 * The edge indices we care about storing are represented either in COO, CSC,
   or CSR format. They can be uniquely identified by an edge type (in PyG,
   this is a tuple of the source node, relation type, and destination node).
-* Edge indices are static once they are stored in tthe grah. That is, we do not
+* Edge indices are static once they are stored in the graph. That is, we do not
   support dynamic modification of edge indices once they have been inserted
   into the graph store.
 
@@ -18,16 +17,17 @@ index in a KV store. More complicated implementations may choose to partition
 the graph in interesting manners based on the provided metadata.
 """
 import copy
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-import torch
 from torch import Tensor
 
+from torch_geometric.index import index2ptr, ptr2index
 from torch_geometric.typing import EdgeTensorType, EdgeType, OptTensor
+from torch_geometric.utils import index_sort
 from torch_geometric.utils.mixin import CastMixin
 
 # The output of converting between two types in the GraphStore is a Tuple of
@@ -41,9 +41,6 @@ from torch_geometric.utils.mixin import CastMixin
 #     in converting between formats, if applicable.
 ConversionOutputType = Tuple[Dict[EdgeType, Tensor], Dict[EdgeType, Tensor],
                              Dict[EdgeType, OptTensor]]
-
-ptr2ind = torch.ops.torch_sparse.ptr2ind
-ind2ptr = torch.ops.torch_sparse.ind2ptr
 
 
 class EdgeLayout(Enum):
@@ -101,7 +98,7 @@ class EdgeAttr(CastMixin):
         self.size = size
 
 
-class GraphStore:
+class GraphStore(ABC):
     r"""An abstract base class to access edges from a remote graph store.
 
     Args:
@@ -119,7 +116,6 @@ class GraphStore:
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
@@ -128,12 +124,11 @@ class GraphStore:
         Returns whether insertion was successful.
 
         Args:
-            tensor (Tuple[torch.Tensor, torch.Tensor]): The :obj:`edge_index`
-                tuple in a format specified in :class:`EdgeAttr`.
-            **kwargs (EdgeAttr): Any relevant edge attributes that
-                correspond to the :obj:`edge_index` tuple. See the
-                :class:`EdgeAttr` documentation for required and optional
-                attributes.
+            edge_index (Tuple[torch.Tensor, torch.Tensor]): The
+                :obj:`edge_index` tuple in a format specified in
+                :class:`EdgeAttr`.
+            *args: Arguments passed to :class:`EdgeAttr`.
+            **kwargs: Keyword arguments passed to :class:`EdgeAttr`.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._put_edge_index(edge_index, edge_attr)
@@ -141,17 +136,14 @@ class GraphStore:
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
         r"""Synchronously obtains an :obj:`edge_index` tuple from the
         :class:`GraphStore`.
 
         Args:
-            **kwargs (EdgeAttr): Any relevant edge attributes that
-                correspond to the :obj:`edge_index` tuple. See the
-                :class:`EdgeAttr` documentation for required and optional
-                attributes.
+            *args: Arguments passed to :class:`EdgeAttr`.
+            **kwargs: Keyword arguments passed to :class:`EdgeAttr`.
 
         Raises:
             KeyError: If the :obj:`edge_index` corresponding to the input
@@ -166,7 +158,6 @@ class GraphStore:
     @abstractmethod
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def remove_edge_index(self, *args, **kwargs) -> bool:
         r"""Synchronously deletes an :obj:`edge_index` tuple from the
@@ -174,18 +165,15 @@ class GraphStore:
         Returns whether deletion was successful.
 
         Args:
-            **kwargs (EdgeAttr): Any relevant edge attributes that
-                correspond to the :obj:`edge_index` tuple. See the
-                :class:`EdgeAttr` documentation for required and optional
-                attributes.
+            *args: Arguments passed to :class:`EdgeAttr`.
+            **kwargs: Keyword arguments passed to :class:`EdgeAttr`.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._remove_edge_index(edge_attr)
 
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        r"""Obtains all edge attributes stored in the :class:`GraphStore`."""
-        pass
+        r"""Returns all registered edge attributes."""
 
     # Layout Conversion #######################################################
 
@@ -194,8 +182,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in COO
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in COO format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -211,8 +198,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in CSR
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in CSR format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -228,8 +214,7 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
-        r"""Obtains the edge indices in the :class:`GraphStore` in CSC
-        format.
+        r"""Returns the edge indices in the :class:`GraphStore` in CSC format.
 
         Args:
             edge_types (List[Any], optional): The edge types of edge indices
@@ -267,30 +252,39 @@ class GraphStore:
 
         if layout == EdgeLayout.COO:  # COO output requested:
             if attr.layout == EdgeLayout.CSR:  # CSR->COO
-                row = ptr2ind(row, col.numel())
+                row = ptr2index(row)
             elif attr.layout == EdgeLayout.CSC:  # CSC->COO
-                col = ptr2ind(col, row.numel())
+                col = ptr2index(col)
 
         elif layout == EdgeLayout.CSR:  # CSR output requested:
             if attr.layout == EdgeLayout.CSC:  # CSC->COO
-                col = ptr2ind(col, row.numel())
+                col = ptr2index(col)
 
             if attr.layout != EdgeLayout.CSR:  # COO->CSR
-                row, perm = row.sort()  # Cannot be sorted by destination.
-                col = col[perm]
                 num_rows = attr.size[0] if attr.size else int(row.max()) + 1
-                row = ind2ptr(row, num_rows)
+                row, perm = index_sort(row, max_value=num_rows)
+                col = col[perm]
+                row = index2ptr(row, num_rows)
 
         else:  # CSC output requested:
             if attr.layout == EdgeLayout.CSR:  # CSR->COO
-                row = ptr2ind(row, col.numel())
+                row = ptr2index(row)
 
             if attr.layout != EdgeLayout.CSC:  # COO->CSC
+                if hasattr(self, 'meta') and self.meta.get('is_hetero', False):
+                    # Hotfix for `LocalGraphStore`, where in heterogeneous
+                    # graphs, edge indices for different edge types have
+                    # continuous indices not starting at 0.
+                    num_cols = int(col.max()) + 1
+                elif attr.size is not None:
+                    num_cols = attr.size[1]
+                else:
+                    num_cols = int(col.max()) + 1
+
                 if not attr.is_sorted:  # Not sorted by destination.
-                    col, perm = col.sort()
+                    col, perm = index_sort(col, max_value=num_cols)
                     row = row[perm]
-                num_cols = attr.size[1] if attr.size else int(col.max()) + 1
-                col = ind2ptr(col, num_cols)
+                col = index2ptr(col, num_cols)
 
         if attr.layout != layout and store:
             attr = copy.copy(attr)
@@ -307,6 +301,16 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         store: bool = False,
     ) -> ConversionOutputType:
+
+        edge_attrs: List[EdgeAttr] = self.get_all_edge_attrs()
+
+        if hasattr(self, 'meta'):  # `LocalGraphStore` hack.
+            is_hetero = self.meta.get('is_hetero', False)
+        else:
+            is_hetero = all(attr.edge_type is not None for attr in edge_attrs)
+
+        if not is_hetero:
+            return self._edge_to_layout(edge_attrs[0], layout, store)
 
         # Obtain all edge attributes, grouped by type:
         edge_type_attrs: Dict[EdgeType, List[EdgeAttr]] = defaultdict(list)

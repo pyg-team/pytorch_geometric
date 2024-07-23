@@ -8,7 +8,7 @@ from torch.nn import LayerNorm, Linear, MultiheadAttention, Parameter
 class MultiheadAttentionBlock(torch.nn.Module):
     r"""The Multihead Attention Block (MAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -24,17 +24,22 @@ class MultiheadAttentionBlock(torch.nn.Module):
             (default: :obj:`1`)
         norm (str, optional): If set to :obj:`False`, will not apply layer
             normalization. (default: :obj:`True`)
+        dropout (float, optional): Dropout probability of attention weights.
+            (default: :obj:`0`)
     """
-    def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True):
+    def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True,
+                 dropout: float = 0.0):
         super().__init__()
 
         self.channels = channels
         self.heads = heads
+        self.dropout = dropout
 
         self.attn = MultiheadAttention(
             channels,
             heads,
             batch_first=True,
+            dropout=dropout,
         )
         self.lin = Linear(channels, channels)
         self.layer_norm1 = LayerNorm(channels) if layer_norm else None
@@ -50,7 +55,7 @@ class MultiheadAttentionBlock(torch.nn.Module):
 
     def forward(self, x: Tensor, y: Tensor, x_mask: Optional[Tensor] = None,
                 y_mask: Optional[Tensor] = None) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         if y_mask is not None:
             y_mask = ~y_mask
 
@@ -74,13 +79,14 @@ class MultiheadAttentionBlock(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '
                 f'heads={self.heads}, '
-                f'layer_norm={self.layer_norm1 is not None})')
+                f'layer_norm={self.layer_norm1 is not None}, '
+                f'dropout={self.dropout})')
 
 
 class SetAttentionBlock(torch.nn.Module):
     r"""The Set Attention Block (SAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -92,10 +98,14 @@ class SetAttentionBlock(torch.nn.Module):
             (default: :obj:`1`)
         norm (str, optional): If set to :obj:`False`, will not apply layer
             normalization. (default: :obj:`True`)
+        dropout (float, optional): Dropout probability of attention weights.
+            (default: :obj:`0`)
     """
-    def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True):
+    def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True,
+                 dropout: float = 0.0):
         super().__init__()
-        self.mab = MultiheadAttentionBlock(channels, heads, layer_norm)
+        self.mab = MultiheadAttentionBlock(channels, heads, layer_norm,
+                                           dropout)
 
     def reset_parameters(self):
         self.mab.reset_parameters()
@@ -106,13 +116,14 @@ class SetAttentionBlock(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.mab.channels}, '
                 f'heads={self.mab.heads}, '
-                f'layer_norm={self.mab.layer_norm1 is not None})')
+                f'layer_norm={self.mab.layer_norm1 is not None}, '
+                f'dropout={self.mab.dropout})')
 
 
 class InducedSetAttentionBlock(torch.nn.Module):
     r"""The Induced Set Attention Block (SAB) from the `"Set Transformer: A
     Framework for Attention-based Permutation-Invariant Neural Networks"
-    <https://arxiv.org/abs/1810.00825>`_ paper
+    <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -130,13 +141,17 @@ class InducedSetAttentionBlock(torch.nn.Module):
             (default: :obj:`1`)
         norm (str, optional): If set to :obj:`False`, will not apply layer
             normalization. (default: :obj:`True`)
+        dropout (float, optional): Dropout probability of attention weights.
+            (default: :obj:`0`)
     """
     def __init__(self, channels: int, num_induced_points: int, heads: int = 1,
-                 layer_norm: bool = True):
+                 layer_norm: bool = True, dropout: float = 0.0):
         super().__init__()
-        self.ind = Parameter(torch.Tensor(1, num_induced_points, channels))
-        self.mab1 = MultiheadAttentionBlock(channels, heads, layer_norm)
-        self.mab2 = MultiheadAttentionBlock(channels, heads, layer_norm)
+        self.ind = Parameter(torch.empty(1, num_induced_points, channels))
+        self.mab1 = MultiheadAttentionBlock(channels, heads, layer_norm,
+                                            dropout)
+        self.mab2 = MultiheadAttentionBlock(channels, heads, layer_norm,
+                                            dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -152,13 +167,14 @@ class InducedSetAttentionBlock(torch.nn.Module):
         return (f'{self.__class__.__name__}({self.ind.size(2)}, '
                 f'num_induced_points={self.ind.size(1)}, '
                 f'heads={self.mab1.heads}, '
-                f'layer_norm={self.mab1.layer_norm1 is not None})')
+                f'layer_norm={self.mab1.layer_norm1 is not None}, '
+                f'dropout={self.mab1.dropout})')
 
 
 class PoolingByMultiheadAttention(torch.nn.Module):
     r"""The Pooling by Multihead Attention (PMA) layer from the `"Set
     Transformer: A Framework for Attention-based Permutation-Invariant Neural
-    Networks" <https://arxiv.org/abs/1810.00825>`_ paper
+    Networks" <https://arxiv.org/abs/1810.00825>`_ paper.
 
     .. math::
 
@@ -174,13 +190,16 @@ class PoolingByMultiheadAttention(torch.nn.Module):
             (default: :obj:`1`)
         norm (str, optional): If set to :obj:`False`, will not apply layer
             normalization. (default: :obj:`True`)
+        dropout (float, optional): Dropout probability of attention weights.
+            (default: :obj:`0`)
     """
     def __init__(self, channels: int, num_seed_points: int = 1, heads: int = 1,
-                 layer_norm: bool = True):
+                 layer_norm: bool = True, dropout: float = 0.0):
         super().__init__()
         self.lin = Linear(channels, channels)
-        self.seed = Parameter(torch.Tensor(1, num_seed_points, channels))
-        self.mab = MultiheadAttentionBlock(channels, heads, layer_norm)
+        self.seed = Parameter(torch.empty(1, num_seed_points, channels))
+        self.mab = MultiheadAttentionBlock(channels, heads, layer_norm,
+                                           dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -196,4 +215,5 @@ class PoolingByMultiheadAttention(torch.nn.Module):
         return (f'{self.__class__.__name__}({self.seed.size(2)}, '
                 f'num_seed_points={self.seed.size(1)}, '
                 f'heads={self.mab.heads}, '
-                f'layer_norm={self.mab.layer_norm1 is not None})')
+                f'layer_norm={self.mab.layer_norm1 is not None}, '
+                f'dropout={self.mab.dropout})')

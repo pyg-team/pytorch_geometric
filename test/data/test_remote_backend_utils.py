@@ -3,13 +3,11 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.remote_backend_utils import num_nodes, size
-from torch_geometric.testing import MyFeatureStore, MyGraphStore
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    get_random_edge_index,
+)
 
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
@@ -24,7 +22,7 @@ def test_num_nodes_size(FeatureStore, GraphStore):
     assert num_nodes(feature_store, graph_store, 'x') == 100
 
     # Infer num nodes and size from edges:
-    xy = get_edge_index(100, 50, 20)
+    xy = get_random_edge_index(100, 50, 20)
     graph_store.put_edge_index(xy, edge_type=('x', 'to', 'y'), layout='coo',
                                size=(100, 50))
     assert num_nodes(feature_store, graph_store, 'y') == 50

@@ -1,22 +1,34 @@
+import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.datasets import GDELT, ICEWS18  # noqa
+from torch_geometric.datasets import GDELT, ICEWS18
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models.re_net import RENet
 
-seq_len = 10
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '--dataset',
+    type=str,
+    default='GDELT',
+    choices=['ICEWS18', 'GDELT'],
+)
+parser.add_argument('--seq_len', type=int, default=10)
+args = parser.parse_args()
 
-# Load the dataset and precompute history objects.
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ICEWS18')
-train_dataset = ICEWS18(path, pre_transform=RENet.pre_transform(seq_len))
-test_dataset = ICEWS18(path, split='test')
-
-# path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'GDELT')
-# train_dataset = GDELT(path, pre_transform=RENet.pre_transform(seq_len))
-# test_dataset = ICEWS18(path, split='test')
+# Load the dataset and precompute history objects:
+path = osp.dirname(osp.realpath(__file__))
+path = osp.join(path, '..', 'data', args.dataset)
+pre_transform = RENet.pre_transform(args.seq_len)
+if args.dataset == 'ICEWS18':
+    train_dataset = ICEWS18(path, pre_transform=pre_transform)
+    test_dataset = ICEWS18(path, split='test', pre_transform=pre_transform)
+elif args.dataset == 'GDELT':
+    train_dataset = GDELT(path, pre_transform=pre_transform)
+    test_dataset = GDELT(path, split='test', pre_transform=pre_transform)
 
 # Create dataloader for training and test dataset.
 train_loader = DataLoader(train_dataset, batch_size=1024, shuffle=True,
@@ -30,7 +42,7 @@ model = RENet(
     train_dataset.num_nodes,
     train_dataset.num_rels,
     hidden_channels=200,
-    seq_len=seq_len,
+    seq_len=args.seq_len,
     dropout=0.5,
 ).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001,
@@ -68,8 +80,12 @@ def test(loader):
     return result.tolist()
 
 
+times = []
 for epoch in range(1, 21):
+    start = time.time()
     train()
     mrr, hits1, hits3, hits10 = test(test_loader)
     print(f'Epoch: {epoch:02d}, MRR: {mrr:.4f}, Hits@1: {hits1:.4f}, '
           f'Hits@3: {hits3:.4f}, Hits@10: {hits10:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

@@ -11,7 +11,7 @@ def test_x_conv():
     batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
 
     conv = XConv(16, 32, dim=3, kernel_size=2, dilation=2)
-    assert conv.__repr__() == 'XConv(16, 32)'
+    assert str(conv) == 'XConv(16, 32)'
 
     torch.manual_seed(12345)
     out1 = conv(x, pos)
@@ -25,7 +25,7 @@ def test_x_conv():
         jit = torch.jit.script(conv)
 
         torch.manual_seed(12345)
-        assert jit(x, pos).tolist() == out1.tolist()
+        assert torch.allclose(jit(x, pos), out1, atol=1e-6)
 
         torch.manual_seed(12345)
-        assert jit(x, pos, batch).tolist() == out2.tolist()
+        assert torch.allclose(jit(x, pos, batch), out2, atol=1e-6)

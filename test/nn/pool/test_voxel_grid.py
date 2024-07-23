@@ -7,7 +7,13 @@ from torch_geometric.testing import withPackage
 
 @withPackage('torch_cluster')
 def test_voxel_grid():
-    pos = torch.Tensor([[0, 0], [11, 9], [2, 8], [2, 2], [8, 3]])
+    pos = torch.tensor([
+        [0.0, 0.0],
+        [11.0, 9.0],
+        [2.0, 8.0],
+        [2.0, 2.0],
+        [8.0, 3.0],
+    ])
     batch = torch.tensor([0, 0, 0, 1, 1])
 
     assert voxel_grid(pos, size=5, batch=batch).tolist() == [0, 5, 3, 6, 7]
@@ -22,7 +28,13 @@ def test_voxel_grid():
 
 @withPackage('torch_cluster')
 def test_single_voxel_grid():
-    pos = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]])
+    pos = torch.tensor([
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [3.0, 3.0],
+        [4.0, 4.0],
+    ])
     edge_index = torch.tensor([[0, 0, 3], [1, 2, 4]])
     batch = torch.tensor([0, 0, 0, 1, 1])
     x = torch.randn(5, 16)

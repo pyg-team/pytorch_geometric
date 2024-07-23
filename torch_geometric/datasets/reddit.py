@@ -3,7 +3,6 @@ import os.path as osp
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import (
@@ -21,7 +20,7 @@ class Reddit(InMemoryDataset):
     Reddit posts belonging to different communities.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -30,20 +29,23 @@ class Reddit(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 232,965
-              - 114,615,892
-              - 602
-              - 41
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 232,965
+          - 114,615,892
+          - 602
+          - 41
     """
 
     url = 'https://data.dgl.ai/dataset/reddit.zip'
@@ -53,9 +55,11 @@ class Reddit(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -65,12 +69,14 @@ class Reddit(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
+        import scipy.sparse as sp
+
         data = np.load(osp.join(self.raw_dir, 'reddit_data.npz'))
         x = torch.from_numpy(data['feature']).to(torch.float)
         y = torch.from_numpy(data['label']).to(torch.long)
@@ -89,4 +95,4 @@ class Reddit(InMemoryDataset):
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

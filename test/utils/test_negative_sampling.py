@@ -9,7 +9,7 @@ from torch_geometric.utils import (
     structured_negative_sampling_feasible,
     to_undirected,
 )
-from torch_geometric.utils.negative_sampling import (
+from torch_geometric.utils._negative_sampling import (
     edge_index_to_vector,
     vector_to_edge_index,
 )
@@ -66,6 +66,10 @@ def test_negative_sampling():
     edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
 
     neg_edge_index = negative_sampling(edge_index)
+    assert neg_edge_index.size(1) == edge_index.size(1)
+    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
+
+    neg_edge_index = negative_sampling(edge_index, method='dense')
     assert neg_edge_index.size(1) == edge_index.size(1)
     assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
 

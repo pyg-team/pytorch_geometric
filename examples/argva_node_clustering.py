@@ -15,7 +15,13 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import ARGVA, GCNConv
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 transform = T.Compose([
     T.ToDevice(device),
     T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True,
@@ -88,7 +94,8 @@ def test(data):
 
     # Cluster embedded values using k-means.
     kmeans_input = z.cpu().numpy()
-    kmeans = KMeans(n_clusters=7, random_state=0).fit(kmeans_input)
+    kmeans = KMeans(n_clusters=7, random_state=0,
+                    n_init='auto').fit(kmeans_input)
     pred = kmeans.predict(kmeans_input)
 
     labels = data.y.cpu().numpy()
@@ -105,9 +112,9 @@ def test(data):
 for epoch in range(1, 151):
     loss = train()
     auc, ap, completeness, hm, nmi = test(test_data)
-    print((f'Epoch: {epoch:03d}, Loss: {loss:.3f}, AUC: {auc:.3f}, '
-           f'AP: {ap:.3f}, Completeness: {completeness:.3f}, '
-           f'Homogeneity: {hm:.3f}, NMI: {nmi:.3f}'))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.3f}, AUC: {auc:.3f}, '
+          f'AP: {ap:.3f}, Completeness: {completeness:.3f}, '
+          f'Homogeneity: {hm:.3f}, NMI: {nmi:.3f}')
 
 
 @torch.no_grad()

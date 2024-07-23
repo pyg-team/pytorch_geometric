@@ -5,15 +5,15 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import GRU, Linear, Parameter
-from torch_scatter import scatter_mean
 
 from torch_geometric.data.data import Data
+from torch_geometric.utils import scatter
 
 
 class RENet(torch.nn.Module):
     r"""The Recurrent Event Network model from the `"Recurrent Event Network
     for Reasoning over Temporal Knowledge Graphs"
-    <https://arxiv.org/abs/1904.05530>`_ paper
+    <https://arxiv.org/abs/1904.05530>`_ paper.
 
     .. math::
         f_{\mathbf{\Theta}}(\mathbf{e}_s, \mathbf{e}_r,
@@ -62,8 +62,8 @@ class RENet(torch.nn.Module):
         self.seq_len = seq_len
         self.dropout = dropout
 
-        self.ent = Parameter(torch.Tensor(num_nodes, hidden_channels))
-        self.rel = Parameter(torch.Tensor(num_rels, hidden_channels))
+        self.ent = Parameter(torch.empty(num_nodes, hidden_channels))
+        self.rel = Parameter(torch.empty(num_rels, hidden_channels))
 
         self.sub_gru = GRU(3 * hidden_channels, hidden_channels, num_layers,
                            batch_first=True, bias=bias)
@@ -86,7 +86,7 @@ class RENet(torch.nn.Module):
 
     @staticmethod
     def pre_transform(seq_len: int) -> Callable:
-        r"""Precomputes history objects
+        r"""Precomputes history objects.
 
         .. math::
             \{ \mathcal{O}^{(t-k-1)}_r(s), \ldots, \mathcal{O}^{(t-1)}_r(s) \}
@@ -94,7 +94,7 @@ class RENet(torch.nn.Module):
         of a :class:`torch_geometric.datasets.icews.EventDataset` with
         :math:`k` denoting the sequence length :obj:`seq_len`.
         """
-        class PreTransform(object):
+        class PreTransform:
             def __init__(self, seq_len: int):
                 self.seq_len = seq_len
                 self.inc = 5000
@@ -173,19 +173,18 @@ class RENet(torch.nn.Module):
                 The same information must be given for objects (:obj:`h_obj`,
                 :obj:`h_obj_t`, :obj:`h_obj_batch`).
         """
-
         assert 'h_sub_batch' in data and 'h_obj_batch' in data
         batch_size, seq_len = data.sub.size(0), self.seq_len
 
         h_sub_t = data.h_sub_t + data.h_sub_batch * seq_len
         h_obj_t = data.h_obj_t + data.h_obj_batch * seq_len
 
-        h_sub = scatter_mean(self.ent[data.h_sub], h_sub_t, dim=0,
-                             dim_size=batch_size * seq_len).view(
-                                 batch_size, seq_len, -1)
-        h_obj = scatter_mean(self.ent[data.h_obj], h_obj_t, dim=0,
-                             dim_size=batch_size * seq_len).view(
-                                 batch_size, seq_len, -1)
+        h_sub = scatter(self.ent[data.h_sub], h_sub_t, dim=0,
+                        dim_size=batch_size * seq_len,
+                        reduce='mean').view(batch_size, seq_len, -1)
+        h_obj = scatter(self.ent[data.h_obj], h_obj_t, dim=0,
+                        dim_size=batch_size * seq_len,
+                        reduce='mean').view(batch_size, seq_len, -1)
 
         sub = self.ent[data.sub].unsqueeze(1).repeat(1, seq_len, 1)
         rel = self.rel[data.rel].unsqueeze(1).repeat(1, seq_len, 1)
@@ -210,8 +209,8 @@ class RENet(torch.nn.Module):
 
     def test(self, logits: Tensor, y: Tensor) -> Tensor:
         """Given ground-truth :obj:`y`, computes Mean Reciprocal Rank (MRR)
-        and Hits at 1/3/10."""
-
+        and Hits at 1/3/10.
+        """
         _, perm = logits.sort(dim=1, descending=True)
         mask = (y.view(-1, 1) == perm)
 

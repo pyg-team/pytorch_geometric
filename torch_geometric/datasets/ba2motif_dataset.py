@@ -48,7 +48,7 @@ class BA2MotifDataset(InMemoryDataset):
         dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -57,22 +57,25 @@ class BA2MotifDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 1000
-              - 25
-              - ~51.0
-              - 10
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 1000
+          - 25
+          - ~51.0
+          - 10
+          - 2
     """
     url = 'https://github.com/flyingdoog/PGExplainer/raw/master/dataset'
     filename = 'BA-2motif.pkl'
@@ -82,10 +85,13 @@ class BA2MotifDataset(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
+    @property
     def raw_file_names(self) -> str:
         return self.filename
 
@@ -93,10 +99,10 @@ class BA2MotifDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         download_url(f'{self.url}/{self.filename}', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         with open(self.raw_paths[0], 'rb') as f:
             adj, x, y = pickle.load(f)
 
@@ -117,4 +123,4 @@ class BA2MotifDataset(InMemoryDataset):
 
             data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

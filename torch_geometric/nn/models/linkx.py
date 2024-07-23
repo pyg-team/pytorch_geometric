@@ -3,12 +3,12 @@ import math
 import torch
 from torch import Tensor
 from torch.nn import BatchNorm1d, Parameter
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn import inits
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.models import MLP
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import spmm
 
 
 class SparseLinear(MessagePassing):
@@ -17,9 +17,9 @@ class SparseLinear(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -30,13 +30,18 @@ class SparseLinear(MessagePassing):
                               a=math.sqrt(5))
         inits.uniform(self.in_channels, self.bias)
 
-    def forward(self, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
         # propagate_type: (weight: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, weight=self.weight,
-                             edge_weight=edge_weight, size=None)
+                             edge_weight=edge_weight)
+
         if self.bias is not None:
             out = out + self.bias
+
         return out
 
     def message(self, weight_j: Tensor, edge_weight: OptTensor) -> Tensor:
@@ -45,15 +50,14 @@ class SparseLinear(MessagePassing):
         else:
             return edge_weight.view(-1, 1) * weight_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              weight: Tensor) -> Tensor:
-        return matmul(adj_t, weight, reduce=self.aggr)
+    def message_and_aggregate(self, adj_t: Adj, weight: Tensor) -> Tensor:
+        return spmm(adj_t, weight, reduce=self.aggr)
 
 
 class LINKX(torch.nn.Module):
     r"""The LINKX model from the `"Large Scale Learning on Non-Homophilous
     Graphs: New Benchmarks and Strong Simple Methods"
-    <https://arxiv.org/abs/2110.14446>`_ paper
+    <https://arxiv.org/abs/2110.14446>`_ paper.
 
     .. math::
         \mathbf{H}_{\mathbf{A}} &= \textrm{MLP}_{\mathbf{A}}(\mathbf{A})
@@ -76,16 +80,24 @@ class LINKX(torch.nn.Module):
         hidden_channels (int): Size of each hidden sample.
         out_channels (int): Size of each output sample.
         num_layers (int): Number of layers of :math:`\textrm{MLP}_{f}`.
-        num_edge_layers (int): Number of layers of
+        num_edge_layers (int, optional): Number of layers of
             :math:`\textrm{MLP}_{\mathbf{A}}`. (default: :obj:`1`)
-        num_node_layers (int): Number of layers of
+        num_node_layers (int, optional): Number of layers of
             :math:`\textrm{MLP}_{\mathbf{X}}`. (default: :obj:`1`)
         dropout (float, optional): Dropout probability of each hidden
-            embedding. (default: :obj:`0.`)
+            embedding. (default: :obj:`0.0`)
     """
-    def __init__(self, num_nodes: int, in_channels: int, hidden_channels: int,
-                 out_channels: int, num_layers: int, num_edge_layers: int = 1,
-                 num_node_layers: int = 1, dropout: float = 0.):
+    def __init__(
+        self,
+        num_nodes: int,
+        in_channels: int,
+        hidden_channels: int,
+        out_channels: int,
+        num_layers: int,
+        num_edge_layers: int = 1,
+        num_node_layers: int = 1,
+        dropout: float = 0.0,
+    ):
         super().__init__()
 
         self.num_nodes = num_nodes
@@ -94,10 +106,14 @@ class LINKX(torch.nn.Module):
         self.num_edge_layers = num_edge_layers
 
         self.edge_lin = SparseLinear(num_nodes, hidden_channels)
+
         if self.num_edge_layers > 1:
             self.edge_norm = BatchNorm1d(hidden_channels)
             channels = [hidden_channels] * num_edge_layers
             self.edge_mlp = MLP(channels, dropout=0., act_first=True)
+        else:
+            self.edge_norm = None
+            self.edge_mlp = None
 
         channels = [in_channels] + [hidden_channels] * num_node_layers
         self.node_mlp = MLP(channels, dropout=0., act_first=True)
@@ -111,20 +127,27 @@ class LINKX(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.edge_lin.reset_parameters()
-        if self.num_edge_layers > 1:
+        if self.edge_norm is not None:
             self.edge_norm.reset_parameters()
+        if self.edge_mlp is not None:
             self.edge_mlp.reset_parameters()
         self.node_mlp.reset_parameters()
         self.cat_lin1.reset_parameters()
         self.cat_lin2.reset_parameters()
         self.final_mlp.reset_parameters()
 
-    def forward(self, x: OptTensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
-        """"""
+    def forward(
+        self,
+        x: OptTensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
+        """"""  # noqa: D419
         out = self.edge_lin(edge_index, edge_weight)
-        if self.num_edge_layers > 1:
+
+        if self.edge_norm is not None and self.edge_mlp is not None:
             out = out.relu_()
             out = self.edge_norm(out)
             out = self.edge_mlp(out)

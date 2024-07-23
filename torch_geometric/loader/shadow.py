@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Batch, Data
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import WITH_TORCH_SPARSE, SparseTensor
 
 
 class ShaDowKHopSampler(torch.utils.data.DataLoader):
@@ -40,9 +40,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
                  node_idx: Optional[Tensor] = None, replace: bool = False,
                  **kwargs):
 
-        try:
-            import torch_sparse  # noqa
-        except ImportError:
+        if not WITH_TORCH_SPARSE:
             raise ImportError(
                 f"'{self.__class__.__name__}' requires 'torch-sparse'")
 

@@ -13,14 +13,13 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data',
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 
 
-class Net(torch.nn.Module):
+class GAT(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = GATConv(dataset.num_features, 8, heads=8,
-                             dropout=0.6).jittable()
+        self.conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6)
 
         self.conv2 = GATConv(64, dataset.num_classes, heads=1, concat=True,
-                             dropout=0.6).jittable()
+                             dropout=0.6)
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
@@ -31,7 +30,7 @@ class Net(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model, data = Net().to(device), dataset[0].to(device)
+model, data = GAT().to(device), dataset[0].to(device)
 model = torch.jit.script(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
@@ -49,9 +48,9 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    logits, accs = model(data.x, data.edge_index), []
+    out, accs = model(data.x, data.edge_index), []
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
-        pred = logits[mask].max(1)[1]
+        pred = out[mask].argmax(1)
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
         accs.append(acc)
     return accs

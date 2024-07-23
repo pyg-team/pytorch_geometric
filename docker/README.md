@@ -1,14 +1,25 @@
-# Docker
+# Docker on NVIDIA GPU
 
-You can run PyG with CUDA 10.1 inside a docker image.
+The recommended way to use Docker for NVIDIA hardware is described [here](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg).
+
+You can also run PyG with CUDA 12.1 inside a docker image. This method is deprecated and we highly recommend the above mentioned official NVIDIA docker containers instead.
+
 The creation of [our dockerfile](https://github.com/pyg-team/pytorch_geometric/blob/master/docker/Dockerfile) refers to the dockerfiles provided by [NVIDIA](https://gitlab.com/nvidia/cuda/tree/ubuntu18.04) and [PyTorch](https://github.com/anibali/docker-pytorch).
 
 1. Download the dockerfile to your host server.
-2. `$ docker build -t "custom image name"`
-3. `$ docker run --rm -it --init --runtime=nvidia --ipc=host --network=host --volume=$PWD:/app -e NVIDIA_VISIBLE_DEVICES=0 "custom image name" /bin/bash`
+1. `$ docker build -t "custom image name"`
+1. `$ docker run --rm -it --init --runtime=nvidia --ipc=host --network=host --volume=$PWD:/app -e NVIDIA_VISIBLE_DEVICES=0 "custom image name" /bin/bash`
 
-If you encounter any problems, please feel free to contact <liangshengwen@ict.ac.cn>.
+If you encounter any problems, please feel free to create a GitHub issue.
 
+# Docker on Intel GPU
+
+You can also run PyG with Intel GPU inside a docker image.
+The creation of [our dockerfile](https://github.com/pyg-team/pytorch_geometric/blob/master/docker/Dockerfile.xpu) refers to the dockerfiles provided by [Intel](https://github.com/intel/intel-extension-for-pytorch/blob/xpu-main/docker/Dockerfile.prebuilt) and the installation guidance provided by [Intel® Extension for PyTorch](https://intel.github.io/intel-extension-for-pytorch/index.html#installation?platform=gpu&version=v2.1.30%2bxpu&os=linux%2fwsl2&package=pip).
+
+1. Download the dockerfile to your host server.
+1. `$ docker build -f docker/Dockerfile.xpu -t "custom image name"`
+1. `$ docker run --rm -it --ipc=host -v /dev/dri:/dev/dri --volume=$PWD:/app "custom image name" /bin/bash`
 
 # Singularity
 
@@ -49,4 +60,5 @@ to run on the CPU, or
 ```
 singularity exec --nv geometric.sif python3 gat.py
 ```
+
 to run on the GPU.

@@ -1,21 +1,14 @@
 from typing import Optional, Tuple
 
 import torch
-
-try:
-    import torch_cluster  # noqa
-    random_walk = torch.ops.torch_cluster.random_walk
-except ImportError:
-    random_walk = None
 from torch import Tensor
 
+import torch_geometric.typing
+from torch_geometric import is_compiling
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
-
-from .degree import degree
-from .num_nodes import maybe_num_nodes
-from .sort_edge_index import sort_edge_index
-from .subgraph import subgraph
+from torch_geometric.utils import cumsum, degree, sort_edge_index, subgraph
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def filter_adj(row: Tensor, col: Tensor, edge_attr: OptTensor,
@@ -56,7 +49,6 @@ def dropout_adj(
             no-op. (default: :obj:`True`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_attr = torch.tensor([1, 2, 3, 4, 5, 6])
@@ -71,7 +63,6 @@ def dropout_adj(
                 [1, 2, 3, 0, 1, 2]]),
         tensor([1, 3, 5, 1, 3, 5]))
     """
-
     if p < 0. or p > 1.:
         raise ValueError(f'Dropout probability has to be between 0 and 1 '
                          f'(got {p}')
@@ -100,9 +91,13 @@ def dropout_adj(
     return edge_index, edge_attr
 
 
-def dropout_node(edge_index: Tensor, p: float = 0.5,
-                 num_nodes: Optional[int] = None,
-                 training: bool = True) -> Tuple[Tensor, Tensor, Tensor]:
+def dropout_node(
+    edge_index: Tensor,
+    p: float = 0.5,
+    num_nodes: Optional[int] = None,
+    training: bool = True,
+    relabel_nodes: bool = False,
+) -> Tuple[Tensor, Tensor, Tensor]:
     r"""Randomly drops nodes from the adjacency matrix
     :obj:`edge_index` with probability :obj:`p` using samples from
     a Bernoulli distribution.
@@ -118,11 +113,13 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         training (bool, optional): If set to :obj:`False`, this operation is a
             no-op. (default: :obj:`True`)
+        relabel_nodes (bool, optional): If set to `True`, the resulting
+            `edge_index` will be relabeled to hold consecutive indices
+            starting from zero.
 
     :rtype: (:class:`LongTensor`, :class:`BoolTensor`, :class:`BoolTensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask, node_mask = dropout_node(edge_index)
@@ -147,9 +144,13 @@ def dropout_node(edge_index: Tensor, p: float = 0.5,
 
     prob = torch.rand(num_nodes, device=edge_index.device)
     node_mask = prob > p
-    edge_index, _, edge_mask = subgraph(node_mask, edge_index,
-                                        num_nodes=num_nodes,
-                                        return_edge_mask=True)
+    edge_index, _, edge_mask = subgraph(
+        node_mask,
+        edge_index,
+        relabel_nodes=relabel_nodes,
+        num_nodes=num_nodes,
+        return_edge_mask=True,
+    )
     return edge_index, edge_mask, node_mask
 
 
@@ -176,7 +177,6 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     :rtype: (:class:`LongTensor`, :class:`BoolTensor` or :class:`LongTensor`)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask = dropout_edge(edge_index)
@@ -248,7 +248,6 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     :rtype: (:class:`LongTensor`, :class:`BoolTensor`)
 
     Example:
-
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> edge_index, edge_mask = dropout_path(edge_index)
@@ -258,7 +257,6 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
         >>> edge_mask # masks indicating which edges are retained
         tensor([False, False,  True, False,  True, False])
     """
-
     if p < 0. or p > 1.:
         raise ValueError(f'Sample probability has to be between 0 and 1 '
                          f'(got {p}')
@@ -268,7 +266,7 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     if not training or p == 0.0:
         return edge_index, edge_mask
 
-    if random_walk is None:
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER or is_compiling():
         raise ImportError('`dropout_path` requires `torch-cluster`.')
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -283,14 +281,12 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     sample_mask = torch.rand(row.size(0), device=edge_index.device) <= p
     start = row[sample_mask].repeat(walks_per_node)
 
-    deg = degree(row, num_nodes=num_nodes)
-    rowptr = row.new_zeros(num_nodes + 1)
-    torch.cumsum(deg, 0, out=rowptr[1:])
-    n_id, e_id = random_walk(rowptr, col, start, walk_length, 1.0, 1.0)
+    rowptr = cumsum(degree(row, num_nodes=num_nodes, dtype=torch.long))
+    n_id, e_id = torch.ops.torch_cluster.random_walk(rowptr, col, start,
+                                                     walk_length, 1.0, 1.0)
     e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
 
-    if edge_orders is not None:
-        # permute edge ids
+    if edge_orders is not None:  # Permute edge indices:
         e_id = edge_orders[e_id]
     edge_mask[e_id] = False
     edge_index = ori_edge_index[:, edge_mask]

@@ -19,10 +19,9 @@ class GATConv(torch.nn.Module):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(torch.Tensor(in_channels,
-                                             heads * out_channels))
-        self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
-        self.bias = Parameter(torch.Tensor(heads * out_channels))
+        self.weight = Parameter(torch.empty(in_channels, heads * out_channels))
+        self.att = Parameter(torch.empty(1, heads, 2 * out_channels))
+        self.bias = Parameter(torch.empty(heads * out_channels))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -76,11 +75,10 @@ class GATSPMVConv(torch.nn.Module):
         self.heads = heads
         self.negative_slope = negative_slope
         self.dropout = dropout
-        self.weight = Parameter(torch.Tensor(in_channels,
-                                             heads * out_channels))
-        self.att_l = Parameter(torch.Tensor(heads, out_channels, 1))
-        self.att_r = Parameter(torch.Tensor(heads, out_channels, 1))
-        self.bias = Parameter(torch.Tensor(heads * out_channels))
+        self.weight = Parameter(torch.empty(in_channels, heads * out_channels))
+        self.att_l = Parameter(torch.empty(heads, out_channels, 1))
+        self.att_r = Parameter(torch.empty(heads, out_channels, 1))
+        self.bias = Parameter(torch.empty(heads * out_channels))
         self.softmax = EdgeSoftmax()
         self.reset_parameters()
 

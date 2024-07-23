@@ -34,6 +34,12 @@ class AirfRANS(InMemoryDataset):
     Finaly, a boolean is attached to each point to inform if this point lies on
     the airfoil or not.
 
+    A library for manipulating simulations of the dataset is available `here
+    <https://airfrans.readthedocs.io/en/latest/index.html>`_.
+
+    The dataset is released under the `ODbL v1.0 License
+    <https://opendatacommons.org/licenses/odbl/1-0/>`_.
+
     .. note::
 
         Data objects contain no edge indices to be agnostic to the simulation
@@ -41,8 +47,8 @@ class AirfRANS(InMemoryDataset):
         :obj:`torch_geometric.transforms.RadiusGraph` transform.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        task (string): The task to study (:obj:`"full"`, :obj:`"scarce"`,
+        root (str): Root directory where the dataset should be saved.
+        task (str): The task to study (:obj:`"full"`, :obj:`"scarce"`,
             :obj:`"reynolds"`, :obj:`"aoa"`) that defines the utilized training
             and test splits.
         train (bool, optional): If :obj:`True`, loads the training dataset,
@@ -59,22 +65,25 @@ class AirfRANS(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 1,000
-              - ~180,000
-              - 0
-              - 5
-              - 4
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 1,000
+          - ~180,000
+          - 0
+          - 5
+          - 4
     """
     url = 'https://data.isir.upmc.fr/extrality/pytorch_geometric/AirfRANS.zip'
     tasks = ['full', 'scarce', 'reynolds', 'aoa']
@@ -87,7 +96,8 @@ class AirfRANS(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         if task not in self.tasks:
             raise ValueError(f"Expected 'task' to be in {self.tasks} "
                              f"got '{task}'")
@@ -95,28 +105,25 @@ class AirfRANS(InMemoryDataset):
         self.task = 'full' if task == 'scarce' and not train else task
         self.split = 'train' if train else 'test'
 
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
         return ['AirfRANS.pt', 'manifest.json']
 
     @property
-    def process(self) -> List[str]:
-        return ['AirfRANS.pt', 'manifest.json']
-
-    @property
     def processed_file_names(self) -> str:
         return f'{self.task}_{self.split}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
-        with open(self.raw_paths[1], 'r') as f:
+    def process(self) -> None:
+        with open(self.raw_paths[1]) as f:
             manifest = json.load(f)
         total = manifest['full_train'] + manifest['full_test']
         partial = set(manifest[f'{self.task}_{self.split}'])
@@ -134,7 +141,7 @@ class AirfRANS(InMemoryDataset):
 
                 data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

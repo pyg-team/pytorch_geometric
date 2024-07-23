@@ -3,6 +3,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.aggr import Aggregation
 
 
@@ -13,6 +14,15 @@ class SortAggregation(Aggregation):
     where node features are sorted in descending order based on their last
     feature channel. The first :math:`k` nodes form the output of the layer.
 
+    .. note::
+
+        :class:`SortAggregation` requires sorted indices :obj:`index` as input.
+        Specifically, if you use this aggregation as part of
+        :class:`~torch_geometric.nn.conv.MessagePassing`, ensure that
+        :obj:`edge_index` is sorted by destination nodes, either by manually
+        sorting edge indices via :meth:`~torch_geometric.utils.sort_edge_index`
+        or by calling :meth:`torch_geometric.data.Data.sort`.
+
     Args:
         k (int): The number of nodes to hold for each graph.
     """
@@ -20,13 +30,21 @@ class SortAggregation(Aggregation):
         super().__init__()
         self.k = k
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        max_num_elements: Optional[int] = None,
+    ) -> Tensor:
 
-        fill_value = x.min().item() - 1
+        fill_value = x.detach().min() - 1
         batch_x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
-                                         fill_value=fill_value)
+                                         fill_value=fill_value,
+                                         max_num_elements=max_num_elements)
         B, N, D = batch_x.size()
 
         _, perm = batch_x[:, :, -1].sort(dim=-1, descending=True)

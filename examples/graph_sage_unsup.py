@@ -1,9 +1,11 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
 from sklearn.linear_model import LogisticRegression
 
+import torch_geometric
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
@@ -21,12 +23,21 @@ train_loader = LinkNeighborLoader(
     neg_sampling_ratio=1.0,
     num_neighbors=[10, 10],
 )
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
+data = data.to(device, 'x', 'edge_index')
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GraphSAGE(data.num_node_features, hidden_channels=64,
-                  num_layers=2).to(device)
+model = GraphSAGE(
+    data.num_node_features,
+    hidden_channels=64,
+    num_layers=2,
+).to(device)
+
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-x, edge_index = data.x.to(device), data.edge_index.to(device)
 
 
 def train():
@@ -51,7 +62,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    out = model(data.x.to(device), data.edge_index.to(device)).cpu()
+    out = model(data.x, data.edge_index).cpu()
 
     clf = LogisticRegression()
     clf.fit(out[data.train_mask], data.y[data.train_mask])
@@ -62,8 +73,12 @@ def test():
     return val_acc, test_acc
 
 
+times = []
 for epoch in range(1, 51):
+    start = time.time()
     loss = train()
     val_acc, test_acc = test()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
           f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 from typing import Callable, Optional
 
 import numpy as np
@@ -23,7 +23,7 @@ class DGraphFin(InMemoryDataset):
 
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -32,30 +32,39 @@ class DGraphFin(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 3,700,550
-              - 4,300,999
-              - 17
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 3,700,550
+          - 4,300,999
+          - 17
+          - 2
     """
 
     url = "https://dgraph.xinye.com"
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f"Dataset not found. Please download '{self.raw_file_names}' from "
             f"'{self.url}' and move it to '{self.raw_dir}'")
@@ -72,9 +81,9 @@ class DGraphFin(InMemoryDataset):
     def num_classes(self) -> int:
         return 2
 
-    def process(self):
+    def process(self) -> None:
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
-        path = os.path.join(self.raw_dir, "dgraphfin.npz")
+        path = osp.join(self.raw_dir, "dgraphfin.npz")
 
         with np.load(path) as loader:
             x = torch.from_numpy(loader['x']).to(torch.float)
@@ -95,5 +104,4 @@ class DGraphFin(InMemoryDataset):
                         val_mask=val_mask, test_mask=test_mask)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

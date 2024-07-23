@@ -78,7 +78,7 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
             y = y[input_nodes] if input_nodes is not None else y
 
         elif isinstance(dataset, InMemoryDataset):
-            y = dataset.data.y.view(-1)
+            y = dataset.y.view(-1)
             assert len(dataset) == y.numel()
 
         else:

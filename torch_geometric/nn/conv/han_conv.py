@@ -7,6 +7,7 @@ from torch import Tensor, nn
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, reset
+from torch_geometric.typing import PairTensor  # noqa
 from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils import softmax
 
@@ -31,10 +32,9 @@ def group(
 
 
 class HANConv(MessagePassing):
-    r"""
-    The Heterogenous Graph Attention Operator from the
+    r"""The Heterogenous Graph Attention Operator from the
     `"Heterogenous Graph Attention Network"
-    <https://arxiv.org/pdf/1903.07293.pdf>`_ paper.
+    <https://arxiv.org/abs/1903.07293>`_ paper.
 
     .. note::
 
@@ -84,7 +84,7 @@ class HANConv(MessagePassing):
         self.metadata = metadata
         self.dropout = dropout
         self.k_lin = nn.Linear(out_channels, out_channels)
-        self.q = nn.Parameter(torch.Tensor(1, out_channels))
+        self.q = nn.Parameter(torch.empty(1, out_channels))
 
         self.proj = nn.ModuleDict()
         for node_type, in_channels in self.in_channels.items():
@@ -95,12 +95,13 @@ class HANConv(MessagePassing):
         dim = out_channels // heads
         for edge_type in metadata[1]:
             edge_type = '__'.join(edge_type)
-            self.lin_src[edge_type] = nn.Parameter(torch.Tensor(1, heads, dim))
-            self.lin_dst[edge_type] = nn.Parameter(torch.Tensor(1, heads, dim))
+            self.lin_src[edge_type] = nn.Parameter(torch.empty(1, heads, dim))
+            self.lin_dst[edge_type] = nn.Parameter(torch.empty(1, heads, dim))
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.proj)
         glorot(self.lin_src)
         glorot(self.lin_dst)
@@ -114,15 +115,16 @@ class HANConv(MessagePassing):
         return_semantic_attention_weights: bool = False,
     ) -> Union[Dict[NodeType, OptTensor], Tuple[Dict[NodeType, OptTensor],
                                                 Dict[NodeType, OptTensor]]]:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding input node
-                features  for each individual node type.
-            edge_index_dict (Dict[str, Union[Tensor, SparseTensor]]): A
+            x_dict (Dict[str, torch.Tensor]): A dictionary holding node feature
+                information for each individual node type.
+            edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
                 dictionary holding graph connectivity information for each
-                individual edge type, either as a :obj:`torch.LongTensor` of
+                individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
-                :obj:`torch_sparse.SparseTensor`.
+                :class:`torch_sparse.SparseTensor`.
             return_semantic_attention_weights (bool, optional): If set to
                 :obj:`True`, will additionally return the semantic-level
                 attention weights for each destination node type.
@@ -146,9 +148,9 @@ class HANConv(MessagePassing):
             x_dst = x_node_dict[dst_type]
             alpha_src = (x_src * lin_src).sum(dim=-1)
             alpha_dst = (x_dst * lin_dst).sum(dim=-1)
-            # propagate_type: (x_dst: PairTensor, alpha: PairTensor)
+            # propagate_type: (x: PairTensor, alpha: PairTensor)
             out = self.propagate(edge_index, x=(x_src, x_dst),
-                                 alpha=(alpha_src, alpha_dst), size=None)
+                                 alpha=(alpha_src, alpha_dst))
 
             out = F.relu(out)
             out_dict[dst_type].append(out)

@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 from math import ceil
 
 import torch
@@ -12,7 +13,7 @@ from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
-average_nodes = int(dataset.data.x.size(0) / len(dataset))
+avg_num_nodes = int(dataset._data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]
 val_dataset = dataset[n:2 * n]
@@ -27,7 +28,7 @@ class Net(torch.nn.Module):
         super().__init__()
 
         self.conv1 = GCNConv(in_channels, hidden_channels)
-        num_nodes = ceil(0.5 * average_nodes)
+        num_nodes = ceil(0.5 * avg_num_nodes)
         self.pool1 = Linear(hidden_channels, num_nodes)
 
         self.conv2 = DenseGraphConv(hidden_channels, hidden_channels)
@@ -97,10 +98,12 @@ def test(loader):
     return loss_all / len(loader.dataset), correct / len(loader.dataset)
 
 
+times = []
 best_val_acc = test_acc = 0
 best_val_loss = float('inf')
 patience = start_patience = 50
-for epoch in range(1, 15000):
+for epoch in range(1, 15001):
+    start = time.time()
     train_loss = train(epoch)
     _, train_acc = test(train_loader)
     val_loss, val_acc = test(val_loader)
@@ -116,3 +119,5 @@ for epoch in range(1, 15000):
           f'Train Acc: {train_acc:.3f}, Val Loss: {val_loss:.3f}, '
           f'Val Acc: {val_acc:.3f}, Test Loss: {test_loss:.3f}, '
           f'Test Acc: {test_acc:.3f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

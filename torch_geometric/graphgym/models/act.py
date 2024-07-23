@@ -1,35 +1,35 @@
-import torch.nn as nn
+import torch
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.register import register_act
 
 
 def relu():
-    return nn.ReLU(inplace=cfg.mem.inplace)
+    return torch.nn.ReLU(inplace=cfg.mem.inplace)
 
 
 def selu():
-    return nn.SELU(inplace=cfg.mem.inplace)
+    return torch.nn.SELU(inplace=cfg.mem.inplace)
 
 
 def prelu():
-    return nn.PReLU()
+    return torch.nn.PReLU()
 
 
 def elu():
-    return nn.ELU(inplace=cfg.mem.inplace)
+    return torch.nn.ELU(inplace=cfg.mem.inplace)
 
 
 def lrelu_01():
-    return nn.LeakyReLU(0.1, inplace=cfg.mem.inplace)
+    return torch.nn.LeakyReLU(0.1, inplace=cfg.mem.inplace)
 
 
 def lrelu_025():
-    return nn.LeakyReLU(0.25, inplace=cfg.mem.inplace)
+    return torch.nn.LeakyReLU(0.25, inplace=cfg.mem.inplace)
 
 
 def lrelu_05():
-    return nn.LeakyReLU(0.5, inplace=cfg.mem.inplace)
+    return torch.nn.LeakyReLU(0.5, inplace=cfg.mem.inplace)
 
 
 if cfg is not None:

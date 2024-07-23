@@ -1,4 +1,4 @@
-name: Testing
+name: Testing PyTorch 2.3
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -9,18 +9,30 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   pytest:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-14]
+        include:
+          - os: ubuntu-latest
+            python-version: '3.8'
+          - os: windows-latest
+            python-version: '3.8'
+          - os: macos-14
+            python-version: '3.10'
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 40
 
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v34
+        uses: tj-actions/changed-files@v41
         with:
           files: |
             benchmark/**
@@ -29,24 +41,33 @@ jobs:
             docs/**
             examples/**
             graphgym/**
+            README.md
             CHANGELOG.md
 
       - name: Setup packages
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install main package
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Windows' }}
+        run: |
+          pip install -e .[test]
+
+      - name: Install full main package
+        if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os != 'Windows' }}
         run: |
           pip install -e .[full,test]
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        timeout-minutes: 10
         run: |
-          pytest --cov --cov-report=xml
+          pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Linux' }}
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: false

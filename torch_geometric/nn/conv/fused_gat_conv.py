@@ -2,9 +2,10 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
+from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import GATConv
+from torch_geometric.utils import sort_edge_index
 
 
 class FusedGATConv(GATConv):  # pragma: no cover
@@ -15,8 +16,9 @@ class FusedGATConv(GATConv):  # pragma: no cover
     9a1158154dfa42caddbd0694a4e9bdc8-Paper.pdf>`_ paper.
 
     :class:`FusedGATConv` is an optimized version of
-    :class:`~torch_geometric.nn.conv.GATConv` that fuses message passing
-    computation  for accelerated exeuction and lower memory footprint.
+    :class:`~torch_geometric.nn.conv.GATConv` based on the :obj:`dgNN` package
+    that fuses message passing computation for accelerated execution and lower
+    memory footprint.
 
     .. note::
 
@@ -46,41 +48,54 @@ class FusedGATConv(GATConv):  # pragma: no cover
         edge_index: Tensor,
         size: Optional[Tuple[int, int]] = None,
     ) -> Tuple[Tuple[Tensor, Tensor], Tuple[Tensor, Tensor], Tensor]:
-        r"""
+        r"""Converts an :obj:`edge_index` representation of a graph to the
+        desired input format of :class:`FusedGATConv`.
+
         Args:
-            edge_index (Tensor): The edge indices.
-            size ((int, int), optional). The shape of :obj:`edge_index` in each
+            edge_index (torch.Tensor): The edge indices.
+            size ((int, int), optional): The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
         """
-        value = torch.arange(edge_index.size(1), dtype=torch.int,
-                             device=edge_index.device)
+        edge_index = edge_index.to(torch.int)
 
-        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=size)
-        adj.set_value_(value, layout='csr')
+        edge_index = sort_edge_index(edge_index, sort_by_row=True)
+        rowptr = index2ptr(edge_index[0], size=size[0] if size else None)
+        col = edge_index[1]
 
-        rowptr, col, _ = adj.csr()
-        colptr, row, perm = adj.csc()
+        device = edge_index.device
+        perm = torch.arange(edge_index.size(1), dtype=torch.int, device=device)
+        edge_index, perm = sort_edge_index(edge_index, perm, sort_by_row=False)
+        row = edge_index[0]
+        colptr = index2ptr(edge_index[1], size=size[1] if size else None)
 
-        return (rowptr.int(), col.int()), (row.int(), colptr.int()), perm
+        return (rowptr, col), (row, colptr), perm
 
-    def forward(self, x: Tensor, csr: Tuple[Tensor, Tensor],
-                csc: Tuple[Tensor, Tensor], perm: Tensor) -> Tensor:
-        r"""
+    def forward(
+        self,
+        x: Tensor,
+        csr: Tuple[Tensor, Tensor],
+        csc: Tuple[Tensor, Tensor],
+        perm: Tensor,
+    ) -> Tensor:
+        r"""Runs the forward pass of the module.
+
         Args:
-            x (Tensor): The node features.
-            csr: ((Tensor, Tensor)): A tuple containing the CSR representation
-                of a graph, given as a tuple of :obj:`(rowptr, col)`.
-            csc: ((Tensor, Tensor)): A tuple containing the CSC representation
-                of a graph, given as a tuple of :obj:`(row, colptr)`.
-            perm (Tensor): Permutation tensor to map the CSR representation to
-                the CSC representation.
+            x (torch.Tensor): The node features.
+            csr ((torch.Tensor, torch.Tensor)): A tuple containing the CSR
+                representation of a graph, given as a tuple of
+                :obj:`(rowptr, col)`.
+            csc ((torch.Tensor, torch.Tensor)): A tuple containing the CSC
+                representation of a graph, given as a tuple of
+                :obj:`(row, colptr)`.
+            perm (torch.Tensor): Permutation tensor to map the CSR
+                representation to the CSC representation.
 
         .. note::
 
             Use the
-            :meth:`torch_geometric.nn.conv.FusedGATConv.to_graph_format` method
-            to obtain the :obj:`(csr, csc, perm)` graph format from an existing
-            :obj:`edge_index` representation.
+            :meth:`~torch_geometric.nn.conv.FusedGATConv.to_graph_format`
+            method to obtain the :obj:`(csr, csc, perm)` graph format from an
+            existing :obj:`edge_index` representation.
         """
         H, C = self.heads, self.out_channels
 

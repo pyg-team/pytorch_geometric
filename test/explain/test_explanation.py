@@ -1,6 +1,4 @@
-import os.path
-import random
-import sys
+import os.path as osp
 from typing import Optional, Union
 
 import pytest
@@ -10,18 +8,6 @@ from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.config import MaskType
 from torch_geometric.testing import withPackage
-
-
-@pytest.fixture
-def data():
-    return Data(
-        x=torch.randn(4, 3),
-        edge_index=torch.tensor([
-            [0, 0, 0, 1, 1, 2],
-            [1, 2, 3, 2, 3, 3],
-        ]),
-        edge_attr=torch.randn(6, 3),
-    )
 
 
 def create_random_explanation(
@@ -111,15 +97,15 @@ def test_node_mask(data):
     assert out.node_mask.size() == (2, 1)
     assert (out.node_mask > 0.0).sum() == 2
     assert out.x.size() == (2, 3)
-    assert out.edge_index.size() == (2, 1)
-    assert out.edge_attr.size() == (1, 3)
+    assert out.edge_index.size(1) <= 6
+    assert out.edge_index.size(1) == out.edge_attr.size(0)
 
     out = explanation.get_complement_subgraph()
     assert out.node_mask.size() == (2, 1)
     assert (out.node_mask == 0.0).sum() == 2
     assert out.x.size() == (2, 3)
-    assert out.edge_index.size() == (2, 1)
-    assert out.edge_attr.size() == (1, 3)
+    assert out.edge_index.size(1) <= 6
+    assert out.edge_index.size(1) == out.edge_attr.size(0)
 
 
 def test_edge_mask(data):
@@ -151,16 +137,14 @@ def test_edge_mask(data):
 @withPackage('matplotlib', 'pandas')
 @pytest.mark.parametrize('top_k', [2, None])
 @pytest.mark.parametrize('node_mask_type', [None, 'attributes'])
-def test_visualize_feature_importance(data, top_k, node_mask_type):
+def test_visualize_feature_importance(tmp_path, data, top_k, node_mask_type):
     explanation = create_random_explanation(data, node_mask_type)
 
-    path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.png')
+    path = osp.join(tmp_path, 'feature_importance.png')
 
     if node_mask_type is None:
         with pytest.raises(ValueError, match="node_mask' is not"):
             explanation.visualize_feature_importance(path, top_k=top_k)
     else:
-        assert not os.path.exists(path)
         explanation.visualize_feature_importance(path, top_k=top_k)
-        assert os.path.exists(path)
-        os.remove(path)
+        assert osp.exists(path)

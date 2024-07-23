@@ -8,17 +8,13 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import (
-    add_self_loops,
-    get_laplacian,
-    remove_self_loops,
-)
+from torch_geometric.utils import get_laplacian
 
 
 class ChebConv(MessagePassing):
     r"""The chebyshev spectral graph convolutional operator from the
     `"Convolutional Neural Networks on Graphs with Fast Localized Spectral
-    Filtering" <https://arxiv.org/abs/1606.09375>`_ paper
+    Filtering" <https://arxiv.org/abs/1606.09375>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \sum_{k=1}^{K} \mathbf{Z}^{(k)} \cdot
@@ -105,6 +101,7 @@ class ChebConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin in self.lins:
             lin.reset_parameters()
         zeros(self.bias)
@@ -119,8 +116,6 @@ class ChebConv(MessagePassing):
         dtype: Optional[int] = None,
         batch: OptTensor = None,
     ):
-        edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
-
         edge_index, edge_weight = get_laplacian(edge_index, edge_weight,
                                                 normalization, dtype,
                                                 num_nodes)
@@ -139,10 +134,8 @@ class ChebConv(MessagePassing):
         edge_weight = (2.0 * edge_weight) / lambda_max
         edge_weight.masked_fill_(edge_weight == float('inf'), 0)
 
-        edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
-                                                 fill_value=-1.,
-                                                 num_nodes=num_nodes)
-        assert edge_weight is not None
+        loop_mask = edge_index[0] == edge_index[1]
+        edge_weight[loop_mask] -= 1
 
         return edge_index, edge_weight
 
@@ -154,7 +147,7 @@ class ChebConv(MessagePassing):
         batch: OptTensor = None,
         lambda_max: OptTensor = None,
     ) -> Tensor:
-        """"""
+
         edge_index, norm = self.__norm__(
             edge_index,
             x.size(self.node_dim),
@@ -171,11 +164,11 @@ class ChebConv(MessagePassing):
 
         # propagate_type: (x: Tensor, norm: Tensor)
         if len(self.lins) > 1:
-            Tx_1 = self.propagate(edge_index, x=x, norm=norm, size=None)
+            Tx_1 = self.propagate(edge_index, x=x, norm=norm)
             out = out + self.lins[1](Tx_1)
 
         for lin in self.lins[2:]:
-            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm, size=None)
+            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm)
             Tx_2 = 2. * Tx_2 - Tx_0
             out = out + lin.forward(Tx_2)
             Tx_0, Tx_1 = Tx_1, Tx_2
