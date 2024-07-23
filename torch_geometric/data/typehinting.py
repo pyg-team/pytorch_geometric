@@ -88,6 +88,17 @@ def _check(hint: Any, argument_name: str, value: Any) -> None:
 
 
 def typecheck(_f: Optional[Callable] = None, strict: bool = False) -> Callable:
+    """Typechecking decorator for functions.
+
+    Args:
+        _f (Optional[Callable], optional): The function to be typechecked. Defaults to ``None``.
+        strict (bool, optional): Whether to enforce strict typechecking. Defaults to ``False``.
+            Strict typechecking will perform typechecking for non-Data/Batch types as well.
+
+    Returns:
+        Callable: The typechecking decorator.
+    """
+
     def _typecheck(f: Callable) -> Callable:
         """Typechecking decorator."""
         signature = inspect.signature(f)
@@ -183,10 +194,6 @@ class DataMeta(GenericMeta, ABCMeta):
 
     Methods:
         None specific to DataMeta.
-
-    Example:
-        >>> class MyBatch(BatchT):
-        ...     pass
     """
 
     def __new__(metacls, name, bases, namespace, **kargs):
@@ -234,10 +241,6 @@ class BatchMeta(GenericMeta, DynamicInheritance):
 
     Methods:
         None specific to BatchMeta.
-
-    Example:
-        >>> class MyBatch(BatchT):
-        ...     pass
     """
 
     def __new__(metacls, name, bases, namespace, **kargs):
@@ -311,7 +314,47 @@ def _get_attribute_dtypes(
 
 
 class DataT(Data, extra=Generic, metaclass=DataMeta):
-    """Defines type DataT to serve as annotation for `torch_geometric.data.Data`."""
+    """
+    Defines type DataT to serve as annotation for `torch_geometric.data.Data`.
+
+
+    Examples:
+        >>> from torch_geometric.data.typehinting import DataT, typecheck
+        >>> from torch_geometric.data import Data
+        >>> from jaxtyping import Float, Int
+        >>> from torch import Tensor
+        >>> d = Data()
+        >>> d.x = torch.randn((1, 2, 3))
+        >>> d.y = torch.randn((1, 2, 3))
+        >>> d.z = torch.randn((1, 2, 3))
+        >>> d
+        Data(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3])
+        >>> def forward(d: DataT["x" : torch.Tensor]):
+        >>>    return d
+        >>> forward(d)
+        Data(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3])
+
+        >>> @typecheck
+        >>> def forward(d: DataT["x" : float]):
+        >>>     return d
+        >>> forward(d)
+        TypeError: d Data attributes  {'x', 'z', 'y'} do not match
+
+        >>> def forward(d: DataT["x", : Float[Tensor "1 2 3"]]):
+        >>>     return d
+        >>> forward(d)
+        TypeError: d Data attributes  {'x', 'z', 'y'} do not match
+
+        >>> def forward(d: DataT["x" : Float[Tensor "1 2 3"], ...]):
+        >>>     return d
+        >>> forward(d)
+        Data(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3])
+
+        >>> def forward(d: DataT["x" : Int[Tensor "1 2 3"], ...]):
+        >>>     return d
+        >>> forward(d)
+        TypeError: Data(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3]) attribute `x` is not a valid instance of <class 'jaxtyping.Int[Tensor, '1 2 3']'>
+    """
 
     __slots__ = ()
     check_only_specified = None
@@ -327,7 +370,45 @@ class DataT(Data, extra=Generic, metaclass=DataMeta):
 
 
 class BatchT(Batch, extra=Generic, metaclass=BatchMeta):
-    """Defines type BatchT to serve as annotation for `torch_geometric.data.Batch`."""
+    """Defines type BatchT to serve as annotation for `torch_geometric.data.Batch`.
+
+    Examples:
+        >>> from torch_geometric.data.typehinting import BatchT, typecheck
+        >>> from torch_geometric.data import Batch
+        >>> from jaxtyping import Float, Int
+        >>> from torch import Tensor
+        >>> b = Batch()
+        >>> b.x = torch.randn((1, 2, 3))
+        >>> b.y = torch.randn((1, 2, 3))
+        >>> b.z = torch.randn((1, 2, 3))
+        >>> b
+        Batch(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3])
+        >>> def forward(b: BatchT["x" : torch.Tensor]):
+        >>>    return b
+        >>> forward(b)
+        Batch(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3])
+
+        >>> @typecheck
+        >>> def forward(b: BatchT["x" : float]):
+        >>>     return b
+        >>> forward(b)
+        TypeError: b Batch attributes  {'x', 'z', 'y'} do not match
+
+        >>> def forward(b: BatchT["x", : Float[Tensor "1 2 3"]]):
+        >>>     return b
+        >>> forward(b)
+        TypeError: b Batch attributes  {'x', 'z', 'y'} do not match
+
+        >>> def forward(b: BatchT["x" : Float[Tensor "1 2 3"], ...]):
+        >>>     return b
+        >>> forward(b)
+        Batch(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3])
+
+        >>> def forward(b: BatchT["x" : Int[Tensor "1 2 3"], ...]):
+        >>>     return b
+        >>> forward(b)
+        TypeError: Batch(x=[1, 2, 3], y=[1, 2, 3], z=[1, 2, 3]) attribute `x` is not a valid instance of <class 'jaxtyping.Int[Tensor, '1 2 3']'>
+    """
 
     __slots__ = ()
     check_only_specified = None
