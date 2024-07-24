@@ -48,9 +48,10 @@ def retrieval_via_pcst(
     topk_e: int = 3,
     cost_e: float = 0.5,
     save_idx: bool = False,
+    override: bool = False,
 ) -> Tuple[Data, str]:
     c = 0.01
-    if len(textual_nodes) == 0 or len(textual_edges) == 0:
+    if len(textual_nodes) == 0 or len(textual_edges) == 0 or override:
         desc = (textual_nodes.to_csv(index=False) +
                 "\n" + textual_edges.to_csv(
                     index=False, columns=["src", "edge_attr", "dst"]))
@@ -232,6 +233,15 @@ class UpdatedWebQSPDataset(InMemoryDataset):
 
         if self.limit >= 0:
             self.raw_dataset = self.raw_dataset.select(range(self.limit))
+            self.split_idxs = {
+                "train":
+                torch.arange(self.limit//2),
+                "val":
+                torch.arange(self.limit//4) + self.limit//2,
+                "test":
+                torch.arange(self.limit//4) + self.limit//2 +
+                self.limit//4,
+            }
         self._save_raw_data()
 
     def _get_trips(self) -> Iterator[TripletLike]:
@@ -287,6 +297,8 @@ class UpdatedWebQSPDataset(InMemoryDataset):
                     graph["node_idx"]].reset_index()
                 textual_edges = self.textual_edges.iloc[
                     graph["edge_idx"]].reset_index()
+            pcst_subgraph = graph
+            '''
             pcst_subgraph, desc = retrieval_via_pcst(
                 graph,
                 q_embs[index],
@@ -296,12 +308,13 @@ class UpdatedWebQSPDataset(InMemoryDataset):
                 topk_e=5,
                 cost_e=0.5,
             )
+            '''
             question = f"Question: {data_i['question']}\nAnswer: "
             label = ("|").join(data_i["answer"]).lower()
 
             pcst_subgraph["question"] = question
             pcst_subgraph["label"] = label
-            pcst_subgraph["desc"] = desc
+            #pcst_subgraph["desc"] = desc
             list_of_graphs.append(pcst_subgraph.to("cpu"))
         print("Saving subgraphs...")
         self.save(list_of_graphs, self.processed_paths[0])
