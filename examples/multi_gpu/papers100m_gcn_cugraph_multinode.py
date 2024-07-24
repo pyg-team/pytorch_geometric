@@ -358,7 +358,7 @@ if __name__ == "__main__":
 
     # Set a very high timeout so that PyTorch does not crash while
     # partitioning the data.
-    dist.init_process_group("nccl", timeout=timedelta(minutes=60), rank=os.environ['SLURM_PROCID'])
+    dist.init_process_group("nccl", timeout=timedelta(minutes=60), rank=int(os.environ['SLURM_PROCID']))
     world_size = dist.get_world_size()
     assert dist.is_initialized(), "Distributed cluster not initialized"
 
