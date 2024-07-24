@@ -63,9 +63,15 @@ parser.add_argument('--lr', type=float, default=0.003)
 parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--tempdir_root', type=str, default=None)
+parser.add_argument('--dataset_root', type=str, default=None)
 args = parser.parse_args()
 
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'papers100')
+root = (
+    osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'papers100') 
+    if args.dataset_root is None
+    else args.dataset_root
+)
+
 dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
 
