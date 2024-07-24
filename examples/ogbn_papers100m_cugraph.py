@@ -18,7 +18,6 @@ cupy.cuda.set_allocator(rmm_cupy_allocator)
 torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 
 import torch.nn.functional as F  # noqa: E402
-import torch_geometric  # noqa: E402
 import cugraph_pyg  # noqa: E402
 from cugraph_pyg.loader import NeighborLoader  # noqa: E402
 
