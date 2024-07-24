@@ -366,6 +366,8 @@ if __name__ == "__main__":
     local_rank = int(os.environ["LOCAL_RANK"])
     device = torch.device(local_rank)
 
+    print(f'Global rank: {global_rank}, Local Rank: {local_rank}, World size: {world_size}')
+
     # Create the uid needed for cuGraph comms
     if global_rank == 0:
         cugraph_id = [cugraph_comms_create_unique_id()]
