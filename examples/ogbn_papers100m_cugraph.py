@@ -144,7 +144,7 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
 
         total_loss = total_correct = total_examples = 0
         for batch in tqdm(train_loader):
-            batch = batch.to(args.device)
+            batch = batch.cuda()
             optimizer.zero_grad()
             out = model(batch.x, batch.edge_index)[:batch.batch_size]
             y = batch.y[:batch.batch_size].view(-1).to(torch.long)
@@ -165,7 +165,7 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
 
         total_correct = total_examples = 0
         for batch in tqdm(loader):
-            batch = batch.to(args.device)
+            batch = batch.cuda()
             out = model(batch.x, batch.edge_index)[:batch.batch_size]
             y = batch.y[:batch.batch_size].view(-1).to(torch.long)
 
