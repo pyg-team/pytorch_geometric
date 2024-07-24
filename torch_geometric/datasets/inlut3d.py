@@ -57,13 +57,67 @@ def read_inlut3d_pts(path: str, ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     )
 
 
-class _BaseInLUT3D(Dataset):
+class InLUT3D(Dataset):
+    r"""The Indoor Lodz University of Technology Point Cloud Dataset (InLUT3D)
+    of indoor setups across various buildings of W7 faculty of Lodz University
+    of Technology. Points are annotated with 18 distinct categories.
+    Each point (a node) is described by its 3D position, unnormalised color in
+    RGB space, a category, and instance codes.
+
+    Args:
+        task (str): The task for which the dataset should be used. It can be
+            one of the following: "classification", "semantic_segmentation",
+            "instance_segmentation".
+        root (str): Root directory where the dataset should be saved.
+        train (bool, optional): If :obj:`True`, loads the training dataset,
+            otherwise the test dataset. (default: :obj:`True`)
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        remove_unlabeled (bool, optional): Whether to remove points with
+            unlabeled categories. (default: :obj:`True`)
+    """
+
     URL: str = "https://zenodo.org/records/12804009/files/inlut3d.tar.gz"
     SETUPS_NBR: int = 321
     FIRST_TEST_ID: int = 301
 
+    def __new__(
+        cls: Type["InLUT3D"],
+        task: Literal["classification", "semantic_segmentation",
+                      "instance_segmentation"],
+        root: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+        remove_unlabeled: bool = True,
+    ) -> "InLUT3D":
+        if task == "classification":
+            return object.__new__(ClassificationInLUT3D)
+        elif task == "semantic_segmentation":
+            return object.__new__(SemanticSegmentationInLUT3D)
+        elif task == "instance_segmentation":
+            return object.__new__(InstanceSegmentationInLUT3D)
+        else:
+            raise ValueError(f"InLU3D cannot be used for: {task}")
+
     def __init__(
         self,
+        task: Literal["classification", "semantic_segmentation",
+                      "instance_segmentation"],
         root: str,
         train: bool = True,
         transform: Optional[Callable] = None,
@@ -85,10 +139,10 @@ class _BaseInLUT3D(Dataset):
         else:
             self.split_processed_paths = self.collect_test_samples()
 
-    def collect_train_samples(self) -> List[str]:
+    def collect_train_samples(self) -> Tuple[str]:
         raise NotImplementedError
 
-    def collect_test_samples(self) -> List[str]:
+    def collect_test_samples(self) -> Tuple[str]:
         raise NotImplementedError
 
     @property
@@ -144,9 +198,9 @@ class _BaseInLUT3D(Dataset):
                 yield setup_name, (xyz, rgb, categories, instances)
 
 
-class ClassificationInLUT3D(_BaseInLUT3D):
+class ClassificationInLUT3D(InLUT3D):
     SAMPLES_NBR: int = 3608
-    FIRST_TEST_ID: int = 3382
+    FIRST_TEST_ID: int = 2801
 
     @property
     def processed_dir(self) -> str:
@@ -156,17 +210,17 @@ class ClassificationInLUT3D(_BaseInLUT3D):
     def processed_file_names(self) -> List[str]:
         return [f"sample_{i}.pt" for i in range(self.SAMPLES_NBR)]
 
-    def collect_train_samples(self) -> List[str]:
-        return [
+    def collect_train_samples(self) -> Tuple[str]:
+        return tuple([
             osp.join(self.processed_dir, f"sample_{i}.pt")
             for i in range(self.FIRST_TEST_ID)
-        ]
+        ])
 
-    def collect_test_samples(self) -> List[str]:
-        return [
-            osp.join(self.processed_dir, )
+    def collect_test_samples(self) -> Tuple[str]:
+        return tuple([
+            osp.join(self.processed_dir, f"sample_{i}.pt")
             for i in range(self.FIRST_TEST_ID, self.SAMPLES_NBR)
-        ]
+        ])
 
     def _samples_ids_gen(self):  # type: ignore[no-untyped-def]
         id_ = 0
@@ -209,7 +263,7 @@ class ClassificationInLUT3D(_BaseInLUT3D):
                     )
 
 
-class InstanceSegmentationInLUT3D(_BaseInLUT3D):
+class InstanceSegmentationInLUT3D(InLUT3D):
     @property
     def processed_dir(self) -> str:
         return osp.join(self.root, "processed_instance_segmentation")
@@ -263,80 +317,3 @@ class SemanticSegmentationInLUT3D(InstanceSegmentationInLUT3D):
                 data = self.pre_transform(data)
             fs.torch_save(data, osp.join(self.processed_dir,
                                          f"{setup_name}.pt"))
-
-
-class InLUT3D:
-    r"""The Indoor Lodz University of Technology Point Cloud Dataset (InLUT3D)
-    of indoor setups across various buildings of W7 faculty of Lodz University
-    of Technology. Points are annotated with 18 distinct categories.
-    Each point (a node) is described by its 3D position, unnormalised color in
-    RGB space, a category, and instance codes.
-
-    Args:
-        task (str): The task for which the dataset should be used. It can be
-            one of the following: "classification", "semantic_segmentation",
-            "instance_segmentation".
-        root (str): Root directory where the dataset should be saved.
-        train (bool, optional): If :obj:`True`, loads the training dataset,
-            otherwise the test dataset. (default: :obj:`True`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
-            version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
-            transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
-        remove_unlabeled (bool, optional): Whether to remove points with
-            unlabeled categories. (default: :obj:`True`)
-    """
-    def __new__(  # type: ignore[misc]
-        cls: Type["InLUT3D"],
-        task: Literal["classification", "semantic_segmentation",
-                      "instance_segmentation"],
-        root: str,
-        train: bool = True,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-        force_reload: bool = False,
-        remove_unlabeled: bool = True,
-    ):
-        if task == "classification":
-            return ClassificationInLUT3D(
-                root=root,
-                train=train,
-                transform=transform,
-                pre_transform=pre_transform,
-                pre_filter=pre_filter,
-                force_reload=force_reload,
-                remove_unlabeled=remove_unlabeled,
-            )
-        elif task == "semantic_segmentation":
-            return SemanticSegmentationInLUT3D(
-                root=root,
-                train=train,
-                transform=transform,
-                pre_transform=pre_transform,
-                pre_filter=pre_filter,
-                force_reload=force_reload,
-                remove_unlabeled=remove_unlabeled,
-            )
-        elif task == "instance_segmentation":
-            return InstanceSegmentationInLUT3D(
-                root=root,
-                train=train,
-                transform=transform,
-                pre_transform=pre_transform,
-                pre_filter=pre_filter,
-                force_reload=force_reload,
-                remove_unlabeled=remove_unlabeled,
-            )
-        else:
-            raise ValueError(f"InLU3D cannot be used for: {task}")
