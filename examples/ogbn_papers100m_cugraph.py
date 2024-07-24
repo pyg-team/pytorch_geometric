@@ -87,6 +87,8 @@ feature_store = cugraph_pyg.data.TensorDictFeatureStore()
 feature_store["node", "x"] = data.x
 feature_store["node", "y"] = data.y
 
+data = (feature_store, graph_store)
+
 class SAGE(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
