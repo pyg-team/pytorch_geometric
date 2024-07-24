@@ -58,7 +58,7 @@ def read_inlut3d_pts(path: str, ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
 
 
 class _BaseInLUT3D(Dataset):
-    URL: str = "https://zenodo.org/records/12754337/files/inlut3d.tar.gz"
+    URL: str = "https://zenodo.org/records/12804009/files/inlut3d.tar.gz"
     SETUPS_NBR: int = 321
     FIRST_TEST_ID: int = 301
 
