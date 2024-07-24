@@ -172,9 +172,11 @@ class UpdatedWebQSPDataset(InMemoryDataset):
         force_reload: bool = False,
         whole_graph_retrieval: bool = False,
         limit: int = -1,
+        override: bool = False,
     ) -> None:
         self.limit = limit
         self.whole_graph_retrieval = whole_graph_retrieval
+        self.override = override
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
@@ -297,8 +299,6 @@ class UpdatedWebQSPDataset(InMemoryDataset):
                     graph["node_idx"]].reset_index()
                 textual_edges = self.textual_edges.iloc[
                     graph["edge_idx"]].reset_index()
-            pcst_subgraph = graph
-            '''
             pcst_subgraph, desc = retrieval_via_pcst(
                 graph,
                 q_embs[index],
@@ -307,14 +307,14 @@ class UpdatedWebQSPDataset(InMemoryDataset):
                 topk=3,
                 topk_e=5,
                 cost_e=0.5,
+                override=self.override,
             )
-            '''
             question = f"Question: {data_i['question']}\nAnswer: "
             label = ("|").join(data_i["answer"]).lower()
 
             pcst_subgraph["question"] = question
             pcst_subgraph["label"] = label
-            #pcst_subgraph["desc"] = desc
+            pcst_subgraph["desc"] = desc
             list_of_graphs.append(pcst_subgraph.to("cpu"))
         print("Saving subgraphs...")
         self.save(list_of_graphs, self.processed_paths[0])
