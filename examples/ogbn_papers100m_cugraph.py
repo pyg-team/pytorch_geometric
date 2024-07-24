@@ -112,7 +112,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
     loader_kwargs = {
         "data": data,
-        "num_neighbors": [args.fan_out] * args.num_layers,
+        "num_neighbors": [args.num_neighbors] * args.num_layers,
         "replace": False,
         "batch_size": args.batch_size,
         "samples_dir": samples_dir,
