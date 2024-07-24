@@ -1,3 +1,8 @@
+# This example uses the cuGraph-PyG Dask API.
+# The Dask API is not recommended for new users
+# and is planned for deprecation.  Instead consider
+# the new non-Dask API in ogbn_papers100m_cugraph.py
+
 import argparse
 import os
 import time
@@ -24,6 +29,7 @@ from cugraph_pyg.loader import CuGraphNeighborLoader  # noqa
 
 import torch_geometric  # noqa
 from torch_geometric.loader import NeighborLoader  # noqa
+from torch_geometric.utils import to_undirected # noqa: E402
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=256)
@@ -69,6 +75,7 @@ dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                  root='/datasets/ogb_datasets')
 split_idx = dataset.get_idx_split()
 data = dataset[0]
+data.edge_index = to_undirected(data.edge_index, reduce="mean")
 
 G = {("N", "E", "N"): data.edge_index}
 N = {"N": data.num_nodes}
