@@ -402,6 +402,7 @@ if __name__ == "__main__":
         )
 
     dist.barrier()
+    print("Loading partitioned data")
     data, split_idx, meta = load_partitioned_data(
         rank=global_rank,
         edge_path=edge_path,
@@ -420,6 +421,7 @@ if __name__ == "__main__":
     ).to(device)
     model = DistributedDataParallel(model, device_ids=[local_rank])
 
+    print("Beginning training")
     with tempfile.TemporaryDirectory(dir=args.tempdir_root) as tempdir:
         run_train(
             global_rank,
