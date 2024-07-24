@@ -123,6 +123,7 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
     train_loader = create_loader(
         input_nodes=split_idx["train"],
         stage_name="train",
+        shuffle=True,
         **loader_kwargs,
     )
 
