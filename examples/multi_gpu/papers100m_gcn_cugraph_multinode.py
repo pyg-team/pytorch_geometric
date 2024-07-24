@@ -356,6 +356,9 @@ if __name__ == "__main__":
     args = parse_args()
     wall_clock_start = time.perf_counter()
 
+    os.environ['MASTER_ADDR'] = os.environ['SLURM_LAUNCH_NODE_IPADDR']
+    os.environ['MASTER_PORT'] = "29500"
+
     # Set a very high timeout so that PyTorch does not crash while
     # partitioning the data.
     dist.init_process_group(
