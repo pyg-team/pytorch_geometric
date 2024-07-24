@@ -1,3 +1,8 @@
+# This example uses the cuGraph-PyG Dask API.
+# The Dask API is not recommended for new users
+# and is planned for deprecation.  Instead consider
+# the new non-Dask API in ogbn_papers100m_cugraph.py
+
 import argparse
 import os
 import tempfile
