@@ -39,7 +39,7 @@ from ogb.nodeproppred import PygNodePropPredDataset # noqa: E402
 
 
 def create_loader(
-    data, num_neighbors, input_nodes, replace, batch_size, samples_dir, stage_name
+    data, num_neighbors, input_nodes, replace, batch_size, samples_dir, stage_name, shuffle=False,
 ):
     directory = os.path.join(samples_dir, stage_name)
     os.mkdir(directory)
@@ -50,6 +50,7 @@ def create_loader(
         replace=replace,
         batch_size=batch_size,
         directory=directory,
+        shuffle=shuffle,
     )
     
 
