@@ -10,7 +10,7 @@ __email__ = "jakub.walczak@p.lodz.pl"
 
 import os
 import os.path as osp
-from typing import Callable, List, Literal, Optional, Tuple, Type, Union
+from typing import Callable, List, Literal, Optional, Tuple, Type
 
 import numpy as np
 import torch
@@ -307,11 +307,7 @@ class InLUT3D:
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
         remove_unlabeled: bool = True,
-    ) -> Union[
-            ClassificationInLUT3D,
-            SemanticSegmentationInLUT3D,
-            InstanceSegmentationInLUT3D,
-    ]:
+    ):
         if task == "classification":
             return ClassificationInLUT3D(
                 root=root,
