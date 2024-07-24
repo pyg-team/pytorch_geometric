@@ -1,5 +1,3 @@
-# Reaches around 0.7870 ± 0.0036 test accuracy.
-
 import argparse
 import tempfile
 import os
