@@ -29,7 +29,7 @@ from cugraph_pyg.loader import CuGraphNeighborLoader  # noqa
 
 import torch_geometric  # noqa
 from torch_geometric.loader import NeighborLoader  # noqa
-from torch_geometric.utils import to_undirected # noqa: E402
+from torch_geometric.utils import to_undirected  # noqa: E402
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=256)

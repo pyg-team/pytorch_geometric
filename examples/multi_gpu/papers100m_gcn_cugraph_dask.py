@@ -288,6 +288,7 @@ if __name__ == '__main__':
         action='store_true',
         help="Whether or not to use GATConv. (Defaults to using GCNConv)",
     )
+
     parser.add_argument(
         "--n_gat_conv_heads",
         type=int,

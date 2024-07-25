@@ -17,22 +17,20 @@ import argparse
 import os
 import tempfile
 import time
-import warnings
 
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
+from cugraph.gnn import (
+    cugraph_comms_create_unique_id,
+    cugraph_comms_init,
+    cugraph_comms_shutdown,
+)
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric
-
-from cugraph.gnn import (
-    cugraph_comms_init,
-    cugraph_comms_shutdown,
-    cugraph_comms_create_unique_id,
-)
 
 # Allow computation on objects that are larger than GPU memory
 # https://docs.rapids.ai/api/cudf/stable/developer_guide/library_design/#spilling-to-host-memory
@@ -69,7 +67,8 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
     os.environ["MASTER_PORT"] = "12355"
     dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
-    cugraph_comms_init(rank=rank, world_size=world_size, uid=cugraph_id, device=rank)
+    cugraph_comms_init(rank=rank, world_size=world_size, uid=cugraph_id,
+                       device=rank)
 
 
 def run_train(
@@ -96,7 +95,8 @@ def run_train(
 
     model = model.to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
+                                 weight_decay=0.0005)
 
     kwargs = dict(
         num_neighbors=[fan_out] * num_layers,
@@ -108,9 +108,8 @@ def run_train(
 
     graph_store = GraphStore(is_multi_gpu=True)
     ixr = torch.tensor_split(data.edge_index, world_size, dim=1)[rank]
-    graph_store[
-        ("node", "rel", "node"), "coo", False, (data.num_nodes, data.num_nodes)
-    ] = ixr
+    graph_store[("node", "rel", "node"), "coo", False,
+                (data.num_nodes, data.num_nodes)] = ixr
 
     feature_store = TensorDictFeatureStore()
     feature_store["node", "x"] = data.x
@@ -162,7 +161,8 @@ def run_train(
 
     if rank == 0:
         prep_time = round(time.perf_counter() - wall_clock_start, 2)
-        print("Total time before training begins (prep_time) =", prep_time, "seconds")
+        print("Total time before training begins (prep_time) =", prep_time,
+              "seconds")
         print("Beginning training...")
     for epoch in range(epochs):
         for i, batch in enumerate(train_loader):
@@ -180,14 +180,8 @@ def run_train(
             loss.backward()
             optimizer.step()
             if rank == 0 and i % 10 == 0:
-                print(
-                    "Epoch: "
-                    + str(epoch)
-                    + ", Iteration: "
-                    + str(i)
-                    + ", Loss: "
-                    + str(loss)
-                )
+                print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
+                      ", Loss: " + str(loss))
         nb = i + 1.0
 
         if rank == 0:
@@ -217,9 +211,7 @@ def run_train(
 
             acc_val = total_correct / total_examples
             if rank == 0:
-                print(
-                    f"Validation Accuracy: {acc_val * 100.0:.4f}%",
-                )
+                print(f"Validation Accuracy: {acc_val * 100.0:.4f}%", )
 
         torch.cuda.synchronize()
 
@@ -240,9 +232,7 @@ def run_train(
 
         acc_test = total_correct / total_examples
         if rank == 0:
-            print(
-                f"Test Accuracy: {acc_test * 100.0:.4f}%",
-            )
+            print(f"Test Accuracy: {acc_test * 100.0:.4f}%", )
 
     if rank == 0:
         total_time = round(time.perf_counter() - wall_clock_start, 2)

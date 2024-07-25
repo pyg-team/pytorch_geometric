@@ -1,12 +1,11 @@
 import argparse
-import tempfile
 import os
 import os.path as osp
+import tempfile
 
-import torch
 import cupy
-
 import rmm
+import torch
 from rmm.allocators.cupy import rmm_cupy_allocator
 from rmm.allocators.torch import rmm_torch_allocator
 
@@ -17,26 +16,30 @@ rmm.reinitialize(devices=[0], pool_allocator=True, managed_memory=True)
 cupy.cuda.set_allocator(rmm_cupy_allocator)
 torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 
-import torch.nn.functional as F  # noqa: E402
 import cugraph_pyg  # noqa: E402
-from cugraph_pyg.loader import NeighborLoader  # noqa: E402
-
+import torch.nn.functional as F  # noqa: E402
 # Enable cudf spilling to save gpu memory
 from cugraph.testing.mg_utils import enable_spilling  # noqa: E402
+from cugraph_pyg.loader import NeighborLoader  # noqa: E402
 
 enable_spilling()
 
-from tqdm import tqdm # noqa: E402
+from ogb.nodeproppred import PygNodePropPredDataset  # noqa: E402
+from tqdm import tqdm  # noqa: E402
 
-from cugraph_pyg.loader import NeighborLoader # noqa: E402
-from torch_geometric.nn import SAGEConv # noqa: E402
-from torch_geometric.utils import to_undirected # noqa: E402
-
-from ogb.nodeproppred import PygNodePropPredDataset # noqa: E402
+from torch_geometric.nn import SAGEConv  # noqa: E402
+from torch_geometric.utils import to_undirected  # noqa: E402
 
 
 def create_loader(
-    data, num_neighbors, input_nodes, replace, batch_size, samples_dir, stage_name, shuffle=False,
+    data,
+    num_neighbors,
+    input_nodes,
+    replace,
+    batch_size,
+    samples_dir,
+    stage_name,
+    shuffle=False,
 ):
     directory = os.path.join(samples_dir, stage_name)
     os.mkdir(directory)
@@ -49,7 +52,7 @@ def create_loader(
         directory=directory,
         shuffle=shuffle,
     )
-    
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=10)
@@ -64,11 +67,9 @@ parser.add_argument('--tempdir_root', type=str, default=None)
 parser.add_argument('--dataset_root', type=str, default=None)
 args = parser.parse_args()
 
-root = (
-    osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'papers100') 
-    if args.dataset_root is None
-    else args.dataset_root
-)
+root = (osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                 'papers100')
+        if args.dataset_root is None else args.dataset_root)
 
 dataset = PygNodePropPredDataset('ogbn-papers100M', root)
 split_idx = dataset.get_idx_split()
@@ -77,15 +78,15 @@ data = dataset[0]
 data.edge_index = to_undirected(data.edge_index, reduce="mean")
 
 graph_store = cugraph_pyg.data.GraphStore()
-graph_store[
-    ("node", "rel", "node"), "coo", False, (data.num_nodes, data.num_nodes)
-] = data.edge_index
+graph_store[("node", "rel", "node"), "coo", False,
+            (data.num_nodes, data.num_nodes)] = data.edge_index
 
 feature_store = cugraph_pyg.data.TensorDictFeatureStore()
 feature_store["node", "x"] = data.x
 feature_store["node", "y"] = data.y
 
 data = (feature_store, graph_store)
+
 
 class SAGE(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -137,7 +138,6 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
         **loader_kwargs,
     )
 
-
     def train():
         model.train()
 
@@ -157,7 +157,6 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
 
         return total_loss / total_examples, total_correct / total_examples
 
-
     @torch.no_grad()
     def test(loader):
         model.eval()
@@ -173,10 +172,10 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
 
         return total_correct / total_examples
 
-
     for epoch in range(1, args.epochs + 1):
         loss, train_acc = train()
-        print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Acc: {train_acc:.4f}')
+        print(
+            f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Acc: {train_acc:.4f}')
         val_acc = test(val_loader)
         print(f'Epoch {epoch:02d}, Val Acc: {val_acc:.4f}')
         test_acc = test(test_loader)

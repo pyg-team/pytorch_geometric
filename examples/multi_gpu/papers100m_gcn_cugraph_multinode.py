@@ -14,10 +14,12 @@
 # Multi-node, multi-GPU example with WholeGraph feature storage.
 # It is recommended that you download the dataset first before running.
 
-# To run, use sbatch (i.e. sbatch -N2 -p <partition> -A <account> -J <job name>) with the script shown below:
+# To run, use sbatch
+# (i.e. sbatch -N2 -p <partition> -A <account> -J <job name>)
+# with the script shown below:
 #
 # head_node_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
-# 
+#
 # (yes || true) | srun -l \
 #        --container-image <container image> \
 #        --container-mounts "$(pwd):/workspace","/raid:/raid" \
@@ -31,35 +33,29 @@
 #            --epochs 1 \
 #            --dataset ogbn-papers100M \
 #            --dataset_root /workspace/datasets \
-#            --tempdir_root /raid/scratch 
+#            --tempdir_root /raid/scratch
 
 import argparse
+import json
 import os
 import tempfile
 import time
-import json
-
 from datetime import timedelta
-
 
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
+from cugraph.gnn import (
+    cugraph_comms_create_unique_id,
+    cugraph_comms_init,
+    cugraph_comms_shutdown,
+)
 from ogb.nodeproppred import PygNodePropPredDataset
+from pylibwholegraph.torch.initialize import finalize as wm_finalize
+from pylibwholegraph.torch.initialize import init as wm_init
 from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric
-
-from cugraph.gnn import (
-    cugraph_comms_init,
-    cugraph_comms_shutdown,
-    cugraph_comms_create_unique_id,
-)
-
-from pylibwholegraph.torch.initialize import (
-    init as wm_init,
-    finalize as wm_finalize,
-)
 
 # Allow computation on objects that are larger than GPU memory
 # https://docs.rapids.ai/api/cudf/stable/developer_guide/library_design/#spilling-to-host-memory
@@ -92,14 +88,14 @@ def init_pytorch_worker(global_rank, local_rank, world_size, cugraph_id):
 
     torch.cuda.set_device(local_rank)
 
-    cugraph_comms_init(
-        rank=global_rank, world_size=world_size, uid=cugraph_id, device=local_rank
-    )
+    cugraph_comms_init(rank=global_rank, world_size=world_size, uid=cugraph_id,
+                       device=local_rank)
 
     wm_init(global_rank, world_size, local_rank, torch.cuda.device_count())
 
 
-def partition_data(dataset, split_idx, edge_path, feature_path, label_path, meta_path):
+def partition_data(dataset, split_idx, edge_path, feature_path, label_path,
+                   meta_path):
     data = dataset[0]
 
     # Split and save edge index
@@ -107,7 +103,9 @@ def partition_data(dataset, split_idx, edge_path, feature_path, label_path, meta
         edge_path,
         exist_ok=True,
     )
-    for (r, e) in enumerate(torch.tensor_split(data.edge_index, world_size, dim=1)):
+    for (r,
+         e) in enumerate(torch.tensor_split(data.edge_index, world_size,
+                                            dim=1)):
         rank_path = os.path.join(edge_path, f"rank={r}.pt")
         torch.save(
             e.clone(),
@@ -155,38 +153,33 @@ def partition_data(dataset, split_idx, edge_path, feature_path, label_path, meta
         json.dump(meta, f)
 
 
-def load_partitioned_data(
-    rank, edge_path, feature_path, label_path, meta_path, wg_mem_type
-):
+def load_partitioned_data(rank, edge_path, feature_path, label_path, meta_path,
+                          wg_mem_type):
     from cugraph_pyg.data import GraphStore, WholeFeatureStore
 
     graph_store = GraphStore(is_multi_gpu=True)
     feature_store = WholeFeatureStore(memory_type=wg_mem_type)
 
     # Load metadata
-    with open(meta_path, "r") as f:
+    with open(meta_path) as f:
         meta = json.load(f)
 
     # Load labels
     split_idx = {}
     for split in ["train", "test", "valid"]:
         split_idx[split] = torch.load(
-            os.path.join(label_path, f"rank={rank}", f"{split}.pt")
-        )
+            os.path.join(label_path, f"rank={rank}", f"{split}.pt"))
 
     # Load features
     feature_store["node", "x"] = torch.load(
-        os.path.join(feature_path, f"rank={rank}_x.pt")
-    )
+        os.path.join(feature_path, f"rank={rank}_x.pt"))
     feature_store["node", "y"] = torch.load(
-        os.path.join(feature_path, f"rank={rank}_y.pt")
-    )
+        os.path.join(feature_path, f"rank={rank}_y.pt"))
 
     # Load edge index
     eix = torch.load(os.path.join(edge_path, f"rank={rank}.pt"))
-    graph_store[
-        ("node", "rel", "node"), "coo", False, (meta["num_nodes"], meta["num_nodes"])
-    ] = eix
+    graph_store[("node", "rel", "node"), "coo", False,
+                (meta["num_nodes"], meta["num_nodes"])] = eix
 
     return (feature_store, graph_store), split_idx, meta
 
@@ -206,7 +199,8 @@ def run_train(
     tempdir=None,
     num_layers=3,
 ):
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
+                                 weight_decay=0.0005)
 
     kwargs = dict(
         num_neighbors=[fan_out] * num_layers,
@@ -261,7 +255,8 @@ def run_train(
 
     if global_rank == 0:
         prep_time = round(time.perf_counter() - wall_clock_start, 2)
-        print("Total time before training begins (prep_time) =", prep_time, "seconds")
+        print("Total time before training begins (prep_time) =", prep_time,
+              "seconds")
         print("Beginning training...")
 
     for epoch in range(epochs):
@@ -280,14 +275,8 @@ def run_train(
             loss.backward()
             optimizer.step()
             if global_rank == 0 and i % 10 == 0:
-                print(
-                    "Epoch: "
-                    + str(epoch)
-                    + ", Iteration: "
-                    + str(i)
-                    + ", Loss: "
-                    + str(loss)
-                )
+                print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
+                      ", Loss: " + str(loss))
         nb = i + 1.0
 
         if global_rank == 0:
@@ -317,9 +306,7 @@ def run_train(
 
             acc_val = total_correct / total_examples
             if global_rank == 0:
-                print(
-                    f"Validation Accuracy: {acc_val * 100.0:.4f}%",
-                )
+                print(f"Validation Accuracy: {acc_val * 100.0:.4f}%", )
 
         torch.cuda.synchronize()
 
@@ -340,9 +327,7 @@ def run_train(
 
         acc_test = total_correct / total_examples
         if global_rank == 0:
-            print(
-                f"Test Accuracy: {acc_test * 100.0:.4f}%",
-            )
+            print(f"Test Accuracy: {acc_test * 100.0:.4f}%", )
 
     if global_rank == 0:
         total_time = round(time.perf_counter() - wall_clock_start, 2)
@@ -387,7 +372,11 @@ if __name__ == "__main__":
     local_rank = int(os.environ["LOCAL_RANK"])
     device = torch.device(local_rank)
 
-    print(f'Global rank: {global_rank}, Local Rank: {local_rank}, World size: {world_size}')
+    print(
+        f'Global rank: {global_rank},',
+        f'Local Rank: {local_rank},',
+        f'World size: {world_size}',
+    )
 
     # Create the uid needed for cuGraph comms
     if global_rank == 0:
@@ -412,7 +401,8 @@ if __name__ == "__main__":
     # so this works well.
     if not args.skip_partition and global_rank == 0:
         print("Partitioning the data into equal size parts per worker")
-        dataset = PygNodePropPredDataset(name=args.dataset, root=args.dataset_root)
+        dataset = PygNodePropPredDataset(name=args.dataset,
+                                         root=args.dataset_root)
         split_idx = dataset.get_idx_split()
 
         partition_data(
