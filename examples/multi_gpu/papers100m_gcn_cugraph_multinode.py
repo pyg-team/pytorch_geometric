@@ -12,8 +12,26 @@
 # limitations under the License.
 
 # Multi-node, multi-GPU example with WholeGraph feature storage.
-# Can be run with srun
-# i.e. srun
+# It is recommended that you download the dataset first before running.
+
+# To run, use sbatch (i.e. sbatch -N2 -p <partition> -A <account> -J <job name>) with the script shown below:
+#
+# head_node_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
+# 
+# (yes || true) | srun -l \
+#        --container-image <container image> \
+#        --container-mounts "$(pwd):/workspace","/raid:/raid" \
+#          torchrun \
+#          --nnodes 2 \
+#          --nproc-per-node 8 \
+#          --rdzv-backend c10d \
+#          --rdzv-id 62 \
+#          --rdzv-endpoint $head_node_addr:29505 \
+#          /workspace/papers100m_gcn_cugraph_multinode.py \
+#            --epochs 1 \
+#            --dataset ogbn-papers100M \
+#            --dataset_root /workspace/datasets \
+#            --tempdir_root /raid/scratch 
 
 import argparse
 import os
@@ -345,7 +363,7 @@ def parse_args():
     parser.add_argument("--fan_out", type=int, default=30)
     parser.add_argument("--tempdir_root", type=str, default=None)
     parser.add_argument("--dataset_root", type=str, default="dataset")
-    parser.add_argument("--dataset", type=str, default="ogbn-products")
+    parser.add_argument("--dataset", type=str, default="ogbn-papers100M")
     parser.add_argument("--skip_partition", action="store_true")
     parser.add_argument("--wg_mem_type", type=str, default="distributed")
 
@@ -356,16 +374,11 @@ if __name__ == "__main__":
     args = parse_args()
     wall_clock_start = time.perf_counter()
 
-    os.environ['MASTER_ADDR'] = os.environ['SLURM_LAUNCH_NODE_IPADDR']
-    os.environ['MASTER_PORT'] = "29500"
-
     # Set a very high timeout so that PyTorch does not crash while
     # partitioning the data.
     dist.init_process_group(
         "nccl",
         timeout=timedelta(minutes=60),
-        rank=int(os.environ['SLURM_PROCID']),
-        world_size=int(os.environ['SLURM_NTASKS'])
     )
     world_size = dist.get_world_size()
     assert dist.is_initialized(), "Distributed cluster not initialized"

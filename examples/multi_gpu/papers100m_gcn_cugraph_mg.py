@@ -263,7 +263,7 @@ if __name__ == "__main__":
     parser.add_argument("--fan_out", type=int, default=30)
     parser.add_argument("--tempdir_root", type=str, default=None)
     parser.add_argument("--dataset_root", type=str, default="dataset")
-    parser.add_argument("--dataset", type=str, default="ogbn-products")
+    parser.add_argument("--dataset", type=str, default="ogbn-papers100M")
 
     parser.add_argument(
         "--n_devices",
