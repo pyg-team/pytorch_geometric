@@ -159,6 +159,7 @@ class GRetriever(nn.Module):
         """
         num_nodes_per_graph = ptr[1:] - ptr[:-1]
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
+                                          batch)
         projected_graph_embeds = self.projector(graph_embeds)
         graph_embeds = []
         for i, num_nodes_in_graph_i in enumerate(num_nodes_per_graph):
@@ -167,7 +168,7 @@ class GRetriever(nn.Module):
             else:
                 graph_embeds.append(projected_graph_embeds[i].unsqueeze(0))
 
-        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(  # noqa
+        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(
             question, additional_text_context, graph_embeds, label)
 
         with self.llm_to_use.autocast_context:
