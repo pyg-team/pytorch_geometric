@@ -275,10 +275,12 @@ class LinearHeteroNodeModule(LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
+
 @pytest.fixture
 def destroy_pg():
-     yield
-     torch.distributed.destroy_process_group()
+    yield
+    torch.distributed.destroy_process_group()
+
 
 @onlyCUDA
 @onlyFullTest
