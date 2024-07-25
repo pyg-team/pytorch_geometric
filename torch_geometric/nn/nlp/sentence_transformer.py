@@ -27,7 +27,9 @@ class SentenceTransformer(torch.nn.Module):
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name)
-
+        if self.tokenizer.pad_token == None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+            
     def forward(self, input_ids: Tensor, attention_mask: Tensor) -> Tensor:
         out = self.model(input_ids=input_ids, attention_mask=attention_mask)
 
