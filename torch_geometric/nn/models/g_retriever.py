@@ -163,12 +163,12 @@ class GRetriever(nn.Module):
         projected_graph_embeds = self.projector(graph_embeds)
         graph_embeds = []
         for i, num_nodes_in_graph_i in enumerate(num_nodes_per_graph):
-            if num_nodes_in_graph == 0:
+            if num_nodes_in_graph_i == 0:
                 graph_embeds.append(None)
             else:
                 graph_embeds.append(projected_graph_embeds[i].unsqueeze(0))
 
-        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(
+        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds( # noqa
             question, additional_text_context, graph_embeds, label)
 
         with self.llm_to_use.autocast_context:
