@@ -134,7 +134,7 @@ class LLM(torch.nn.Module):
             torch.tensor(input_ids, device=self.llm_device))
 
         to_cat = [bos_embeds]
-        if embedding is not None:
+        if embedding[i] is not None:
             to_cat.append(embedding[i])
         to_cat.append(inputs_embeds)
         inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
