@@ -168,7 +168,7 @@ class GRetriever(nn.Module):
             else:
                 graph_embeds.append(projected_graph_embeds[i].unsqueeze(0))
 
-        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds( # noqa
+        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(  # noqa
             question, additional_text_context, graph_embeds, label)
 
         with self.llm_to_use.autocast_context:
