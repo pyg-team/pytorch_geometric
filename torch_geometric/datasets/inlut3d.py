@@ -210,13 +210,13 @@ class ClassificationInLUT3D(InLUT3D):
     def processed_file_names(self) -> List[str]:
         return [f"sample_{i}.pt" for i in range(self.SAMPLES_NBR)]
 
-    def collect_train_samples(self) -> Tuple[str]:
+    def collect_train_samples(self) -> Tuple[str, ...]:
         return tuple([
             osp.join(self.processed_dir, f"sample_{i}.pt")
             for i in range(self.FIRST_TEST_ID)
         ])
 
-    def collect_test_samples(self) -> Tuple[str]:
+    def collect_test_samples(self) -> Tuple[str, ...]:
         return tuple([
             osp.join(self.processed_dir, f"sample_{i}.pt")
             for i in range(self.FIRST_TEST_ID, self.SAMPLES_NBR)
@@ -272,17 +272,17 @@ class InstanceSegmentationInLUT3D(InLUT3D):
     def processed_file_names(self) -> List[str]:
         return [f"setup_{i}.pt" for i in range(self.SETUPS_NBR)]
 
-    def collect_train_samples(self) -> List[str]:
-        return [
+    def collect_train_samples(self) -> Tuple[str, ...]:
+        return tuple([
             osp.join(self.processed_dir, f"{setup}.pt")
             for setup in self.train_setups
-        ]
+        ])
 
-    def collect_test_samples(self) -> List[str]:
-        return [
+    def collect_test_samples(self) -> Tuple[str, ...]:
+        return tuple([
             osp.join(self.processed_dir, f"{setup}.pt")
             for setup in self.test_setups
-        ]
+        ])
 
     def process(self) -> None:
         for setup_name, (
