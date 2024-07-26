@@ -6,7 +6,7 @@ from torch_geometric.testing import onlyFullTest, withPackage
 
 
 @onlyFullTest
-@withPackage('transformers', 'accelerate')
+@withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever() -> None:
     batch = Data()
     batch.question = ["Is PyG the best open-source GNN library?"]
