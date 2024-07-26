@@ -75,3 +75,15 @@ def extract_gz(path: str, folder: str, log: bool = True) -> None:
     with gzip.open(path, 'r') as r:
         with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
             w.write(r.read())
+
+
+def extract_tar_gz(path: str, folder: str, log: bool = True) -> None:
+    r"""Extracts a tar.gz archive to a specific folder.
+
+    Args:
+        path (str): The path to the tar.gz archive.
+        folder (str): The folder.
+        log (bool, optional): If :obj:`False`, will not print anything to the
+            console. (default: :obj:`True`)
+    """
+    extract_tar(path, folder, log=log)
