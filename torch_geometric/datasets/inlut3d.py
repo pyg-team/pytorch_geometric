@@ -139,10 +139,10 @@ class InLUT3D(Dataset):
         else:
             self.split_processed_paths = self.collect_test_samples()
 
-    def collect_train_samples(self) -> Tuple[str]:
+    def collect_train_samples(self) -> Tuple[str, ...]:
         raise NotImplementedError
 
-    def collect_test_samples(self) -> Tuple[str]:
+    def collect_test_samples(self) -> Tuple[str, ...]:
         raise NotImplementedError
 
     @property
