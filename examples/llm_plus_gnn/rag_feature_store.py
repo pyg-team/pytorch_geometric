@@ -89,4 +89,5 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
 class SentenceTransformerFeatureStore(KNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
+        kwargs['model_name'] = kwargs.get('model_name', 'sentence-transformers/all-roberta-large-v1')
         super().__init__(SentenceTransformer, *args, **kwargs)
