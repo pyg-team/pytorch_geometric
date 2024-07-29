@@ -234,4 +234,3 @@ class GRetriever(nn.Module):
                 use_cache=True  # IMPORTANT!
             )
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
-
