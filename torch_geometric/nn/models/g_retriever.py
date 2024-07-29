@@ -11,16 +11,10 @@ from torch_geometric.utils import scatter
 class GRetriever(nn.Module):
     r"""This GNN+LLM implementation is based on G-retriever.
     Original Paper: <https://arxiv.org/abs/2402.07630>`_.
-    See `examples/llm_plus_gnn/g_retriever.py` for example usage.
 
     Args:
         llm_to_use (str): A string representing the huggingface model you
-            want to use. This module has been tested for 'llama2' and 'gemma'.
-            Other huggingface transformer models should work if you pass the
-            correct name, see huggingface.co for details. If any issues occur
-            please file an issue on
-            https://github.com/pyg-team/pytorch_geometric
-            and assign to puririshi98. (default: :obj:'llama2')
+            want to use. (default: :obj:`"meta-llama/Llama-2-7b-chat-hf"`)
         llm_use_lora (bool): use LORA from peft for training the LLM. see
             https://huggingface.co/docs/peft/en/index for details.
         llm_dtype (torch.dtype): The dtype to use for the LLM.
@@ -31,18 +25,31 @@ class GRetriever(nn.Module):
             available GPU memory of your GPUs (default :obj:`7`)
         gnn_to_use (BasicGNN): Please pass a valid model that extends
             torch_geometric.nn.models.basic_gnn.BasicGNN. (default: :obj:`GAT`)
-        gnn_in_channels (int): (default: 1024)
-        gnn_hidden_channels (int): (default: 1024)
-        gnn_out_channels (int): (default: 1024)
-        num_gnn_layers (int): (default: 4)
+        gnn_in_channels (int): (default: :obj:`1024`)
+        gnn_hidden_channels (int): (default: obj:`1024`)
+        gnn_out_channels (int): (default: :obj:`1024`)
+        num_gnn_layers (int): (default: :obj:`4`)
         num_gnn_heads (int): Number of heads to use for BasicGNNs with the
-        `heads` kwarg. (default: 4)
-        mlp_hidden_dim (int): (default: 2048)
-        mlp_out_dim (int): (default: 4096)
+            :obj:`heads` kwarg. (default: :obj:`4`)
+        mlp_hidden_dim (int): (default: :obj:`2048`)
+        mlp_out_dim (int): (default: :obj:`4096`)
+
+    .. warning::
+        This module has been tested with the following Hugging Face models
+
+        - :obj:`llm_to_use="meta-llama/Llama-2-7b-chat-hf"`
+        - :obj:`llm_to_use="google/gemma-7b"`
+
+        and may not work with other models. See other models at `Hugging Face
+        Models <https://huggingface.co/models>`_ and let us know if you
+        encounter any issue by submitting a GitHub issue.
+
+    .. note::
+        See `examples/llm_plus_gnn/g_retriever.py` for example usage.
     """
     def __init__(
         self,
-        llm_to_use='llama2-7b',
+        llm_to_use='meta-llama/Llama-2-7b-chat-hf',
         llm_use_lora: bool = False,
         llm_dtype=torch.bfloat16,
         num_llm_params: int = 7,
@@ -56,12 +63,7 @@ class GRetriever(nn.Module):
         mlp_out_dim: int = 4096,
     ) -> None:
         super().__init__()
-        if 'llama2-7b' in llm_to_use.lower():
-            self.llm_to_use = LLM('llama2-7b', num_llm_params, llm_dtype)
-        elif 'gemma' in llm_to_use.lower():
-            self.llm_to_use = LLM('gemma', num_llm_params, llm_dtype)
-        else:
-            self.llm_to_use = LLM(llm_to_use, num_llm_params, llm_dtype)
+        self.llm_to_use = LLM(llm_to_use, num_llm_params, llm_dtype)
         self.llm_generator = self.llm_to_use.llm
         self.llm_dtype = llm_dtype
         if llm_use_lora:
@@ -70,7 +72,6 @@ class GRetriever(nn.Module):
                 get_peft_model,
                 prepare_model_for_kbit_training,
             )
-            print("Training our LLM with LORA!")
             self.llm_generator = prepare_model_for_kbit_training(
                 self.llm_generator)
             lora_r: int = 8
@@ -125,7 +126,6 @@ class GRetriever(nn.Module):
         edge_attr = edge_attr.to(self.llm_device)
         n_embeds = self.graph_encoder(x, edge_index.long(), edge_attr)
         batch = batch.to(self.llm_device)
-        # mean pooling
         g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
         return g_embeds
 
@@ -168,7 +168,11 @@ class GRetriever(nn.Module):
             else:
                 graph_embeds.append(projected_graph_embeds[i].unsqueeze(0))
 
-        inputs_embeds, attention_mask, label_input_ids = self.llm_to_use._get_embeds(  # noqa
+        (
+            inputs_embeds,
+            attention_mask,
+            label_input_ids,
+        ) = self.llm_to_use._get_embeds(  # noqa
             question, additional_text_context, graph_embeds, label)
 
         with self.llm_to_use.autocast_context:
