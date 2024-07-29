@@ -4,7 +4,7 @@ from typing import Optional, Tuple, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Identity, Parameter
+from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
@@ -108,8 +108,7 @@ class GATConv(MessagePassing):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         residual (bool, optional): If set to :obj:`True`, the layer will add
-            skip-connection mentioned in the `"Graph Attention Networks"
-            <https://arxiv.org/abs/1710.10903>`_ paper. (default: :obj:`False`)
+            a learnable skip-connection. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -181,23 +180,22 @@ class GATConv(MessagePassing):
             self.lin_edge = None
             self.register_parameter('att_edge', None)
 
-        # The number of out channels for residual and bias depending on concat
-        if concat:
-            out_chennels_total = out_channels * heads
-        else:
-            out_chennels_total = out_channels
+        # The number of output channels:
+        total_out_channels = out_channels * (heads if concat else 1)
 
         if residual:
-            if in_channels != out_chennels_total:
-                self.lin_res = Linear(in_channels, out_channels * heads,
-                                      bias=bias, weight_initializer='glorot')
-            else:
-                self.lin_res = Identity()
+            self.res = Linear(
+                in_channels
+                if isinstance(in_channels, int) else in_channels[1],
+                total_out_channels,
+                bias=False,
+                weight_initializer='glorot',
+            )
         else:
-            self.register_parameter('lin_res', None)
+            self.register_parameter('res', None)
 
         if bias:
-            self.bias = Parameter(torch.empty(out_chennels_total))
+            self.bias = Parameter(torch.empty(total_out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -213,9 +211,8 @@ class GATConv(MessagePassing):
             self.lin_dst.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
-        if isinstance(self.lin_res, Linear):
-            self.lin_res.reset_parameters()
-            zeros(self.lin_res.bias)
+        if self.res is not None:
+            self.res.reset_parameters()
         glorot(self.att_src)
         glorot(self.att_dst)
         glorot(self.att_edge)
@@ -298,10 +295,9 @@ class GATConv(MessagePassing):
         if isinstance(x, Tensor):
             assert x.dim() == 2, "Static graphs not supported in 'GATConv'"
 
-            if self.lin_res is not None:
-                # Clone to avoid unexpected reference when lin_res is
-                # identity mapping
-                res = self.lin_res(x.clone())
+            res: Optional[Tensor] = None
+            if self.res is not None:
+                res = self.res(x)
 
             if self.lin is not None:
                 x_src = x_dst = self.lin(x).view(-1, H, C)
@@ -316,8 +312,8 @@ class GATConv(MessagePassing):
             x_src, x_dst = x
             assert x_src.dim() == 2, "Static graphs not supported in 'GATConv'"
 
-            if x_dst is not None and self.lin_res is not None:
-                res = self.lin_res(x_dst.clone())
+            if x_dst is not None and self.res is not None:
+                res = self.res(x_dst)
 
             if self.lin is not None:
                 # If the module is initialized as non-bipartite, we expect that
@@ -375,7 +371,7 @@ class GATConv(MessagePassing):
         else:
             out = out.mean(dim=1)
 
-        if self.lin_res is not None:
+        if res is not None:
             out = out + res
 
         if self.bias is not None:
