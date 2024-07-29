@@ -162,7 +162,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
                 mlp_out_dim=2048,
             )
         else:
-            model = GRetriever(gnn_hidden_channels=hidden_channels,
+            model = GRetriever(llm_to_use="meta-llama/Llama-2-7b-chat-hf", gnn_hidden_channels=hidden_channels,
                                num_gnn_layers=num_gnn_layers)
     if num_gnn_layers is not None:
         model_save_name = "gnn_llm"
