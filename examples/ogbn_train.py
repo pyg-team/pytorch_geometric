@@ -293,6 +293,7 @@ def test(loader: NeighborLoader, val_steps=None) -> float:
 
     return total_correct / total_examples
 
+
 @torch.no_grad()
 def test_inference(mode : str) -> float:
     model.eval()
@@ -308,6 +309,7 @@ def test_inference(mode : str) -> float:
     })['acc']
 
     return acc
+
 
 if args.use_gat:
     model = GAT(
