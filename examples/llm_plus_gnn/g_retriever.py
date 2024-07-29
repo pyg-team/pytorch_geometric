@@ -165,7 +165,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
                 mlp_out_dim=2048,
             )
         else:
-            model = GRetriever(gnn_hidden_channels=hidden_channels,
+            model = GRetriever(llm_to_use="meta-llama/Llama-2-7b-chat-hf",
+                               gnn_hidden_channels=hidden_channels,
                                num_gnn_layers=num_gnn_layers)
     if num_gnn_layers is not None:
         model_save_name = "gnn_llm"
@@ -182,11 +183,6 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
         },
     ], betas=(0.9, 0.95))
     grad_steps = 2
-    if model is None:
-        trainable_params, all_param = model.print_trainable_params()
-        print(f"trainable params: {trainable_params} || \
-            all params: {all_param} || \
-            trainable%: {100 * trainable_params / all_param}")
 
     best_val_loss = float('inf')
     # Step 4 Training
