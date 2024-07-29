@@ -4,7 +4,7 @@ from typing import Optional, Tuple, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Identity, Parameter
+from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
@@ -106,13 +106,12 @@ class GATv2Conv(MessagePassing):
             :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`"mean"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        residual (bool, optional): If set to :obj:`True`, the layer will add
-            skip-connection mentioned in the `"Graph Attention Networks"
-            <https://arxiv.org/abs/1710.10903>`_ paper. (default: :obj:`False`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
             will be applied to the source and the target node of every edge,
             *i.e.* :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
             (default: :obj:`False`)
+        residual (bool, optional): If set to :obj:`True`, the layer will add
+            a learnable skip-connection. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -143,8 +142,8 @@ class GATv2Conv(MessagePassing):
         edge_dim: Optional[int] = None,
         fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
-        residual: bool = False,
         share_weights: bool = False,
+        residual: bool = False,
         **kwargs,
     ):
         super().__init__(node_dim=0, **kwargs)
@@ -186,23 +185,22 @@ class GATv2Conv(MessagePassing):
         else:
             self.lin_edge = None
 
-        # The number of out channels for residual and bias depending on concat
-        if concat:
-            out_chennels_total = out_channels * heads
-        else:
-            out_chennels_total = out_channels
+        # The number of output channels:
+        total_out_channels = out_channels * (heads if concat else 1)
 
         if residual:
-            if in_channels != out_chennels_total:
-                self.lin_res = Linear(in_channels, out_channels * heads,
-                                      bias=bias, weight_initializer='glorot')
-            else:
-                self.lin_res = Identity()
+            self.res = Linear(
+                in_channels
+                if isinstance(in_channels, int) else in_channels[1],
+                total_out_channels,
+                bias=False,
+                weight_initializer='glorot',
+            )
         else:
-            self.register_parameter('lin_res', None)
+            self.register_parameter('res', None)
 
         if bias:
-            self.bias = Parameter(torch.empty(out_chennels_total))
+            self.bias = Parameter(torch.empty(total_out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -214,9 +212,8 @@ class GATv2Conv(MessagePassing):
         self.lin_r.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
-        if isinstance(self.lin_res, Linear):
-            self.lin_res.reset_parameters()
-            zeros(self.lin_res.bias)
+        if self.res is not None:
+            self.res.reset_parameters()
         glorot(self.att)
         zeros(self.bias)
 
@@ -276,17 +273,15 @@ class GATv2Conv(MessagePassing):
         """
         H, C = self.heads, self.out_channels
 
-        res = None
+        res: Optional[Tensor] = None
 
         x_l: OptTensor = None
         x_r: OptTensor = None
         if isinstance(x, Tensor):
             assert x.dim() == 2
 
-            if self.lin_res is not None:
-                # Clone to avoid unexpected reference when lin_res is
-                # identity mapping
-                res = self.lin_res(x.clone())
+            if self.res is not None:
+                res = self.res(x)
 
             x_l = self.lin_l(x).view(-1, H, C)
             if self.share_weights:
@@ -296,8 +291,10 @@ class GATv2Conv(MessagePassing):
         else:
             x_l, x_r = x[0], x[1]
             assert x[0].dim() == 2
-            if x_r is not None and self.lin_res is not None:
-                res = self.lin_res(x_r.clone())
+
+            if x_r is not None and self.res is not None:
+                res = self.res(x_r)
+
             x_l = self.lin_l(x_l).view(-1, H, C)
             if x_r is not None:
                 x_r = self.lin_r(x_r).view(-1, H, C)
@@ -336,7 +333,7 @@ class GATv2Conv(MessagePassing):
         else:
             out = out.mean(dim=1)
 
-        if self.lin_res is not None:
+        if res is not None:
             out = out + res
 
         if self.bias is not None:

@@ -288,14 +288,13 @@ class GATConv(MessagePassing):
 
         H, C = self.heads, self.out_channels
 
-        res = None
+        res: Optional[Tensor] = None
 
         # We first transform the input node features. If a tuple is passed, we
         # transform source and target node features via separate weights:
         if isinstance(x, Tensor):
             assert x.dim() == 2, "Static graphs not supported in 'GATConv'"
 
-            res: Optional[Tensor] = None
             if self.res is not None:
                 res = self.res(x)
 
