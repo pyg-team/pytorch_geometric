@@ -468,7 +468,7 @@ def get_edge_type(
 ###############################################################################
 
 # These methods are used to group the individual type-wise components into a
-# unfied single representation.
+# unified single representation.
 
 
 def group_node_placeholder(input_dict: Dict[NodeType, Tensor],

@@ -1928,7 +1928,7 @@ def _spmm(
     if transpose and not input.is_sorted_by_col:
         cls_name = input.__class__.__name__
         raise ValueError(f"'matmul(..., transpose=True)' requires "
-                         f"'{cls_name}' to be sorted by colums")
+                         f"'{cls_name}' to be sorted by columns")
 
     if (torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling()
             and other.is_cuda):  # pragma: no cover

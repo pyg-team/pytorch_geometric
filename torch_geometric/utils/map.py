@@ -14,7 +14,7 @@ def map_index(
     inclusive: bool = False,
 ) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Maps indices in :obj:`src` to the positional value of their
-    corresponding occurence in :obj:`index`.
+    corresponding occurrence in :obj:`index`.
     Indices must be strictly positive.
 
     Args:

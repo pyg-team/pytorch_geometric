@@ -18,8 +18,8 @@ class Transformer:
     :class:`~torch.nn.Module`.
     :class:`Transformer` works entirely symbolically.
 
-    Methods in the :class:`Transformer` class can be overriden to customize the
-    behavior of transformation.
+    Methods in the :class:`Transformer` class can be overridden to customize
+    the behavior of transformation.
 
     .. code-block:: none
 
@@ -283,7 +283,7 @@ def symbolic_trace(
             # TODO We currently only trace top-level modules.
             return not isinstance(module, torch.nn.Sequential)
 
-        # Note: This is a hack around the fact that `Aggregaton.__call__`
+        # Note: This is a hack around the fact that `Aggregation.__call__`
         # is not patched by the base implementation of `trace`.
         # see https://github.com/pyg-team/pytorch_geometric/pull/5021 for
         # details on the rationale
