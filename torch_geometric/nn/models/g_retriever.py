@@ -101,7 +101,7 @@ class GRetriever(nn.Module):
                 heads=num_gnn_heads,
                 norm='batch_norm',
             ).to(self.llm_device)
-        except:  # noqa
+        except:  # noqa: E722
             # to handle gnns that do not have `heads` param
             self.graph_encoder = gnn_to_use(
                 in_channels=gnn_in_channels,
@@ -172,8 +172,8 @@ class GRetriever(nn.Module):
             inputs_embeds,
             attention_mask,
             label_input_ids,
-        ) = self.llm_to_use._get_embeds(  # noqa
-            question, additional_text_context, graph_embeds, label)
+        ) = self.llm_to_use._get_embeds(question, additional_text_context,
+                                        graph_embeds, label)
 
         with self.llm_to_use.autocast_context:
             outputs = self.llm_generator(
@@ -234,4 +234,3 @@ class GRetriever(nn.Module):
                 use_cache=True  # IMPORTANT!
             )
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
-
