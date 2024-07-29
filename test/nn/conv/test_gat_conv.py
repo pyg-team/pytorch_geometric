@@ -11,13 +11,14 @@ from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
-def test_gat_conv():
+@pytest.mark.parametrize('residual', [False, True])
+def test_gat_conv(residual):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
-    conv = GATConv(8, 32, heads=2)
+    conv = GATConv(8, 32, heads=2, residual=residual)
     assert str(conv) == 'GATConv(8, 32, heads=2)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
@@ -113,7 +114,7 @@ def test_gat_conv():
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
 
-    conv = GATConv((8, 16), 32, heads=2)
+    conv = GATConv((8, 16), 32, heads=2, residual=residual)
     assert str(conv) == 'GATConv((8, 16), 32, heads=2)'
 
     out1 = conv((x1, x2), edge_index)
