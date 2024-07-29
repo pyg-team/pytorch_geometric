@@ -35,6 +35,11 @@ parser.add_argument(
     action='store_true',
     help='Whether or not to use graphsage model',
 )
+parser.add_argument(
+    '--test_inference',
+    action='store_true',
+    help='Whether or not to test inference method',
+)
 parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--epochs', type=int, default=10,
                     help='number of training epochs.')
@@ -288,6 +293,21 @@ def test(loader: NeighborLoader, val_steps=None) -> float:
 
     return total_correct / total_examples
 
+@torch.no_grad()
+def test_inference(mode):
+    model.eval()
+
+    out = model.inference(data.x)
+
+    y_true = data.y.cpu()
+    y_pred = out.argmax(dim=-1, keepdim=True)
+
+    acc = evaluator.eval({
+        'y_true': y_true[split_idx[mode]],
+        'y_pred': y_pred[split_idx[mode]],
+    })['acc']
+
+    return acc
 
 if args.use_gat:
     model = GAT(
@@ -313,8 +333,12 @@ optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 for epoch in range(1, num_epochs + 1):
     loss, acc = train(epoch)
     print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
-    train_acc = test(train_loader)
-    val_acc = test(val_loader)
+    if args.test_inference:
+        train_acc = test_inference('train')
+        val_acc = test_inference('valid')
+    else:
+        train_acc = test(train_loader)
+        val_acc = test(val_loader)
     print(f'Epoch {epoch:02d}, Train accuracy: {train_acc:.4f}, '
           f'Validation accuracy: {val_acc:.4f}')
 
