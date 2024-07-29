@@ -537,7 +537,7 @@ class NegativeSampling(CastMixin):
             the sampling of source nodes. Does not necessarily need to sum up
             to one. If not given, negative nodes will be sampled uniformly.
             (default: :obj:`None`)
-        src_weight (torch.Tensor, optional): A node-level vector determining
+        dst_weight (torch.Tensor, optional): A node-level vector determining
             the sampling of destination nodes. Does not necessarily need to sum
             up to one. If not given, negative nodes will be sampled uniformly.
             (default: :obj:`None`)

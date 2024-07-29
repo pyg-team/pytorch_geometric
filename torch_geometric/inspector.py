@@ -305,7 +305,7 @@ class Inspector:
         according to its function signature from a data blob.
 
         Args:
-            func (callabel or str): The function.
+            func (callable or str): The function.
             kwargs (dict[str, Any]): The data blob which may serve as inputs.
         """
         out_dict: Dict[str, Any] = {}
@@ -346,7 +346,7 @@ class Inspector:
             type annotations are not found.
 
         Args:
-            func (callabel or str): The function.
+            func (callable or str): The function.
             exclude (list[int or str]): A list of parameters to exclude, either
                 given by their name or index. (default: :obj:`None`)
         """
