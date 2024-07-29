@@ -1165,7 +1165,7 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
                f'[{value.num_rows}, {value.num_cols}])')
     elif isinstance(value, str):
         out = f"'{value}'"
-    elif isinstance(value, Sequence):
+    elif isinstance(value, (Sequence, set)):
         out = str([len(value)])
     elif isinstance(value, Mapping) and len(value) == 0:
         out = '{}'

@@ -295,7 +295,7 @@ def group_cat(
     r"""Concatenates the given sequence of tensors :obj:`tensors` in the given
     dimension :obj:`dim`.
     Different from :meth:`torch.cat`, values along the concatenating dimension
-    are grouped according to the indicies defined in the :obj:`index` tensors.
+    are grouped according to the indices defined in the :obj:`index` tensors.
     All tensors must have the same shape (except in the concatenating
     dimension).
 
