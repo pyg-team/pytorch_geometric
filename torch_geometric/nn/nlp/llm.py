@@ -62,21 +62,12 @@ class LLM(torch.nn.Module):
 
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
-        if model_name == 'llama2-7b':
-            pretty_model_name = 'LLAMA2'
-            model_name = 'meta-llama/Llama-2-7b-chat-hf'
-        elif model_name == 'gemma':
-            pretty_model_name = 'GEMMA'
-            model_name = 'google/gemma-7b'
-        else:
-            pretty_model_name = model_name
-
         # A rough heuristic on GPU memory requirements, e.g., we found that
         # LLAMA2 (7B parameters) fits on a 85GB GPU.
         required_memory = 85 * num_params / 7
         kwargs = get_llm_kwargs(required_memory, dtype)
 
-        print(f"Setting up '{pretty_model_name}' with configuration: {kwargs}")
+        print(f"Setting up '{model_name}' with configuration: {kwargs}")
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name,
             use_fast=False,
