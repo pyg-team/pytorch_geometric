@@ -107,6 +107,8 @@ class GATConv(MessagePassing):
             :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`"mean"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        residual (bool, optional): If set to :obj:`True`, the layer will add
+            a learnable skip-connection. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -137,6 +139,7 @@ class GATConv(MessagePassing):
         edge_dim: Optional[int] = None,
         fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
+        residual: bool = False,
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
@@ -151,6 +154,7 @@ class GATConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.edge_dim = edge_dim
         self.fill_value = fill_value
+        self.residual = residual
 
         # In case we are operating in bipartite graphs, we apply separate
         # transformations 'lin_src' and 'lin_dst' to source and target nodes:
@@ -176,10 +180,22 @@ class GATConv(MessagePassing):
             self.lin_edge = None
             self.register_parameter('att_edge', None)
 
-        if bias and concat:
-            self.bias = Parameter(torch.empty(heads * out_channels))
-        elif bias and not concat:
-            self.bias = Parameter(torch.empty(out_channels))
+        # The number of output channels:
+        total_out_channels = out_channels * (heads if concat else 1)
+
+        if residual:
+            self.res = Linear(
+                in_channels
+                if isinstance(in_channels, int) else in_channels[1],
+                total_out_channels,
+                bias=False,
+                weight_initializer='glorot',
+            )
+        else:
+            self.register_parameter('res', None)
+
+        if bias:
+            self.bias = Parameter(torch.empty(total_out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -195,6 +211,8 @@ class GATConv(MessagePassing):
             self.lin_dst.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
+        if self.res is not None:
+            self.res.reset_parameters()
         glorot(self.att_src)
         glorot(self.att_dst)
         glorot(self.att_edge)
@@ -270,10 +288,15 @@ class GATConv(MessagePassing):
 
         H, C = self.heads, self.out_channels
 
+        res: Optional[Tensor] = None
+
         # We first transform the input node features. If a tuple is passed, we
         # transform source and target node features via separate weights:
         if isinstance(x, Tensor):
             assert x.dim() == 2, "Static graphs not supported in 'GATConv'"
+
+            if self.res is not None:
+                res = self.res(x)
 
             if self.lin is not None:
                 x_src = x_dst = self.lin(x).view(-1, H, C)
@@ -287,6 +310,9 @@ class GATConv(MessagePassing):
         else:  # Tuple of source and target node features:
             x_src, x_dst = x
             assert x_src.dim() == 2, "Static graphs not supported in 'GATConv'"
+
+            if x_dst is not None and self.res is not None:
+                res = self.res(x_dst)
 
             if self.lin is not None:
                 # If the module is initialized as non-bipartite, we expect that
@@ -343,6 +369,9 @@ class GATConv(MessagePassing):
             out = out.view(-1, self.heads * self.out_channels)
         else:
             out = out.mean(dim=1)
+
+        if res is not None:
+            out = out + res
 
         if self.bias is not None:
             out = out + self.bias

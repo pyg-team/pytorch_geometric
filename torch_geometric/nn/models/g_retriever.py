@@ -235,14 +235,3 @@ class GRetriever(nn.Module):
             )
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-    def print_trainable_params(self) -> None:
-        trainable_params = 0
-        all_param = 0
-        for _, param in self.named_parameters():
-            num_params = param.numel()
-
-            all_param += num_params
-            if param.requires_grad:
-                trainable_params += num_params
-
-        return trainable_params, all_param
