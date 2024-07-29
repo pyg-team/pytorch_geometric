@@ -295,7 +295,7 @@ def test(loader: NeighborLoader, val_steps=None) -> float:
 
 
 @torch.no_grad()
-def test_inference(mode : str) -> float:
+def test_inference(mode: str) -> float:
     model.eval()
 
     out = model.inference(data.x)
