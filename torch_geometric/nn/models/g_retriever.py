@@ -172,7 +172,7 @@ class GRetriever(nn.Module):
             inputs_embeds,
             attention_mask,
             label_input_ids,
-        ) = self.llm_to_use._get_embeds(  # noqa
+        ) = self.llm_to_use._get_embeds(
             question, additional_text_context, graph_embeds, label)
 
         with self.llm_to_use.autocast_context:
