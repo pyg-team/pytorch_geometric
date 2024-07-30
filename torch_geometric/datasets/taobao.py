@@ -10,7 +10,6 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
 
 
@@ -115,7 +114,8 @@ class Taobao(InMemoryDataset):
         if self.process_item_to_item:
             # Compute sparsified item<>item relationships through users:
             print('Computing item<>item relationships...')
-            mat = to_scipy_sparse_matrix(data['user', 'item'].edge_index).tocsr()
+            mat = to_scipy_sparse_matrix(data['user',
+                                              'item'].edge_index).tocsr()
             mat = mat[:data['user'].num_nodes, :data['item'].num_nodes]
             comat = mat.T @ mat
             comat.setdiag(0)

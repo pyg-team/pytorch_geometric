@@ -1,9 +1,8 @@
 # An Multi GPU implementation of unsupervised bipartite GraphSAGE
 # using the Alibaba Taobao dataset.
+import argparse
 import os
 import os.path as osp
-
-import argparse
 
 import torch
 import torch.distributed as dist
@@ -144,7 +143,7 @@ def run_train(rank, data, train_data, val_data, test_data, args, world_size):
         model.train()
 
         total_loss = total_examples = 0
-        for batch in tqdm.tqdm(train_loader, disable=rank!=0):
+        for batch in tqdm.tqdm(train_loader, disable=rank != 0):
             batch = batch.to(rank)
             optimizer.zero_grad()
 
@@ -168,7 +167,7 @@ def run_train(rank, data, train_data, val_data, test_data, args, world_size):
         model.eval()
 
         preds, targets = [], []
-        for batch in tqdm.tqdm(loader, disable=rank!=0):
+        for batch in tqdm.tqdm(loader, disable=rank != 0):
             batch = batch.to(rank)
 
             pred = model(
@@ -206,32 +205,33 @@ def run_train(rank, data, train_data, val_data, test_data, args, world_size):
         break
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    best_val_auc = 0 
+    best_val_auc = 0
     for epoch in range(1, args.epochs):
         loss = train()
         if rank == 0:
             val_auc = test(val_loader)
             best_val_auc = max(best_val_auc, val_auc)
         if rank == 0:
-            print(f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val AUC: {val_auc:.4f}')
+            print(
+                f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val AUC: {val_auc:.4f}')
     if rank == 0:
         test_auc = test(test_loader)
         print(f'Total {args.epochs:02d} epochs: Final Loss: {loss:4f}, '
               f'Best Val AUC: {best_val_auc:.4f}, '
               f'Test AUC: {test_auc:.4f}')
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_workers',
-                        type=int,
-                        default=16,
+    parser.add_argument('--num_workers', type=int, default=16,
                         help="Number of workers per dataloader")
-    parser.add_argument('--lr',type=float, default=0.001)
+    parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--epochs', type=int, default=21)
     parser.add_argument('--batch_size', type=int, default=2048)
-    parser.add_argument('--dataset_root_dir',
-                        type=str,
-                        default=osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao'))
+    parser.add_argument(
+        '--dataset_root_dir', type=str,
+        default=osp.join(osp.dirname(osp.realpath(__file__)),
+                         '../../data/Taobao'))
     args = parser.parse_args()
 
     dataset = Taobao(args.dataset_root_dir, process_item_to_item=True)
