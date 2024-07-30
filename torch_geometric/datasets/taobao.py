@@ -11,6 +11,8 @@ from torch_geometric.data import (
     extract_zip,
 )
 
+from torch_geometric.utils.convert import to_scipy_sparse_matrix
+
 
 class Taobao(InMemoryDataset):
     r"""Taobao is a dataset of user behaviors from Taobao offered by Alibaba,
@@ -48,7 +50,9 @@ class Taobao(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
+        process_item_to_item: bool = False,
     ) -> None:
+        self.process_item_to_item = process_item_to_item
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
@@ -107,6 +111,19 @@ class Taobao(InMemoryDataset):
         row = torch.from_numpy(df['itemId'].values)
         col = torch.from_numpy(df['categoryId'].values)
         data['item', 'category'].edge_index = torch.stack([row, col], dim=0)
+
+        if self.process_item_to_item:
+            # Compute sparsified item<>item relationships through users:
+            print('Computing item<>item relationships...')
+            mat = to_scipy_sparse_matrix(data['user', 'item'].edge_index).tocsr()
+            mat = mat[:data['user'].num_nodes, :data['item'].num_nodes]
+            comat = mat.T @ mat
+            comat.setdiag(0)
+            comat = comat >= 3.
+            comat = comat.tocoo()
+            row = torch.from_numpy(comat.row).to(torch.long)
+            col = torch.from_numpy(comat.col).to(torch.long)
+            data['item', 'item'].edge_index = torch.stack([row, col], dim=0)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 
