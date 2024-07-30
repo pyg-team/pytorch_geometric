@@ -241,7 +241,7 @@ if __name__ == '__main__':
 
     torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 
-    dataset = PygNodePropPredDataset(name=args.dataset, root=args.dataset_root)
+    dataset = PygNodePropPredDataset(name=args.dataset, root=args.root)
     split_idx = dataset.get_idx_split()
     data = dataset[0]
     data.y = data.y.reshape(-1)
