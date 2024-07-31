@@ -11,6 +11,7 @@ from torch_geometric.data import (
     extract_zip,
 )
 
+
 class Taobao(InMemoryDataset):
     r"""Taobao is a dataset of user behaviors from Taobao offered by Alibaba,
     provided by the `Tianchi Alicloud platform

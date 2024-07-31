@@ -17,8 +17,8 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Taobao
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
-
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
+
 
 class ItemGNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
