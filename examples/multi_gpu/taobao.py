@@ -18,6 +18,7 @@ from torch_geometric.datasets import Taobao
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
 
+from torch_geometric.utils.convert import to_scipy_sparse_matrix
 
 class ItemGNNEncoder(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels):
@@ -234,7 +235,21 @@ if __name__ == '__main__':
                          '../../data/Taobao'))
     args = parser.parse_args()
 
-    dataset = Taobao(args.dataset_root_dir, process_item_to_item=True)
+    def pre_transform(data):
+        # Compute sparsified item<>item relationships through users:
+        print('Computing item<>item relationships...')
+        mat = to_scipy_sparse_matrix(data['user', 'item'].edge_index).tocsr()
+        mat = mat[:data['user'].num_nodes, :data['item'].num_nodes]
+        comat = mat.T @ mat
+        comat.setdiag(0)
+        comat = comat >= 3.
+        comat = comat.tocoo()
+        row = torch.from_numpy(comat.row).to(torch.long)
+        col = torch.from_numpy(comat.col).to(torch.long)
+        data['item', 'item'].edge_index = torch.stack([row, col], dim=0)
+        return data
+
+    dataset = Taobao(args.dataset_root_dir, pre_transform=pre_transform)
     data = dataset[0]
 
     data['user'].x = torch.arange(0, data['user'].num_nodes)
