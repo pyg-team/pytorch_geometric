@@ -1,17 +1,15 @@
+from typing import Tuple
+
 import torch
 from torch import Tensor
+
 from torch_geometric.utils import add_self_loops, degree
-from typing import Tuple
 
 
 def normalize_edge_index(
-        edge_index: Tensor,
-        num_nodes: int,
-        self_loop: bool = True,
-        symmetric_normalization: bool = True
-) -> Tuple[Tensor, Tensor]:
-    """
-    Normalizes the edge index of a graph for use in GNNs.
+        edge_index: Tensor, num_nodes: int, self_loop: bool = True,
+        symmetric_normalization: bool = True) -> Tuple[Tensor, Tensor]:
+    """Normalizes the edge index of a graph for use in GNNs.
 
     This function can add self-loops to the graph and apply either symmetric or
     asymmetric normalization based on the node degrees.
@@ -36,7 +34,6 @@ def normalize_edge_index(
         - edge_index: The possibly modified edge index with self-loops.
         - edge_weight: The normalized edge weights.
     """
-
     if self_loop:
         edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
 
