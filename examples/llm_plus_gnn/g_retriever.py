@@ -279,7 +279,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             num_params=1,
         )
     else:
-        pure_llm = LLM(model_name="llama2-7b", num_params=7)
+        pure_llm = LLM(model_name="meta-llama/Llama-2-7b-chat-hf", num_params=7)
     if path.exists("demo_save_dict.pt"):
         print("Saved outputs for the first step of the demo found.")
         print("Would you like to redo?")
