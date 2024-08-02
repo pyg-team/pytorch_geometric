@@ -7,7 +7,7 @@ from torch_geometric.utils import coalesce
 
 
 @functional_transform('line_digraph')
-class LineGraph(BaseTransform):
+class LineDiGraph(BaseTransform):
     r"""Converts a graph to its corresponding line-digraph
     (functional name: :obj:`line_digraph`).
 
