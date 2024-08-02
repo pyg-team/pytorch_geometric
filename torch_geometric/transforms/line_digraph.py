@@ -16,7 +16,8 @@ class LineGraph(BaseTransform):
 
         \mathcal{V}^{\prime} &= \mathcal{E}
 
-        \mathcal{E}^{\prime} &= \{ ((u, v), (w, x)) : (u, v) \in \mathcal{E} \land (w, x) \in \mathcal{E} \land v = w\}
+        \mathcal{E}^{\prime} &= \{ ((u, v), (w, x)) : (u, v) \in \mathcal{E}
+            \land (w, x) \in \mathcal{E} \land v = w\}
 
     Line-digraph node indices are equal to indices in the original graph's
     coalesced :obj:`edge_index`.
@@ -28,9 +29,9 @@ class LineGraph(BaseTransform):
         assert data.edge_index is not None
         assert data.is_directed()
         edge_index, edge_attr = data.edge_index, data.edge_attr
-        N, E = data.num_nodes, data.num_edges
+        E = data.num_edges
 
-        edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes=data.num_nodes)
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, data.num_nodes)
         row, col = edge_index
 
         new_edge_index = []
