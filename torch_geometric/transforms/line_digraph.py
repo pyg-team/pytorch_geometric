@@ -34,12 +34,14 @@ class LineDiGraph(BaseTransform):
         edge_index, edge_attr = coalesce(edge_index, edge_attr, data.num_nodes)
         row, col = edge_index
 
-        new_edge_index = []
-        for i in range(E):
-            new_col_i = torch.nonzero(row == col[i])
-            new_row_i = i * torch.ones_like(new_col_i)
-            new_edge_index.append(torch.cat([new_row_i, new_col_i], dim=1))
-        new_edge_index = torch.cat(new_edge_index, dim=0).t()
+        # Broadcast to create a mask for matching row and col elements
+        mask = row.unsqueeze(0) == col.unsqueeze(1)  # (num_edges, num_edges)
+        # Generate new_row/col indices. 2D tensor of arange
+        new_row = torch.arange(E).unsqueeze(1).expand(-1, mask.size(1))
+        new_col = torch.arange(mask.size(1)).unsqueeze(0).expand(E, -1)
+        new_row = new_row[mask]
+        new_col = new_col[mask]
+        new_edge_index = torch.stack([new_row, new_col], dim=0)
 
         data.edge_index = new_edge_index
         data.x = edge_attr
