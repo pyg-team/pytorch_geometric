@@ -6,7 +6,7 @@ from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import remove_self_loops
 
 
-@functional_transform('remove_remaining_self_loops')
+@functional_transform('remove_self_loops')
 class RemoveSelfLoops(BaseTransform):
     r"""Remove all self-loops in the given homogeneous or heterogeneous
     graph (functional name: :obj:`remove_self_loops`).
