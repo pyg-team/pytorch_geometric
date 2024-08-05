@@ -1,6 +1,7 @@
 # Reaches around 0.7870 ± 0.0036 test accuracy.
 
 import argparse
+import time
 import os.path as osp
 from typing import Tuple
 
@@ -31,9 +32,20 @@ parser.add_argument(
     help='Root directory of dataset.',
 )
 parser.add_argument(
+    "--dataset_subdir",
+    type=str,
+    default="ogb-papers100M",
+    help="directory of dataset.",
+)
+parser.add_argument(
     '--use_gat',
     action='store_true',
     help='Whether or not to use graphsage model',
+)
+parser.add_argument(
+    '--verbose',
+    action='store_true',
+    help='Whether or not to generate statistical report',
 )
 parser.add_argument(
     '--test_inference',
@@ -41,13 +53,15 @@ parser.add_argument(
     help='Whether or not to test inference method',
 )
 parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument('--epochs', type=int, default=10,
+parser.add_argument('--runs', type=int, default=1,
+                    help='number of runs.')
+parser.add_argument('-e', '--epochs', type=int, default=10,
                     help='number of training epochs.')
 parser.add_argument('--num_layers', type=int, default=3,
                     help='number of layers.')
 parser.add_argument('--num_heads', type=int, default=2,
                     help='number of heads for GAT model.')
-parser.add_argument('--batch_size', type=int, default=1024, help='batch size.')
+parser.add_argument('-b', '--batch_size', type=int, default=1024, help='batch size.')
 parser.add_argument('--num_workers', type=int, default=12,
                     help='number of workers.')
 parser.add_argument('--neighbors', type=str, default='15,10,5',
@@ -67,7 +81,20 @@ parser.add_argument(
     help='Whether or not to use directed graph',
 )
 args = parser.parse_args()
+
+verbose = args.verbose
+if verbose:
+    wall_clock_start = time.perf_counter()
+    if args.use_gat:
+        print(f"Training {args.dataset} with GAT model.")
+    else:
+        print(f"Training {args.dataset} with GraphSage model.")
+
+if not torch.cuda.is_available():
+    args.device = "cpu"
 device = torch.device(args.device)
+
+num_runs = args.runs
 num_epochs = args.epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
@@ -77,7 +104,7 @@ neighbors = args.neighbors.split(',')
 num_neighbors = [int(i) for i in neighbors]
 log_interval = args.log_interval
 
-root = osp.join(args.dataset_dir, args.dataset)
+root = osp.join(args.dataset_dir, args.dataset_subdir)
 print('The root is: ', root)
 dataset = PygNodePropPredDataset(name=args.dataset, root=root)
 split_idx = dataset.get_idx_split()
@@ -332,16 +359,88 @@ else:
 model = model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
-for epoch in range(1, num_epochs + 1):
-    loss, acc = train(epoch)
-    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
-    if args.test_inference:
-        train_acc = test_inference('train')
-        val_acc = test_inference('valid')
-    else:
-        train_acc = test(train_loader)
-        val_acc = test(val_loader)
-    print(f'Epoch {epoch:02d}, Train accuracy: {train_acc:.4f}, '
-          f'Validation accuracy: {val_acc:.4f}')
+if verbose:
+    prep_time = round(time.perf_counter() - wall_clock_start, 2)
+    print("Total time before training begins (prep_time)=", prep_time, "seconds")
+    print("Training...")
+  
+test_accs = []
+val_accs = []
+times = []
+train_times = []
+inference_times = []
+best_val = best_test = 0.
+for run in range(1, num_runs + 1):
+    start = time.time()
+    if verbose:
+        print(f'\nRun {run:02d}:\n')
 
-print(f'Test accuracy: {test(test_loader)}')
+    model.reset_parameters()
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+
+    best_val_acc = best_test_acc = 0.0
+    for epoch in range(1, num_epochs + 1):
+        train_start = time.time()
+        loss, acc = train(epoch)
+        train_end = time.time()
+        train_times.append(train_end - train_start)
+        
+        inference_start = time.time()
+        if args.test_inference: 
+            train_acc = test_inference("train")
+            val_acc = test_inference("valid")
+            test_acc = test_inference("test")
+        else:
+            train_acc = test(train_loader)
+            val_acc = test(val_loader)
+            test_acc = test(test_loader)
+
+        inference_times.append(time.time() - inference_start)
+        test_accs.append(test_acc)
+        val_accs.append(val_acc)
+        if verbose:
+            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}'
+                  f' Time: {train_end - train_start:.4f}s')
+            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+                  f'Test: {test_acc:.4f}')
+
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+        if test_acc > best_test_acc:
+            best_test_acc = test_acc
+        times.append(time.time() - train_start)
+    if best_val < best_val_acc:
+        best_val = best_val_acc
+    if best_test < best_test_acc:
+        best_test = best_test_acc
+    if verbose:
+        print("Total time used for run: {:02d} is {:.4f}".format(
+            run,
+            time.time() - start))
+
+if verbose:
+    test_acc = torch.tensor(test_accs)
+    val_acc = torch.tensor(val_accs)
+    print('============================')
+    print("Average Epoch Time on training: {:.4f}".format(
+        torch.tensor(train_times).mean()))
+    print("Average Epoch Time on inference: {:.4f}".format(
+        torch.tensor(inference_times).mean()))
+    print("Average Epoch Time: {:.4f}".format(torch.tensor(times).mean()))
+    print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
+    print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
+    print(f'Final Validation: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
+    print(f"Best validation accuracy: {best_val:.4f}")
+    print(f"Best testing accuracy: {best_test:.4f}")
+
+
+if verbose:
+        print("Testing...")
+if args.test_inference:
+    test_final_acc = test_inference("test")
+else:
+    test_final_acc = test(test_loader)
+print(f'Test Accuracy: {test_final_acc:.4f}')
+if verbose:
+    total_time = round(time.perf_counter() - wall_clock_start, 2)
+    print("Total Program Runtime (total_time) =", total_time, "seconds")
