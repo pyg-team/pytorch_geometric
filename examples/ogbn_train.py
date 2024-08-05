@@ -1,8 +1,8 @@
 # Reaches around 0.7870 ± 0.0036 test accuracy.
 
 import argparse
-import time
 import os.path as osp
+import time
 from typing import Tuple
 
 import torch
@@ -53,15 +53,15 @@ parser.add_argument(
     help='Whether or not to test inference method',
 )
 parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument('--runs', type=int, default=1,
-                    help='number of runs.')
+parser.add_argument('--runs', type=int, default=1, help='number of runs.')
 parser.add_argument('-e', '--epochs', type=int, default=10,
                     help='number of training epochs.')
 parser.add_argument('--num_layers', type=int, default=3,
                     help='number of layers.')
 parser.add_argument('--num_heads', type=int, default=2,
                     help='number of heads for GAT model.')
-parser.add_argument('-b', '--batch_size', type=int, default=1024, help='batch size.')
+parser.add_argument('-b', '--batch_size', type=int, default=1024,
+                    help='batch size.')
 parser.add_argument('--num_workers', type=int, default=12,
                     help='number of workers.')
 parser.add_argument('--neighbors', type=str, default='15,10,5',
@@ -361,9 +361,10 @@ optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 if verbose:
     prep_time = round(time.perf_counter() - wall_clock_start, 2)
-    print("Total time before training begins (prep_time)=", prep_time, "seconds")
+    print("Total time before training begins (prep_time)=", prep_time,
+          "seconds")
     print("Training...")
-  
+
 test_accs = []
 val_accs = []
 times = []
@@ -384,9 +385,9 @@ for run in range(1, num_runs + 1):
         loss, acc = train(epoch)
         train_end = time.time()
         train_times.append(train_end - train_start)
-        
+
         inference_start = time.time()
-        if args.test_inference: 
+        if args.test_inference:
             train_acc = test_inference("train")
             val_acc = test_inference("valid")
             test_acc = test_inference("test")
@@ -426,16 +427,15 @@ if verbose:
         torch.tensor(train_times).mean()))
     print("Average Epoch Time on inference: {:.4f}".format(
         torch.tensor(inference_times).mean()))
-    print("Average Epoch Time: {:.4f}".format(torch.tensor(times).mean()))
+    print(f"Average Epoch Time: {torch.tensor(times).mean():.4f}")
     print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
     print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
     print(f'Final Validation: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
     print(f"Best validation accuracy: {best_val:.4f}")
     print(f"Best testing accuracy: {best_test:.4f}")
 
-
 if verbose:
-        print("Testing...")
+    print("Testing...")
 if args.test_inference:
     test_final_acc = test_inference("test")
 else:
