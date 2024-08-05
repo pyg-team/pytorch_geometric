@@ -399,9 +399,9 @@ for run in range(1, num_runs + 1):
         test_accs.append(test_acc)
         val_accs.append(val_acc)
         if verbose:
-            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}'
+            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}' \
                   f' Time: {train_end - train_start:.4f}s')
-            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, ' \
                   f'Test: {test_acc:.4f}')
 
         if val_acc > best_val_acc:
