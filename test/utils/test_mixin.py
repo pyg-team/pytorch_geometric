@@ -19,3 +19,6 @@ def test_cast_mixin():
     obj1 = MyClass1(1, 2, z=3)
     obj2 = MyClass2.cast(obj1)
     assert isinstance(obj2, MyClass2)
+    assert obj2.a == 1
+    assert obj2.b == 2
+    assert obj2.c == 3
