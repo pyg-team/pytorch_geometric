@@ -25,6 +25,7 @@ from cugraph_pyg.loader import NeighborLoader  # noqa
 enable_spilling()
 
 from ogb.nodeproppred import PygNodePropPredDataset  # noqa
+from tqdm import tqdm  # noqa
 
 from torch_geometric.nn import SAGEConv  # noqa
 from torch_geometric.utils import to_undirected  # noqa
@@ -169,7 +170,7 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
         model.eval()
 
         total_correct = total_examples = 0
-        for batch in enumerate(loader):
+        for batch in loader:
             batch = batch.cuda()
             out = model(batch.x, batch.edge_index)[:batch.batch_size]
             y = batch.y[:batch.batch_size].view(-1).to(torch.long)
