@@ -1,8 +1,0 @@
- 06-08-2024 09:27:35:29 [pid=907411 tid=907411] NOTICE  cufio-drv:727 running in compatible mode
- 06-08-2024 09:27:35:202 [pid=907413 tid=907413] NOTICE  cufio-drv:727 running in compatible mode
- 06-08-2024 09:27:35:218 [pid=907412 tid=907412] NOTICE  cufio-drv:727 running in compatible mode
- 06-08-2024 09:27:37:133 [pid=907412 tid=907412] ERROR  cufio-fs:79 mount option not found in mount table data device: /dev/sdb1
- 06-08-2024 09:27:37:133 [pid=907413 tid=907413] ERROR  cufio-fs:79 mount option not found in mount table data device: /dev/sdb1
- 06-08-2024 09:27:37:144 [pid=907411 tid=907411] ERROR  cufio-fs:79 mount option not found in mount table data device: /dev/sdb1
- 06-08-2024 09:27:37:721 [pid=907413 tid=908390] ERROR  0:64 numa_run_on_node encountered error for node 2 errno 34 hence not affinitizing
- 06-08-2024 09:27:42:296 [pid=907413 tid=908390] ERROR  0:64 numa_run_on_node encountered error for node 2 errno 34 hence not affinitizing
