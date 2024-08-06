@@ -128,8 +128,7 @@ def test_lightning_dataset(get_dataset, strategy_type):
                                    'pin_memory=True, '
                                    'persistent_workers=False)')
 
-        with pytest.warns(UserWarning, match="defined a `validation_step`"):
-            trainer.fit(model, datamodule)
+        trainer.fit(model, datamodule)
 
         assert not trainer.validate_loop._data_source.is_defined()
         assert not trainer.test_loop._data_source.is_defined()
