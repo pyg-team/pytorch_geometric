@@ -11,6 +11,8 @@ class CastMixin:
             if elem is None:
                 return None  # type: ignore
             if isinstance(elem, CastMixin):
+                if cls is not elem.__class__:
+                    return cls(*elem)  # type: ignore
                 return elem  # type: ignore
             if isinstance(elem, tuple):
                 return cls(*elem)  # type: ignore
