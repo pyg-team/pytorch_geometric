@@ -57,6 +57,8 @@ benchmark=[
     "wandb",
 ]
 test=[
+    "beartype",
+    "jaxtyping",
     "onnx",
     "onnxruntime",
     "pytest",
@@ -75,6 +77,7 @@ full = [
     "captum<0.7.0",
     "graphviz",
     "h5py",
+    "jaxtyping",
     "matplotlib",
     "networkx",
     "numba<0.60.0",
