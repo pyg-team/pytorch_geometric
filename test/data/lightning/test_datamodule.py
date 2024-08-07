@@ -80,18 +80,19 @@ class LinearGraphModule(LightningModule):
 @withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_dataset(get_dataset, strategy_type):
-    import pytorch_lightning as pl
     from contextlib import contextmanager
+
+    import pytorch_lightning as pl
     from pytorch_lightning.utilities import rank_zero_only
 
     @contextmanager
     def expect_warning_on_rank_zero():
         if rank_zero_only.rank == 0:
-            with pytest.warns(UserWarning, match="defined a `validation_step`"):
+            with pytest.warns(UserWarning,
+                              match="defined a `validation_step`"):
                 yield
         else:
             yield
-
 
     dataset = get_dataset(name='MUTAG').shuffle()
     train_dataset = dataset[:50]
