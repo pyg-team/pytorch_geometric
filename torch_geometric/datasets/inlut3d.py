@@ -247,11 +247,11 @@ class ClassificationInLUT3D(InLUT3D):
                 )
                 for unique_object in inst_c.unique():
                     mask_i = inst_c == unique_object
-                    pt_cat = cat_c[mask_i].unique().size(0)
+                    pt_cat = cat_c[mask_i].unique()
                     sample_xyz, sample_rgb = xyz_c[mask_i], rgb_c[mask_i]
-                    assert (
-                        pt_cat == 1), "Non-unique category for a single object"
-                    data = Data(pos=sample_xyz, x=sample_rgb, cat=pt_cat)
+                    assert (pt_cat.size(0) == 1 and pt_cat.ndim
+                            == 1), "Non-unique category for a single object"
+                    data = Data(pos=sample_xyz, x=sample_rgb, y=pt_cat.item())
                     if self.pre_filter is not None and not self.pre_filter(
                             data):
                         continue
@@ -291,7 +291,7 @@ class InstanceSegmentationInLUT3D(InLUT3D):
                 categories,
                 instances,
         ) in self.iter_over_setups():
-            data = Data(pos=xyz, x=rgb, cat=categories, instances=instances)
+            data = Data(pos=xyz, x=rgb, y=(categories, instances))
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
             if self.pre_transform is not None:
@@ -310,7 +310,7 @@ class SemanticSegmentationInLUT3D(InstanceSegmentationInLUT3D):
 
     def process(self) -> None:
         for setup_name, (xyz, rgb, categories, _) in self.iter_over_setups():
-            data = Data(pos=xyz, x=rgb, cat=categories)
+            data = Data(pos=xyz, x=rgb, y=categories)
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
             if self.pre_transform is not None:
