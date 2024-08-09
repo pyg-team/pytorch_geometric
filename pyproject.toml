@@ -37,15 +37,13 @@ dependencies=[
     "psutil>=5.8.0",
     "pyparsing",
     "requests",
-    "scikit-learn",
-    "scipy",
     "tqdm",
 ]
 
 [project.optional-dependencies]
 graphgym=[
     "protobuf<4.21",
-    "pytorch-lightning",
+    "pytorch-lightning<2.3.0",
     "yacs",
 ]
 modelhub=[
@@ -71,13 +69,15 @@ dev=[
     "torch_geometric[test]",
 ]
 full = [
+    "scipy",
+    "scikit-learn",
     "ase",
     "captum<0.7.0",
     "graphviz",
     "h5py",
     "matplotlib",
     "networkx",
-    "numba",
+    "numba<0.60.0",
     "opt_einsum",
     "pandas",
     "pgmpy",
@@ -208,3 +208,6 @@ exclude_lines = [
     "register_parameter",
     "torch.cuda.is_available",
 ]
+
+[tool.setuptools]
+py-modules = []

@@ -75,7 +75,7 @@ class Airports(InMemoryDataset):
 
     def process(self) -> None:
         index_map, ys = {}, []
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             rows = f.read().split('\n')[1:-1]
             for i, row in enumerate(rows):
                 idx, label = row.split()
@@ -85,7 +85,7 @@ class Airports(InMemoryDataset):
         x = torch.eye(y.size(0))
 
         edge_indices = []
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             rows = f.read().split('\n')[:-1]
             for row in rows:
                 src, dst = row.split()

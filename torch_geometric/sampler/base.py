@@ -444,7 +444,7 @@ class NumNeighbors:
             out = copy.copy(self.values)
 
         if isinstance(out, dict):
-            num_hops = set(len(v) for v in out.values())
+            num_hops = {len(v) for v in out.values()}
             if len(num_hops) > 1:
                 raise ValueError(f"Number of hops must be the same across all "
                                  f"edge types (got {len(num_hops)} different "
@@ -537,7 +537,7 @@ class NegativeSampling(CastMixin):
             the sampling of source nodes. Does not necessarily need to sum up
             to one. If not given, negative nodes will be sampled uniformly.
             (default: :obj:`None`)
-        src_weight (torch.Tensor, optional): A node-level vector determining
+        dst_weight (torch.Tensor, optional): A node-level vector determining
             the sampling of destination nodes. Does not necessarily need to sum
             up to one. If not given, negative nodes will be sampled uniformly.
             (default: :obj:`None`)

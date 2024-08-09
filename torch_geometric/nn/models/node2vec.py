@@ -173,7 +173,6 @@ class Node2Vec(torch.nn.Module):
         test_z: Tensor,
         test_y: Tensor,
         solver: str = 'lbfgs',
-        multi_class: str = 'auto',
         *args,
         **kwargs,
     ) -> float:
@@ -182,7 +181,7 @@ class Node2Vec(torch.nn.Module):
         """
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
+        clf = LogisticRegression(solver=solver, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())
         return clf.score(test_z.detach().cpu().numpy(),

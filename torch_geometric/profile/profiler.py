@@ -436,10 +436,10 @@ def format_time(time_us: int) -> str:
     US_IN_SECOND = 1000.0 * 1000.0
     US_IN_MS = 1000.0
     if time_us >= US_IN_SECOND:
-        return '{:.3f}s'.format(time_us / US_IN_SECOND)
+        return f'{time_us / US_IN_SECOND:.3f}s'
     if time_us >= US_IN_MS:
-        return '{:.3f}ms'.format(time_us / US_IN_MS)
-    return '{:.3f}us'.format(time_us)
+        return f'{time_us / US_IN_MS:.3f}ms'
+    return f'{time_us:.3f}us'
 
 
 def format_memory(nbytes: int) -> str:
@@ -448,10 +448,10 @@ def format_memory(nbytes: int) -> str:
     MB = 1024 * KB
     GB = 1024 * MB
     if (abs(nbytes) >= GB):
-        return '{:.2f} Gb'.format(nbytes * 1.0 / GB)
+        return f'{nbytes * 1.0 / GB:.2f} Gb'
     elif (abs(nbytes) >= MB):
-        return '{:.2f} Mb'.format(nbytes * 1.0 / MB)
+        return f'{nbytes * 1.0 / MB:.2f} Mb'
     elif (abs(nbytes) >= KB):
-        return '{:.2f} Kb'.format(nbytes * 1.0 / KB)
+        return f'{nbytes * 1.0 / KB:.2f} Kb'
     else:
         return str(nbytes) + ' b'

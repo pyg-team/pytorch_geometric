@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added a `residual` option in `GATConv` and `GATv2Conv` ([#9515](https://github.com/pyg-team/pytorch_geometric/pull/9515))
+- Added the `PatchTransformerAggregation` layer ([#9487](https://github.com/pyg-team/pytorch_geometric/pull/9487))
+- Added the `nn.nlp.LLM` model ([#9462](https://github.com/pyg-team/pytorch_geometric/pull/9462))
+- Added an example of training GNNs for a graph-level regression task ([#9070](https://github.com/pyg-team/pytorch_geometric/pull/9070))
+- Added `utils.from_rdmol`/`utils.to_rdmol` functionality ([#9452](https://github.com/pyg-team/pytorch_geometric/pull/9452))
+- Added the `OPFDataset` ([#9379](https://github.com/pyg-team/pytorch_geometric/pull/9379))
+- Added the heterogeneous `HeteroJumpingKnowledge` module ([#9380](https://github.com/pyg-team/pytorch_geometric/pull/9380))
 - Started work on GNN+LLM package ([#9350](https://github.com/pyg-team/pytorch_geometric/pull/9350))
 - Added support for negative sampling in `LinkLoader` acccording to source and destination node weights ([#9316](https://github.com/pyg-team/pytorch_geometric/pull/9316))
 - Added support for `EdgeIndex.unbind` ([#9298](https://github.com/pyg-team/pytorch_geometric/pull/9298))
@@ -27,9 +34,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added a `ogbn-mag240m` example ([#8249](https://github.com/pyg-team/pytorch_geometric/pull/8249))
 - Added `EdgeIndex.sparse_resize_` functionality ([#8983](https://github.com/pyg-team/pytorch_geometric/pull/8983))
 - Added approximate `faiss`-based KNN-search ([#8952](https://github.com/pyg-team/pytorch_geometric/pull/8952))
+- Added documentation on environment setup on XPU device ([#9407](https://github.com/pyg-team/pytorch_geometric/pull/9407))
 
 ### Changed
 
+- Adapt `cugraph` examples to its new API ([#9541](https://github.com/pyg-team/pytorch_geometric/pull/9541))
+- Allow optional but untyped tensors in `MessagePassing` ([#9494](https://github.com/pyg-team/pytorch_geometric/pull/9494))
+- Added support for modifying `filename` of the stored partitioned file in `ClusterLoader` ([#9448](https://github.com/pyg-team/pytorch_geometric/pull/9448))
+- Support other than two-dimensional inputs in `AttentionalAggregation` ([#9433](https://github.com/pyg-team/pytorch_geometric/pull/9433))
+- Improved model performance of the `examples/ogbn_papers_100m.py` script ([#9386](https://github.com/pyg-team/pytorch_geometric/pull/9386), [#9445](https://github.com/pyg-team/pytorch_geometric/pull/9445))
+- Added the `fmt` arg to `Dataset.get_summary` ([#9408](https://github.com/pyg-team/pytorch_geometric/pull/9408))
 - Skipped zero atom molecules in `MoleculeNet` ([#9318](https://github.com/pyg-team/pytorch_geometric/pull/9318))
 - Ensure proper parallelism in `OnDiskDataset` for multi-threaded `get` calls ([#9140](https://github.com/pyg-team/pytorch_geometric/pull/9140))
 - Allow `None` outputs in `FeatureStore.get_tensor()` - `KeyError` should now be raised based on the implementation in `FeatureStore._get_tensor()` ([#9102](https://github.com/pyg-team/pytorch_geometric/pull/9102))
@@ -41,11 +55,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Made `MessagePassing` interface thread-safe ([#9001](https://github.com/pyg-team/pytorch_geometric/pull/9001))
 - Breaking Change: Added support for `EdgeIndex` in `cugraph` GNN layers ([#8938](https://github.com/pyg-team/pytorch_geometric/pull/8937))
 - Added the `dim` arg to `torch.cross` calls ([#8918](https://github.com/pyg-team/pytorch_geometric/pull/8918))
+- Added XPU support to basic GNN examples ([#9421](https://github.com/pyg-team/pytorch_geometric/pull/9421), [#9439](https://github.com/pyg-team/pytorch_geometric/pull/9439))
 
 ### Deprecated
 
 ### Fixed
 
+- Fixed an issue where import order in the multi-GPU `cugraph` example could cause an `rmm` error ([#9577](https://github.com/pyg-team/pytorch_geometric/pull/9577))
+- Made the output of the single-GPU `cugraph` example more readable ([#9577](https://github.com/pyg-team/pytorch_geometric/pull/9577))
+- Fixed `load_state_dict` behavior with lazy parameters in `HeteroDictLinear` ([#9493](https://github.com/pyg-team/pytorch_geometric/pull/9493))
 - `Sequential` can now be properly pickled ([#9369](https://github.com/pyg-team/pytorch_geometric/pull/9369))
 - Fixed `pickle.load` for jittable `MessagePassing` modules ([#9368](https://github.com/pyg-team/pytorch_geometric/pull/9368))
 - Fixed batching of sparse tensors saved via `data.edge_index` ([#9317](https://github.com/pyg-team/pytorch_geometric/pull/9317))
@@ -62,6 +80,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed `OSError` on read-only file systems within `MessagePassing` ([#9032](https://github.com/pyg-team/pytorch_geometric/pull/9032))
 - Fixed metaclass conflict in `Dataset` ([#8999](https://github.com/pyg-team/pytorch_geometric/pull/8999))
 - Fixed import errors on `MessagePassing` modules with nested inheritance ([#8973](https://github.com/pyg-team/pytorch_geometric/pull/8973))
+- Fixed bug in multi XPU training ([#9456](https://github.com/pyg-team/pytorch_geometric/pull/9456))
+- Fixed TorchScript compilation error for `MessagePassing._check_input` on older torch versions ([#9564](https://github.com/pyg-team/pytorch_geometric/pull/9564))
 
 ### Removed
 
