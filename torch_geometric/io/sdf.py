@@ -9,7 +9,7 @@ elems = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
 
 def parse_sdf(src: str) -> Data:
     lines = src.split('\n')[3:]
-    num_atoms, num_bonds = [int(item) for item in lines[0].split()[:2]]
+    num_atoms, num_bonds = (int(item) for item in lines[0].split()[:2])
 
     atom_block = lines[1:num_atoms + 1]
     pos = parse_txt_array(atom_block, end=3)
@@ -28,5 +28,5 @@ def parse_sdf(src: str) -> Data:
 
 
 def read_sdf(path: str) -> Data:
-    with open(path, 'r') as f:
+    with open(path) as f:
         return parse_sdf(f.read())

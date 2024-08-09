@@ -181,7 +181,7 @@ class LinearNodeModule(LightningModule):
 @onlyOnline
 @onlyFullTest
 @onlyNeighborSampler
-@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
+@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0', 'scipy')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_node_data(get_dataset, strategy_type, loader):
@@ -276,11 +276,19 @@ class LinearHeteroNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@pytest.fixture
+def preserve_context():
+    num_threads = torch.get_num_threads()
+    yield
+    torch.distributed.destroy_process_group()
+    torch.set_num_threads(num_threads)
+
+
 @onlyCUDA
 @onlyFullTest
 @onlyNeighborSampler
 @withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
-def test_lightning_hetero_node_data(get_dataset):
+def test_lightning_hetero_node_data(preserve_context, get_dataset):
     import pytorch_lightning as pl
 
     data = get_dataset(name='hetero')[0]
@@ -426,7 +434,7 @@ def test_lightning_hetero_link_data_custom_store():
 
 @onlyOnline
 @onlyNeighborSampler
-@withPackage('pytorch_lightning')
+@withPackage('pytorch_lightning', 'scipy')
 def test_eval_loader_kwargs(get_dataset):
     data = get_dataset(name='Cora')[0]
 

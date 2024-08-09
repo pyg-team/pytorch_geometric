@@ -272,7 +272,6 @@ class ToHeteroWithBasesTransformer(Transformer):
                     args=(value, self.find_by_name('edge_offset_dict')),
                     name=f'{value.name}__split')
 
-                pass
             elif isinstance(value, Node):
                 self.graph.inserting_before(node)
                 return self.graph.create_node(
@@ -469,7 +468,7 @@ def get_edge_type(
 ###############################################################################
 
 # These methods are used to group the individual type-wise components into a
-# unfied single representation.
+# unified single representation.
 
 
 def group_node_placeholder(input_dict: Dict[NodeType, Tensor],

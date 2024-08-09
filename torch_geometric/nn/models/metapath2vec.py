@@ -103,7 +103,7 @@ class MetaPath2Vec(torch.nn.Module):
         self.num_negative_samples = num_negative_samples
         self.num_nodes_dict = num_nodes_dict
 
-        types = set([x[0] for x in metapath]) | set([x[-1] for x in metapath])
+        types = {x[0] for x in metapath} | {x[-1] for x in metapath}
         types = sorted(list(types))
 
         count = 0

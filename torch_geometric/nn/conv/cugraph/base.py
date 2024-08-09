@@ -36,7 +36,6 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        pass
 
     def get_cugraph(
         self,

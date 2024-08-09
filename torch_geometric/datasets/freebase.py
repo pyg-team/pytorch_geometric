@@ -75,7 +75,7 @@ class FB15k_237(InMemoryDataset):
         rel_dict: Dict[str, int] = {}
 
         for path in self.raw_paths:
-            with open(path, 'r') as f:
+            with open(path) as f:
                 lines = [x.split('\t') for x in f.read().split('\n')[:-1]]
 
             edge_index = torch.empty((2, len(lines)), dtype=torch.long)

@@ -37,8 +37,6 @@ dependencies=[
     "psutil>=5.8.0",
     "pyparsing",
     "requests",
-    "scikit-learn",
-    "scipy",
     "tqdm",
 ]
 
@@ -71,6 +69,8 @@ dev=[
     "torch_geometric[test]",
 ]
 full = [
+    "scipy",
+    "scikit-learn",
     "ase",
     "captum<0.7.0",
     "graphviz",
@@ -208,3 +208,6 @@ exclude_lines = [
     "register_parameter",
     "torch.cuda.is_available",
 ]
+
+[tool.setuptools]
+py-modules = []
