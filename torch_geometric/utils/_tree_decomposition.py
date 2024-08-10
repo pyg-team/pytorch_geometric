@@ -64,7 +64,7 @@ def tree_decomposition(
             xs.append(1)
 
     # Generate `atom2cliques` mappings.
-    atom2cliques: List[List[int]] = [[] for i in range(mol.GetNumAtoms())]
+    atom2cliques: List[List[int]] = [[] for _ in range(mol.GetNumAtoms())]
     for c in range(len(cliques)):
         for atom in cliques[c]:
             atom2cliques[atom].append(c)
