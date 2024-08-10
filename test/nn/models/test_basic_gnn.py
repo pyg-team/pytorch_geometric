@@ -281,13 +281,9 @@ def test_onnx(tmp_path):
 
     path = osp.join(tmp_path, 'model.onnx')
     torch.onnx.export(
-        model,
-        (x, edge_index),
-        path,
-        input_names=('x', 'edge_index'),
+        model, (x, edge_index), path, input_names=('x', 'edge_index'),
         opset_version=16,
-        operator_export_type=torch.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK
-        )
+        operator_export_type=torch.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)
 
     model = onnx.load(path)
     onnx.checker.check_model(model)
