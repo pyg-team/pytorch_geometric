@@ -97,9 +97,9 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                                   f" package, but it was not found")
 
                 res = src.new_zeros(size)
+                # `scatter_reduce_` with `include_self=False` is not currently
+                # supported by onnx
                 if src.numel() > 0:
-                    # `scatter_reduce_` with `include_self=False` is not
-                    # currently supported by onnx
                     fill_value = src.max() if "min" in reduce else src.min()
                     [res.select(dim, i).fill_(fill_value) for i in index]
                 index = broadcast(index, src, dim)
