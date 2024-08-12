@@ -97,8 +97,8 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                                   f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
-                fill_value = src.max().item() if "min" in reduce else src.min(
-                ).item()
+                fill_value = (0 if src.numel() == 0 else src.max().item()
+                              if "min" in reduce else src.min().item())
                 return src.new_full(size, fill_value).scatter_reduce_(
                     dim, index, src, reduce=f"a{reduce[-3:]}",
                     include_self=True)
@@ -202,7 +202,8 @@ def scatter_argmax(
         dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
     if torch_geometric.typing.WITH_PT112:
-        res = src.new_full((dim_size, ), src.min().item())
+        fill_value = 0 if src.numel() == 0 else src.min().item()
+        res = src.new_full((dim_size, ), fill_value)
         res.scatter_reduce_(0, index, src.detach(), reduce="amax",
                             include_self=True)
     elif torch_geometric.typing.WITH_PT111:
