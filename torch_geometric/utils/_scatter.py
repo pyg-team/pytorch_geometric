@@ -96,12 +96,12 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                                   f"can be accelerated via the 'torch-scatter'"
                                   f" package, but it was not found")
 
-                res = src.new_zeros(size)
                 # `scatter_reduce_` with `include_self=False` is not currently
                 # supported by onnx
-                if src.numel() > 0:
-                    fill_value = src.max() if "min" in reduce else src.min()
-                    [res.select(dim, i).fill_(fill_value) for i in index]
+                res = src.new_zeros(size)
+                fill_value = torch.tensor(torch.inf if "min" in
+                                          reduce else -torch.inf).to(src.dtype)
+                [res.select(dim, i).fill_(fill_value) for i in index]
                 index = broadcast(index, src, dim)
                 res.scatter_reduce_(dim, index, src, reduce=f"a{reduce[-3:]}",
                                     include_self=True)
@@ -206,11 +206,10 @@ def scatter_argmax(
         dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
     if torch_geometric.typing.WITH_PT112:
-        res = src.new_empty(dim_size)
         # `scatter_reduce_` with `include_self=False` is not currently
         # supported by onnx
-        if src.numel() > 0:
-            [res.select(0, i).fill_(src.min()) for i in index]
+        res = src.new_empty(dim_size).fill_(
+            torch.tensor(-torch.inf).to(src.dtype))
         res.scatter_reduce_(0, index, src.detach(), reduce="amax",
                             include_self=True)
     elif torch_geometric.typing.WITH_PT111:
