@@ -348,7 +348,8 @@ else:
     )
 
 model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
+                             weight_decay=args.wd)
 
 if verbose:
     prep_time = round(time.perf_counter() - wall_clock_start, 2)
