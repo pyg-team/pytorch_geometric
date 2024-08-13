@@ -1,9 +1,11 @@
+from typing import List, Optional, Union
+
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-from torch_geometric.nn.models import basic_gnn, GraphSAGE
-from typing import List, Optional, Union
+
 from torch_geometric.loader import DataLoader, NeighborLoader
+from torch_geometric.nn.models import GraphSAGE, basic_gnn
 
 
 class GLEM(torch.nn.Module):
@@ -11,7 +13,7 @@ class GLEM(torch.nn.Module):
     Original Paper: <https://arxiv.org/abs/2210.14709> `_.
     See `examples/glem/ogbn_products_glem.py` for example usage
     Args:
-        lm_to_use (str): A TextEncoder from huggingface model repo 
+        lm_to_use (str): A TextEncoder from huggingface model repo
                 with a classifier(default: TinyBERT)
         gnn_to_use (torch_geometric.nn.models): (default: GraphSAGE)
         out_channels (int): output channels for LM and GNN, should be same
@@ -19,7 +21,7 @@ class GLEM(torch.nn.Module):
         num_gnn_layers (int): number of gnn layers
         gnn_loss: loss function for gnn, (default: CrossEntropyLoss)
         lm_loss: loss function for Language Model, (default: CrossEntropyLoss)
-        alpha (float): pseudo label weight of E-step, LM optimization, 
+        alpha (float): pseudo label weight of E-step, LM optimization,
             (default: 0.5)
         beta (float): pseudo label weight of M-step, GNN optimization,
             (default: 0.5)
@@ -27,41 +29,36 @@ class GLEM(torch.nn.Module):
             (default: torch.bfloat16)
         lm_use_lora (bool): choose if LM use Lora peft for fine tune,
             (default: True)
-        lora_target_modules: The names of the target modules to apply the lora 
+        lora_target_modules: The names of the target modules to apply the lora
             adapter to, e.g. ['q_proj', 'v_proj'] for LLM , (default: None)
     """
-
     def __init__(
-        self,
-        lm_to_use: str = 'prajjwal1/bert-tiny',
-        gnn_to_use: basic_gnn = GraphSAGE,
-        out_channels: int = 47,
-        gnn_loss=nn.CrossEntropyLoss(reduction='mean'),
-        lm_loss=nn.CrossEntropyLoss(reduction='mean'),
-        alpha: float = 0.5, # pseudo label weight of E-step, LM optimization
-        beta: float = 0.5, # pseudo label weight of M-step, GNN optimization
-        lm_dtype: torch.dtype =torch.bfloat16,
-        lm_use_lora: bool=True,
-        lora_target_modules: Optional[Union[List[str], str]]=None,
-        device: Union[str, torch.device] = torch.device('cpu'),
+            self,
+            lm_to_use: str = 'prajjwal1/bert-tiny',
+            gnn_to_use: basic_gnn = GraphSAGE,
+            out_channels: int = 47,
+            gnn_loss=nn.CrossEntropyLoss(reduction='mean'),
+            lm_loss=nn.CrossEntropyLoss(reduction='mean'),
+            alpha: float = 0.5,  # pseudo label weight of E-step, LM optimization
+            beta: float = 0.5,  # pseudo label weight of M-step, GNN optimization
+            lm_dtype: torch.dtype = torch.bfloat16,
+            lm_use_lora: bool = True,
+            lora_target_modules: Optional[Union[List[str], str]] = None,
+            device: Union[str, torch.device] = torch.device('cpu'),
     ):
         super().__init__()
         self.device = device
         self.lm_loss = lm_loss
         self.gnn = gnn_to_use
         self.gnn_loss = gnn_loss
-        self.alpha=alpha
-        self.beta=beta
-        self.gnn_loss=gnn_loss
+        self.alpha = alpha
+        self.beta = beta
+        self.gnn_loss = gnn_loss
         self.lm = lm_to_use
         from transformers import AutoModelForSequenceClassification
         self.lm = AutoModelForSequenceClassification.from_pretrained(
-                lm_to_use,
-                num_labels=out_channels,
-                torch_dtype=lm_dtype,
-                offload_folder="offload",
-                trust_remote_code=True
-        )
+            lm_to_use, num_labels=out_channels, torch_dtype=lm_dtype,
+            offload_folder="offload", trust_remote_code=True)
         if lm_use_lora:
             from peft import (
                 LoraConfig,
@@ -70,39 +67,32 @@ class GLEM(torch.nn.Module):
                 prepare_model_for_kbit_training,
             )
             print("Training LM with LORA!")
-            self.lm = prepare_model_for_kbit_training(
-                self.lm)
-            config = LoraConfig(
-                task_type=TaskType.SEQ_CLS, 
-                r=16, lora_alpha=16, lora_dropout=0.05, bias="none", 
-                target_modules=lora_target_modules
-            )
+            self.lm = prepare_model_for_kbit_training(self.lm)
+            config = LoraConfig(task_type=TaskType.SEQ_CLS, r=16,
+                                lora_alpha=16, lora_dropout=0.05, bias="none",
+                                target_modules=lora_target_modules)
             self.lm = get_peft_model(self.lm, config)
             self.lm.print_trainable_parameters()
         self.lm.config.pad_token_id = self.lm.config.eos_token_id
         self.lm_device = self.lm.device
-        
+
         if self.lm.num_labels != self.gnn.out_channels:
             raise ValueError('''The output channel of language model \
                              and gnn should be the same''')
-        
-    def pre_train_gnn(self, 
-                      train_loader: NeighborLoader, 
-                      optimizer: torch.optim.Optimizer, 
-                      num_epochs: int, 
-                      patience: int,
-                      ext_pseudo_labels: torch.Tensor=None, 
-                      is_augmented: bool=False, 
-                      verbose: bool=True):
-        r"""
-        Pretrain GNN, optional steps if you do not have pseudo labels
+
+    def pre_train_gnn(self, train_loader: NeighborLoader,
+                      optimizer: torch.optim.Optimizer, num_epochs: int,
+                      patience: int, ext_pseudo_labels: torch.Tensor = None,
+                      is_augmented: bool = False, verbose: bool = True):
+        r"""Pretrain GNN, optional steps if you do not have pseudo labels
         """
         best_acc = 0
         early_stopping = 0
         # training only based on gold data
         for epoch in range(0, num_epochs):
-            acc, loss = self.train_gnn(train_loader, optimizer, epoch, 
-                                       ext_pseudo_labels, is_augmented, verbose)
+            acc, loss = self.train_gnn(train_loader, optimizer, epoch,
+                                       ext_pseudo_labels, is_augmented,
+                                       verbose)
             if acc < best_acc:
                 early_stopping += 1
                 if early_stopping > patience:
@@ -111,21 +101,16 @@ class GLEM(torch.nn.Module):
                     break
             best_acc = max(best_acc, acc)
 
-    def pre_train_lm(self, 
-                     train_loader: DataLoader, 
-                     optimizer: torch.optim.Optimizer, 
-                     num_epochs: int, 
-                     patience: int,
-                     ext_pseudo_labels: torch.Tensor = None, 
-                     is_augmented: bool = False, 
-                     verbose: bool = True):
-        r"""
-        Pretrain language model
+    def pre_train_lm(self, train_loader: DataLoader,
+                     optimizer: torch.optim.Optimizer, num_epochs: int,
+                     patience: int, ext_pseudo_labels: torch.Tensor = None,
+                     is_augmented: bool = False, verbose: bool = True):
+        r"""Pretrain language model
         """
         best_acc = 0
         early_stopping = 0
-        for epoch in range(1, num_epochs+1):
-            acc, loss = self.train_lm(train_loader, optimizer, epoch, 
+        for epoch in range(1, num_epochs + 1):
+            acc, loss = self.train_lm(train_loader, optimizer, epoch,
                                       ext_pseudo_labels, is_augmented, verbose)
             if acc < best_acc:
                 early_stopping += 1
@@ -135,22 +120,17 @@ class GLEM(torch.nn.Module):
                     break
             best_acc = max(best_acc, acc)
 
-    def train(self,
-              em_phase: str,
-              train_loader: Union[DataLoader, NeighborLoader],
-              optimizer: torch.optim.Optimizer,
-              pseudo_labels: torch.Tensor,
-              epoch: int,
-              is_augmented: bool = False,
-              verbose: bool = False):
-        r"""
-        GLEM training step, EM steps
+    def train(self, em_phase: str, train_loader: Union[DataLoader,
+                                                       NeighborLoader],
+              optimizer: torch.optim.Optimizer, pseudo_labels: torch.Tensor,
+              epoch: int, is_augmented: bool = False, verbose: bool = False):
+        r"""GLEM training step, EM steps
         Args:
-            train_loader(dataloader or nodeloader): 
+            train_loader(dataloader or nodeloader):
                 dataloader: for lm training, include tokenized data, labels etc.
                 nodeloader: for gnn training, include x, edge_index, etc.
             em_phase(str): 'gnn' or 'lm' choose which phase you are training on
-            pseudo_labels(torch.Tensor): the predicted labels used as pseudo 
+            pseudo_labels(torch.Tensor): the predicted labels used as pseudo
                 labels
             epoch (int): current epoch
             is_augmented (bool): will use pseudo_labels or not
@@ -169,15 +149,11 @@ class GLEM(torch.nn.Module):
                                       pseudo_labels, is_augmented, verbose)
         return acc, loss
 
-    def train_lm(self,
-                 train_loader: DataLoader,
-                 optimizer: torch.optim.Optimizer,
-                 epoch: int,
+    def train_lm(self, train_loader: DataLoader,
+                 optimizer: torch.optim.Optimizer, epoch: int,
                  pseudo_labels: torch.Tensor = None,
-                 is_augmented: bool = False,
-                 verbose: bool = True):
-        r"""
-        train language model in every epoch
+                 is_augmented: bool = False, verbose: bool = True):
+        r"""Train language model in every epoch
         Args:
             train_loader(loader.dataloader.DataLoader): text token dataloader
             optimizer: model optimizer
@@ -188,7 +164,7 @@ class GLEM(torch.nn.Module):
         Returns:
             approx_acc (torch.tensor): training accuracy
             loss (torch.float): loss value
-        
+
         """
         all_out = []
         total_loss = total_correct = 0
@@ -206,9 +182,9 @@ class GLEM(torch.nn.Module):
                 pl_batch = pseudo_labels[batch['n_id']].to(self.device)
             else:
                 pl_batch = None
-            loss = self.loss(out, labels, self.lm_loss, 
-                            batch['is_gold'].to(self.device),
-                            pl_batch, self.alpha, is_augmented)
+            loss = self.loss(out, labels, self.lm_loss,
+                             batch['is_gold'].to(self.device), pl_batch,
+                             self.alpha, is_augmented)
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
@@ -226,17 +202,12 @@ class GLEM(torch.nn.Module):
         print(f'Epoch {epoch:02d} Loss: {loss:.4f} '\
               f'Approx. Train: {approx_acc:.4f}')
         return approx_acc, loss
-    
 
-    def train_gnn(self, 
-                  train_loader: NeighborLoader, 
-                  optimizer: torch.optim.Optimizer, 
-                  epoch: int, 
-                  pseudo_labels: torch.Tensor = None, 
-                  is_augmented: bool = False, 
-                  verbose: bool = True):
-        r"""
-        Args:
+    def train_gnn(self, train_loader: NeighborLoader,
+                  optimizer: torch.optim.Optimizer, epoch: int,
+                  pseudo_labels: torch.Tensor = None,
+                  is_augmented: bool = False, verbose: bool = True):
+        r"""Args:
             train_loader (loader.NeighborLoader): gnn Neighbor node loader
             epoch (int): current train epoch
             pseudo_labels(torch.tensor): 1-D tensor, predictions from lm
@@ -255,18 +226,18 @@ class GLEM(torch.nn.Module):
         all_out = []
         for batch in train_loader:
             batch = batch.to(self.device)
-            
+
             out = self.gnn(batch.x, batch.edge_index)[:batch.batch_size]
             all_out.append(out)
             labels = batch.y[:batch.batch_size].squeeze()
             is_gold_batch = batch.is_gold[:batch.batch_size].squeeze()
             # training with pseudo labels or not
             if is_augmented and pseudo_labels is not None:
-                pl_batch = pseudo_labels[batch.n_id[:batch.batch_size]]    
+                pl_batch = pseudo_labels[batch.n_id[:batch.batch_size]]
             else:
                 pl_batch = None
-            loss = self.loss(out, labels, self.gnn_loss, is_gold_batch, 
-                            pl_batch, self.beta, is_augmented)
+            loss = self.loss(out, labels, self.gnn_loss, is_gold_batch,
+                             pl_batch, self.beta, is_augmented)
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
@@ -283,22 +254,20 @@ class GLEM(torch.nn.Module):
         print(f'Epoch: {epoch:02d} Loss: {loss:.4f} '\
               f'Approx. Train: {approx_acc:.4f}')
         return approx_acc, loss
-    
+
     @torch.no_grad()
-    def inference(self, 
-                  em_phase: str,
-                  data_loader: Union[NeighborLoader, DataLoader], 
+    def inference(self, em_phase: str, data_loader: Union[NeighborLoader,
+                                                          DataLoader],
                   verbose: bool = False):
-        r"""
-        GLEM training step, EM steps
+        r"""GLEM training step, EM steps
         Args:
             em_phase(str): 'gnn' or 'lm'
-            data_loader(dataloader or Neighborloader): 
+            data_loader(dataloader or Neighborloader):
                 dataloader: for lm training, include tokenized data
                 nodeloader: for gnn training, include x, edge_index
             verbose(bool): print inference progress or not
         Returns:
-            out (torch.Tensor): n * m tensor, m is number of classes, 
+            out (torch.Tensor): n * m tensor, m is number of classes,
                 n is number of nodes
         """
         out = None
@@ -311,15 +280,13 @@ class GLEM(torch.nn.Module):
         return out
 
     @torch.no_grad()
-    def inference_lm(self, 
-                     data_loader: DataLoader, 
-                     verbose: bool = True):
-        r"""
-        LM inference
+    def inference_lm(self, data_loader: DataLoader, verbose: bool = True):
+        r"""LM inference
         Args:
-            data_loader(torch_geometric.nn.Dataloader): include x, edge_index, 
+            data_loader(torch_geometric.nn.Dataloader): include x, edge_index,
+
         Returns:
-            preds (tensor): prediction from GNN, 
+            preds (tensor): prediction from GNN,
                 convert to pseudo labels by preds.argmax(dim=-1).unsqueeze(1)
         """
         if verbose:
@@ -337,17 +304,15 @@ class GLEM(torch.nn.Module):
             pbar.close()
         preds = torch.cat(preds)
         return preds
-    
+
     @torch.no_grad()
-    def inference_gnn(self, 
-                      data_loader: NeighborLoader, 
-                      verbose: bool = True):
-        r"""
-        use gnn to inference, generate predictions
+    def inference_gnn(self, data_loader: NeighborLoader, verbose: bool = True):
+        r"""Use gnn to inference, generate predictions
         Args:
-            data_loader(torch_geometric.nn.Dataloader): include x, edge_index, 
+            data_loader(torch_geometric.nn.Dataloader): include x, edge_index,
+
         Returns:
-            preds (tensor): prediction from GNN, 
+            preds (tensor): prediction from GNN,
                 convert to pseudo labels by preds.argmax(dim=-1).unsqueeze(1)
         """
         if verbose:
@@ -365,27 +330,21 @@ class GLEM(torch.nn.Module):
         preds = torch.cat(preds, dim=0)
         return preds
 
-
-    def loss(self, 
-             logits: torch.Tensor, 
-             labels: torch.Tensor, 
-             loss_func: torch.nn.functional,
-             is_gold: torch.Tensor,
-             pseudo_labels: bool = None,
-             pl_weight: float = 0.5, 
+    def loss(self, logits: torch.Tensor, labels: torch.Tensor,
+             loss_func: torch.nn.functional, is_gold: torch.Tensor,
+             pseudo_labels: bool = None, pl_weight: float = 0.5,
              is_augmented: bool = True):
-        r"""
-        reference: 
+        r"""reference:
         <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> #noqa
         Core function of EM inference, this function is aming on combining:
         Cross Entropy loss on gold and Cross Entropy loss on pseudo labels
-        (1-pl_weight)*MLE + pl_weight*pseudo_label_loss 
+        (1-pl_weight)*MLE + pl_weight*pseudo_label_loss
         Args:
             logits(torch.tensor): predict results from LM or GNN
-            labels(torch.tensor): combined node labels from ground truth and 
+            labels(torch.tensor): combined node labels from ground truth and
                 pseudo labels(if provided)
             loss_func(torch.nn.modules.loss)
-            is_gold(tensor): a tensor with bool value that mask ground truth 
+            is_gold(tensor): a tensor with bool value that mask ground truth
                     label and during training, thus ~is_gold mask pseudo labels
             pl_weight: the pseudo labels used in E-step and M-step optimization
                         alpha in E-step, beta in M-step respectively
@@ -395,8 +354,8 @@ class GLEM(torch.nn.Module):
             deal_nan = lambda x: 0 if torch.isnan(x) else x
             mle_loss = deal_nan(loss_func(logits[is_gold], labels[is_gold]))
             # all other labels beside from ground truth(gold labels)
-            pseudo_label_loss = deal_nan(loss_func(logits[~is_gold], 
-                                                   pseudo_labels[~is_gold]))
+            pseudo_label_loss = deal_nan(
+                loss_func(logits[~is_gold], pseudo_labels[~is_gold]))
             loss = pl_weight * pseudo_label_loss + (1 - pl_weight) * mle_loss
         else:
             loss = loss_func(logits, labels)
