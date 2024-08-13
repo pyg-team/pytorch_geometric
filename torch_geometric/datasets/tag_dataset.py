@@ -1,0 +1,300 @@
+import os
+import os.path as osp
+import numpy as np
+import torch
+from torch import Tensor
+from transformers import AutoTokenizer
+from torch_geometric.data.data import BaseData
+from torch_geometric.data import InMemoryDataset, download_google_url
+from tqdm import tqdm
+from collections.abc import Sequence
+from typing import (
+    List,
+    Optional,
+    Union,
+    Dict
+)
+
+
+try:
+    from pandas import read_csv, DataFrame
+    WITH_PANDAS = True
+except ImportError:
+    WITH_PANDAS = False
+
+
+IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+class TAGDataset(InMemoryDataset):
+    r"""The Text Attributed Graph datasets from the
+    `"Learning on Large-scale Text-attributed Graphs via Variational Inference
+    " <https://arxiv.org/abs/2210.14709>`_ paper.
+    This dataset is aiming on transform `ogbn products`, `ogbn arxiv`
+    into Text Attributed Graph that each node in graph is associate with a 
+    raw text, that dataset can be adapt to DataLoader (for LM training) and 
+    NeighborLoader(for GNN training). In addition, this class can be use as a 
+    wrapper class by convert a InMemoryDataset with Tokenizer and text into
+    Text Attributed Graph.
+    
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        dataset (InMemoryDataset): The name of the dataset 
+            (:obj:`"ogbn-products"`, :obj:`"ogbn-arxiv"`).
+        tokenizer (AutoTokenizer): The tokenizer for language model,
+            Be sure to use same tokenizer as your `model id` of model repo on
+            huggingface.co.
+        text (List[str]): list of raw text associate with node, the order of
+            list should be align with node list
+        split_idx (Optional[Dict[str, torch.Tensor]]): Optional dictionary,
+            for saving split index, it is required that if your dataset doesn't
+            have get_split_idx function
+        tokenize_batch_size (int): batch size of tokenizing text, the tokenizing
+            process will run on cpu, default: 256
+        token_on_disk (bool): save token as .pt file on disk or not, 
+            default: False
+        text_on_disk (bool): save given text(list of str) as dataframe on disk 
+            or not, default: False
+        force_reload (bool): default: False
+
+    .. note::
+        See `example/llm_plus_gnn/glem.py` for example usage
+
+    """
+    raw_text_id = {
+        'ogbn-arxiv': '1g3OOVhRyiyKv13LY6gbp8GLITocOUr_3',
+        'ogbn-products': '1I-S176-W4Bm1iPDjQv3hYwQBtxE0v8mt'
+    }
+
+    def __init__(self,
+                 root: str,
+                 dataset: InMemoryDataset,
+                 tokenizer: AutoTokenizer, 
+                 text: Optional[List[str]] = None,
+                 split_idx: Optional[Dict[str, Tensor]] = None,
+                 tokenize_batch_size: int = 256,
+                 token_on_disk: bool = False,
+                 text_on_disk: bool = False,
+                 force_reload: bool = False) -> None:
+        # list the vars you want to pass in before run download & process
+        self.name = dataset.name
+        self.text = text
+        self.tokenizer = tokenizer
+        self.tokenizer_name = tokenizer.name_or_path
+        self.dir_name = '_'.join(dataset.name.split('-'))
+        self.root = osp.join(root, self.dir_name)
+        missing_str_list = []
+        if not WITH_PANDAS:
+            missing_str_list.append('pandas')
+        if len(missing_str_list) > 0:
+            missing_str = ' '.join(missing_str_list)
+            error_out = f"`pip install {missing_str}` to use this dataset."
+            raise ImportError(error_out)
+        if hasattr(dataset, 'get_idx_split'):
+            self.split_idx = dataset.get_idx_split()
+        elif split_idx is not None:
+            self.split_idx = split_idx
+        else:
+            raise ValueError(f"TAGDataset need split idx for generating " 
+                             f"is_gold mask, please pass splited index "
+                             f"in format of dictionaty with 'train', 'valid' ", 
+                             f"'test' index tensor to 'split_idx'")
+        if text is not None and text_on_disk:
+            self.save_node_text(text)
+        self.text_on_disk = text_on_disk
+        # init will call download and process
+        super().__init__(self.root,
+                         transform=None,
+                         pre_transform=None,
+                         pre_filter=None,
+                         force_reload=force_reload)
+        # after processing and download
+        self._data = dataset._data # reassign reference
+        self._n_id = torch.arange(self._data.num_nodes)
+        is_good_tensor = self.load_gold_mask()
+        self._is_gold = is_good_tensor.squeeze()
+        self._data['is_gold'] = is_good_tensor
+        if self.text is not None and len(self.text) != dataset._data.num_nodes:
+            raise ValueError(f"The number of text sequence in 'text' should be "
+                             f"equal to number of nodes!")
+        self.token_on_disk = token_on_disk
+        self.tokenize_batch_size = tokenize_batch_size
+        self._token = self.tokenize_graph(self.tokenize_batch_size)
+        self.__num_classes__ = dataset.num_classes
+        
+        
+    @property
+    def num_classes(self):
+        return self.__num_classes__
+    
+    @property
+    def raw_file_names(self):
+        file_names = []
+        for root, _, files in os.walk(osp.join(self.root, 'raw')):
+            for file in files:
+                file_names.append(file)
+        return file_names
+
+    @property
+    def processed_file_names(self):
+        return ['geometric_data_processed.pt', 
+                'pre_filter.pt', 'pre_transformed.pt']
+
+    @property
+    def token(self):
+        if self._token is None: # lazy load
+            self._token = self.tokenize_graph()
+        return self._token
+    
+    # load is_gold after init
+    @property
+    def is_gold(self):
+        if self._is_gold is None:
+            print('lazy load is_gold!!')
+            self.load_gold_mask()
+        return self._is_gold
+    
+    def get_token(self, node_idx: Tensor) -> Dict[str, Tensor]:
+        r"""
+        This function will be called in __getitem__()
+        """
+        items = {k: v[node_idx] for k, v in self.token.items()}
+        return items
+
+    def get_n_id(self, node_idx):
+        if self._n_id == None:
+            self._n_id = torch.arange(self._data.num_nodes)
+        return self._n_id[node_idx]
+    
+    
+    def load_gold_mask(self):
+        r"""
+        use original train split as gold split, generating is_gold mask
+        for picking ground truth labels and pseudo labels
+        """
+        train_split_idx = self.get_idx_split()['train']
+        is_good_tensor = torch.zeros(self._data.num_nodes, 
+                                        dtype=torch.bool).view(-1, 1)
+        is_good_tensor[train_split_idx] = True
+        return is_good_tensor
+        
+        
+    def get_gold(self, node_idx=None):
+        r"""
+        node_idx (torch.tensor): a tensor contain node idx
+        """
+        if self._is_gold is None:
+            _ = self.is_gold
+        return self._is_gold[node_idx]
+
+    def get_idx_split(self):
+        return self.split_idx
+    
+    def download(self) -> None:
+        print('downloading raw text')
+        raw_text_path = download_google_url(id=self.raw_text_id[self.name],
+                                folder=f'{self.root}/raw', 
+                                filename='node-text.csv.gz', log=True)
+        text_df = read_csv(raw_text_path)
+        self.text = list(text_df['text'])
+    
+    def process(self) -> None:
+        if osp.exists(osp.join(self.root, 'raw', 'node-text.csv.gz')):
+            text_df = read_csv(osp.join(self.root, 'raw', 'node-text.csv.gz'))
+            self.text = list(text_df['text'])
+        elif self.name in self.raw_text_id:
+            self.download()
+        else:
+            print(f'The dataset is not ogbn-products nor ogbn-arxiv,'
+                  f'please pass in your raw text string list to `text`')
+        if self.text is None:
+            raise ValueError(f"The TAGDataset only have ogbn-products and "
+                             f"ogbn-arxiv raw text in default "
+                             f"The raw text of each node is not specified"
+                             f"Please pass in 'text' when convert your dataset "
+                             f"to Text Attribute Graph Dataset")
+    
+    def save_node_text(self, text: List[str]):
+        node_text_path = osp.join(self.root, 'raw', 'node-text.csv.gz')
+        if osp.exists(node_text_path):
+            print(f'The raw text is existed at {node_text_path}')
+        else:
+            print(f'Saving raw text file at {node_text_path}')
+            os.makedirs(f'{self.root}/raw', exist_ok=True)
+            text_df = DataFrame(text, columns=['text'])
+            text_df.to_csv(osp.join(node_text_path),
+                        compression='gzip', 
+                        index=False)
+    
+    def tokenize_graph(self,
+                       batch_size: Optional[int] = 256) -> Tensor:
+        r"""
+        Tokenizing the text associate with each node, running in cpu
+        batch_size (Optional[int]): batch size of list of text for generating 
+            emebdding
+        """
+        data_len = len(self.text)
+        token_keys = ['input_ids', 'token_type_ids', 'attention_mask']
+        path = os.path.join(self.processed_dir, 'token', self.tokenizer_name)
+        # Check if the .pt files already exist
+        token_files_exist = any(os.path.exists(os.path.join(path, f'{k}.pt')) 
+                          for k in token_keys)
+        
+        if token_files_exist and self.token_on_disk:
+            print('Found tokenized file, loading may take several minutes...')
+            all_encoded_token = {k: torch.load(os.path.join(path, f'{k}.pt'), 
+                                               weights_only=True)
+                                 for k in token_keys if os.path.exists(
+                                    os.path.join(path, f'{k}.pt'))}
+            return all_encoded_token
+
+        all_encoded_token = { k: [] for k in token_keys}
+        pbar = tqdm(total=len(self.text))
+        
+        pbar.set_description(f'Tokenizing Text Attributed Graph')
+        for i in range(0, data_len, batch_size):
+            end_index = min(data_len, i + batch_size)
+            token = self.tokenizer(self.text[i: min(i+batch_size, data_len)], 
+                                      padding='max_length', truncation=True, 
+                                      max_length=512, return_tensors="pt")
+            for k in token.keys():
+                all_encoded_token[k].append(token[k])
+            pbar.update(end_index - i)
+        pbar.close()
+        
+        all_encoded_token = {k: torch.cat(v)
+                            for k, v in all_encoded_token.items() if len(v) > 0}
+        if self.token_on_disk:
+            os.makedirs(path, exist_ok=True)
+            print('Saving tokens on Disk')
+            for k, tensor in all_encoded_token.items():
+                torch.save(tensor, os.path.join(path, f'{k}.pt'))
+                print('Token saved:', os.path.join(path, f'{k}.pt'))
+        os.environ["TOKENIZERS_PARALLELISM"] = 'true' # supressing warning
+        return all_encoded_token
+    
+    def __getitem__(self, node_id: Tensor) -> Dict: # for LM training
+        r"""
+        This function will override __getitem__() function in 
+        torch_geometric.data.dataset.Dataset, and will be called when you 
+        iterate batch in the dataloader, make sure all following 
+        Args:
+            node_ids (List[int]): list of node idx for selecting tokens, 
+                labels etc. when iterating data loader for LM
+        Returns:
+            items (dict): input k,v pairs for Language model training and 
+                inference
+        """
+        item = {}
+        item['input'] = self.get_token(node_id)
+        item['labels'] = self._data.y[node_id]
+        item['is_gold'] = self.get_gold(node_id)
+        item['n_id'] = self.get_n_id(node_id)
+        return item
+    
+    def len(self):
+        return self._data.num_nodes
+
+    def get(self, idx: int) -> BaseData:
+        return self._data
+    
+    def __repr__(self):
+        return '{}()'.format(self.__class__.__name__)
