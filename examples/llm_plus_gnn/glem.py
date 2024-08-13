@@ -70,13 +70,7 @@ def main(args):
     labels = dataset[0].y.squeeze().numpy()  # reutrn labels with numpy array
     data = dataset.data
 
-    from transformers import AutoTokenizer
-    tokenizer = AutoTokenizer.from_pretrained(hf_model)
-    if tokenizer.pad_token_id == None:
-        tokenizer.pad_token_id = tokenizer.eos_token_id
-    if tokenizer.pad_token == None:
-        tokenizer.pad_token = tokenizer.eos_token
-    tag_dataset = TAGDataset(root, dataset, tokenizer,
+    tag_dataset = TAGDataset(root, dataset, hf_model,
                              token_on_disk=token_on_disk)
 
     print(tag_dataset.num_classes, tag_dataset.raw_file_names)
@@ -228,7 +222,7 @@ def main(args):
     lm_opt = torch.optim.Adam(lm.parameters(), lr=lm_lr)
 
     def load_model(em_phase):
-        print(f'Load {em_phase} model on disk')
+        print(f'Move {em_phase} model from cpu memory')
         if em_phase == 'lm':
             model.lm = model.lm.to(device)
             optimizer = torch.optim.Adam(model.lm.parameters(), lr=lm_lr)
