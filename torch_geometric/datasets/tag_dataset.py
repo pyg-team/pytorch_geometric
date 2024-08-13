@@ -36,7 +36,7 @@ class TAGDataset(InMemoryDataset):
         dataset (InMemoryDataset): The name of the dataset
             (:obj:`"ogbn-products"`, :obj:`"ogbn-arxiv"`).
         tokenizer_name (str): The tokenizer name for language model,
-            Be sure to use same tokenizer name as your `model id` of model repo 
+            Be sure to use same tokenizer name as your `model id` of model repo
             on huggingface.co.
         text (List[str]): list of raw text associate with node, the order of
             list should be align with node list
@@ -59,13 +59,9 @@ class TAGDataset(InMemoryDataset):
         'ogbn-arxiv': '1g3OOVhRyiyKv13LY6gbp8GLITocOUr_3',
         'ogbn-products': '1I-S176-W4Bm1iPDjQv3hYwQBtxE0v8mt'
     }
-    
 
-    def __init__(self, 
-                 root: str, 
-                 dataset: InMemoryDataset,
-                 tokenizer_name: str, 
-                 text: Optional[List[str]] = None,
+    def __init__(self, root: str, dataset: InMemoryDataset,
+                 tokenizer_name: str, text: Optional[List[str]] = None,
                  split_idx: Optional[Dict[str, Tensor]] = None,
                  tokenize_batch_size: int = 256, token_on_disk: bool = False,
                  text_on_disk: bool = False,
@@ -80,7 +76,7 @@ class TAGDataset(InMemoryDataset):
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         if self.tokenizer.pad_token == None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
-        
+
         self.dir_name = '_'.join(dataset.name.split('-'))
         self.root = osp.join(root, self.dir_name)
         missing_str_list = []
