@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch import Tensor
 from tqdm import tqdm
-from transformers import AutoTokenizer
+
 
 from torch_geometric.data import InMemoryDataset, download_google_url
 from torch_geometric.data.data import BaseData
@@ -60,6 +60,7 @@ class TAGDataset(InMemoryDataset):
         'ogbn-arxiv': '1g3OOVhRyiyKv13LY6gbp8GLITocOUr_3',
         'ogbn-products': '1I-S176-W4Bm1iPDjQv3hYwQBtxE0v8mt'
     }
+    from transformers import AutoTokenizer
 
     def __init__(self, root: str, dataset: InMemoryDataset,
                  tokenizer: AutoTokenizer, text: Optional[List[str]] = None,
