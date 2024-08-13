@@ -40,7 +40,7 @@ parser.add_argument(
 parser.add_argument(
     '--use_gat',
     action='store_true',
-    help='Whether or not to use graphsage model',
+    help='Whether or not to use GAT model',
 )
 parser.add_argument(
     '--verbose',
@@ -53,7 +53,6 @@ parser.add_argument(
     help='Whether or not to test inference method',
 )
 parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument('--runs', type=int, default=1, help='number of runs.')
 parser.add_argument('-e', '--epochs', type=int, default=10,
                     help='number of training epochs.')
 parser.add_argument('--num_layers', type=int, default=3,
@@ -64,12 +63,8 @@ parser.add_argument('-b', '--batch_size', type=int, default=1024,
                     help='batch size.')
 parser.add_argument('--num_workers', type=int, default=12,
                     help='number of workers.')
-parser.add_argument('--neighbors', type=str, default='15,10,5',
-                    help='number of neighbors.')
 parser.add_argument('--fan_out', type=int, default=10,
                     help='number of fanout.')
-parser.add_argument('--log_interval', type=int, default=10,
-                    help='number of log interval.')
 parser.add_argument('--hidden_channels', type=int, default=256,
                     help='number of hidden channels.')
 parser.add_argument('--lr', type=float, default=0.003)
@@ -94,15 +89,11 @@ if not torch.cuda.is_available():
     args.device = "cpu"
 device = torch.device(args.device)
 
-num_runs = args.runs
 num_epochs = args.epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
 num_hidden_channels = args.hidden_channels
 batch_size = args.batch_size
-neighbors = args.neighbors.split(',')
-num_neighbors = [int(i) for i in neighbors]
-log_interval = args.log_interval
 
 root = osp.join(args.dataset_dir, args.dataset_subdir)
 print('The root is: ', root)
@@ -357,7 +348,7 @@ else:
     )
 
 model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
 if verbose:
     prep_time = round(time.perf_counter() - wall_clock_start, 2)
@@ -371,53 +362,41 @@ times = []
 train_times = []
 inference_times = []
 best_val = best_test = 0.
-for run in range(1, num_runs + 1):
-    start = time.time()
+start = time.time()
+
+model.reset_parameters()
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+
+for epoch in range(1, num_epochs + 1):
+    train_start = time.time()
+    loss, acc = train(epoch)
+    train_end = time.time()
+    train_times.append(train_end - train_start)
+
+    inference_start = time.time()
+    if args.test_inference:
+        train_acc = test_inference("train")
+        val_acc = test_inference("valid")
+        test_acc = test_inference("test")
+    else:
+        train_acc = test(train_loader)
+        val_acc = test(val_loader)
+        test_acc = test(test_loader)
+
+    inference_times.append(time.time() - inference_start)
+    test_accs.append(test_acc)
+    val_accs.append(val_acc)
     if verbose:
-        print(f'\nRun {run:02d}:\n')
+        print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train:'
+              f' {acc:.4f} Time: {train_end - train_start:.4f}s')
+        print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+              f'Test: {test_acc:.4f}')
 
-    model.reset_parameters()
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-
-    best_val_acc = best_test_acc = 0.0
-    for epoch in range(1, num_epochs + 1):
-        train_start = time.time()
-        loss, acc = train(epoch)
-        train_end = time.time()
-        train_times.append(train_end - train_start)
-
-        inference_start = time.time()
-        if args.test_inference:
-            train_acc = test_inference("train")
-            val_acc = test_inference("valid")
-            test_acc = test_inference("test")
-        else:
-            train_acc = test(train_loader)
-            val_acc = test(val_loader)
-            test_acc = test(test_loader)
-
-        inference_times.append(time.time() - inference_start)
-        test_accs.append(test_acc)
-        val_accs.append(val_acc)
-        if verbose:
-            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train:'
-                  f' {acc:.4f} Time: {train_end - train_start:.4f}s')
-            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                  f'Test: {test_acc:.4f}')
-
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc
-        if test_acc > best_test_acc:
-            best_test_acc = test_acc
-        times.append(time.time() - train_start)
-    if best_val < best_val_acc:
-        best_val = best_val_acc
-    if best_test < best_test_acc:
-        best_test = best_test_acc
-    if verbose:
-        print("Total time used for run: {:02d} is {:.4f}".format(
-            run,
-            time.time() - start))
+    if val_acc > best_val:
+        best_val = val_acc
+    if test_acc > best_test:
+        best_test = test_acc
+    times.append(time.time() - train_start)
 
 if verbose:
     test_acc = torch.tensor(test_accs)
