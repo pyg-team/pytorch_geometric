@@ -64,7 +64,7 @@ parser.add_argument('-b', '--batch_size', type=int, default=1024,
 parser.add_argument('--num_workers', type=int, default=12,
                     help='number of workers.')
 parser.add_argument('--fan_out', type=int, default=10,
-                    help='number of fanout.')
+                    help='number of neighbors in each layer')
 parser.add_argument('--hidden_channels', type=int, default=256,
                     help='number of hidden channels.')
 parser.add_argument('--lr', type=float, default=0.003)
