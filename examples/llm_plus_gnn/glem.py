@@ -17,15 +17,12 @@ import os
 import os.path as osp
 import sys
 import time
-
 import torch
-
+from torch_geometric.datasets import TAGDataset
+from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
 # Add the parent directory to sys.path
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
-from torch_geometric.datasets import TAGDataset
-from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
-
 
 def get_n_params(model):
     pp = 0
@@ -67,17 +64,16 @@ def main(args):
     from ogb.nodeproppred import PygNodePropPredDataset
     dataset = PygNodePropPredDataset(f'ogbn-{dataset_name}', root=root)
     split_idx = dataset.get_idx_split()
-    labels = dataset[0].y.squeeze().numpy()  # reutrn labels with numpy array
     data = dataset.data
 
     tag_dataset = TAGDataset(root, dataset, hf_model,
                              token_on_disk=token_on_disk)
-
+    text_dataset = TAGDataset.to_text_dataset()
     print(tag_dataset.num_classes, tag_dataset.raw_file_names)
 
     num_classes = tag_dataset.num_classes
     num_features = data.num_features
-    # =========================== LM Data split ================================
+    # =========================== LM Data split ===============================
     split_idx = tag_dataset.get_idx_split()
 
     # GLEM train with augmented data, mark original train data as gold data,
@@ -96,14 +92,14 @@ def main(args):
           f'gold_idx: {gold_idx.size(0)}, '
           f'pseudo labels ratio: {pl_ratio}, '
           f'{train_idx.size(0)/gold_idx.size(0) - 1.0}')
-    gold_dataset = torch.utils.data.Subset(dataset=tag_dataset,
+    gold_dataset = torch.utils.data.Subset(dataset=text_dataset,
                                            indices=gold_idx)
-    train_dataset = torch.utils.data.Subset(dataset=tag_dataset,
+    train_dataset = torch.utils.data.Subset(dataset=text_dataset,
                                             indices=train_idx)
-    valid_dataset = torch.utils.data.Subset(dataset=tag_dataset,
+    valid_dataset = torch.utils.data.Subset(dataset=text_dataset,
                                             indices=valid_idx)
 
-    # ========================== LM Data Loader ================================
+    # ========================== LM Data Loader ===============================
 
     print('Building language model dataloader...', end='-->')
     from torch_geometric.loader import DataLoader
@@ -116,12 +112,12 @@ def main(args):
     text_val_loader = DataLoader(valid_dataset, batch_size=lm_batch_size * 4,
                                  drop_last=False, pin_memory=True,
                                  shuffle=False)
-    text_data_loader = DataLoader(tag_dataset, batch_size=lm_batch_size * 4,
+    text_data_loader = DataLoader(text_dataset, batch_size=lm_batch_size * 4,
                                   drop_last=False, pin_memory=False,
                                   shuffle=False)
     print('done')
 
-    # =========================== GNN Data Loader ==============================
+    # =========================== GNN Data Loader =============================
     initial_memory = torch.cuda.memory_allocated()
     data = data.to(device)
 
@@ -191,7 +187,7 @@ def main(args):
 
         return train_acc, val_acc, test_acc
 
-    # =========================== Build GNN Model ==============================
+    # =========================== Build GNN Model =============================
     gnn = None
     if args.gnn_model == 'SAGE':
         gnn = GraphSAGE(
@@ -212,7 +208,7 @@ def main(args):
         )
 
     print("# GNN Params:", get_n_params(gnn))
-    # =========================== Build LM Model ===============================
+    # =========================== Build LM Model ==============================
 
     model = GLEM(lm_to_use=hf_model, gnn_to_use=gnn, out_channels=num_classes,
                  lm_use_lora=lm_use_lora, device=device)
@@ -233,11 +229,11 @@ def main(args):
             # print(f'Load GNN model train with {epoch} epochs')
         return optimizer
 
-    ### Run GLEM
+    # ================================= Run GLEM ==============================
     preds_filename = 'lm_pretrain'
     preds_dir = f'{out_dir}preds/{dataset_name}/'
 
-    # =============================== GLEM pretraining =========================
+    # =============================== GLEM pretraining ========================
     pretrain_phase = 'lm'
     if em_order == 'lm':
         pretrain_phase = 'gnn'
@@ -345,8 +341,8 @@ if __name__ == '__main__':
                         help='huggingface model repo id')
     parser.add_argument(
         '--gnn_model', type=str, default='SAGE',
-        help=f'gnn model for node classification,'
-        f'options: SAGE, GAT, GCN')
+        help='gnn model for node classification,'
+        'options: SAGE, GAT, GCN')
     parser.add_argument('--lm_batch_size', type=int, default=256)
     parser.add_argument('--gnn_batch_size', type=int, default=1024)
     parser.add_argument('--external_pred_path', type=str, default=None)

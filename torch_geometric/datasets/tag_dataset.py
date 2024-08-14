@@ -43,8 +43,8 @@ class TAGDataset(InMemoryDataset):
         split_idx (Optional[Dict[str, torch.Tensor]]): Optional dictionary,
             for saving split index, it is required that if your dataset doesn't
             have get_split_idx function
-        tokenize_batch_size (int): batch size of tokenizing text, the tokenizing
-            process will run on cpu, default: 256
+        tokenize_batch_size (int): batch size of tokenizing text, the 
+            tokenizing process will run on cpu, default: 256
         token_on_disk (bool): save token as .pt file on disk or not,
             default: False
         text_on_disk (bool): save given text(list of str) as dataframe on disk
@@ -150,19 +150,14 @@ class TAGDataset(InMemoryDataset):
             self.load_gold_mask()
         return self._is_gold
 
-    def get_token(self, node_idx: Tensor) -> Dict[str, Tensor]:
-        r"""This function will be called in __getitem__()
-        """
-        items = {k: v[node_idx] for k, v in self.token.items()}
-        return items
-
     def get_n_id(self, node_idx):
         if self._n_id == None:
             self._n_id = torch.arange(self._data.num_nodes)
         return self._n_id[node_idx]
 
     def load_gold_mask(self):
-        r"""Use original train split as gold split, generating is_gold mask
+        r"""
+        Use original train split as gold split, generating is_gold mask
         for picking ground truth labels and pseudo labels
         """
         train_split_idx = self.get_idx_split()['train']
@@ -219,7 +214,8 @@ class TAGDataset(InMemoryDataset):
                            index=False)
 
     def tokenize_graph(self, batch_size: Optional[int] = 256) -> Tensor:
-        r"""Tokenizing the text associate with each node, running in cpu
+        r"""
+        Tokenizing the text associate with each node, running in cpu
         batch_size (Optional[int]): batch size of list of text for generating
             emebdding
         """
@@ -265,30 +261,60 @@ class TAGDataset(InMemoryDataset):
                 print('Token saved:', os.path.join(path, f'{k}.pt'))
         os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # supressing warning
         return all_encoded_token
-
-    def __getitem__(self, node_id: Tensor) -> Dict:  # for LM training
-        r"""This function will override __getitem__() function in
-        torch_geometric.data.dataset.Dataset, and will be called when you
-        iterate batch in the dataloader, make sure all following
-        Args:
-            node_ids (List[int]): list of node idx for selecting tokens,
-                labels etc. when iterating data loader for LM
-        Returns:
-            items (dict): input k,v pairs for Language model training and
-                inference
+    
+    def to_text_dataset(self):
+        r"""
+        Factory Build text dataset from Text Attributed Graph Dataset
+        each data point is node's associated text token
         """
-        item = {}
-        item['input'] = self.get_token(node_id)
-        item['labels'] = self._data.y[node_id]
-        item['is_gold'] = self.get_gold(node_id)
-        item['n_id'] = self.get_n_id(node_id)
-        return item
-
-    def len(self):
-        return self._data.num_nodes
-
-    def get(self, idx: int) -> BaseData:
-        return self._data
-
+        return TAGDataset.TextDataset(self)
+    
     def __repr__(self):
         return f'{self.__class__.__name__}()'
+    
+    
+    class TextDataset(torch.utils.data.Dataset):
+        def __init__(self, tag_dataset):
+            self.tag_dataset = tag_dataset
+            self.token = tag_dataset.token
+            self._data = tag_dataset.data
+            self.labels = tag_dataset._data.y
+
+        def get_token(self, node_idx: Tensor) -> Dict[str, Tensor]:
+            r"""
+            This function will be called in __getitem__()
+            Args:
+                node_idx (Tensor): selected node idx in each batch
+            Returns:
+                items(Dict[str, Tensor]): input for LM
+            """
+            items = {k: v[node_idx] for k, v in self.token.items()}
+            return items
+        
+        def __getitem__(self, node_id: Tensor) -> Dict:  # for LM training
+            r"""
+            This function will override __getitem__() function in
+            torch.utils.data.Dataset, and will be called when you
+            iterate batch in the dataloader, make sure all following
+            Args:
+                node_ids (List[int]): list of node idx for selecting tokens,
+                    labels etc. when iterating data loader for LM
+            Returns:
+                items (dict): input k,v pairs for Language model training and
+                    inference
+            """
+            item = {}
+            item['input'] = self.get_token(node_id)
+            item['labels'] = self.labels[node_id]
+            item['is_gold'] = self.tag_dataset.get_gold(node_id)
+            item['n_id'] = self.tag_dataset.get_n_id(node_id)
+            return item
+
+        def __len__(self):
+            return self._data.num_nodes
+
+        def get(self, idx: int) -> BaseData:
+            return self._data
+
+        def __repr__(self):
+            return f'{self.__class__.__name__}()'
