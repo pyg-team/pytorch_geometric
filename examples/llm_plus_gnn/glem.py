@@ -17,12 +17,16 @@ import os
 import os.path as osp
 import sys
 import time
+
 import torch
+
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
+
 # Add the parent directory to sys.path
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
+
 
 def get_n_params(model):
     pp = 0

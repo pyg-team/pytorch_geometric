@@ -43,7 +43,7 @@ class TAGDataset(InMemoryDataset):
         split_idx (Optional[Dict[str, torch.Tensor]]): Optional dictionary,
             for saving split index, it is required that if your dataset doesn't
             have get_split_idx function
-        tokenize_batch_size (int): batch size of tokenizing text, the 
+        tokenize_batch_size (int): batch size of tokenizing text, the
             tokenizing process will run on cpu, default: 256
         token_on_disk (bool): save token as .pt file on disk or not,
             default: False
@@ -156,8 +156,7 @@ class TAGDataset(InMemoryDataset):
         return self._n_id[node_idx]
 
     def load_gold_mask(self):
-        r"""
-        Use original train split as gold split, generating is_gold mask
+        r"""Use original train split as gold split, generating is_gold mask
         for picking ground truth labels and pseudo labels
         """
         train_split_idx = self.get_idx_split()['train']
@@ -214,8 +213,7 @@ class TAGDataset(InMemoryDataset):
                            index=False)
 
     def tokenize_graph(self, batch_size: Optional[int] = 256) -> Tensor:
-        r"""
-        Tokenizing the text associate with each node, running in cpu
+        r"""Tokenizing the text associate with each node, running in cpu
         batch_size (Optional[int]): batch size of list of text for generating
             emebdding
         """
@@ -261,18 +259,16 @@ class TAGDataset(InMemoryDataset):
                 print('Token saved:', os.path.join(path, f'{k}.pt'))
         os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # supressing warning
         return all_encoded_token
-    
+
     def to_text_dataset(self):
-        r"""
-        Factory Build text dataset from Text Attributed Graph Dataset
+        r"""Factory Build text dataset from Text Attributed Graph Dataset
         each data point is node's associated text token
         """
         return TAGDataset.TextDataset(self)
-    
+
     def __repr__(self):
         return f'{self.__class__.__name__}()'
-    
-    
+
     class TextDataset(torch.utils.data.Dataset):
         def __init__(self, tag_dataset):
             self.tag_dataset = tag_dataset
@@ -281,8 +277,8 @@ class TAGDataset(InMemoryDataset):
             self.labels = tag_dataset._data.y
 
         def get_token(self, node_idx: Tensor) -> Dict[str, Tensor]:
-            r"""
-            This function will be called in __getitem__()
+            r"""This function will be called in __getitem__()
+
             Args:
                 node_idx (Tensor): selected node idx in each batch
             Returns:
@@ -290,10 +286,9 @@ class TAGDataset(InMemoryDataset):
             """
             items = {k: v[node_idx] for k, v in self.token.items()}
             return items
-        
+
         def __getitem__(self, node_id: Tensor) -> Dict:  # for LM training
-            r"""
-            This function will override __getitem__() function in
+            r"""This function will override __getitem__() function in
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
             Args:
