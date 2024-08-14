@@ -147,7 +147,7 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
         model.train()
 
         total_loss = total_correct = total_examples = 0
-        for batch in tqdm(train_loader):
+        for i, batch in enumerate(train_loader):
             batch = batch.cuda()
             optimizer.zero_grad()
             out = model(batch.x, batch.edge_index)[:batch.batch_size]
@@ -160,6 +160,9 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
             total_correct += int(out.argmax(dim=-1).eq(y).sum())
             total_examples += y.size(0)
 
+            if i % 10 == 0:
+                print(f"Epoch: {epoch:02d}, Iteration: {i}, Loss: {loss:.4f}")
+
         return total_loss / total_examples, total_correct / total_examples
 
     @torch.no_grad()
@@ -167,7 +170,7 @@ with tempfile.TemporaryDirectory(dir=args.tempdir_root) as samples_dir:
         model.eval()
 
         total_correct = total_examples = 0
-        for batch in tqdm(loader):
+        for batch in loader:
             batch = batch.cuda()
             out = model(batch.x, batch.edge_index)[:batch.batch_size]
             y = batch.y[:batch.batch_size].view(-1).to(torch.long)
