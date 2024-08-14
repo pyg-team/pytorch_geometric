@@ -8,7 +8,7 @@ from torch_geometric.utils import remove_self_loops
 
 @functional_transform('remove_self_loops')
 class RemoveSelfLoops(BaseTransform):
-    r"""Remove all self-loops in the given homogeneous or heterogeneous
+    r"""Removes all self-loops in the given homogeneous or heterogeneous
     graph (functional name: :obj:`remove_self_loops`).
 
     Args:
@@ -17,10 +17,7 @@ class RemoveSelfLoops(BaseTransform):
             :meth:`torch_geometric.utils.remove_self_loops`.
             (default: :obj:`"edge_weight"`)
     """
-    def __init__(
-        self,
-        attr: str = 'edge_weight',
-    ):
+    def __init__(self, attr: str = 'edge_weight') -> None:
         self.attr = attr
 
     def forward(
