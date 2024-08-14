@@ -9,8 +9,8 @@ from torch_geometric.nn.models import GraphSAGE, basic_gnn
 
 
 class GLEM(torch.nn.Module):
-    r"""This GNN+LM co-training model is based on GLEM
-    Original Paper: <https://arxiv.org/abs/2210.14709> `_.
+    r"""This GNN+LM co-training model is based on GLEM.
+    Original Paper: <https://arxiv.org/abs/2210.14709>`_.
 
     Args:
         lm_to_use (str): A TextEncoder from huggingface model repo
@@ -33,7 +33,7 @@ class GLEM(torch.nn.Module):
             adapter to, e.g. ['q_proj', 'v_proj'] for LLM , (default: None)
 
     .. note::
-        See `examples/llm_plus_gnn/glem.py` for example usage
+        See `examples/llm_plus_gnn/glem.py` for example usage.
     """
     def __init__(
             self,
@@ -87,8 +87,7 @@ class GLEM(torch.nn.Module):
                       optimizer: torch.optim.Optimizer, num_epochs: int,
                       patience: int, ext_pseudo_labels: torch.Tensor = None,
                       is_augmented: bool = False, verbose: bool = True):
-        r"""Pretrain GNN, optional steps if you do not have pseudo labels.
-        """
+        # Pretrain GNN, optional steps if you do not have pseudo labels.
         best_acc = 0
         early_stopping = 0
         # training only based on gold data
@@ -129,11 +128,12 @@ class GLEM(torch.nn.Module):
         r"""GLEM training step, EM steps.
 
         Args:
+            em_phase(str): 'gnn' or 'lm' choose which phase you are training on
             train_loader(dataloader or nodeloader):
                 dataloader: for lm training, include tokenized data, labels
                     is_gold mask etc.
                 nodeloader: for gnn training, include x, edge_index, etc.
-            em_phase(str): 'gnn' or 'lm' choose which phase you are training on
+            optimizer (torch.optim.Optimizer): optimizer for training
             pseudo_labels(torch.Tensor): the predicted labels used as pseudo
                 labels
             epoch (int): current epoch
@@ -156,7 +156,7 @@ class GLEM(torch.nn.Module):
                  optimizer: torch.optim.Optimizer, epoch: int,
                  pseudo_labels: torch.Tensor = None,
                  is_augmented: bool = False, verbose: bool = True):
-        r"""Train language model in every epoch.
+        r"""Language model Training in every epoch.
 
         Args:
             train_loader(loader.dataloader.DataLoader): text token dataloader
@@ -211,7 +211,8 @@ class GLEM(torch.nn.Module):
                   optimizer: torch.optim.Optimizer, epoch: int,
                   pseudo_labels: torch.Tensor = None,
                   is_augmented: bool = False, verbose: bool = True):
-        r"""Args:
+        r""" GNN training step in every epoch.
+        Args:
             train_loader (loader.NeighborLoader): gnn Neighbor node loader
             epoch (int): current train epoch
             pseudo_labels(torch.tensor): 1-D tensor, predictions from lm
@@ -262,7 +263,7 @@ class GLEM(torch.nn.Module):
     def inference(self, em_phase: str, data_loader: Union[NeighborLoader,
                                                           DataLoader],
                   verbose: bool = False):
-        r"""GLEM inference steps:
+        r"""GLEM inference step.
 
         Args:
             em_phase(str): 'gnn' or 'lm'
@@ -285,7 +286,7 @@ class GLEM(torch.nn.Module):
 
     @torch.no_grad()
     def inference_lm(self, data_loader: DataLoader, verbose: bool = True):
-        r"""LM inference:
+        r"""LM inference step.
         Args:
             data_loader (Dataloader): include token, labels, and gold mask
             verbose (bool): print progress bar or not
@@ -311,7 +312,8 @@ class GLEM(torch.nn.Module):
 
     @torch.no_grad()
     def inference_gnn(self, data_loader: NeighborLoader, verbose: bool = True):
-        r"""GNN inference:
+        r"""GNN inference step.
+        
         Args:
             data_loader(NeighborLoader): include x, edge_index,
             verbose (bool): print progress bar or not
@@ -340,7 +342,7 @@ class GLEM(torch.nn.Module):
              pseudo_labels: bool = None, pl_weight: float = 0.5,
              is_augmented: bool = True):
         r"""Reference:
-        <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> #noqa
+        <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> # noqa
         Core function of EM inference, this function is aming on combining:
         Cross Entropy loss on gold and Cross Entropy loss on pseudo labels:
         (1- pl_weight ) * MLE + pl_weight * pseudo_label_loss
@@ -355,8 +357,9 @@ class GLEM(torch.nn.Module):
                         alpha in E-step, beta in M-step respectively
             is_augmented: use EM or just train GNN and LM with gold data
         """
+        def deal_nan(x):
+            return 0 if torch.isnan(x) else x
         if is_augmented and (sum(~is_gold) > 0):
-            deal_nan = lambda x: 0 if torch.isnan(x) else x
             mle_loss = deal_nan(loss_func(logits[is_gold], labels[is_gold]))
             # all other labels beside from ground truth(gold labels)
             pseudo_label_loss = deal_nan(

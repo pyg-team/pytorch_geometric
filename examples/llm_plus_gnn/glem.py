@@ -113,9 +113,9 @@ def main(args):
     text_train_loader = DataLoader(train_dataset, batch_size=lm_batch_size,
                                    drop_last=False, pin_memory=False,
                                    shuffle=True)
-    text_val_loader = DataLoader(valid_dataset, batch_size=lm_batch_size * 4,
-                                 drop_last=False, pin_memory=True,
-                                 shuffle=False)
+    # text_val_loader = DataLoader(valid_dataset, batch_size=lm_batch_size * 4,
+    #                              drop_last=False, pin_memory=True,
+    #                              shuffle=False)
     text_data_loader = DataLoader(text_dataset, batch_size=lm_batch_size * 4,
                                   drop_last=False, pin_memory=False,
                                   shuffle=False)

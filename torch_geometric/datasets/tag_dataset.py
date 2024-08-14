@@ -60,7 +60,7 @@ class TAGDataset(InMemoryDataset):
         'ogbn-products': '1I-S176-W4Bm1iPDjQv3hYwQBtxE0v8mt'
     }
 
-    def __init__(self, root: str, dataset: InMemoryDataset,
+    def __init__(self, root: str, dataset: InMemoryDataset[BaseData],
                  tokenizer_name: str, text: Optional[List[str]] = None,
                  split_idx: Optional[Dict[str, Tensor]] = None,
                  tokenize_batch_size: int = 256, token_on_disk: bool = False,
@@ -148,7 +148,7 @@ class TAGDataset(InMemoryDataset):
             self.load_gold_mask()
         return self._is_gold
 
-    def get_n_id(self, node_idx) -> IndexType:
+    def get_n_id(self, node_idx: Tensor) -> IndexType:
         if self._n_id is None:
             self._n_id = torch.arange(self._data.num_nodes)
         return self._n_id[node_idx]
@@ -163,9 +163,10 @@ class TAGDataset(InMemoryDataset):
         is_good_tensor[train_split_idx] = True
         return is_good_tensor
 
-    def get_gold(self, node_idx=None) -> IndexType:
-        r"""Args:
-        node_idx (torch.tensor): a tensor contain node idx
+    def get_gold(self, node_idx: Tensor = None) -> IndexType:
+        r"""Get gold mask for given node_idx.
+        Args:
+            node_idx (torch.tensor): a tensor contain node idx
         """
         if self._is_gold is None:
             _ = self.is_gold
@@ -211,13 +212,19 @@ class TAGDataset(InMemoryDataset):
                            index=False)
 
     def tokenize_graph(self,
-                       batch_size: Optional[int] = 256) -> Dict[str, Tensor]:
+                       batch_size: int = 256) -> Dict[str, Tensor]:
         r"""Tokenizing the text associate with each node, running in cpu.
-        batch_size (Optional[int]): batch size of list of text for generating
-            emebdding
+        Args:
+            batch_size (Optional[int]): batch size of list of text for generating
+                emebdding
+        Returns:
+            Dict[str, torch.Tensor]: tokenized graph
         """
+        data_len = 0
         if self.text is not None:
             data_len = len(self.text)
+        else:
+            raise ValueError("The TAGDataset need text for tokenization")
         token_keys = ['input_ids', 'token_type_ids', 'attention_mask']
         path = os.path.join(self.processed_dir, 'token', self.tokenizer_name)
         # Check if the .pt files already exist
@@ -234,7 +241,7 @@ class TAGDataset(InMemoryDataset):
             return all_encoded_token
 
         all_encoded_token = {k: [] for k in token_keys}
-        pbar = tqdm(total=len(self.text))
+        pbar = tqdm(total=data_len)
 
         pbar.set_description('Tokenizing Text Attributed Graph')
         for i in range(0, data_len, batch_size):
@@ -260,17 +267,17 @@ class TAGDataset(InMemoryDataset):
         os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # supressing warning
         return all_encoded_token
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
 
     class TextDataset(torch.utils.data.Dataset):
-        r"""This nested dataset provides textual data for each node in the graph.
-        Factory method to create TextDataset from TAGDataset.
+        r"""This nested dataset provides textual data for each node in 
+        the graph. Factory method to create TextDataset from TAGDataset.
 
         Args:
             tag_dataset (TAGDataset): the parent dataset
         """
-        def __init__(self, tag_dataset):
+        def __init__(self, tag_dataset) -> None:
             self.tag_dataset = tag_dataset
             self.token = tag_dataset.token
             self._data = tag_dataset.data
@@ -288,13 +295,13 @@ class TAGDataset(InMemoryDataset):
             return items
 
         def __getitem__(self, node_id: Tensor) -> Dict:  # for LM training
-            r"""This function will override __getitem__() function in
+            r"""This function will override the function in
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
             key value pairs are present in the return dict.
 
             Args:
-                node_ids (List[int]): list of node idx for selecting tokens,
+                node_id (List[int]): list of node idx for selecting tokens,
                     labels etc. when iterating data loader for LM
             Returns:
                 items (dict): input k,v pairs for Language model training and
@@ -307,13 +314,13 @@ class TAGDataset(InMemoryDataset):
             item['n_id'] = self.tag_dataset.get_n_id(node_id)
             return item
 
-        def __len__(self):
+        def __len__(self) -> int:
             return self._data.num_nodes
 
         def get(self, idx: int) -> BaseData:
             return self._data
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             return f'{self.__class__.__name__}()'
 
     def to_text_dataset(self) -> TextDataset:
