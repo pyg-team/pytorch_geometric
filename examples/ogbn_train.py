@@ -69,7 +69,7 @@ parser.add_argument('--hidden_channels', type=int, default=256,
                     help='number of hidden channels.')
 parser.add_argument('--lr', type=float, default=0.003)
 parser.add_argument('--wd', type=float, default=0.0,
-                    help = 'weight decay for the optimizer')
+                    help='weight decay for the optimizer')
 parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument(
     '--use_directed_graph',
