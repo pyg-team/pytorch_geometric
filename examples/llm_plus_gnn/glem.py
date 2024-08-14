@@ -100,8 +100,8 @@ def main(args):
                                            indices=gold_idx)
     train_dataset = torch.utils.data.Subset(dataset=text_dataset,
                                             indices=train_idx)
-    valid_dataset = torch.utils.data.Subset(dataset=text_dataset,
-                                            indices=valid_idx)
+    # valid_dataset = torch.utils.data.Subset(dataset=text_dataset,
+    #                                         indices=valid_idx)
 
     # ========================== LM Data Loader ===============================
 

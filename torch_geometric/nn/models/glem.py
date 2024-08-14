@@ -159,8 +159,8 @@ class GLEM(torch.nn.Module):
         r"""Language model Training in every epoch.
 
         Args:
-            train_loader(loader.dataloader.DataLoader): text token dataloader
-            optimizer: model optimizer
+            train_loader (loader.dataloader.DataLoader): text token dataloader
+            optimizer (torch.optim.Optimizer): model optimizer
             epoch (int): current train epoch
             pseudo_labels (torch.Tensor): 1-D tensor, predictions from gnn
             is_augmented (bool): train with pseudo labels or not
@@ -215,6 +215,7 @@ class GLEM(torch.nn.Module):
 
         Args:
             train_loader (loader.NeighborLoader): gnn Neighbor node loader
+            optimizer (torch.optim.Optimizer): model optimizer
             epoch (int): current train epoch
             pseudo_labels(torch.tensor): 1-D tensor, predictions from lm
             is_augmented(bool): use pseudo labeled node or not
@@ -343,11 +344,12 @@ class GLEM(torch.nn.Module):
              loss_func: torch.nn.functional, is_gold: torch.Tensor,
              pseudo_labels: bool = None, pl_weight: float = 0.5,
              is_augmented: bool = True):
-        r"""Reference:
-        <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> # noqa
-        Core function of EM inference, this function is aming on combining:
-        Cross Entropy loss on gold and Cross Entropy loss on pseudo labels:
+        r"""Core function of EM inference, this function is aming on combining
+        loss value on gold(original train) and loss value on pseudo labels. 
         (1- pl_weight ) * MLE + pl_weight * pseudo_label_loss
+        Reference:
+        <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> # noqa
+        
         Args:
             logits(torch.tensor): predict results from LM or GNN
             labels(torch.tensor): combined node labels from ground truth and

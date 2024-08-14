@@ -60,7 +60,7 @@ class TAGDataset(InMemoryDataset):
         'ogbn-products': '1I-S176-W4Bm1iPDjQv3hYwQBtxE0v8mt'
     }
 
-    def __init__(self, root: str, dataset: InMemoryDataset[BaseData],
+    def __init__(self, root: str, dataset: InMemoryDataset,
                  tokenizer_name: str, text: Optional[List[str]] = None,
                  split_idx: Optional[Dict[str, Tensor]] = None,
                  tokenize_batch_size: int = 256, token_on_disk: bool = False,
@@ -102,12 +102,17 @@ class TAGDataset(InMemoryDataset):
         super().__init__(self.root, transform=None, pre_transform=None,
                          pre_filter=None, force_reload=force_reload)
         # after processing and download
-        self._data = dataset._data  # reassign reference
-        self._n_id = torch.arange(self._data.num_nodes)
+        if hasattr(dataset, '_data'):
+            self._data = dataset._data  # reassign reference
+            self._n_id = torch.arange(self._data.num_nodes)
+        else:
+            raise ValueError("TAGDataset need include _data in dataset")
+        if not hasattr(self._data, 'num_nodes'):
+            raise ValueError("_data must have num_nodes attribute")
         is_good_tensor = self.load_gold_mask()
         self._is_gold = is_good_tensor.squeeze()
         self._data['is_gold'] = is_good_tensor
-        if self.text is not None and len(self.text) != dataset._data.num_nodes:
+        if self.text is not None and len(self.text) != self._data.num_nodes:
             raise ValueError("The number of text sequence in 'text' should be "
                              "equal to number of nodes!")
         self.token_on_disk = token_on_disk
@@ -216,8 +221,8 @@ class TAGDataset(InMemoryDataset):
         r"""Tokenizing the text associate with each node, running in cpu.
 
         Args:
-            batch_size (Optional[int]): batch size of list of text for generating
-                emebdding
+            batch_size (Optional[int]): batch size of list of text for 
+                generating emebdding
         Returns:
             Dict[str, torch.Tensor]: tokenized graph
         """
