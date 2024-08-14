@@ -9,8 +9,9 @@ from torch_geometric.nn.models import GraphSAGE, basic_gnn
 
 
 class GLEM(torch.nn.Module):
-    r"""This GNN+LM co-training model is based on GLEM.
-    Original Paper: <https://arxiv.org/abs/2210.14709>`_.
+    r"""This GNN+LM co-training model is based on GLEM from the `"Learning on 
+    Large-scale Text-attributed Graphs via Variational Inference"
+    <https://arxiv.org/abs/2210.14709>`_ paper.
 
     Args:
         lm_to_use (str): A TextEncoder from huggingface model repo
@@ -129,16 +130,16 @@ class GLEM(torch.nn.Module):
 
         Args:
             em_phase(str): 'gnn' or 'lm' choose which phase you are training on
-            train_loader(dataloader or nodeloader):
-                dataloader: for lm training, include tokenized data, labels
-                    is_gold mask etc.
-                nodeloader: for gnn training, include x, edge_index, etc.
+            train_loader(Union[DataLoader, NeighborLoader]): use DataLoader for 
+                lm training, include tokenized data, labels is_gold mask.
+                use NeighborLoader for gnn training, include x, edge_index.
             optimizer (torch.optim.Optimizer): optimizer for training
             pseudo_labels(torch.Tensor): the predicted labels used as pseudo
                 labels
             epoch (int): current epoch
             is_augmented (bool): will use pseudo_labels or not
             verbose (bool): print training progress bar or not
+
         Returns:
             acc (float): training accuracy
             loss (float): loss value
@@ -165,6 +166,7 @@ class GLEM(torch.nn.Module):
             pseudo_labels (torch.Tensor): 1-D tensor, predictions from gnn
             is_augmented (bool): train with pseudo labels or not
             verbose (bool): print training progress bar or not
+
         Returns:
             approx_acc (torch.tensor): training accuracy
             loss (torch.float): loss value
@@ -220,7 +222,8 @@ class GLEM(torch.nn.Module):
             pseudo_labels(torch.tensor): 1-D tensor, predictions from lm
             is_augmented(bool): use pseudo labeled node or not
             verbose (bool): print training progress or not
-        Return:
+
+        Returns:
             approx_acc (torch.tensor): training accuracy
             loss (torch.float): loss value
         """
@@ -273,6 +276,7 @@ class GLEM(torch.nn.Module):
                 dataloader: for lm training, include tokenized data
                 nodeloader: for gnn training, include x, edge_index
             verbose(bool): print inference progress or not
+
         Returns:
             out (torch.Tensor): n * m tensor, m is number of classes,
                 n is number of nodes
@@ -293,9 +297,10 @@ class GLEM(torch.nn.Module):
         Args:
             data_loader (Dataloader): include token, labels, and gold mask
             verbose (bool): print progress bar or not
+
         Returns:
-            preds (tensor): prediction from GNN,
-                convert to pseudo labels by preds.argmax(dim=-1).unsqueeze(1)
+            preds (tensor): prediction from GNN, convert to pseudo labels 
+                by preds.argmax(dim=-1).unsqueeze(1)
         """
         if verbose:
             pbar = tqdm(total=data_loader.dataset._data.num_nodes)
@@ -320,6 +325,7 @@ class GLEM(torch.nn.Module):
         Args:
             data_loader(NeighborLoader): include x, edge_index,
             verbose (bool): print progress bar or not
+
         Returns:
             preds (tensor): prediction from GNN,
                 convert to pseudo labels by preds.argmax(dim=-1).unsqueeze(1)
@@ -342,7 +348,7 @@ class GLEM(torch.nn.Module):
 
     def loss(self, logits: torch.Tensor, labels: torch.Tensor,
              loss_func: torch.nn.functional, is_gold: torch.Tensor,
-             pseudo_labels: bool = None, pl_weight: float = 0.5,
+             pseudo_labels: torch.Tensor = None, pl_weight: float = 0.5,
              is_augmented: bool = True):
         r"""Core function of EM inference, this function is aming on combining
         loss value on gold(original train) and loss value on pseudo labels.
@@ -357,6 +363,7 @@ class GLEM(torch.nn.Module):
             loss_func(torch.nn.modules.loss)
             is_gold(tensor): a tensor with bool value that mask ground truth
                     label and during training, thus ~is_gold mask pseudo labels
+            pseudo_labels(torch.tensor): predictions from other model
             pl_weight: the pseudo labels used in E-step and M-step optimization
                         alpha in E-step, beta in M-step respectively
             is_augmented: use EM or just train GNN and LM with gold data
