@@ -11,7 +11,7 @@ from torch_geometric.nn.models import GraphSAGE, basic_gnn
 class GLEM(torch.nn.Module):
     r"""This GNN+LM co-training model is based on GLEM
     Original Paper: <https://arxiv.org/abs/2210.14709> `_.
-    
+
     Args:
         lm_to_use (str): A TextEncoder from huggingface model repo
                 with a classifier(default: TinyBERT)
@@ -87,8 +87,7 @@ class GLEM(torch.nn.Module):
                       optimizer: torch.optim.Optimizer, num_epochs: int,
                       patience: int, ext_pseudo_labels: torch.Tensor = None,
                       is_augmented: bool = False, verbose: bool = True):
-        r"""
-        Pretrain GNN, optional steps if you do not have pseudo labels.
+        r"""Pretrain GNN, optional steps if you do not have pseudo labels.
         """
         best_acc = 0
         early_stopping = 0
@@ -123,16 +122,11 @@ class GLEM(torch.nn.Module):
                     break
             best_acc = max(best_acc, acc)
 
-    def train(self,
-              em_phase: str, 
-              train_loader: Union[DataLoader, NeighborLoader],
-              optimizer: torch.optim.Optimizer,
-              pseudo_labels: torch.Tensor,
-              epoch: int, 
-              is_augmented: bool = False, 
-              verbose: bool = False):
-        r"""
-        GLEM training step, EM steps.
+    def train(self, em_phase: str, train_loader: Union[DataLoader,
+                                                       NeighborLoader],
+              optimizer: torch.optim.Optimizer, pseudo_labels: torch.Tensor,
+              epoch: int, is_augmented: bool = False, verbose: bool = False):
+        r"""GLEM training step, EM steps.
 
         Args:
             train_loader(dataloader or nodeloader):
@@ -162,8 +156,7 @@ class GLEM(torch.nn.Module):
                  optimizer: torch.optim.Optimizer, epoch: int,
                  pseudo_labels: torch.Tensor = None,
                  is_augmented: bool = False, verbose: bool = True):
-        r"""
-        Train language model in every epoch.
+        r"""Train language model in every epoch.
 
         Args:
             train_loader(loader.dataloader.DataLoader): text token dataloader
@@ -218,8 +211,7 @@ class GLEM(torch.nn.Module):
                   optimizer: torch.optim.Optimizer, epoch: int,
                   pseudo_labels: torch.Tensor = None,
                   is_augmented: bool = False, verbose: bool = True):
-        r"""
-        Args:
+        r"""Args:
             train_loader (loader.NeighborLoader): gnn Neighbor node loader
             epoch (int): current train epoch
             pseudo_labels(torch.tensor): 1-D tensor, predictions from lm
@@ -270,8 +262,7 @@ class GLEM(torch.nn.Module):
     def inference(self, em_phase: str, data_loader: Union[NeighborLoader,
                                                           DataLoader],
                   verbose: bool = False):
-        r"""
-        GLEM inference steps:
+        r"""GLEM inference steps:
 
         Args:
             em_phase(str): 'gnn' or 'lm'
@@ -294,8 +285,7 @@ class GLEM(torch.nn.Module):
 
     @torch.no_grad()
     def inference_lm(self, data_loader: DataLoader, verbose: bool = True):
-        r"""
-        LM inference:
+        r"""LM inference:
         Args:
             data_loader (Dataloader): include token, labels, and gold mask
             verbose (bool): print progress bar or not
@@ -321,8 +311,7 @@ class GLEM(torch.nn.Module):
 
     @torch.no_grad()
     def inference_gnn(self, data_loader: NeighborLoader, verbose: bool = True):
-        r"""
-        GNN inference:
+        r"""GNN inference:
         Args:
             data_loader(NeighborLoader): include x, edge_index,
             verbose (bool): print progress bar or not
