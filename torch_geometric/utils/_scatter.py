@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import is_compiling, warnings
+from torch_geometric import is_compiling, is_in_onnx_export, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
 
@@ -88,27 +88,33 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
         # in case the input does not require gradients:
         if reduce in ['min', 'max', 'amin', 'amax']:
             if (not torch_geometric.typing.WITH_TORCH_SCATTER
-                    or is_compiling() or not src.is_cuda
+                    or is_compiling() or is_in_onnx_export() or not src.is_cuda
                     or not src.requires_grad):
 
-                if src.is_cuda and src.requires_grad and not is_compiling():
+                if (src.is_cuda and src.requires_grad and not is_compiling()
+                        and not is_in_onnx_export()):
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
                                   f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
-                # `scatter_reduce_` with `include_self=False` is not currently
-                # supported by onnx
-                fill_src = (torch.tensor(torch.inf if "min" in
-                                         reduce else -torch.inf).to(
-                                             src.dtype).expand_as(src))
-                fill_reduce = "amax" if "min" in reduce else "amin"
-                res = src.new_zeros(size).scatter_reduce_(
-                    dim, index, fill_src, reduce=fill_reduce,
+                if not is_in_onnx_export():
+                    return src.new_zeros(size).scatter_reduce_(
+                        dim, index, src, reduce=f'a{reduce[-3:]}',
+                        include_self=False)
+
+                fill = torch.full(
+                    (1, ),
+                    fill_value=src.min() if 'max' in reduce else src.max(),
+                    dtype=src.dtype,
+                    device=src.device,
+                ).expand_as(src)
+                out = src.new_zeros(size).scatter_reduce_(
+                    dim, index, fill, reduce=f'a{reduce[-3:]}',
                     include_self=True)
-                res.scatter_reduce_(dim, index, src, reduce=f"a{reduce[-3:]}",
-                                    include_self=True)
-                return res
+                return out.scatter_reduce_(dim, index, src,
+                                           reduce=f'a{reduce[-3:]}',
+                                           include_self=True)
 
             return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                          reduce=reduce[-3:])
@@ -196,7 +202,8 @@ def scatter_argmax(
     dim_size: Optional[int] = None,
 ) -> Tensor:
 
-    if torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling():
+    if (torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling()
+            and not is_in_onnx_export()):
         out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
         return out[1]
 
@@ -209,10 +216,13 @@ def scatter_argmax(
         dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
     if torch_geometric.typing.WITH_PT112:
-        # `scatter_reduce_` with `include_self=False` is not currently
-        # supported by onnx
-        res = src.new_empty(dim_size).fill_(
-            torch.tensor(-torch.inf).to(src.dtype))
+        # `include_self=False` is currently not supported by ONNX:
+        res = torch.full(
+            (dim_size, ),
+            fill_value=src.min(),
+            dtype=src.dtype,
+            device=src.device,
+        )
         res.scatter_reduce_(0, index, src.detach(), reduce="amax",
                             include_self=True)
     elif torch_geometric.typing.WITH_PT111:
