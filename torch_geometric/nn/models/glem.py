@@ -211,7 +211,8 @@ class GLEM(torch.nn.Module):
                   optimizer: torch.optim.Optimizer, epoch: int,
                   pseudo_labels: torch.Tensor = None,
                   is_augmented: bool = False, verbose: bool = True):
-        r""" GNN training step in every epoch.
+        r"""GNN training step in every epoch.
+
         Args:
             train_loader (loader.NeighborLoader): gnn Neighbor node loader
             epoch (int): current train epoch
@@ -287,6 +288,7 @@ class GLEM(torch.nn.Module):
     @torch.no_grad()
     def inference_lm(self, data_loader: DataLoader, verbose: bool = True):
         r"""LM inference step.
+
         Args:
             data_loader (Dataloader): include token, labels, and gold mask
             verbose (bool): print progress bar or not
@@ -313,7 +315,7 @@ class GLEM(torch.nn.Module):
     @torch.no_grad()
     def inference_gnn(self, data_loader: NeighborLoader, verbose: bool = True):
         r"""GNN inference step.
-        
+
         Args:
             data_loader(NeighborLoader): include x, edge_index,
             verbose (bool): print progress bar or not
@@ -359,6 +361,7 @@ class GLEM(torch.nn.Module):
         """
         def deal_nan(x):
             return 0 if torch.isnan(x) else x
+
         if is_augmented and (sum(~is_gold) > 0):
             mle_loss = deal_nan(loss_func(logits[is_gold], labels[is_gold]))
             # all other labels beside from ground truth(gold labels)

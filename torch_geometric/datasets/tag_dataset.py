@@ -165,6 +165,7 @@ class TAGDataset(InMemoryDataset):
 
     def get_gold(self, node_idx: Tensor = None) -> IndexType:
         r"""Get gold mask for given node_idx.
+
         Args:
             node_idx (torch.tensor): a tensor contain node idx
         """
@@ -211,9 +212,9 @@ class TAGDataset(InMemoryDataset):
             text_df.to_csv(osp.join(node_text_path), compression='gzip',
                            index=False)
 
-    def tokenize_graph(self,
-                       batch_size: int = 256) -> Dict[str, Tensor]:
+    def tokenize_graph(self, batch_size: int = 256) -> Dict[str, Tensor]:
         r"""Tokenizing the text associate with each node, running in cpu.
+
         Args:
             batch_size (Optional[int]): batch size of list of text for generating
                 emebdding
@@ -271,7 +272,7 @@ class TAGDataset(InMemoryDataset):
         return f'{self.__class__.__name__}()'
 
     class TextDataset(torch.utils.data.Dataset):
-        r"""This nested dataset provides textual data for each node in 
+        r"""This nested dataset provides textual data for each node in
         the graph. Factory method to create TextDataset from TAGDataset.
 
         Args:
