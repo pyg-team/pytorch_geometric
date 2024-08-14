@@ -9,7 +9,7 @@ from torch_geometric.nn.models import GraphSAGE, basic_gnn
 
 
 class GLEM(torch.nn.Module):
-    r"""This GNN+LM co-training model is based on GLEM from the `"Learning on 
+    r"""This GNN+LM co-training model is based on GLEM from the `"Learning on
     Large-scale Text-attributed Graphs via Variational Inference"
     <https://arxiv.org/abs/2210.14709>`_ paper.
 
@@ -130,7 +130,7 @@ class GLEM(torch.nn.Module):
 
         Args:
             em_phase(str): 'gnn' or 'lm' choose which phase you are training on
-            train_loader(Union[DataLoader, NeighborLoader]): use DataLoader for 
+            train_loader(Union[DataLoader, NeighborLoader]): use DataLoader for
                 lm training, include tokenized data, labels is_gold mask.
                 use NeighborLoader for gnn training, include x, edge_index.
             optimizer (torch.optim.Optimizer): optimizer for training
@@ -299,7 +299,7 @@ class GLEM(torch.nn.Module):
             verbose (bool): print progress bar or not
 
         Returns:
-            preds (tensor): prediction from GNN, convert to pseudo labels 
+            preds (tensor): prediction from GNN, convert to pseudo labels
                 by preds.argmax(dim=-1).unsqueeze(1)
         """
         if verbose:
