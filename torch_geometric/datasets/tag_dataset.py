@@ -221,7 +221,7 @@ class TAGDataset(InMemoryDataset):
         r"""Tokenizing the text associate with each node, running in cpu.
 
         Args:
-            batch_size (Optional[int]): batch size of list of text for 
+            batch_size (Optional[int]): batch size of list of text for
                 generating emebdding
         Returns:
             Dict[str, torch.Tensor]: tokenized graph

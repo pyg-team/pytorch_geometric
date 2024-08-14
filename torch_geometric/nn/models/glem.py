@@ -345,11 +345,11 @@ class GLEM(torch.nn.Module):
              pseudo_labels: bool = None, pl_weight: float = 0.5,
              is_augmented: bool = True):
         r"""Core function of EM inference, this function is aming on combining
-        loss value on gold(original train) and loss value on pseudo labels. 
+        loss value on gold(original train) and loss value on pseudo labels.
         (1- pl_weight ) * MLE + pl_weight * pseudo_label_loss
         Reference:
         <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> # noqa
-        
+
         Args:
             logits(torch.tensor): predict results from LM or GNN
             labels(torch.tensor): combined node labels from ground truth and
