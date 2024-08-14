@@ -103,8 +103,8 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                         dim, index, src, reduce=f'a{reduce[-3:]}',
                         include_self=False)
 
-                fill = torch.full(
-                    (1, ),
+                fill = torch.full(  # type: ignore
+                    size=(1, ),
                     fill_value=src.min() if 'max' in reduce else src.max(),
                     dtype=src.dtype,
                     device=src.device,
@@ -222,7 +222,10 @@ def scatter_argmax(
                                 include_self=False)
         else:
             # `include_self=False` is currently not supported by ONNX:
-            res = src.new_full((dim_size, ), fill_value=src.min())
+            res = src.new_full(
+                size=(dim_size, ),
+                fill_value=src.min(),  # type: ignore
+            )
             res.scatter_reduce_(0, index, src.detach(), reduce="amax",
                                 include_self=True)
     elif torch_geometric.typing.WITH_PT111:
