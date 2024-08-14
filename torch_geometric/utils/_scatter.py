@@ -216,15 +216,15 @@ def scatter_argmax(
         dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
     if torch_geometric.typing.WITH_PT112:
-        # `include_self=False` is currently not supported by ONNX:
-        res = torch.full(
-            (dim_size, ),
-            fill_value=src.min(),
-            dtype=src.dtype,
-            device=src.device,
-        )
-        res.scatter_reduce_(0, index, src.detach(), reduce="amax",
-                            include_self=True)
+        if not is_in_onnx_export():
+            res = src.new_empty(dim_size)
+            res.scatter_reduce_(0, index, src.detach(), reduce='amax',
+                                include_self=False)
+        else:
+            # `include_self=False` is currently not supported by ONNX:
+            res = src.new_full((dim_size, ), fill_value=src.min())
+            res.scatter_reduce_(0, index, src.detach(), reduce="amax",
+                                include_self=True)
     elif torch_geometric.typing.WITH_PT111:
         res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
                                    output_size=dim_size)  # type: ignore
