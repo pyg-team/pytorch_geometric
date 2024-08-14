@@ -21,6 +21,7 @@ from ._subgraph import (get_num_hops, subgraph, k_hop_subgraph,
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
 from ._homophily import homophily
 from ._assortativity import assortativity
+from ._normalize_edge_index import normalize_edge_index
 from .laplacian import get_laplacian
 from .mesh_laplacian import get_mesh_laplacian
 from .mask import mask_select, index_to_mask, mask_to_index
@@ -89,6 +90,7 @@ __all__ = [
     'dropout_adj',
     'homophily',
     'assortativity',
+    'normalize_edge_index',
     'get_laplacian',
     'get_mesh_laplacian',
     'mask_select',
