@@ -72,9 +72,9 @@ class TAGDataset(InMemoryDataset):
         self.tokenizer_name = tokenizer_name
         from transformers import AutoTokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-        if self.tokenizer.pad_token_id == None:
+        if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
-        if self.tokenizer.pad_token == None:
+        if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
         self.dir_name = '_'.join(dataset.name.split('-'))
@@ -92,10 +92,10 @@ class TAGDataset(InMemoryDataset):
             self.split_idx = split_idx
         else:
             raise ValueError(
-                f"TAGDataset need split idx for generating "
-                f"is_gold mask, please pass splited index "
-                f"in format of dictionaty with 'train', 'valid' ",
-                f"'test' index tensor to 'split_idx'")
+                "TAGDataset need split idx for generating "
+                "is_gold mask, please pass splited index "
+                "in format of dictionaty with 'train', 'valid' "
+                "'test' index tensor to 'split_idx'")
         if text is not None and text_on_disk:
             self.save_node_text(text)
         self.text_on_disk = text_on_disk
@@ -110,19 +110,19 @@ class TAGDataset(InMemoryDataset):
         self._data['is_gold'] = is_good_tensor
         if self.text is not None and len(self.text) != dataset._data.num_nodes:
             raise ValueError(
-                f"The number of text sequence in 'text' should be "
-                f"equal to number of nodes!")
+                "The number of text sequence in 'text' should be "
+                "equal to number of nodes!")
         self.token_on_disk = token_on_disk
         self.tokenize_batch_size = tokenize_batch_size
         self._token = self.tokenize_graph(self.tokenize_batch_size)
         self.__num_classes__ = dataset.num_classes
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> int:
         return self.__num_classes__
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         file_names = []
         for root, _, files in os.walk(osp.join(self.root, 'raw')):
             for file in files:
@@ -130,34 +130,35 @@ class TAGDataset(InMemoryDataset):
         return file_names
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return [
             'geometric_data_processed.pt', 'pre_filter.pt',
             'pre_transformed.pt'
         ]
 
     @property
-    def token(self):
+    def token(self) -> Dict[str, Tensor]:
         if self._token is None:  # lazy load
             self._token = self.tokenize_graph()
         return self._token
 
     # load is_gold after init
     @property
-    def is_gold(self):
+    def is_gold(self) -> Tensor:
         if self._is_gold is None:
             print('lazy load is_gold!!')
             self.load_gold_mask()
         return self._is_gold
 
-    def get_n_id(self, node_idx):
-        if self._n_id == None:
+    def get_n_id(self, node_idx) -> IndexType:
+        if self._n_id is None:
             self._n_id = torch.arange(self._data.num_nodes)
         return self._n_id[node_idx]
 
-    def load_gold_mask(self):
-        r"""Use original train split as gold split, generating is_gold mask
-        for picking ground truth labels and pseudo labels
+    def load_gold_mask(self) -> Tensor:
+        r"""
+        Use original train split as gold split, generating is_gold mask
+        for picking ground truth labels and pseudo labels.
         """
         train_split_idx = self.get_idx_split()['train']
         is_good_tensor = torch.zeros(self._data.num_nodes,
@@ -165,14 +166,16 @@ class TAGDataset(InMemoryDataset):
         is_good_tensor[train_split_idx] = True
         return is_good_tensor
 
-    def get_gold(self, node_idx=None):
-        r"""node_idx (torch.tensor): a tensor contain node idx
+    def get_gold(self, node_idx=None) -> IndexType:
+        r"""
+        Args:
+            node_idx (torch.tensor): a tensor contain node idx
         """
         if self._is_gold is None:
             _ = self.is_gold
         return self._is_gold[node_idx]
 
-    def get_idx_split(self):
+    def get_idx_split(self) -> Dict[str, Tensor]:
         return self.split_idx
 
     def download(self) -> None:
@@ -191,17 +194,17 @@ class TAGDataset(InMemoryDataset):
         elif self.name in self.raw_text_id:
             self.download()
         else:
-            print(f'The dataset is not ogbn-products nor ogbn-arxiv,'
-                  f'please pass in your raw text string list to `text`')
+            print('The dataset is not ogbn-products nor ogbn-arxiv,'
+                  'please pass in your raw text string list to `text`')
         if self.text is None:
             raise ValueError(
-                f"The TAGDataset only have ogbn-products and "
-                f"ogbn-arxiv raw text in default "
-                f"The raw text of each node is not specified"
-                f"Please pass in 'text' when convert your dataset "
-                f"to Text Attribute Graph Dataset")
+                "The TAGDataset only have ogbn-products and "
+                "ogbn-arxiv raw text in default "
+                "The raw text of each node is not specified"
+                "Please pass in 'text' when convert your dataset "
+                "to Text Attribute Graph Dataset")
 
-    def save_node_text(self, text: List[str]):
+    def save_node_text(self, text: List[str]) -> None:
         node_text_path = osp.join(self.root, 'raw', 'node-text.csv.gz')
         if osp.exists(node_text_path):
             print(f'The raw text is existed at {node_text_path}')
@@ -212,12 +215,15 @@ class TAGDataset(InMemoryDataset):
             text_df.to_csv(osp.join(node_text_path), compression='gzip',
                            index=False)
 
-    def tokenize_graph(self, batch_size: Optional[int] = 256) -> Tensor:
-        r"""Tokenizing the text associate with each node, running in cpu
+    def tokenize_graph(self, 
+                       batch_size: Optional[int] = 256) -> Dict[str, Tensor]:
+        r"""
+        Tokenizing the text associate with each node, running in cpu.
         batch_size (Optional[int]): batch size of list of text for generating
             emebdding
         """
-        data_len = len(self.text)
+        if self.text is not None:
+            data_len = len(self.text)
         token_keys = ['input_ids', 'token_type_ids', 'attention_mask']
         path = os.path.join(self.processed_dir, 'token', self.tokenizer_name)
         # Check if the .pt files already exist
@@ -236,7 +242,7 @@ class TAGDataset(InMemoryDataset):
         all_encoded_token = {k: [] for k in token_keys}
         pbar = tqdm(total=len(self.text))
 
-        pbar.set_description(f'Tokenizing Text Attributed Graph')
+        pbar.set_description('Tokenizing Text Attributed Graph')
         for i in range(0, data_len, batch_size):
             end_index = min(data_len, i + batch_size)
             token = self.tokenizer(self.text[i:min(i + batch_size, data_len)],
@@ -259,17 +265,17 @@ class TAGDataset(InMemoryDataset):
                 print('Token saved:', os.path.join(path, f'{k}.pt'))
         os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # supressing warning
         return all_encoded_token
-
-    def to_text_dataset(self):
-        r"""Factory Build text dataset from Text Attributed Graph Dataset
-        each data point is node's associated text token
-        """
-        return TAGDataset.TextDataset(self)
-
+    
     def __repr__(self):
         return f'{self.__class__.__name__}()'
 
     class TextDataset(torch.utils.data.Dataset):
+        r"""
+        This nested dataset provides textual data for each node in the graph.
+        Factory method to create TextDataset from TAGDataset.
+        Args:
+            tag_dataset (TAGDataset): the parent dataset
+        """
         def __init__(self, tag_dataset):
             self.tag_dataset = tag_dataset
             self.token = tag_dataset.token
@@ -277,8 +283,8 @@ class TAGDataset(InMemoryDataset):
             self.labels = tag_dataset._data.y
 
         def get_token(self, node_idx: Tensor) -> Dict[str, Tensor]:
-            r"""This function will be called in __getitem__()
-
+            r"""
+            This function will be called in __getitem__().
             Args:
                 node_idx (Tensor): selected node idx in each batch
             Returns:
@@ -291,6 +297,7 @@ class TAGDataset(InMemoryDataset):
             r"""This function will override __getitem__() function in
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
+            key value pairs are present in the return dict.
             Args:
                 node_ids (List[int]): list of node idx for selecting tokens,
                     labels etc. when iterating data loader for LM
@@ -313,3 +320,10 @@ class TAGDataset(InMemoryDataset):
 
         def __repr__(self):
             return f'{self.__class__.__name__}()'
+        
+    def to_text_dataset(self) -> TextDataset:
+        r"""
+        Factory Build text dataset from Text Attributed Graph Dataset
+        each data point is node's associated text token.
+        """
+        return TAGDataset.TextDataset(self)

@@ -11,7 +11,7 @@ from torch_geometric.nn.models import GraphSAGE, basic_gnn
 class GLEM(torch.nn.Module):
     r"""This GNN+LM co-training model is based on GLEM
     Original Paper: <https://arxiv.org/abs/2210.14709> `_.
-    See `examples/glem/ogbn_products_glem.py` for example usage
+    
     Args:
         lm_to_use (str): A TextEncoder from huggingface model repo
                 with a classifier(default: TinyBERT)
@@ -31,6 +31,9 @@ class GLEM(torch.nn.Module):
             (default: True)
         lora_target_modules: The names of the target modules to apply the lora
             adapter to, e.g. ['q_proj', 'v_proj'] for LLM , (default: None)
+
+    .. note::
+        See `examples/llm_plus_gnn/glem.py` for example usage
     """
     def __init__(
             self,
@@ -84,7 +87,8 @@ class GLEM(torch.nn.Module):
                       optimizer: torch.optim.Optimizer, num_epochs: int,
                       patience: int, ext_pseudo_labels: torch.Tensor = None,
                       is_augmented: bool = False, verbose: bool = True):
-        r"""Pretrain GNN, optional steps if you do not have pseudo labels
+        r"""
+        Pretrain GNN, optional steps if you do not have pseudo labels.
         """
         best_acc = 0
         early_stopping = 0
@@ -105,8 +109,7 @@ class GLEM(torch.nn.Module):
                      optimizer: torch.optim.Optimizer, num_epochs: int,
                      patience: int, ext_pseudo_labels: torch.Tensor = None,
                      is_augmented: bool = False, verbose: bool = True):
-        r"""Pretrain language model
-        """
+        # Pretrain language model
         best_acc = 0
         early_stopping = 0
         for epoch in range(1, num_epochs + 1):
@@ -120,11 +123,17 @@ class GLEM(torch.nn.Module):
                     break
             best_acc = max(best_acc, acc)
 
-    def train(self, em_phase: str, train_loader: Union[DataLoader,
-                                                       NeighborLoader],
-              optimizer: torch.optim.Optimizer, pseudo_labels: torch.Tensor,
-              epoch: int, is_augmented: bool = False, verbose: bool = False):
-        r"""GLEM training step, EM steps
+    def train(self,
+              em_phase: str, 
+              train_loader: Union[DataLoader, NeighborLoader],
+              optimizer: torch.optim.Optimizer,
+              pseudo_labels: torch.Tensor,
+              epoch: int, 
+              is_augmented: bool = False, 
+              verbose: bool = False):
+        r"""
+        GLEM training step, EM steps.
+
         Args:
             train_loader(dataloader or nodeloader):
                 dataloader: for lm training, include tokenized data, labels
@@ -141,7 +150,6 @@ class GLEM(torch.nn.Module):
             loss (float): loss value
         """
         pseudo_labels = pseudo_labels.to(self.device)
-        # switch of training gnn or lm
         if em_phase == 'gnn':
             acc, loss = self.train_gnn(train_loader, optimizer, epoch,
                                        pseudo_labels, is_augmented, verbose)
@@ -154,7 +162,9 @@ class GLEM(torch.nn.Module):
                  optimizer: torch.optim.Optimizer, epoch: int,
                  pseudo_labels: torch.Tensor = None,
                  is_augmented: bool = False, verbose: bool = True):
-        r"""Train language model in every epoch
+        r"""
+        Train language model in every epoch.
+
         Args:
             train_loader(loader.dataloader.DataLoader): text token dataloader
             optimizer: model optimizer
@@ -208,7 +218,8 @@ class GLEM(torch.nn.Module):
                   optimizer: torch.optim.Optimizer, epoch: int,
                   pseudo_labels: torch.Tensor = None,
                   is_augmented: bool = False, verbose: bool = True):
-        r"""Args:
+        r"""
+        Args:
             train_loader (loader.NeighborLoader): gnn Neighbor node loader
             epoch (int): current train epoch
             pseudo_labels(torch.tensor): 1-D tensor, predictions from lm
@@ -259,7 +270,9 @@ class GLEM(torch.nn.Module):
     def inference(self, em_phase: str, data_loader: Union[NeighborLoader,
                                                           DataLoader],
                   verbose: bool = False):
-        r"""GLEM training step, EM steps
+        r"""
+        GLEM inference steps:
+
         Args:
             em_phase(str): 'gnn' or 'lm'
             data_loader(dataloader or Neighborloader):
@@ -281,7 +294,8 @@ class GLEM(torch.nn.Module):
 
     @torch.no_grad()
     def inference_lm(self, data_loader: DataLoader, verbose: bool = True):
-        r"""LM inference
+        r"""
+        LM inference:
         Args:
             data_loader (Dataloader): include token, labels, and gold mask
             verbose (bool): print progress bar or not
@@ -307,7 +321,8 @@ class GLEM(torch.nn.Module):
 
     @torch.no_grad()
     def inference_gnn(self, data_loader: NeighborLoader, verbose: bool = True):
-        r"""Use gnn to inference, generate predictions
+        r"""
+        GNN inference:
         Args:
             data_loader(NeighborLoader): include x, edge_index,
             verbose (bool): print progress bar or not
@@ -317,7 +332,7 @@ class GLEM(torch.nn.Module):
         """
         if verbose:
             pbar = tqdm(total=data_loader.data.num_nodes)
-            pbar.set_description(f'GNN inference stage')
+            pbar.set_description('GNN inference stage')
         preds = []
         self.gnn.eval()
         for batch in data_loader:
@@ -338,8 +353,8 @@ class GLEM(torch.nn.Module):
         r"""Reference:
         <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> #noqa
         Core function of EM inference, this function is aming on combining:
-        Cross Entropy loss on gold and Cross Entropy loss on pseudo labels
-        (1-pl_weight)*MLE + pl_weight*pseudo_label_loss
+        Cross Entropy loss on gold and Cross Entropy loss on pseudo labels:
+        (1- pl_weight ) * MLE + pl_weight * pseudo_label_loss
         Args:
             logits(torch.tensor): predict results from LM or GNN
             labels(torch.tensor): combined node labels from ground truth and

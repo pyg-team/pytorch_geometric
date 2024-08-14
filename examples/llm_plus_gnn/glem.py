@@ -72,7 +72,7 @@ def main(args):
 
     tag_dataset = TAGDataset(root, dataset, hf_model,
                              token_on_disk=token_on_disk)
-    text_dataset = TAGDataset.to_text_dataset()
+    text_dataset = tag_dataset.to_text_dataset()
     print(tag_dataset.num_classes, tag_dataset.raw_file_names)
 
     num_classes = tag_dataset.num_classes
@@ -164,7 +164,7 @@ def main(args):
         num_workers=12,
         persistent_workers=True,
     )
-    # =========================== internal function ============================
+    # =========================== internal function ===========================
 
     from ogb.nodeproppred import Evaluator
     evaluator = Evaluator(name=f'ogbn-{dataset_name}')
