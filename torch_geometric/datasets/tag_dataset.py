@@ -103,11 +103,14 @@ class TAGDataset(InMemoryDataset):
                          pre_filter=None, force_reload=force_reload)
         # after processing and download
         # Dataset has to have BaseData as _data
+        assert dataset._data is not None
         self._data = dataset._data  # reassign reference
         assert self._data is not None
+        assert dataset._data.y is not None
         assert isinstance(self._data, BaseData)
         assert self._data.num_nodes is not None
         assert isinstance(dataset._data.num_nodes, int)
+        
         self._n_id = torch.arange(self._data.num_nodes)
         is_good_tensor = self.load_gold_mask()
         self._is_gold = is_good_tensor.squeeze()
@@ -155,6 +158,7 @@ class TAGDataset(InMemoryDataset):
 
     def get_n_id(self, node_idx: Tensor) -> Tensor:
         if self._n_id is None:
+            assert isinstance(self._data.num_nodes, int)
             self._n_id = torch.arange(self._data.num_nodes)
         return self._n_id[node_idx]
 
@@ -286,7 +290,8 @@ class TAGDataset(InMemoryDataset):
         def __init__(self, tag_dataset: 'TAGDataset') -> None:
             self.tag_dataset = tag_dataset
             self.token = tag_dataset.token
-            self._data = tag_dataset.data
+            assert tag_dataset._data is not None
+            self._data = tag_dataset._data
             assert tag_dataset._data.y is not None
             self.labels = tag_dataset._data.y
 
@@ -301,7 +306,10 @@ class TAGDataset(InMemoryDataset):
             items = {k: v[node_idx] for k, v in self.token.items()}
             return items
 
-        def __getitem__(self, node_id: Tensor) -> Dict:  # for LM training
+        # for LM training
+        def __getitem__(self, 
+                        node_id: Tensor
+                        ) -> Dict[str, Union[Tensor, Dict[str, Tensor]]]:  
             r"""This function will override the function in
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
