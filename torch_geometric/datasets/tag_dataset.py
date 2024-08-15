@@ -103,10 +103,11 @@ class TAGDataset(InMemoryDataset):
                          pre_filter=None, force_reload=force_reload)
         # after processing and download
         # Dataset has to have BaseData as _data
-        assert isinstance(dataset._data, BaseData)
-        # Dataset._data has to have num_nodes and it has to be int
-        assert isinstance(dataset._data.num_nodes, int)
         self._data = dataset._data  # reassign reference
+        assert self._data is not None
+        assert isinstance(self._data, BaseData)
+        assert self._data.num_nodes is not None
+        assert isinstance(dataset._data.num_nodes, int)
         self._n_id = torch.arange(self._data.num_nodes)
         is_good_tensor = self.load_gold_mask()
         self._is_gold = is_good_tensor.squeeze()
@@ -152,7 +153,7 @@ class TAGDataset(InMemoryDataset):
             self.load_gold_mask()
         return self._is_gold
 
-    def get_n_id(self, node_idx: Tensor) -> IndexType:
+    def get_n_id(self, node_idx: Tensor) -> Tensor:
         if self._n_id is None:
             self._n_id = torch.arange(self._data.num_nodes)
         return self._n_id[node_idx]
@@ -167,7 +168,7 @@ class TAGDataset(InMemoryDataset):
         is_good_tensor[train_split_idx] = True
         return is_good_tensor
 
-    def get_gold(self, node_idx: Tensor = None) -> IndexType:
+    def get_gold(self, node_idx: Tensor) -> Tensor:
         r"""Get gold mask for given node_idx.
 
         Args:
@@ -286,6 +287,7 @@ class TAGDataset(InMemoryDataset):
             self.tag_dataset = tag_dataset
             self.token = tag_dataset.token
             self._data = tag_dataset.data
+            assert tag_dataset._data.y is not None
             self.labels = tag_dataset._data.y
 
         def get_token(self, node_idx: Tensor) -> Dict[str, Tensor]:

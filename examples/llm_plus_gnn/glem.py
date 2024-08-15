@@ -276,6 +276,11 @@ def main(args):
     em_phase = em_order
     # EM step
     early_stopping = 0
+    """
+    We run E-step(LM training) and M-Step(GNN training) alternatively in each
+    em iterations, so the total number of iterations is num_em_iter * 2 and 
+    we switch the em_phase at end of each iteration in following loop
+    """
     for em_it in range(1, num_em_iters * 2 + 1):
         pseudo_labels = preds.argmax(dim=-1)
         best_val_acc = final_test_acc = 0.0
@@ -356,7 +361,10 @@ if __name__ == '__main__':
                         help='Number of multi-head-attentions for GAT ')
     parser.add_argument('--lm_batch_size', type=int, default=256)
     parser.add_argument('--gnn_batch_size', type=int, default=1024)
-    parser.add_argument('--external_pred_path', type=str, default=None)
+    parser.add_argument('--external_pred_path', type=str, default=None,
+                        help="Other model's output logits during the "
+                             "pretraining phase or simply concatenate it with"
+                             "node features as augmented data for gnn")
     parser.add_argument('--alpha', type=float, default=0.5,
                         help='pseudo label weight in E-step')
     parser.add_argument('--beta', type=float, default=0.5,
