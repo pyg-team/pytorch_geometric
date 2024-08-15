@@ -350,9 +350,10 @@ class GLEM(torch.nn.Module):
              loss_func: torch.nn.functional, is_gold: torch.Tensor,
              pseudo_labels: torch.Tensor = None, pl_weight: float = 0.5,
              is_augmented: bool = True):
-        r"""Core function of EM inference, this function is aming on combining
-        loss value on gold(original train) and loss value on pseudo labels.
-        (1- pl_weight ) * MLE + pl_weight * pseudo_label_loss
+        r"""Core function of variational EM inference, this function is aming 
+        on combining loss value on gold(original train) and loss value on 
+        pseudo labels.
+
         Reference:
         <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> # noqa
 
@@ -360,13 +361,14 @@ class GLEM(torch.nn.Module):
             logits(torch.tensor): predict results from LM or GNN
             labels(torch.tensor): combined node labels from ground truth and
                 pseudo labels(if provided)
-            loss_func(torch.nn.modules.loss)
+            loss_func(torch.nn.modules.loss): loss function for classification
             is_gold(tensor): a tensor with bool value that mask ground truth
                     label and during training, thus ~is_gold mask pseudo labels
             pseudo_labels(torch.tensor): predictions from other model
             pl_weight: the pseudo labels used in E-step and M-step optimization
                         alpha in E-step, beta in M-step respectively
             is_augmented: use EM or just train GNN and LM with gold data
+            
         """
         def deal_nan(x):
             return 0 if torch.isnan(x) else x

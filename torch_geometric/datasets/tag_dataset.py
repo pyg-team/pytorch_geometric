@@ -102,13 +102,12 @@ class TAGDataset(InMemoryDataset):
         super().__init__(self.root, transform=None, pre_transform=None,
                          pre_filter=None, force_reload=force_reload)
         # after processing and download
-        if hasattr(dataset, '_data'):
-            self._data = dataset._data  # reassign reference
-            self._n_id = torch.arange(self._data.num_nodes)
-        else:
-            raise ValueError("TAGDataset need include _data in dataset")
-        if not hasattr(self._data, 'num_nodes'):
-            raise ValueError("_data must have num_nodes attribute")
+        # Dataset has to have BaseData as _data
+        assert isinstance(dataset._data, BaseData)
+        # Dataset._data has to have num_nodes and it has to be int
+        assert isinstance(dataset._data.num_nodes, int)
+        self._data = dataset._data  # reassign reference
+        self._n_id = torch.arange(self._data.num_nodes)
         is_good_tensor = self.load_gold_mask()
         self._is_gold = is_good_tensor.squeeze()
         self._data['is_gold'] = is_good_tensor
@@ -283,7 +282,7 @@ class TAGDataset(InMemoryDataset):
         Args:
             tag_dataset (TAGDataset): the parent dataset
         """
-        def __init__(self, tag_dataset) -> None:
+        def __init__(self, tag_dataset: 'TAGDataset') -> None:
             self.tag_dataset = tag_dataset
             self.token = tag_dataset.token
             self._data = tag_dataset.data

@@ -82,7 +82,7 @@ def main(args):
 
     # GLEM train with augmented data, mark original train data as gold data,
     gold_idx = split_idx['train']
-    split_idx['valid']
+    # valid_idx = split_idx['valid']
     test_idx = split_idx['test']
 
     # randome sample pseudo labels nodes, generate their index
@@ -108,16 +108,15 @@ def main(args):
     print('Building language model dataloader...', end='-->')
     from torch_geometric.loader import DataLoader
     text_pretrain_loader = DataLoader(gold_dataset, batch_size=lm_batch_size,
-                                      drop_last=False, pin_memory=False,
+                                      drop_last=False, pin_memory=True,
                                       shuffle=True)
     text_train_loader = DataLoader(train_dataset, batch_size=lm_batch_size,
-                                   drop_last=False, pin_memory=False,
+                                   drop_last=False, pin_memory=True,
                                    shuffle=True)
     # text_val_loader = DataLoader(valid_dataset, batch_size=lm_batch_size * 4,
-    #                              drop_last=False, pin_memory=True,
-    #                              shuffle=False)
+    #                              drop_last=False, shuffle=False)
     text_data_loader = DataLoader(text_dataset, batch_size=lm_batch_size * 4,
-                                  drop_last=False, pin_memory=False,
+                                  drop_last=False, pin_memory=True,
                                   shuffle=False)
     print('done')
 
@@ -126,6 +125,7 @@ def main(args):
     data = data.to(device)
 
     current_memory_1 = torch.cuda.max_memory_allocated()
+    # 1 GB = 1073741824 Byte
     gpu_usage = float(current_memory_1 - initial_memory) / 1073741824
     # Print the maximum memory usage after running the model
     print(f'GPU memory usage -- data to gpu: {gpu_usage:.2f} GB')
@@ -196,18 +196,21 @@ def main(args):
     if args.gnn_model == 'SAGE':
         gnn = GraphSAGE(
             in_channels=num_features,
-            hidden_channels=256,
-            num_layers=3,
+            hidden_channels=args.gnn_hidden_channels,
+            num_layers=args.gnn_num_layers,
             out_channels=dataset.num_classes,
         )
     elif args.gnn_model == 'GAT':
-        gnn = GAT(in_channels=num_features, hidden_channels=256, num_layers=3,
-                  out_channels=dataset.num_classes, heads=8)
+        gnn = GAT(in_channels=num_features, 
+                  hidden_channels=args.gnn_hidden_channels, 
+                  num_layers=args.gnn_num_layers,
+                  out_channels=dataset.num_classes, 
+                  heads=args.gat_heads)
     else:
         gnn = GCN(
             in_channels=num_features,
-            hidden_channels=256,
-            num_layers=3,
+            hidden_channels=args.gnn_hidden_channels,
+            num_layers=args.gnn_num_layers,
             out_channels=dataset.num_classes,
         )
 
@@ -241,7 +244,7 @@ def main(args):
     pretrain_phase = 'lm'
     if em_order == 'lm':
         pretrain_phase = 'gnn'
-
+    pretrain_start_time = time.time()
     # pretraining
     if pretrain_phase == 'gnn':
         model.gnn = model.gnn.to(device)
@@ -258,7 +261,8 @@ def main(args):
                            None, False, verbose)
         preds = model.inference('lm', text_data_loader, verbose)
         preds_filename = 'lm_pretrain'
-
+    pretrain_phase_time = time.time() - pretrain_start_time
+    print(f'Pretrain {pretrain_phase} time: {pretrain_phase_time:.2f}s')
     os.makedirs(osp.dirname(preds_dir), exist_ok=True)
     torch.save(preds, osp.join(preds_dir, f'{preds_filename}.pt'))
     print(
@@ -347,6 +351,10 @@ if __name__ == '__main__':
         '--gnn_model', type=str, default='SAGE',
         help='gnn model for node classification,'
         'options: SAGE, GAT, GCN')
+    parser.add_argument('--gnn_hidden_channels', type=int, default=256)
+    parser.add_argument('--gnn_num_layers', type=int, default=3)
+    parser.add_argument('--gat_heads', type=int, default=4, 
+                        help='Number of multi-head-attentions for GAT ')
     parser.add_argument('--lm_batch_size', type=int, default=256)
     parser.add_argument('--gnn_batch_size', type=int, default=1024)
     parser.add_argument('--external_pred_path', type=str, default=None)
@@ -358,13 +366,17 @@ if __name__ == '__main__':
     parser.add_argument('--gnn_epochs', type=int, default=50)
     parser.add_argument('--gnn_lr', type=float, default=0.003)
     parser.add_argument('--lm_lr', type=float, default=0.001)
-    parser.add_argument('--patience', type=int, default=5)
+    parser.add_argument('--patience', type=int, default=5,
+                        help='Patience for early stopping')
     parser.add_argument('--verbose', action='store_true',
                         help='show progress bar during training or not')
-    parser.add_argument('--em_order', type=str, default='lm')
+    parser.add_argument('--em_order', type=str, default='lm',
+                        help='decide train LM first or GNN first')
     parser.add_argument('--lm_use_lora', action='store_true',
                         help='use Lora to fine-tune model or not')
-    parser.add_argument('--token_on_disk', action='store_true')
+    parser.add_argument('--token_on_disk', action='store_true',
+                        help='save token on disk and load token from disk'
+                             'for reducing duplicated tokenizing')
     parser.add_argument('--out_dir', type=str, default='output/',
                         help='output directory')
     args = parser.parse_args()
