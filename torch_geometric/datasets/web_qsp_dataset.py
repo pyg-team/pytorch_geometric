@@ -18,14 +18,12 @@ except ImportError:
 
 try:
     from pcst_fast import pcst_fast
-
     WITH_PCST = True
 except ImportError:
     WITH_PCST = False
 
 try:
     import datasets
-
     WITH_DATASETS = True
 except ImportError:
     WITH_DATASETS = False
@@ -43,15 +41,10 @@ def retrieval_via_pcst(
 ) -> Tuple[Data, str]:
     c = 0.01
     if len(textual_nodes) == 0 or len(textual_edges) == 0:
-        desc = (textual_nodes.to_csv(index=False) +
-                "\n" + textual_edges.to_csv(
-                    index=False, columns=["src", "edge_attr", "dst"]))
-        graph = Data(
-            x=graph.x,
-            edge_index=graph.edge_index,
-            edge_attr=graph.edge_attr,
-            num_nodes=graph.num_nodes,
-        )
+        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
+            index=False, columns=["src", "edge_attr", "dst"])
+        graph = Data(x=graph.x, edge_index=graph.edge_index,
+                     edge_attr=graph.edge_attr, num_nodes=graph.num_nodes)
         return graph, desc
 
     root = -1  # unrooted
@@ -131,8 +124,8 @@ def retrieval_via_pcst(
 
     n = textual_nodes.iloc[selected_nodes]
     e = textual_edges.iloc[selected_edges]
-    desc = (n.to_csv(index=False) + "\n" +
-            e.to_csv(index=False, columns=["src", "edge_attr", "dst"]))
+    desc = n.to_csv(index=False) + "\n" + e.to_csv(
+        index=False, columns=["src", "edge_attr", "dst"])
 
     mapping = {n: i for i, n in enumerate(selected_nodes.tolist())}
 
@@ -206,7 +199,7 @@ class WebQSPDataset(InMemoryDataset):
             torch.arange(len(dataset["validation"])) + len(dataset["train"]),
             "test":
             torch.arange(len(dataset["test"])) + len(dataset["train"]) +
-            len(dataset["validation"]),
+            len(dataset["validation"])
         }
 
     def process(self) -> None:

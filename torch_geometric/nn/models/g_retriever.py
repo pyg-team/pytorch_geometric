@@ -61,7 +61,6 @@ class GRetriever(nn.Module):
         num_gnn_heads: int = 4,
         mlp_hidden_dim: int = 2048,
         mlp_out_dim: int = 4096,
-        mlp_out_tokens: int = 1,
     ) -> None:
         super().__init__()
         self.llm_to_use = LLM(llm_to_use, num_llm_params, llm_dtype)
@@ -116,10 +115,8 @@ class GRetriever(nn.Module):
         self.projector = nn.Sequential(
             nn.Linear(gnn_out_channels, mlp_hidden_dim),
             nn.Sigmoid(),
-            nn.Linear(mlp_hidden_dim, mlp_out_dim*mlp_out_tokens),
+            nn.Linear(mlp_hidden_dim, mlp_out_dim),
         ).to(self.llm_device)
-
-        self.mlp_out_tokens = mlp_out_tokens
 
         self.word_embedding = self.llm_to_use.word_embedding
 
