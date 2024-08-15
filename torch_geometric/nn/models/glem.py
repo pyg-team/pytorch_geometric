@@ -350,8 +350,8 @@ class GLEM(torch.nn.Module):
              loss_func: torch.nn.functional, is_gold: torch.Tensor,
              pseudo_labels: torch.Tensor = None, pl_weight: float = 0.5,
              is_augmented: bool = True):
-        r"""Core function of variational EM inference, this function is aming 
-        on combining loss value on gold(original train) and loss value on 
+        r"""Core function of variational EM inference, this function is aming
+        on combining loss value on gold(original train) and loss value on
         pseudo labels.
 
         Reference:
@@ -368,7 +368,7 @@ class GLEM(torch.nn.Module):
             pl_weight: the pseudo labels used in E-step and M-step optimization
                         alpha in E-step, beta in M-step respectively
             is_augmented: use EM or just train GNN and LM with gold data
-            
+
         """
         def deal_nan(x):
             return 0 if torch.isnan(x) else x

@@ -201,11 +201,10 @@ def main(args):
             out_channels=dataset.num_classes,
         )
     elif args.gnn_model == 'GAT':
-        gnn = GAT(in_channels=num_features, 
-                  hidden_channels=args.gnn_hidden_channels, 
+        gnn = GAT(in_channels=num_features,
+                  hidden_channels=args.gnn_hidden_channels,
                   num_layers=args.gnn_num_layers,
-                  out_channels=dataset.num_classes, 
-                  heads=args.gat_heads)
+                  out_channels=dataset.num_classes, heads=args.gat_heads)
     else:
         gnn = GCN(
             in_channels=num_features,
@@ -353,7 +352,7 @@ if __name__ == '__main__':
         'options: SAGE, GAT, GCN')
     parser.add_argument('--gnn_hidden_channels', type=int, default=256)
     parser.add_argument('--gnn_num_layers', type=int, default=3)
-    parser.add_argument('--gat_heads', type=int, default=4, 
+    parser.add_argument('--gat_heads', type=int, default=4,
                         help='Number of multi-head-attentions for GAT ')
     parser.add_argument('--lm_batch_size', type=int, default=256)
     parser.add_argument('--gnn_batch_size', type=int, default=1024)
@@ -374,9 +373,10 @@ if __name__ == '__main__':
                         help='decide train LM first or GNN first')
     parser.add_argument('--lm_use_lora', action='store_true',
                         help='use Lora to fine-tune model or not')
-    parser.add_argument('--token_on_disk', action='store_true',
-                        help='save token on disk and load token from disk'
-                             'for reducing duplicated tokenizing')
+    parser.add_argument(
+        '--token_on_disk', action='store_true',
+        help='save token on disk and load token from disk'
+        'for reducing duplicated tokenizing')
     parser.add_argument('--out_dir', type=str, default='output/',
                         help='output directory')
     args = parser.parse_args()
