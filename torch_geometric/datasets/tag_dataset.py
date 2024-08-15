@@ -110,7 +110,7 @@ class TAGDataset(InMemoryDataset):
         assert isinstance(self._data, BaseData)
         assert self._data.num_nodes is not None
         assert isinstance(dataset._data.num_nodes, int)
-        
+
         self._n_id = torch.arange(self._data.num_nodes)
         is_good_tensor = self.load_gold_mask()
         self._is_gold = is_good_tensor.squeeze()
@@ -307,9 +307,9 @@ class TAGDataset(InMemoryDataset):
             return items
 
         # for LM training
-        def __getitem__(self, 
-                        node_id: Tensor
-                        ) -> Dict[str, Union[Tensor, Dict[str, Tensor]]]:  
+        def __getitem__(
+                self, node_id: Tensor
+        ) -> Dict[str, Union[Tensor, Dict[str, Tensor]]]:
             r"""This function will override the function in
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
