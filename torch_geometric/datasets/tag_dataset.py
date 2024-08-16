@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 from collections.abc import Sequence
-from typing import Dict, List, Mapping, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 import torch
