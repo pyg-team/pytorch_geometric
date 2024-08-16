@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 from collections.abc import Sequence
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Mapping
 
 import numpy as np
 import torch
@@ -156,7 +156,7 @@ class TAGDataset(InMemoryDataset):
             self._is_gold = self.load_gold_mask()
         return self._is_gold
 
-    def get_n_id(self, node_idx: Tensor) -> Tensor:
+    def get_n_id(self, node_idx: IndexType) -> Tensor:
         if self._n_id is None:
             assert self._data is not None
             assert self._data.num_nodes is not None
@@ -177,7 +177,7 @@ class TAGDataset(InMemoryDataset):
         is_good_tensor[train_split_idx] = True
         return is_good_tensor
 
-    def get_gold(self, node_idx: Tensor) -> Tensor:
+    def get_gold(self, node_idx: IndexType) -> Tensor:
         r"""Get gold mask for given node_idx.
 
         Args:
@@ -315,7 +315,7 @@ class TAGDataset(InMemoryDataset):
         # for LM training
         def __getitem__(
                 self, node_id: IndexType
-        ) -> Dict[str, Union[Tensor, Dict[str, Tensor]]]:
+        ) -> Mapping[str, Union[Tensor, Dict[str, Tensor]]]:
             r"""This function will override the function in
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
