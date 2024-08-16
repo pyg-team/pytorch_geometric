@@ -110,7 +110,7 @@ class TAGDataset(InMemoryDataset):
         assert isinstance(self._data, BaseData)
         assert self._data.num_nodes is not None
         assert isinstance(dataset._data.num_nodes, int)
-
+        assert isinstance(self._data.num_nodes, int)
         self._n_id = torch.arange(self._data.num_nodes)
         is_good_tensor = self.load_gold_mask()
         self._is_gold = is_good_tensor.squeeze()
@@ -153,11 +153,13 @@ class TAGDataset(InMemoryDataset):
     def is_gold(self) -> Tensor:
         if self._is_gold is None:
             print('lazy load is_gold!!')
-            self.load_gold_mask()
+            self._is_gold = self.load_gold_mask()
         return self._is_gold
 
     def get_n_id(self, node_idx: Tensor) -> Tensor:
         if self._n_id is None:
+            assert self._data is not None
+            assert self._data.num_nodes is not None
             assert isinstance(self._data.num_nodes, int)
             self._n_id = torch.arange(self._data.num_nodes)
         return self._n_id[node_idx]
@@ -167,6 +169,9 @@ class TAGDataset(InMemoryDataset):
         for picking ground truth labels and pseudo labels.
         """
         train_split_idx = self.get_idx_split()['train']
+        assert self._data is not None
+        assert self._data.num_nodes is not None
+        assert isinstance(self._data.num_nodes, int)
         is_good_tensor = torch.zeros(self._data.num_nodes,
                                      dtype=torch.bool).view(-1, 1)
         is_good_tensor[train_split_idx] = True
@@ -179,7 +184,7 @@ class TAGDataset(InMemoryDataset):
             node_idx (torch.tensor): a tensor contain node idx
         """
         if self._is_gold is None:
-            _ = self.is_gold
+            self._is_gold = self.is_gold
         return self._is_gold[node_idx]
 
     def get_idx_split(self) -> Dict[str, Tensor]:
@@ -292,23 +297,24 @@ class TAGDataset(InMemoryDataset):
             self.token = tag_dataset.token
             assert tag_dataset._data is not None
             self._data = tag_dataset._data
+            
             assert tag_dataset._data.y is not None
             self.labels = tag_dataset._data.y
 
-        def get_token(self, node_idx: Tensor) -> Dict[str, Tensor]:
+        def get_token(self, node_idx: IndexType) -> Dict[str, Tensor]:
             r"""This function will be called in __getitem__().
 
             Args:
-                node_idx (Tensor): selected node idx in each batch
+                node_idx (IndexType): selected node idx in each batch
             Returns:
-                items(Dict[str, Tensor]): input for LM
+                items (Dict[str, Tensor]): input for LM
             """
             items = {k: v[node_idx] for k, v in self.token.items()}
             return items
 
         # for LM training
         def __getitem__(
-                self, node_id: Tensor
+                self, node_id: IndexType
         ) -> Dict[str, Union[Tensor, Dict[str, Tensor]]]:
             r"""This function will override the function in
             torch.utils.data.Dataset, and will be called when you
@@ -330,6 +336,7 @@ class TAGDataset(InMemoryDataset):
             return item
 
         def __len__(self) -> int:
+            assert self._data.num_nodes is not None
             return self._data.num_nodes
 
         def get(self, idx: int) -> BaseData:
