@@ -297,7 +297,7 @@ class TAGDataset(InMemoryDataset):
             self.token = tag_dataset.token
             assert tag_dataset._data is not None
             self._data = tag_dataset._data
-            
+
             assert tag_dataset._data.y is not None
             self.labels = tag_dataset._data.y
 
