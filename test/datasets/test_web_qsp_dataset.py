@@ -1,5 +1,5 @@
-from torch_geometric.testing import onlyFullTest, onlyOnline
 from torch_geometric.datasets import WebQSPDataset
+from torch_geometric.testing import onlyFullTest, onlyOnline
 
 
 @onlyOnline
