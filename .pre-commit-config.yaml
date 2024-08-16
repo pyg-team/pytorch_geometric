@@ -89,3 +89,9 @@ repos:
           - mdformat-gfm
           - mdformat_frontmatter
           - mdformat_footnote
+
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v0.9.1
+    hooks:
+      - id: sphinx-lint
+        name: Check Sphinx
