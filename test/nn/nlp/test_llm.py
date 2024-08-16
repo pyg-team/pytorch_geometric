@@ -6,7 +6,7 @@ from torch_geometric.testing import onlyFullTest, withPackage
 
 
 @onlyFullTest
-@withPackage('transformers')
+@withPackage('transformers', 'accelerate')
 def test_llm() -> None:
     question = ["Is PyG the best open-source GNN library?"]
     answer = ["yes!"]
