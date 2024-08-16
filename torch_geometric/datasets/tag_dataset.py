@@ -314,8 +314,8 @@ class TAGDataset(InMemoryDataset):
 
         # for LM training
         def __getitem__(
-            self, node_id: IndexType
-        ) -> Mapping[str, Union[Tensor, Dict[str, Tensor]]]:
+                self, node_id: IndexType
+        ) -> Dict[str, Union[Tensor, Dict[str, Tensor]]]:
             r"""This function will override the function in
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
@@ -328,7 +328,7 @@ class TAGDataset(InMemoryDataset):
                 items (dict): input k,v pairs for Language model training and
                     inference
             """
-            item = {}
+            item: Dict[str, Union[Tensor, Dict[str, Tensor]]] = {}
             item['input'] = self.get_token(node_id)
             item['labels'] = self.labels[node_id]
             item['is_gold'] = self.tag_dataset.get_gold(node_id)
