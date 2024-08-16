@@ -383,8 +383,8 @@ where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu121`, or `cu124`
 
 |             | `cpu` | `cu118` | `cu121` | `cu124` |
 | ----------- | ----- | ------- | ------- | ------- |
-| **Linux**   | ✅     | ✅       | ✅       |✅       |
-| **Windows** | ✅     | ✅       | ✅       |✅       |
+| **Linux**   | ✅     | ✅       | ✅       | ✅       |
+| **Windows** | ✅     | ✅       | ✅       | ✅       |
 | **macOS**   | ✅     |         |         |         |
 
 #### PyTorch 2.3
