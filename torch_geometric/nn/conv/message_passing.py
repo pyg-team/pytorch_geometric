@@ -204,7 +204,7 @@ class MessagePassing(torch.nn.Module):
     def _check_input(
         self,
         edge_index: Union[Tensor, SparseTensor],
-        size: Optional[Tuple[int, int]],
+        size: Optional[Tuple[Optional[int], Optional[int]]],
     ) -> List[Optional[int]]:
 
         if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
