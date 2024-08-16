@@ -82,7 +82,6 @@ def main(args):
 
     # GLEM train with augmented data, mark original train data as gold data,
     gold_idx = split_idx['train']
-    # valid_idx = split_idx['valid']
     test_idx = split_idx['test']
 
     # randome sample pseudo labels nodes, generate their index
@@ -100,9 +99,6 @@ def main(args):
                                            indices=gold_idx)
     train_dataset = torch.utils.data.Subset(dataset=text_dataset,
                                             indices=train_idx)
-    # valid_dataset = torch.utils.data.Subset(dataset=text_dataset,
-    #                                         indices=valid_idx)
-
     # ========================== LM Data Loader ===============================
 
     print('Building language model dataloader...', end='-->')
@@ -113,8 +109,6 @@ def main(args):
     text_train_loader = DataLoader(train_dataset, batch_size=lm_batch_size,
                                    drop_last=False, pin_memory=True,
                                    shuffle=True)
-    # text_val_loader = DataLoader(valid_dataset, batch_size=lm_batch_size * 4,
-    #                              drop_last=False, shuffle=False)
     text_data_loader = DataLoader(text_dataset, batch_size=lm_batch_size * 4,
                                   drop_last=False, pin_memory=True,
                                   shuffle=False)
@@ -252,7 +246,6 @@ def main(args):
                             patience, None, False, verbose)
         preds = model.inference('gnn', subgraph_loader, verbose)
         preds_filename = 'gnn_pretrain'
-        # train_acc, val_acc, test_acc = evaluate(preds)
     elif pretrain_phase == 'lm':
         model.lm = model.lm.to(device)
         print('pretraining lm to generate pseudo labels')
@@ -320,14 +313,10 @@ def main(args):
 
         if em_phase == 'gnn':
             gnn_test_acc = max(gnn_test_acc, final_test_acc)
-            # torch.save(preds, osp.join(preds_dir, f'lm.pt'))
-            # del model.gnn
             model.gnn.cpu()
             em_phase = 'lm'
         else:
             lm_test_acc = max(lm_test_acc, final_test_acc)
-            # torch.save(preds, osp.join(preds_dir, f'gnn.pt'))
-            # del model.lm
             model.lm.cpu()
             em_phase = 'gnn'
         torch.cuda.empty_cache()
