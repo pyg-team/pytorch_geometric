@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 from collections.abc import Sequence
-from typing import Dict, List, Optional, Union, Mapping
+from typing import Dict, List, Mapping, Optional, Union
 
 import numpy as np
 import torch
@@ -314,7 +314,7 @@ class TAGDataset(InMemoryDataset):
 
         # for LM training
         def __getitem__(
-                self, node_id: IndexType
+            self, node_id: IndexType
         ) -> Mapping[str, Union[Tensor, Dict[str, Tensor]]]:
             r"""This function will override the function in
             torch.utils.data.Dataset, and will be called when you
