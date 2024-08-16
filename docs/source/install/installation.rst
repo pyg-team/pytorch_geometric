@@ -96,7 +96,7 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    * :pytorch:`PyTorch` 2.0: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
 
-   For example, for :pytorch:`PyTorch` 2.3.* and CUDA 12.1, type:
+   For example, for :pytorch:`PyTorch` 2.4.* and CUDA 12.4, type:
 
    .. code-block:: none
 
