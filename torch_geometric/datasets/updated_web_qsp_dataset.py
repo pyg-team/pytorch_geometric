@@ -237,18 +237,18 @@ class UpdatedWebQSPDataset(InMemoryDataset):
             self.raw_dataset = self.raw_dataset.select(range(self.limit))
             self.split_idxs = {
                 "train":
-                torch.arange(self.limit//2),
+                torch.arange(self.limit // 2),
                 "val":
-                torch.arange(self.limit//4) + self.limit//2,
+                torch.arange(self.limit // 4) + self.limit // 2,
                 "test":
-                torch.arange(self.limit//4) + self.limit//2 +
-                self.limit//4,
+                torch.arange(self.limit // 4) + self.limit // 2 +
+                self.limit // 4,
             }
         self._save_raw_data()
 
     def _get_trips(self) -> Iterator[TripletLike]:
         return chain.from_iterable(
-            (iter(ds["graph"]) for ds in self.raw_dataset))
+            iter(ds["graph"]) for ds in self.raw_dataset)
 
     def _build_graph(self) -> None:
         trips = self._get_trips()
@@ -321,7 +321,8 @@ class UpdatedWebQSPDataset(InMemoryDataset):
 
     def process(self) -> None:
         self._load_raw_data()
-        self.model = SentenceTransformer('sentence-transformers/all-roberta-large-v1').to(self.device)
+        self.model = SentenceTransformer(
+            'sentence-transformers/all-roberta-large-v1').to(self.device)
         self.model.eval()
         if not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")

@@ -19,9 +19,8 @@ from torch_geometric.data.large_graph_indexer import (
 
 # create possible nodes and edges for graph
 strkeys = string.ascii_letters + string.digits
-NODE_POOL = list(
-    set(["".join(random.sample(strkeys, 10)) for i in range(1000)]))
-EDGE_POOL = list(set(["".join(random.sample(strkeys, 10)) for i in range(50)]))
+NODE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(1000)})
+EDGE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(50)})
 
 
 def featurize(s: str) -> int:
