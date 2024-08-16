@@ -18,6 +18,7 @@ from typing import (
 )
 
 import torch
+from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import Data
@@ -45,11 +46,12 @@ EDGE_INDEX = "edge_idx"
 
 EDGE_KEYS = {EDGE_PID, EDGE_HEAD, EDGE_RELATION, EDGE_TAIL, EDGE_INDEX}
 
+FeatureValueType = Sequence[Any] | Tensor
 
 @dataclass
 class MappedFeature:
     name: str
-    values: Sequence[Any]
+    values: FeatureValueType
 
     def __eq__(self, value: "MappedFeature") -> bool:
         eq = self.name == value.name
@@ -180,7 +182,7 @@ class LargeGraphIndexer:
     def add_node_feature(
         self,
         new_feature_name: str,
-        new_feature_vals: Sequence[Any],
+        new_feature_vals: FeatureValueType,
         map_from_feature: str = NODE_PID,
     ) -> None:
 
@@ -270,7 +272,7 @@ class LargeGraphIndexer:
     def add_edge_feature(
         self,
         new_feature_name: str,
-        new_feature_vals: Sequence[Any],
+        new_feature_vals: FeatureValueType,
         map_from_feature: str = EDGE_PID,
     ) -> None:
 
@@ -297,7 +299,7 @@ class LargeGraphIndexer:
         self,
         feature_name: str = EDGE_PID,
         pids: Optional[Iterable[Hashable]] = None,
-    ) -> Sequence[Any]:
+    ) -> List[Any]:
         if feature_name in self._mapped_edge_features:
             values = self.edge_attr[feature_name].values
         else:

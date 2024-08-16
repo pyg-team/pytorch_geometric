@@ -160,7 +160,7 @@ def retrieval_via_pcst(
     return data, desc
 
 
-def preprocess_triplet(triplet: TripletLike) -> TripletLike:
+def preprocess_triplet(triplet: Tuple[str, str, str]) -> TripletLike:
     h, r, t = triplet
     return h.lower(), r, t.lower()
 
@@ -256,17 +256,17 @@ class UpdatedWebQSPDataset(InMemoryDataset):
             trips, pre_transform=preprocess_triplet)
 
         # Nodes:
-        nodes = self.indexer.get_unique_node_features()
-        x = self.model.encode(nodes, batch_size=256)
+        nodes: List[str] = self.indexer.get_unique_node_features()
+        x = self.model.encode(nodes, batch_size=256)  # type: ignore
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
-        edges = self.indexer.get_unique_edge_features(
+        edges: List[str] = self.indexer.get_unique_edge_features(
             feature_name=EDGE_RELATION)
         edge_attr = self.model.encode(edges, batch_size=256)
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
-            new_feature_vals=edge_attr,
+            new_feature_vals=edge_attr,  # type: ignore
             map_from_feature=EDGE_RELATION,
         )
 
@@ -281,8 +281,6 @@ class UpdatedWebQSPDataset(InMemoryDataset):
         print("Retrieving subgraphs...")
         textual_nodes = self.textual_nodes
         textual_edges = self.textual_edges
-        graph = None
-        graph_gen = None
         if self.whole_graph_retrieval:
             graph = self.indexer.to_data(node_feature_name="x",
                                          edge_feature_name="edge_attr")
