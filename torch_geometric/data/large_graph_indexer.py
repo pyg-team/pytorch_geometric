@@ -15,6 +15,7 @@ from typing import (
     Sequence,
     Set,
     Tuple,
+    Union,
 )
 
 import torch
@@ -46,7 +47,8 @@ EDGE_INDEX = "edge_idx"
 
 EDGE_KEYS = {EDGE_PID, EDGE_HEAD, EDGE_RELATION, EDGE_TAIL, EDGE_INDEX}
 
-FeatureValueType = Sequence[Any] | Tensor
+FeatureValueType = Union[Sequence[Any], Tensor]
+
 
 @dataclass
 class MappedFeature:
