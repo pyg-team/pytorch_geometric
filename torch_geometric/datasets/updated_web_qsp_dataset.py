@@ -266,7 +266,7 @@ class UpdatedWebQSPDataset(InMemoryDataset):
         edge_attr = self.model.encode(edges, batch_size=256)  # type: ignore
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
-            new_feature_vals=edge_attr,  # type: ignore
+            new_feature_vals=edge_attr,
             map_from_feature=EDGE_RELATION,
         )
 
