@@ -1,7 +1,7 @@
 import functools
+import re
 from collections import OrderedDict, defaultdict, namedtuple
 from typing import Any, List, NamedTuple, Optional, Tuple
-import re
 
 import torch
 import torch.profiler as torch_profiler
