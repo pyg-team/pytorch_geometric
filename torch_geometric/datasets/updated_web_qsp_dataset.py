@@ -160,9 +160,9 @@ def retrieval_via_pcst(
     return data, desc
 
 
-def preprocess_triplet(triplet: Tuple[str, str, str]) -> TripletLike:
+def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     h, r, t = triplet
-    return h.lower(), r, t.lower()
+    return str(h).lower(), str(r), str(t).lower()
 
 
 class UpdatedWebQSPDataset(InMemoryDataset):
@@ -256,14 +256,14 @@ class UpdatedWebQSPDataset(InMemoryDataset):
             trips, pre_transform=preprocess_triplet)
 
         # Nodes:
-        nodes: List[str] = self.indexer.get_unique_node_features()
+        nodes = self.indexer.get_unique_node_features()
         x = self.model.encode(nodes, batch_size=256)  # type: ignore
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
-        edges: List[str] = self.indexer.get_unique_edge_features(
+        edges = self.indexer.get_unique_edge_features(
             feature_name=EDGE_RELATION)
-        edge_attr = self.model.encode(edges, batch_size=256)
+        edge_attr = self.model.encode(edges, batch_size=256)  # type: ignore
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
             new_feature_vals=edge_attr,  # type: ignore
@@ -275,7 +275,7 @@ class UpdatedWebQSPDataset(InMemoryDataset):
 
     def _retrieve_subgraphs(self) -> None:
         print("Encoding questions...")
-        self.questions = [ds["question"] for ds in self.raw_dataset]
+        self.questions = [str(ds["question"]) for ds in self.raw_dataset]
         q_embs = self.model.encode(self.questions, batch_size=256)
         list_of_graphs = []
         print("Retrieving subgraphs...")
