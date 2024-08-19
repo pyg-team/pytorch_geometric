@@ -9,7 +9,7 @@ from .hgt_loader import HGTLoader
 from .cluster import ClusterData, ClusterLoader
 from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
                           GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
-from .BRW import (BiasedRandomWalkSampler)
+from .brw import BiasedRandomWalkSampler
 from .shadow import ShaDowKHopSampler
 from .random_node_loader import RandomNodeLoader
 # from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader

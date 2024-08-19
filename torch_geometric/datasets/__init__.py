@@ -47,6 +47,7 @@ from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
 from .word_net import WordNet18, WordNet18RR
 from .freebase import FB15k_237
+from .kg_benchmark_dataset import KGBenchmarkDataset
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
@@ -103,7 +104,6 @@ from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
-from .KGBen_banchmark_dataset import KGBen_banchmark_dataset
 
 import torch_geometric.datasets.utils
 
@@ -157,6 +157,7 @@ homo_datasets = [
     'WordNet18',
     'WordNet18RR',
     'FB15k_237',
+    'KGBenchmarkDataset',
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',
@@ -189,9 +190,22 @@ homo_datasets = [
 ]
 
 hetero_datasets = [
-    'DBP15K', 'AMiner', 'OGB_MAG', 'DBLP', 'MovieLens', 'MovieLens100K',
-    'MovieLens1M', 'IMDB', 'LastFM', 'HGBDataset', 'Taobao', 'IGMCDataset',
-    'AmazonBook', 'HM', 'OSE_GVCS', 'RCDD', 'KGBen_banchmark_dataset'
+    'DBP15K',
+    'AMiner',
+    'OGB_MAG',
+    'DBLP',
+    'MovieLens',
+    'MovieLens100K',
+    'MovieLens1M',
+    'IMDB',
+    'LastFM',
+    'HGBDataset',
+    'Taobao',
+    'IGMCDataset',
+    'AmazonBook',
+    'HM',
+    'OSE_GVCS',
+    'RCDD',
 ]
 synthetic_datasets = [
     'FakeDataset',
