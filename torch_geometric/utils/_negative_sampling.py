@@ -1,14 +1,18 @@
-import random
 import warnings
 from typing import Optional, Tuple, Union
 
-import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import coalesce, cumsum, degree, remove_self_loops, to_undirected, index_sort
+from torch_geometric.utils import (
+    coalesce,
+    cumsum,
+    degree,
+    index_sort,
+    remove_self_loops,
+    to_undirected,
+)
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
 
 _MAX_NUM_EDGES = 10**4
 
@@ -82,7 +86,9 @@ def negative_sampling(
 
     # transform a pair (u,v) in an edge id
     edge_id = edge_index_to_vector_id(edge_index, size)
-    edge_id, _ = index_sort(edge_id, max_value=num_tot_edges)  # TODO: is this O(1) if the input is already sorted?
+    edge_id, _ = index_sort(
+        edge_id, max_value=num_tot_edges
+    )  # TODO: is this O(1) if the input is already sorted?
 
     method = get_method(method, size)
 
@@ -95,15 +101,19 @@ def negative_sampling(
         else:
             # the probability is too low, but the graph is too big for the exact sampling.
             # we perform the sparse sampling but we raise a warning
-            k = int(min(10 * num_neg_samples, max(num_neg_samples / (prob - 0.1), 10 ** -3)))
+            k = int(
+                min(10 * num_neg_samples,
+                    max(num_neg_samples / (prob - 0.1), 10**-3)))
 
-            warnings.warn('The probability of sampling a negative edge is too low! '
-                          'It could be that the number of sampled edges is smaller than the numbers you required!')
+            warnings.warn(
+                'The probability of sampling a negative edge is too low! '
+                'It could be that the number of sampled edges is smaller than the numbers you required!'
+            )
 
-    guess_edge_index, guess_edge_id = sample_almost_k_edges(size, k,
-                                                            force_undirected=force_undirected,
-                                                            remove_self_loops=not bipartite,
-                                                            method=method, device=edge_index.device)
+    guess_edge_index, guess_edge_id = sample_almost_k_edges(
+        size, k, force_undirected=force_undirected,
+        remove_self_loops=not bipartite, method=method,
+        device=edge_index.device)
 
     neg_edge_mask = get_neg_edge_mask(edge_id, guess_edge_id)
 
@@ -217,11 +227,9 @@ def batched_negative_sampling(
 
 
 def structured_negative_sampling(
-    edge_index: Tensor,
-    num_nodes: Optional[int] = None,
-    contains_neg_self_loops: bool = True,
-    method: str = "auto"
-) -> Tuple[Tensor, Tensor, Tensor]:
+        edge_index: Tensor, num_nodes: Optional[int] = None,
+        contains_neg_self_loops: bool = True,
+        method: str = "auto") -> Tuple[Tensor, Tensor, Tensor]:
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
     :obj:`(i,j)` in the graph given by :attr:`edge_index`, and returns it as a
     tuple of the form :obj:`(i,j,k)`.
@@ -259,35 +267,44 @@ def structured_negative_sampling(
 
     # transform a pair (u,v) in an edge id
     edge_id = edge_index_to_vector_id(edge_index, size)
-    edge_id, _ = index_sort(edge_id, max_value=num_tot_edges)  # TODO: is this O(1) if the input is already sorted?
+    edge_id, _ = index_sort(
+        edge_id, max_value=num_tot_edges
+    )  # TODO: is this O(1) if the input is already sorted?
 
     # select the method
     method = get_method(method, size)
 
     k = None
-    prob = torch.min(1 - deg/num_nodes)
+    torch.min(1 - deg / num_nodes)
     if method == 'sparse':
         k = 10
         # TODO: can we compute the prob to find the k?
 
-
-    guess_col, guess_edge_id = sample_k_structured_edges(edge_index, num_nodes, k,
-                                                         not contains_neg_self_loops, method, device)
+    guess_col, guess_edge_id = sample_k_structured_edges(
+        edge_index, num_nodes, k, not contains_neg_self_loops, method, device)
 
     neg_edge_mask = get_neg_edge_mask(edge_id, guess_edge_id)
-    if not torch.all(torch.any(neg_edge_mask.view(-1,k), dim=1)):
-        warnings.warn('We were not able to sample all negative edges requested!')
+    if not torch.all(torch.any(neg_edge_mask.view(-1, k), dim=1)):
+        warnings.warn(
+            'We were not able to sample all negative edges requested!')
 
     if method == 'sparse':
         neg_col = -torch.ones_like(edge_index[0])
-        neg_edge_mask = get_first_k_true_values_for_each_row(neg_edge_mask.view(num_edges, k), 1)
-        ok_edges = torch.any(neg_edge_mask, dim=1)  # this is the mask of edges for which we have obtained a neg sample
-        col_to_save = guess_col.view(num_edges, k)[neg_edge_mask]  # this the list of neg samples
+        neg_edge_mask = get_first_k_true_values_for_each_row(
+            neg_edge_mask.view(num_edges, k), 1)
+        ok_edges = torch.any(
+            neg_edge_mask, dim=1
+        )  # this is the mask of edges for which we have obtained a neg sample
+        col_to_save = guess_col.view(
+            num_edges, k)[neg_edge_mask]  # this the list of neg samples
         neg_col[ok_edges] = col_to_save.view(-1)
     else:
-        shape = (num_nodes, num_nodes if contains_neg_self_loops else num_nodes-1)
-        neg_edge_mask = get_first_k_true_values_for_each_row(neg_edge_mask.view(*shape), deg)
-        col_to_save = guess_col.view(*shape)[neg_edge_mask]  # this the list of neg samples
+        shape = (num_nodes,
+                 num_nodes if contains_neg_self_loops else num_nodes - 1)
+        neg_edge_mask = get_first_k_true_values_for_each_row(
+            neg_edge_mask.view(*shape), deg)
+        col_to_save = guess_col.view(
+            *shape)[neg_edge_mask]  # this the list of neg samples
         neg_col = col_to_save.view(-1)
 
     assert neg_col.size(0) == edge_index.size(1)
@@ -336,20 +353,22 @@ def structured_negative_sampling_feasible(
 
     deg = degree(edge_index[0], num_nodes)
     # structured sample is feasible if, for each node, deg > max_neigh/2
-    return bool(torch.all(2*deg <= max_num_neighbors))
+    return bool(torch.all(2 * deg <= max_num_neighbors))
 
 
 ###############################################################################
 
+
 def get_method(method, size):
     # select the method
     tot_num_edges = size[0] * size[1]
-    auto_method = 'dense' if tot_num_edges < _MAX_NUM_EDGES else 'sparse' # prefer dense method if the graph is small
+    auto_method = 'dense' if tot_num_edges < _MAX_NUM_EDGES else 'sparse'  # prefer dense method if the graph is small
     method = auto_method if method == 'auto' else method
 
     if method == 'dense' and tot_num_edges >= _MAX_NUM_EDGES:
-        warnings.warn(f'You choose the dense method on a graph with {tot_num_edges} possible edges! '
-                      f'It could require a lot of memory!')
+        warnings.warn(
+            f'You choose the dense method on a graph with {tot_num_edges} possible edges! '
+            f'It could require a lot of memory!')
 
     return method
 
@@ -367,16 +386,17 @@ def sample_almost_k_edges(
     N1, N2 = size
 
     if method == 'sparse':
-        k = 2*k if force_undirected else k
-        p = torch.tensor([1.], device=device).expand(N1*N2)
+        k = 2 * k if force_undirected else k
+        p = torch.tensor([1.], device=device).expand(N1 * N2)
         if k > N1 * N2:
-            k = N1*N2
+            k = N1 * N2
         new_edge_id = torch.multinomial(p, k, replacement=False)
 
     else:
-        new_edge_id = torch.randperm(N1*N2, device=device)
+        new_edge_id = torch.randperm(N1 * N2, device=device)
 
-    new_edge_index = torch.stack(vector_id_to_edge_index(new_edge_id, size), dim=0)
+    new_edge_index = torch.stack(vector_id_to_edge_index(new_edge_id, size),
+                                 dim=0)
 
     if remove_self_loops:
         not_in_diagonal = new_edge_index[0] != new_edge_index[1]
@@ -407,10 +427,11 @@ def sample_k_structured_edges(
     size = (num_nodes, num_nodes)
 
     if method == 'sparse':
-        new_row, new_col = row.view(-1, 1).expand(-1, k), torch.randint(num_nodes, (num_edges, k))
+        new_row, new_col = row.view(-1, 1).expand(-1, k), torch.randint(
+            num_nodes, (num_edges, k))
         new_edge_id = edge_index_to_vector_id((new_row, new_col), size)
     else:
-        new_edge_id = torch.randperm(num_nodes*num_nodes, device=device)
+        new_edge_id = torch.randperm(num_nodes * num_nodes, device=device)
         new_row, new_col = vector_id_to_edge_index(new_edge_id, size)
         new_row, idx_to_sort = index_sort(new_row)
         new_edge_id = new_edge_id[idx_to_sort]
@@ -448,12 +469,13 @@ def get_neg_edge_mask(edge_id, guess_edge_id):
     neg_edge_mask = torch.eq(pos, num_edges)  # negative edge from case 1)
     not_neg_edge_mask = torch.logical_not(neg_edge_mask)
     # negative edge from case 2)
-    neg_edge_mask[not_neg_edge_mask] = edge_id[pos[not_neg_edge_mask]] != guess_edge_id[not_neg_edge_mask]
+    neg_edge_mask[not_neg_edge_mask] = edge_id[
+        pos[not_neg_edge_mask]] != guess_edge_id[not_neg_edge_mask]
     return neg_edge_mask
 
 
 def edge_index_to_vector_id(
-    edge_index: Tensor | Tuple[Tensor,Tensor],
+    edge_index: Tensor | Tuple[Tensor, Tensor],
     size: Tuple[int, int],
 ) -> Tensor:
 
@@ -464,8 +486,7 @@ def edge_index_to_vector_id(
 def vector_id_to_edge_index(
     vector_id: Tensor,
     size: Tuple[int, int],
-) -> Tuple[Tensor,Tensor]:
+) -> Tuple[Tensor, Tensor]:
 
     row, col = vector_id // size[1], vector_id % size[1]
     return row, col
-

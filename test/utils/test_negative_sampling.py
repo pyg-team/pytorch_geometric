@@ -3,18 +3,16 @@ import torch
 from torch_geometric.utils import (
     batched_negative_sampling,
     contains_self_loops,
+    erdos_renyi_graph,
     is_undirected,
     negative_sampling,
     structured_negative_sampling,
     structured_negative_sampling_feasible,
     to_undirected,
-    erdos_renyi_graph,
-    stochastic_blockmodel_graph
 )
-
 from torch_geometric.utils._negative_sampling import (
     edge_index_to_vector_id,
-    vector_id_to_edge_index
+    vector_id_to_edge_index,
 )
 
 
@@ -40,12 +38,13 @@ def test_edge_index_to_vector_and_vice_versa():
     edge_index = torch.stack([row, col], dim=0)
 
     idx = edge_index_to_vector_id(edge_index, (N1, N2))
-    assert idx.tolist() == list(range(N1*N2))
+    assert idx.tolist() == list(range(N1 * N2))
     edge_index2 = torch.stack(vector_id_to_edge_index(idx, (N1, N2)), dim=0)
     assert edge_index.tolist() == edge_index2.tolist()
 
-    vector_id = torch.arange(N1*N2)
-    edge_index3 = torch.stack(vector_id_to_edge_index(vector_id, (N1, N2)), dim=0)
+    vector_id = torch.arange(N1 * N2)
+    edge_index3 = torch.stack(vector_id_to_edge_index(vector_id, (N1, N2)),
+                              dim=0)
     assert edge_index.tolist() == edge_index3.tolist()
 
 
@@ -85,19 +84,23 @@ def test_negative_sampling_with_different_edge_density():
         for p in [0.1, 0.3, 0.5, 0.8]:
             for is_directed in [False, True]:
                 edge_index = erdos_renyi_graph(num_nodes, p, is_directed)
-                neg_edge_index = negative_sampling(edge_index, num_nodes, force_undirected=not is_directed)
-                assert is_negative(edge_index, neg_edge_index, (num_nodes, num_nodes), bipartite=False)
+                neg_edge_index = negative_sampling(
+                    edge_index, num_nodes, force_undirected=not is_directed)
+                assert is_negative(edge_index, neg_edge_index,
+                                   (num_nodes, num_nodes), bipartite=False)
 
 
 def test_bipartite_negative_sampling_with_different_edge_density():
     for num_nodes in [10, 100, 1000]:
         for p in [0.1, 0.3, 0.5, 0.8]:
-            size = (num_nodes, int(num_nodes*1.2))
+            size = (num_nodes, int(num_nodes * 1.2))
             n_edges = int(p * size[0] * size[1])
-            row, col = torch.randint(size[0], (n_edges,)), torch.randint(size[1], (n_edges,))
+            row, col = torch.randint(size[0], (n_edges, )), torch.randint(
+                size[1], (n_edges, ))
             edge_index = torch.stack([row, col], dim=0)
             neg_edge_index = negative_sampling(edge_index, size)
-            assert is_negative(edge_index, neg_edge_index, size, bipartite=True)
+            assert is_negative(edge_index, neg_edge_index, size,
+                               bipartite=True)
 
 
 def test_batched_negative_sampling():
@@ -167,7 +170,8 @@ def test_structured_negative_sampling_sparse():
     num_nodes = 1000
     edge_index = erdos_renyi_graph(num_nodes, 0.1)
 
-    i, j, k = structured_negative_sampling(edge_index, num_nodes=num_nodes, contains_neg_self_loops=True)
+    i, j, k = structured_negative_sampling(edge_index, num_nodes=num_nodes,
+                                           contains_neg_self_loops=True)
     assert i.size(0) == edge_index.size(1)
     assert j.size(0) == edge_index.size(1)
     assert k.size(0) == edge_index.size(1)
@@ -180,7 +184,8 @@ def test_structured_negative_sampling_sparse():
     neg_adj[i, k] = 1
     assert (adj & neg_adj).sum() == 0
 
-    i, j, k = structured_negative_sampling(edge_index, num_nodes=num_nodes, contains_neg_self_loops=False)
+    i, j, k = structured_negative_sampling(edge_index, num_nodes=num_nodes,
+                                           contains_neg_self_loops=False)
     assert i.size(0) == edge_index.size(1)
     assert j.size(0) == edge_index.size(1)
     assert k.size(0) == edge_index.size(1)
