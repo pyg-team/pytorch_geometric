@@ -290,7 +290,8 @@ class LinearHeteroNodeModule(LightningModule):
 def preserve_context():
     num_threads = torch.get_num_threads()
     yield
-    torch.distributed.destroy_process_group()
+    if torch.distributed.is_initialized():
+        torch.distributed.destroy_process_group()
     torch.set_num_threads(num_threads)
 
 
