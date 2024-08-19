@@ -10,11 +10,6 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
-from cugraph.gnn import (
-    cugraph_comms_create_unique_id,
-    cugraph_comms_init,
-    cugraph_comms_shutdown,
-)
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 
@@ -55,6 +50,7 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
     os.environ['MASTER_PORT'] = '12355'
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
+    from cugraph.gnn import cugraph_comms_init
     cugraph_comms_init(rank=rank, world_size=world_size, uid=cugraph_id,
                        device=rank)
 
@@ -212,6 +208,7 @@ def run(rank, data, world_size, cugraph_id, model, epochs, batch_size, fan_out,
         print(f"Total Training Runtime: {total_time - prep_time}s")
         print(f"Total Program Runtime: {total_time}s")
 
+    from cugraph.gnn import cugraph_comms_shutdown
     cugraph_comms_shutdown()
     dist.destroy_process_group()
 
@@ -257,9 +254,10 @@ if __name__ == '__main__':
         world_size = torch.cuda.device_count()
     else:
         world_size = args.n_devices
-    print(f"Using {world_size} many GPUs...")
+    print(f"Using {world_size} GPUs...")
 
     # Create the uid needed for cuGraph comms
+    from cugraph.gnn import cugraph_comms_create_unique_id
     cugraph_id = cugraph_comms_create_unique_id()
 
     with tempfile.TemporaryDirectory(dir=args.tempdir_root) as tempdir:

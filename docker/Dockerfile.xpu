@@ -27,5 +27,5 @@ RUN echo "source /opt/intel/oneapi/setvars.sh --force" >> /root/.bashrc
 
 # Install PyG
 RUN pip install ninja wheel ogb && pip install git+https://github.com/pyg-team/pyg-lib.git && \
-    pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+cpu.html && \
+    pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.4.0+cpu.html && \
     pip install torch_geometric

@@ -1,4 +1,5 @@
 from ._compile import compile, is_compiling
+from ._onnx import is_in_onnx_export
 from .index import Index
 from .edge_index import EdgeIndex
 from .seed import seed_everything
@@ -34,6 +35,7 @@ __all__ = [
     'set_home_dir',
     'compile',
     'is_compiling',
+    'is_in_onnx_export',
     'is_mps_available',
     'is_xpu_available',
     'device',
