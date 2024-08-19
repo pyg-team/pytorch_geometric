@@ -3,7 +3,7 @@ import os
 import os.path as osp
 import time
 from collections import OrderedDict
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -13,14 +13,7 @@ from tqdm import trange
 
 import torch_geometric.transforms as T
 from torch_geometric.data import Data, Dataset, download_url
-from torch_geometric.graphgym.init import init_weights
-from torch_geometric.graphgym.models.encoder import (
-    AtomEncoder,
-    BondEncoder,
-    IntegerFeatureEncoder,
-)
 from torch_geometric.loader import DataLoader, NeighborLoader
-from torch_geometric.nn import Linear as Linear_pyg
 from torch_geometric.nn import (
     ResGatedGraphConv,
     global_add_pool,
@@ -28,119 +21,18 @@ from torch_geometric.nn import (
     global_mean_pool,
 )
 from torch_geometric.nn.resolver import activation_resolver
-from torch_geometric.utils import (
-    add_self_loops,
-    remove_self_loops,
-    to_dense_batch,
-)
+from torch_geometric.utils import to_dense_batch
 
 
-class GeneralLayer(nn.Module):
-    r"""General wrapper for layers, based on PyG GraphGym.
-
-    Args:
-        name (str): Name of the layer registered in :obj:`layer_dict`.
-        dim_in (int): Input dimension.
-        dim_out (int): Output dimension.
-        has_bn (bool): Whether to apply batch normalization to layer outputs.
-        bn_eps (float): Epsilon for batch normalization.
-        bn_mom (float): Momentum for batch normalization.
-        has_l2norm (bool): Whether to apply L2 normalization to the layer
-            outputs.
-        dropout (float): Dropout ratio at layer output.
-        has_act (bool): Whether to apply an activation after the layers.
-        act (str): Activation to apply to layer outputs.
-        **kwargs (optional): Additional args for :class:`GPSE` layer classes.
-    """
-    def __init__(self, name: str, dim_in: int, dim_out: int, has_bn: bool,
-                 bn_eps: float, bn_mom: float, has_l2norm: bool,
-                 dropout: float, has_act: bool, act: str, **kwargs):
+class Linear(torch.nn.Module):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        bias: bool,
+    ) -> None:
         super().__init__()
-        layer_dict = {
-            'linear': Linear,
-            'resgatedgcnconv': ResGatedGCNConvGraphGymLayer
-        }
-        self.has_l2norm = has_l2norm
-        has_bias = not has_bn
-        self.layer = layer_dict[name](dim_in, dim_out, bias=has_bias, **kwargs)
-        layer_wrapper = []
-        if has_bn:
-            layer_wrapper.append(
-                nn.BatchNorm1d(dim_out, eps=bn_eps, momentum=bn_mom))
-        if dropout > 0:
-            layer_wrapper.append(nn.Dropout(p=dropout, inplace=False))
-        if has_act:
-            layer_wrapper.append(activation_resolver(act))
-        self.post_layer = nn.Sequential(*layer_wrapper)
-
-    def forward(self, batch):
-        batch = self.layer(batch)
-        if isinstance(batch, torch.Tensor):
-            batch = self.post_layer(batch)
-            if self.has_l2norm:
-                batch = F.normalize(batch, p=2, dim=1)
-        else:
-            batch.x = self.post_layer(batch.x)
-            if self.has_l2norm:
-                batch.x = F.normalize(batch.x, p=2, dim=1)
-        return batch
-
-
-class GeneralMultiLayer(nn.Module):
-    r"""General wrapper for a stack of :class:`GeneralLayer`s,
-    based on PyG GraphGym.
-
-    Args:
-        name (str): Name of the layer registered in :obj:`layer_dict` of
-            :class:`GeneralLayer`.
-        dim_in (int): Input dimension.
-        dim_out (int): Output dimension.
-        dim_inner (int): Dimension of the inner layers.
-        num_layers (int): Number of layers.
-        has_bn (bool): Whether to apply batch normalization to layer outputs.
-        bn_eps (float): Epsilon for batch normalization.
-        bn_mom (float): Momentum for batch normalization.
-        has_l2norm (bool): Whether to apply L2 normalization to the layer
-            outputs.
-        dropout (float): Dropout ratio at layer output.
-        final_act (bool): Whether to apply an activation after the final layer.
-        act (str): Activation to apply to layer outputs.
-        **kwargs (optional): Additional args for :class:`GeneralLayer`.
-    """
-    def __init__(self, name: str, dim_in: int, dim_out: int, dim_inner: int,
-                 num_layers: int, has_bn: bool, bn_eps: float, bn_mom: float,
-                 has_l2norm: bool, dropout: float, final_act: bool, act: str,
-                 **kwargs):
-        super().__init__()
-        dim_inner = dim_out if dim_inner is None else dim_inner
-        for i in range(num_layers):
-            d_in = dim_in if i == 0 else dim_inner
-            d_out = dim_out if i == num_layers - 1 else dim_inner
-            has_act = final_act if i == num_layers - 1 else True
-            layer = GeneralLayer(name, d_in, d_out, has_bn, bn_eps, bn_mom,
-                                 has_l2norm, dropout, has_act, act, **kwargs)
-            self.add_module('Layer_{}'.format(i), layer)
-
-    def forward(self, batch):
-        for layer in self.children():
-            batch = layer(batch)
-        return batch
-
-
-class Linear(nn.Module):
-    r"""Basic Linear layer, wrapper on :class:`~torch_geometric.nn.Linear`
-    based on PyG GraphGym.
-
-    Args:
-        dim_in (int): Input dimension.
-        dim_out (int): Output dimension.
-        bias (bool): Whether the layer has a bias term.
-        **kwargs (optional): Additional args for
-            :class:`~torch_geometric.nn.Linear`.
-    """
-    def __init__(self, dim_in: int, dim_out: int, bias: bool, **kwargs):
-        super().__init__()
-        self.model = Linear_pyg(dim_in, dim_out, bias=bias, **kwargs)
+        self.model = torch.nn.Linear(in_channels, out_channels, bias=bias)
 
     def forward(self, batch):
         if isinstance(batch, torch.Tensor):
@@ -150,103 +42,167 @@ class Linear(nn.Module):
         return batch
 
 
-class ResGatedGCNConvGraphGymLayer(nn.Module):
-    r"""ResGatedGCN layer, wrapper on
-    :class:`~torch_geometric.nn.ResGatedGraphConv` based on PyG GraphGym.
-
-    Args:
-        dim_in (int): Input dimension.
-        dim_out (int): Output dimension.
-        bias (bool): Whether the layer has a bias term.
-        **kwargs (optional): Additional args for
-            :class:`~torch_geometric.nn.ResGatedGraphConv`.
-    """
-    def __init__(self, dim_in: int, dim_out: int, bias: bool, **kwargs):
+class ResGatedGCNConv(torch.nn.Module):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        bias: bool,
+        **kwargs,
+    ) -> None:
         super().__init__()
-        self.model = ResGatedGraphConv(dim_in, dim_out, bias=bias, **kwargs)
+        self.model = ResGatedGraphConv(
+            in_channels,
+            out_channels,
+            bias=bias,
+            **kwargs,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
         return batch
 
 
-class BatchNorm1dNode(nn.Module):
-    r"""Batch normalization for node features, wrapper on
-        :class:`~torch_geometric.nn.BatchNorm1d` based on PyG GraphGym.
-
-    Args:
-        dim_in (int): Input dimension.
-        bn_eps (float): Epsilon for batch normalization.
-        bn_mom (float): Momentum for batch normalization.
-    """
-    def __init__(self, dim_in: int, bn_eps: float, bn_mom: float):
+class GeneralLayer(torch.nn.Module):
+    def __init__(
+        self,
+        name: str,
+        in_channels: int,
+        out_channels: int,
+        has_batch_norm: bool,
+        has_l2_norm: bool,
+        dropout: float,
+        act: Optional[str],
+        **kwargs,
+    ):
         super().__init__()
-        self.bn = nn.BatchNorm1d(dim_in, eps=bn_eps, momentum=bn_mom)
+        self.has_l2_norm = has_l2_norm
+
+        layer_dict = {
+            'linear': Linear,
+            'resgatedgcnconv': ResGatedGCNConv,
+        }
+        self.layer = layer_dict[name](
+            in_channels,
+            out_channels,
+            bias=not has_batch_norm,
+            **kwargs,
+        )
+        post_layers = []
+        if has_batch_norm:
+            post_layers.append(
+                torch.nn.BatchNorm1d(out_channels, eps=1e-5, momentum=0.1))
+        if dropout > 0:
+            post_layers.append(torch.nn.Dropout(p=dropout, inplace=False))
+        if act is not None:
+            post_layers.append(activation_resolver(act))
+        self.post_layer = nn.Sequential(*post_layers)
+
+    def forward(self, batch):
+        batch = self.layer(batch)
+        if isinstance(batch, torch.Tensor):
+            batch = self.post_layer(batch)
+            if self.has_l2_norm:
+                batch = F.normalize(batch, p=2, dim=1)
+        else:
+            batch.x = self.post_layer(batch.x)
+            if self.has_l2_norm:
+                batch.x = F.normalize(batch.x, p=2, dim=1)
+        return batch
+
+
+class GeneralMultiLayer(torch.nn.Module):
+    def __init__(
+        self,
+        name: str,
+        in_channels: int,
+        out_channels: int,
+        hidden_channels: Optional[int],
+        num_layers: int,
+        has_batch_norm: bool,
+        has_l2_norm: bool,
+        dropout: float,
+        act: str,
+        final_act: bool,
+        **kwargs,
+    ) -> None:
+        super().__init__()
+        hidden_channels = hidden_channels or out_channels
+
+        for i in range(num_layers):
+            d_in = in_channels if i == 0 else hidden_channels
+            d_out = out_channels if i == num_layers - 1 else hidden_channels
+            layer = GeneralLayer(
+                name=name,
+                in_channels=d_in,
+                out_channels=d_out,
+                has_batch_norm=has_batch_norm,
+                has_l2_norm=has_l2_norm,
+                dropout=dropout,
+                act=None if i == num_layers - 1 and not final_act else act,
+                **kwargs,
+            )
+            self.add_module('Layer_{}'.format(i), layer)
+
+    def forward(self, batch):
+        for layer in self.children():
+            batch = layer(batch)
+        return batch
+
+
+class BatchNorm1dNode(torch.nn.Module):
+    def __init__(self, channels: int) -> None:
+        super().__init__()
+        self.bn = torch.nn.BatchNorm1d(channels, eps=1e-5, momentum=0.1)
 
     def forward(self, batch):
         batch.x = self.bn(batch.x)
         return batch
 
 
-class BatchNorm1dEdge(nn.Module):
-    r"""Batch normalization for edge features, wrapper on
-        :class:`~torch_geometric.nn.BatchNorm1d` based on PyG GraphGym.
-
-    Args:
-        dim_in (int): Input dimension.
-        bn_eps (float): Epsilon for batch normalization.
-        bn_mom (float): Momentum for batch normalization.
-    """
-    def __init__(self, dim_in: int, bn_eps: float, bn_mom: float):
+class BatchNorm1dEdge(torch.nn.Module):
+    def __init__(self, channels: int) -> None:
         super().__init__()
-        self.bn = nn.BatchNorm1d(dim_in, eps=bn_eps, momentum=bn_mom)
+        self.bn = torch.nn.BatchNorm1d(channels, eps=1e-5, momentum=0.1)
 
     def forward(self, batch):
         batch.edge_attr = self.bn(batch.edge_attr)
         return batch
 
 
-class MLP(nn.Module):
-    r"""Basic MLP model, based on PyG GraphGym. Here, 1-layer MLP is equivalent
-    to a :class:`Linear` layer. A multi-layer MLP is a stack of :class:`Linear`
-    layers, in the form of a :class:`GeneralMultiLayer`.
-
-    Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        dim_inner (int): The dimension for the inner layers. If None, it is set
-            to the input dimension.
-        num_layers (int): Number of hidden layers in the MLP.
-        has_bn (bool, optional): Whether to apply batch normalization to layer
-            outputs. (default: :obj:`True`)
-        bn_eps (float, optional): Epsilon for batch normalization.
-            (default: :obj:`1.0e-05`)
-        bn_mom (float, optional): Momentum for batch normalization.
-            (default: :obj:`0.1`)
-        has_l2norm (bool, optional): Whether to apply L2 normalization to the
-            layer outputs. (default: :obj:`True`)
-        dropout (float, optional): Dropout ratio at layer output.
-            (default: :obj:`0.2`)
-        act (str, optional): Activation to apply to layer output.
-            (default: :obj:`relu`)
-        **kwargs (optional): Additional args for GeneralLayer.
-    """
-    def __init__(self, dim_in: int, dim_out: int, dim_inner: int,
-                 num_layers: int, has_bn: bool = True, bn_eps: float = 1.0e-05,
-                 bn_mom: float = 0.1, has_l2norm: bool = True,
-                 dropout: float = 0.2, act: str = 'relu', **kwargs):
+class MLP(torch.nn.Module):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        hidden_channels: Optional[int],
+        num_layers: int,
+        has_batch_norm: bool = True,
+        has_l2_norm: bool = True,
+        dropout: float = 0.2,
+        act: str = 'relu',
+        **kwargs,
+    ):
         super().__init__()
-        dim_inner = dim_in if dim_inner is None else dim_inner
+        hidden_channels = hidden_channels or in_channels
+
         layers = []
         if num_layers > 1:
-            layers.append(
-                GeneralMultiLayer('linear', dim_in, dim_inner, dim_inner,
-                                  num_layers - 1, has_bn, bn_eps, bn_mom,
-                                  has_l2norm, dropout, final_act=True, act=act,
-                                  **kwargs))
-            layers.append(Linear(dim_inner, dim_out, bias=True))
-        else:
-            layers.append(Linear(dim_inner, dim_out, bias=True))
+            layer = GeneralMultiLayer(
+                'linear',
+                in_channels,
+                hidden_channels,
+                hidden_channels,
+                num_layers - 1,
+                has_batch_norm,
+                has_l2_norm,
+                dropout,
+                act,
+                final_act=True,
+                **kwargs,
+            )
+            layers.append(layer)
+        layers.append(Linear(hidden_channels, out_channels, bias=True))
         self.model = nn.Sequential(*layers)
 
     def forward(self, batch):
@@ -257,7 +213,53 @@ class MLP(nn.Module):
         return batch
 
 
-class GNNInductiveHybridMultiHead(nn.Module):
+class GNNStackStage(torch.nn.Module):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_layers: int,
+        layer_type: str,
+        stage_type: str = 'skipsum',
+        final_l2_norm: bool = True,
+        has_batch_norm: bool = True,
+        has_l2_norm: bool = True,
+        dropout: float = 0.2,
+        act: Optional[str] = 'relu',
+    ):
+        super().__init__()
+        self.num_layers = num_layers
+        self.stage_type = stage_type
+        self.final_l2_norm = final_l2_norm
+
+        for i in range(num_layers):
+            if stage_type == 'skipconcat':
+                if i == 0:
+                    d_in = in_channels
+                else:
+                    d_in = in_channels + i * out_channels
+            else:
+                d_in = in_channels if i == 0 else out_channels
+            layer = GeneralLayer(layer_type, d_in, out_channels,
+                                 has_batch_norm, has_l2_norm, dropout, act)
+            self.add_module(f'layer{i}', layer)
+
+    def forward(self, batch):
+        for i, layer in enumerate(self.children()):
+            x = batch.x
+            batch = layer(batch)
+            if self.stage_type == 'skipsum':
+                batch.x = x + batch.x
+            elif self.stage_type == 'skipconcat' and i < self.num_layers - 1:
+                batch.x = torch.cat([x, batch.x], dim=1)
+
+        if self.final_l2_norm:
+            batch.x = F.normalize(batch.x, p=2, dim=-1)
+
+        return batch
+
+
+class GNNInductiveHybridMultiHead(torch.nn.Module):
     r"""GNN prediction head for inductive node and graph prediction tasks using
     individual MLP for each task.
 
@@ -291,13 +293,21 @@ class GNNInductiveHybridMultiHead(nn.Module):
         act (str, optional): Activation to apply to layer outputs if
             :obj:`has_act` is :obj:`True`. (default: :obj:`relu`)
     """
-    def __init__(self, dim_in: int, dim_out: int, num_node_targets: int,
-                 num_graph_targets: int, layers_post_mp: int,
-                 virtual_node: bool = True, multi_head_dim_inner: int = 32,
-                 graph_pooling: str = 'add', has_bn: bool = True,
-                 bn_eps: float = 1.0e-05, bn_mom: float = 0.1,
-                 has_l2norm: bool = True, dropout: float = 0.2,
-                 act: str = 'relu'):
+    def __init__(
+        self,
+        dim_in: int,
+        dim_out: int,
+        num_node_targets: int,
+        num_graph_targets: int,
+        layers_post_mp: int,
+        virtual_node: bool = True,
+        multi_head_dim_inner: int = 32,
+        graph_pooling: str = 'add',
+        has_bn: bool = True,
+        has_l2norm: bool = True,
+        dropout: float = 0.2,
+        act: str = 'relu',
+    ):
         super().__init__()
         pool_dict = {
             'add': global_add_pool,
@@ -310,16 +320,14 @@ class GNNInductiveHybridMultiHead(nn.Module):
         num_layers = layers_post_mp
 
         self.node_post_mps = nn.ModuleList([
-            MLP(dim_in, 1, multi_head_dim_inner, num_layers, has_bn, bn_eps,
-                bn_mom, has_l2norm, dropout, act)
-            for _ in range(self.node_target_dim)
+            MLP(dim_in, 1, multi_head_dim_inner, num_layers, has_bn,
+                has_l2norm, dropout, act) for _ in range(self.node_target_dim)
         ])
 
         self.graph_pooling = pool_dict[graph_pooling]
 
         self.graph_post_mp = MLP(dim_in, self.graph_target_dim, dim_in,
-                                 num_layers, has_bn, bn_eps, bn_mom,
-                                 has_l2norm, dropout, act)
+                                 num_layers, has_bn, has_l2norm, dropout, act)
 
     def _pad_and_stack(self, x1: torch.Tensor, x2: torch.Tensor, pad1: int,
                        pad2: int):
@@ -354,219 +362,24 @@ class GNNInductiveHybridMultiHead(nn.Module):
                                  self.node_target_dim, self.graph_target_dim)
 
 
-def GNNLayer(name: str, dim_in: int, dim_out: int, has_bn: bool = True,
-             bn_eps: float = 1.0e-05, bn_mom: float = 0.1,
-             has_l2norm: bool = True, dropout: float = 0.2,
-             has_act: bool = True, act: str = 'relu', **kwargs):
-    r"""Wrapper for a single GNN layer.
-
-    Args:
-        name (str): Name of the layer in registered :obj:`layer_dict`
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        has_bn (bool, optional): Whether to apply batch normalization to layer
-            outputs. (default: :obj:`True`)
-        bn_eps (float, optional): Epsilon for batch normalization.
-            (default: :obj:`1.0e-05`)
-        bn_mom (float, optional): Momentum for batch normalization.
-            (default: :obj:`0.1`)
-        has_l2norm (bool, optional): Whether to apply L2 normalization to the
-            layer outputs. (default: :obj:`True`)
-        dropout (float, optional): Dropout ratio at layer output.
-            (default: :obj:`0.2`)
-        has_act (bool, optional): Whether the layer has activation.
-            (default: :obj:`True`)
-        act (str, optional): Activation to apply to layer output if
-            :obj:`has_act` is :obj:`True`. (default: :obj:`relu`)
-        **kwargs (optional): Additional args for :class:`GeneralLayer`.
-
-    Returns:
-        GeneralLayer: Instance of GeneralLayer with specified configurations.
-    """
-    return GeneralLayer(name, dim_in, dim_out, has_bn, bn_eps, bn_mom,
-                        has_l2norm, dropout, has_act, act, **kwargs)
-
-
-def GNNPreMP(dim_in: int, dim_out: int, dim_inner: int, num_layers: int,
-             has_bn: bool = True, bn_eps: float = 1.0e-05, bn_mom: float = 0.1,
-             has_l2norm: bool = True, dropout: float = 0.2,
-             final_act: bool = True, act: str = 'relu', **kwargs):
-    r"""Wrapper for multiple NN layers before GNN message passing.
-
-    Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        dim_inner (int): Dimension of the inner layers
-        num_layers (int): Number of layers
-        has_bn (bool, optional): Whether to apply batch normalization to layer
-            outputs. (default: :obj:`True`)
-        bn_eps (float, optional): Epsilon for batch normalization.
-            (default: :obj:`1.0e-05`)
-        bn_mom (float, optional): Momentum for batch normalization.
-        (default: :obj:`0.1`)
-        has_l2norm (bool, optional): Whether to apply L2 normalization to the
-            layer outputs. (default: :obj:`True`)
-        dropout (float, optional): Dropout ratio at layer output.
-            (default: :obj:`0.2`)
-        final_act (bool, optional): Whether to apply an activation after the
-            final layer. (default: :obj:`True`)
-        act (str, optional): Activation to apply to layer output if
-            :obj:`has_act` is :obj:`True`. (default: :obj:`relu`)
-        **kwargs (optional): Additional args for :class:`GeneralMultiLayer`.
-
-    Returns:
-        GeneralMultiLayer: Instance of GeneralMultiLayer with specified
-            configurations.
-    """
-    return GeneralMultiLayer('linear', dim_in, dim_out, dim_inner, num_layers,
-                             has_bn, bn_eps, bn_mom, has_l2norm, dropout,
-                             final_act, act, **kwargs)
-
-
-class IdentityHead(nn.Module):
-    r"""A placeholder prediction head that only returns batch.x and
-    batch.y.
-    """
-    def __init__(self):
-        super().__init__()
-
+class IdentityHead(torch.nn.Module):
     def forward(self, batch):
         return batch.x, batch.y
 
 
-class GNNStackStage(nn.Module):
-    r"""Stacks a number of GNN layers, alongside skip connections and L2
-    normalization.
-
-    Args:
-        dim_in (int): The input dimension.
-        dim_out (int): The output dimension.
-        num_layers (int): The number of layers.
-        layer_type (str): The type of GNN layer to use.
-        stage_type (str, optional): The type of staging to apply. Possible
-            values are: :obj:`skipsum`, :obj:`skipconcat`. Any other value will
-            default to no skip connections. (default: 'skipsum')
-        final_l2norm (bool, optional): Whether to apply L2 normalization to the
-            outputs. (default: :obj:`True`)
-        has_bn (bool, optional): Whether to apply batch normalization to layer
-            outputs. (default: :obj:`True`)
-        bn_eps (float, optional): Epsilon for batch normalization.
-            (default: :obj:`1.0e-05`)
-        bn_mom (float, optional): Momentum for batch normalization.
-            (default: :obj:`0.1`)
-        has_l2norm (bool, optional): Whether the layer has L2 normalization.
-            (default: :obj:`True`)
-        dropout (float, optional): Dropout ratio at layer output.
-            (default: :obj:`0.2`)
-        has_act (bool, optional): Whether the layer has activation.
-            (default: :obj:`True`)
-        act (str, optional): Activation to apply to layer output if
-            :obj:`has_act` is :obj:`True`. (default: :obj:`relu`)
-    """
-    def __init__(self, dim_in: int, dim_out: int, num_layers: int,
-                 layer_type: str, stage_type: str = 'skipsum',
-                 final_l2norm: bool = True, has_bn: bool = True,
-                 bn_eps: float = 1.0e-05, bn_mom: float = 0.1,
-                 has_l2norm: bool = True, dropout: float = 0.2,
-                 has_act: bool = True, act: str = 'relu'):
-        super().__init__()
-        self.num_layers = num_layers
-        self.stage_type = stage_type
-        self.l2norm = final_l2norm
-        for i in range(num_layers):
-            if stage_type == 'skipconcat':
-                d_in = dim_in if i == 0 else dim_in + i * dim_out
-            else:
-                d_in = dim_in if i == 0 else dim_out
-            layer = GNNLayer(layer_type, d_in, dim_out, has_bn, bn_eps, bn_mom,
-                             has_l2norm, dropout, has_act, act)
-            self.add_module(f'layer{i}', layer)
-
-    def forward(self, batch):
-        for i, layer in enumerate(self.children()):
-            x = batch.x
-            batch = layer(batch)
-            if self.stage_type == 'skipsum':
-                batch.x = x + batch.x
-            elif (self.stage_type == 'skipconcat' and i < self.num_layers - 1):
-                batch.x = torch.cat([x, batch.x], dim=1)
-        if self.l2norm:
-            batch.x = F.normalize(batch.x, p=2, dim=-1)
-        return batch
-
-
-class FeatureEncoder(nn.Module):
-    r"""Encoder for :class:`GPSE` module that embeds raw node and edge
-    features. Typically not used on downstream :class:`GPSE` usage.
-
-    Args:
-        dim_in (int): Input feature dimension.
-        dim_inner (int): Width of the encoder.
-        node_encoder (bool): Whether to use a node encoder.
-        node_encoder_name (str): Name of the node encoder, depends on the
-            pre-training dataset (e.g. pre-training on ogbg-molpcba requires an
-            AtomEncoder).
-        node_encoder_bn (bool): Whether to use batch normalization in the node
-            encoder.
-        edge_encoder (bool): Whether to use an edge encoder.
-        edge_encoder_name (str): Name of the edge encoder, depends on the
-            pre-training dataset (e.g. pre-training on ogbg-molpcba requires a
-            BondEncoder).
-        edge_encoder_bn (bool): Whether to use batch normalization in the edge
-            encoder.
-        bn_eps (float): Epsilon for batch normalization.
-        bn_mom (float): Momentum for batch normalization.
-    """
-    def __init__(self, dim_in: int, dim_inner: int, node_encoder: bool,
-                 node_encoder_name: str, node_encoder_bn: bool,
-                 edge_encoder: bool, edge_encoder_name: str,
-                 edge_encoder_bn: bool, bn_eps: float, bn_mom: float):
-        super().__init__()
-        node_encoder_dict = {
-            'Integer': IntegerFeatureEncoder,
-            'Atom': AtomEncoder
-        }
-        edge_encoder_dict = {'Bond': BondEncoder}
-        self.dim_in = dim_in
-        if node_encoder:
-            # Encode integer node features via nn.Embeddings
-            NodeEncoder = node_encoder_dict[node_encoder_name]
-            self.node_encoder = NodeEncoder(dim_inner)
-            if node_encoder_bn:
-                self.node_encoder_bn = BatchNorm1dNode(dim_inner, bn_eps,
-                                                       bn_mom)
-            # Update dim_in to reflect the new dimension fo the node features
-            self.dim_in = dim_inner
-        if edge_encoder:
-            # Encode integer edge features via nn.Embeddings
-            EdgeEncoder = edge_encoder_dict[edge_encoder_name]
-            self.edge_encoder = EdgeEncoder(dim_inner)
-            if edge_encoder_bn:
-                self.edge_encoder_bn = BatchNorm1dNode(dim_inner, bn_eps,
-                                                       bn_mom)
-
-    def forward(self, batch):
-        for module in self.children():
-            batch = module(batch)
-        return batch
-
-
-class GPSE(nn.Module):
+class GPSE(torch.nn.Module):
     r"""The Graph Positional and Structural Encoder (GPSE) model from the
     `"Graph Positional and Structural Encoder"
     <https://arxiv.org/abs/2307.07107>`_ paper.
-    The GPSE model consists of (1) an (optional) encoder, (2) a deep GNN that
-    consists of stacked message-passing layers, (3) a prediction head to
-    predict pre-computed positional and structural encodings (PSE). When used
-    on downstream datasets, these prediction heads are removed and the final
-    fully-connected layer outputs are used as learned PSE embeddings.
 
-    GPSE also provides a static method :obj:`from_pretrained` to load
-    pre-trained GPSE models trained on a variety of molecular datasets. One can
-    then use the pre-trained model to pre-compute GPSE encodings for a given
-    dataset using the :obj:`precompute_gpse` method. Alternatively, the model
-    can be used to generate GPSE encodings as part of a transform or
-    pre_transform in a PyG dataset.
+    The GPSE model consists of a (1) deep GNN that consists of stacked
+    message passing layers, and a (2) prediction head to predict pre-computed
+    positional and structural encodings (PSE).
+    When used on downstream datasets, these prediction heads are removed and
+    the final fully-connected layer outputs are used as learned PSE embeddings.
+
+    GPSE also provides a static method :meth:`from_pretrained` to load
+    pre-trained GPSE models trained on a variety of molecular datasets.
 
     .. code-block:: python
 
@@ -635,20 +448,6 @@ class GPSE(nn.Module):
             (default: :obj:`51`)
         num_graph_targets (int, optional): Number of graph-level targets used
             in pretraining :class:`GPSE`. (default: :obj:`11`)
-        node_encoder (bool, optional): Whether to use a node encoder.
-            (default: :obj:`False`)
-        node_encoder_name (str, optional): Name of the node encoder, depends on
-            the pre-training dataset (e.g. pre-training on ogbg-molpcba
-            requires an AtomEncoder). (default: :obj:`Atom`)
-        node_encoder_bn (bool, optional): Whether to use batch normalization in
-        the node encoder. (default: :obj:`False`)
-        edge_encoder (bool, optional): Whether to use an edge encoder.
-            (default: :obj:`False`)
-        edge_encoder_name (str, optional): Name of the edge encoder, depends on
-            the pre-training dataset (e.g. pre-training on ogbg-molpcba
-            requires a BondEncoder). (default: :obj:`Bond`)
-        edge_encoder_bn (bool, optional): Whether to use batch normalization in
-            the edge encoder. (default: :obj:`False`)
         stage_type (str, optional): The type of staging to apply. Possible
             values are: :obj:`skipsum`, :obj:`skipconcat`. Any other value will
             default to no skip connections. (default: :obj:`skipsum`)
@@ -702,63 +501,101 @@ class GPSE(nn.Module):
     }
 
     def __init__(
-            self, dim_in: int = 20, dim_out: int = 51, dim_inner: int = 512,
-            layer_type: str = 'resgatedgcnconv', layers_pre_mp: int = 1,
-            layers_mp: int = 20, layers_post_mp: int = 2,
-            num_node_targets: int = 51, num_graph_targets: int = 11,
-            node_encoder: bool = False, node_encoder_name: str = 'Atom',
-            node_encoder_bn: bool = False, edge_encoder: bool = False,
-            edge_encoder_name: str = 'Bond', edge_encoder_bn: bool = False,
-            stage_type: str = 'skipsum', has_bn: bool = True,
-            head_bn: bool = False, bn_eps: float = 1.0e-05,
-            bn_mom: float = 0.1, final_l2norm: bool = True,
-            has_l2norm: bool = True, dropout: float = 0.2,
-            has_act: bool = True, final_act: bool = True, act: str = 'relu',
-            virtual_node: bool = True, multi_head_dim_inner: int = 32,
-            graph_pooling: str = 'add', use_repr: bool = True,
-            repr_type: str = 'no_post_mp', bernoulli_threshold: float = 0.5):
-
+        self,
+        dim_in: int = 20,
+        dim_out: int = 51,
+        dim_inner: int = 512,
+        layer_type: str = 'resgatedgcnconv',
+        layers_pre_mp: int = 1,
+        layers_mp: int = 20,
+        layers_post_mp: int = 2,
+        num_node_targets: int = 51,
+        num_graph_targets: int = 11,
+        stage_type: str = 'skipsum',
+        has_bn: bool = True,
+        head_bn: bool = False,
+        bn_eps: float = 1.0e-05,
+        bn_mom: float = 0.1,
+        final_l2norm: bool = True,
+        has_l2norm: bool = True,
+        dropout: float = 0.2,
+        has_act: bool = True,
+        final_act: bool = True,
+        act: str = 'relu',
+        virtual_node: bool = True,
+        multi_head_dim_inner: int = 32,
+        graph_pooling: str = 'add',
+        use_repr: bool = True,
+        repr_type: str = 'no_post_mp',
+        bernoulli_threshold: float = 0.5,
+    ):
         super().__init__()
+
         self.use_repr = use_repr
         self.repr_type = repr_type
         self.bernoulli_threshold = bernoulli_threshold
 
-        self.encoder = FeatureEncoder(dim_in, dim_inner, node_encoder,
-                                      node_encoder_name, node_encoder_bn,
-                                      edge_encoder, edge_encoder_name,
-                                      edge_encoder_bn, bn_eps, bn_mom)
-        dim_in = self.encoder.dim_in
-
         if layers_pre_mp > 0:
-            self.pre_mp = GNNPreMP(dim_in, dim_inner, dim_inner, layers_pre_mp,
-                                   has_bn, bn_eps, bn_mom, has_l2norm, dropout,
-                                   final_act, act)
+            self.pre_mp = GeneralMultiLayer(
+                name='linear',
+                in_channels=dim_in,
+                out_channels=dim_inner,
+                hidden_channels=dim_inner,
+                num_layers=layers_pre_mp,
+                has_batch_norm=has_bn,
+                has_l2_norm=has_l2norm,
+                dropout=dropout,
+                act=act,
+                final_act=final_act,
+            )
             dim_in = dim_inner
         if layers_mp > 0:
-            self.mp = GNNStackStage(dim_in, dim_inner, layers_mp, layer_type,
-                                    stage_type, final_l2norm, has_bn, bn_eps,
-                                    bn_mom, has_l2norm, dropout, has_act, act)
-        self.post_mp = GNNInductiveHybridMultiHead(
-            dim_inner, dim_out, num_node_targets, num_graph_targets,
-            layers_post_mp, virtual_node, multi_head_dim_inner, graph_pooling,
-            head_bn, bn_eps, bn_mom, has_l2norm, dropout, act)
+            self.mp = GNNStackStage(
+                in_channels=dim_in,
+                out_channels=dim_inner,
+                num_layers=layers_mp,
+                layer_type=layer_type,
+                stage_type=stage_type,
+                final_l2_norm=final_l2norm,
+                has_batch_norm=has_bn,
+                has_l2_norm=has_l2norm,
+                dropout=dropout,
+                act=act if has_act else None,
+            )
 
-        self.apply(init_weights)
+        self.post_mp = GNNInductiveHybridMultiHead(
+            dim_inner,
+            dim_out,
+            num_node_targets,
+            num_graph_targets,
+            layers_post_mp,
+            virtual_node,
+            multi_head_dim_inner,
+            graph_pooling,
+            head_bn,
+            bn_eps,
+            bn_mom,
+            has_l2norm,
+            dropout,
+            act,
+        )
+
+        self.reset_parameters()
 
     def reset_parameters(self):
+        from torch_geometric.graphgym.init import init_weights
         self.apply(init_weights)
 
     @classmethod
     def from_pretrained(cls, name: str, root: str = 'GPSE_pretrained'):
-        r"""Returns a :class:`GPSE` model pre-trained on the dataset registered
-        in :obj:`param_dict` under :obj:`name`.
+        r"""Returns a pretrained :class:`GPSE` model on a dataset.
 
         Args:
-            name (str): The name of the dataset to pre-train on. Options are:
-                :obj:`molpcba`, :obj:`zinc`, :obj:`pcqm4mv2`, :obj:`geom`,
-                :obj:`chembl`.
-            root (str, optional): Root directory to save the pre-trained model.
-                (default: :obj:`'GPSE_pretrained'`)
+            name (str): The name of the dataset (:obj:`"molpcba"`,
+                :obj:`"zinc"`, :obj:`"pcqm4mv2"`, :obj:`"geom"`,
+                :obj:`"chembl"`).
+            root (str, optional): The root directory to save the pre-trained
+                model. (default: :obj:`"GPSE_pretrained"`)
         """
         root = osp.expanduser(osp.normpath(root))
         os.makedirs(root, exist_ok=True)
@@ -769,6 +606,7 @@ class GPSE(nn.Module):
         model_state_new = OrderedDict([(k.split('.', 1)[1], v)
                                        for k, v in model_state.items()])
         model.load_state_dict(model_state_new)
+
         # Set the final linear layer to identity if we use hidden reprs
         if model.use_repr:
             if model.repr_type == 'one_layer_before':
@@ -776,7 +614,8 @@ class GPSE(nn.Module):
             elif model.repr_type == 'no_post_mp':
                 model.post_mp = IdentityHead()
             else:
-                raise ValueError(f'Unknown repr_type {model.repr_type}')
+                raise ValueError(f"Unknown type '{model.repr_type}'")
+
         model.eval()
         return model
 
@@ -786,30 +625,7 @@ class GPSE(nn.Module):
         return batch
 
 
-class VirtualNodePatchSingleton(T.VirtualNode):
-    r"""PyG transform that appends a virtual node to a single data object, with
-    better handling of singleton graphs with no edges than
-    :class:`~torch_geometric.transforms.VirtualNode`.
-
-    Args:
-        data (torch_geometric.data.Data): The
-        :class:`~torch_geometric.data.Data` object to add VN to.
-    """
-    def __call__(self, data: Data):
-        if data.edge_index.numel() == 0:
-            data.edge_index, data.edge_attr = add_self_loops(
-                data.edge_index, data.edge_attr, num_nodes=data.num_nodes)
-            data = super().__call__(data)
-            if hasattr(data, "y_graph"):  # potentially fix hybrid head
-                data.y_graph = data.y_graph[:1]
-            data.edge_index, data.edge_attr = remove_self_loops(
-                data.edge_index, data.edge_attr)
-        else:
-            data = super().__call__(data)
-        return data
-
-
-class GPSENodeEncoder(nn.Module):
+class GPSENodeEncoder(torch.nn.Module):
     r"""A helper linear/MLP encoder that takes the :class:`GPSE` encodings
     (based on the `"Graph Positional and Structural Encoder"
     <https://arxiv.org/abs/2307.07107>`_ paper) precomputed as
@@ -883,15 +699,16 @@ class GPSENodeEncoder(nn.Module):
         if model_type == 'mlp':
             layers = []
             if n_layers == 1:
-                layers.append(nn.Linear(dim_pe_in, dim_pe_out))
+                layers.append(torch.nn.Linear(dim_pe_in, dim_pe_out))
                 layers.append(activation())
             else:
-                layers.append(nn.Linear(dim_pe_in, 2 * dim_pe_out))
+                layers.append(torch.nn.Linear(dim_pe_in, 2 * dim_pe_out))
                 layers.append(activation())
                 for _ in range(n_layers - 2):
-                    layers.append(nn.Linear(2 * dim_pe_out, 2 * dim_pe_out))
+                    layers.append(
+                        torch.nn.Linear(2 * dim_pe_out, 2 * dim_pe_out))
                     layers.append(activation())
-                layers.append(nn.Linear(2 * dim_pe_out, dim_pe_out))
+                layers.append(torch.nn.Linear(2 * dim_pe_out, dim_pe_out))
                 layers.append(activation())
             self.pe_encoder = nn.Sequential(*layers)
         elif model_type == 'linear':
@@ -1131,7 +948,7 @@ def precompute_GPSE(model: GPSE, dataset: Dataset, use_vn: bool = True,
     orig_dataset_transform = dataset.transform
     dataset.transform = None
     if use_vn:
-        dataset.transform = VirtualNodePatchSingleton()
+        dataset.transform = T.VirtualNode()
 
     # Remove split indices, to be recovered at the end of the precomputation
     tmp_store = {}
