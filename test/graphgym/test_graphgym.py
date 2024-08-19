@@ -166,7 +166,8 @@ def test_graphgym_module(tmp_path):
 @pytest.fixture
 def destroy_process_group():
     yield
-    torch.distributed.destroy_process_group()
+    if torch.distributed.is_initialized():
+        torch.distributed.destroy_process_group()
 
 
 @onlyOnline
