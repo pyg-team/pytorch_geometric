@@ -174,6 +174,19 @@ class UpdatedWebQSPDataset(InMemoryDataset):
         limit: int = -1,
         override: bool = False,
     ) -> None:
+        """Construct a WebQSPDataset.
+
+        Args:
+            root (str, optional): Path to save dataset to. Defaults to "".
+            force_reload (bool, optional): Whether to rerun process step.
+                Defaults to False.
+            whole_graph_retrieval (bool, optional): Whether to retrieve the
+                entire knowledge graph at once. Defaults to False.
+            limit (int, optional): Construct only the first n samples.
+                Defaults to -1 to construct all samples.
+            override (bool, optional): Whether to skip WebQSP step. Defaults
+                to False.
+        """
         self.limit = limit
         self.whole_graph_retrieval = whole_graph_retrieval
         self.override = override

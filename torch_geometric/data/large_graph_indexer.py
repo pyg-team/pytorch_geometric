@@ -24,8 +24,6 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data
 
-# Is there a multiprocessing-friendly implementation of this?
-
 TripletLike = Tuple[Hashable, Hashable, Hashable]
 
 
@@ -76,6 +74,19 @@ class LargeGraphIndexer:
         node_attr: Optional[Dict[str, List[Any]]] = None,
         edge_attr: Optional[Dict[str, List[Any]]] = None,
     ) -> None:
+        r"""Constructs a new index that uniquely catalogs each node and edge
+        by id. Not meant to be used directly.
+
+        Args:
+            nodes (Iterable[Hashable]): Node ids in the graph.
+            edges (Iterable[TripletLike]): Edge ids in the graph.
+            node_attr (Optional[Dict[str, List[Any]]], optional): Mapping node
+                attribute name and list of their values in order of unique node
+                ids. Defaults to None.
+            edge_attr (Optional[Dict[str, List[Any]]], optional): Mapping edge
+                attribute name and list of their values in order of unique edge
+                ids. Defaults to None.
+        """
         self._nodes: Dict[Hashable, int] = dict()
         self._edges: Dict[TripletLike, int] = dict()
 
@@ -139,6 +150,20 @@ class LargeGraphIndexer:
         triplets: Iterable[TripletLike],
         pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
     ) -> "LargeGraphIndexer":
+        r"""Generate a new index from a series of triplets that represent edge
+        relations between nodes.
+        Formatted like (source_node, edge, dest_node).
+
+        Args:
+            triplets (Iterable[TripletLike]): Series of triplets representing
+                knowledge graph relations.
+            pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
+                Optional preprocessing function to apply to triplets.
+                Defaults to None.
+
+        Returns:
+            LargeGraphIndexer: Index of unique nodes and edges.
+        """
         # NOTE: Right now assumes that all trips can be loaded into memory
         nodes = set()
         edges = set()
@@ -165,12 +190,32 @@ class LargeGraphIndexer:
     @classmethod
     def collate(cls,
                 graphs: Iterable["LargeGraphIndexer"]) -> "LargeGraphIndexer":
+        r"""Combines a series of large graph indexes into a single large graph
+        index.
+
+        Args:
+            graphs (Iterable[&quot;LargeGraphIndexer&quot;]): Indices to be
+                combined.
+
+        Returns:
+            LargeGraphIndexer: Singular unique index for all nodes and edges
+                in input indices.
+        """
         # FIXME Needs to merge node attrs and edge attrs?
         trips = chain.from_iterable([graph.to_triplets() for graph in graphs])
         return cls.from_triplets(trips)
 
     def get_unique_node_features(
             self, feature_name: str = NODE_PID) -> List[Hashable]:
+        r"""Get all the unique values for a specific node attribute.
+
+        Args:
+            feature_name (str, optional): Name of feature to get.
+                Defaults to NODE_PID.
+
+        Returns:
+            List[Hashable]: List of unique values for the specified feature.
+        """
         try:
             if feature_name in self._mapped_node_features:
                 raise IndexError(
@@ -187,7 +232,17 @@ class LargeGraphIndexer:
         new_feature_vals: FeatureValueType,
         map_from_feature: str = NODE_PID,
     ) -> None:
+        r"""Adds a new feature that corresponds to each unique node in
+            the graph.
 
+        Args:
+            new_feature_name (str): Name to call the new feature.
+            new_feature_vals (FeatureValueType): Values to map for that
+                new feature.
+            map_from_feature (str, optional): Key of feature to map from.
+                Size must match the number of feature values.
+                Defaults to NODE_PID.
+        """
         if new_feature_name in self.node_attr:
             raise AttributeError("Features cannot be overridden once created")
         if map_from_feature in self._mapped_node_features:
@@ -212,6 +267,18 @@ class LargeGraphIndexer:
         feature_name: str = NODE_PID,
         pids: Optional[Iterable[Hashable]] = None,
     ) -> List[Any]:
+        r"""Get node feature values for a given set of unique node ids.
+            Returned values are not necessarily unique.
+
+        Args:
+            feature_name (str, optional): Name of feature to fetch. Defaults
+                to NODE_PID.
+            pids (Optional[Iterable[Hashable]], optional): Node ids to fetch
+                for. Defaults to None, which fetches all nodes.
+
+        Returns:
+            List[Any]: Node features corresponding to the specified ids.
+        """
         if feature_name in self._mapped_node_features:
             values = self.node_attr[feature_name].values
         else:
@@ -231,6 +298,9 @@ class LargeGraphIndexer:
         pids: Optional[Iterable[Hashable]] = None,
         index_only: bool = False,
     ) -> Iterator[Any]:
+        """Iterator version of get_node_features. If index_only is True,
+        yields indices instead of values.
+        """
         if pids is None:
             pids = self.node_attr[NODE_PID]
 
@@ -262,6 +332,15 @@ class LargeGraphIndexer:
 
     def get_unique_edge_features(
             self, feature_name: str = EDGE_PID) -> List[Hashable]:
+        r"""Get all the unique values for a specific edge attribute.
+
+        Args:
+            feature_name (str, optional): Name of feature to get.
+                Defaults to EDGE_PID.
+
+        Returns:
+            List[Hashable]: List of unique values for the specified feature.
+        """
         try:
             if feature_name in self._mapped_edge_features:
                 raise IndexError(
@@ -277,7 +356,17 @@ class LargeGraphIndexer:
         new_feature_vals: FeatureValueType,
         map_from_feature: str = EDGE_PID,
     ) -> None:
+        r"""Adds a new feature that corresponds to each unique edge in
+        the graph.
 
+        Args:
+            new_feature_name (str): Name to call the new feature.
+            new_feature_vals (FeatureValueType): Values to map for that new
+                feature.
+            map_from_feature (str, optional): Key of feature to map from.
+                Size must match the number of feature values.
+                Defaults to EDGE_PID.
+        """
         if new_feature_name in self.edge_attr:
             raise AttributeError("Features cannot be overridden once created")
         if map_from_feature in self._mapped_edge_features:
@@ -302,6 +391,18 @@ class LargeGraphIndexer:
         feature_name: str = EDGE_PID,
         pids: Optional[Iterable[Hashable]] = None,
     ) -> List[Any]:
+        r"""Get edge feature values for a given set of unique edge ids.
+            Returned values are not necessarily unique.
+
+        Args:
+            feature_name (str, optional): Name of feature to fetch.
+                Defaults to EDGE_PID.
+            pids (Optional[Iterable[Hashable]], optional): Edge ids to fetch
+                for. Defaults to None, which fetches all edges.
+
+        Returns:
+            List[Any]: Node features corresponding to the specified ids.
+        """
         if feature_name in self._mapped_edge_features:
             values = self.edge_attr[feature_name].values
         else:
@@ -321,6 +422,9 @@ class LargeGraphIndexer:
         pids: Optional[Iterable[TripletLike]] = None,
         index_only: bool = False,
     ) -> Iterator[Any]:
+        """Iterator version of get_edge_features. If index_only is True,
+        yields indices instead of values.
+        """
         if pids is None:
             pids = self.edge_attr[EDGE_PID]
 
@@ -429,6 +533,18 @@ class LargeGraphIndexer:
 
     def to_data(self, node_feature_name: str,
                 edge_feature_name: Optional[str] = None) -> Data:
+        """Return a Data object containing all the specified node and
+            edge features and the graph.
+
+        Args:
+            node_feature_name (str): Feature to use for nodes
+            edge_feature_name (Optional[str], optional): Feature to use for
+                edges. Defaults to None.
+
+        Returns:
+            Data: Data object containing the specified node and
+                edge features and the graph.
+        """
         x = torch.Tensor(self.get_node_features(node_feature_name))
         node_id = torch.LongTensor(range(len(x)))
 
@@ -449,6 +565,26 @@ def get_features_for_triplets_groups(
     node_feature_name: str = "x", edge_feature_name: str = "edge_attr",
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None
 ) -> Iterator[Data]:
+    """Given an indexer and a series of triplet groups (like a dataset),
+    retrieve the specified node and edge features for each triplet from the
+    index.
+
+    Args:
+        indexer (LargeGraphIndexer): Indexer containing desired features
+        triplet_groups (Iterable[Iterable[TripletLike]]): List of lists of
+            triplets to fetch features for
+        node_feature_name (str, optional): Node feature to fetch.
+            Defaults to "x".
+        edge_feature_name (str, optional): edge feature to fetch.
+            Defaults to "edge_attr".
+        pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
+            Optional preprocessing to perform on triplets.
+            Defaults to None.
+
+    Yields:
+        Iterator[Data]: For each triplet group, yield a data object containing
+            the unique graph and features from the index.
+    """
     if pre_transform is not None:
 
         def apply_transform(trips):
@@ -505,7 +641,23 @@ def get_features_for_triplets(
     edge_feature_name: str = "edge_attr",
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
 ) -> Data:
+    """For a given set of triplets retrieve a Data object containing the
+        unique graph and features from the index.
 
+    Args:
+        indexer (LargeGraphIndexer): Indexer containing desired features
+        triplets (Iterable[TripletLike]): Triplets to fetch features for
+        node_feature_name (str, optional): Feature to use for node features.
+            Defaults to "x".
+        edge_feature_name (str, optional): Feature to use for edge features.
+            Defaults to "edge_attr".
+        pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
+            Optional preprocessing function for triplets. Defaults to None.
+
+    Returns:
+        Data: Data object containing the unique graph and features from the
+            index for the given triplets.
+    """
     gen = get_features_for_triplets_groups(indexer, [triplets],
                                            node_feature_name,
                                            edge_feature_name, pre_transform)
