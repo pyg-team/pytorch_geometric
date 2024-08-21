@@ -11,7 +11,7 @@ def is_compiling() -> bool:
     :meth:`torch.compile`.
     """
     if torch_geometric.typing.WITH_PT21:
-        return torch._dynamo.is_compiling()
+        return torch.compiler.is_compiling()
     return False  # pragma: no cover
 
 
