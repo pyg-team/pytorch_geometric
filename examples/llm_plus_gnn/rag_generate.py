@@ -14,7 +14,7 @@ import tqdm
 import pandas as pd
 
 # %%
-ds = UpdatedWebQSPDataset("small_dataset", force_reload=True, limit=20)
+ds = UpdatedWebQSPDataset("full_dataset")
 
 # %%
 triplets = chain.from_iterable((d['graph'] for d in ds.raw_dataset))
