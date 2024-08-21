@@ -24,6 +24,17 @@ def end_cuda_profile(prev_state: bool):
 
 def nvtxit(name: Optional[str] = None, n_warmups: int = 0,
            n_iters: Optional[int] = None):
+    """Enables NVTX profiling for a function.
+
+    Args:
+        name (Optional[str], optional): Name to give the reference frame for
+            the function being wrapped. Defaults to the name of the
+            function in code.
+        n_warmups (int, optional): Number of iters to call that function
+            before starting. Defaults to 0.
+        n_iters (Optional[int], optional): Number of iters of that function to
+            record. Defaults to all of them.
+    """
     def nvtx(func):
 
         nonlocal name
