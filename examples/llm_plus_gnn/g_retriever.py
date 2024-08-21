@@ -8,16 +8,17 @@ Requirements on top of basic PyG:
 import argparse
 import gc
 import math
+import multiprocessing as mp
 import re
 import time
 from os import path
+from typing import Any, Callable, Dict, List, Type
 
 import pandas as pd
 import torch
+import torch.nn as nn
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
-import torch.nn as nn
-from typing import Callable, List, Type, Dict, Any
 
 from torch_geometric import seed_everything
 from torch_geometric.data import Dataset
@@ -25,7 +26,7 @@ from torch_geometric.datasets import UpdatedWebQSPDataset, WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GRetriever
 from torch_geometric.nn.nlp import LLM
-import multiprocessing as mp
+
 
 def _detect_hallucinate(inp):
     pred, label = inp
@@ -48,6 +49,7 @@ def detect_hallucinate(pred_batch, label_batch):
     with mp.Pool(len(pred_batch)) as p:
         res = p.map(_detect_hallucinate, zip(pred_batch, label_batch))
     return res
+
 
 def compute_accuracy(eval_output) -> float:
     df = pd.concat([pd.DataFrame(d) for d in eval_output])
@@ -92,6 +94,7 @@ def compute_accuracy(eval_output) -> float:
 
     return hit
 
+
 def compute_n_parameters(model: torch.nn.Module) -> int:
     return sum([p.numel() for p in model.parameters() if p.requires_grad])
 
@@ -130,7 +133,6 @@ def inference_step(model, batch, model_save_name):
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
-
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
@@ -282,6 +284,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     print("Done!")
     return prep_time, dataset, eval_output
 
+
 def _eval_hallucinations_on_loader(outs, loader, eval_batch_size):
     model_save_list = []
     model_preds = []
@@ -290,20 +293,52 @@ def _eval_hallucinations_on_loader(outs, loader, eval_batch_size):
     for i, batch in enumerate(loader):
         correct_answer = batch.label
 
-        model_pred = model_preds[i*eval_batch_size:(i+1)*eval_batch_size]
-        model_hallucinates = detect_hallucinate(model_pred,
-                                                correct_answer)
+        model_pred = model_preds[i * eval_batch_size:(i + 1) * eval_batch_size]
+        model_hallucinates = detect_hallucinate(model_pred, correct_answer)
         model_save_list += [tup for tup in zip(model_pred, model_hallucinates)]
     return model_save_list
 
 
-def benchmark_models(models: List[Type[nn.Module]], model_names: List[str], model_kwargs: List[Dict[str, Any]], dataset: Dataset, lr: float, epochs: int, batch_size: int, eval_batch_size: int, loss_fn: Callable, inference_fn: Callable, skip_LLMs: bool = True, tiny_llama: bool = False, checkpointing: bool = True, force: bool = False, root_dir='.'):
+def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
+                     model_kwargs: List[Dict[str, Any]], dataset: Dataset,
+                     lr: float, epochs: int, batch_size: int,
+                     eval_batch_size: int, loss_fn: Callable,
+                     inference_fn: Callable, skip_LLMs: bool = True,
+                     tiny_llama: bool = False, checkpointing: bool = True,
+                     force: bool = False, root_dir='.'):
+    """Utility function for creating a model benchmark for GRetriever that
+    grid searches over hyperparameters.  Produces a DataFrame containing
+    metrics for each model.
 
+    Args:
+        models (List[Type[nn.Module]]): Models to be benchmarked.
+        model_names (List[str]): Name of save files for model checkpoints
+        model_kwargs (List[Dict[str, Any]]): Parameters to use for each
+            particular model.
+        dataset (Dataset): Input dataset to train on.
+        lr (float): Learning rate
+        epochs (int): Number of epochs
+        batch_size (int): Batch size for training
+        eval_batch_size (int): Batch size for eval. Also determines
+            hallucination detection concurrancy.
+        loss_fn (Callable): Loss function
+        inference_fn (Callable): Inference function
+        skip_LLMs (bool, optional): Whether to skip LLM-only runs.
+            Defaults to True.
+        tiny_llama (bool, optional): Whether to use tiny llama as LLM.
+            Defaults to False.
+        checkpointing (bool, optional): Whether to checkpoint models.
+            Defaults to True.
+        force (bool, optional): Whether to rerun already existing results.
+            Defaults to False.
+        root_dir (str, optional): Dir to save results and checkpoints in.
+            Defaults to '.'.
+    """
     model_log: Dict[str, Dict[str, Any]] = dict()
     idx_split = dataset.split_idxs
     test_dataset = [dataset[i] for i in idx_split['test']]
-    loader = DataLoader(test_dataset, batch_size=eval_batch_size, drop_last=False,
-                        pin_memory=True, shuffle=False)
+    loader = DataLoader(test_dataset, batch_size=eval_batch_size,
+                        drop_last=False, pin_memory=True, shuffle=False)
 
     if not skip_LLMs:
         if tiny_llama:
@@ -314,28 +349,37 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str], mode
         else:
             pure_llm = LLM(model_name="llama2-7b", num_params=7)
 
-        if not path.exists(root_dir +"/pure_llm_model_log.pt"):
+        if not path.exists(root_dir + "/pure_llm_model_log.pt"):
             model_log["pure_llm"] = dict()
-            
+
             pure_preds = []
             for batch in tqdm(loader):
-                pure_llm_preds = pure_llm.inference(batch.question, batch.desc, max_tokens=256)
+                pure_llm_preds = pure_llm.inference(batch.question, batch.desc,
+                                                    max_tokens=256)
                 pure_preds += pure_llm_preds
             pure_preds = [{"pred": pred} for pred in pure_preds]
 
             model_log["pure_llm"]["preds"] = pure_preds
-            model_log["pure_llm"]["hallucinates_list"] = _eval_hallucinations_on_loader(pure_preds, loader, eval_batch_size)
+            model_log["pure_llm"]["hallucinates_list"] = \
+                _eval_hallucinations_on_loader(pure_preds, loader,
+                                               eval_batch_size)
             model_log["pure_llm"]["n_params"] = compute_n_parameters(pure_llm)
-            torch.save(model_log["pure_llm"], root_dir+"/pure_llm_model_log.pt")
+            torch.save(model_log["pure_llm"],
+                       root_dir + "/pure_llm_model_log.pt")
         else:
-            model_log["pure_llm"] = torch.load(root_dir+"/pure_llm_model_log.pt")
+            model_log["pure_llm"] = \
+                torch.load(root_dir+"/pure_llm_model_log.pt")
 
         # LORA
-        if not path.exists(root_dir+"/tuned_llm_model_log.pt"):
+        if not path.exists(root_dir + "/tuned_llm_model_log.pt"):
             model_log["tuned_llm"] = dict()
             since = time.time()
             gc.collect()
-            prep_time, _, lora_eval_outs = train(since, epochs, None, None, batch_size, eval_batch_size, lr, loss_fn, inference_fn, model=pure_llm, dataset=dataset)
+            prep_time, _, lora_eval_outs = train(since, epochs, None, None,
+                                                 batch_size, eval_batch_size,
+                                                 lr, loss_fn, inference_fn,
+                                                 model=pure_llm,
+                                                 dataset=dataset)
             torch.cuda.empty_cache()
             torch.cuda.reset_max_memory_allocated()
             gc.collect()
@@ -346,33 +390,39 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str], mode
             print("E2E time (e2e_time) =", e2e_time, "seconds")
             print("E2E tme minus Prep Time =", e2e_time - prep_time, "seconds")
 
-            model_log["tuned_llm"]["hallucinates_list"] = _eval_hallucinations_on_loader(lora_eval_outs, loader, eval_batch_size)
+            model_log["tuned_llm"]["hallucinates_list"] = \
+                _eval_hallucinations_on_loader(lora_eval_outs, loader,
+                                               eval_batch_size)
             model_log["tuned_llm"]["n_params"] = compute_n_parameters(pure_llm)
-            torch.save(model_log["tuned_llm"], root_dir+"/tuned_llm_model_log.pt")
+            torch.save(model_log["tuned_llm"],
+                       root_dir + "/tuned_llm_model_log.pt")
         else:
-            model_log["tuned_llm"] = torch.load(root_dir+"/tuned_llm_model_log.pt")
-        
+            model_log["tuned_llm"] = \
+                torch.load(root_dir+"/tuned_llm_model_log.pt")
+
         del pure_llm
         gc.collect()
-     
+
     # All other models
     for name, Model, kwargs in zip(model_names, models, model_kwargs):
         model_log[name] = dict()
         train_model = True
-        if path.exists(root_dir+f"/{name}.pt") and not force:
+        if path.exists(root_dir + f"/{name}.pt") and not force:
             print(f"Model {name} appears to already exist.")
             print("Would you like to retrain?")
             train_model = str(input("(y/n):")).lower() == "y"
-        
+
         if train_model:
             since = time.time()
             gc.collect()
             model = Model(**kwargs)
             prep_time, _, model_eval_outs = train(
-                since=since, num_epochs=epochs, hidden_channels=None, num_gnn_layers=None,
-                batch_size=batch_size, eval_batch_size=eval_batch_size, lr=lr, loss_fn=loss_fn,
+                since=since, num_epochs=epochs, hidden_channels=None,
+                num_gnn_layers=None, batch_size=batch_size,
+                eval_batch_size=eval_batch_size, lr=lr, loss_fn=loss_fn,
                 inference_fn=inference_fn, checkpointing=checkpointing,
-                tiny_llama=tiny_llama, dataset=dataset, model_save_name=root_dir+'/'+name, model=model)
+                tiny_llama=tiny_llama, dataset=dataset,
+                model_save_name=root_dir + '/' + name, model=model)
             torch.cuda.empty_cache()
             torch.cuda.reset_max_memory_allocated()
             gc.collect()
@@ -386,33 +436,43 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str], mode
             del model
             gc.collect()
         else:
-            model_eval_outs = torch.load(root_dir+f"/{name}_eval_outs.pt")
-        
+            model_eval_outs = torch.load(root_dir + f"/{name}_eval_outs.pt")
+
         # Calculate Hallucinations
         skip_hallucination_detection = False
 
-        if path.exists(root_dir+f"/{name}_model_log.pt") and not force:
+        if path.exists(root_dir + f"/{name}_model_log.pt") and not force:
             print(f"Saved outputs for {name} have been found.")
             print("Would you like to redo?")
             user_input = str(input("(y/n):")).lower()
             skip_hallucination_detection = user_input != "y"
 
-
         if not skip_hallucination_detection:
-            model_save_list = _eval_hallucinations_on_loader(model_eval_outs, loader, eval_batch_size)
- 
+            model_save_list = _eval_hallucinations_on_loader(
+                model_eval_outs, loader, eval_batch_size)
+
             model_log[name]["hallucinates_list"] = model_save_list
-            torch.save(model_log[name], root_dir+f"/{name}_model_log.pt")
+            torch.save(model_log[name], root_dir + f"/{name}_model_log.pt")
         else:
-            model_log[name]["hallucinates_list"] = torch.load(root_dir+f"/{name}_model_log.pt")["hallucinates_list"]
-    
-    hal_dict = {k: [tup[1] for tup in v["hallucinates_list"]] for (k, v) in model_log.items()}
+            model_log[name]["hallucinates_list"] = \
+                torch.load(
+                    root_dir+f"/{name}_model_log.pt"
+                    )["hallucinates_list"]
+
+    hal_dict = {
+        k: [tup[1] for tup in v["hallucinates_list"]]
+        for (k, v) in model_log.items()
+    }
     hallucinates_df = pd.DataFrame(hal_dict).astype(str)
     hallucinates_df = hallucinates_df.apply(pd.Series.value_counts).transpose()
-    hallucinates_df['e2e_time'] = pd.Series({k: v.get('e2e_time') for (k, v) in model_log.items()})
-    hallucinates_df['n_params'] = pd.Series({k: v.get('n_params') for (k, v) in model_log.items()})
+    hallucinates_df['e2e_time'] = pd.Series(
+        {k: v.get('e2e_time')
+         for (k, v) in model_log.items()})
+    hallucinates_df['n_params'] = pd.Series(
+        {k: v.get('n_params')
+         for (k, v) in model_log.items()})
     print(hallucinates_df)
-    hallucinates_df.to_csv(root_dir+"/hallucinates_df.csv", index=False)
+    hallucinates_df.to_csv(root_dir + "/hallucinates_df.csv", index=False)
 
 
 def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
@@ -424,8 +484,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     idx_split = dataset.split_idxs
     test_dataset = [dataset[i] for i in idx_split['test']]
     # batch size 1 loader for simplicity
-    loader = DataLoader(test_dataset, batch_size=eval_batch_size, drop_last=False,
-                        pin_memory=True, shuffle=False)
+    loader = DataLoader(test_dataset, batch_size=eval_batch_size,
+                        drop_last=False, pin_memory=True, shuffle=False)
     if tiny_llama:
         pure_llm = LLM(
             model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
@@ -469,14 +529,20 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                                                    max_tokens=256)
                 pure_llm_hallucinates = detect_hallucinate(
                     pure_llm_pred, correct_answer)
-            untuned_llm_save_list += [tup for tup in zip(pure_llm_pred, pure_llm_hallucinates)]
+            untuned_llm_save_list += [
+                tup for tup in zip(pure_llm_pred, pure_llm_hallucinates)
+            ]
 
-            gnn_llm_pred = gnn_llm_preds[i*eval_batch_size:(i+1)*eval_batch_size]
+            gnn_llm_pred = gnn_llm_preds[i * eval_batch_size:(i + 1) *
+                                         eval_batch_size]
             gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,
                                                       correct_answer)
-            gnn_save_list += [tup for tup in zip(gnn_llm_pred, gnn_llm_hallucinates)]
+            gnn_save_list += [
+                tup for tup in zip(gnn_llm_pred, gnn_llm_hallucinates)
+            ]
 
-            for gnn_llm_hal, pure_llm_hal in zip(gnn_llm_hallucinates, pure_llm_hallucinates):
+            for gnn_llm_hal, pure_llm_hal in zip(gnn_llm_hallucinates,
+                                                 pure_llm_hallucinates):
                 if gnn_llm_hal == "skip" or pure_llm_hal == "skip":  # noqa
                     # skipping when hallucination is hard to eval
                     continue
@@ -534,27 +600,35 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     for i, batch in enumerate(tqdm(loader)):
         question = batch.question
         correct_answer = batch.label
-        gnn_llm_pred, gnn_llm_hallucinates = list(zip(*gnn_save_list[i*eval_batch_size:(i+1)*eval_batch_size]))
-        untuned_llm_pred, untuned_llm_hallucinates = list(zip(*untuned_llm_save_list[i*eval_batch_size:(i+1)*eval_batch_size]))
+        gnn_llm_pred, gnn_llm_hallucinates = list(
+            zip(*gnn_save_list[i * eval_batch_size:(i + 1) * eval_batch_size]))
+        untuned_llm_pred, untuned_llm_hallucinates = list(
+            zip(*untuned_llm_save_list[i * eval_batch_size:(i + 1) *
+                                       eval_batch_size]))
         if gnn_llm_hallucinates == "skip" or untuned_llm_hallucinates == "skip":  # noqa
             continue
-        pure_llm_pred = pure_llm_preds[i*eval_batch_size:(i+1)*eval_batch_size]
+        pure_llm_pred = pure_llm_preds[i * eval_batch_size:(i + 1) *
+                                       eval_batch_size]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
         for j in range(len(gnn_llm_pred)):
-            if gnn_llm_hallucinates[j] == "skip" or untuned_llm_hallucinates[j] == "skip" or pure_llm_hallucinates[j] == "skip":
+            if gnn_llm_hallucinates[j] == "skip" or untuned_llm_hallucinates[
+                    j] == "skip" or pure_llm_hallucinates[j] == "skip":
                 continue
             trained_llm_hallucin_sum += int(pure_llm_hallucinates[j])
             if skip_pretrained_LLM:
                 # we did not check the untrained LLM, so do not decide to demo
                 # based on this.
                 untuned_llm_hallucinates = True
-            if untuned_llm_hallucinates[j] and pure_llm_hallucinates[j] and not gnn_llm_hallucinates[j]:  # noqa
+            if untuned_llm_hallucinates[j] and pure_llm_hallucinates[
+                    j] and not gnn_llm_hallucinates[j]:  # noqa
                 final_prnt_str += "Prompt: '" + question[j] + "'\n"
                 final_prnt_str += "Label: '" + correct_answer[j] + "'\n"
                 if not skip_pretrained_LLM:
-                    final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred[j] + "'\n"  # noqa
-                final_prnt_str += "Tuned LLM Output: '" + pure_llm_pred[j] + "'\n"
+                    final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred[
+                        j] + "'\n"  # noqa
+                final_prnt_str += "Tuned LLM Output: '" + pure_llm_pred[
+                    j] + "'\n"
                 final_prnt_str += "GNN+LLM Output: '" + gnn_llm_pred[j] + "'\n"
                 final_prnt_str += "\n" + "#" * 20 + "\n\n"
     if not skip_pretrained_LLM:
