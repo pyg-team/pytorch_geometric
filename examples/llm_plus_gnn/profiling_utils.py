@@ -100,6 +100,7 @@ class RemoteDataType(Enum):
 
 @dataclass
 class RemoteGraphBackendLoader:
+    """Utility class to load triplets into a RAG Backend."""
     path: str
     datatype: RemoteDataType
     graph_store_type: Type[ConvertableGraphStore]
@@ -140,7 +141,37 @@ def create_remote_backend_from_triplets(
     node_method_kwargs: Optional[Dict[str, Any]] = None,
     edge_method_kwargs: Optional[Dict[str, Any]] = None
 ) -> RemoteGraphBackendLoader:
+    """Utility function that can be used to create a RAG Backend from triplets.
 
+    Args:
+        triplets (Iterable[TripletLike]): Triplets to load into the RAG
+            Backend.
+        node_embedding_model (Module): Model to embed nodes into a feature
+            space.
+        edge_embedding_model (Module | None, optional): Model to embed edges
+            into a feature space. Defaults to the node model.
+        graph_db (Type[ConvertableGraphStore], optional): GraphStore class to
+            use. Defaults to LocalGraphStore.
+        feature_db (Type[ConvertableFeatureStore], optional): FeatureStore
+            class to use. Defaults to LocalFeatureStore.
+        node_method_to_call (str, optional): method to call for embeddings on
+            the node model. Defaults to "forward".
+        edge_method_to_call (str | None, optional): method to call for
+            embeddings on the edge model. Defaults to the node method.
+        pre_transform (Callable[[TripletLike], TripletLike] | None, optional):
+            optional preprocessing function for triplets. Defaults to None.
+        path (str, optional): path to save resulting stores. Defaults to ''.
+        n_parts (int, optional): Number of partitons to store in.
+            Defaults to 1.
+        node_method_kwargs (Optional[Dict[str, Any]], optional): args to pass
+            into node encoding method. Defaults to None.
+        edge_method_kwargs (Optional[Dict[str, Any]], optional): args to pass
+            into edge encoding method. Defaults to None.
+
+    Returns:
+        RemoteGraphBackendLoader: Loader to load RAG backend from disk or
+            memory.
+    """
     # Will return attribute errors for missing attributes
     if not issubclass(graph_db, ConvertableGraphStore):
         getattr(graph_db, "from_data")

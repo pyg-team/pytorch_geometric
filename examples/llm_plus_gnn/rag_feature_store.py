@@ -35,6 +35,17 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
     def retrieve_seed_nodes(self, query: Any, k_nodes: int = 5) -> InputNodes:
+        """Retrieve the seed nodes for a given query using KNN search after
+            embedding the query.
+
+        Args:
+            query (Any): Input to be embedded and used for KNN search.
+            k_nodes (int, optional): Number of nodes to search for in KNN
+                search. Defaults to 5.
+
+        Returns:
+            InputNodes: Input object to be used in a PyG Sampler.
+        """
         return next(self._retrieve_seed_nodes_batch([query], k_nodes))
 
     def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
@@ -51,6 +62,17 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             yield indices
 
     def retrieve_seed_edges(self, query: Any, k_edges: int = 3) -> InputEdges:
+        """Retrieve the seed edges for a given query using KNN search after
+        embedding the query.
+
+        Args:
+            query (Any): Input to be embedded and used for KNN search.
+            k_edges (int, optional): Number of edges to search for in KNN
+                search. Defaults to 3.
+
+        Returns:
+            InputNodes: Input object to be used in a PyG Sampler.
+        """
         return next(self._retrieve_seed_edges_batch([query], k_edges))
 
     def _retrieve_seed_edges_batch(self, query: Iterable[Any],
@@ -71,7 +93,17 @@ class KNNRAGFeatureStore(LocalFeatureStore):
     def load_subgraph(
         self, sample: Union[SamplerOutput, HeteroSamplerOutput]
     ) -> Union[Data, HeteroData]:
+        """Retrieve subgraph features corresponding to the given sampler
+        output.
 
+        Args:
+            sample (Union[SamplerOutput, HeteroSamplerOutput]): Output from a
+                PyG Sampler to retrieve subgraph features for.
+
+        Returns:
+            Union[Data, HeteroData]: Data object containing subgraph features
+                and edge indices.
+        """
         if isinstance(sample, HeteroSamplerOutput):
             raise NotImplementedError
 
@@ -89,5 +121,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
 class SentenceTransformerFeatureStore(KNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
-        kwargs['model_name'] = kwargs.get('model_name', 'sentence-transformers/all-roberta-large-v1')
+        kwargs['model_name'] = \
+            kwargs.get('model_name',
+                       'sentence-transformers/all-roberta-large-v1')
         super().__init__(SentenceTransformer, *args, **kwargs)

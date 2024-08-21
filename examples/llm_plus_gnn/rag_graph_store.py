@@ -68,6 +68,20 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self, seed_nodes: InputNodes, seed_edges: InputEdges,
         num_neighbors: Optional[NumNeighborsType] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        """Sample the graph starting from the given nodes and edges using the
+        in-built NeighborSampler.
+
+        Args:
+            seed_nodes (InputNodes): Seed nodes to start sampling from.
+            seed_edges (InputEdges): Seed edges to start sampling from.
+            num_neighbors (Optional[NumNeighborsType], optional): Parameters
+                to determine how many hops and number of neighbors per hop.
+                Defaults to None.
+
+        Returns:
+            Union[SamplerOutput, HeteroSamplerOutput]: NeighborSamplerOutput
+                for the input.
+        """
         if not self._sampler_is_initialized:
             self._init_sampler()
         if num_neighbors is not None:
@@ -81,8 +95,9 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         device = seed_nodes.device
 
         # TODO: Call sample_from_edges for seed_edges
+        # Turning them into nodes for now.
         seed_edges = self.edge_index.to(device).T[seed_edges.to(
-            device)].reshape((-1))
+            device)].reshape(-1)
         seed_nodes = torch.cat((seed_nodes, seed_edges), dim=0)
 
         seed_nodes = seed_nodes.unique().contiguous()
