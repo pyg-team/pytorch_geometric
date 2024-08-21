@@ -339,29 +339,29 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
             [getattr(e, "cpu_memory_usage", 0) or 0 for e in events])
     self_cuda_memory = None
     has_self_cuda_memory = any(
-        hasattr(e, "self_cuda_memory_usage") for e in events)
+        hasattr(e, "self_device_memory_usage") for e in events)
     if has_self_cuda_memory:
         self_cuda_memory = sum(
-            [getattr(e, "self_cuda_memory_usage", 0) or 0 for e in events])
+            [getattr(e, "self_device_memory_usage", 0) or 0 for e in events])
     cuda_memory = None
-    has_cuda_memory = any(hasattr(e, "cuda_memory_usage") for e in events)
+    has_cuda_memory = any(hasattr(e, "device_memory_usage") for e in events)
     if has_cuda_memory:
         cuda_memory = sum(
-            [getattr(e, "cuda_memory_usage", 0) or 0 for e in events])
+            [getattr(e, "device_memory_usage", 0) or 0 for e in events])
 
     # self CUDA time supported in torch >= 1.7
     self_cuda_total = None
     has_self_cuda_time = any(
-        hasattr(e, "self_cuda_time_total") for e in events)
+        hasattr(e, "self_device_time_total") for e in events)
     if has_self_cuda_time:
         self_cuda_total = sum(
-            [getattr(e, "self_cuda_time_total", 0) or 0 for e in events])
+            [getattr(e, "self_device_time_total", 0) or 0 for e in events])
 
     return Measure(
         self_cpu_total=sum([e.self_cpu_time_total or 0 for e in events]),
         cpu_total=sum([e.cpu_time_total or 0 for e in events]),
         self_cuda_total=self_cuda_total,
-        cuda_total=sum([e.cuda_time_total or 0 for e in events]),
+        cuda_total=sum([e.device_time_total or 0 for e in events]),
         self_cpu_memory=self_cpu_memory,
         cpu_memory=cpu_memory,
         self_cuda_memory=self_cuda_memory,
