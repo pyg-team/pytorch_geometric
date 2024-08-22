@@ -37,7 +37,7 @@ unsupported_methods = [
 
 class HetGraphNet(torch.nn.Module):
     def __init__(self, model_config: ModelConfig, metadata: dict,
-                 in_channels: int = -1, base_conv: str = 'han',
+                 in_channels: int = -1, base_conv: Literal['han', 'hgt'] = 'han',
                  hid_dim: int = 8):
         super().__init__()
 
@@ -48,7 +48,7 @@ class HetGraphNet(torch.nn.Module):
         else:
             self.out_channels = 1
 
-        if (base_conv == 'hgt'):
+        if base_conv == 'hgt':
             self.conv = HGTConv(in_channels, self.hid_dim, heads=2,
                                 metadata=metadata)
             self.conv2 = HGTConv(self.hid_dim, self.out_channels, heads=1,
@@ -58,7 +58,8 @@ class HetGraphNet(torch.nn.Module):
                                 metadata=metadata)
             self.conv2 = HANConv(self.hid_dim, self.out_channels, heads=1,
                                  metadata=metadata)
-
+        else:
+            raise ValueError(f"Unsupported base conv {base_conv}")
         self.relu = torch.nn.ReLU()
 
     def forward(self, x_dict, edge_index_dict, batch_info=None,
