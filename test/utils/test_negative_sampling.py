@@ -203,8 +203,25 @@ def test_structured_negative_sampling_sparse():
 
 
 def test_structured_negative_sampling_feasible():
-    edge_index = torch.LongTensor([[0, 0, 1, 1, 2, 2, 2],
-                                   [1, 2, 0, 2, 0, 1, 1]])
-    assert not structured_negative_sampling_feasible(edge_index, 3, False)
-    assert structured_negative_sampling_feasible(edge_index, 3, True)
-    assert structured_negative_sampling_feasible(edge_index, 4, False)
+
+    def create_ring_graph(num_nodes):
+        forward_edges = torch.stack([torch.arange(0, num_nodes, dtype=torch.long),
+                                     (torch.arange(0, num_nodes, dtype=torch.long) + 1) % num_nodes], dim=0)
+        backward_edges = torch.stack([torch.arange(0, num_nodes, dtype=torch.long),
+                                      (torch.arange(0, num_nodes, dtype=torch.long) - 1) % num_nodes], dim=0)
+        return torch.concat([forward_edges, backward_edges], dim=1)
+
+    # ring 3 is always unfeasible
+    ring_3 = create_ring_graph(3)
+    assert not structured_negative_sampling_feasible(ring_3, 3, False)
+    assert not structured_negative_sampling_feasible(ring_3, 3, True)
+
+    # ring 4 is feasible only if we consider self loops
+    ring_4 = create_ring_graph(4)
+    assert not structured_negative_sampling_feasible(ring_4, 4, False)
+    assert structured_negative_sampling_feasible(ring_4, 4, True)
+
+    # ring 5 is always feasible
+    ring_5 = create_ring_graph(5)
+    assert structured_negative_sampling_feasible(ring_5, 5, False)
+    assert structured_negative_sampling_feasible(ring_5, 5, True)

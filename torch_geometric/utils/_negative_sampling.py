@@ -88,7 +88,7 @@ def negative_sampling(
     edge_id = edge_index_to_vector_id(edge_index, size)
     edge_id, _ = index_sort(
         edge_id, max_value=num_tot_edges
-    )  # TODO: is this O(1) if the input is already sorted?
+    )
 
     method = get_method(method, size)
 
@@ -269,7 +269,7 @@ def structured_negative_sampling(
     edge_id = edge_index_to_vector_id(edge_index, size)
     edge_id, _ = index_sort(
         edge_id, max_value=num_tot_edges
-    )  # TODO: is this O(1) if the input is already sorted?
+    )
 
     # select the method
     method = get_method(method, size)
@@ -284,9 +284,6 @@ def structured_negative_sampling(
         edge_index, num_nodes, k, not contains_neg_self_loops, method, device)
 
     neg_edge_mask = get_neg_edge_mask(edge_id, guess_edge_id)
-    if not torch.all(torch.any(neg_edge_mask.view(-1, k), dim=1)):
-        warnings.warn(
-            'We were not able to sample all negative edges requested!')
 
     if method == 'sparse':
         neg_col = -torch.ones_like(edge_index[0])
@@ -298,6 +295,11 @@ def structured_negative_sampling(
         col_to_save = guess_col.view(
             num_edges, k)[neg_edge_mask]  # this the list of neg samples
         neg_col[ok_edges] = col_to_save.view(-1)
+
+        if not torch.all(ok_edges):
+            warnings.warn(
+                'We were not able to sample all negative edges requested!')
+
     else:
         shape = (num_nodes,
                  num_nodes if contains_neg_self_loops else num_nodes - 1)
