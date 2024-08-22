@@ -371,3 +371,14 @@ MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
+
+# Serialization ###############################################################
+
+if WITH_PT24:
+    torch.serialization.add_safe_globals([
+        SparseTensor,
+        SparseStorage,
+        TensorFrame,
+        MockTorchCSCTensor,
+        EdgeTypeStr,
+    ])
