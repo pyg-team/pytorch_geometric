@@ -10,6 +10,7 @@ import torch.nn.functional as F
 
 import torch_geometric.typing
 from torch_geometric.data import Data
+from torch_geometric.io import fs
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
@@ -235,7 +236,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
-    model = torch.load(path)
+    model = fs.torch_load(path)
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 

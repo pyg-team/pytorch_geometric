@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 import torch
 
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.io import fs
 
 MODEL_STATE = 'model_state'
 OPTIMIZER_STATE = 'optimizer_state'
@@ -25,7 +26,7 @@ def load_ckpt(
     if not osp.exists(path):
         return 0
 
-    ckpt = torch.load(path)
+    ckpt = fs.torch_load(path)
     model.load_state_dict(ckpt[MODEL_STATE])
     if optimizer is not None and OPTIMIZER_STATE in ckpt:
         optimizer.load_state_dict(ckpt[OPTIMIZER_STATE])

@@ -7,6 +7,7 @@ import torch
 import torch_geometric
 from torch_geometric import EdgeIndex, Index
 from torch_geometric.data import Batch, Data, HeteroData
+from torch_geometric.io import fs
 from torch_geometric.testing import get_random_edge_index, withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_edge_index, to_torch_sparse_tensor
@@ -330,7 +331,7 @@ def test_pickling(tmp_path):
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    batch = torch.load(path)
+    batch = fs.torch_load(path)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
