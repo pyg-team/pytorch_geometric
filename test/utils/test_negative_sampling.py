@@ -203,12 +203,15 @@ def test_structured_negative_sampling_sparse():
 
 
 def test_structured_negative_sampling_feasible():
-
     def create_ring_graph(num_nodes):
-        forward_edges = torch.stack([torch.arange(0, num_nodes, dtype=torch.long),
-                                     (torch.arange(0, num_nodes, dtype=torch.long) + 1) % num_nodes], dim=0)
-        backward_edges = torch.stack([torch.arange(0, num_nodes, dtype=torch.long),
-                                      (torch.arange(0, num_nodes, dtype=torch.long) - 1) % num_nodes], dim=0)
+        forward_edges = torch.stack([
+            torch.arange(0, num_nodes, dtype=torch.long),
+            (torch.arange(0, num_nodes, dtype=torch.long) + 1) % num_nodes
+        ], dim=0)
+        backward_edges = torch.stack([
+            torch.arange(0, num_nodes, dtype=torch.long),
+            (torch.arange(0, num_nodes, dtype=torch.long) - 1) % num_nodes
+        ], dim=0)
         return torch.concat([forward_edges, backward_edges], dim=1)
 
     # ring 3 is always unfeasible

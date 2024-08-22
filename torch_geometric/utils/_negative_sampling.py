@@ -86,9 +86,7 @@ def negative_sampling(
 
     # transform a pair (u,v) in an edge id
     edge_id = edge_index_to_vector_id(edge_index, size)
-    edge_id, _ = index_sort(
-        edge_id, max_value=num_tot_edges
-    )
+    edge_id, _ = index_sort(edge_id, max_value=num_tot_edges)
 
     method = get_method(method, size)
 
@@ -267,9 +265,7 @@ def structured_negative_sampling(
 
     # transform a pair (u,v) in an edge id
     edge_id = edge_index_to_vector_id(edge_index, size)
-    edge_id, _ = index_sort(
-        edge_id, max_value=num_tot_edges
-    )
+    edge_id, _ = index_sort(edge_id, max_value=num_tot_edges)
 
     # select the method
     method = get_method(method, size)
