@@ -267,8 +267,6 @@ def main(args):
     gnn_test_acc = 0.0
     lm_test_acc = 0.0
     em_phase = em_order
-    # EM step
-    early_stopping = 0
     """
     We run E-step(LM training) and M-Step(GNN training) alternatively in each
     em iterations, so the total number of iterations is num_em_iter * 2 and
@@ -284,6 +282,7 @@ def main(args):
         num_epochs = lm_epochs
         train_loader = text_train_loader
         test_loader = text_data_loader
+        early_stopping = 0
         if em_phase == 'gnn':
             train_loader = graph_train_loader
             num_epochs = gnn_epochs
@@ -313,11 +312,11 @@ def main(args):
 
         if em_phase == 'gnn':
             gnn_test_acc = max(gnn_test_acc, final_test_acc)
-            model.gnn.cpu()
+            model.gnn = model.gnn.to('cpu', non_blocking=True)
             em_phase = 'lm'
         else:
             lm_test_acc = max(lm_test_acc, final_test_acc)
-            model.lm.cpu()
+            model.lm = model.lm.to('cpu', non_blocking=True)
             em_phase = 'gnn'
         torch.cuda.empty_cache()
     print(f'Best GNN acc: {gnn_test_acc}, LM acc: {lm_test_acc}')
