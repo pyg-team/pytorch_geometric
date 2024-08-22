@@ -5,7 +5,7 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn import HANConv, HGTConv, MessagePassing
-from torch_geometric.typing import EdgeType
+from torch_geometric.typing import EDGE_TYPE_STR_SPLIT, EdgeType
 
 
 def set_masks(
@@ -51,8 +51,9 @@ def set_hetero_masks(
             for edge_type in mask_dict.keys():
                 if edge_type in module:
                     edge_level_module = module[edge_type]
-                elif '__'.join(edge_type) in module:
-                    edge_level_module = module['__'.join(edge_type)]
+                elif EDGE_TYPE_STR_SPLIT.join(edge_type) in module:
+                    edge_level_module = module[EDGE_TYPE_STR_SPLIT.join(
+                        edge_type)]
                 else:
                     continue
 
@@ -69,12 +70,12 @@ def set_hetero_masks(
                 continue
 
             loop_mask_dict = {
-                '__'.join(k): edge_index[0] != edge_index[1]
+                EDGE_TYPE_STR_SPLIT.join(k): edge_index[0] != edge_index[1]
                 for k, edge_index in edge_index_dict.items()
             }
 
             edge_mask_dict = {
-                '__'.join(k): mask
+                EDGE_TYPE_STR_SPLIT.join(k): mask
                 for k, mask in mask_dict.items()
             }
 
@@ -83,7 +84,9 @@ def set_hetero_masks(
             # so while this would be dangerous on older versions,
             # it is safe to assume the order here will be the same
             # order passed to the convolution's forward
-            edge_keys_dict = ['__'.join(k) for k in edge_index_dict.keys()]
+            edge_keys_dict = [
+                EDGE_TYPE_STR_SPLIT.join(k) for k in edge_index_dict.keys()
+            ]
 
             module.explain = True
             module._edge_mask = edge_mask_dict
