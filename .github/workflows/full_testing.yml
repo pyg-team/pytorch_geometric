@@ -36,13 +36,13 @@ jobs:
           - os: macos-14
             python-version: '3.8'
           - os: macos-14
-            torch-verion: 1.13.0
+            torch-version: 1.13.0
           - os: macos-14
-            torch-verion: 2.0.0
+            torch-version: 2.0.0
           - os: macos-14
-            torch-verion: 2.1.0
+            torch-version: 2.1.0
           - os: macos-14
-            torch-verion: 2.2.0
+            torch-version: 2.2.0
 
     steps:
       - name: Checkout repository
