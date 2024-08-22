@@ -220,11 +220,11 @@ def main(args):
     def load_model(em_phase):
         print(f'Move {em_phase} model from cpu memory')
         if em_phase == 'lm':
-            model.lm = model.lm.to(device)
+            model.lm = model.lm.to(device, non_blocking=True)
             optimizer = torch.optim.Adam(model.lm.parameters(), lr=lm_lr)
             # print(f'Load language model train with {epoch} epochs')
         if em_phase == 'gnn':
-            model.gnn = model.gnn.to(device)
+            model.gnn = model.gnn.to(device, non_blocking=True)
             optimizer = torch.optim.Adam(model.gnn.parameters(), lr=gnn_lr)
             # print(f'Load GNN model train with {epoch} epochs')
         return optimizer
