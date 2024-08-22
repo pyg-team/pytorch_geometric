@@ -41,6 +41,11 @@ class OPFDataset(InMemoryDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         case_name (str, optional): The name of the original pglib-opf case.
             (default: :obj:`"pglib_opf_case14_ieee"`)
+        num_groups (int, optional): The dataset is divided into 20 groups with 
+            each group containing 15000 samples. For large systems, this amount
+            of data can be overwhelming. The num_groups parameters controls the
+            amount of data being downloaded. Allowable values are [1, 20]. 
+            (default: :obj:`20`)
         topological_perturbations (bool, optional): Whether to use the dataset
             with added topological perturbations. (default: :obj:`False`)
         transform (callable, optional): A function/transform that takes in
@@ -76,6 +81,7 @@ class OPFDataset(InMemoryDataset):
             'pglib_opf_case10000_goc',
             'pglib_opf_case13659_pegase',
         ] = 'pglib_opf_case14_ieee',
+        num_groups: int = 20,
         topological_perturbations: bool = False,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
@@ -85,6 +91,7 @@ class OPFDataset(InMemoryDataset):
 
         self.split = split
         self.case_name = case_name
+        self.num_groups = num_groups
         self.topological_perturbations = topological_perturbations
 
         self._release = 'dataset_release_1'
@@ -107,7 +114,7 @@ class OPFDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [f'{self.case_name}_{i}.tar.gz' for i in range(20)]
+        return [f'{self.case_name}_{i}.tar.gz' for i in range(self.num_groups)]
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -124,7 +131,7 @@ class OPFDataset(InMemoryDataset):
         val_data_list = []
         test_data_list = []
 
-        for group in tqdm.tqdm(range(20)):
+        for group in tqdm.tqdm(range(self.num_groups)):
             tmp_dir = osp.join(
                 self.raw_dir,
                 'gridopt-dataset-tmp',
