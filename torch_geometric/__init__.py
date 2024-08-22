@@ -59,6 +59,8 @@ __all__ = [
 
 if torch_geometric.typing.WITH_PT24:
     torch.serialization.add_safe_globals([
+        dict,
+        list,
         defaultdict,
         Index,
         torch_geometric.index.CatMetadata,
