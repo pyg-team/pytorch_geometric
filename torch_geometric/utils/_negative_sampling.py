@@ -475,7 +475,7 @@ def get_neg_edge_mask(edge_id, guess_edge_id):
 
 
 def edge_index_to_vector_id(
-    edge_index: Tensor | Tuple[Tensor, Tensor],
+    edge_index: Union[Tensor, Tuple[Tensor, Tensor]],
     size: Tuple[int, int],
 ) -> Tensor:
 
