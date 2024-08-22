@@ -53,6 +53,8 @@ __all__ = [
     '__version__',
 ]
 
+# Serialization ###############################################################
+
 if torch_geometric.typing.WITH_PT24:
     torch.serialization.add_safe_globals([
         Index,

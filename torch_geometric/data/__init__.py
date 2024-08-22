@@ -77,7 +77,6 @@ if torch_geometric.typing.WITH_PT24:
     torch.serialization.add_safe_globals([
         Data,
         HeteroData,
-        Batch,
         TemporalData,
         ClusterData,
         TensorAttr,

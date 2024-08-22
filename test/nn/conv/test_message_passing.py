@@ -9,7 +9,6 @@ from torch.nn import Linear
 
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
-from torch_geometric.io import fs
 from torch_geometric.nn import GATConv, MessagePassing, aggr
 from torch_geometric.typing import (
     Adj,
@@ -140,7 +139,7 @@ def test_my_conv_save(tmp_path):
 
     path = osp.join(tmp_path, 'model.pt')
     torch.save(conv, path)
-    conv = fs.torch_load(path)
+    conv = torch.load(path, weights_only=False)
     assert conv._jinja_propagate is not None
     assert conv.__class__._jinja_propagate is not None
     assert conv._orig_propagate is not None
@@ -739,7 +738,7 @@ def test_pickle(tmp_path):
     GATConv.propagate = GATConv._orig_propagate
     GATConv.edge_updater = GATConv._orig_edge_updater
 
-    model = fs.torch_load(path)
+    model = torch.load(path, weights_only=False)
     torch.jit.script(model)
 
 
