@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import torch
 import torch_geometric.typing
 
@@ -57,6 +59,7 @@ __all__ = [
 
 if torch_geometric.typing.WITH_PT24:
     torch.serialization.add_safe_globals([
+        defaultdict,
         Index,
         torch_geometric.index.CatMetadata,
         EdgeIndex,
