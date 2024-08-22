@@ -37,8 +37,8 @@ unsupported_methods = [
 
 class HetGraphNet(torch.nn.Module):
     def __init__(self, model_config: ModelConfig, metadata: dict,
-                 in_channels: int = -1, base_conv: Literal['han', 'hgt'] = 'han',
-                 hid_dim: int = 8):
+                 in_channels: int = -1,
+                 base_conv: Literal['han', 'hgt'] = 'han', hid_dim: int = 8):
         super().__init__()
 
         self.model_config = model_config
