@@ -185,7 +185,7 @@ def test_batch(norm):
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0]
 
     model = GraphSAGE(dataset.num_features, hidden_channels=16, num_layers=2,
@@ -235,7 +235,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
-    model = torch.load(path)
+    model = torch.load(path, weights_only=False)
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 

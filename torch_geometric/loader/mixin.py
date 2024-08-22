@@ -56,7 +56,7 @@ def get_numa_nodes_cores() -> Dict[str, Any]:
             nodes[numa_node_id] = sorted([(k, sorted(v))
                                           for k, v in thread_siblings.items()])
 
-    except (OSError, ValueError, IndexError, IOError):
+    except (OSError, ValueError, IndexError):
         Warning('Failed to read NUMA info')
         return {}
 

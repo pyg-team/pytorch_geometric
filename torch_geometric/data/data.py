@@ -938,16 +938,14 @@ class Data(BaseData, FeatureStore, GraphStore):
         r"""Iterates over all attributes in the data, yielding their attribute
         names and values.
         """
-        for key, value in self._store.items():
-            yield key, value
+        yield from self._store.items()
 
     def __call__(self, *args: str) -> Iterable:
         r"""Iterates over all attributes :obj:`*args` in the data, yielding
         their attribute names and values.
         If :obj:`*args` is not given, will iterate over all attributes.
         """
-        for key, value in self._store.items(*args):
-            yield key, value
+        yield from self._store.items(*args)
 
     @property
     def x(self) -> Optional[Tensor]:
@@ -1167,7 +1165,7 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
                f'[{value.num_rows}, {value.num_cols}])')
     elif isinstance(value, str):
         out = f"'{value}'"
-    elif isinstance(value, Sequence):
+    elif isinstance(value, (Sequence, set)):
         out = str([len(value)])
     elif isinstance(value, Mapping) and len(value) == 0:
         out = '{}'

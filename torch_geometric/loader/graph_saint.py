@@ -4,6 +4,7 @@ from typing import Optional
 import torch
 from tqdm import tqdm
 
+from torch_geometric.io import fs
 from torch_geometric.typing import SparseTensor
 
 
@@ -77,7 +78,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         if self.sample_coverage > 0:
             path = osp.join(save_dir or '', self._filename)
             if save_dir is not None and osp.exists(path):  # pragma: no cover
-                self.node_norm, self.edge_norm = torch.load(path)
+                self.node_norm, self.edge_norm = fs.torch_load(path)
             else:
                 self.node_norm, self.edge_norm = self._compute_norm()
                 if save_dir is not None:  # pragma: no cover

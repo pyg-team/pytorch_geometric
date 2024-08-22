@@ -174,7 +174,7 @@ def test_hetero_linear_amp(device, use_segment_matmul):
 
     lin = HeteroLinear(16, 32, num_types=3).to(device)
 
-    with torch.cuda.amp.autocast():
+    with torch.amp.autocast('cuda'):
         assert lin(x, type_vec).size() == (3, 32)
 
     torch_geometric.backend.use_segment_matmul = old_state

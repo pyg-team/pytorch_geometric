@@ -65,7 +65,7 @@ class WikiCS(InMemoryDataset):
             download_url(f'{self.url}/{name}', self.raw_dir)
 
     def process(self) -> None:
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             data = json.load(f)
 
         x = torch.tensor(data['features'], dtype=torch.float)

@@ -134,15 +134,18 @@ class OPFDataset(InMemoryDataset):
             )
 
             for name in os.listdir(tmp_dir):
-                with open(osp.join(tmp_dir, name), 'r') as f:
+                with open(osp.join(tmp_dir, name)) as f:
                     obj = json.load(f)
 
                 grid = obj['grid']
                 solution = obj['solution']
+                metadata = obj['metadata']
 
                 # Graph-level properties:
                 data = HeteroData()
                 data.x = torch.tensor(grid['context']).view(-1)
+
+                data.objective = torch.tensor(metadata['objective'])
 
                 # Nodes (only some have a target):
                 data['bus'].x = torch.tensor(grid['nodes']['bus'])

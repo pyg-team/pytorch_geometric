@@ -59,7 +59,7 @@ class PGExplainer(ExplainerAlgorithm):
         'edge_size': 0.05,
         'edge_ent': 1.0,
         'temp': [5.0, 2.0],
-        'bias': 0.0,
+        'bias': 0.01,
     }
 
     def __init__(self, epochs: int, lr: float = 0.003, **kwargs):

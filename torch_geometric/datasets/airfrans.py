@@ -2,14 +2,13 @@ import json
 import os
 from typing import Callable, List, Optional
 
-import torch
-
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class AirfRANS(InMemoryDataset):
@@ -123,13 +122,13 @@ class AirfRANS(InMemoryDataset):
         os.unlink(path)
 
     def process(self) -> None:
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             manifest = json.load(f)
         total = manifest['full_train'] + manifest['full_test']
         partial = set(manifest[f'{self.task}_{self.split}'])
 
         data_list = []
-        raw_data = torch.load(self.raw_paths[0])
+        raw_data = fs.torch_load(self.raw_paths[0])
         for k, s in enumerate(total):
             if s in partial:
                 data = Data(**raw_data[k])

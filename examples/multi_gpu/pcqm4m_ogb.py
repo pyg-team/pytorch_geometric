@@ -16,6 +16,7 @@ from tqdm.auto import tqdm
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import PCQM4Mv2
+from torch_geometric.io import fs
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import (
     GlobalAttention,
@@ -56,7 +57,7 @@ class GINConv(MessagePassing):
         Args:
             emb_dim (int): node embedding dimensionality
         """
-        super(GINConv, self).__init__(aggr="add")
+        super().__init__(aggr="add")
         self.mlp = torch.nn.Sequential(
             torch.nn.Linear(emb_dim, emb_dim),
             torch.nn.BatchNorm1d(emb_dim),
@@ -81,7 +82,7 @@ class GINConv(MessagePassing):
 
 class GCNConv(MessagePassing):
     def __init__(self, emb_dim):
-        super(GCNConv, self).__init__(aggr='add')
+        super().__init__(aggr='add')
         self.linear = torch.nn.Linear(emb_dim, emb_dim)
         self.root_emb = torch.nn.Embedding(1, emb_dim)
         self.bond_encoder = BondEncoder(emb_dim=emb_dim)
@@ -119,7 +120,7 @@ class GNNNode(torch.nn.Module):
             residual (bool): Wether or not to add the residual
             gnn_type (str): Type of GNN to use.
         """
-        super(GNNNode, self).__init__()
+        super().__init__()
         if num_layers < 2:
             raise ValueError("Number of GNN layers must be greater than 1.")
 
@@ -178,7 +179,7 @@ class GNNNodeVirtualNode(torch.nn.Module):
     """Outputs node representations."""
     def __init__(self, num_layers, emb_dim, drop_ratio=0.5, JK="last",
                  residual=False, gnn_type='gin'):
-        super(GNNNodeVirtualNode, self).__init__()
+        super().__init__()
         if num_layers < 2:
             raise ValueError("Number of GNN layers must be greater than 1.")
 
@@ -303,7 +304,7 @@ class GNN(torch.nn.Module):
             JK (str): "last" or "sum" to choose JK concat strat.
             graph_pooling (str): Graph pooling strat to use.
         """
-        super(GNN, self).__init__()
+        super().__init__()
         if num_layers < 2:
             raise ValueError("Number of GNN layers must be greater than 1.")
 
@@ -520,7 +521,7 @@ def run(rank, dataset, args):
 
     checkpoint_path = os.path.join(args.checkpoint_dir, 'checkpoint.pt')
     if os.path.isfile(checkpoint_path):
-        checkpoint = torch.load(checkpoint_path)
+        checkpoint = fs.torch_load(checkpoint_path)
         current_epoch = checkpoint['epoch'] + 1
         model.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
