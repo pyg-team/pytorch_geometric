@@ -43,7 +43,7 @@ class OPFDataset(InMemoryDataset):
             (default: :obj:`"pglib_opf_case14_ieee"`)
         num_groups (int, optional): The dataset is divided into 20 groups with
             each group containing 15,000 samples.
-            On smaller systems, this amount of data can be overwhelming.
+            For large networks, this amount of data can be overwhelming.
             The :obj:`num_groups` parameters controls the amount of data being
             downloaded. Allowed values are :obj:`[1, 20]`.
             (default: :obj:`20`)
