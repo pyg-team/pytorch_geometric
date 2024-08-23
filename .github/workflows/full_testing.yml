@@ -43,6 +43,9 @@ jobs:
             torch-version: 2.1.0
           - os: macos-14
             torch-version: 2.2.0
+          - os: windows-latest
+            torch-version: 2.4.0
+            python-version: '3.10'
 
     steps:
       - name: Checkout repository
