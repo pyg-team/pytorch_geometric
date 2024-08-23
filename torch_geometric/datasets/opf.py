@@ -42,9 +42,10 @@ class OPFDataset(InMemoryDataset):
         case_name (str, optional): The name of the original pglib-opf case.
             (default: :obj:`"pglib_opf_case14_ieee"`)
         num_groups (int, optional): The dataset is divided into 20 groups with
-            each group containing 15000 samples. For large systems, this amount
-            of data can be overwhelming. The num_groups parameters controls the
-            amount of data being downloaded. Allowable values are [1, 20].
+            each group containing 15,000 samples.
+            On smaller systems, this amount of data can be overwhelming.
+            The :obj:`num_groups` parameters controls the amount of data being
+            downloaded. Allowed values are :obj:`[1, 20]`.
             (default: :obj:`20`)
         topological_perturbations (bool, optional): Whether to use the dataset
             with added topological perturbations. (default: :obj:`False`)
