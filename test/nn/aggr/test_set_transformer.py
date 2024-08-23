@@ -20,7 +20,7 @@ def test_set_transformer_aggregation():
     assert out.size() == (4, 2 * 16)
     assert out.isnan().sum() == 0
     if torch_geometric.typing.WITH_PT25:
-        if not out[2].abs.sum() != 0:
+        if not out[2].abs().sum() != 0:
             warnings.warn("'SetTransformerAggregation' broken on PyTorch>2.4")
     else:
         assert out[2].abs().sum() == 0
