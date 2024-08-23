@@ -111,7 +111,8 @@ class OPFDataset(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self._release, self.case_name, 'processed')
+        return osp.join(self.root, self._release, self.case_name,
+                        f'processed_{self.num_groups}')
 
     @property
     def raw_file_names(self) -> List[str]:
