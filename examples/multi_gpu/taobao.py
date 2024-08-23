@@ -166,7 +166,6 @@ def run_train(rank, data, train_data, val_data, test_data, args, world_size):
     @torch.no_grad()
     def test(loader):
         model.eval()
-
         preds, targets = [], []
         for batch in tqdm.tqdm(loader, disable=rank != 0):
             batch = batch.to(rank)
@@ -208,14 +207,17 @@ def run_train(rank, data, train_data, val_data, test_data, args, world_size):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     best_val_auc = 0
     for epoch in range(1, args.epochs):
+        print("Train")
         loss = train()
         if rank == 0:
+            print("Val")
             val_auc = test(val_loader)
             best_val_auc = max(best_val_auc, val_auc)
         if rank == 0:
             print(
                 f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val AUC: {val_auc:.4f}')
     if rank == 0:
+        print("Test")
         test_auc = test(test_loader)
         print(f'Total {args.epochs:02d} epochs: Final Loss: {loss:4f}, '
               f'Best Val AUC: {best_val_auc:.4f}, '
