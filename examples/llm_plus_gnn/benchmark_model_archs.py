@@ -15,9 +15,8 @@ parser.add_argument("--learning_rate", type=float, default=1e-5)
 parser.add_argument("--epochs", type=int, default=2)
 parser.add_argument("--batch_size", type=int, default=8)
 parser.add_argument("--eval_batch_size", type=int, default=16)
-parser.add_argument("--tiny_llama", store_true=True)
+parser.add_argument("--tiny_llama", action='store_true')
 
-parser.add_argument("--custom_dataset", store_true=True)
 parser.add_argument("--dataset_path", type=str, required=False)
 # Default to WebQSP split
 parser.add_argument("--num_train", type=int, default=2826)
@@ -34,7 +33,7 @@ batch_size = args.batch_size
 eval_batch_size = args.eval_batch_size
 
 # %%
-if not args.custom_dataset:
+if not args.dataset_path:
     ds = UpdatedWebQSPDataset('benchmark_archs')
 else:
     # We just assume that the size of the dataset accomodates the
@@ -71,11 +70,14 @@ for m_type in model_type:
         model_classes.append(GRetriever)
         kwargs = dict(gnn_hidden_channels=hidden_channels,
                       num_gnn_layers=n_layer, gnn_to_use=models[m_type])
+        if args.tiny_llama:
+            kwargs['llm_to_use'] = 'TinyLlama/TinyLlama-1.1B-Chat-v0.1'
+            kwargs['mlp_out_dim'] = 2048
+            kwargs['num_llm_params'] = 1
         model_kwargs.append(kwargs)
 
 # %%
 benchmark_models(model_classes, model_names, model_kwargs, ds, lr, epochs,
                  batch_size, eval_batch_size, get_loss, inference_step,
-                 skip_LLMs=False, tiny_llama=True, force=True)
+                 skip_LLMs=False, tiny_llama=args.tiny_llama, force=True)
 
-# TODO Argparse options
