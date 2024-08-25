@@ -203,8 +203,8 @@ def to_torch_coo_tensor(
         values=edge_attr,
         size=tuple(size) + edge_attr.size()[1:],
         device=edge_index.device,
+        is_coalesced=True,
     )
-    adj = adj._coalesced_(True)
 
     return adj
 
@@ -536,10 +536,8 @@ def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
         values=torch.cat(values),
         size=(num_rows, num_cols) + values[-1].size()[1:],
         device=tensor.device,
+        is_coalesced=True if is_coalesced else None,
     )
-
-    if is_coalesced:
-        out = out._coalesced_(True)
 
     return out
 
