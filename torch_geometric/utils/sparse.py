@@ -545,7 +545,6 @@ def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             values=torch.cat(values),
             size=(num_rows, num_cols) + values[-1].size()[1:],
             device=tensor.device,
-            is_coalesced=True if is_coalesced else None,
         )
         if is_coalesced:
             out = out._coalesced_(True)
