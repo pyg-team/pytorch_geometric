@@ -37,11 +37,7 @@ class LineDiGraph(BaseTransform):
         # Broadcast to create a mask for matching row and col elements
         mask = row.unsqueeze(0) == col.unsqueeze(1)  # (num_edges, num_edges)
         # Generate new_row/col indices. 2D tensor of arange
-        new_row = torch.arange(E).unsqueeze(1).expand(-1, mask.size(1))
-        new_col = torch.arange(mask.size(1)).unsqueeze(0).expand(E, -1)
-        new_row = new_row[mask]
-        new_col = new_col[mask]
-        new_edge_index = torch.stack([new_row, new_col], dim=0)
+        new_edge_index = torch.nonzero(mask).T
 
         data.edge_index = new_edge_index
         data.x = edge_attr
