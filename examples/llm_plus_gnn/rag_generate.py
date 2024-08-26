@@ -16,12 +16,13 @@ import argparse
 
 # %%
 parser = argparse.ArgumentParser(description="Generate new WebQSP subgraphs")
-# TODO: Add more arguments
-parser.add_argumetn("--use_pcst", action="store_true")
+# TODO: Add more arguments for configuring rag params
+parser.add_argument("--use_pcst", action="store_true")
+parser.add_argument("--num_samples", type=int, default=50)
 args = parser.parse_args()
 
 # %%
-ds = UpdatedWebQSPDataset("dataset", limit=100)
+ds = UpdatedWebQSPDataset("dataset", limit=args.num_samples)
 
 # %%
 triplets = chain.from_iterable((d['graph'] for d in ds.raw_dataset))
@@ -59,7 +60,7 @@ def apply_retrieval_with_text(graph: Data, query: str) -> Tuple[Data, str]:
     graph["desc"] = desc
     return graph
 
-transform = apply_retrieval_with_text if args.use_pcst else apply_retrieval_via_pcst
+transform = apply_retrieval_via_pcst if args.use_pcst else apply_retrieval_with_text
 
 query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 5}, seed_edges_kwargs={"k_edges": 5}, sampler_kwargs={"num_neighbors": [50]*2}, local_filter=transform)
 
@@ -97,7 +98,7 @@ for subg in tqdm.tqdm((query_loader.query(q) for q in questions)):
     subgs.append(subg)
     node_len.append(subg['x'].shape[0])
     edge_len.append(subg['edge_attr'].shape[0])
-print(sum(node_len)/4700, sum(edge_len)/4700)
+print(sum(node_len)/args.num_samples, sum(edge_len)/args.num_samples)
 
 for i, subg in enumerate(subgs):
     subg['question'] = questions[i]
