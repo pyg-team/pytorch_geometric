@@ -22,9 +22,6 @@ class LineDiGraph(BaseTransform):
     Line-digraph node indices are equal to indices in the original graph's
     coalesced :obj:`edge_index`.
     """
-    def __init__(self, force_directed: bool = False) -> None:
-        self.force_directed = force_directed
-
     def forward(self, data: Data) -> Data:
         assert data.edge_index is not None
         assert data.is_directed()
@@ -36,7 +33,6 @@ class LineDiGraph(BaseTransform):
 
         # Broadcast to create a mask for matching row and col elements
         mask = row.unsqueeze(0) == col.unsqueeze(1)  # (num_edges, num_edges)
-        # Generate new_row/col indices. 2D tensor of arange
         new_edge_index = torch.nonzero(mask).T
 
         data.edge_index = new_edge_index
