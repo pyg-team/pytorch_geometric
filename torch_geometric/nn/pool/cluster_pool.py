@@ -2,10 +2,15 @@ from typing import Callable, NamedTuple, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
+from scipy.sparse.csgraph import connected_components
 from torch import Tensor
 
-from torch_geometric.utils import coalesce, to_scipy_sparse_matrix, dense_to_sparse, to_dense_adj
-from scipy.sparse.csgraph import connected_components
+from torch_geometric.utils import (
+    coalesce,
+    dense_to_sparse,
+    to_dense_adj,
+    to_scipy_sparse_matrix,
+)
 
 
 class ClusterPooling(torch.nn.Module):
@@ -16,7 +21,7 @@ class ClusterPooling(torch.nn.Module):
     Based on the selected edges, graph clusters are calculated and compressed to one
     node using an injective aggregation function (sum). Edges are remapped based on
     the node created by each cluster and the original edges.
-    
+
     Args:
         in_channels (int): Size of each input sample.
         edge_score_method (function, optional): The function to apply
@@ -34,16 +39,13 @@ class ClusterPooling(torch.nn.Module):
         dropout (float, optional): The probability with
             which to drop edge scores during training. (default: :obj:`0`)
     """
-    unpool_description = NamedTuple(
-        "UnpoolDescription",
-        ["edge_index", "batch", "cluster_map"])
+    unpool_description = NamedTuple("UnpoolDescription",
+                                    ["edge_index", "batch", "cluster_map"])
 
-    def __init__(self,
-                 in_channels: int,
+    def __init__(self, in_channels: int,
                  edge_score_method: Optional[Callable] = None,
                  dropout: Optional[float] = 0.0,
-                 threshold: Optional[float] = None,
-                 directed: bool = False):
+                 threshold: Optional[float] = None, directed: bool = False):
         super().__init__()
         self.in_channels = in_channels
         if edge_score_method is None:
@@ -104,42 +106,47 @@ class ClusterPooling(torch.nn.Module):
         """
         #First we drop the self edges as those cannot be clustered
         msk = edge_index[0] != edge_index[1]
-        edge_index = edge_index[:,msk]
+        edge_index = edge_index[:, msk]
         if not self.directed:
             edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=-1)
         # We only evaluate each edge once, so we filter double edges from the list
         edge_index = coalesce(edge_index)
-        
-        e = torch.cat([x[edge_index[0]], x[edge_index[1]]], dim=-1) # Concatenates the source feature with the target features
-        e = self.lin(e).view(-1) # Apply linear NN on the node pairs (edges) and reshape to 1 dimension
+
+        e = torch.cat(
+            [x[edge_index[0]], x[edge_index[1]]],
+            dim=-1)  # Concatenates the source feature with the target features
+        e = self.lin(e).view(
+            -1
+        )  # Apply linear NN on the node pairs (edges) and reshape to 1 dimension
         e = F.dropout(e, p=self.dropout, training=self.training)
 
-        e = self.compute_edge_score(e) #Non linear activation function
+        e = self.compute_edge_score(e)  #Non linear activation function
         x, edge_index, batch, unpool_info = self.__merge_edges__(
             x, edge_index, batch, e)
 
         return x, edge_index, batch, unpool_info
-    
+
     def __merge_edges__(
-        self,
-        X: Tensor,
-        edge_index: Tensor,
-        batch: Tensor,
-        edge_score: Tensor
-    ) -> Tuple[Tensor, Tensor, Tensor, NamedTuple]:
+            self, X: Tensor, edge_index: Tensor, batch: Tensor,
+            edge_score: Tensor) -> Tuple[Tensor, Tensor, Tensor, NamedTuple]:
         edges_contract = edge_index[..., edge_score > self.threshhold]
 
         adj = to_scipy_sparse_matrix(edges_contract, num_nodes=X.size(0))
-        _, cluster_index = connected_components(adj, directed=True, connection="weak")
+        _, cluster_index = connected_components(adj, directed=True,
+                                                connection="weak")
 
-        cluster_index = torch.tensor(cluster_index, dtype=torch.int64, device=X.device)
+        cluster_index = torch.tensor(cluster_index, dtype=torch.int64,
+                                     device=X.device)
         C = F.one_hot(cluster_index).type(torch.float)
         A = to_dense_adj(edge_index, max_num_nodes=X.size(0)).squeeze(0)
-        S = to_dense_adj(edge_index, edge_attr=edge_score, max_num_nodes=X.size(0)).squeeze(0)
+        S = to_dense_adj(edge_index, edge_attr=edge_score,
+                         max_num_nodes=X.size(0)).squeeze(0)
 
-        A_contract = to_dense_adj(edges_contract, max_num_nodes=X.size(0)).type(torch.int).squeeze(0)
-        nodes_single = ((A_contract.sum(-1) + A_contract.sum(-2))==0).nonzero()
-        S[nodes_single,nodes_single] = 1
+        A_contract = to_dense_adj(
+            edges_contract, max_num_nodes=X.size(0)).type(torch.int).squeeze(0)
+        nodes_single = ((A_contract.sum(-1) +
+                         A_contract.sum(-2)) == 0).nonzero()
+        S[nodes_single, nodes_single] = 1
 
         X_new = (S @ C).T @ X
         edge_index_new, _ = dense_to_sparse((C.T @ A @ C).fill_diagonal_(0))
@@ -151,7 +158,8 @@ class ClusterPooling(torch.nn.Module):
                                               batch=batch,
                                               cluster_map=cluster_index)
 
-        return X_new.to(X.device), edge_index_new.to(X.device), new_batch, unpool_info
+        return X_new.to(X.device), edge_index_new.to(
+            X.device), new_batch, unpool_info
 
     def unpool(
         self,
@@ -181,7 +189,7 @@ class ClusterPooling(torch.nn.Module):
             node_maps += len(c)
         import numpy as np
         repack = np.array([-1 for _ in range(n_nodes)])
-        for i,c in enumerate(node_maps):
+        for i, c in enumerate(node_maps):
             repack[c] = i
         new_x = x[repack]
 
