@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 import tqdm
 from profiling_utils import create_remote_backend_from_triplets
-from rag_feature_store import SentenceTransformerFeatureStore
+from rag_feature_store import SentenceTransformerApproxFeatureStore
 from rag_graph_store import NeighborSamplingRAGGraphStore
 
 from torch_geometric.datasets.updated_web_qsp_dataset import (
@@ -32,7 +32,7 @@ fs, gs = create_remote_backend_from_triplets(
     pre_transform=preprocess_triplet, node_method_kwargs={
         "batch_size": 256
     }, graph_db=NeighborSamplingRAGGraphStore,
-    feature_db=SentenceTransformerFeatureStore).load()
+    feature_db=SentenceTransformerApproxFeatureStore).load()
 
 # %%
 query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 10},
