@@ -116,8 +116,7 @@ class ClusterPooling(torch.nn.Module):
             [x[edge_index[0]], x[edge_index[1]]],
             dim=-1)  # Concatenates source feature with target features
         e = self.lin(e).view(
-            -1
-        )  # Apply linear NN on the node pairs (edges) and reshape
+            -1)  # Apply linear NN on the node pairs (edges) and reshape
         e = F.dropout(e, p=self.dropout, training=self.training)
 
         e = self.compute_edge_score(e)  # Non linear activation function
