@@ -18,9 +18,9 @@ class ClusterPooling(torch.nn.Module):
     Pooling" <paper url>` paper.
 
     In short, a score is computed for each edge.
-    Based on the selected edges, graph clusters are calculated and compressed to one
-    node using an injective aggregation function (sum). Edges are remapped based on
-    the node created by each cluster and the original edges.
+    Based on the selected edges, graph clusters are calculated and compressed
+    to one node using an injective aggregation function (sum). Edges are
+    remapped based on the node created by each cluster and the original edges.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -104,23 +104,23 @@ class ClusterPooling(torch.nn.Module):
             * **unpool_info** *(unpool_description)* - Information that is
               consumed by :func:`ClusterPooling.unpool` for unpooling.
         """
-        #First we drop the self edges as those cannot be clustered
+        # First we drop the self edges as those cannot be clustered
         msk = edge_index[0] != edge_index[1]
         edge_index = edge_index[:, msk]
         if not self.directed:
             edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=-1)
-        # We only evaluate each edge once, so we filter double edges from the list
+        # We only evaluate each edge once, remove double edges from the list
         edge_index = coalesce(edge_index)
 
         e = torch.cat(
             [x[edge_index[0]], x[edge_index[1]]],
-            dim=-1)  # Concatenates the source feature with the target features
+            dim=-1)  # Concatenates source feature with target features
         e = self.lin(e).view(
             -1
-        )  # Apply linear NN on the node pairs (edges) and reshape to 1 dimension
+        )  # Apply linear NN on the node pairs (edges) and reshape
         e = F.dropout(e, p=self.dropout, training=self.training)
 
-        e = self.compute_edge_score(e)  #Non linear activation function
+        e = self.compute_edge_score(e)  # Non linear activation function
         x, edge_index, batch, unpool_info = self.__merge_edges__(
             x, edge_index, batch, e)
 
@@ -182,7 +182,7 @@ class ClusterPooling(torch.nn.Module):
             * **edge_index** *(LongTensor)* - The new edge indices.
             * **batch** *(LongTensor)* - The new batch vector.
         """
-        # We just copy the cluster feature into every node
+        # We copy the cluster features into every node
         node_maps = unpool_info.cluster_map
         n_nodes = 0
         for c in node_maps:
