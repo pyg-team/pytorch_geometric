@@ -8,7 +8,6 @@ def test_line_digraph():
     transform = LineDiGraph()
     assert str(transform) == 'LineDiGraph()'
 
-    # Directed.
     edge_index = torch.tensor([
         [0, 1, 2, 2, 3],
         [1, 2, 0, 3, 0],
@@ -18,7 +17,6 @@ def test_line_digraph():
     assert data.edge_index.tolist() == [[0, 1, 1, 2, 3, 4], [1, 2, 3, 0, 4, 0]]
     assert data.num_nodes == data.edge_index.max().item() + 1
 
-    # Undirected.
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 2, 3, 3, 4],
                                [1, 2, 3, 4, 0, 3, 0, 4, 1]])
     edge_attr = torch.ones(edge_index.size(1))
