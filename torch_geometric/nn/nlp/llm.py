@@ -3,7 +3,10 @@ from typing import Any, Dict, List, Optional
 
 import torch
 from torch import Tensor
-from transformers.tokenization_utils_base import BatchEncoding
+try:
+    from transformers.tokenization_utils_base import BatchEncoding
+except:
+    BatchEncoding = Dict
 
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
