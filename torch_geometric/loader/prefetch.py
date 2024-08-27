@@ -73,7 +73,7 @@ class PrefetchLoader:
         if isinstance(batch, dict):
             return {k: self.non_blocking_transfer(v) for k, v in batch.items()}
 
-        batch = batch.pin_memory(self.device_helper.device)
+        batch = batch.pin_memory()
         return batch.to(self.device_helper.device, non_blocking=True)
 
     def __iter__(self) -> Any:
