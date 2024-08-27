@@ -63,7 +63,7 @@ model_classes = []
 model_kwargs = []
 model_type = ["GAT", "MLP"]
 models = {"GAT": GAT, "MLP": MLP}
-num_layers = [1, 4, 16]
+num_layers = [4]
 for m_type in model_type:
     for n_layer in num_layers:
         model_names.append(f"{m_type}_{n_layer}")
