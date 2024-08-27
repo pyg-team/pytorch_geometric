@@ -15,6 +15,7 @@ from torch_geometric.distributed.rpc import (
     rpc_async,
     rpc_register,
 )
+from torch_geometric.io import fs
 from torch_geometric.typing import EdgeType, NodeOrEdgeType, NodeType
 
 
@@ -415,11 +416,11 @@ class LocalFeatureStore(FeatureStore):
 
         node_feats: Optional[Dict[str, Any]] = None
         if osp.exists(osp.join(part_dir, 'node_feats.pt')):
-            node_feats = torch.load(osp.join(part_dir, 'node_feats.pt'))
+            node_feats = fs.torch_load(osp.join(part_dir, 'node_feats.pt'))
 
         edge_feats: Optional[Dict[str, Any]] = None
         if osp.exists(osp.join(part_dir, 'edge_feats.pt')):
-            edge_feats = torch.load(osp.join(part_dir, 'edge_feats.pt'))
+            edge_feats = fs.torch_load(osp.join(part_dir, 'edge_feats.pt'))
 
         if not meta['is_hetero'] and node_feats is not None:
             feat_store.put_global_id(node_feats['global_id'], group_name=None)

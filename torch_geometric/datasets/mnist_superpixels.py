@@ -1,14 +1,13 @@
 import os
 from typing import Callable, List, Optional
 
-import torch
-
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class MNISTSuperpixels(InMemoryDataset):
@@ -85,7 +84,7 @@ class MNISTSuperpixels(InMemoryDataset):
         os.unlink(path)
 
     def process(self) -> None:
-        inputs = torch.load(self.raw_paths[0])
+        inputs = fs.torch_load(self.raw_paths[0])
         for i in range(len(inputs)):
             data_list = [Data(**data_dict) for data_dict in inputs[i]]
 

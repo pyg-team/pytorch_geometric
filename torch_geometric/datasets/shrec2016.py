@@ -6,7 +6,7 @@ from typing import Callable, List, Optional
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
-from torch_geometric.io import read_off, read_txt_array
+from torch_geometric.io import fs, read_off, read_txt_array
 
 
 class SHREC2016(InMemoryDataset):
@@ -79,7 +79,7 @@ class SHREC2016(InMemoryDataset):
         self.cat = category.lower()
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        self.__ref__ = torch.load(self.processed_paths[0])
+        self.__ref__ = fs.torch_load(self.processed_paths[0])
         path = self.processed_paths[1] if train else self.processed_paths[2]
         self.load(path)
 
