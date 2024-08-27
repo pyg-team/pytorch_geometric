@@ -820,18 +820,27 @@ class EdgeIndex(Tensor):
                 :obj:`1.0`. (default: :obj:`None`)
         """
         value = self._get_value() if value is None else value
-        out = torch.sparse_coo_tensor(
+
+        if not torch_geometric.typing.WITH_PT21:
+            out = torch.sparse_coo_tensor(
+                indices=self._data,
+                values=value,
+                size=self.get_sparse_size(),
+                device=self.device,
+                requires_grad=value.requires_grad,
+            )
+            if self.is_sorted_by_row:
+                out = out._coalesced_(True)
+            return out
+
+        return torch.sparse_coo_tensor(
             indices=self._data,
             values=value,
             size=self.get_sparse_size(),
             device=self.device,
             requires_grad=value.requires_grad,
+            is_coalesced=True if self.is_sorted_by_row else None,
         )
-
-        if self.is_sorted_by_row:
-            out = out._coalesced_(True)
-
-        return out
 
     def to_sparse_csr(  # type: ignore
             self,

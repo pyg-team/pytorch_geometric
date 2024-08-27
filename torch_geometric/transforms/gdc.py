@@ -21,7 +21,7 @@ from torch_geometric.utils import (
 @functional_transform('gdc')
 class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
-    `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
+    `"Diffusion Improves Graph Learning" <https://arxiv.org/abs/1911.05485>`_
     paper (functional name: :obj:`gdc`).
 
     .. note::

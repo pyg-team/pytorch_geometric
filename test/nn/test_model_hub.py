@@ -97,7 +97,7 @@ def test_from_pretrained_internal(model, monkeypatch):
     hf_hub_download = Mock(side_effect='model')
     monkeypatch.setattr('torch_geometric.nn.model_hub.hf_hub_download',
                         hf_hub_download)
-    monkeypatch.setattr('torch_geometric.nn.model_hub.torch.load',
+    monkeypatch.setattr('torch_geometric.nn.model_hub.fs.torch_load',
                         lambda x, **kwargs: {'state_dict': 1})
 
     model = model._from_pretrained(

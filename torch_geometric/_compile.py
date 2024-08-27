@@ -10,6 +10,8 @@ def is_compiling() -> bool:
     r"""Returns :obj:`True` in case :pytorch:`PyTorch` is compiling via
     :meth:`torch.compile`.
     """
+    if torch_geometric.typing.WITH_PT23:
+        return torch.compiler.is_compiling()
     if torch_geometric.typing.WITH_PT21:
         return torch._dynamo.is_compiling()
     return False  # pragma: no cover

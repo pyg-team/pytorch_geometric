@@ -7,6 +7,7 @@ from torch import tensor
 
 import torch_geometric.typing
 from torch_geometric import Index
+from torch_geometric.io import fs
 from torch_geometric.testing import onlyCUDA, withCUDA
 from torch_geometric.typing import INDEX_DTYPES
 
@@ -529,7 +530,7 @@ def test_save_and_load(dtype, device, tmp_path):
 
     path = osp.join(tmp_path, 'edge_index.pt')
     torch.save(index, path)
-    out = torch.load(path)
+    out = fs.torch_load(path)
 
     assert isinstance(out, Index)
     assert out.equal(index)
