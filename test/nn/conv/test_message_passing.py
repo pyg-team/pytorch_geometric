@@ -139,7 +139,7 @@ def test_my_conv_save(tmp_path):
 
     path = osp.join(tmp_path, 'model.pt')
     torch.save(conv, path)
-    conv = torch.load(path)
+    conv = torch.load(path, weights_only=False)
     assert conv._jinja_propagate is not None
     assert conv.__class__._jinja_propagate is not None
     assert conv._orig_propagate is not None
@@ -738,7 +738,7 @@ def test_pickle(tmp_path):
     GATConv.propagate = GATConv._orig_propagate
     GATConv.edge_updater = GATConv._orig_edge_updater
 
-    model = torch.load(path)
+    model = torch.load(path, weights_only=False)
     torch.jit.script(model)
 
 
