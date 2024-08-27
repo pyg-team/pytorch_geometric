@@ -1,8 +1,8 @@
 # %%
-from g_retriever import benchmark_models, get_loss, inference_step
-
 from torch_geometric.datasets import UpdatedWebQSPDataset
 from torch_geometric.nn.models import GAT, MLP, GRetriever
+
+from g_retriever import benchmark_models, get_loss, inference_step
 
 # %%
 hidden_channels = 1024

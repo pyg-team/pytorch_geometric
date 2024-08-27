@@ -18,7 +18,7 @@ import argparse
 parser = argparse.ArgumentParser(description="Generate new WebQSP subgraphs")
 # TODO: Add more arguments for configuring rag params
 parser.add_argument("--use_pcst", action="store_true")
-parser.add_argument("--num_samples", type=int, default=50)
+parser.add_argument("--num_samples", type=int, default=4700)
 parser.add_argument("--out_file", default="subg_results.pt")
 args = parser.parse_args()
 
@@ -30,11 +30,6 @@ triplets = chain.from_iterable((d['graph'] for d in ds.raw_dataset))
 
 # %%
 questions = ds.raw_dataset['question']
-questions
-
-# %%
-#ground_truth_graphs = get_features_for_triplets_groups(ds.indexer, (d['graph'] for d in ds.raw_dataset), pre_transform=preprocess_triplet)
-#num_edges = len(ds.indexer._edges)
 
 # %%
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -95,11 +90,9 @@ subgs = []
 node_len = []
 edge_len = []
 for subg in tqdm.tqdm((query_loader.query(q) for q in questions)):
-    print(subg)
     subgs.append(subg)
     node_len.append(subg['x'].shape[0])
     edge_len.append(subg['edge_attr'].shape[0])
-print(sum(node_len)/args.num_samples, sum(edge_len)/args.num_samples)
 
 for i, subg in enumerate(subgs):
     subg['question'] = questions[i]

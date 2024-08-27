@@ -1,12 +1,13 @@
 """Used to benchmark the performance of an untuned/fine tuned LLM against 
 GRetriever with various architectures and layer depths."""
 # %%
-from g_retriever import benchmark_models, get_loss, inference_step
 import argparse
+
+import torch
 from torch_geometric.datasets import UpdatedWebQSPDataset
 from torch_geometric.nn.models import GAT, MLP, GRetriever
-import torch
 
+from g_retriever import benchmark_models, get_loss, inference_step
 
 # %%
 parser = argparse.ArgumentParser(description="Benchmarker for GRetriever")
