@@ -108,12 +108,15 @@ class LLM(torch.nn.Module):
         return (batch_size, questions, context, eos_user_tokens, bos_embeds,
                 pad_embeds)
 
-    def _label_input_ids(self, i:int, label:BatchEncoding, eos_tokens:BatchEncoding) -> List[int]:
+    def _label_input_ids(self, i: int, label: BatchEncoding,
+                         eos_tokens: BatchEncoding) -> List[int]:
         label_input_ids = label.input_ids[i][:MAX_NEW_TOKENS]
         label_input_ids += eos_tokens.input_ids  # Add EOS token.
         return label_input_ids
 
-    def _input_ids(self, i:int, context:BatchEncoding, question:BatchEncoding, eos_user_tokens:BatchEncoding) -> List[int]:
+    def _input_ids(self, i: int, context: BatchEncoding,
+                   question: BatchEncoding,
+                   eos_user_tokens: BatchEncoding) -> List[int]:
         input_ids: List[int] = []
         if context is not None:
             input_ids += context.input_ids[i][:MAX_TXT_LEN]
@@ -121,7 +124,8 @@ class LLM(torch.nn.Module):
         input_ids += eos_user_tokens.input_ids
         return input_ids
 
-    def _inputs_embeds(self, i:int, input_ids: List[int], bos_embeds: Tensor, embedding:List[Tensor] = None) -> Tensor:
+    def _inputs_embeds(self, i: int, input_ids: List[int], bos_embeds: Tensor,
+                       embedding: List[Tensor] = None) -> Tensor:
         inputs_embeds = self.word_embedding(
             torch.tensor(input_ids, device=self.llm_device))
 
@@ -133,9 +137,11 @@ class LLM(torch.nn.Module):
                                   dim=0)
         return inputs_embeds
 
-    def _append_embeds(self, inputs_embeds: Tensor, batch_inputs_embeds:List[Tensor],
-                       batch_attention_mask: List[List[int]], label_input_ids: List[int]=None,
-                       batch_label_input_ids: List[List[int]]=None) -> tuple:
+    def _append_embeds(self, inputs_embeds: Tensor,
+                       batch_inputs_embeds: List[Tensor],
+                       batch_attention_mask: List[List[int]],
+                       label_input_ids: List[int] = None,
+                       batch_label_input_ids: List[List[int]] = None) -> tuple:
         batch_inputs_embeds.append(inputs_embeds)
         batch_attention_mask.append([1] * inputs_embeds.size(0))
         if label_input_ids is not None:
@@ -144,8 +150,10 @@ class LLM(torch.nn.Module):
             batch_label_input_ids.append(label_input_ids)
         return batch_inputs_embeds, batch_attention_mask, batch_label_input_ids
 
-    def _pad_embeds(self, pad_embeds:Tensor, batch_inputs_embeds:List[Tensor],
-                    batch_attention_mask:List[List[int]], batch_label_input_ids:List[List[int]]=None) -> tuple:
+    def _pad_embeds(self, pad_embeds: Tensor,
+                    batch_inputs_embeds: List[Tensor],
+                    batch_attention_mask: List[List[int]],
+                    batch_label_input_ids: List[List[int]] = None) -> tuple:
         max_length = max([x.size(0) for x in batch_inputs_embeds])
         batch_size = len(batch_inputs_embeds)
         for i in range(batch_size):
@@ -168,7 +176,9 @@ class LLM(torch.nn.Module):
             label_input_ids = None
         return inputs_embeds, attention_mask, label_input_ids
 
-    def _get_embeds(self, question:List[str], context:List[str]=None, embedding:List[Tensor]=None, answer:List[str]=None) -> tuple:
+    def _get_embeds(self, question: List[str], context: List[str] = None,
+                    embedding: List[Tensor] = None,
+                    answer: List[str] = None) -> tuple:
         (batch_size, question, context, eos_user_tokens, bos_embeds,
          pad_embeds) = self._encode_inputs(question, context)
         if answer is not None:
