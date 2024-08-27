@@ -13,6 +13,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, scatter
 
 HAR2EV = 27.211386246
@@ -212,7 +213,7 @@ class QM9(InMemoryDataset):
                    "install 'rdkit' to alternatively process the raw data."),
                   file=sys.stderr)
 
-            data_list = torch.load(self.raw_paths[0])
+            data_list = fs.torch_load(self.raw_paths[0])
             data_list = [Data(**data_dict) for data_dict in data_list]
 
             if self.pre_filter is not None:

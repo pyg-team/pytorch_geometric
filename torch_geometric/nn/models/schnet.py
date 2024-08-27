@@ -11,6 +11,7 @@ from torch import Tensor
 from torch.nn import Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.data import Dataset, download_url, extract_zip
+from torch_geometric.io import fs
 from torch_geometric.nn import MessagePassing, SumAggregation, radius_graph
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
@@ -216,7 +217,7 @@ class SchNet(torch.nn.Module):
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
-            state = torch.load(path, map_location='cpu')
+            state = fs.torch_load(path, map_location='cpu')
 
         net = SchNet(
             hidden_channels=128,
