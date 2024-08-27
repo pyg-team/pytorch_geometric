@@ -6,7 +6,7 @@ from torch import Tensor
 
 try:
     from transformers.tokenization_utils_base import BatchEncoding
-except:
+except ImportError:
     BatchEncoding = Dict
 
 BOS = '<s>[INST]'
