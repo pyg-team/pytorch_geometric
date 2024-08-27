@@ -24,7 +24,12 @@ from torch_geometric.nn.models import GRetriever
 from torch_geometric.nn.nlp import LLM
 
 
-def detect_hallucinate(pred, label):
+def detect_hallucinate(pred: str, label: str):
+    r"""
+    This is an approximation for the unsolved task of detecting hallucinations.
+    We define a hallucination as an output that contains no instances of
+    acceptable label.
+    """
     try:
         split_pred = pred.split('[/s]')[0].strip().split('|')
         correct_hit = len(re.findall(split_pred[0], label)) > 0
