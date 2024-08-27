@@ -26,6 +26,8 @@ from torch_geometric.data import Data
 
 TripletLike = Tuple[Hashable, Hashable, Hashable]
 
+KnowledgeGraphLike = Iterable[TripletLike]
+
 
 def ordered_set(values: Iterable[Hashable]) -> List[Hashable]:
     return list(dict.fromkeys(values))
@@ -70,7 +72,7 @@ class LargeGraphIndexer:
     def __init__(
         self,
         nodes: Iterable[Hashable],
-        edges: Iterable[TripletLike],
+        edges: KnowledgeGraphLike,
         node_attr: Optional[Dict[str, List[Any]]] = None,
         edge_attr: Optional[Dict[str, List[Any]]] = None,
     ) -> None:
@@ -79,7 +81,7 @@ class LargeGraphIndexer:
 
         Args:
             nodes (Iterable[Hashable]): Node ids in the graph.
-            edges (Iterable[TripletLike]): Edge ids in the graph.
+            edges (KnowledgeGraphLike): Edge ids in the graph.
             node_attr (Optional[Dict[str, List[Any]]], optional): Mapping node
                 attribute name and list of their values in order of unique node
                 ids. Defaults to None.
@@ -147,7 +149,7 @@ class LargeGraphIndexer:
     @classmethod
     def from_triplets(
         cls,
-        triplets: Iterable[TripletLike],
+        triplets: KnowledgeGraphLike,
         pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
     ) -> "LargeGraphIndexer":
         r"""Generate a new index from a series of triplets that represent edge
@@ -155,7 +157,7 @@ class LargeGraphIndexer:
         Formatted like (source_node, edge, dest_node).
 
         Args:
-            triplets (Iterable[TripletLike]): Series of triplets representing
+            triplets (KnowledgeGraphLike): Series of triplets representing
                 knowledge graph relations.
             pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
                 Optional preprocessing function to apply to triplets.
@@ -171,7 +173,7 @@ class LargeGraphIndexer:
         if pre_transform is not None:
 
             def apply_transform(
-                    trips: Iterable[TripletLike]) -> Iterator[TripletLike]:
+                    trips: KnowledgeGraphLike) -> Iterator[TripletLike]:
                 for trip in trips:
                     yield pre_transform(trip)
 
@@ -419,7 +421,7 @@ class LargeGraphIndexer:
     def get_edge_features_iter(
         self,
         feature_name: str = EDGE_PID,
-        pids: Optional[Iterable[TripletLike]] = None,
+        pids: Optional[KnowledgeGraphLike] = None,
         index_only: bool = False,
     ) -> Iterator[Any]:
         """Iterator version of get_edge_features. If index_only is True,
@@ -508,29 +510,6 @@ class LargeGraphIndexer:
 
         return indexer
 
-    def __eq__(self, value: "LargeGraphIndexer") -> bool:
-        eq = True
-        eq &= self._nodes == value._nodes
-        eq &= self._edges == value._edges
-        eq &= self.node_attr.keys() == value.node_attr.keys()
-        eq &= self.edge_attr.keys() == value.edge_attr.keys()
-        eq &= self._mapped_node_features == value._mapped_node_features
-        eq &= self._mapped_edge_features == value._mapped_edge_features
-
-        for k in self.node_attr:
-            eq &= isinstance(self.node_attr[k], type(value.node_attr[k]))
-            if isinstance(self.node_attr[k], torch.Tensor):
-                eq &= torch.equal(self.node_attr[k], value.node_attr[k])
-            else:
-                eq &= self.node_attr[k] == value.node_attr[k]
-        for k in self.edge_attr:
-            eq &= isinstance(self.edge_attr[k], type(value.edge_attr[k]))
-            if isinstance(self.edge_attr[k], torch.Tensor):
-                eq &= torch.equal(self.edge_attr[k], value.edge_attr[k])
-            else:
-                eq &= self.edge_attr[k] == value.edge_attr[k]
-        return eq
-
     def to_data(self, node_feature_name: str,
                 edge_feature_name: Optional[str] = None) -> Data:
         """Return a Data object containing all the specified node and
@@ -558,10 +537,33 @@ class LargeGraphIndexer:
         return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                     edge_id=edge_id, node_id=node_id)
 
+    def __eq__(self, value: "LargeGraphIndexer") -> bool:
+        eq = True
+        eq &= self._nodes == value._nodes
+        eq &= self._edges == value._edges
+        eq &= self.node_attr.keys() == value.node_attr.keys()
+        eq &= self.edge_attr.keys() == value.edge_attr.keys()
+        eq &= self._mapped_node_features == value._mapped_node_features
+        eq &= self._mapped_edge_features == value._mapped_edge_features
+
+        for k in self.node_attr:
+            eq &= isinstance(self.node_attr[k], type(value.node_attr[k]))
+            if isinstance(self.node_attr[k], torch.Tensor):
+                eq &= torch.equal(self.node_attr[k], value.node_attr[k])
+            else:
+                eq &= self.node_attr[k] == value.node_attr[k]
+        for k in self.edge_attr:
+            eq &= isinstance(self.edge_attr[k], type(value.edge_attr[k]))
+            if isinstance(self.edge_attr[k], torch.Tensor):
+                eq &= torch.equal(self.edge_attr[k], value.edge_attr[k])
+            else:
+                eq &= self.edge_attr[k] == value.edge_attr[k]
+        return eq
+
 
 def get_features_for_triplets_groups(
     indexer: LargeGraphIndexer,
-    triplet_groups: Iterable[Iterable[TripletLike]],
+    triplet_groups: Iterable[KnowledgeGraphLike],
     node_feature_name: str = "x", edge_feature_name: str = "edge_attr",
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None
 ) -> Iterator[Data]:
@@ -571,7 +573,7 @@ def get_features_for_triplets_groups(
 
     Args:
         indexer (LargeGraphIndexer): Indexer containing desired features
-        triplet_groups (Iterable[Iterable[TripletLike]]): List of lists of
+        triplet_groups (Iterable[KnowledgeGraphLike]): List of lists of
             triplets to fetch features for
         node_feature_name (str, optional): Node feature to fetch.
             Defaults to "x".
@@ -636,7 +638,7 @@ def get_features_for_triplets_groups(
 
 def get_features_for_triplets(
     indexer: LargeGraphIndexer,
-    triplets: Iterable[TripletLike],
+    triplets: KnowledgeGraphLike,
     node_feature_name: str = "x",
     edge_feature_name: str = "edge_attr",
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
@@ -646,7 +648,7 @@ def get_features_for_triplets(
 
     Args:
         indexer (LargeGraphIndexer): Indexer containing desired features
-        triplets (Iterable[TripletLike]): Triplets to fetch features for
+        triplets (KnowledgeGraphLike): Triplets to fetch features for
         node_feature_name (str, optional): Feature to use for node features.
             Defaults to "x".
         edge_feature_name (str, optional): Feature to use for edge features.
