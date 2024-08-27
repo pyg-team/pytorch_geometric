@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 
 import torch
 from torch import Tensor
+
 try:
     from transformers.tokenization_utils_base import BatchEncoding
 except:
