@@ -25,8 +25,7 @@ from torch_geometric.nn.nlp import LLM
 
 
 def detect_hallucinate(pred: str, label: str):
-    r"""
-    This is an approximation for the unsolved task of detecting hallucinations.
+    r"""This is an approximation for the unsolved task of detecting hallucinations.
     We define a hallucination as an output that contains no instances of
     acceptable label.
     """
