@@ -165,7 +165,7 @@ def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     return str(h).lower(), str(r), str(t).lower()
 
 
-class UpdatedWebQSPDataset(InMemoryDataset):
+class WebQSPDataset(InMemoryDataset):
     r"""The WebQuestionsSP dataset was released as part of
     “The Value of Semantic Parse Labeling for Knowledge
     Base Question Answering”
