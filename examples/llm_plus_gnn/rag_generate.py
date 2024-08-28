@@ -19,7 +19,7 @@ parser = argparse.ArgumentParser(description="Generate new WebQSP subgraphs")
 # TODO: Add more arguments for configuring rag params
 parser.add_argument("--use_pcst", action="store_true")
 parser.add_argument("--num_samples", type=int, default=4700)
-parser.add_argument("--out_file", default="subg_results.pt")
+parser.add_argument("--out_file", default="subg_results")
 args = parser.parse_args()
 
 # %%
@@ -98,6 +98,6 @@ for i, subg in enumerate(subgs):
     subg['question'] = questions[i]
     subg['label'] = ds[i]['label']
 
-pd.DataFrame.from_dict(retrieval_stats).to_csv('metadata.csv')
-torch.save(subgs, args.out_file)
+pd.DataFrame.from_dict(retrieval_stats).to_csv(args.out_file+'_metadata.csv')
+torch.save(subgs, args.out_file+'.pt')
 
