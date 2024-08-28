@@ -565,7 +565,8 @@ def get_features_for_triplets_groups(
     indexer: LargeGraphIndexer,
     triplet_groups: Iterable[KnowledgeGraphLike],
     node_feature_name: str = "x", edge_feature_name: str = "edge_attr",
-    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None
+    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+    verbose: bool = False,
 ) -> Iterator[Data]:
     """Given an indexer and a series of triplet groups (like a dataset),
     retrieve the specified node and edge features for each triplet from the
@@ -582,6 +583,7 @@ def get_features_for_triplets_groups(
         pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
             Optional preprocessing to perform on triplets.
             Defaults to None.
+        verbose (bool, optional): Whether to print progress. Defaults to False.
 
     Yields:
         Iterator[Data]: For each triplet group, yield a data object containing
@@ -601,7 +603,7 @@ def get_features_for_triplets_groups(
     edge_keys = []
     edge_index = []
 
-    for triplets in tqdm(triplet_groups):
+    for triplets in tqdm(triplet_groups, disable=not verbose):
         small_graph_indexer = LargeGraphIndexer.from_triplets(
             triplets, pre_transform=pre_transform)
 
@@ -642,6 +644,7 @@ def get_features_for_triplets(
     node_feature_name: str = "x",
     edge_feature_name: str = "edge_attr",
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+    verbose: bool = False,
 ) -> Data:
     """For a given set of triplets retrieve a Data object containing the
         unique graph and features from the index.
@@ -655,6 +658,7 @@ def get_features_for_triplets(
             Defaults to "edge_attr".
         pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
             Optional preprocessing function for triplets. Defaults to None.
+        verbose (bool, optional): Whether to print progress. Defaults to False.
 
     Returns:
         Data: Data object containing the unique graph and features from the
@@ -662,5 +666,5 @@ def get_features_for_triplets(
     """
     gen = get_features_for_triplets_groups(indexer, [triplets],
                                            node_feature_name,
-                                           edge_feature_name, pre_transform)
+                                           edge_feature_name, pre_transform, verbose)
     return next(gen)

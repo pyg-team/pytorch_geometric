@@ -254,6 +254,8 @@ class WebQSPDataset(InMemoryDataset):
 
         if self.limit >= 0:
             self.raw_dataset = self.raw_dataset.select(range(self.limit))
+
+            # HACK
             self.split_idxs = {
                 "train":
                 torch.arange(self.limit // 2),
@@ -300,22 +302,17 @@ class WebQSPDataset(InMemoryDataset):
         print("Retrieving subgraphs...")
         textual_nodes = self.textual_nodes
         textual_edges = self.textual_edges
-        if self.whole_graph_retrieval:
-            graph = self.indexer.to_data(node_feature_name="x",
-                                         edge_feature_name="edge_attr")
-        else:
-            graph_gen = get_features_for_triplets_groups(
-                self.indexer, (ds['graph'] for ds in self.raw_dataset),
-                pre_transform=preprocess_triplet)
+        graph_gen = get_features_for_triplets_groups(
+            self.indexer, (ds['graph'] for ds in self.raw_dataset),
+            pre_transform=preprocess_triplet)
 
-        for index in tqdm(range(len(self.raw_dataset))):
+        for index in tqdm(range(len(self.raw_dataset)), disable=True):
             data_i = self.raw_dataset[index]
-            if not self.whole_graph_retrieval:
-                graph = next(graph_gen)
-                textual_nodes = self.textual_nodes.iloc[
-                    graph["node_idx"]].reset_index()
-                textual_edges = self.textual_edges.iloc[
-                    graph["edge_idx"]].reset_index()
+            graph = next(graph_gen)
+            textual_nodes = self.textual_nodes.iloc[
+                graph["node_idx"]].reset_index()
+            textual_edges = self.textual_edges.iloc[
+                graph["edge_idx"]].reset_index()
             pcst_subgraph, desc = retrieval_via_pcst(
                 graph,
                 q_embs[index],
