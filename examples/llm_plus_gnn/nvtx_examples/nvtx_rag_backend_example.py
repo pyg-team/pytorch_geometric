@@ -3,7 +3,7 @@ from profiling_utils import create_remote_backend_from_triplets
 from rag_feature_store import SentenceTransformerFeatureStore
 from rag_graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.loader import rag_loader
-from torch_geometric.datasets import UpdatedWebQSPDataset
+from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.datasets.updated_web_qsp_dataset import preprocess_triplet
 from torch_geometric.data import get_features_for_triplets_groups, Data
@@ -23,7 +23,7 @@ NeighborSamplingRAGGraphStore.sample_subgraph = nvtxit()(NeighborSamplingRAGGrap
 rag_loader.RAGQueryLoader.query = nvtxit()(rag_loader.RAGQueryLoader.query)
 
 # %%
-ds = UpdatedWebQSPDataset("small_ds_1", force_reload=True, limit=10)
+ds = WebQSPDataset("small_ds_1", force_reload=True, limit=10)
 
 # %%
 triplets = list(chain.from_iterable((d['graph'] for d in ds.raw_dataset)))

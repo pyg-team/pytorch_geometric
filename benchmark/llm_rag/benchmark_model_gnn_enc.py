@@ -1,5 +1,5 @@
 # %%
-from torch_geometric.datasets import UpdatedWebQSPDataset
+from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.models import GAT, MLP, GRetriever
 
 from g_retriever import benchmark_models, get_loss, inference_step
@@ -13,7 +13,7 @@ batch_size = 8
 eval_batch_size = 16
 
 # %%
-ds = UpdatedWebQSPDataset('benchmark_archs')
+ds = WebQSPDataset('benchmark_archs')
 
 # %%
 model_names = []

@@ -72,10 +72,10 @@ WebQSP:
 
 .. code:: ipython3
 
-    from torch_geometric.datasets import UpdatedWebQSPDataset
+    from torch_geometric.datasets import WebQSPDataset
     
     num_questions = 100
-    ds = UpdatedWebQSPDataset('small_sample', limit=num_questions)
+    ds = WebQSPDataset('small_sample', limit=num_questions)
 
 
 .. parsed-literal::
@@ -1920,14 +1920,7 @@ differences being due to floating point jitter.
 
 
 When scaled up to the entire dataset, we see a 2x speedup with indexing
-this way.
-
-WebQSPDataset is a question-by-question implementation.
-
-UpdatedQSPDataset is a LargeGraphIndexer implementation.
-
-These were computed on an RTX 4090 with 24GB of memory. Your milage may
-vary.
+this way on the WebQSP Dataset.
 
 Example 2: Building a new Dataset from Questions and an already-existing Knowledge Graph
 ----------------------------------------------------------------------------------------
@@ -2394,7 +2387,7 @@ experiment:
 .. code:: ipython3
 
     from torch_geometric.data import LargeGraphIndexer
-    from torch_geometric.datasets import UpdatedWebQSPDataset
+    from torch_geometric.datasets import WebQSPDataset
     from itertools import chain
 
 
@@ -2407,7 +2400,7 @@ experiment:
 .. code:: ipython3
 
     # Limiting to 10 questions for the sake of compute, but can be increased if necessary
-    ds = UpdatedWebQSPDataset(root='demo', limit=10)
+    ds = WebQSPDataset(root='demo', limit=10)
 
 Let’s set up our set of questions and graph triplets:
 
