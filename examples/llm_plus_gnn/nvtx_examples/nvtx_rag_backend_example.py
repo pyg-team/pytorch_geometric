@@ -5,7 +5,7 @@ from rag_graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.loader import rag_loader
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.datasets.updated_web_qsp_dataset import preprocess_triplet
+from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 from torch_geometric.data import get_features_for_triplets_groups, Data
 from itertools import chain
 from torch_geometric.profile.nvtx import nvtxit
@@ -43,7 +43,7 @@ model = SentenceTransformer().to(device)
 fs, gs = create_remote_backend_from_triplets(triplets=triplets, node_embedding_model=model, node_method_to_call="encode", path="backend", pre_transform=preprocess_triplet, node_method_kwargs={"batch_size": 256}, graph_db=NeighborSamplingRAGGraphStore, feature_db=SentenceTransformerFeatureStore).load()
 
 # %%
-from torch_geometric.datasets.updated_web_qsp_dataset import retrieval_via_pcst
+from torch_geometric.datasets.web_qsp_dataset import retrieval_via_pcst
 
 @nvtxit()
 def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3, topk_e: int = 3, cost_e: float = 0.5) -> Tuple[Data, str]:

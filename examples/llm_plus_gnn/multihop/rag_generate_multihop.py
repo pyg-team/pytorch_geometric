@@ -6,7 +6,7 @@ from profiling_utils import create_remote_backend_from_triplets
 from rag_feature_store import SentenceTransformerApproxFeatureStore
 from rag_graph_store import NeighborSamplingRAGGraphStore
 
-from torch_geometric.datasets.updated_web_qsp_dataset import (
+from torch_geometric.datasets.web_qsp_dataset import (
     preprocess_triplet,
     retrieval_via_pcst,
 )

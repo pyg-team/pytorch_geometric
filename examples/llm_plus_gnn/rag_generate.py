@@ -5,7 +5,7 @@ from rag_graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.datasets import UpdatedWebQSPDataset
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.datasets.updated_web_qsp_dataset import preprocess_triplet, retrieval_via_pcst
+from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet, retrieval_via_pcst
 from torch_geometric.data import get_features_for_triplets_groups, Data
 from itertools import chain
 import torch
