@@ -162,7 +162,7 @@ if __name__ == '__main__':
     else:
         world_size = args.n_devices
     import psutil
-    if (psutil.virtual_memory().total / (1024 ** 3)) < 190 + 200 * world_size:
+    if (psutil.virtual_memory().total / (1024**3)) < 190 + 200 * world_size:
         print("Warning: may not have enough RAM to use this many GPUs.")
         print("Consider upgrading RAM or using less GPUs if an error occurs.")
     print('Let\'s use', world_size, 'GPUs!')
