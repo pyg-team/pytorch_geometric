@@ -24,11 +24,3 @@ def test_web_qsp_dataset_limit_no_pcst():
     dataset = WebQSPDataset(limit=100, include_pcst=False)
     assert len(dataset) == 100
     assert str(dataset) == "WebQSPDataset(100)"
-
-def test_web_qsp_import_error():
-    # WebQSP shouldn't run if dependencies don't exist locally
-    try:
-        dataset = WebQSPDataset()
-        assert False # Test should fail if gets to here.
-    except ImportError:
-        pass

@@ -172,7 +172,7 @@ class GRetriever(nn.Module):
             if num_nodes_in_graph_i == 0:
                 graph_embeds.append(None)
             else:
-                graph_embeds.append(projected_graph_embeds[i].unsqueeze(0))
+                graph_embeds.append(projected_graph_embeds[i])
 
         (
             inputs_embeds,
