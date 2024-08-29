@@ -85,9 +85,9 @@ maintained by Google. For each question-answer pair in the dataset, a
 subgraph was chosen based on a Semantic SPARQL search on the larger
 knowledge graph, to provide relevent context on finding the answer. So
 each entry in the dataset consists of:
-- A question to be answered 
+- A question to be answered
 - The answer
-- A knowledge graph subgraph of Freebase that has the context 
+- A knowledge graph subgraph of Freebase that has the context
 needed to answer the question.
 
 .. code:: python
@@ -411,7 +411,7 @@ With these questions and triplets, we want to:
 
 In order to create a remote backend, we need to define a FeatureStore
 and GraphStore locally, as well as a method for initializing its state
-from triplets. The code methods used in this tutorial can be found in 
+from triplets. The code methods used in this tutorial can be found in
 `examples/llm_plus_gnn`.
 
 .. code:: python
