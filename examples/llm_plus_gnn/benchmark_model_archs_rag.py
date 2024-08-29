@@ -7,7 +7,7 @@ import argparse
 import torch
 from g_retriever import benchmark_models, get_loss, inference_step
 
-from torch_geometric.datasets import UpdatedWebQSPDataset
+from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.models import GAT, MLP, GRetriever
 
 # %%
@@ -36,7 +36,7 @@ eval_batch_size = args.eval_batch_size
 
 # %%
 if not args.dataset_path:
-    ds = UpdatedWebQSPDataset('benchmark_archs')
+    ds = WebQSPDataset('benchmark_archs')
 else:
     # We just assume that the size of the dataset accomodates the
     # train/val/test split, because checking may be expensive.
