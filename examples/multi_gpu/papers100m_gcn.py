@@ -162,9 +162,11 @@ if __name__ == '__main__':
     else:
         world_size = args.n_devices
     import psutil
-    if (psutil.virtual_memory().total / (1024**3)) < 190 + 200 * world_size:
+    gb_ram_needed = 190 + 200 * world_size
+    if (psutil.virtual_memory().total / (1024**3)) < gb_ram_needed:
         print("Warning: may not have enough RAM to use this many GPUs.")
         print("Consider upgrading RAM or using less GPUs if an error occurs.")
+        print("Estimated RAM Needed: ~" + str(gb_ram_needed))
     print('Let\'s use', world_size, 'GPUs!')
     dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                      root='/datasets/ogb_datasets')
