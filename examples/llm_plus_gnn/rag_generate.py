@@ -11,7 +11,7 @@ from rag_feature_store import SentenceTransformerFeatureStore
 from rag_graph_store import NeighborSamplingRAGGraphStore
 
 from torch_geometric.data import Data
-from torch_geometric.datasets import UpdatedWebQSPDataset
+from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import (
     preprocess_triplet,
     retrieval_via_pcst,
@@ -28,7 +28,7 @@ parser.add_argument("--out_file", default="subg_results")
 args = parser.parse_args()
 
 # %%
-ds = UpdatedWebQSPDataset("dataset", limit=args.num_samples)
+ds = WebQSPDataset("dataset", limit=args.num_samples)
 
 # %%
 triplets = chain.from_iterable(d['graph'] for d in ds.raw_dataset)
