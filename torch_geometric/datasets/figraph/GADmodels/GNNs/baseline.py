@@ -2,12 +2,18 @@ import csv
 
 import pandas as pd
 import torch
-import torch.nn.functional as F
-from torch_geometric.nn import GCNConv
+from util import (
+    GAT_1,
+    GCN_1,
+    GraphSAGE_1,
+    evaluate,
+    load_data,
+    map_nodes_to_indices,
+    read_edges_from_files,
+    sigmoid_focal_loss,
+)
+
 from torch_geometric.data import Data
-from sklearn.metrics import roc_auc_score, recall_score, f1_score, roc_curve
-from util import evaluate, GAT_1, GraphSAGE_1, load_data, read_edges_from_files, map_nodes_to_indices, GCN_1, \
-    sigmoid_focal_loss
 
 # 加载数据
 x_all = []
@@ -31,9 +37,12 @@ for i in range(2014, 2023, 1):
         map_nodes_to_indices(all_edges, data_feature, list(range(st, end + 1, 1)))
 
     # 构建 Data 对象
-    edge_index = torch.tensor([(edge[0], edge[1]) for edge in mapped_edges], dtype=torch.long).t().contiguous()
-    x = torch.tensor([node[1] for node in mapped_node_features_labels], dtype=torch.float)
-    y = torch.tensor([node[2] for node in mapped_node_features_labels], dtype=torch.long)
+    edge_index = torch.tensor([(edge[0], edge[1]) for edge in mapped_edges],
+                              dtype=torch.long).t().contiguous()
+    x = torch.tensor([node[1] for node in mapped_node_features_labels],
+                     dtype=torch.float)
+    y = torch.tensor([node[2] for node in mapped_node_features_labels],
+                     dtype=torch.long)
     x_all.append(x)
     y_all.append(y)
     data = Data(x=x, edge_index=edge_index, y=y)
@@ -41,18 +50,38 @@ for i in range(2014, 2023, 1):
 
 # criterion = FocalLoss()
 
-
 # split_dicts = {0: {'train': [2014, 2016], 'valid': 2017, 'test': 2018},
 #                1: {'train': [2014, 2017], 'valid': 2018, 'test': 2019},
 #                2: {'train': [2014, 2018], 'valid': 2019, 'test': 2020},
 #                3: {'train': [2014, 2019], 'valid': 2020, 'test': 2021},
 #                4: {'train': [2014, 2020], 'valid': 2021, 'test': 2022}}
-split_dicts = {0: {'train': [2014, 2016], 'valid': 2017, 'test': 2018},
-               1: {'train': [2014, 2017], 'valid': 2018, 'test': 2019},
-               2: {'train': [2014, 2018], 'valid': 2019, 'test': 2020},
-               3: {'train': [2014, 2019], 'valid': 2020, 'test': 2021},
-               4: {'train': [2014, 2020], 'valid': 2021, 'test': 2022}}
-
+split_dicts = {
+    0: {
+        'train': [2014, 2016],
+        'valid': 2017,
+        'test': 2018
+    },
+    1: {
+        'train': [2014, 2017],
+        'valid': 2018,
+        'test': 2019
+    },
+    2: {
+        'train': [2014, 2018],
+        'valid': 2019,
+        'test': 2020
+    },
+    3: {
+        'train': [2014, 2019],
+        'valid': 2020,
+        'test': 2021
+    },
+    4: {
+        'train': [2014, 2020],
+        'valid': 2021,
+        'test': 2022
+    }
+}
 
 model_name = "GAT"
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -66,13 +95,15 @@ for model_name in ["SAGE", 'GAT', "GCN"]:
         elif model_name == "GAT":
             model = GAT_1(247, 2).to(device)
 
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.01)
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.001,
+                                     weight_decay=0.01)
         criterion = torch.nn.CrossEntropyLoss()
         result = []
         loss_train = []
         for epoch in range(500):
             loss_sum = 0
-            for year in range(split_dicts[time]['train'][0], split_dicts[time]['train'][1] + 1):
+            for year in range(split_dicts[time]['train'][0],
+                              split_dicts[time]['train'][1] + 1):
                 labels = data_all[year - 2014].y.to(device)
                 # 现在，data 包含了节点特征、连接关系和标签信息
                 model.train()
@@ -85,8 +116,10 @@ for model_name in ["SAGE", 'GAT', "GCN"]:
                 optimizer.step()
                 # print('Epoch:',epoch,'      Train')
                 # evaluate(loss.item(), labels, out, epoch, params=1)
-            loss_train.append(loss_sum / (split_dicts[time]['train'][1] - split_dicts[time]['train'][0]+ 1))
-            print(loss_sum /(split_dicts[time]['train'][1] - split_dicts[time]['train'][0]+ 1) )
+            loss_train.append(loss_sum / (split_dicts[time]['train'][1] -
+                                          split_dicts[time]['train'][0] + 1))
+            print(loss_sum / (split_dicts[time]['train'][1] -
+                              split_dicts[time]['train'][0] + 1))
 
             # 验证
             model.eval()
@@ -94,14 +127,17 @@ for model_name in ["SAGE", 'GAT', "GCN"]:
             with torch.no_grad():
                 out = model(data_all[split_dicts[time]['valid'] - 2014])
             gnn_loss_xent = criterion(out, labels)
-            loss = sigmoid_focal_loss(gnn_loss_xent, out, labels, alpha=0.82, gamma=0)
+            loss = sigmoid_focal_loss(gnn_loss_xent, out, labels, alpha=0.82,
+                                      gamma=0)
             print('Epoch:', epoch, '      Valid       ', loss.item())
 
             if epoch == 0:
                 result = evaluate(loss.item(), labels, out, epoch, params=1)
             else:
-                result = pd.concat([result, evaluate(loss.item(), labels, out, epoch, params=1)],
-                                   axis=0)
+                result = pd.concat([
+                    result,
+                    evaluate(loss.item(), labels, out, epoch, params=1)
+                ], axis=0)
 
             # 测试
             model.eval()
@@ -109,14 +145,19 @@ for model_name in ["SAGE", 'GAT', "GCN"]:
             with torch.no_grad():
                 out = model(data_all[split_dicts[time]['test'] - 2014])
             gnn_loss_xent = criterion(out, labels)
-            loss = sigmoid_focal_loss(gnn_loss_xent, out, labels, alpha=0.82, gamma=0)
+            loss = sigmoid_focal_loss(gnn_loss_xent, out, labels, alpha=0.82,
+                                      gamma=0)
             print('Epoch:', epoch, '      Test       ', loss.item())
-            result = pd.concat([result, evaluate(loss.item(), labels, out, epoch, params=2)], axis=0)
-        file_name = 'result-Nips/result_Findata_Nips_' + str(time) + '_' + model_name + '.csv'
+            result = pd.concat(
+                [result,
+                 evaluate(loss.item(), labels, out, epoch, params=2)], axis=0)
+        file_name = 'result-Nips/result_Findata_Nips_' + str(
+            time) + '_' + model_name + '.csv'
         result.to_csv(file_name)
 
         # 将列表写入CSV文件
-        file_name = 'result-Nips/result_Findata_Nips_train_loss_' + str(time) + '_' + model_name + '.csv'
+        file_name = 'result-Nips/result_Findata_Nips_train_loss_' + str(
+            time) + '_' + model_name + '.csv'
         with open(file_name, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['Epoch', 'Train_loss_average'])

@@ -1,15 +1,17 @@
 import os
+
+import networkx as nx
 import pandas as pd
 import torch
-from torch_geometric.data import InMemoryDataset, Data
+
+from torch_geometric.data import InMemoryDataset
 from torch_geometric.utils import from_networkx
-import networkx as nx
 
 
 class FiGraphDataset(InMemoryDataset):
     def __init__(self, root, transform=None, pre_transform=None):
         self.custom_root = root
-        super(FiGraphDataset, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         if not os.path.exists(self.processed_paths[0]):
             self.process()
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -35,7 +37,7 @@ class FiGraphDataset(InMemoryDataset):
 
         for year in range(2014, 2016):
             edge_path = os.path.join(data_dir, f'edges{year}.csv')
-            edge_data = pd.read_csv(edge_path, header=None)  
+            edge_data = pd.read_csv(edge_path, header=None)
 
             G = nx.Graph()
             for _, row in edge_data.iterrows():
@@ -50,15 +52,20 @@ class FiGraphDataset(InMemoryDataset):
             node_features = []
             node_labels = []
             node_ids = []
-            for _, row in feature_data[feature_data['Year'] == year].iterrows():
+            for _, row in feature_data[feature_data['Year'] ==
+                                       year].iterrows():
                 node_id = row['nodeID']
                 node_ids.append(node_id)
 
                 try:
-                    features = torch.tensor(row.drop(['nodeID', 'Year', 'Label']).values.astype(float),
-                                            dtype=torch.float)
+                    features = torch.tensor(
+                        row.drop(['nodeID', 'Year',
+                                  'Label']).values.astype(float),
+                        dtype=torch.float)
                 except ValueError as e:
-                    print(f"Error converting features for node {node_id} in year {year}: {e}")
+                    print(
+                        f"Error converting features for node {node_id} in year {year}: {e}"
+                    )
                     continue
 
                 node_features.append(features)

@@ -1,15 +1,16 @@
-
-from model import *
-from config import *
-from utils import *
-from metrics_utils import *
 import time
+
+from config import *
+from metrics_utils import *
+from model import *
+from utils import *
+
 
 class FocalLoss(nn.Module):
     # gamma=0,alpha=0.86,gcn层数为1，应该最优，可以平衡欺诈和非欺诈之间的识别, 我们的数据集
     # alpha=? ,ACM
     def __init__(self, gamma=0, alpha=0.86, reduction='sum'):
-        super(FocalLoss, self).__init__()
+        super().__init__()
         self.gamma = gamma
         self.alpha = alpha
         self.reduction = reduction
@@ -27,13 +28,18 @@ class FocalLoss(nn.Module):
 
         return loss
 
+
 for key, value in split_dicts.items():
     print('year', value)
 
     # 加载数据集
-    G, ntypes, etypes, labels = load_dataset(value, graph_type_full, graph_type_etypes, feature_path, device)
+    G, ntypes, etypes, labels = load_dataset(value, graph_type_full,
+                                             graph_type_etypes, feature_path,
+                                             device)
 
-    model = HGT(G, n_inp=G.nodes['L'].data['inp'].shape[1], n_hid=64, n_out=labels.max().item() + 1, n_layers=3, n_heads=8, use_norm=True).to(device)
+    model = HGT(G, n_inp=G.nodes['L'].data['inp'].shape[1], n_hid=64,
+                n_out=labels.max().item() + 1, n_layers=3, n_heads=8,
+                use_norm=True).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
     loss_fcn = FocalLoss()
 
@@ -55,21 +61,27 @@ for key, value in split_dicts.items():
             model.train()
             logits = model(G, 'L')
             # The loss is computed only for labeled nodes.
-            loss = loss_fcn(logits.softmax(dim=1)[train_id, 1], labels[train_id].to(device))
+            loss = loss_fcn(
+                logits.softmax(dim=1)[train_id, 1],
+                labels[train_id].to(device))
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-            result_train.append(evaluate_new(labels=labels[train_id].detach().cpu().numpy(),
-                                             y_probs=logits.softmax(dim=1)[train_id, 1].detach().cpu().numpy(),
-                                             epo=epoch,
-                                             loss=loss.detach().cpu().numpy(),
-                                             ))
+            result_train.append(
+                evaluate_new(
+                    labels=labels[train_id].detach().cpu().numpy(),
+                    y_probs=logits.softmax(dim=1)[train_id,
+                                                  1].detach().cpu().numpy(),
+                    epo=epoch,
+                    loss=loss.detach().cpu().numpy(),
+                ))
 
             # 验证
             model.eval()
-            loss = loss_fcn(logits.softmax(dim=1)[val_id, 1], labels[val_id].to(device))
+            loss = loss_fcn(
+                logits.softmax(dim=1)[val_id, 1], labels[val_id].to(device))
             prob, value_label = torch.max(logits.softmax(dim=1)[val_id], dim=1)
             # result_valid.append(evaluate_new(y_proba=logits.softmax(dim=1)[val_id, 1].detach().cpu().numpy(),
             #                              y_pred=value_label.detach().cpu().numpy(),
@@ -77,26 +89,34 @@ for key, value in split_dicts.items():
             #                              loss=loss.item(),
             #                              epoch=epoch,
             #                              params=model.parameters()))
-            result_valid.append(evaluate_new(labels=labels[val_id].detach().cpu().numpy(),
-                                             y_probs=logits.softmax(dim=1)[val_id, 1].detach().cpu().numpy(),
-                                             epo=epoch,
-                                             loss=loss.detach().cpu().numpy(),
-                                             ))
+            result_valid.append(
+                evaluate_new(
+                    labels=labels[val_id].detach().cpu().numpy(),
+                    y_probs=logits.softmax(dim=1)[val_id,
+                                                  1].detach().cpu().numpy(),
+                    epo=epoch,
+                    loss=loss.detach().cpu().numpy(),
+                ))
 
             # 测试
             model.eval()
-            loss = loss_fcn(logits.softmax(dim=1)[test_id, 1], labels[test_id].to(device))
-            prob, value_label = torch.max(logits.softmax(dim=1)[test_id], dim=1)
+            loss = loss_fcn(
+                logits.softmax(dim=1)[test_id, 1], labels[test_id].to(device))
+            prob, value_label = torch.max(
+                logits.softmax(dim=1)[test_id], dim=1)
             # res = evaluate(y_proba=logits.softmax(dim=1)[test_id, 1].detach().cpu().numpy(),
             #                y_pred=value_label.detach().cpu().numpy(),
             #                label=labels[test_id].detach().cpu().numpy(),
             #                loss=loss.item(),
             #                epoch=epoch,
             #                params=model.parameters())
-            res = evaluate_new(labels=labels[test_id].detach().cpu().numpy(),
-                             y_probs=logits.softmax(dim=1)[test_id, 1].detach().cpu().numpy(),
-                             epo=epoch,
-                             loss=loss.detach().cpu().numpy(),)
+            res = evaluate_new(
+                labels=labels[test_id].detach().cpu().numpy(),
+                y_probs=logits.softmax(dim=1)[test_id,
+                                              1].detach().cpu().numpy(),
+                epo=epoch,
+                loss=loss.detach().cpu().numpy(),
+            )
             # print(res.loc[0, 'Recall'], res.loc[0, 'Recall_macro'], res.loc[0, 'ROC_AUC'], res.loc[0, "KS"])
             result_test.append(res)
 
@@ -104,11 +124,11 @@ for key, value in split_dicts.items():
         print("程序运行时间：", end_time - start_time, "秒")
         # 保存验证文件和测试文件
         pd.concat(result_valid).to_csv(
-            "HGT_result_wxg/" + str(key) + "_" + str(t) + "_" + str(value) + "_train.csv", index=False,
-            encoding='utf-8')
+            "HGT_result_wxg/" + str(key) + "_" + str(t) + "_" + str(value) +
+            "_train.csv", index=False, encoding='utf-8')
         pd.concat(result_valid).to_csv(
-            "HGT_result_wxg/" + str(key) + "_" + str(t) + "_" + str(value) + "_valid.csv", index=False,
-            encoding='utf-8')
+            "HGT_result_wxg/" + str(key) + "_" + str(t) + "_" + str(value) +
+            "_valid.csv", index=False, encoding='utf-8')
         pd.concat(result_test).to_csv(
-            "HGT_result_wxg/" + str(key) + "_" + str(t) + "_" + str(value) + "_test.csv", index=False,
-            encoding='utf-8')
+            "HGT_result_wxg/" + str(key) + "_" + str(t) + "_" + str(value) +
+            "_test.csv", index=False, encoding='utf-8')

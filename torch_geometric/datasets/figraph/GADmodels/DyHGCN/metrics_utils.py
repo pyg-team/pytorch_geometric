@@ -1,12 +1,15 @@
-import copy
-import random
-from sklearn.metrics import accuracy_score, precision_score, recall_score
-from sklearn.metrics import f1_score, roc_auc_score, balanced_accuracy_score,average_precision_score
-from sklearn.utils import shuffle
-from scipy.stats import ks_2samp
-import pandas as pd
 import numpy as np
-
+import pandas as pd
+from scipy.stats import ks_2samp
+from sklearn.metrics import (
+    accuracy_score,
+    average_precision_score,
+    balanced_accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 
 
 def KS(y_true, y_proba):
@@ -19,11 +22,11 @@ def GM(y_true, y_pred):
     for label in labels:
         recall = (y_pred[y_true == label] == label).mean()
         gmean = gmean * recall
-    return gmean ** (1 / len(labels))
+    return gmean**(1 / len(labels))
 
 
 def evaluate(labels, y_probs, epo, loss, params={}):
-    '''y_preds 是一维向量，y_probs是二维矩阵'''
+    """y_preds 是一维向量，y_probs是二维矩阵"""
     accuracy_list = []
     recall_list = []
     precision_list = []
@@ -46,16 +49,20 @@ def evaluate(labels, y_probs, epo, loss, params={}):
     y_preds = np.array([1 if i > 0.5 else 0 for i in y_probs.squeeze()])
 
     accuracy_list.append(accuracy_score(labels, y_preds))
-    if len(np.unique(labels))<=2:
-        recall_list.append(recall_score(labels, y_preds, average='binary', pos_label=1))
-        precision_list.append(precision_score(labels, y_preds, average='binary', pos_label=1))
+    if len(np.unique(labels)) <= 2:
+        recall_list.append(
+            recall_score(labels, y_preds, average='binary', pos_label=1))
+        precision_list.append(
+            precision_score(labels, y_preds, average='binary', pos_label=1))
         fpr_list.append((y_preds[labels == 0] == 1).mean())
-        f1_list.append(f1_score(labels, y_preds, average='binary', pos_label=1))
+        f1_list.append(f1_score(labels, y_preds, average='binary',
+                                pos_label=1))
         roc_auc_list.append(roc_auc_score(labels, y_probs))
-        auprc_list.append(average_precision_score(labels, y_probs, pos_label=1))
+        auprc_list.append(average_precision_score(labels, y_probs,
+                                                  pos_label=1))
         ks_list.append(KS(labels, y_probs))
 
-    elif len(np.unique(labels))>2:
+    elif len(np.unique(labels)) > 2:
         recall_list.append(None)
         precision_list.append(None)
         fpr_list.append(None)
@@ -73,43 +80,45 @@ def evaluate(labels, y_probs, epo, loss, params={}):
     precision_macro_list.append(precision_macro)
 
     f1_macro_arithmetic_list.append(f1_score(labels, y_preds, average='macro'))
-    f1_macro_harmonic = 2 * recall_macro * precision_macro / (recall_macro + precision_macro)
+    f1_macro_harmonic = 2 * recall_macro * precision_macro / (recall_macro +
+                                                              precision_macro)
     f1_macro_harmonic_list.append(f1_macro_harmonic)
 
-    mauc_list.append(roc_auc_score(labels, y_probs, average='macro', multi_class='ovo'))
+    mauc_list.append(
+        roc_auc_score(labels, y_probs, average='macro', multi_class='ovo'))
     gm_list.append(GM(labels, y_preds))
 
     epoch_list = [epo]
     loss_list = [loss]
     params_list.append(params)
 
-    indicator = np.vstack(
-        [np.array(accuracy_list), np.array(recall_list),
-         np.array(precision_list), np.array(fpr_list),
-         np.array(f1_list), np.array(roc_auc_list),
-         np.array(auprc_list),
-         np.array(ks_list),
+    indicator = np.vstack([
+        np.array(accuracy_list),
+        np.array(recall_list),
+        np.array(precision_list),
+        np.array(fpr_list),
+        np.array(f1_list),
+        np.array(roc_auc_list),
+        np.array(auprc_list),
+        np.array(ks_list),
+        np.array(balanced_accuracy_list),
+        np.array(recall_macro_list),
+        np.array(precision_macro_list),
+        np.array(f1_macro_arithmetic_list),
+        np.array(f1_macro_harmonic_list),
+        np.array(mauc_list),
+        np.array(gm_list),
+        np.array(epoch_list),
+        np.array(loss_list),
+        np.array(params_list)
+    ])
 
-         np.array(balanced_accuracy_list), np.array(recall_macro_list),
-         np.array(precision_macro_list), np.array(f1_macro_arithmetic_list),
-         np.array(f1_macro_harmonic_list), np.array(mauc_list),
-         np.array(gm_list),
-
-         np.array(epoch_list), np.array(loss_list), np.array(params_list)
-         ])
-
-    scores = pd.DataFrame(indicator.T,
-                          columns=['Accuracy', 'Recall', 'Precision',
-                                   'FPR', 'F1', 'ROC_AUC', 'AUPRC', 'KS',
-
-                                   'Balanced_Accuracy', 'Recall_macro',
-                                   'precision_macro', 'F1_macro_arithmetic',
-                                   'F1_macro_harmonic', 'MAUC', 'GM',
-
-                                   'epoch','Loss', 'Parmmeters'])
+    scores = pd.DataFrame(
+        indicator.T, columns=[
+            'Accuracy', 'Recall', 'Precision', 'FPR', 'F1', 'ROC_AUC', 'AUPRC',
+            'KS', 'Balanced_Accuracy', 'Recall_macro', 'precision_macro',
+            'F1_macro_arithmetic', 'F1_macro_harmonic', 'MAUC', 'GM', 'epoch',
+            'Loss', 'Parmmeters'
+        ])
 
     return scores
-
-
-
-

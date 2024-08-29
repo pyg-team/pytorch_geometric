@@ -1,11 +1,12 @@
-import pandas as pd
+import random
+
 import numpy as np
+import pandas as pd
 import torch
+from metrics_utils import evaluate  # 导入评估函数
+
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import ToUndirected
-from metrics_utils import evaluate  # 导入评估函数
-import random
-from torch_geometric.utils import subgraph
 
 # 确保使用 GPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -27,7 +28,9 @@ features = pd.read_csv('../data/FiGraph/ListedCompanyFeatures.csv')
 
 
 def remove_background_nodes(edges, removal_percentage, node_labels):
-    background_nodes = [i for i, label in enumerate(node_labels) if label == -1]
+    background_nodes = [
+        i for i, label in enumerate(node_labels) if label == -1
+    ]
     num_remove = int(len(background_nodes) * removal_percentage / 100)
     remove_nodes = random.sample(background_nodes, num_remove)
     keep_nodes = list(set(range(len(node_labels))) - set(remove_nodes))
@@ -36,9 +39,12 @@ def remove_background_nodes(edges, removal_percentage, node_labels):
 
 def create_data_list(removal_percentage):
     data_list = []
-    all_edges = pd.concat(
-        [pd.read_csv(edge_file, names=['source', 'target', 'relation']) for edge_file in edge_files.values()])
-    all_node_ids = list(set(all_edges['source']).union(set(all_edges['target'])))
+    all_edges = pd.concat([
+        pd.read_csv(edge_file, names=['source', 'target', 'relation'])
+        for edge_file in edge_files.values()
+    ])
+    all_node_ids = list(
+        set(all_edges['source']).union(set(all_edges['target'])))
     all_node_index = {node: idx for idx, node in enumerate(all_node_ids)}
 
     all_node_labels = np.full(len(all_node_index), -1)  # 初始化为 -1，表示背景节点没有标签
@@ -47,7 +53,8 @@ def create_data_list(removal_percentage):
             idx = all_node_index[row['nodeID']]
             all_node_labels[idx] = row['Label']
 
-    keep_nodes = remove_background_nodes(all_edges, removal_percentage, all_node_labels)
+    keep_nodes = remove_background_nodes(all_edges, removal_percentage,
+                                         all_node_labels)
     keep_nodes_set = set(keep_nodes)
 
     for year, edge_file in edge_files.items():
@@ -55,7 +62,10 @@ def create_data_list(removal_percentage):
         node_ids = list(set(edges['source']).union(set(edges['target'])))
         node_index = {node: idx for idx, node in enumerate(node_ids)}
 
-        edge_index = {edge_type: [[], []] for edge_type in edges['relation'].unique()}
+        edge_index = {
+            edge_type: [[], []]
+            for edge_type in edges['relation'].unique()
+        }
         for _, row in edges.iterrows():
             src = node_index[row['source']]
             tgt = node_index[row['target']]
@@ -81,7 +91,9 @@ def create_data_list(removal_percentage):
         data['company'].y = node_labels
 
         for edge_type, (src, tgt) in edge_index.items():
-            data[('company', edge_type, 'company')].edge_index = torch.tensor([src, tgt], dtype=torch.long)
+            data[('company', edge_type,
+                  'company')].edge_index = torch.tensor([src, tgt],
+                                                        dtype=torch.long)
 
         data = ToUndirected()(data)
         data_list.append(data)
@@ -91,15 +103,18 @@ def create_data_list(removal_percentage):
 
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.nn import GCNConv
 
 
 class DyHGCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_relations):
-        super(DyHGCN, self).__init__()
+    def __init__(self, in_channels, hidden_channels, out_channels,
+                 num_relations):
+        super().__init__()
         self.num_layers = len(hidden_channels)
         self.convs = torch.nn.ModuleList()
-        self.relation_embedding = torch.nn.Embedding(num_relations, in_channels)
+        self.relation_embedding = torch.nn.Embedding(num_relations,
+                                                     in_channels)
 
         # 创建每种关系的多层 GCN
         for _ in range(num_relations):
@@ -110,7 +125,8 @@ class DyHGCN(torch.nn.Module):
                 conv_layers.append(GCNConv(in_dim, out_dim))
             self.convs.append(conv_layers)
 
-        self.lstm = torch.nn.LSTM(hidden_channels[-1], hidden_channels[-1], batch_first=True)
+        self.lstm = torch.nn.LSTM(hidden_channels[-1], hidden_channels[-1],
+                                  batch_first=True)
         self.out_conv = GCNConv(hidden_channels[-1], out_channels)
 
     def forward(self, x, edge_index_dict):
@@ -126,11 +142,13 @@ class DyHGCN(torch.nn.Module):
         out, _ = self.lstm(out.unsqueeze(0))
         out = out.squeeze(0)
         out = F.relu(out)
-        out = self.out_conv(out, torch.cat(list(edge_index_dict.values()), dim=1))
+        out = self.out_conv(out,
+                            torch.cat(list(edge_index_dict.values()), dim=1))
         return F.log_softmax(out, dim=1)
 
 
-def train_and_evaluate(model, optimizer, criterion, data_list, train_years, val_year, test_year, params):
+def train_and_evaluate(model, optimizer, criterion, data_list, train_years,
+                       val_year, test_year, params):
     all_results = []
     model.to(device)  # 将模型移到 GPU 上
     for epoch in range(250):
@@ -146,20 +164,19 @@ def train_and_evaluate(model, optimizer, criterion, data_list, train_years, val_
 
         model.eval()
         with torch.no_grad():
-            for year, settype in [(train_years[-1], 'train'), (val_year, 'valid'), (test_year, 'test')]:
+            for year, settype in [(train_years[-1], 'train'),
+                                  (val_year, 'valid'), (test_year, 'test')]:
                 data = data_list[year - 2014].to(device)  # 将数据移到 GPU 上
                 out = model(data['company'].x, data.edge_index_dict)
                 mask = data['company'].y != -1  # 只评估目标节点
                 y_probs = torch.softmax(out[mask], dim=1)[:, 1].cpu().numpy()
                 labels = data['company'].y[mask].cpu().numpy()
-                results = evaluate(labels, y_probs, epoch, loss.item(), params=str(params))
+                results = evaluate(labels, y_probs, epoch, loss.item(),
+                                   params=str(params))
                 results['settype'] = settype  # 添加 settype 列
                 all_results.append(results)
 
     return pd.concat(all_results)
-
-
-
 
 
 if __name__ == '__main__':
@@ -184,29 +201,30 @@ if __name__ == '__main__':
                            hidden_channels=hidden_channels,
                            out_channels=out_channels,
                            num_relations=num_relations)
-            optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=weight_decay)
+            optimizer = torch.optim.Adam(model.parameters(), lr=0.0001,
+                                         weight_decay=weight_decay)
             criterion = torch.nn.CrossEntropyLoss()
 
-            params = {'hidden_channels': hidden_channels,
-                      'weight_decay': weight_decay,
-                      'removal_percentage': removal_percentage
-                      }
+            params = {
+                'hidden_channels': hidden_channels,
+                'weight_decay': weight_decay,
+                'removal_percentage': removal_percentage
+            }
 
             print(
-                f"Training on years {train_years}, validating on {val_year}, testing on {test_year}, removal_percentage={removal_percentage}")
-            df_results = train_and_evaluate(model, optimizer, criterion, data_list,
-                                            train_years, val_year, test_year, params)
+                f"Training on years {train_years}, validating on {val_year}, testing on {test_year}, removal_percentage={removal_percentage}"
+            )
+            df_results = train_and_evaluate(model, optimizer, criterion,
+                                            data_list, train_years, val_year,
+                                            test_year, params)
 
             df_results['repeat'] = i
-            df_results.to_csv('./result/DyHGCN_result_' + str(removal_percentage) + '_' + str(i) + '.csv',
-                              index=False, encoding='utf-8')
+            df_results.to_csv(
+                './result/DyHGCN_result_' + str(removal_percentage) + '_' +
+                str(i) + '.csv', index=False, encoding='utf-8')
             results.append(df_results)
 
         final_results = pd.concat(results, axis=0)
-        final_results.to_csv('./result/DyHGCN_result_' + str(removal_percentage) + '.csv',
-                             index=False, encoding='utf-8')
-
-
-
-
-
+        final_results.to_csv(
+            './result/DyHGCN_result_' + str(removal_percentage) + '.csv',
+            index=False, encoding='utf-8')

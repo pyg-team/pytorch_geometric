@@ -35,7 +35,7 @@ seed: 72
 
 # hyper-parameters
 optimizer: 'adam'
-lr: 0.005 
+lr: 0.005
 weight_decay: 0.0005
 batch_size: 256
 num_epochs: 51

@@ -1,8 +1,9 @@
+import dgl
 import numpy as np
 import pandas as pd
-from scipy.sparse import load_npz, coo_matrix
+from scipy.sparse import load_npz
 from sklearn.preprocessing import StandardScaler
-import dgl
+
 
 def create_dgl_graph(year):
     # 根据L-U-L、L-A-L、L-R-L、L-P-L、L-L创建同构图
@@ -51,6 +52,7 @@ def create_dgl_graph(year):
 
     return g
 
+
 # 给定特征表和年份，返回特征和标签
 def feature_label(feature, year):
     feature_year = feature[(feature['Year'] == year)]
@@ -59,8 +61,10 @@ def feature_label(feature, year):
     # 标签
     labels = feature_year['label']
     # 特征
-    node_features = feature_year.drop(columns={'StkcdYear', 'Stkcd', 'Year', 'label'})
+    node_features = feature_year.drop(
+        columns={'StkcdYear', 'Stkcd', 'Year', 'label'})
     return node_features.values, labels.values
+
 
 def new_split_data(train_start_year, train_end_year, valid_year, test_year):
     # 文件路径
@@ -69,13 +73,19 @@ def new_split_data(train_start_year, train_end_year, valid_year, test_year):
     feature = pd.read_csv(file_path)
     # 特征归一化
     # 特征提取
-    num_cols = [col for col in list(feature.columns) if col not in ['StkcdYear', 'Stkcd', 'Year', 'label']]
+    num_cols = [
+        col for col in list(feature.columns)
+        if col not in ['StkcdYear', 'Stkcd', 'Year', 'label']
+    ]
 
     # 获取训练集，验证集，测试集
     trainset = pd.DataFrame.copy(
-        feature[(feature['Year'] >= train_start_year) & (feature['Year'] <= train_end_year)], deep=True)
-    validset = pd.DataFrame.copy(feature[(feature['Year'] == valid_year)], deep=True)
-    testset = pd.DataFrame.copy(feature[(feature['Year'] == test_year)], deep=True)
+        feature[(feature['Year'] >= train_start_year)
+                & (feature['Year'] <= train_end_year)], deep=True)
+    validset = pd.DataFrame.copy(feature[(feature['Year'] == valid_year)],
+                                 deep=True)
+    testset = pd.DataFrame.copy(feature[(feature['Year'] == test_year)],
+                                deep=True)
     # 开始连续特征归一化
     trainset[num_cols] = StandardScaler().fit_transform(trainset[num_cols])
     validset[num_cols] = StandardScaler().fit_transform(validset[num_cols])
@@ -102,13 +112,17 @@ def new_split_data(train_start_year, train_end_year, valid_year, test_year):
 
     return train_g, train_feature, train_labels, valid_g, valid_feature, valid_labels, test_g, test_feature, test_labels
 
+
 def split_dataset(total, train, val, test):
     ids = [i for i in range(total.shape[0])]
     # 划分训练集和测试集id
     split_ratio = [train, val, test]
     # 计算总数
     total_ratios = sum(split_ratio)
-    splits = [sum(split_ratio[:i + 1]) * len(ids) // total_ratios for i in range(len(split_ratio))]
+    splits = [
+        sum(split_ratio[:i + 1]) * len(ids) // total_ratios
+        for i in range(len(split_ratio))
+    ]
 
     # 打乱
     np.random.shuffle(ids)

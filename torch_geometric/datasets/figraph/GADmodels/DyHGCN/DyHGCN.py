@@ -1,13 +1,13 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 import torch
+from metrics_utils import evaluate  # 导入评估函数
+
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import ToUndirected
-from metrics_utils import evaluate  # 导入评估函数
 
 # 确保使用 GPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
 # 加载边数据
 edge_files = {
@@ -24,7 +24,6 @@ edge_files = {
 
 features = pd.read_csv('../data/FiGraph/ListedCompanyFeatures.csv')
 
-
 # 创建多个时间快照的 HeteroData 对象
 data_list = []
 
@@ -33,7 +32,10 @@ for year, edge_file in edge_files.items():
     node_ids = list(set(edges['source']).union(set(edges['target'])))
     node_index = {node: idx for idx, node in enumerate(node_ids)}
 
-    edge_index = {edge_type: [[], []] for edge_type in edges['relation'].unique()}
+    edge_index = {
+        edge_type: [[], []]
+        for edge_type in edges['relation'].unique()
+    }
     for _, row in edges.iterrows():
         src = node_index[row['source']]
         tgt = node_index[row['target']]
@@ -58,22 +60,27 @@ for year, edge_file in edge_files.items():
     data['company'].y = node_labels
 
     for edge_type, (src, tgt) in edge_index.items():
-        data[('company', edge_type, 'company')].edge_index = torch.tensor([src, tgt], dtype=torch.long)
+        data[('company', edge_type,
+              'company')].edge_index = torch.tensor([src, tgt],
+                                                    dtype=torch.long)
 
     data = ToUndirected()(data)
     data_list.append(data)
 
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.nn import GCNConv
 
 
 class DyHGCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_relations):
-        super(DyHGCN, self).__init__()
+    def __init__(self, in_channels, hidden_channels, out_channels,
+                 num_relations):
+        super().__init__()
         self.num_layers = len(hidden_channels)
         self.convs = torch.nn.ModuleList()
-        self.relation_embedding = torch.nn.Embedding(num_relations, in_channels)
+        self.relation_embedding = torch.nn.Embedding(num_relations,
+                                                     in_channels)
 
         # 创建每种关系的多层 GCN
         for _ in range(num_relations):
@@ -84,7 +91,8 @@ class DyHGCN(torch.nn.Module):
                 conv_layers.append(GCNConv(in_dim, out_dim))
             self.convs.append(conv_layers)
 
-        self.lstm = torch.nn.LSTM(hidden_channels[-1], hidden_channels[-1], batch_first=True)
+        self.lstm = torch.nn.LSTM(hidden_channels[-1], hidden_channels[-1],
+                                  batch_first=True)
         self.out_conv = GCNConv(hidden_channels[-1], out_channels)
 
     def forward(self, x, edge_index_dict):
@@ -100,11 +108,13 @@ class DyHGCN(torch.nn.Module):
         out, _ = self.lstm(out.unsqueeze(0))
         out = out.squeeze(0)
         out = F.relu(out)
-        out = self.out_conv(out, torch.cat(list(edge_index_dict.values()), dim=1))
+        out = self.out_conv(out,
+                            torch.cat(list(edge_index_dict.values()), dim=1))
         return F.log_softmax(out, dim=1)
 
 
-def train_and_evaluate(model, optimizer, criterion, data_list, train_years, val_year, test_year, params):
+def train_and_evaluate(model, optimizer, criterion, data_list, train_years,
+                       val_year, test_year, params):
     all_results = []
     model.to(device)  # 将模型移到 GPU 上
     for epoch in range(250):
@@ -120,21 +130,19 @@ def train_and_evaluate(model, optimizer, criterion, data_list, train_years, val_
 
         model.eval()
         with torch.no_grad():
-            for year, settype in [(train_years[-1], 'train'), (val_year, 'valid'), (test_year, 'test')]:
+            for year, settype in [(train_years[-1], 'train'),
+                                  (val_year, 'valid'), (test_year, 'test')]:
                 data = data_list[year - 2014].to(device)  # 将数据移到 GPU 上
                 out = model(data['company'].x, data.edge_index_dict)
                 mask = data['company'].y != -1  # 只评估目标节点
                 y_probs = torch.softmax(out[mask], dim=1)[:, 1].cpu().numpy()
                 labels = data['company'].y[mask].cpu().numpy()
-                results = evaluate(labels, y_probs, epoch, loss.item(), params=str(params))
+                results = evaluate(labels, y_probs, epoch, loss.item(),
+                                   params=str(params))
                 results['settype'] = settype  # 添加 settype 列
                 all_results.append(results)
 
     return pd.concat(all_results)
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -153,27 +161,27 @@ if __name__ == '__main__':
 
         model = DyHGCN(in_channels=in_channels,
                        hidden_channels=hidden_channels,
-                       out_channels=out_channels,
-                       num_relations=num_relations)
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=weight_decay)
+                       out_channels=out_channels, num_relations=num_relations)
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.0001,
+                                     weight_decay=weight_decay)
         criterion = torch.nn.CrossEntropyLoss()
 
-        params = {'hidden_channels': hidden_channels,
-                  'weight_decay': weight_decay
-                  }
+        params = {
+            'hidden_channels': hidden_channels,
+            'weight_decay': weight_decay
+        }
 
-        print(f"Training on years {train_years}, validating on {val_year}, testing on {test_year}")
+        print(
+            f"Training on years {train_years}, validating on {val_year}, testing on {test_year}"
+        )
         df_results = train_and_evaluate(model, optimizer, criterion, data_list,
-                                        train_years, val_year, test_year, params)
+                                        train_years, val_year, test_year,
+                                        params)
         df_results['repeat'] = i
         results.append(df_results)
-        df_results.to_csv('./result/DyHGCN_result' + str(i) + '.csv', index=False, encoding='utf-8')
+        df_results.to_csv('./result/DyHGCN_result' + str(i) + '.csv',
+                          index=False, encoding='utf-8')
 
     final_results = pd.concat(results, axis=0)
-    final_results.to_csv('./result/DyHGCN_result'+'.csv', index=False, encoding='utf-8')
-
-
-
-
-
-
+    final_results.to_csv('./result/DyHGCN_result' + '.csv', index=False,
+                         encoding='utf-8')

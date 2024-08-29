@@ -1,8 +1,8 @@
-
-for year in range(2010,2023,1):
+for year in range(2010, 2023, 1):
     # 读取原始文本文件
-    file_name = 'data/graph_edges_listed/graph_edges_listed'+str(year)+'.txt'
-    with open(file_name, 'r') as input_file:
+    file_name = 'data/graph_edges_listed/graph_edges_listed' + str(
+        year) + '.txt'
+    with open(file_name) as input_file:
         lines = input_file.readlines()
 
     # 处理每一行数据

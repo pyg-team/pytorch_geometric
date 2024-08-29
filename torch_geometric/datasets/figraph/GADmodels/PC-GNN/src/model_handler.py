@@ -1,17 +1,24 @@
+import argparse
 import csv
-import time, datetime
+import datetime
 import os
 import random
-import argparse
+import time
+
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-
-from src.utils import test_pcgnn, test_sage, load_data, pos_neg_split, normalize, pick_step, load_all_data
-from src.model import PCALayer
-from src.layers import InterAgg, IntraAgg
 from src.graphsage import *
+from src.layers import InterAgg, IntraAgg
+from src.model import PCALayer
+from src.utils import (
+    load_all_data,
+    load_data,
+    normalize,
+    pick_step,
+    pos_neg_split,
+    test_pcgnn,
+)
 
 """
 	Training PC-GNN
@@ -19,37 +26,41 @@ from src.graphsage import *
 """
 
 
-class ModelHandler(object):
-
+class ModelHandler:
     def __init__(self, config):
         args = argparse.Namespace(**config)
         # load graph, feature, and label
-        [homo, relation1, relation2, relation3], feat_data, labels = load_data(args.data_name, prefix=args.data_dir)
+        [homo, relation1, relation2,
+         relation3], feat_data, labels = load_data(args.data_name,
+                                                   prefix=args.data_dir)
 
         # train_test split
         np.random.seed(args.seed)
         random.seed(args.seed)
         if args.data_name == 'yelp':
             index = list(range(len(labels)))
-            idx_train, idx_rest, y_train, y_rest = train_test_split(index, labels, stratify=labels,
-                                                                    train_size=args.train_ratio,
-                                                                    random_state=2, shuffle=True)
-            idx_valid, idx_test, y_valid, y_test = train_test_split(idx_rest, y_rest, stratify=y_rest,
-                                                                    test_size=args.test_ratio,
-                                                                    random_state=2, shuffle=True)
+            idx_train, idx_rest, y_train, y_rest = train_test_split(
+                index, labels, stratify=labels, train_size=args.train_ratio,
+                random_state=2, shuffle=True)
+            idx_valid, idx_test, y_valid, y_test = train_test_split(
+                idx_rest, y_rest, stratify=y_rest, test_size=args.test_ratio,
+                random_state=2, shuffle=True)
 
         elif args.data_name == 'amazon':  # amazon
             # 0-3304 are unlabeled nodes
             index = list(range(3305, len(labels)))
-            idx_train, idx_rest, y_train, y_rest = train_test_split(index, labels[3305:], stratify=labels[3305:],
-                                                                    train_size=args.train_ratio, random_state=2,
-                                                                    shuffle=True)
-            idx_valid, idx_test, y_valid, y_test = train_test_split(idx_rest, y_rest, stratify=y_rest,
-                                                                    test_size=args.test_ratio, random_state=2,
-                                                                    shuffle=True)
+            idx_train, idx_rest, y_train, y_rest = train_test_split(
+                index, labels[3305:], stratify=labels[3305:],
+                train_size=args.train_ratio, random_state=2, shuffle=True)
+            idx_valid, idx_test, y_valid, y_test = train_test_split(
+                idx_rest, y_rest, stratify=y_rest, test_size=args.test_ratio,
+                random_state=2, shuffle=True)
 
-        print(f'Run on {args.data_name}, postive/total num: {np.sum(labels)}/{len(labels)}, train num {len(y_train)},' +
-              f'valid num {len(y_valid)}, test num {len(y_test)}, test positive num {np.sum(y_test)}')
+        print(
+            f'Run on {args.data_name}, postive/total num: {np.sum(labels)}/{len(labels)}, train num {len(y_train)},'
+            +
+            f'valid num {len(y_valid)}, test num {len(y_test)}, test positive num {np.sum(y_test)}'
+        )
         print(f"Classification threshold: {args.thres}")
         print(f"Feature dimension: {feat_data.shape[1]}")
 
@@ -71,24 +82,58 @@ class ModelHandler(object):
         else:
             adj_lists = [relation1, relation2, relation3]
 
-        print(f'Model: {args.model}, multi-relation aggregator: {args.multi_relation}, emb_size: {args.emb_size}.')
+        print(
+            f'Model: {args.model}, multi-relation aggregator: {args.multi_relation}, emb_size: {args.emb_size}.'
+        )
 
         self.args = args
-        self.dataset = {'feat_data': feat_data, 'labels': labels, 'adj_lists': adj_lists, 'homo': homo,
-                        'idx_train': idx_train, 'idx_valid': idx_valid, 'idx_test': idx_test,
-                        'y_train': y_train, 'y_valid': y_valid, 'y_test': y_test,
-                        'train_pos': train_pos, 'train_neg': train_neg}
+        self.dataset = {
+            'feat_data': feat_data,
+            'labels': labels,
+            'adj_lists': adj_lists,
+            'homo': homo,
+            'idx_train': idx_train,
+            'idx_valid': idx_valid,
+            'idx_test': idx_test,
+            'y_train': y_train,
+            'y_valid': y_valid,
+            'y_test': y_test,
+            'train_pos': train_pos,
+            'train_neg': train_neg
+        }
 
     def train(self):
         args = self.args
         features_all, y_all, dgl_all, adj_all, idx_train_all, idx_valid_all, idx_test_all, y_train_all, y_valid_all, y_test_all, array_all \
             = load_all_data()
 
-        split_dicts = {0: {'train': [2014, 2016], 'valid': 2017, 'test': 2018},
-                       1: {'train': [2014, 2017], 'valid': 2018, 'test': 2019},
-                       2: {'train': [2014, 2018], 'valid': 2019, 'test': 2020},
-                       3: {'train': [2014, 2019], 'valid': 2020, 'test': 2021},
-                       4: {'train': [2014, 2020], 'valid': 2021, 'test': 2022}}
+        split_dicts = {
+            0: {
+                'train': [2014, 2016],
+                'valid': 2017,
+                'test': 2018
+            },
+            1: {
+                'train': [2014, 2017],
+                'valid': 2018,
+                'test': 2019
+            },
+            2: {
+                'train': [2014, 2018],
+                'valid': 2019,
+                'test': 2020
+            },
+            3: {
+                'train': [2014, 2019],
+                'valid': 2020,
+                'test': 2021
+            },
+            4: {
+                'train': [2014, 2020],
+                'valid': 2021,
+                'test': 2022
+            }
+        }
         # for times in range(5):
         for times in [0, 1, 2, 3]:
             loss_average = []
@@ -108,12 +153,12 @@ class ModelHandler(object):
 
             # build one-layer models
             if args.model == 'PCGNN':
-                intra1 = IntraAgg(features_all[0].shape[1], args.emb_size, args.rho,
-                                  cuda=args.cuda)
-                intra2 = IntraAgg(features_all[0].shape[1], args.emb_size, args.rho,
-                                  cuda=args.cuda)
-                intra3 = IntraAgg(features_all[0].shape[1], args.emb_size, args.rho,
-                                  cuda=args.cuda)
+                intra1 = IntraAgg(features_all[0].shape[1], args.emb_size,
+                                  args.rho, cuda=args.cuda)
+                intra2 = IntraAgg(features_all[0].shape[1], args.emb_size,
+                                  args.rho, cuda=args.cuda)
+                intra3 = IntraAgg(features_all[0].shape[1], args.emb_size,
+                                  args.rho, cuda=args.cuda)
                 inter1 = InterAgg(features_all[0].shape[1], args.emb_size,
                                   inter=args.multi_relation, cuda=args.cuda)
             # elif args.model == 'SAGE':
@@ -137,20 +182,23 @@ class ModelHandler(object):
             if args.cuda:
                 gnn_model.cuda()
 
-            optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, gnn_model.parameters()), lr=args.lr,
-                                         weight_decay=args.weight_decay)
+            optimizer = torch.optim.Adam(
+                filter(lambda p: p.requires_grad, gnn_model.parameters()),
+                lr=args.lr, weight_decay=args.weight_decay)
 
             timestamp = time.time()
-            timestamp = datetime.datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d %H-%M-%S')
+            timestamp = datetime.datetime.fromtimestamp(
+                int(timestamp)).strftime('%Y-%m-%d %H-%M-%S')
             dir_saver = args.save_dir + timestamp
-            path_saver = os.path.join(dir_saver, '{}_{}.pkl'.format(args.data_name, args.model))
+            os.path.join(dir_saver, f'{args.data_name}_{args.model}.pkl')
             f1_mac_best, auc_best, ep_best = 0, 0, -1
 
             # train the model
             for epoch in range(200):
                 loss_sum = 0.0
 
-                for year in range(split_dicts[times]['train'][0], split_dicts[times]['train'][1] + 1):
+                for year in range(split_dicts[times]['train'][0],
+                                  split_dicts[times]['train'][1] + 1):
                     labels = y_all[year - 2014]
                     idx_train = list(range(len(labels)))
                     y_train = y_all[year - 2014]
@@ -158,12 +206,14 @@ class ModelHandler(object):
                     features = features_all[year - 2014]
                     train_pos, train_neg = pos_neg_split(idx_train, y_train)
 
-                    sampled_idx_train = pick_step(idx_train, y_train, adj_lists[0],
+                    sampled_idx_train = pick_step(idx_train, y_train,
+                                                  adj_lists[0],
                                                   size=len(train_pos) * 2)
 
                     random.shuffle(sampled_idx_train)
 
-                    num_batches = int(len(sampled_idx_train) / args.batch_size) + 1
+                    num_batches = int(
+                        len(sampled_idx_train) / args.batch_size) + 1
 
                     loss = 0.0
                     epoch_time = 0
@@ -172,17 +222,22 @@ class ModelHandler(object):
                     for batch in range(num_batches):
                         start_time = time.time()
                         i_start = batch * args.batch_size
-                        i_end = min((batch + 1) * args.batch_size, len(sampled_idx_train))
+                        i_end = min((batch + 1) * args.batch_size,
+                                    len(sampled_idx_train))
                         batch_nodes = sampled_idx_train[i_start:i_end]
                         batch_label = labels[np.array(batch_nodes)]
                         optimizer.zero_grad()
                         if args.cuda:
-                            loss = gnn_model.loss(batch_nodes, Variable(torch.cuda.LongTensor(batch_label)))
+                            loss = gnn_model.loss(
+                                batch_nodes,
+                                Variable(torch.cuda.LongTensor(batch_label)))
                         else:
-                            loss = gnn_model.loss(batch_nodes, Variable(torch.LongTensor(batch_label)),
-                                                  adj_lists=adj_lists, features=features,
-                                                  intra_list=[intra1, intra2, intra3],
-                                                  train_pos=train_pos)
+                            loss = gnn_model.loss(
+                                batch_nodes,
+                                Variable(torch.LongTensor(batch_label)),
+                                adj_lists=adj_lists, features=features,
+                                intra_list=[intra1, intra2,
+                                            intra3], train_pos=train_pos)
                         loss.backward()
                         optimizer.step()
                         end_time = time.time()
@@ -191,7 +246,9 @@ class ModelHandler(object):
 
                     loss_sum += loss.item() / num_batches
                 # loss_average.append(loss_sum/3)
-                loss_average.append(loss_sum / (split_dicts[times]['train'][1] - split_dicts[times]['train'][0] + 1))
+                loss_average.append(loss_sum /
+                                    (split_dicts[times]['train'][1] -
+                                     split_dicts[times]['train'][0] + 1))
                 # Valid the model for every $valid_epoch$ epoch
                 # if args.model == 'SAGE' or args.model == 'GCN':
                 #     print("Valid at epoch {}".format(epoch))
@@ -209,14 +266,14 @@ class ModelHandler(object):
                 y_train = y_all[split_dicts[times]['valid'] - 2014]
                 idx_train = list(range(len(y_train)))
                 train_pos, train_neg = pos_neg_split(idx_train, y_train)
-                a = test_pcgnn(range(len(y_all[split_dicts[times]['valid'] - 2014])),
-                               y_all[split_dicts[times]['valid'] - 2014], gnn_model,
-                               args.batch_size, thres=args.thres,
-                               features=features_all[split_dicts[times]['valid'] - 2014],
-                               adj_lists=adj_all[split_dicts[times]['valid'] - 2014],
-                               intra_list=[intra1, intra2, intra3],
-                               train_pos=train_pos,
-                               epoch=epoch, params=2)
+                a = test_pcgnn(
+                    range(len(y_all[split_dicts[times]['valid'] - 2014])),
+                    y_all[split_dicts[times]['valid'] - 2014], gnn_model,
+                    args.batch_size, thres=args.thres,
+                    features=features_all[split_dicts[times]['valid'] - 2014],
+                    adj_lists=adj_all[split_dicts[times]['valid'] - 2014],
+                    intra_list=[intra1, intra2, intra3
+                                ], train_pos=train_pos, epoch=epoch, params=2)
                 if epoch == 0:
                     result = a
                 else:
@@ -225,18 +282,21 @@ class ModelHandler(object):
                 y_train = y_all[split_dicts[times]['test'] - 2014]
                 idx_train = list(range(len(y_train)))
                 train_pos, train_neg = pos_neg_split(idx_train, y_train)
-                a = test_pcgnn(range(len(y_all[split_dicts[times]['test'] - 2014])),
-                               y_all[split_dicts[times]['test'] - 2014],
-                               gnn_model, args.batch_size, thres=args.thres,
-                               features=features_all[split_dicts[times]['test'] - 2014],
-                               adj_lists=adj_all[split_dicts[times]['test'] - 2014],
-                               intra_list=[intra1, intra2, intra3], train_pos=train_pos,
-                               epoch=epoch, params=2)
+                a = test_pcgnn(
+                    range(len(y_all[split_dicts[times]['test'] - 2014])),
+                    y_all[split_dicts[times]['test'] - 2014], gnn_model,
+                    args.batch_size, thres=args.thres,
+                    features=features_all[split_dicts[times]['test'] - 2014],
+                    adj_lists=adj_all[split_dicts[times]['test'] - 2014],
+                    intra_list=[intra1, intra2, intra3
+                                ], train_pos=train_pos, epoch=epoch, params=2)
                 result = pd.concat([result, a], axis=0)
-            file_name = 'result/result_Findata_Nips' + str(times) + '_' + 'PC-GNN' + '.csv'
+            file_name = 'result/result_Findata_Nips' + str(
+                times) + '_' + 'PC-GNN' + '.csv'
             result.to_csv(file_name)
             # 将列表写入CSV文件
-            file_name = 'result/result_Findata_Nips_train_loss_' + str(times) + '_' + 'PC-GNN' + '.csv'
+            file_name = 'result/result_Findata_Nips_train_loss_' + str(
+                times) + '_' + 'PC-GNN' + '.csv'
             with open(file_name, mode='w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(['Epoch', 'Train_loss_average'])

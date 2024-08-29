@@ -1,8 +1,8 @@
-import numpy as np
 import pandas as pd
+
+
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-
     def __init__(self, patience=10, delta=0):
         self.patience = patience
         self.counter = 0
@@ -26,16 +26,20 @@ class EarlyStopping:
                 self.best_epoch = epoch
                 self.counter = 0
 
+
 def early_stopping_73(year, total_year, times, dirname):
     best_data = []
     best_epoch = 0
-    best_score = 0
     all_best_data = []
     for each_year in range(total_year):
         best_data = []
         for t in range(times):
-            data_valid = pd.read_csv(dirname + '/' + str(each_year) + "_" + str(t) + "_" + str(each_year + year) + "_valid.csv")
-            data_test = pd.read_csv(dirname + '/' + str(each_year) + "_" + str(t) + "_" + str(each_year + year) + "_test.csv")
+            data_valid = pd.read_csv(dirname + '/' + str(each_year) + "_" +
+                                     str(t) + "_" + str(each_year + year) +
+                                     "_valid.csv")
+            data_test = pd.read_csv(dirname + '/' + str(each_year) + "_" +
+                                    str(t) + "_" + str(each_year + year) +
+                                    "_test.csv")
 
             # data_test = pd.read_csv(test_path)
             loss_valid = data_valid['loss'].values.tolist()
@@ -45,14 +49,18 @@ def early_stopping_73(year, total_year, times, dirname):
                 early_stopping(loss, epoch)
 
             best_epoch = early_stopping.best_epoch
-            best_score = early_stopping.best_score
+            early_stopping.best_score
             print(best_epoch)
 
             best_data.append(data_test[(data_test['epoch'] == best_epoch)])
 
-        pd.concat(best_data).to_csv(dirname + '/result' + "_" + str(each_year + year) + ".csv", index=False, encoding='utf-8')
+        pd.concat(best_data).to_csv(
+            dirname + '/result' + "_" + str(each_year + year) + ".csv",
+            index=False, encoding='utf-8')
         all_best_data.extend(best_data)
-    pd.concat(all_best_data).to_csv(dirname + '/result.csv', index=False, encoding='utf-8')
+    pd.concat(all_best_data).to_csv(dirname + '/result.csv', index=False,
+                                    encoding='utf-8')
+
 
 if __name__ == "__main__":
     # new_early_stopping()
