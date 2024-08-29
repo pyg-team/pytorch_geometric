@@ -1,0 +1,48 @@
+# Data
+data_name: 'amazon'
+data_dir: './data/'
+train_ratio: 0.4
+test_ratio: 0.67
+save_dir: './pytorch_models/'
+
+# Model
+model: 'PCGNN'
+multi_relation: 'GNN'
+
+
+# Model architecture
+emb_size: 64
+
+thres: 0.4
+
+rho: 0.5
+# rho:
+#   - 0.2
+#   - 0.4
+#   - 0.6
+#   - 0.8
+
+seed: 72
+
+# # Run multiple times with different random seeds
+# seed:
+#     - 42
+#     - 448
+#     - 854
+#     - 29493
+#     - 88867
+
+
+# hyper-parameters
+optimizer: 'adam'
+lr: 0.005 
+weight_decay: 0.0005
+batch_size: 256
+num_epochs: 51
+valid_epochs: 5
+alpha: 2
+
+
+# Device
+no_cuda: True
+cuda_id: '2'
