@@ -204,7 +204,6 @@ First, we compare the clock times of encoding using both methods.
 
     print(time.time()-start)
 
-    >>> 100%|██████████| 100/100 [02:01<00:00,  1.22s/it]
     >>> 121.68579435348511
 
 
@@ -502,7 +501,6 @@ subgraphs:
     for q in tqdm.tqdm(questions):
         sub_graphs.append(query_loader.query(q))
 
-    >>> 100%|██████████| 10/10 [00:07<00:00,  1.28it/s]
 
     sub_graphs[0]
 
