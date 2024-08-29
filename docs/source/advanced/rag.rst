@@ -416,7 +416,7 @@ from triplets. The code methods used in this tutorial can be found in
 .. code:: python
 
     from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
-    from profiling_utils import create_remote_backend_from_triplets, RemoteGraphBackendLoader
+    from rag_construction_utils import create_remote_backend_from_triplets, RemoteGraphBackendLoader
 
     # We define this GraphStore to sample the neighbors of a node locally.
     # Ideally for a real remote backend, this interface would be replaced with an API to a Graph DB, such as Neo4j.
