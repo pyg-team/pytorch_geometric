@@ -35,6 +35,7 @@ triplets = torch.load('wikimultihopqa_full_graph.pt')
 # %%
 df = pd.read_csv('wikimultihopqa_cleaned.csv')
 questions = df['question'][:args.num_samples]
+labels = df['answer'][:args.num_samples]
 
 # %%
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -76,9 +77,10 @@ query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 10},
 
 # %%
 subgs = []
-for q in tqdm.tqdm(questions):
+for q, l in tqdm.tqdm(zip(questions, labels)):
     subg = query_loader.query(q)
     subg['question'] = q
+    subg['label'] = l
     subgs.append(subg)
 
 torch.save(subgs, 'subg_results.pt')
