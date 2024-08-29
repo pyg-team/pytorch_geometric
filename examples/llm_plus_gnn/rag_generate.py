@@ -129,5 +129,6 @@ for i, subg in enumerate(subgs):
     subg['question'] = questions[i]
     subg['label'] = ds[i]['label']
 
-pd.DataFrame.from_dict(retrieval_stats).to_csv(args.out_file.split('.')[0] + '_metadata.csv')
+pd.DataFrame.from_dict(retrieval_stats).to_csv(
+    args.out_file.split('.')[0] + '_metadata.csv')
 torch.save(subgs, args.out_file)
