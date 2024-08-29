@@ -6,6 +6,7 @@ from torch.nn import Parameter
 
 from torch_geometric.nn import HANConv, HGTConv, MessagePassing
 from torch_geometric.typing import EDGE_TYPE_STR_SPLIT, EdgeType
+from torch_geometric.utils import is_sparse
 
 
 def set_masks(
@@ -68,6 +69,13 @@ def set_hetero_masks(
             # Skip if explicitly set for skipping
             if (module.explain is False):
                 continue
+
+            # Check if edge index is sparse (unsupported)
+            for edge_index in edge_index_dict.values():
+                if is_sparse(edge_index):
+                    raise ValueError("Sparse edge index not supported "
+                                     "for HAN and HGT graph layers "
+                                     "in explaining edge-level masks.")
 
             loop_mask_dict = {
                 EDGE_TYPE_STR_SPLIT.join(k): edge_index[0] != edge_index[1]

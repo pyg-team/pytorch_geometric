@@ -14,6 +14,7 @@ from torch_geometric.explain.config import (
 )
 from torch_geometric.nn import HANConv, HGTConv, global_add_pool
 from torch_geometric.testing import withPackage
+from torch_geometric.transforms import ToSparseTensor
 
 methods = [
     'Saliency',
@@ -53,7 +54,7 @@ class HetGraphNet(torch.nn.Module):
                                 metadata=metadata)
             self.conv2 = HGTConv(self.hid_dim, self.out_channels, heads=1,
                                  metadata=metadata)
-        elif (base_conv == 'han'):
+        elif base_conv == 'han':
             self.conv = HANConv(in_channels, self.hid_dim, heads=2,
                                 metadata=metadata)
             self.conv2 = HANConv(self.hid_dim, self.out_channels, heads=1,
@@ -76,7 +77,8 @@ class HetGraphNet(torch.nn.Module):
                 k: global_add_pool(v, batch_info[k])
                 for k, v in x_dict_n.items()
             }
-            x = torch.stack(list(x_dict_n.values()), dim=-1).sum(dim=-1)
+            x = torch.stack(list(x_dict_n.values()), dim=-1)
+            x = x.sum(dim=-1)
         elif (self.model_config.task_level == ModelTaskLevel.edge):
             assert edge_label_index is not None
             x = [
@@ -129,6 +131,7 @@ node_mask_types = [MaskType.attributes, None]
 edge_mask_types = [MaskType.object, None]
 task_levels = [ModelTaskLevel.node, ModelTaskLevel.edge, ModelTaskLevel.graph]
 indices = [1, torch.arange(2)]
+edge_type = ['dense', 'sparse']
 
 
 # Note: no reason to believe tests will pass IntegratedGradients
@@ -143,6 +146,7 @@ indices = [1, torch.arange(2)]
 @pytest.mark.parametrize('task_level', task_levels)
 @pytest.mark.parametrize('index', indices)
 @pytest.mark.parametrize('conv_type', ['hgt', 'han'])
+@pytest.mark.parametrize('edge_type', edge_type)
 def test_captum_explainer_special_heterogeneous(
     method,
     mode_type,
@@ -153,6 +157,7 @@ def test_captum_explainer_special_heterogeneous(
     task_level,
     index,
     conv_type,
+    edge_type,
 ):
 
     if node_mask_type is None and edge_mask_type is None:
@@ -205,12 +210,40 @@ def test_captum_explainer_special_heterogeneous(
         model_config=model_config,
     )
 
-    explanation = explainer(
-        hetero_data.x_dict,
-        hetero_data.edge_index_dict,
-        index=index,
-        batch_info=batch_info,
-        edge_label_index=edge_label_index,
-    )
+    if edge_type == 'dense':
+        explanation = explainer(
+            hetero_data.x_dict,
+            hetero_data.edge_index_dict,
+            index=index,
+            batch_info=batch_info,
+            edge_label_index=edge_label_index,
+        )
 
-    check_hetero_explanation(explanation, node_mask_type, edge_mask_type)
+        check_hetero_explanation(explanation, node_mask_type, edge_mask_type)
+
+    elif edge_type == 'sparse':
+        sparse_transform = ToSparseTensor()
+        hetero_data = sparse_transform(hetero_data)
+
+        # Fail on sparse edge masking
+        if edge_mask_type == MaskType.object:
+            with pytest.raises(ValueError,
+                               match="Sparse edge index is not supported"):
+                explanation = explainer(
+                    hetero_data.x_dict,
+                    hetero_data.adj_t_dict,
+                    index=index,
+                    batch_info=batch_info,
+                    edge_label_index=edge_label_index,
+                )
+        else:
+            explanation = explainer(
+                hetero_data.x_dict,
+                hetero_data.adj_t_dict,
+                index=index,
+                batch_info=batch_info,
+                edge_label_index=edge_label_index,
+            )
+
+            check_hetero_explanation(explanation, node_mask_type,
+                                     edge_mask_type)
