@@ -33,6 +33,8 @@ class GRetriever(nn.Module):
             :obj:`heads` kwarg. (default: :obj:`4`)
         mlp_hidden_dim (int): (default: :obj:`2048`)
         mlp_out_dim (int): (default: :obj:`4096`)
+        mlp_out_tokens (int) : Number of LLM prefix tokens to reserve for 
+            GNN output. (default: :obj:`1`)
 
     .. warning::
         This module has been tested with the following Hugging Face models
@@ -117,6 +119,7 @@ class GRetriever(nn.Module):
             nn.Linear(gnn_out_channels, mlp_hidden_dim),
             nn.Sigmoid(),
             nn.Linear(mlp_hidden_dim, mlp_out_dim*mlp_out_tokens),
+            nn.Unflatten(-1, (mlp_out_tokens, mlp_out_dim)),
         ).to(self.llm_device)
 
         self.mlp_out_tokens = mlp_out_tokens
@@ -223,7 +226,7 @@ class GRetriever(nn.Module):
         graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
                                           batch)
         graph_embeds = [
-            (embed.unsqueeze(0) if num_nodes_per_graph[i] != 0 else None)
+            (embed if num_nodes_per_graph[i] != 0 else None)
             for i, embed in enumerate(self.projector(graph_embeds))
         ]
         inputs_embeds, attention_mask, _ = self.llm_to_use._get_embeds(
