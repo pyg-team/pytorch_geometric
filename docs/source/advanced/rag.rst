@@ -84,20 +84,17 @@ Knowledge Graph, which is an open-source knowledge graph formerly
 maintained by Google. For each question-answer pair in the dataset, a
 subgraph was chosen based on a Semantic SPARQL search on the larger
 knowledge graph, to provide relevent context on finding the answer. So
-each entry in the dataset consists of: - A question to be answered - The
-answer - A knowledge graph subgraph of Freebase that has the context
+each entry in the dataset consists of:
+- A question to be answered 
+- The answer
+- A knowledge graph subgraph of Freebase that has the context 
 needed to answer the question.
 
 .. code:: python
 
     ds.raw_dataset
 
-
-
-
-.. parsed-literal::
-
-    Dataset({
+    >>> Dataset({
         features: ['id', 'question', 'answer', 'q_entity', 'a_entity', 'graph', 'choices'],
         num_rows: 100
     })
@@ -109,11 +106,7 @@ needed to answer the question.
     ds.raw_dataset[0]
 
 
-
-
-.. parsed-literal::
-
-    {'id': 'WebQTrn-0',
+    >>> {'id': 'WebQTrn-0',
      'question': 'what is the name of justin bieber brother',
      'answer': ['Jaxon Bieber'],
      'q_entity': ['Justin Bieber'],
@@ -130,7 +123,7 @@ from doing so:
 1. A retrieval algorithm needs to be implemented and
 executed during inference time, that might not appropriately correspond
 to the algorithm that was used to generate the dataset subgraphs.
-2. The dataset as is not stored computationally efficiently, as there will
+1. The dataset as is not stored computationally efficiently, as there will
 exist many duplicate nodes and edges that are shared between the
 questions.
 
@@ -154,10 +147,7 @@ be tried. We can do this with the LargeGraphIndexer class:
     raw_dataset_graphs = [[tuple(trip) for trip in graph] for graph in ds.raw_dataset['graph']]
     print(raw_dataset_graphs[0][:10])
 
-
-.. parsed-literal::
-
-    [('P!nk', 'freebase.valuenotation.is_reviewed', 'Gender'), ('1Club.FM: Power', 'broadcast.content.artist', 'P!nk'), ('Somebody to Love', 'music.recording.contributions', 'm.0rqp4h0'), ('Rudolph Valentino', 'freebase.valuenotation.is_reviewed', 'Place of birth'), ('Ice Cube', 'broadcast.artist.content', '.977 The Hits Channel'), ('Colbie Caillat', 'broadcast.artist.content', 'Hot Wired Radio'), ('Stephen Melton', 'people.person.nationality', 'United States of America'), ('Record producer', 'music.performance_role.regular_performances', 'm.012m1vf1'), ('Justin Bieber', 'award.award_winner.awards_won', 'm.0yrkc0l'), ('1.FM Top 40', 'broadcast.content.artist', 'Geri Halliwell')]
+    >>> [('P!nk', 'freebase.valuenotation.is_reviewed', 'Gender'), ('1Club.FM: Power', 'broadcast.content.artist', 'P!nk'), ...]
 
 
 To show the benefits of this indexer in action, we will use the
@@ -168,10 +158,6 @@ along with naively.
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(model_name='sentence-transformers/all-roberta-large-v1').to(device)
-
-.. parsed-literal::
-
-    cuda
 
 
 First, we compare the clock times of encoding using both methods.
@@ -218,14 +204,8 @@ First, we compare the clock times of encoding using both methods.
 
     print(time.time()-start)
 
-
-.. parsed-literal::
-
-    100%|██████████| 100/100 [02:01<00:00,  1.22s/it]
-
-.. parsed-literal::
-
-    121.68579435348511
+    >>> 100%|██████████| 100/100 [02:01<00:00,  1.22s/it]
+    >>> 121.68579435348511
 
 
 
@@ -263,22 +243,10 @@ First, we compare the clock times of encoding using both methods.
     dataset_graphs_embedded_largegraphindexer = [graph for graph in tqdm.tqdm(get_features_for_triplets_groups(indexer=indexer, triplet_groups=raw_dataset_graphs), total=num_questions)]
     print(time.time()-start-whole_graph_diff)
 
-
-.. parsed-literal::
-
-    Indexing...
-    Time to create whole knowledge_graph: 114.01080107688904
-    Retrieving Subgraphs...
-
-
-.. parsed-literal::
-
-    100%|██████████| 100/100 [00:00<00:00, 212.87it/s]
-    100%|██████████| 100/100 [00:01<00:00, 80.90it/s]
-
-.. parsed-literal::
-
-    114.66037964820862
+    >>> Indexing...
+    >>> Time to create whole knowledge_graph: 114.01080107688904
+    >>> Retrieving Subgraphs...
+    >>> 114.66037964820862
 
 
 The large graph indexer allows us to compute the entire knowledge graph
@@ -306,24 +274,13 @@ differences being due to floating point jitter.
             and _sorted_tensors_are_close(ground_truth.edge_attr, new_method.edge_attr) \
             and _graphs_are_same(ground_truth.edge_index, new_method.edge_index)
 
-.. code:: python
 
     all_results_match = True
     for old_graph, new_graph in tqdm.tqdm(zip(dataset_graphs_embedded, dataset_graphs_embedded_largegraphindexer), total=num_questions):
         all_results_match &= results_are_close_enough(old_graph, new_graph)
     all_results_match
 
-
-.. parsed-literal::
-
-    100%|██████████| 100/100 [00:25<00:00,  4.00it/s]
-
-
-
-
-.. parsed-literal::
-
-    True
+    >>> True
 
 
 
@@ -407,9 +364,6 @@ experiment:
     from torch_geometric.datasets import WebQSPDataset
     from itertools import chain
 
-
-.. code:: python
-
     ds = WebQSPDataset(root='demo', limit=10)
 
 Let’s set up our set of questions and graph triplets:
@@ -419,12 +373,7 @@ Let’s set up our set of questions and graph triplets:
     questions = ds.raw_dataset['question']
     questions
 
-
-
-
-.. parsed-literal::
-
-    ['what is the name of justin bieber brother',
+    >>> ['what is the name of justin bieber brother',
      'what character did natalie portman play in star wars',
      'what country is the grand bahama island in',
      'what kind of money to take to bahamas',
@@ -436,17 +385,10 @@ Let’s set up our set of questions and graph triplets:
      'which countries border the us']
 
 
-
-.. code:: python
-
     ds.raw_dataset[:10]['graph'][0][:10]
 
 
-
-
-.. parsed-literal::
-
-    [['P!nk', 'freebase.valuenotation.is_reviewed', 'Gender'],
+    >>> [['P!nk', 'freebase.valuenotation.is_reviewed', 'Gender'],
      ['1Club.FM: Power', 'broadcast.content.artist', 'P!nk'],
      ['Somebody to Love', 'music.recording.contributions', 'm.0rqp4h0'],
      ['Rudolph Valentino', 'freebase.valuenotation.is_reviewed', 'Place of birth'],
@@ -460,9 +402,6 @@ Let’s set up our set of questions and graph triplets:
      ['1.FM Top 40', 'broadcast.content.artist', 'Geri Halliwell']]
 
 
-
-.. code:: python
-
     all_triplets = chain.from_iterable((row['graph'] for row in ds.raw_dataset))
 
 With these questions and triplets, we want to:
@@ -470,23 +409,14 @@ With these questions and triplets, we want to:
 2. Create a FeatureStore that encodes all the nodes and edges in the knowledge graph
 3. Create a GraphStore that encodes all the edge indices in the knowledge graph
 
-.. code:: python
-
-    import torch
-    from torch_geometric.nn.nlp import SentenceTransformer
-    from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
-
-.. code:: python
-
-    import sys
-    sys.path.append('..')
-
 In order to create a remote backend, we need to define a FeatureStore
 and GraphStore locally, as well as a method for initializing its state
-from triplets:
+from triplets. The code methods used in this tutorial can be found in 
+`examples/llm_plus_gnn`.
 
 .. code:: python
 
+    from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
     from profiling_utils import create_remote_backend_from_triplets, RemoteGraphBackendLoader
 
     # We define this GraphStore to sample the neighbors of a node locally.
@@ -530,8 +460,6 @@ diagram:
 
     from torch_geometric.loader import RAGQueryLoader
 
-.. code:: python
-
     query_loader = RAGQueryLoader(
         data=(feature_store, graph_store), # Remote Rag Graph Store and Feature Store
         # Arguments to pass into the seed node/edge retrieval methods for the FeatureStore.
@@ -570,31 +498,15 @@ subgraphs:
 
 .. code:: python
 
-    import tqdm
-
-.. code:: python
-
     sub_graphs = []
     for q in tqdm.tqdm(questions):
         sub_graphs.append(query_loader.query(q))
 
-
-
-.. parsed-literal::
-
-    100%|██████████| 10/10 [00:07<00:00,  1.28it/s]
-
-
-.. code:: python
+    >>> 100%|██████████| 10/10 [00:07<00:00,  1.28it/s]
 
     sub_graphs[0]
 
-
-
-
-.. parsed-literal::
-
-    Data(x=[2251, 1024], edge_index=[2, 7806], edge_attr=[7806, 1024], node_idx=[2251], edge_idx=[7806])
+    >>> Data(x=[2251, 1024], edge_index=[2, 7806], edge_attr=[7806, 1024], node_idx=[2251], edge_idx=[7806])
 
 
 
@@ -602,10 +514,6 @@ These subgraphs are now retrieved using a different retrieval method
 when compared to the original WebQSP dataset. Can we compare the
 properties of this method to the original WebQSPDataset’s retrieval
 method? Let’s compare some basics properties of the subgraphs:
-
-.. code:: python
-
-    from torch_geometric.data import Data
 
 .. code:: python
 
@@ -631,110 +539,24 @@ method? Let’s compare some basics properties of the subgraphs:
         subg_e, gt_e = _eidx_helper(subg, ground_truth)
         return len(subg_e & gt_e) / len(gt_e)
 
-.. code:: python
-
-    from torch_geometric.data import get_features_for_triplets_groups
-
-.. code:: python
 
     ground_truth_graphs = get_features_for_triplets_groups(ds.indexer, (d['graph'] for d in ds.raw_dataset), pre_transform=preprocess_triplet)
     num_edges = len(ds.indexer._edges)
 
-.. code:: python
 
     for subg, ground_truth in tqdm.tqdm(zip((query_loader.query(q) for q in questions), ground_truth_graphs)):
         print(f"Size: {len(subg.x)}, Ground Truth Size: {len(ground_truth.x)}, Accuracy: {check_retrieval_accuracy(subg, ground_truth, num_edges)}, Precision: {check_retrieval_precision(subg, ground_truth)}, Recall: {check_retrieval_recall(subg, ground_truth)}")
 
-
-.. parsed-literal::
-
-    10it [00:00, 60.20it/s]
-    1it [00:00,  1.18it/s]
-
-.. parsed-literal::
-
-    Size: 2193, Ground Truth Size: 1709, Accuracy: 0.6636780705203827, Precision: 0.22923807012918535, Recall: 0.1994037381034285
-
-
-.. parsed-literal::
-
-    2it [00:01,  1.41it/s]
-
-.. parsed-literal::
-
-    Size: 2682, Ground Truth Size: 1251, Accuracy: 0.7158736400576746, Precision: 0.10843513670738801, Recall: 0.22692963233503774
-
-
-.. parsed-literal::
-
-    3it [00:02,  1.51it/s]
-
-.. parsed-literal::
-
-    Size: 2087, Ground Truth Size: 1285, Accuracy: 0.7979813868134749, Precision: 0.0547879177377892, Recall: 0.15757855822550831
-
-
-.. parsed-literal::
-
-    4it [00:02,  1.56it/s]
-
-.. parsed-literal::
-
-    Size: 2975, Ground Truth Size: 1988, Accuracy: 0.6956088609254162, Precision: 0.14820555621795636, Recall: 0.21768826619964973
-
-
-.. parsed-literal::
-
-    5it [00:03,  1.59it/s]
-
-.. parsed-literal::
-
-    Size: 2594, Ground Truth Size: 633, Accuracy: 0.78849128326124, Precision: 0.04202616198163095, Recall: 0.2032301480484522
-
-
-.. parsed-literal::
-
-    6it [00:03,  1.61it/s]
-
-.. parsed-literal::
-
-    Size: 2462, Ground Truth Size: 1044, Accuracy: 0.7703499803381832, Precision: 0.07646643109540636, Recall: 0.19551861221539574
-
-
-.. parsed-literal::
-
-    7it [00:04,  1.62it/s]
-
-.. parsed-literal::
-
-    Size: 2011, Ground Truth Size: 1382, Accuracy: 0.7871804954777821, Precision: 0.10117783355860205, Recall: 0.13142713819914723
-
-
-.. parsed-literal::
-
-    8it [00:05,  1.63it/s]
-
-.. parsed-literal::
-
-    Size: 2011, Ground Truth Size: 1052, Accuracy: 0.802831301612269, Precision: 0.06452691407556001, Recall: 0.16702726092600606
-
-
-.. parsed-literal::
-
-    9it [00:05,  1.64it/s]
-
-.. parsed-literal::
-
-    Size: 2892, Ground Truth Size: 1012, Accuracy: 0.7276182985974571, Precision: 0.10108615156751419, Recall: 0.20860927152317882
-
-
-.. parsed-literal::
-
-    10it [00:06,  1.58it/s]
-
-.. parsed-literal::
-
-    Size: 1817, Ground Truth Size: 1978, Accuracy: 0.7530475815965395, Precision: 0.1677807486631016, Recall: 0.11696178937558248
+    >>> Size: 2193, Ground Truth Size: 1709, Accuracy: 0.6636780705203827, Precision: 0.22923807012918535, Recall: 0.1994037381034285
+    >>> Size: 2682, Ground Truth Size: 1251, Accuracy: 0.7158736400576746, Precision: 0.10843513670738801, Recall: 0.22692963233503774
+    >>> Size: 2087, Ground Truth Size: 1285, Accuracy: 0.7979813868134749, Precision: 0.0547879177377892, Recall: 0.15757855822550831
+    >>> Size: 2975, Ground Truth Size: 1988, Accuracy: 0.6956088609254162, Precision: 0.14820555621795636, Recall: 0.21768826619964973
+    >>> Size: 2594, Ground Truth Size: 633, Accuracy: 0.78849128326124, Precision: 0.04202616198163095, Recall: 0.2032301480484522
+    >>> Size: 2462, Ground Truth Size: 1044, Accuracy: 0.7703499803381832, Precision: 0.07646643109540636, Recall: 0.19551861221539574
+    >>> Size: 2011, Ground Truth Size: 1382, Accuracy: 0.7871804954777821, Precision: 0.10117783355860205, Recall: 0.13142713819914723
+    >>> Size: 2011, Ground Truth Size: 1052, Accuracy: 0.802831301612269, Precision: 0.06452691407556001, Recall: 0.16702726092600606
+    >>> Size: 2892, Ground Truth Size: 1012, Accuracy: 0.7276182985974571, Precision: 0.10108615156751419, Recall: 0.20860927152317882
+    >>> Size: 1817, Ground Truth Size: 1978, Accuracy: 0.7530475815965395, Precision: 0.1677807486631016, Recall: 0.11696178937558248
 
 
 
