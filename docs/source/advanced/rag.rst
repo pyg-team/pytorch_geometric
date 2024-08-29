@@ -71,7 +71,7 @@ retrieved is crucial for whether the appropriate response to the LLM.
 The same is true for GNN based RAG. For example, consider the
 WebQSPDataset.
 
-.. code:: ipython3
+.. code:: python
 
     from torch_geometric.datasets import WebQSPDataset
 
@@ -88,7 +88,7 @@ each entry in the dataset consists of: - A question to be answered - The
 answer - A knowledge graph subgraph of Freebase that has the context
 needed to answer the question.
 
-.. code:: ipython3
+.. code:: python
 
     ds.raw_dataset
 
@@ -104,7 +104,7 @@ needed to answer the question.
 
 
 
-.. code:: ipython3
+.. code:: python
 
     ds.raw_dataset[0]
 
@@ -139,7 +139,7 @@ the entries into a large knowledge graph, so that duplicate nodes and
 edges can be avoided, and so that alternative retrieval algorithms can
 be tried. We can do this with the LargeGraphIndexer class:
 
-.. code:: ipython3
+.. code:: python
 
     from torch_geometric.data import LargeGraphIndexer, Data, get_features_for_triplets_groups
     from torch_geometric.nn.nlp import SentenceTransformer
@@ -149,7 +149,7 @@ be tried. We can do this with the LargeGraphIndexer class:
     from itertools import chain
     import networkx as nx
 
-.. code:: ipython3
+.. code:: python
 
     raw_dataset_graphs = [[tuple(trip) for trip in graph] for graph in ds.raw_dataset['graph']]
     print(raw_dataset_graphs[0][:10])
@@ -164,7 +164,7 @@ To show the benefits of this indexer in action, we will use the
 following model to encode this sample of graphs using LargeGraphIndexer,
 along with naively.
 
-.. code:: ipython3
+.. code:: python
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(model_name='sentence-transformers/all-roberta-large-v1').to(device)
@@ -176,7 +176,7 @@ along with naively.
 
 First, we compare the clock times of encoding using both methods.
 
-.. code:: ipython3
+.. code:: python
 
     # Indexing question-by-question
     dataset_graphs_embedded = []
@@ -229,7 +229,7 @@ First, we compare the clock times of encoding using both methods.
 
 
 
-.. code:: ipython3
+.. code:: python
 
     # Using LargeGraphIndexer to make one large knowledge graph
     from torch_geometric.data.large_graph_indexer import EDGE_RELATION
@@ -295,7 +295,7 @@ of the number of unique nodes and edges in the graph.
 We expect the two results to be functionally identical, with the
 differences being due to floating point jitter.
 
-.. code:: ipython3
+.. code:: python
 
     def results_are_close_enough(ground_truth: Data, new_method: Data, thresh=.8):
         def _sorted_tensors_are_close(tensor1, tensor2):
@@ -306,7 +306,7 @@ differences being due to floating point jitter.
             and _sorted_tensors_are_close(ground_truth.edge_attr, new_method.edge_attr) \
             and _graphs_are_same(ground_truth.edge_index, new_method.edge_index)
 
-.. code:: ipython3
+.. code:: python
 
     all_results_match = True
     for old_graph, new_graph in tqdm.tqdm(zip(dataset_graphs_embedded, dataset_graphs_embedded_largegraphindexer), total=num_questions):
@@ -401,20 +401,20 @@ store the node and edge features in the graph.
 Let’s start by loading in a knowledge graph dataset for the sake of our
 experiment:
 
-.. code:: ipython3
+.. code:: python
 
     from torch_geometric.data import LargeGraphIndexer
     from torch_geometric.datasets import WebQSPDataset
     from itertools import chain
 
 
-.. code:: ipython3
+.. code:: python
 
     ds = WebQSPDataset(root='demo', limit=10)
 
 Let’s set up our set of questions and graph triplets:
 
-.. code:: ipython3
+.. code:: python
 
     questions = ds.raw_dataset['question']
     questions
@@ -437,7 +437,7 @@ Let’s set up our set of questions and graph triplets:
 
 
 
-.. code:: ipython3
+.. code:: python
 
     ds.raw_dataset[:10]['graph'][0][:10]
 
@@ -461,7 +461,7 @@ Let’s set up our set of questions and graph triplets:
 
 
 
-.. code:: ipython3
+.. code:: python
 
     all_triplets = chain.from_iterable((row['graph'] for row in ds.raw_dataset))
 
@@ -470,13 +470,13 @@ With these questions and triplets, we want to:
 2. Create a FeatureStore that encodes all the nodes and edges in the knowledge graph
 3. Create a GraphStore that encodes all the edge indices in the knowledge graph
 
-.. code:: ipython3
+.. code:: python
 
     import torch
     from torch_geometric.nn.nlp import SentenceTransformer
     from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 
-.. code:: ipython3
+.. code:: python
 
     import sys
     sys.path.append('..')
@@ -485,7 +485,7 @@ In order to create a remote backend, we need to define a FeatureStore
 and GraphStore locally, as well as a method for initializing its state
 from triplets:
 
-.. code:: ipython3
+.. code:: python
 
     from profiling_utils import create_remote_backend_from_triplets, RemoteGraphBackendLoader
 
@@ -497,7 +497,7 @@ from triplets:
     # Ideally for a real remote backend, this interface would be replaced with an API to a vector DB, such as Pinecone.
     from rag_feature_store import SentenceTransformerFeatureStore
 
-.. code:: ipython3
+.. code:: python
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(model_name="sentence-transformers/all-roberta-large-v1").to(device)
@@ -526,11 +526,11 @@ diagram:
 
 
 
-.. code:: ipython3
+.. code:: python
 
     from torch_geometric.loader import RAGQueryLoader
 
-.. code:: ipython3
+.. code:: python
 
     query_loader = RAGQueryLoader(
         data=(feature_store, graph_store), # Remote Rag Graph Store and Feature Store
@@ -568,11 +568,11 @@ unique hyperparameters for each unique step in this retrieval.
 Now we can submit our queries to the remote backend to retrieve our
 subgraphs:
 
-.. code:: ipython3
+.. code:: python
 
     import tqdm
 
-.. code:: ipython3
+.. code:: python
 
     sub_graphs = []
     for q in tqdm.tqdm(questions):
@@ -585,7 +585,7 @@ subgraphs:
     100%|██████████| 10/10 [00:07<00:00,  1.28it/s]
 
 
-.. code:: ipython3
+.. code:: python
 
     sub_graphs[0]
 
@@ -603,11 +603,11 @@ when compared to the original WebQSP dataset. Can we compare the
 properties of this method to the original WebQSPDataset’s retrieval
 method? Let’s compare some basics properties of the subgraphs:
 
-.. code:: ipython3
+.. code:: python
 
     from torch_geometric.data import Data
 
-.. code:: ipython3
+.. code:: python
 
     def _eidx_helper(subg: Data, ground_truth: Data):
         subg_eidx, gt_eidx = subg.edge_idx, ground_truth.edge_idx
@@ -631,16 +631,16 @@ method? Let’s compare some basics properties of the subgraphs:
         subg_e, gt_e = _eidx_helper(subg, ground_truth)
         return len(subg_e & gt_e) / len(gt_e)
 
-.. code:: ipython3
+.. code:: python
 
     from torch_geometric.data import get_features_for_triplets_groups
 
-.. code:: ipython3
+.. code:: python
 
     ground_truth_graphs = get_features_for_triplets_groups(ds.indexer, (d['graph'] for d in ds.raw_dataset), pre_transform=preprocess_triplet)
     num_edges = len(ds.indexer._edges)
 
-.. code:: ipython3
+.. code:: python
 
     for subg, ground_truth in tqdm.tqdm(zip((query_loader.query(q) for q in questions), ground_truth_graphs)):
         print(f"Size: {len(subg.x)}, Ground Truth Size: {len(ground_truth.x)}, Accuracy: {check_retrieval_accuracy(subg, ground_truth, num_edges)}, Precision: {check_retrieval_precision(subg, ground_truth)}, Recall: {check_retrieval_recall(subg, ground_truth)}")
