@@ -198,6 +198,7 @@ class WebQSPDataset(InMemoryDataset):
         self.include_pcst = include_pcst
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
+        self._check_dependencies()
         super().__init__(root, None, None, force_reload=force_reload)
         self._load_raw_data()
         self.load(self.processed_paths[0])
