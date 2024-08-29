@@ -76,7 +76,8 @@ query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 10},
 
 # %%
 subgs = []
-for subg in tqdm.tqdm(query_loader.query(q) for q in questions):
+for q in tqdm.tqdm(questions):
+    subg = query_loader.query(q)
     subg['question'] = q
     subgs.append(subg)
 
