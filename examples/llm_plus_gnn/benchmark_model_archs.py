@@ -64,8 +64,10 @@ model_classes = []
 model_kwargs = []
 model_type = ["GAT", "MLP"]
 models = {"GAT": GAT, "MLP": MLP}
-num_layers = [4] # Use to vary the depth of the GNN model
-num_tokens = [1] # Use to vary the number of LLM tokens reserved for GNN output
+# Use to vary the depth of the GNN model
+num_layers = [4]
+# Use to vary the number of LLM tokens reserved for GNN output
+num_tokens = [1]
 for m_type in model_type:
     for n_layer in num_layers:
         for n_tokens in num_tokens:
