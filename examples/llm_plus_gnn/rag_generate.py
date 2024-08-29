@@ -6,7 +6,7 @@ from typing import Tuple
 import pandas as pd
 import torch
 import tqdm
-from profiling_utils import create_remote_backend_from_triplets
+from rag_backend_utils import create_remote_backend_from_triplets
 from rag_feature_store import SentenceTransformerFeatureStore
 from rag_graph_store import NeighborSamplingRAGGraphStore
 
