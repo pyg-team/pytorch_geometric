@@ -1,23 +1,26 @@
 # %%
+import argparse
 import sys
+from typing import Tuple
 
 import pandas as pd
 import torch
 import tqdm
 
-sys.path.append('..')
-import argparse
-
-from profiling_utils import create_remote_backend_from_triplets
-from rag_feature_store import SentenceTransformerApproxFeatureStore
-from rag_graph_store import NeighborSamplingRAGGraphStore
-
+from torch_geometric.data import Data
 from torch_geometric.datasets.web_qsp_dataset import (
     preprocess_triplet,
     retrieval_via_pcst,
 )
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
+
+sys.path.append('..')
+
+from profiling_utils import create_remote_backend_from_triplets  # noqa: E402
+from rag_feature_store import \
+    SentenceTransformerApproxFeatureStore  # noqa: E402
+from rag_graph_store import NeighborSamplingRAGGraphStore  # noqa: E402
 
 # %%
 parser = argparse.ArgumentParser(
@@ -48,9 +51,6 @@ fs, gs = create_remote_backend_from_triplets(
     feature_db=SentenceTransformerApproxFeatureStore).load()
 
 # %%
-from typing import Tuple
-
-from torch_geometric.data import Data
 
 all_textual_nodes = pd.read_csv('wikimultihopqa_textual_nodes.csv')
 all_textual_edges = pd.read_csv('wikimultihopqa_textual_edges.csv')

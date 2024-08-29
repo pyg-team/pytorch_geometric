@@ -43,7 +43,9 @@ else:
     dataset = torch.load(args.dataset_path)
 
     class MockDataset:
-        """Utility class to patch the fields in WebQSPDataset used by GRetriever."""
+        """Utility class to patch the fields in WebQSPDataset used by
+        GRetriever.
+        """
         def __init__(self) -> None:
             pass
 

@@ -106,7 +106,9 @@ def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
         knn_index (ApproxMIPSKNNIndex): Index to add features to.
         emb (Tensor): Embeddings to add.
         device (torch.device): Device to store in
-        batch_size (int, optional): Batch size to iterate by. Defaults to 2**20, which equates to 4GB if working with 1024 dim floats.
+        batch_size (int, optional): Batch size to iterate by.
+            Defaults to 2**20, which equates to 4GB if working with
+            1024 dim floats.
     """
     for i in range(0, emb.size(0), batch_size):
         if emb.size(0) - i >= batch_size:

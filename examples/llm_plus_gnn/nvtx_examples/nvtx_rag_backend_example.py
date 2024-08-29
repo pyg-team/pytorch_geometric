@@ -1,19 +1,25 @@
 # %%
 import argparse
+import sys
 from itertools import chain
 from typing import Tuple
 
 import torch
-from profiling_utils import create_remote_backend_from_triplets
-from rag_feature_store import SentenceTransformerFeatureStore
-from rag_graph_store import NeighborSamplingRAGGraphStore
 
 from torch_geometric.data import Data, get_features_for_triplets_groups
 from torch_geometric.datasets import WebQSPDataset
-from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
+from torch_geometric.datasets.web_qsp_dataset import (
+    preprocess_triplet,
+    retrieval_via_pcst,
+)
 from torch_geometric.loader import rag_loader
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.profile.nvtx import nvtxit
+
+sys.path.append('..')
+from profiling_utils import create_remote_backend_from_triplets  # noqa: E402
+from rag_feature_store import SentenceTransformerFeatureStore  # noqa: E402
+from rag_graph_store import NeighborSamplingRAGGraphStore  # noqa: E402
 
 # %%
 # Patch FeatureStore and GraphStore
@@ -57,7 +63,6 @@ fs, gs = create_remote_backend_from_triplets(
     feature_db=SentenceTransformerFeatureStore).load()
 
 # %%
-from torch_geometric.datasets.web_qsp_dataset import retrieval_via_pcst
 
 
 @nvtxit()

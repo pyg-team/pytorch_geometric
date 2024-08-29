@@ -1,14 +1,5 @@
 from abc import abstractmethod
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    Optional,
-    Protocol,
-    Tuple,
-    Union,
-)
+from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput

@@ -625,8 +625,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                 final_prnt_str += "Prompt: '" + question[j] + "'\n"
                 final_prnt_str += "Label: '" + correct_answer[j] + "'\n"
                 if not skip_pretrained_LLM:
-                    final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred[
-                        j] + "'\n"  # noqa
+                    final_prnt_str += "Untuned LLM Output: '" \
+                        + untuned_llm_pred[j] + "'\n"  # noqa
                 final_prnt_str += "Tuned LLM Output: '" + pure_llm_pred[
                     j] + "'\n"
                 final_prnt_str += "GNN+LLM Output: '" + gnn_llm_pred[j] + "'\n"

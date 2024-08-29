@@ -75,7 +75,8 @@ def apply_retrieval_with_text(graph: Data, query: str) -> Tuple[Data, str]:
     return graph
 
 
-transform = apply_retrieval_via_pcst if args.use_pcst else apply_retrieval_with_text
+transform = apply_retrieval_via_pcst \
+    if args.use_pcst else apply_retrieval_with_text
 
 query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 5},
                               seed_edges_kwargs={"k_edges": 5},
