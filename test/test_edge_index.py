@@ -16,6 +16,7 @@ from torch_geometric.edge_index import (
     _TorchSPMM,
     set_tuple_item,
 )
+from torch_geometric.io import fs
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     onlyCUDA,
@@ -1256,7 +1257,7 @@ def test_save_and_load(dtype, device, tmp_path):
 
     path = osp.join(tmp_path, 'edge_index.pt')
     torch.save(adj, path)
-    out = torch.load(path)
+    out = fs.torch_load(path)
 
     assert isinstance(out, EdgeIndex)
     assert out.equal(adj)

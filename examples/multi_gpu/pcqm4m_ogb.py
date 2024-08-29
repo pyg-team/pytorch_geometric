@@ -16,6 +16,7 @@ from tqdm.auto import tqdm
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import PCQM4Mv2
+from torch_geometric.io import fs
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import (
     GlobalAttention,
@@ -520,7 +521,7 @@ def run(rank, dataset, args):
 
     checkpoint_path = os.path.join(args.checkpoint_dir, 'checkpoint.pt')
     if os.path.isfile(checkpoint_path):
-        checkpoint = torch.load(checkpoint_path)
+        checkpoint = fs.torch_load(checkpoint_path)
         current_epoch = checkpoint['epoch'] + 1
         model.load_state_dict(checkpoint['model_state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
