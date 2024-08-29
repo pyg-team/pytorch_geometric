@@ -1,12 +1,15 @@
-from torch_geometric.datasets import web_qsp_dataset
-from torch_geometric.profile import nvtxit
-import torch
 import argparse
 
-# Apply Patches
-web_qsp_dataset.retrieval_via_pcst = nvtxit()(web_qsp_dataset.retrieval_via_pcst)
-web_qsp_dataset.WebQSPDataset.process = nvtxit()(web_qsp_dataset.WebQSPDataset.process)
+import torch
 
+from torch_geometric.datasets import web_qsp_dataset
+from torch_geometric.profile import nvtxit
+
+# Apply Patches
+web_qsp_dataset.retrieval_via_pcst = nvtxit()(
+    web_qsp_dataset.retrieval_via_pcst)
+web_qsp_dataset.WebQSPDataset.process = nvtxit()(
+    web_qsp_dataset.WebQSPDataset.process)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -1,9 +1,13 @@
 # %%
+import sys
+
 import pandas as pd
 import torch
 import tqdm
-import sys
+
 sys.path.append('..')
+import argparse
+
 from profiling_utils import create_remote_backend_from_triplets
 from rag_feature_store import SentenceTransformerApproxFeatureStore
 from rag_graph_store import NeighborSamplingRAGGraphStore
@@ -14,10 +18,10 @@ from torch_geometric.datasets.web_qsp_dataset import (
 )
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
-import argparse
 
 # %%
-parser = argparse.ArgumentParser(description="Generate new multihop dataset for rag")
+parser = argparse.ArgumentParser(
+    description="Generate new multihop dataset for rag")
 # TODO: Add more arguments for configuring rag params
 parser.add_argument("--num_samples", type=int)
 args = parser.parse_args()
@@ -45,18 +49,24 @@ fs, gs = create_remote_backend_from_triplets(
 
 # %%
 from typing import Tuple
+
 from torch_geometric.data import Data
 
 all_textual_nodes = pd.read_csv('wikimultihopqa_textual_nodes.csv')
 all_textual_edges = pd.read_csv('wikimultihopqa_textual_edges.csv')
 
-def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3, topk_e: int = 3, cost_e: float = 0.5) -> Tuple[Data, str]:
+
+def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3,
+                             topk_e: int = 3,
+                             cost_e: float = 0.5) -> Tuple[Data, str]:
     q_emb = model.encode(query)
     textual_nodes = all_textual_nodes.iloc[graph["node_idx"]].reset_index()
     textual_edges = all_textual_edges.iloc[graph["edge_idx"]].reset_index()
-    out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes, textual_edges, topk, topk_e, cost_e)
+    out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes,
+                                         textual_edges, topk, topk_e, cost_e)
     out_graph["desc"] = desc
     return out_graph
+
 
 # %%
 query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 10},

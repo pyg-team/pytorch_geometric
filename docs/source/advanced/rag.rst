@@ -1,7 +1,7 @@
 Working with LLM RAG in Pytorch Geometric
 =========================================
 
-This series aims to provide a starting point and for 
+This series aims to provide a starting point and for
 multi-step LLM Retrieval Augmented Generation
 (RAG) using Graph Neural Networks.
 
@@ -60,7 +60,7 @@ are composed of the following steps:
 Encoding a Large Knowledge Graph
 ================================
 
-To start, a Large Knowledge Graph needs to be created from triplets or 
+To start, a Large Knowledge Graph needs to be created from triplets or
 multiple subgraphs in a dataset.
 
 Example 1: Building from Already Existing Datasets
@@ -68,13 +68,13 @@ Example 1: Building from Already Existing Datasets
 
 In most RAG scenarios, the subset of the information corpus that gets
 retrieved is crucial for whether the appropriate response to the LLM.
-The same is true for GNN based RAG. For example, consider the 
+The same is true for GNN based RAG. For example, consider the
 WebQSPDataset.
 
 .. code:: ipython3
 
     from torch_geometric.datasets import WebQSPDataset
-    
+
     num_questions = 100
     ds = WebQSPDataset('small_sample', limit=num_questions)
 
@@ -129,7 +129,7 @@ Although this dataset can be trained on as-is, a couple problems emerge
 from doing so:
 1. A retrieval algorithm needs to be implemented and
 executed during inference time, that might not appropriately correspond
-to the algorithm that was used to generate the dataset subgraphs. 
+to the algorithm that was used to generate the dataset subgraphs.
 2. The dataset as is not stored computationally efficiently, as there will
 exist many duplicate nodes and edges that are shared between the
 questions.
@@ -185,37 +185,37 @@ First, we compare the clock times of encoding using both methods.
         nodes_map = dict()
         edges_map = dict()
         edge_idx_base = []
-    
+
         for src, edge, dst in graph:
             # Collect nodes
             if src not in nodes_map:
                 nodes_map[src] = len(nodes_map)
             if dst not in nodes_map:
                 nodes_map[dst] = len(nodes_map)
-            
+
             # Collect edge types
             if edge not in edges_map:
                 edges_map[edge] = len(edges_map)
-    
+
             # Record edge
             edge_idx_base.append((nodes_map[src], edges_map[edge], nodes_map[dst]))
-        
+
         # Encode nodes and edges
         sorted_nodes = list(sorted(nodes_map.keys(), key=lambda x: nodes_map[x]))
         sorted_edges = list(sorted(edges_map.keys(), key=lambda x: edges_map[x]))
-    
+
         x = model.encode(sorted_nodes, batch_size=256)
         edge_attrs_map = model.encode(sorted_edges, batch_size=256)
-        
+
         edge_attrs = []
         edge_idx = []
         for trip in edge_idx_base:
             edge_attrs.append(edge_attrs_map[trip[1]])
             edge_idx.append([trip[0], trip[2]])
-    
+
         dataset_graphs_embedded.append(Data(x=x, edge_index=torch.tensor(edge_idx).T, edge_attr=torch.stack(edge_attrs, dim=0)))
-        
-        
+
+
     print(time.time()-start)
 
 
@@ -233,31 +233,31 @@ First, we compare the clock times of encoding using both methods.
 
     # Using LargeGraphIndexer to make one large knowledge graph
     from torch_geometric.data.large_graph_indexer import EDGE_RELATION
-    
+
     start = time.time()
     all_triplets_together = chain.from_iterable(raw_dataset_graphs)
     # Index as one large graph
     print('Indexing...')
     indexer = LargeGraphIndexer.from_triplets(all_triplets_together)
-    
+
     # first the nodes
     unique_nodes = indexer.get_unique_node_features()
     node_encs = model.encode(unique_nodes, batch_size=256)
     indexer.add_node_feature(new_feature_name='x', new_feature_vals=node_encs)
-    
+
     # then the edges
     unique_edges = indexer.get_unique_edge_features(feature_name=EDGE_RELATION)
     edge_attr = model.encode(unique_edges, batch_size=256)
     indexer.add_edge_feature(new_feature_name="edge_attr", new_feature_vals=edge_attr, map_from_feature=EDGE_RELATION)
-    
+
     ckpt_time = time.time()
-    whole_knowledge_graph = indexer.to_data(node_feature_name='x', edge_feature_name='edge_attr') 
+    whole_knowledge_graph = indexer.to_data(node_feature_name='x', edge_feature_name='edge_attr')
     whole_graph_done = time.time()
     print(f"Time to create whole knowledge_graph: {whole_graph_done-start}")
-    
+
     # Compute this to make sure we're comparing like to like on final time printout
     whole_graph_diff = whole_graph_done-ckpt_time
-    
+
     # retrieve subgraphs
     print('Retrieving Subgraphs...')
     dataset_graphs_embedded_largegraphindexer = [graph for graph in tqdm.tqdm(get_features_for_triplets_groups(indexer=indexer, triplet_groups=raw_dataset_graphs), total=num_questions)]
@@ -356,7 +356,7 @@ Building a Multi-Hop QA Dataset
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To see an example of encoding a large knowledge graph starting from an
-existing set of triplets, check out the multi-hop example in 
+existing set of triplets, check out the multi-hop example in
 `examples/llm_plus_gnn/multihop`.
 
 Question: How do we extract a contextual subgraph for a given query?
@@ -374,8 +374,8 @@ Motivation
 ----------
 
 When building a RAG Pipeline for inference, the retrieval component is
-important for the following reasons: 
-1. A given algorithm for retrieving subgraph context can have a 
+important for the following reasons:
+1. A given algorithm for retrieving subgraph context can have a
 marked effect on the hallucination rate of the responses in the model
 2. A given retrieval algorithm needs to be able to scale to larger
 graphs of millions of nodes and edges in order to be practical for production.
@@ -488,11 +488,11 @@ from triplets:
 .. code:: ipython3
 
     from profiling_utils import create_remote_backend_from_triplets, RemoteGraphBackendLoader
-    
+
     # We define this GraphStore to sample the neighbors of a node locally.
     # Ideally for a real remote backend, this interface would be replaced with an API to a Graph DB, such as Neo4j.
     from rag_graph_store import NeighborSamplingRAGGraphStore
-    
+
     # We define this FeatureStore to encode the nodes and edges locally, and perform appoximate KNN when indexing.
     # Ideally for a real remote backend, this interface would be replaced with an API to a vector DB, such as Pinecone.
     from rag_feature_store import SentenceTransformerFeatureStore
@@ -501,7 +501,7 @@ from triplets:
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(model_name="sentence-transformers/all-roberta-large-v1").to(device)
-    
+
     backend_loader: RemoteGraphBackendLoader = create_remote_backend_from_triplets(
         triplets=all_triplets, # All the triplets to insert into the backend
         node_embedding_model=model, # Embedding model to process triplets with
@@ -511,7 +511,7 @@ from triplets:
         node_method_kwargs={"batch_size": 256}, # Keyword arguments to pass to the node_method_to_call.
         graph_db=NeighborSamplingRAGGraphStore, # Graph Store to use
         feature_db=SentenceTransformerFeatureStore # Feature Store to use
-        ) 
+        )
     # This loader saves a copy of the processed data locally to be transformed into a graphstore and featurestore when load() is called.
     feature_store, graph_store = backend_loader.load()
 
@@ -536,7 +536,7 @@ diagram:
         data=(feature_store, graph_store), # Remote Rag Graph Store and Feature Store
         # Arguments to pass into the seed node/edge retrieval methods for the FeatureStore.
         # In this case, it's k for the KNN on the nodes and edges.
-        seed_nodes_kwargs={"k_nodes": 10}, seed_edges_kwargs={"k_edges": 10}, 
+        seed_nodes_kwargs={"k_nodes": 10}, seed_edges_kwargs={"k_edges": 10},
         # Arguments to pass into the GraphStore's Neighbor sampling method.
         # In this case, the GraphStore implements a NeighborLoader, so it takes the same arguments.
         sampler_kwargs={"num_neighbors": [40]*3},
@@ -557,7 +557,7 @@ look at the retrieval process for a remote backend:
 
 
 As we see here, there are 3 important steps to any remote backend
-procedure for graphs: 
+procedure for graphs:
 1. Retrieve the seed nodes and edges to begin our retrieval process from.
 2. Traverse the graph neighborhood of the seed nodes/edges to gather local context.
 3. Fetch the features associated with the subgraphs obtained from the traversal.

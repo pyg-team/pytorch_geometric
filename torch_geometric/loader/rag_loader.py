@@ -1,5 +1,14 @@
 from abc import abstractmethod
-from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union, Iterator
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    Optional,
+    Protocol,
+    Tuple,
+    Union,
+)
 
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
@@ -86,9 +95,9 @@ class RAGQueryLoader:
         self.sampler_kwargs = sampler_kwargs or {}
         self.loader_kwargs = loader_kwargs or {}
 
-    def batch_query(self, queries: Any, batch_size: int = 512) -> Iterator[Data]:
+    def batch_query(self, queries: Any,
+                    batch_size: int = 512) -> Iterator[Data]:
         """Retrieves subraphs associated with each query in the batch (experimental)."""
-
         for i in range(0, len(queries), batch_size):
             if i + batch_size <= len(queries):
                 batch = queries[i:i + batch_size]
@@ -100,12 +109,13 @@ class RAGQueryLoader:
             seed_edges = self.feature_store._retrieve_seed_edges_batch(
                 batch, **self.seed_edges_kwargs)
 
-            for (seed_node, seed_edge, query) in zip(seed_nodes, seed_edges, batch):
+            for (seed_node, seed_edge, query) in zip(seed_nodes, seed_edges,
+                                                     batch):
                 subgraph_sample = self.graph_store.sample_subgraph(
                     seed_node, seed_edge, **self.sampler_kwargs)
 
-                data = self.feature_store.load_subgraph(sample=subgraph_sample,
-                                                        **self.loader_kwargs)
+                data = self.feature_store.load_subgraph(
+                    sample=subgraph_sample, **self.loader_kwargs)
 
                 if self.local_filter:
                     data = self.local_filter(data, query)

@@ -1,13 +1,14 @@
-"""Used to benchmark the performance of an untuned/fine tuned LLM against 
-GRetriever with various architectures and layer depths."""
+"""Used to benchmark the performance of an untuned/fine tuned LLM against
+GRetriever with various architectures and layer depths.
+"""
 # %%
 import argparse
 
 import torch
+from g_retriever import benchmark_models, get_loss, inference_step
+
 from torch_geometric.datasets import UpdatedWebQSPDataset
 from torch_geometric.nn.models import GAT, MLP, GRetriever
-
-from g_retriever import benchmark_models, get_loss, inference_step
 
 # %%
 parser = argparse.ArgumentParser(description="Benchmarker for GRetriever")
@@ -45,17 +46,22 @@ else:
         """Utility class to patch the fields in WebQSPDataset used by GRetriever."""
         def __init__(self) -> None:
             pass
-        
+
         @property
         def split_idxs(self) -> dict:
             # Imitates the WebQSP split method
             return {
-                "train": torch.arange(args.num_train),
-                "val": torch.arange(args.num_val) + args.num_train,
-                "test": torch.arange(args.num_test) + args.num_train + args.num_val,
+                "train":
+                torch.arange(args.num_train),
+                "val":
+                torch.arange(args.num_val) + args.num_train,
+                "test":
+                torch.arange(args.num_test) + args.num_train + args.num_val,
             }
+
         def __getitem__(self, idx: int):
             return dataset[idx]
+
     ds = MockDataset()
 
 # %%
@@ -74,7 +80,8 @@ for m_type in model_type:
             model_names.append(f"{m_type}_{n_layer}_{n_tokens}")
             model_classes.append(GRetriever)
             kwargs = dict(gnn_hidden_channels=hidden_channels,
-                        num_gnn_layers=n_layer, gnn_to_use=models[m_type], mlp_out_tokens=n_tokens)
+                          num_gnn_layers=n_layer, gnn_to_use=models[m_type],
+                          mlp_out_tokens=n_tokens)
             if args.tiny_llama:
                 kwargs['llm_to_use'] = 'TinyLlama/TinyLlama-1.1B-Chat-v0.1'
                 kwargs['mlp_out_dim'] = 2048
@@ -85,4 +92,3 @@ for m_type in model_type:
 benchmark_models(model_classes, model_names, model_kwargs, ds, lr, epochs,
                  batch_size, eval_batch_size, get_loss, inference_step,
                  skip_LLMs=False, tiny_llama=args.tiny_llama, force=True)
-

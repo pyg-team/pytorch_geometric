@@ -564,7 +564,8 @@ class LargeGraphIndexer:
 def get_features_for_triplets_groups(
     indexer: LargeGraphIndexer,
     triplet_groups: Iterable[KnowledgeGraphLike],
-    node_feature_name: str = "x", edge_feature_name: str = "edge_attr",
+    node_feature_name: str = "x",
+    edge_feature_name: str = "edge_attr",
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
     verbose: bool = False,
 ) -> Iterator[Data]:
@@ -666,5 +667,6 @@ def get_features_for_triplets(
     """
     gen = get_features_for_triplets_groups(indexer, [triplets],
                                            node_feature_name,
-                                           edge_feature_name, pre_transform, verbose)
+                                           edge_feature_name, pre_transform,
+                                           verbose)
     return next(gen)

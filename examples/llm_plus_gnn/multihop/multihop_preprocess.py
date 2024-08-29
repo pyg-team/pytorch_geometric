@@ -28,16 +28,18 @@
 # The following download contains the ID to plaintext mapping for all the entities and relations in the knowledge graph:
 
 from subprocess import call
+
 rv = call("./multihop_download.sh")
 
 # %% [markdown]
 # To start, we are going to preprocess the knowledge graph to substitute each of the entity/relation codes with their plaintext aliases. This makes it easier to use a pre-trained textual encoding model to create triplet embeddings, as such a model likely won't understand how to properly embed the entity codes.
 
+import argparse
+import json
+
 # %%
 import pandas as pd
 import tqdm
-import json
-import argparse
 
 # %%
 parser = argparse.ArgumentParser(description="Preprocess wikidata5m")
@@ -78,7 +80,11 @@ for line in tqdm.tqdm(open('wikidata5m_all_triplet.txt')):
     if rel not in rel_alias_map:
         missing_total += 1
     total += 3
-    full_graph.append([alias_map.get(src, src), rel_alias_map.get(rel, rel), alias_map.get(dst, dst)])
+    full_graph.append([
+        alias_map.get(src, src),
+        rel_alias_map.get(rel, rel),
+        alias_map.get(dst, dst)
+    ])
     i += 1
 print(f"Missing aliases: {missing_total}/{total}")
 
@@ -119,7 +125,10 @@ df['graph_size'] = df['evidences_id'].apply(lambda row: len(row))
 # df = df[df['graph_size'] > 0]
 
 # %%
-refined_df = df[['_id', 'question', 'answer', 'split_type', 'evidences_id', 'type', 'graph_size']]
+refined_df = df[[
+    '_id', 'question', 'answer', 'split_type', 'evidences_id', 'type',
+    'graph_size'
+]]
 
 # %% [markdown]
 # Checkpoint:
@@ -205,20 +214,15 @@ textual_nodes = pd.DataFrame.from_dict(
 textual_nodes["node_id"] = textual_nodes.index
 textual_nodes = textual_nodes[["node_id", "node_attr"]]
 
-
 # %% [markdown]
 # Notice how LargeGraphIndexer ensures that there are no duplicate indices:
 
 # %%
 # Edge DF
 textual_edges = pd.DataFrame(indexer.get_edge_features(),
-                                columns=["src", "edge_attr", "dst"])
-textual_edges["src"] = [
-    indexer._nodes[h] for h in textual_edges["src"]
-]
-textual_edges["dst"] = [
-    indexer._nodes[h] for h in textual_edges["dst"]
-]
+                             columns=["src", "edge_attr", "dst"])
+textual_edges["src"] = [indexer._nodes[h] for h in textual_edges["src"]]
+textual_edges["dst"] = [indexer._nodes[h] for h in textual_edges["dst"]]
 
 # %% [markdown]
 # Note: The edge table refers to each node by its index in the node table. We will see how this gets utilized later when indexing a subgraph.

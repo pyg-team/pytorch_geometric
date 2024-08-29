@@ -23,17 +23,20 @@ def _setup_batch() -> Data:
         [list(range(10)), list(range(1, 10)) + [0]])
     return batch
 
+
 def _eval_train_call(model, batch):
     # test train
     loss = model(batch.question, batch.x, batch.edge_index, batch.batch,
                  batch.ptr, batch.label, batch.edge_attr)
     assert loss is not None
 
+
 def _eval_inference_call(model, batch):
     # test inference
     pred = model.inference(batch.question, batch.x, batch.edge_index,
                            batch.batch, batch.ptr, batch.edge_attr)
     assert pred is not None
+
 
 @onlyFullTest
 @withPackage('transformers', 'sentencepiece', 'accelerate')
@@ -46,9 +49,10 @@ def test_g_retriever() -> None:
         mlp_out_dim=2048,
     )
     batch = batch.to(model.llm_device)
-    
+
     _eval_train_call(model, batch)
     _eval_inference_call(model, batch)
+
 
 @onlyFullTest
 @withPackage('transformers', 'sentencepiece', 'accelerate')
@@ -59,10 +63,8 @@ def test_g_retriever_many_tokens() -> None:
         llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
         num_llm_params=1,  # 1 Billion
         mlp_out_dim=2048,
-        mlp_out_tokens=2
-    )
+        mlp_out_tokens=2)
     batch = batch.to(model.llm_device)
 
     _eval_train_call(model, batch)
     _eval_inference_call(model, batch)
-
