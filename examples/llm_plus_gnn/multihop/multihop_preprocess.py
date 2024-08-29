@@ -37,6 +37,12 @@ rv = call("./multihop_download.sh")
 import pandas as pd
 import tqdm
 import json
+import argparse
+
+# %%
+parser = argparse.ArgumentParser(description="Preprocess wikidata5m")
+parser.add_argument("--n_triplets", type=int, default=-1)
+args = parser.parse_args()
 
 # %%
 # Substitute entity codes with their aliases
@@ -58,7 +64,12 @@ for line in open('wikidata5m_relation.txt'):
 full_graph = []
 missing_total = 0
 total = 0
+limit = None if args.n_triplets == -1 else args.n_triplets
+i = 0
+
 for line in tqdm.tqdm(open('wikidata5m_all_triplet.txt')):
+    if limit is not None and i >= limit:
+        break
     src, rel, dst = line.strip().split('\t')
     if src not in alias_map:
         missing_total += 1
@@ -68,6 +79,7 @@ for line in tqdm.tqdm(open('wikidata5m_all_triplet.txt')):
         missing_total += 1
     total += 3
     full_graph.append([alias_map.get(src, src), rel_alias_map.get(rel, rel), alias_map.get(dst, dst)])
+    i += 1
 print(f"Missing aliases: {missing_total}/{total}")
 
 # %% [markdown]
@@ -94,23 +106,11 @@ test_df['split_type'] = 'test'
 
 df = pd.concat([train_df, dev_df, test_df])
 
-# %%
-df.head()
-
-# %%
-df['split_type'].value_counts()
-
-# %%
-df['type'].value_counts()
-
 # %% [markdown]
 # Now we need to extract the subgraphs
 
 # %%
 df['graph_size'] = df['evidences_id'].apply(lambda row: len(row))
-
-# %%
-df['graph_size'].value_counts()
 
 # %% [markdown]
 # (Optional) We take only questions where the evidence graph is greater than 0. (Note: this gets rid of the test set):
@@ -205,14 +205,9 @@ textual_nodes = pd.DataFrame.from_dict(
 textual_nodes["node_id"] = textual_nodes.index
 textual_nodes = textual_nodes[["node_id", "node_attr"]]
 
-# %%
-textual_nodes.head()
 
 # %% [markdown]
 # Notice how LargeGraphIndexer ensures that there are no duplicate indices:
-
-# %%
-textual_nodes['node_attr'].unique().shape[0]/textual_nodes.shape[0]
 
 # %%
 # Edge DF
@@ -228,17 +223,9 @@ textual_edges["dst"] = [
 # %% [markdown]
 # Note: The edge table refers to each node by its index in the node table. We will see how this gets utilized later when indexing a subgraph.
 
-# %%
-textual_edges.head()
-
 # %% [markdown]
 # Now we can save the result
 
 # %%
 textual_nodes.to_csv('wikimultihopqa_textual_nodes.csv', index=False)
 textual_edges.to_csv('wikimultihopqa_textual_edges.csv', index=False)
-
-# %% [markdown]
-# Now were done! This knowledge graph and dataset will get used later on in Section 1.
-
-

@@ -2,6 +2,8 @@
 import pandas as pd
 import torch
 import tqdm
+import sys
+sys.path.append('..')
 from profiling_utils import create_remote_backend_from_triplets
 from rag_feature_store import SentenceTransformerApproxFeatureStore
 from rag_graph_store import NeighborSamplingRAGGraphStore
@@ -25,7 +27,7 @@ triplets = torch.load('wikimultihopqa_full_graph.pt')
 
 # %%
 df = pd.read_csv('wikimultihopqa_cleaned.csv')
-questions = df['question_text'][:args.num_samples]
+questions = df['question'][:args.num_samples]
 
 # %%
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
