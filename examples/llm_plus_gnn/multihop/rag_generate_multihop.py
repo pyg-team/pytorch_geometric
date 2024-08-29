@@ -77,6 +77,7 @@ query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 10},
 # %%
 subgs = []
 for subg in tqdm.tqdm(query_loader.query(q) for q in questions):
+    subg['question'] = q
     subgs.append(subg)
 
 torch.save(subgs, 'subg_results.pt')
