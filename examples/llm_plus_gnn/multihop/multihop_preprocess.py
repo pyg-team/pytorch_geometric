@@ -1,4 +1,4 @@
-"""Example workflow for downloading and assembling a multihop QA dataset"""
+"""Example workflow for downloading and assembling a multihop QA dataset."""
 
 # %% [markdown]
 # # Encoding A Large Knowledge Graph Part 2
