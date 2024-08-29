@@ -32,7 +32,9 @@ nodes, we present the following architecture:
 
 
 
-.. image:: _Introduction_files/_Introduction_7_0.svg
+.. figure:: ../_figures/flowchart.svg
+  :align: center
+  :width: 100%
 
 
 
@@ -279,11 +281,6 @@ First, we compare the clock times of encoding using both methods.
     114.66037964820862
 
 
-.. parsed-literal::
-
-    
-
-
 The large graph indexer allows us to compute the entire knowledge graph
 from a series of samples, so that new retrieval methods can also be
 tested on the entire graph. We will see this attempted in practice later
@@ -345,18 +342,10 @@ hops apart. This can be challenging for an LLM to recognize from
 prepended graph information. Here’s a motivating example (credit to
 @Rishi Puri):
 
-.. code:: ipython3
 
-    from IPython.display import SVG
-
-.. code:: ipython3
-
-    SVG(filename='./media/multihop_example.svg')
-
-
-
-
-.. image:: 0_1_Encoding_from_Scratch_files/0_1_Encoding_from_Scratch_6_0.svg
+.. figure:: ../_figures/multihop_example.svg
+  :align: center
+  :width: 100%
 
 
 
@@ -398,15 +387,10 @@ evaluate its runtime performance.
 We want to do so in-line with Pytorch Geometric’s in-house framework for
 remote backends:
 
-.. code:: ipython3
 
-    from IPython.display import Image, SVG
-    Image(filename='../../../docs/source/_figures/remote_2.png')
-
-
-
-
-.. image:: 1_Retrieval_files/1_Retrieval_5_0.png
+.. figure:: ../_figures/remote_2.png
+  :align: center
+  :width: 100%
 
 
 
@@ -490,7 +474,7 @@ With these questions and triplets, we want to:
 
     import torch
     from torch_geometric.nn.nlp import SentenceTransformer
-    from torch_geometric.datasets.updated_web_qsp_dataset import preprocess_triplet
+    from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 
 .. code:: ipython3
 
@@ -535,14 +519,10 @@ Now that we have initialized our remote backends, we can now retrieve
 from them using a Loader to query the backends, as shown in this
 diagram:
 
-.. code:: ipython3
 
-    Image(filename='../../../docs/source/_figures/remote_3.png')
-
-
-
-
-.. image:: 1_Retrieval_files/1_Retrieval_21_0.png
+.. figure:: ../_figures/remote_3.png
+  :align: center
+  :width: 100%
 
 
 
@@ -569,14 +549,10 @@ diagram:
 To make better sense of this loader’s arguments, let’s take a closer
 look at the retrieval process for a remote backend:
 
-.. code:: ipython3
 
-    SVG(filename="media/remote_backend.svg")
-
-
-
-
-.. image:: 1_Retrieval_files/1_Retrieval_25_0.svg
+.. figure:: ../_figures/remote_backend.svg
+  :align: center
+  :width: 100%
 
 
 
@@ -760,10 +736,6 @@ method? Let’s compare some basics properties of the subgraphs:
 
     Size: 1817, Ground Truth Size: 1978, Accuracy: 0.7530475815965395, Precision: 0.1677807486631016, Recall: 0.11696178937558248
 
-
-.. parsed-literal::
-
-    
 
 
 Note that, since we’re only comparing the results of 10 graphs here,
