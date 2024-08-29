@@ -228,7 +228,7 @@ def test_captum_explainer_special_heterogeneous(
         # Fail on sparse edge masking
         if edge_mask_type == MaskType.object:
             with pytest.raises(ValueError,
-                               match="Sparse edge index is not supported"):
+                               match="Sparse edge index not supported"):
                 explanation = explainer(
                     hetero_data.x_dict,
                     hetero_data.adj_t_dict,
