@@ -183,6 +183,7 @@ class WebQSPDataset(InMemoryDataset):
         force_reload: bool = False,
         limit: int = -1,
         include_pcst: bool = True,
+        verbose: bool = False,
     ) -> None:
         """Construct a WebQSPDataset.
 
@@ -194,12 +195,14 @@ class WebQSPDataset(InMemoryDataset):
                 Defaults to -1 to construct all samples.
             include_pcst (bool, optional): Whether to include PCST step
                 (See GRetriever paper). Defaults to True.
+            verbose (bool, optional): Whether to print output. Defaults to False.
         """
         self.limit = limit
         self.include_pcst = include_pcst
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         self._check_dependencies()
+        self.verbose = verbose
         super().__init__(root, None, None, force_reload=force_reload)
         self._load_raw_data()
         self.load(self.processed_paths[0])
@@ -306,9 +309,10 @@ class WebQSPDataset(InMemoryDataset):
         textual_edges = self.textual_edges
         graph_gen = get_features_for_triplets_groups(
             self.indexer, (ds['graph'] for ds in self.raw_dataset),
-            pre_transform=preprocess_triplet)
+            pre_transform=preprocess_triplet, verbose=self.verbose)
 
-        for index in tqdm(range(len(self.raw_dataset)), disable=True):
+        for index in tqdm(range(len(self.raw_dataset)), 
+                          disable=not self.verbose):
             data_i = self.raw_dataset[index]
             graph = next(graph_gen)
             textual_nodes = self.textual_nodes.iloc[

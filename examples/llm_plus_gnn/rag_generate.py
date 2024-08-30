@@ -28,7 +28,7 @@ parser.add_argument("--out_file", default="subg_results.pt")
 args = parser.parse_args()
 
 # %%
-ds = WebQSPDataset("dataset", limit=args.num_samples)
+ds = WebQSPDataset("dataset", limit=args.num_samples, verbose=True)
 
 # %%
 triplets = chain.from_iterable(d['graph'] for d in ds.raw_dataset)
