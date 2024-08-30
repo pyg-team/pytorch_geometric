@@ -313,7 +313,7 @@ Building a Multi-Hop QA Dataset
 
 To see an example of encoding a large knowledge graph starting from an
 existing set of triplets, check out the multi-hop example in
-`examples/llm_plus_gnn/multihop`.
+`examples/llm_plus_gnn/multihop_rag`.
 
 Question: How do we extract a contextual subgraph for a given query?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
