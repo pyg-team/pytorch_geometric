@@ -157,7 +157,17 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     wall_clock_start = time.perf_counter()
-
+    if args.n_devices == -1:
+        world_size = torch.cuda.device_count()
+    else:
+        world_size = args.n_devices
+    import psutil
+    gb_ram_needed = 190 + 200 * world_size
+    if (psutil.virtual_memory().total / (1024**3)) < gb_ram_needed:
+        print("Warning: may not have enough RAM to use this many GPUs.")
+        print("Consider upgrading RAM or using less GPUs if an error occurs.")
+        print("Estimated RAM Needed: ~" + str(gb_ram_needed))
+    print('Let\'s use', world_size, 'GPUs!')
     dataset = PygNodePropPredDataset(name='ogbn-papers100M',
                                      root='/datasets/ogb_datasets')
     split_idx = dataset.get_idx_split()
@@ -178,11 +188,6 @@ if __name__ == '__main__':
         )
 
     print("Data =", data)
-    if args.n_devices == -1:
-        world_size = torch.cuda.device_count()
-    else:
-        world_size = args.n_devices
-    print('Let\'s use', world_size, 'GPUs!')
     with tempfile.TemporaryDirectory() as tempdir:
         if world_size > 1:
             mp.spawn(

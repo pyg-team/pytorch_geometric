@@ -188,9 +188,8 @@ class LRGBDataset(InMemoryDataset):
                         graphs = pickle.load(f)
                 elif self.name.split('-')[0] == 'peptides':
                     # Peptides-func and Peptides-struct
-                    with open(osp.join(self.raw_dir, f'{split}.pt'),
-                              'rb') as f:
-                        graphs = torch.load(f)
+                    graphs = fs.torch_load(
+                        osp.join(self.raw_dir, f'{split}.pt'))
 
                 data_list = []
                 for graph in tqdm(graphs, desc=f'Processing {split} dataset'):
@@ -260,8 +259,7 @@ class LRGBDataset(InMemoryDataset):
 
     def process_pcqm_contact(self) -> None:
         for split in ['train', 'val', 'test']:
-            with open(osp.join(self.raw_dir, f'{split}.pt'), 'rb') as f:
-                graphs = torch.load(f)
+            graphs = fs.torch_load(osp.join(self.raw_dir, f'{split}.pt'))
 
             data_list = []
             for graph in tqdm(graphs, desc=f'Processing {split} dataset'):

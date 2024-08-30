@@ -70,7 +70,7 @@ class GeneralConv(MessagePassing):
         self,
         in_channels: Union[int, Tuple[int, int]],
         out_channels: Optional[int],
-        in_edge_channels: int = None,
+        in_edge_channels: Optional[int] = None,
         aggr: str = "add",
         skip_linear: str = False,
         directed_msg: bool = True,
