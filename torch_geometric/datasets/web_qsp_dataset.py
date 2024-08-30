@@ -203,6 +203,7 @@ class WebQSPDataset(InMemoryDataset):
             "cuda" if torch.cuda.is_available() else "cpu")
         self._check_dependencies()
         self.verbose = verbose
+        self.force_reload = force_reload
         super().__init__(root, None, None, force_reload=force_reload)
         self._load_raw_data()
         self.load(self.processed_paths[0])
@@ -344,7 +345,7 @@ class WebQSPDataset(InMemoryDataset):
         self.model = SentenceTransformer(
             'sentence-transformers/all-roberta-large-v1').to(self.device)
         self.model.eval()
-        if not os.path.exists(self.processed_paths[-1]):
+        if self.force_reload or not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")
             self._build_graph()
         else:

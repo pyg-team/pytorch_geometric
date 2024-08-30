@@ -36,7 +36,7 @@ eval_batch_size = args.eval_batch_size
 
 # %%
 if not args.dataset_path:
-    ds = WebQSPDataset('benchmark_archs', verbose=True)
+    ds = WebQSPDataset('benchmark_archs', verbose=True, force_reload=True)
 else:
     # We just assume that the size of the dataset accomodates the
     # train/val/test split, because checking may be expensive.
