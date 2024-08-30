@@ -1,3 +1,8 @@
+from collections import defaultdict
+
+import torch
+import torch_geometric.typing
+
 from ._compile import compile, is_compiling
 from ._onnx import is_in_onnx_export
 from .index import Index
@@ -49,3 +54,17 @@ __all__ = [
     'torch_geometric',
     '__version__',
 ]
+
+# Serialization ###############################################################
+
+if torch_geometric.typing.WITH_PT24:
+    torch.serialization.add_safe_globals([
+        dict,
+        list,
+        defaultdict,
+        Index,
+        torch_geometric.index.CatMetadata,
+        EdgeIndex,
+        torch_geometric.edge_index.SortOrder,
+        torch_geometric.edge_index.CatMetadata,
+    ])
