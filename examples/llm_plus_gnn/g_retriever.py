@@ -349,7 +349,7 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
         else:
             pure_llm = LLM(model_name="llama2-7b", num_params=7)
 
-        if not path.exists(root_dir + "/pure_llm_model_log.pt"):
+        if force or not path.exists(root_dir + "/pure_llm_model_log.pt"):
             model_log["pure_llm"] = dict()
 
             pure_preds = []
@@ -371,7 +371,7 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
                 torch.load(root_dir+"/pure_llm_model_log.pt")
 
         # LORA
-        if not path.exists(root_dir + "/tuned_llm_model_log.pt"):
+        if force or not path.exists(root_dir + "/tuned_llm_model_log.pt"):
             model_log["tuned_llm"] = dict()
             since = time.time()
             gc.collect()
