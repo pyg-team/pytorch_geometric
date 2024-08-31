@@ -19,7 +19,7 @@ import sys
 import time
 
 import torch
-
+from torch_geometric import seed_everything
 from torch_geometric.data import download_google_url
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
@@ -77,6 +77,7 @@ def main(args):
         ext_pseudo_labels = ext_pred.argmax(dim=-1)
         pretrain_augmented = True
 
+    seed_everything(42)
     from ogb.nodeproppred import PygNodePropPredDataset
     dataset = PygNodePropPredDataset(f'ogbn-{dataset_name}', root=root)
     split_idx = dataset.get_idx_split()
