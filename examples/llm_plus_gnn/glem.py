@@ -59,7 +59,7 @@ def main(args):
     token_on_disk = args.token_on_disk
     num_em_iters = args.num_em_iters
     start_time = time.time()
-    train_with_ext_pred = args.train_with_ext_pred
+    train_without_ext_pred = args.train_without_ext_pred
     ext_pred = None
     pretrain_augmented = False
     ext_pseudo_labels = None
@@ -68,10 +68,10 @@ def main(args):
     print(f'Running on: {torch.cuda.get_device_name({gpu})}')
     torch.cuda.empty_cache()
 
-    if train_with_ext_pred:
+    if not train_without_ext_pred:
         ext_pred_path = download_google_url(
             id='15sO2m7BeW7C1Upmdw3Cx1JS__6nxTAzY',
-            folder='data/ogbn_products/ext_preds',
+            folder='/work/users/junhaos/glem_data/ogbn_products/ext_preds',
             filename='giant_sagn_scr.pt', log=True)
         ext_pred = torch.load(ext_pred_path, map_location=device)
         ext_pseudo_labels = ext_pred.argmax(dim=-1)
@@ -115,11 +115,11 @@ def main(args):
 
     print('Building language model dataloader...', end='-->')
     from torch_geometric.loader import DataLoader
+    # if set train_without_ext_pred == True, use this for pretrain
     text_pretrain_loader = DataLoader(gold_dataset, batch_size=lm_batch_size,
                                       drop_last=False, pin_memory=True,
                                       shuffle=True)
     # training with augmented data,
-    # if set train_with_ext_pred == True, use this for pretrain
     text_train_loader = DataLoader(train_dataset, batch_size=lm_batch_size,
                                    drop_last=False, pin_memory=True,
                                    shuffle=True)
@@ -248,32 +248,69 @@ def main(args):
     # ================================= Run GLEM ==============================
     preds_filename = 'lm_pretrain'
     preds_dir = f'{out_dir}preds/{dataset_name}/'
-
+    gnn_test_acc = 0.0
+    lm_test_acc = 0.0
     # =============================== GLEM pretraining ========================
     pretrain_phase = 'lm'
     if em_order == 'lm':
         pretrain_phase = 'gnn'
     pretrain_start_time = time.time()
     # pretraining
+    pretrain_loader = graph_pretrain_loader
+    test_loader = subgraph_loader
+    pretrain_num_epochs = gnn_epochs
+    pretrain_opt = gnn_opt
     if pretrain_phase == 'gnn':
         model.gnn = model.gnn.to(device)
         print('pretraining gnn to generate pseudo labels')
-        if train_with_ext_pred:
-            graph_pretrain_loader = graph_train_loader
-        model.pre_train_gnn(graph_pretrain_loader, gnn_opt, gnn_epochs,
-                            patience, ext_pseudo_labels, pretrain_augmented,
-                            verbose)
-        preds = model.inference('gnn', subgraph_loader, verbose)
+        if not train_without_ext_pred:
+            pretrain_loader = graph_train_loader
         preds_filename = 'gnn_pretrain'
     elif pretrain_phase == 'lm':
         model.lm = model.lm.to(device)
         print('pretraining lm to generate pseudo labels')
-        if train_with_ext_pred:
-            text_pretrain_loader = text_train_loader
-        model.pre_train_lm(text_pretrain_loader, lm_opt, lm_epochs, patience,
-                           ext_pseudo_labels, pretrain_augmented, verbose)
-        preds = model.inference('lm', text_data_loader, verbose)
+        pretrain_num_epochs = lm_epochs
+        pretrain_loader = text_pretrain_loader
+        test_loader = text_data_loader
+        pretrain_opt = lm_opt
+        if not train_without_ext_pred:
+            pretrain_loader = text_train_loader
         preds_filename = 'lm_pretrain'
+    
+    early_stopping = 0
+    best_val_acc = final_test_acc = 0.0
+    for epoch in range(1, pretrain_num_epochs + 1):
+        acc, loss = model.train(pretrain_phase, pretrain_loader, 
+                                pretrain_opt, ext_pseudo_labels, epoch,
+                                pretrain_augmented, verbose)
+        if epoch >= 5 or epoch == pretrain_num_epochs:
+            pretrain_preds = model.inference(pretrain_phase, test_loader,
+                                        verbose=verbose)
+            train_acc, val_acc, test_acc = evaluate(
+                pretrain_preds, ['train', 'valid', 'test'])
+
+            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+                  f'Test: {test_acc:.4f}')
+
+            if val_acc <= best_val_acc:
+                early_stopping += 1
+                if early_stopping > patience:
+                    print(f'Pretrain Early stopped by Epoch: {epoch}')
+                    break
+            else:
+                best_val_acc = val_acc
+                final_test_acc = test_acc
+                preds = pretrain_preds
+
+    if pretrain_phase == 'gnn':
+        gnn_test_acc = max(gnn_test_acc, final_test_acc)
+        model.gnn = model.gnn.to('cpu', non_blocking=True)
+    else:
+        lm_test_acc = max(lm_test_acc, final_test_acc)
+        model.lm = model.lm.to('cpu', non_blocking=True)
+    torch.cuda.empty_cache()
+        
+    
     pretrain_phase_time = time.time() - pretrain_start_time
     print(f'Pretrain {pretrain_phase} time: {pretrain_phase_time:.2f}s')
     os.makedirs(osp.dirname(preds_dir), exist_ok=True)
@@ -285,8 +322,7 @@ def main(args):
           f'Test: {test_acc:.4f}')
 
     # EM iterations
-    gnn_test_acc = 0.0
-    lm_test_acc = 0.0
+    
     em_phase = em_order
     """
     We run E-step(LM training) and M-Step(GNN training) alternatively in each
@@ -311,7 +347,7 @@ def main(args):
         for epoch in range(1, num_epochs + 1):
             acc, loss = model.train(em_phase, train_loader, optimizer,
                                     pseudo_labels, epoch, True, verbose)
-            if epoch > 5 or epoch == num_epochs:
+            if epoch >= 5 or epoch == num_epochs:
                 cur_preds = model.inference(em_phase, test_loader,
                                             verbose=verbose)
                 train_acc, val_acc, test_acc = evaluate(
@@ -381,7 +417,7 @@ if __name__ == '__main__':
                         help='pseudo label weight in M-step')
     parser.add_argument('--lm_epochs', type=int, default=10)
     parser.add_argument('--gnn_epochs', type=int, default=50)
-    parser.add_argument('--gnn_lr', type=float, default=0.003)
+    parser.add_argument('--gnn_lr', type=float, default=0.002)
     parser.add_argument('--lm_lr', type=float, default=0.001)
     parser.add_argument('--patience', type=int, default=3,
                         help='Patience for early stopping')
@@ -398,9 +434,9 @@ if __name__ == '__main__':
     parser.add_argument('--out_dir', type=str, default='output/',
                         help='output directory')
     parser.add_argument(
-        '--train_with_ext_pred', action='store_true',
-        help='use additional pseudo labels for augmenting data'
-        'only available for ogbn-products')
+        '--train_without_ext_pred', action='store_true',
+        help='train glem without using additional pseudo labels '
+        'for augmenting data only available for ogbn-products')
     args = parser.parse_args()
     print(args)
     main(args)
