@@ -347,7 +347,8 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
                 num_params=1,
             )
         else:
-            pure_llm = LLM(model_name="llama2-7b", num_params=7)
+            pure_llm = LLM(model_name="meta-llama/Llama-2-7b-chat-hf", 
+                           num_params=7)
 
         if force or not path.exists(root_dir + "/pure_llm_model_log.pt"):
             model_log["pure_llm"] = dict()
