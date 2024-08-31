@@ -7,4 +7,4 @@
 
 ## Run GLEM for getting SOTA result on ogbn-products dataset
 
-`python glem.py --train_with_ext_pred`
+`python glem.py`
