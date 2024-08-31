@@ -19,6 +19,7 @@ import sys
 import time
 
 import torch
+
 from torch_geometric import seed_everything
 from torch_geometric.data import download_google_url
 from torch_geometric.datasets import TAGDataset
