@@ -115,6 +115,7 @@ def main(args):
 
     print('Building language model dataloader...', end='-->')
     from torch_geometric.loader import DataLoader
+
     # if set train_without_ext_pred == True, use this for pretrain
     text_pretrain_loader = DataLoader(gold_dataset, batch_size=lm_batch_size,
                                       drop_last=False, pin_memory=True,
@@ -276,18 +277,18 @@ def main(args):
         if not train_without_ext_pred:
             pretrain_loader = text_train_loader
         preds_filename = 'lm_pretrain'
-    
+
     early_stopping = 0
     best_val_acc = final_test_acc = 0.0
     for epoch in range(1, pretrain_num_epochs + 1):
-        acc, loss = model.train(pretrain_phase, pretrain_loader, 
-                                pretrain_opt, ext_pseudo_labels, epoch,
-                                pretrain_augmented, verbose)
+        acc, loss = model.train(pretrain_phase, pretrain_loader, pretrain_opt,
+                                ext_pseudo_labels, epoch, pretrain_augmented,
+                                verbose)
         if epoch >= 5 or epoch == pretrain_num_epochs:
             pretrain_preds = model.inference(pretrain_phase, test_loader,
-                                        verbose=verbose)
-            train_acc, val_acc, test_acc = evaluate(
-                pretrain_preds, ['train', 'valid', 'test'])
+                                             verbose=verbose)
+            train_acc, val_acc, test_acc = evaluate(pretrain_preds,
+                                                    ['train', 'valid', 'test'])
 
             print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
                   f'Test: {test_acc:.4f}')
@@ -309,8 +310,7 @@ def main(args):
         lm_test_acc = max(lm_test_acc, final_test_acc)
         model.lm = model.lm.to('cpu', non_blocking=True)
     torch.cuda.empty_cache()
-        
-    
+
     pretrain_phase_time = time.time() - pretrain_start_time
     print(f'Pretrain {pretrain_phase} time: {pretrain_phase_time:.2f}s')
     os.makedirs(osp.dirname(preds_dir), exist_ok=True)
@@ -322,7 +322,7 @@ def main(args):
           f'Test: {test_acc:.4f}')
 
     # EM iterations
-    
+
     em_phase = em_order
     """
     We run E-step(LM training) and M-Step(GNN training) alternatively in each
