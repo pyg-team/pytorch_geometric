@@ -19,6 +19,7 @@ import sys
 import time
 
 import torch
+
 from torch_geometric.data import download_google_url
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
@@ -66,16 +67,16 @@ def main(args):
         f'cuda:{gpu}' if torch.cuda.is_available() else 'cpu')
     print(f'Running on: {torch.cuda.get_device_name({gpu})}')
     torch.cuda.empty_cache()
-    
+
     if train_with_ext_pred:
-        ext_pred_path = download_google_url(id='15sO2m7BeW7C1Upmdw3Cx1JS__6nxTAzY',
-                                                folder='data/ogbn_products/ext_preds', 
-                                                filename='giant_sagn_scr.pt', 
-                                                log=True)
+        ext_pred_path = download_google_url(
+            id='15sO2m7BeW7C1Upmdw3Cx1JS__6nxTAzY',
+            folder='data/ogbn_products/ext_preds',
+            filename='giant_sagn_scr.pt', log=True)
         ext_pred = torch.load(ext_pred_path, map_location=device)
         ext_pseudo_labels = ext_pred.argmax(dim=-1)
         pretrain_augmented = True
-        
+
     from ogb.nodeproppred import PygNodePropPredDataset
     dataset = PygNodePropPredDataset(f'ogbn-{dataset_name}', root=root)
     split_idx = dataset.get_idx_split()
@@ -117,7 +118,7 @@ def main(args):
     text_pretrain_loader = DataLoader(gold_dataset, batch_size=lm_batch_size,
                                       drop_last=False, pin_memory=True,
                                       shuffle=True)
-    # training with augmented data, 
+    # training with augmented data,
     # if set train_with_ext_pred == True, use this for pretrain
     text_train_loader = DataLoader(train_dataset, batch_size=lm_batch_size,
                                    drop_last=False, pin_memory=True,
@@ -131,7 +132,7 @@ def main(args):
     initial_memory = torch.cuda.memory_allocated()
     data = data.to(device)
     if ext_pred is not None:
-        data.x = torch.cat((data.x, ext_pred), dim=1) 
+        data.x = torch.cat((data.x, ext_pred), dim=1)
         num_features += ext_pred.size(1)
     current_memory_1 = torch.cuda.max_memory_allocated()
     # 1 GB = 1073741824 Byte
@@ -260,8 +261,8 @@ def main(args):
         if train_with_ext_pred:
             graph_pretrain_loader = graph_train_loader
         model.pre_train_gnn(graph_pretrain_loader, gnn_opt, gnn_epochs,
-                        patience, ext_pseudo_labels, 
-                        pretrain_augmented, verbose)
+                            patience, ext_pseudo_labels, pretrain_augmented,
+                            verbose)
         preds = model.inference('gnn', subgraph_loader, verbose)
         preds_filename = 'gnn_pretrain'
     elif pretrain_phase == 'lm':
@@ -269,9 +270,8 @@ def main(args):
         print('pretraining lm to generate pseudo labels')
         if train_with_ext_pred:
             text_pretrain_loader = text_train_loader
-        model.pre_train_lm(text_pretrain_loader, lm_opt, lm_epochs, 
-                           patience, ext_pseudo_labels, 
-                           pretrain_augmented, verbose)
+        model.pre_train_lm(text_pretrain_loader, lm_opt, lm_epochs, patience,
+                           ext_pseudo_labels, pretrain_augmented, verbose)
         preds = model.inference('lm', text_data_loader, verbose)
         preds_filename = 'lm_pretrain'
     pretrain_phase_time = time.time() - pretrain_start_time
@@ -397,9 +397,10 @@ if __name__ == '__main__':
         'for reducing duplicated tokenizing')
     parser.add_argument('--out_dir', type=str, default='output/',
                         help='output directory')
-    parser.add_argument('--train_with_ext_pred', action='store_true',
-                        help='use additional pseudo labels for augmenting data'
-                             'only available for ogbn-products')
+    parser.add_argument(
+        '--train_with_ext_pred', action='store_true',
+        help='use additional pseudo labels for augmenting data'
+        'only available for ogbn-products')
     args = parser.parse_args()
     print(args)
     main(args)
