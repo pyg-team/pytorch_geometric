@@ -520,19 +520,6 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         for i, batch in enumerate(tqdm(loader)):
             question = batch.question
             correct_answer = batch.label
-            if skip_pretrained_LLM:
-                pure_llm_pred = None
-                pure_llm_hallucinates = False
-            else:
-                # GNN+LLM only using 32 tokens to answer.
-                # Allow more output tokens for untrained LLM
-                pure_llm_pred = pure_llm.inference(batch.question, batch.desc,
-                                                   max_tokens=256)
-                pure_llm_hallucinates = detect_hallucinate(
-                    pure_llm_pred, correct_answer)
-            untuned_llm_save_list += [
-                tup for tup in zip(pure_llm_pred, pure_llm_hallucinates)
-            ]
 
             gnn_llm_pred = gnn_llm_preds[i * eval_batch_size:(i + 1) *
                                          eval_batch_size]
@@ -540,6 +527,20 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                                                       correct_answer)
             gnn_save_list += [
                 tup for tup in zip(gnn_llm_pred, gnn_llm_hallucinates)
+            ]
+
+            if not skip_pretrained_LLM:
+                # GNN+LLM only using 32 tokens to answer.
+                # Allow more output tokens for untrained LLM
+                pure_llm_pred = pure_llm.inference(batch.question, batch.desc,
+                                                   max_tokens=256)
+                pure_llm_hallucinates = detect_hallucinate(
+                    pure_llm_pred, correct_answer)
+            else:
+                pure_llm_pred = [''] * len(gnn_llm_hallucinates)
+                pure_llm_hallucinates = [False]* len(gnn_llm_hallucinates)
+            untuned_llm_save_list += [
+                tup for tup in zip(pure_llm_pred, pure_llm_hallucinates)
             ]
 
             for gnn_llm_hal, pure_llm_hal in zip(gnn_llm_hallucinates,
@@ -606,21 +607,20 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         untuned_llm_pred, untuned_llm_hallucinates = list(
             zip(*untuned_llm_save_list[i * eval_batch_size:(i + 1) *
                                        eval_batch_size]))
-        if gnn_llm_hallucinates == "skip" or untuned_llm_hallucinates == "skip":  # noqa
-            continue
         pure_llm_pred = pure_llm_preds[i * eval_batch_size:(i + 1) *
                                        eval_batch_size]
         pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
                                                    correct_answer)
         for j in range(len(gnn_llm_pred)):
+            if skip_pretrained_LLM:
+                # we did not check the untrained LLM, so do not decide to demo
+                # based on this.
+                # HACK
+                untuned_llm_hallucinates = {j: True}
             if gnn_llm_hallucinates[j] == "skip" or untuned_llm_hallucinates[
                     j] == "skip" or pure_llm_hallucinates[j] == "skip":
                 continue
             trained_llm_hallucin_sum += int(pure_llm_hallucinates[j])
-            if skip_pretrained_LLM:
-                # we did not check the untrained LLM, so do not decide to demo
-                # based on this.
-                untuned_llm_hallucinates = True
             if untuned_llm_hallucinates[j] and pure_llm_hallucinates[
                     j] and not gnn_llm_hallucinates[j]:  # noqa
                 final_prnt_str += "Prompt: '" + question[j] + "'\n"
