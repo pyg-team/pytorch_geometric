@@ -228,10 +228,8 @@ class LinkPredMRR(LinkPredMetric):
     higher_is_better: bool = True
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        first_correct = pred_isin_mat.type(torch.uint8).argmax(dim=-1)
-        rows = torch.arange(pred_isin_mat.size(0), device=pred_isin_mat.device)
-        is_actually_correct = pred_isin_mat[rows, first_correct]
-        ranks = first_correct + 1
-        reciprocals = 1.0 / ranks
-        reciprocals[~is_actually_correct] = 0.0
+        rank = pred_isin_mat.type(torch.uint8).argmax(dim=-1)
+        is_correct = pred_isin_mat.gather(1, rank.view(-1, 1)).view(-1)
+        reciprocals = 1.0 / (rank + 1)
+        reciprocals[~is_correct] = 0.0
         return reciprocals

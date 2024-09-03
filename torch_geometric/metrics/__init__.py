@@ -1,7 +1,13 @@
 # flake8: noqa
 
-from .link_pred import (LinkPredPrecision, LinkPredRecall, LinkPredF1,
-                        LinkPredMAP, LinkPredNDCG, LinkPredMRR)
+from .link_pred import (
+    LinkPredPrecision,
+    LinkPredRecall,
+    LinkPredF1,
+    LinkPredMAP,
+    LinkPredNDCG,
+    LinkPredMRR,
+)
 
 link_pred_metrics = [
     'LinkPredPrecision',
