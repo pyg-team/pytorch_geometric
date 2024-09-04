@@ -5,13 +5,17 @@ GRetriever with various architectures and layer depths.
 import argparse
 
 import torch
-from g_retriever import benchmark_models, get_loss, inference_step
+import sys
 
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.models import GAT, MLP, GRetriever
 
+sys.path.append('..')
+from g_retriever import benchmark_models, get_loss, inference_step # noqa: E402
+
 # %%
-parser = argparse.ArgumentParser(description="Benchmarker for GRetriever")
+parser = argparse.ArgumentParser(description="""Benchmarker for GRetriever
+NOTE: Evaluating with smaller samples may result in poorer performance for the trained models compared to untrained models.""")
 parser.add_argument("--hidden_channels", type=int, default=1024)
 parser.add_argument("--learning_rate", type=float, default=1e-5)
 parser.add_argument("--epochs", type=int, default=2)

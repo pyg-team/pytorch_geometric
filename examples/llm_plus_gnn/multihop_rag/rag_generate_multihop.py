@@ -17,10 +17,10 @@ from torch_geometric.nn.nlp import SentenceTransformer
 
 sys.path.append('..')
 
-from rag_backend_utils import create_remote_backend_from_triplets  # noqa: E402
-from rag_feature_store import \
+from g_retriever_utils.rag_backend_utils import create_remote_backend_from_triplets  # noqa: E402
+from g_retriever_utils.rag_feature_store import \
     SentenceTransformerApproxFeatureStore  # noqa: E402
-from rag_graph_store import NeighborSamplingRAGGraphStore  # noqa: E402
+from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore  # noqa: E402
 
 # %%
 parser = argparse.ArgumentParser(
