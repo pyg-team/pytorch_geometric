@@ -77,7 +77,8 @@ parser.add_argument(
     help='Whether or not to use directed graph',
 )
 args = parser.parse_args()
-if "papers" in str(args.dataset) and (psutil.virtual_memory().total / (1024**3)) < 390:
+if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
+                                      (1024**3)) < 390:
     print("Warning: may not have enough RAM to use this many GPUs.")
     print("Consider upgrading RAM if an error occurs.")
     print("Estimated RAM Needed: ~390GB.")
