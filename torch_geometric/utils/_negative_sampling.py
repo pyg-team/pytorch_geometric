@@ -110,8 +110,7 @@ def negative_sampling(
             warnings.warn(
                 'The probability of sampling a negative edge is too low! '
                 'It could be that the number of sampled edges is smaller '
-                'than the numbers you required!'
-            )
+                'than the numbers you required!')
 
     guess_edge_index, guess_edge_id = sample_almost_k_edges(
         size, k, force_undirected=force_undirected,
@@ -302,10 +301,8 @@ def structured_negative_sampling(
         neg_col[ok_edges] = col_to_save.view(-1)
 
         if not torch.all(ok_edges):
-            raise ValueError(
-                'Sparse method was not able to sample '
-                'all negative edges requested!'
-            )
+            raise ValueError('Sparse method was not able to sample '
+                             'all negative edges requested!')
 
     else:
         guess_col, guess_edge_id = sample_k_structured_edges(
