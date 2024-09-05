@@ -39,8 +39,10 @@ def negative_sampling(
         method (str, optional): The method to use for negative sampling,
             *i.e.* :obj:`"sparse"`, :obj:`"dense"`, or :obj:`"auto"`.
             This is a memory/runtime trade-off.
-            :obj:`"sparse"` will work on any graph of any size, but it could retrieve a different number of negative samples
-            :obj:`"dense"` will work only on small graphs since it enumerates all possible edges
+            :obj:`"sparse"` will work on any graph of any size, but it could
+            retrieve a different number of negative samples
+            :obj:`"dense"` will work only on small graphs since it enumerates
+            all possible edges
             :obj:`"auto"` will automatically choose the best method
             (default: :obj:`"auto"`)
         force_undirected (bool, optional): If set to :obj:`True`, sampled
@@ -93,11 +95,13 @@ def negative_sampling(
     prob = 1 - (num_edges / num_tot_edges)
     if method == 'sparse':
         if prob >= 0.3:
-            # the probability of sampling non-existing edge is high, so the sparse method should be ok
+            # the probability of sampling non-existing edge is high,
+            # so the sparse method should be ok
             k = max(int(1.5 * num_neg_samples),
                     int(num_neg_samples / (prob - 0.1)))
         else:
-            # the probability is too low, but the graph is too big for the exact sampling.
+            # the probability is too low, but the graph is too big
+            # for the exact sampling.
             # we perform the sparse sampling but we raise a warning
             k = int(
                 min(10 * num_neg_samples,
@@ -105,7 +109,8 @@ def negative_sampling(
 
             warnings.warn(
                 'The probability of sampling a negative edge is too low! '
-                'It could be that the number of sampled edges is smaller than the numbers you required!'
+                'It could be that the number of sampled edges is smaller '
+                'than the numbers you required!'
             )
 
     guess_edge_index, guess_edge_id = sample_almost_k_edges(
@@ -122,8 +127,6 @@ def negative_sampling(
         neg_edge_index = neg_edge_index[:, :num_neg_samples]
 
     assert neg_edge_index is not None
-
-    #print(f'{prob} - {method} - {k} - {num_neg_samples} - {neg_edge_index.shape[-1]}')
 
     if force_undirected:
         neg_edge_index = to_undirected(neg_edge_index)
@@ -149,13 +152,16 @@ def batched_negative_sampling(
             If given as a tuple, then :obj:`edge_index` is interpreted as a
             bipartite graph connecting two different node types.
         num_neg_samples (int, optional): The number of negative samples to
-            return for each graph in the batch. If set to :obj:`None`, will try to return a negative edge
+            return for each graph in the batch. If set to :obj:`None`,
+            will try to return a negative edge
             for every positive edge. (default: :obj:`None`)
         method (str, optional): The method to use for negative sampling,
             *i.e.* :obj:`"sparse"`, :obj:`"dense"`, or :obj:`"auto"`.
             This is a memory/runtime trade-off.
-            :obj:`"sparse"` will work on any graph of any size, but it could retrieve a different number of negative samples
-            :obj:`"dense"` will work only on small graphs since it enumerates all possible edges
+            :obj:`"sparse"` will work on any graph of any size, but it could
+            retrieve a different number of negative samples
+            :obj:`"dense"` will work only on small graphs since it enumerates
+            all possible edges
             :obj:`"auto"` will automatically choose the best method
             (default: :obj:`"auto"`)
         force_undirected (bool, optional): If set to :obj:`True`, sampled
@@ -242,8 +248,11 @@ def structured_negative_sampling(
         method (str, optional): The method to use for negative sampling,
             *i.e.* :obj:`"sparse"`, :obj:`"dense"`, or :obj:`"auto"`.
             This is a memory/runtime trade-off.
-            :obj:`"sparse"` will work on any graph of any size, but it could retrieve a different number of negative samples
-            :obj:`"dense"` will work only on small graphs since it enumerates all possible edges
+            :obj:`"sparse"` will work on any graph of any size, but it could
+            retrieve a different number of negative
+            samples
+            :obj:`"dense"` will work only on small graphs since it enumerates
+            all possible edges
             :obj:`"auto"` will automatically choose the best method
             (default: :obj:`"auto"`)
 
@@ -294,7 +303,8 @@ def structured_negative_sampling(
 
         if not torch.all(ok_edges):
             raise ValueError(
-                'Sparse method was not able to sample all negative edges requested!'
+                'Sparse method was not able to sample '
+                'all negative edges requested!'
             )
 
     else:
@@ -364,13 +374,14 @@ def structured_negative_sampling_feasible(
 def get_method(method: str, size: Tuple[int, int]) -> str:
     # select the method
     tot_num_edges = size[0] * size[1]
-    auto_method = 'dense' if tot_num_edges < _MAX_NUM_EDGES else 'sparse'  # prefer dense method if the graph is small
+    # prefer dense method if the graph is small
+    auto_method = 'dense' if tot_num_edges < _MAX_NUM_EDGES else 'sparse'
     method = auto_method if method == 'auto' else method
 
     if method == 'dense' and tot_num_edges >= _MAX_NUM_EDGES:
         warnings.warn(
-            f'You choose the dense method on a graph with {tot_num_edges} possible edges! '
-            f'It could require a lot of memory!')
+            f'You choose the dense method on a graph with {tot_num_edges} '
+            f'possible edges! It could require a lot of memory!')
 
     return method
 
@@ -468,10 +479,12 @@ def get_first_k_true_values_for_each_row(input_mask: Tensor,
 def get_neg_edge_mask(edge_id: Tensor, guess_edge_id: Tensor) -> Tensor:
     num_edges = edge_id.size(0)
     pos = torch.searchsorted(edge_id, guess_edge_id)
-    # pos contains the position where to insert the guessed id to maintain the edge_id sort.
-    # 1) if pos == num_edges, it means that we should add the guessed if at the end of the vector -> the id is new!
-    # 2) if pos != num_edges but the id in position pos != from the guessed one -> the id is new!
-    neg_edge_mask = torch.eq(pos, num_edges)  # negative edge from case 1)
+    # pos contains the position where to insert the guessed id
+    # to maintain the edge_id sort. There are two cases for new_id:
+    # 1) if pos == num_edges (it means that we should add it at the end)
+    # 2) if pos != num_edges but the id in position pos != from the guessed one
+    # negative edge from case 1)
+    neg_edge_mask = torch.eq(pos, num_edges)
     not_neg_edge_mask = torch.logical_not(neg_edge_mask)
     # negative edge from case 2)
     neg_edge_mask[not_neg_edge_mask] = edge_id[
