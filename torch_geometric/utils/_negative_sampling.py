@@ -94,7 +94,8 @@ def negative_sampling(
     if method == 'sparse':
         if prob >= 0.3:
             # the probability of sampling non-existing edge is high, so the sparse method should be ok
-            k = max(int(1.5*num_neg_samples), int(num_neg_samples / (prob - 0.1)))
+            k = max(int(1.5 * num_neg_samples),
+                    int(num_neg_samples / (prob - 0.1)))
         else:
             # the probability is too low, but the graph is too big for the exact sampling.
             # we perform the sparse sampling but we raise a warning
