@@ -274,7 +274,8 @@ def structured_negative_sampling(
         # TODO: can we compute the prob to find the k?
         k = 10
         guess_col, guess_edge_id = sample_k_structured_edges(
-            edge_index, num_nodes, k, not contains_neg_self_loops, method, device)
+            edge_index, num_nodes, k, not contains_neg_self_loops, method,
+            device)
         neg_edge_mask = get_neg_edge_mask(edge_id, guess_edge_id)
 
         neg_col = -torch.ones_like(edge_index[0])
@@ -293,7 +294,8 @@ def structured_negative_sampling(
 
     else:
         guess_col, guess_edge_id = sample_k_structured_edges(
-            edge_index, num_nodes, None, not contains_neg_self_loops, method, device)
+            edge_index, num_nodes, None, not contains_neg_self_loops, method,
+            device)
         neg_edge_mask = get_neg_edge_mask(edge_id, guess_edge_id)
 
         shape = (num_nodes,
@@ -452,7 +454,8 @@ def sample_k_structured_edges(
     return new_col.view(-1), new_edge_id.view(-1)
 
 
-def get_first_k_true_values_for_each_row(input_mask: Tensor, k: Union[Tensor, int]) -> Tensor:
+def get_first_k_true_values_for_each_row(input_mask: Tensor,
+                                         k: Union[Tensor, int]) -> Tensor:
     if isinstance(k, Tensor):
         k = k.unsqueeze(1)
     cum_mask = torch.le(torch.cumsum(input_mask, dim=1), k)
