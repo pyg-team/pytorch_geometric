@@ -1,7 +1,6 @@
 import pytest
 import torch
 
-from torch_geometric import seed_everything
 from torch_geometric.utils import (
     add_random_edge,
     is_undirected,
@@ -79,7 +78,7 @@ def test_add_random_edge():
     assert out[1].tolist() == [[], []]
 
     def _edge_idx_to_set(e: torch.Tensor) -> set:
-        return set([tuple(v) for v in e.tolist()])
+        return {tuple(v) for v in e.tolist()}
 
     out = add_random_edge(edge_index, p=0.5)
     assert _edge_idx_to_set(out[0]).isdisjoint(_edge_idx_to_set(out[1]))

@@ -9,10 +9,10 @@ def test_signed_gcn():
     model = SignedGCN(8, 16, num_layers=2, lamb=5)
     assert str(model) == 'SignedGCN(8, 16, num_layers=2)'
     N, E = 20, 40
-    all_index = torch.randperm(N*N, dtype=torch.long)
+    all_index = torch.randperm(N * N, dtype=torch.long)
     all_index = torch.stack([all_index // N, all_index % N], dim=0)
     pos_index = all_index[:, :E]
-    neg_index = all_index[:, E:2*E]
+    neg_index = all_index[:, E:2 * E]
 
     train_pos_index, test_pos_index = model.split_edges(pos_index)
     train_neg_index, test_neg_index = model.split_edges(neg_index)

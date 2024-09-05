@@ -5,7 +5,6 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import (
-    coalesce,
     cumsum,
     degree,
     index_sort,
@@ -256,7 +255,8 @@ def structured_negative_sampling(
         (tensor([0, 0, 1, 2]), tensor([0, 1, 2, 3]), tensor([2, 3, 0, 2]))
 
     """
-    if not structured_negative_sampling_feasible(edge_index, num_nodes, contains_neg_self_loops):
+    if not structured_negative_sampling_feasible(edge_index, num_nodes,
+                                                 contains_neg_self_loops):
         raise ValueError('Structured sampling is not feasible!')
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -292,7 +292,9 @@ def structured_negative_sampling(
         neg_col[ok_edges] = col_to_save.view(-1)
 
         if not torch.all(ok_edges):
-            raise ValueError('Sparse method was not able to sample all negative edges requested!')
+            raise ValueError(
+                'Sparse method was not able to sample all negative edges requested!'
+            )
 
     else:
         guess_col, guess_edge_id = sample_k_structured_edges(
