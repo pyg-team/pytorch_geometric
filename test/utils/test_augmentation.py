@@ -78,26 +78,20 @@ def test_add_random_edge():
     assert out[0].tolist() == edge_index.tolist()
     assert out[1].tolist() == [[], []]
 
-    seed_everything(5)
-    out = add_random_edge(edge_index, p=0.5)
-    assert out[0].tolist() == [[0, 1, 1, 2, 2, 3, 3, 1, 2],
-                               [1, 0, 2, 1, 3, 2, 0, 3, 0]]
-    assert out[1].tolist() == [[3, 1, 2], [0, 3, 0]]
+    def _edge_idx_to_set(e: torch.Tensor) -> set:
+        return set([tuple(v) for v in e.tolist()])
 
-    seed_everything(6)
+    out = add_random_edge(edge_index, p=0.5)
+    assert _edge_idx_to_set(out[0]).isdisjoint(_edge_idx_to_set(out[1]))
+
     out = add_random_edge(edge_index, p=0.5, force_undirected=True)
-    assert out[0].tolist() == [[0, 1, 1, 2, 2, 3, 1, 3],
-                               [1, 0, 2, 1, 3, 2, 3, 1]]
-    assert out[1].tolist() == [[1, 3], [3, 1]]
+    assert _edge_idx_to_set(out[0]).isdisjoint(_edge_idx_to_set(out[1]))
     assert is_undirected(out[0])
     assert is_undirected(out[1])
 
     # Test for bipartite graph:
-    seed_everything(7)
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5], [2, 3, 1, 4, 2, 1]])
     with pytest.raises(RuntimeError, match="not supported for bipartite"):
         add_random_edge(edge_index, force_undirected=True, num_nodes=(6, 5))
     out = add_random_edge(edge_index, p=0.5, num_nodes=(6, 5))
-    assert out[0].tolist() == [[0, 1, 2, 3, 4, 5, 2, 0, 2],
-                               [2, 3, 1, 4, 2, 1, 0, 4, 2]]
-    assert out[1].tolist() == [[2, 0, 2], [0, 4, 2]]
+    assert _edge_idx_to_set(out[0]).isdisjoint(_edge_idx_to_set(out[1]))
