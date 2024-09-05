@@ -256,6 +256,9 @@ def structured_negative_sampling(
         (tensor([0, 0, 1, 2]), tensor([0, 1, 2, 3]), tensor([2, 3, 0, 2]))
 
     """
+    if not structured_negative_sampling_feasible(edge_index, num_nodes, contains_neg_self_loops):
+        raise ValueError('Structured sampling is not feasible!')
+
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     size = (num_nodes, num_nodes)
     num_edges = edge_index.size(1)
@@ -289,8 +292,7 @@ def structured_negative_sampling(
         neg_col[ok_edges] = col_to_save.view(-1)
 
         if not torch.all(ok_edges):
-            warnings.warn(
-                'We were not able to sample all negative edges requested!')
+            raise ValueError('Sparse method was not able to sample all negative edges requested!')
 
     else:
         guess_col, guess_edge_id = sample_k_structured_edges(
@@ -343,8 +345,6 @@ def structured_negative_sampling_feasible(
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     max_num_neighbors = num_nodes
-
-    edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     if not contains_neg_self_loops:
         edge_index, _ = remove_self_loops(edge_index)
