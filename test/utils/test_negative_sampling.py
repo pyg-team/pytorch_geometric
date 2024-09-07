@@ -159,7 +159,6 @@ def test_structured_negative_sampling():
     assert (adj & neg_adj).sum() == 0
 
     # Test with no self-loops:
-    #edge_index = torch.LongTensor([[0, 0, 1, 1, 2], [1, 2, 0, 2, 1]])
     i, j, k = structured_negative_sampling(edge_index, num_nodes=4,
                                            contains_neg_self_loops=False)
     neg_edge_index = torch.vstack([i, k])
