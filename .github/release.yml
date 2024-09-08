@@ -1,0 +1,27 @@
+changelog:
+  exclude:
+    labels:
+      - skip-changelog
+    authors:
+      - pre-commit-ci[bot]
+      - dependabot[bot]
+  categories:
+    - title: Breaking Changes
+      labels:
+        - breaking change
+    - title: Deprecations
+      labels:
+        - deprecation
+    - title: Features
+      labels:
+        - feature
+    - title: Examples
+      lables:
+        - example
+        - benchmark
+    - title: Bug Fixes
+      labels:
+        - bug
+    - title: Other Changes
+      labels:
+        - "*"
