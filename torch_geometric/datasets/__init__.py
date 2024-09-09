@@ -77,6 +77,8 @@ from .wikidata import Wikidata5M
 from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
 from .web_qsp_dataset import WebQSPDataset
+from .ogbg_code2 import OGBG_Code2
+
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -189,6 +191,7 @@ homo_datasets = [
     'MyketDataset',
     'BrcaTcga',
     'NeuroGraphDataset',
+    'OGBG_Code2'
 ]
 
 hetero_datasets = [
