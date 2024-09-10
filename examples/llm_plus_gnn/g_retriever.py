@@ -119,7 +119,8 @@ def inference_step(model, batch, model_save_name,
                                max_out_tokens=max_out_tokens)
     else:
         return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr, batch.desc, max_out_tokens=max_out_tokens)
+                               batch.batch, batch.edge_attr, batch.desc,
+                               max_out_tokens=max_out_tokens)
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
