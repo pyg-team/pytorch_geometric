@@ -22,6 +22,7 @@ from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GRetriever
 from torch_geometric.nn.nlp import LLM
+from torch_geometric.nn.models import GAT
 
 
 def detect_hallucinate(pred: str, label: str):
@@ -157,18 +158,24 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     # Step 2: Build Model
     if model is None:
         gc.collect()
+        gnn_to_use = GAT(in_channels=1024, hidden_channels=hidden_channels, out_channels=1024, num_layers=num_gnn_layers)
         if tiny_llama:
+            llm_to_use = LLM(
+                model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+                num_params=1,
+            )
             model = GRetriever(
-                llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-                num_llm_params=1,  # 1 Billion
-                gnn_hidden_channels=hidden_channels,
-                num_gnn_layers=num_gnn_layers,
-                mlp_out_dim=2048,
+                llm=llm_to_use,
+                gnn=gnn_to_use,
+                mlp_out_channels=2048
             )
         else:
-            model = GRetriever(llm_to_use="meta-llama/Llama-2-7b-chat-hf",
-                               gnn_hidden_channels=hidden_channels,
-                               num_gnn_layers=num_gnn_layers)
+            llm_to_use = LLM(model_name="meta-llama/Llama-2-7b-chat-hf", num_params=7)
+            model = GRetriever(
+                llm=llm_to_use,
+                gnn=gnn_to_use,
+            )
+
     if num_gnn_layers is not None:
         model_save_name = "gnn_llm"
     else:
