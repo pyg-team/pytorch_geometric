@@ -130,7 +130,7 @@ def inference_step(model, batch, model_save_name,
     return out
 
 
-def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
+def train(since, num_epochs, gnn_hidden_channels, num_gnn_layers, batch_size,
           eval_batch_size, lr, loss_fn, inference_fn, compute_accuracy, model=None, dataset=None,
           checkpointing=False, tiny_llama=False):
     def adjust_learning_rate(param_group, LR, epoch):
