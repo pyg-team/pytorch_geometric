@@ -65,6 +65,8 @@ class LLM(torch.nn.Module):
     ) -> None:
         super().__init__()
 
+        self.model_name = model_name
+
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         # A rough heuristic on GPU memory requirements, e.g., we found that
@@ -83,10 +85,10 @@ class LLM(torch.nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
 
         if 'max_memory' not in kwargs:  # Pure CPU:
-            self.llm_device = torch.device('cpu')
+            self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:
-            self.llm_device = self.llm.device
+            self.device = self.llm.device
             self.autocast_context = torch.cuda.amp.autocast(dtype=dtype)
 
     def _encode_inputs(
@@ -104,10 +106,10 @@ class LLM(torch.nn.Module):
             BOS,
             add_special_tokens=False,
             return_tensors='pt',
-        ).input_ids[0].to(self.llm_device)
+        ).input_ids[0].to(self.device)
         bos_embeds = self.word_embedding(bos_token)
         pad_token = torch.tensor(self.tokenizer.pad_token_id,
-                                 device=self.llm_device)
+                                 device=self.device)
         pad_embeds = self.word_embedding(pad_token).unsqueeze(0)
         return (batch_size, questions, context, eos_user_tokens, bos_embeds,
                 pad_embeds)
@@ -144,13 +146,13 @@ class LLM(torch.nn.Module):
         embedding: Optional[List[Tensor]] = None,
     ) -> Tensor:
         inputs_embeds = self.word_embedding(
-            torch.tensor(input_ids, device=self.llm_device))
+            torch.tensor(input_ids, device=self.device))
 
         to_cat = [bos_embeds]
         if embedding is not None and embedding[i] is not None:
             to_cat.append(embedding[i])
         to_cat.append(inputs_embeds)
-        return torch.cat(to_cat, dim=0).to(self.llm_device)
+        return torch.cat(to_cat, dim=0).to(self.device)
 
     def _append_embeds(
         self,
@@ -188,12 +190,11 @@ class LLM(torch.nn.Module):
                 tmp = [IGNORE_INDEX] * pad + batch_label_input_ids[i]
                 batch_label_input_ids[i] = tmp
         inputs_embeds = torch.stack(batch_inputs_embeds, dim=0)
-        attention_mask = torch.tensor(batch_attention_mask,
-                                      device=self.llm_device)
+        attention_mask = torch.tensor(batch_attention_mask, device=self.device)
         label_input_ids = None
         if batch_label_input_ids is not None:
             label_input_ids = torch.tensor(batch_label_input_ids,
-                                           device=self.llm_device)
+                                           device=self.device)
         return inputs_embeds, attention_mask, label_input_ids
 
     def _get_embeds(
@@ -225,10 +226,17 @@ class LLM(torch.nn.Module):
             inputs_embeds = self._inputs_embeds(i, input_ids, bos_embeds,
                                                 embedding)
 
-            batch_inputs_embeds, batch_attention_mask, batch_label_input_ids = (  # noqa
-                self._append_embeds(inputs_embeds, batch_inputs_embeds,
-                                    batch_attention_mask, label_input_ids,
-                                    batch_label_input_ids))
+            (
+                batch_inputs_embeds,
+                batch_attention_mask,
+                batch_label_input_ids,
+            ) = self._append_embeds(
+                inputs_embeds,
+                batch_inputs_embeds,
+                batch_attention_mask,
+                label_input_ids,
+                batch_label_input_ids,
+            )
 
         inputs_embeds, attention_mask, label_input_ids = self._pad_embeds(
             pad_embeds, batch_inputs_embeds, batch_attention_mask,
@@ -307,3 +315,6 @@ class LLM(torch.nn.Module):
             )
 
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.model_name})'
