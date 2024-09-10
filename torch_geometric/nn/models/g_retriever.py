@@ -125,6 +125,8 @@ class GRetriever(torch.nn.Module):
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
         xs = x.split(1, dim=0)
+        batch_unique = torch.unique(batch)
+        xs = [x if i in batch_unique else None for i, x in enumerate(xs)]
 
         (
             inputs_embeds,
@@ -173,7 +175,8 @@ class GRetriever(torch.nn.Module):
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
         xs = x.split(1, dim=0)
-
+        batch_unique = torch.unique(batch)
+        xs = [x if i in batch_unique else None for i, x in enumerate(xs)]
         inputs_embeds, attention_mask, _ = self.llm._get_embeds(
             question, additional_text_context, xs)
 
