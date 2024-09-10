@@ -135,8 +135,20 @@ class MetaPath2Vec(torch.nn.Module):
         :obj:`node_type`.
         """
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
-        return emb if batch is None else emb.index_select(0, batch)
+        if batch is not None:
+            if not isinstance(batch, torch.Tensor):  # Convert to tensor if not already
+                batch = torch.tensor(batch, dtype=torch.long).to(emb.device)
+            
+            if batch.dim() == 0:  # If batch is a scalar, convert it to a 1D tensor
+                batch = batch.unsqueeze(0)
 
+            if batch.dim() > 1:  # If batch is multi-dimensional, flatten it to a 1D vector
+                batch = batch.view(-1)
+
+            return emb.index_select(0, batch)
+        else:
+            return emb
+            
     def loader(self, **kwargs):
         r"""Returns the data loader that creates both positive and negative
         random walks on the heterogeneous graph.
@@ -257,6 +269,10 @@ def sample(rowptr: Tensor, col: Tensor, rowcount: Tensor, subset: Tensor,
     rand = rand.to(torch.long) + rowptr[subset].view(-1, 1)
     rand = rand.clamp(max=col.numel() - 1)  # If last node is isolated.
 
-    col = col[rand] if col.numel() > 0 else rand
+    if col.numel() > 0:
+        rand = torch.min(rand, torch.tensor(col.numel() - 1))
+        col = col[rand]
+    else:
+        col = rand
     col[mask | (count == 0)] = dummy_idx
     return col
