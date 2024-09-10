@@ -20,7 +20,7 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models import GRetriever
+from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
 from torch_geometric.nn.nlp.llm import max_new_tokens
 
@@ -109,7 +109,7 @@ def get_loss(model, batch, model_save_name) -> torch.Tensor:
         return model(batch.question, batch.label, batch.desc)
     else:
         return model(batch.question, batch.x, batch.edge_index, batch.batch,
-                     batch.ptr, batch.label, batch.edge_attr, batch.desc)
+                     batch.label, batch.edge_attr, batch.desc)
 
 
 def inference_step(model, batch, model_save_name,
@@ -119,8 +119,7 @@ def inference_step(model, batch, model_save_name,
                                max_out_tokens=max_out_tokens)
     else:
         return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.ptr, batch.edge_attr,
-                               batch.desc, max_out_tokens=max_out_tokens)
+                               batch.batch, batch.edge_attr, batch.desc, max_out_tokens=max_out_tokens)
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
@@ -160,18 +159,23 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     # Step 2: Build Model
     if model is None:
         gc.collect()
+        gnn_to_use = GAT(in_channels=1024, hidden_channels=hidden_channels,
+                         out_channels=1024, num_layers=num_gnn_layers, heads=4)
         if tiny_llama:
-            model = GRetriever(
-                llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-                num_llm_params=1,  # 1 Billion
-                gnn_hidden_channels=hidden_channels,
-                num_gnn_layers=num_gnn_layers,
-                mlp_out_dim=2048,
+            llm_to_use = LLM(
+                model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+                num_params=1,
             )
+            model = GRetriever(llm=llm_to_use, gnn=gnn_to_use,
+                               mlp_out_channels=2048)
         else:
-            model = GRetriever(llm_to_use="meta-llama/Llama-2-7b-chat-hf",
-                               gnn_hidden_channels=hidden_channels,
-                               num_gnn_layers=num_gnn_layers)
+            llm_to_use = LLM(model_name="meta-llama/Llama-2-7b-chat-hf",
+                             num_params=7)
+            model = GRetriever(
+                llm=llm_to_use,
+                gnn=gnn_to_use,
+            )
+
     if num_gnn_layers is not None:
         model_save_name = "gnn_llm"
     else:
