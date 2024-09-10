@@ -24,7 +24,7 @@ class ClusterPooling(torch.nn.Module):
 
     :class:`ClusterPooling` computes a score for each edge.
     Based on the selected edges, graph clusters are calculated and compressed
-    to one node using the injective :obj:`"sum" aggregation function.
+    to one node using the injective :obj:`"sum"` aggregation function.
     Edges are remapped based on the nodes created by each cluster and the
     original edges.
 
