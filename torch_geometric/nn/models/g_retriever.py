@@ -129,7 +129,9 @@ class GRetriever(torch.nn.Module):
         batch_size = len(question)
         # handle questions with no node features
         if len(batch_unique) < batch_size:
-            xs = [xs[i] if i in batch_unique else None for i in range(batch_size)]
+            xs = [
+                xs[i] if i in batch_unique else None for i in range(batch_size)
+            ]
 
         (
             inputs_embeds,
@@ -182,7 +184,9 @@ class GRetriever(torch.nn.Module):
         batch_size = len(question)
         # handle questions with no node features
         if len(batch_unique) < batch_size:
-            xs = [xs[i] if i in batch_unique else None for i in range(batch_size)]
+            xs = [
+                xs[i] if i in batch_unique else None for i in range(batch_size)
+            ]
         inputs_embeds, attention_mask, _ = self.llm._get_embeds(
             question, additional_text_context, xs)
 
