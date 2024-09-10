@@ -42,7 +42,7 @@ class GRetriever(torch.nn.Module):
         llm: LLM,
         gnn: torch.nn.Module,
         use_lora: bool = False,
-        mlp_hidden_channels: int = 1024,
+        mlp_hidden_channels: int = 2048,
         mlp_out_channels: int = 4096,
     ) -> None:
         super().__init__()
