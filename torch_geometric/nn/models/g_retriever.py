@@ -42,6 +42,7 @@ class GRetriever(torch.nn.Module):
         llm: LLM,
         gnn: torch.nn.Module,
         use_lora: bool = False,
+        mlp_hidden_channels: int = 1024,
         mlp_out_channels: int = 4096,
     ) -> None:
         super().__init__()
@@ -73,7 +74,6 @@ class GRetriever(torch.nn.Module):
             )
             self.llm_generator = get_peft_model(self.llm_generator, config)
 
-        mlp_hidden_channels = int((self.gnn.out_channels + mlp_out_channels) / 2)
         self.projector = torch.nn.Sequential(
             torch.nn.Linear(self.gnn.out_channels, mlp_hidden_channels),
             torch.nn.Sigmoid(),
