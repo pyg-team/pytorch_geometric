@@ -67,7 +67,7 @@ class AmazonBook(InMemoryDataset):
         attr_names = ['edge_index', 'edge_label_index']
         for path, attr_name in zip(self.raw_paths[2:], attr_names):
             rows, cols = [], []
-            with open(path, 'r') as f:
+            with open(path) as f:
                 lines = f.readlines()
             for line in lines:
                 indices = line.strip().split(' ')

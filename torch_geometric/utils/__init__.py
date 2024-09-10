@@ -21,6 +21,7 @@ from ._subgraph import (get_num_hops, subgraph, k_hop_subgraph,
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
 from ._homophily import homophily
 from ._assortativity import assortativity
+from ._normalize_edge_index import normalize_edge_index
 from .laplacian import get_laplacian
 from .mesh_laplacian import get_mesh_laplacian
 from .mask import mask_select, index_to_mask, mask_to_index
@@ -44,7 +45,7 @@ from .convert import to_networkit, from_networkit
 from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph, from_cugraph
 from .convert import to_dgl, from_dgl
-from .smiles import from_smiles, to_smiles
+from .smiles import from_rdmol, to_rdmol, from_smiles, to_smiles
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
 from ._negative_sampling import (negative_sampling, batched_negative_sampling,
@@ -89,6 +90,7 @@ __all__ = [
     'dropout_adj',
     'homophily',
     'assortativity',
+    'normalize_edge_index',
     'get_laplacian',
     'get_mesh_laplacian',
     'mask_select',
@@ -127,6 +129,8 @@ __all__ = [
     'from_cugraph',
     'to_dgl',
     'from_dgl',
+    'from_rdmol',
+    'to_rdmol',
     'from_smiles',
     'to_smiles',
     'erdos_renyi_graph',

@@ -14,7 +14,12 @@ def inference_step(model, batch):
 	out = model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
-	out["label"] = '|'.join(batch.label)
+	eval_data = {
+                "pred": out,
+                "question": batch.question,
+                "desc": batch.desc,
+                "label": '|'.join(batch.label)
+            }
     return 
 
 

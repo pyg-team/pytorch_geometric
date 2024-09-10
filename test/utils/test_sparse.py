@@ -4,6 +4,7 @@ import pytest
 import torch
 
 import torch_geometric.typing
+from torch_geometric.io import fs
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import is_full_test, withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
@@ -224,7 +225,7 @@ def test_to_torch_coo_tensor_save_load(tmp_path):
 
     path = osp.join(tmp_path, 'adj.t')
     torch.save(adj, path)
-    adj = torch.load(path)
+    adj = fs.torch_load(path)
     assert adj.is_coalesced()
 
 

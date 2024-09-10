@@ -1,326 +1,205 @@
 from typing import List, Optional
 
 import torch
-import torch.nn as nn
+from torch import Tensor
 
 from torch_geometric.nn.models import GAT
-from torch_geometric.nn.nlp.llm import (
-    EOS,
-    IGNORE_INDEX,
-    LLM,
-    max_new_tokens,
-    max_txt_len,
-)
+from torch_geometric.nn.nlp.llm import BOS, LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
 
-class GRetriever(nn.Module):
-    r"""This GNN+LLM implementation is based on G-retriever.
-    Original Paper: <https://arxiv.org/abs/2402.07630>`_.
-    See `examples/llm_plus_gnn/g_retriever.py` for example usage.
+class GRetriever(torch.nn.Module):
+    r"""The G-Retriever model from the `"G-Retriever: Retrieval-Augmented
+    Generation for Textual Graph Understanding and Question Answering"
+    <https://arxiv.org/abs/2402.07630>`_ paper.
 
     Args:
-        llm_to_use (str): A string representing the huggingface model you
-            want to use. This module has been tested for 'llama2' and 'gemma'.
-            Other huggingface transformer models should work if you pass the
-            correct name, see huggingface.co for details. If any issues occur
-            please file an issue on
-            https://github.com/pyg-team/pytorch_geometric
-            and assign to puririshi98. (default: :obj:'llama2')
-        llm_use_lora (bool): use LORA from peft for training the LLM. see
-            https://huggingface.co/docs/peft/en/index for details.
-        llm_dtype (torch.dtype): The dtype to use for the LLM.
-            (default :obj: `torch.bloat16`)
-        num_llm_params (int): An integer representing how many params your
-            huggingface transformer model has, in billions. This is used to
-            automatically allocate the number of gpus needed, given the
-            available GPU memory of your GPUs (default :obj:`7`)
-        gnn_to_use (BasicGNN): Please pass a valid model that extends
-            torch_geometric.nn.models.basic_gnn.BasicGNN. (default: :obj:`GAT`)
-        gnn_in_channels (int): (default: 1024)
-        gnn_hidden_channels (int): (default: 1024)
-        gnn_out_channels (int): (default: 1024)
-        num_gnn_layers (int): (default: 4)
-        num_gnn_heads (int): Number of heads to use for BasicGNNs with the
-        `heads` kwarg. (default: 4)
-        mlp_hidden_dim (int): (default: 2048)
-        mlp_out_dim (int): (default: 4096)
+        llm (LLM): The LLM to use.
+        gnn (torch.nn.Module): The GNN to use.
+        use_lora (bool, optional): If set to :obj:`True`, will use LORA from
+            :obj:`peft` for training the LLM, see
+            `here <https://huggingface.co/docs/peft/en/index>`_ for details.
+            (default: :obj:`False`)
+        mlp_out_channels (int, optional): The size of each graph embedding
+            after projection. (default: :obj:`4096`)
+
+    .. warning::
+        This module has been tested with the following HuggingFace models
+
+        * :obj:`llm_to_use="meta-llama/Llama-2-7b-chat-hf"`
+        * :obj:`llm_to_use="google/gemma-7b"`
+
+        and may not work with other models. See other models at `HuggingFace
+        Models <https://huggingface.co/models>`_ and let us know if you
+        encounter any issues.
+
+    .. note::
+        For an example of using :class:`GRetriever`, see
+        `examples/llm/g_retriever.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/llm/g_retriever.py>`_.
     """
     def __init__(
         self,
-        llm_to_use='llama2-7b',
-        llm_use_lora: bool = False,
-        llm_dtype=torch.bfloat16,
-        num_llm_params: int = 7,
+        llm: LLM,
+        gnn: torch.nn.Module,
+        use_lora: bool = False,
         gnn_to_use=GAT,
-        gnn_in_channels: int = 1024,
-        gnn_hidden_channels: int = 1024,
-        gnn_out_channels: int = 1024,
-        num_gnn_layers: int = 4,
-        num_gnn_heads: int = 4,
-        mlp_hidden_dim: int = 2048,
-        mlp_out_dim: int = 4096,
+        mlp_out_channels: int = 4096,
     ) -> None:
         super().__init__()
-        if 'llama2-7b' in llm_to_use.lower():
-            self.llm_to_use = LLM('llama2-7b', llm_dtype,
-                                  num_params=num_llm_params)
-        elif 'gemma' in llm_to_use.lower():
-            self.llm_to_use = LLM('gemma', llm_dtype,
-                                  num_params=num_llm_params)
-        else:
-            self.llm_to_use = LLM(llm_to_use, llm_dtype,
-                                  num_params=num_llm_params)
-        self.llm_generator = self.llm_to_use.llm
-        self.llm_dtype = llm_dtype
-        if llm_use_lora:
+
+        self.llm = llm
+        self.gnn = gnn.to(self.llm.device)
+
+        self.word_embedding = self.llm.word_embedding
+        self.llm_generator = self.llm.llm
+        if use_lora:
             from peft import (
                 LoraConfig,
                 get_peft_model,
                 prepare_model_for_kbit_training,
             )
-            print("Training our LLM with LORA!")
-            self.llm_generator = prepare_model_for_kbit_training(self.llm)
+            self.llm_generator = prepare_model_for_kbit_training(
+                self.llm_generator)
             lora_r: int = 8
             lora_alpha: int = 16
             lora_dropout: float = 0.05
-            lora_target_modules = [
-                "q_proj",
-                "v_proj",
-            ]
+            lora_target_modules = ['q_proj', 'v_proj']
             config = LoraConfig(
                 r=lora_r,
                 lora_alpha=lora_alpha,
                 target_modules=lora_target_modules,
                 lora_dropout=lora_dropout,
-                bias="none",
-                task_type="CAUSAL_LM",
+                bias='none',
+                task_type='CAUSAL_LM',
             )
             self.llm_generator = get_peft_model(self.llm_generator, config)
-        self.llm_device = self.llm_to_use.llm_device
-        self.tokenizer = self.llm_to_use.tokenizer
-        self.graph_encoder = gnn_to_use(
-            in_channels=gnn_in_channels,
-            out_channels=gnn_out_channels,
-            hidden_channels=gnn_hidden_channels,
-            num_layers=num_gnn_layers,
-            heads=num_gnn_heads,
-            norm='batch_norm',
-        ).to(self.llm_device)
-        # For the MLP Projection
-        mlp_hidden_dim = gnn_out_channels
-        self.projector = nn.Sequential(
-            nn.Linear(gnn_out_channels, mlp_hidden_dim),
-            nn.Sigmoid(),
-            nn.Linear(mlp_hidden_dim, mlp_out_dim),
-        ).to(self.llm_device)
 
-        self.word_embedding = self.llm_to_use.word_embedding
+        mlp_hidden_channels = self.gnn.out_channels
+        self.projector = torch.nn.Sequential(
+            torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
+            torch.nn.Sigmoid(),
+            torch.nn.Linear(mlp_hidden_channels, mlp_out_channels),
+        ).to(self.llm.device)
 
-    def encode_graphs(self, node_feat, edge_index, edge_attr, batch):
-        x = node_feat.to(self.llm_device)
-        edge_index = edge_index.long().to(self.llm_device)
-        edge_attr = edge_attr.to(self.llm_device)
-        n_embeds = self.graph_encoder(x, edge_index.long(), edge_attr)
-        batch = batch.to(self.llm_device)
-        # mean pooling
-        g_embeds = scatter(n_embeds, batch, dim=0, reduce='mean')
-        return g_embeds
+    def encode(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Tensor,
+        edge_attr: Optional[Tensor],
+    ) -> Tensor:
+        x = x.to(self.llm.device)
+        edge_index = edge_index.to(self.llm.device)
+        if edge_attr is not None:
+            edge_attr = edge_attr.to(self.llm.device)
+        batch = batch.to(self.llm.device)
+
+        out = self.gnn(x, edge_index, edge_attr=edge_attr)
+        return scatter(out, batch, dim=0, reduce='mean')
 
     def forward(
         self,
         question: List[str],
-        node_feat: torch.Tensor,
-        edge_index: torch.Tensor,
-        batch: torch.Tensor,
-        ptr: torch.Tensor,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Tensor,
         label: List[str],
-        edge_attr: Optional[torch.Tensor] = None,
+        edge_attr: Optional[Tensor] = None,
         additional_text_context: Optional[List[str]] = None,
     ):
-        r"""Forward pass.
+        r"""The forward pass.
 
         Args:
             question (List[str]): The questions/prompts.
-            node_feat (torch.Tensor): The input node features.
-            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor): The edge indices.
             batch (torch.Tensor): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example.
-            ptr (torch.Tensor): The pointer vector, denoting the
-                boundaries between examples in the batch.
             label (List[str]): The answers/labels.
             edge_attr (torch.Tensor, optional): The edge features (if supported
-                by the GNN being used). (default: :obj:`None`)
+                by the GNN). (default: :obj:`None`)
             additional_text_context (List[str], optional): Additional context
                 to give to the LLM, such as textified knowledge graphs.
+                (default: :obj:`None`)
         """
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context) # noqa
-        # encode labels
-        labels = self.tokenizer(label, add_special_tokens=False)
-        # encode training specific special token
-        eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
+        x = self.encode(x, edge_index, batch, edge_attr)
+        x = self.projector(x)
+        xs = x.split(x.size(0), dim=0)
 
-        # encode graphs
-        graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
-                                          batch)
-        graph_embeds = self.projector(graph_embeds)
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        batch_label_input_ids = []
-        num_nodes_per_graph = ptr[1:] - ptr[:-1]
-        for i in range(batch_size):
-            # Add bos & eos token
-            label_input_ids = labels.input_ids[
-                i][:max_new_tokens] + eos_tokens.input_ids
-            if additional_text_context is not None:
-                input_ids = context.input_ids[
-                    i][:max_txt_len] + questions.input_ids[
-                        i] + eos_user_tokens.input_ids + label_input_ids
-            else:
-                input_ids = questions.input_ids[
-                    i] + eos_user_tokens.input_ids + label_input_ids
-            inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
-            to_cat = [bos_embeds]
-            if num_nodes_per_graph[i] != 0:
-                to_cat.append(graph_embeds[i].unsqueeze(0))
-            to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
-                                      dim=0)
-            batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.shape[0])
-            label_input_ids = [IGNORE_INDEX
-                               ] * (inputs_embeds.shape[0] -
-                                    len(label_input_ids)) + label_input_ids
-            batch_label_input_ids.append(label_input_ids)
+        (
+            inputs_embeds,
+            attention_mask,
+            label_input_ids,
+        ) = self.llm._get_embeds(question, additional_text_context, xs, label)
 
-        # pad inputs_embeds
-        max_length = max([x.shape[0] for x in batch_inputs_embeds])
-        for i in range(batch_size):
-            pad_length = max_length - batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat([
-                pad_embeds.repeat(pad_length, 1).to(self.llm_device),
-                batch_inputs_embeds[i].to(self.llm_device)
-            ])
-            batch_attention_mask[i] = [0
-                                       ] * pad_length + batch_attention_mask[i]
-            batch_label_input_ids[
-                i] = [IGNORE_INDEX] * pad_length + batch_label_input_ids[i]
-
-        inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
-        label_input_ids = torch.tensor(batch_label_input_ids).to(
-            self.llm_device)
-        with self.llm_to_use.autocast_context:
+        with self.llm.autocast_context:
             outputs = self.llm_generator(
                 inputs_embeds=inputs_embeds,
                 attention_mask=attention_mask,
                 return_dict=True,
                 labels=label_input_ids,
             )
+
         return outputs.loss
 
     @torch.no_grad()
     def inference(
         self,
         question: List[str],
-        node_feat: torch.Tensor,
-        edge_index: torch.Tensor,
-        batch: torch.Tensor,
-        ptr: torch.Tensor,
-        edge_attr: Optional[torch.Tensor] = None,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Tensor,
+        edge_attr: Optional[Tensor] = None,
         additional_text_context: Optional[List[str]] = None,
-        max_out_tokens: Optional[int] = max_new_tokens,
+        max_out_tokens: Optional[int] = MAX_NEW_TOKENS,
     ):
-        r"""Inference.
+        r"""The inference pass.
 
         Args:
             question (List[str]): The questions/prompts.
-            node_feat (torch.Tensor): The input node features.
-            edge_index (torch.Tensor or SparseTensor): The edge indices.
-            edge_weight (torch.Tensor, optional): The edge weights (if
-                supported by the underlying GNN layer). (default: :obj:`None`)
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor): The edge indices.
             batch (torch.Tensor): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example.
-            ptr (torch.Tensor): The pointer vector, denoting the
-                boundaries between examples in the batch.
             edge_attr (torch.Tensor, optional): The edge features (if supported
-                by the GNN being used). (default: :obj:`None`)
+                by the GNN). (default: :obj:`None`)
             additional_text_context (List[str], optional): Additional context
                 to give to the LLM, such as textified knowledge graphs.
+                (default: :obj:`None`)
             max_out_tokens (int, optional): How many tokens for the LLM to
-                generate. (default: {32})
+                generate. (default: :obj:`32`)
         """
-        batch_size, questions, context, eos_user_tokens, \
-            bos_embeds, pad_embeds = self.llm_to_use.encode_inputs(question, additional_text_context) # noqa
-        # encode graphs
-        graph_embeds = self.encode_graphs(node_feat, edge_index, edge_attr,
-                                          batch)
-        graph_embeds = self.projector(graph_embeds)
+        x = self.encode(x, edge_index, batch, edge_attr)
+        x = self.projector(x)
+        xs = x.split(x.size(0), dim=0)
 
-        batch_inputs_embeds = []
-        batch_attention_mask = []
-        num_nodes_per_graph = ptr[1:] - ptr[:-1]
-        for i in range(batch_size):
-            # Add bos & eos token
-            if additional_text_context is not None:
-                input_ids = context.input_ids[
-                    i][:max_txt_len] + questions.input_ids[
-                        i] + eos_user_tokens.input_ids
-            else:
-                input_ids = questions.input_ids[i] + eos_user_tokens.input_ids
-            inputs_embeds = self.word_embedding(
-                torch.tensor(input_ids).to(self.llm_device))
-            to_cat = [bos_embeds]
-            if num_nodes_per_graph[i] != 0:
-                to_cat.append(graph_embeds[i].unsqueeze(0))
-            to_cat.append(inputs_embeds)
-            inputs_embeds = torch.cat([i.to(self.llm_device) for i in to_cat],
-                                      dim=0)
-            batch_inputs_embeds.append(inputs_embeds)
-            batch_attention_mask.append([1] * inputs_embeds.shape[0])
+        inputs_embeds, attention_mask, _ = self.llm._get_embeds(
+            question, additional_text_context, xs)
 
-        # pad inputs_embeds
-        max_length = max([x.shape[0] for x in batch_inputs_embeds])
-        for i in range(batch_size):
-            pad_length = max_length - batch_inputs_embeds[i].shape[0]
-            batch_inputs_embeds[i] = torch.cat(
-                [pad_embeds.repeat(pad_length, 1), batch_inputs_embeds[i]])
-            batch_attention_mask[i] = [0
-                                       ] * pad_length + batch_attention_mask[i]
+        bos_token = self.llm.tokenizer(
+            BOS,
+            add_special_tokens=False,
+        ).input_ids[0]
 
-        inputs_embeds = torch.stack(batch_inputs_embeds,
-                                    dim=0).to(self.llm_device)
-        attention_mask = torch.tensor(batch_attention_mask).to(self.llm_device)
-
-        with self.llm_to_use.autocast_context:
+        with self.llm.autocast_context:
             outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_out_tokens,
                 attention_mask=attention_mask,
-                # do_sample=True,
-                use_cache=True  # IMPORTANT!
+                bos_token_id=bos_token,
+                use_cache=True  # Important to set!
             )
-        pred = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        return {
-            'pred': pred,
-            'question': question,
-            'desc': additional_text_context,
-        }
+        return self.llm.tokenizer.batch_decode(
+            outputs,
+            skip_special_tokens=True,
+        )
 
-    def print_trainable_params(self) -> None:
-        trainable_params = 0
-        all_param = 0
-        for _, param in self.named_parameters():
-            num_params = param.numel()
-
-            all_param += num_params
-            if param.requires_grad:
-                trainable_params += num_params
-
-        return trainable_params, all_param
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(\n'
+                f'  llm={self.llm},\n'
+                f'  gnn={self.gnn},\n'
+                f')')

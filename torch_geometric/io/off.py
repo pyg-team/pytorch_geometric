@@ -16,7 +16,7 @@ def parse_off(src: List[str]) -> Data:
     else:
         src[0] = src[0][3:]
 
-    num_nodes, num_faces = [int(item) for item in src[0].split()[:2]]
+    num_nodes, num_faces = (int(item) for item in src[0].split()[:2])
 
     pos = parse_txt_array(src[1:1 + num_nodes])
 
@@ -52,7 +52,7 @@ def read_off(path: str) -> Data:
     Args:
         path (str): The path to the file.
     """
-    with open(path, 'r') as f:
+    with open(path) as f:
         src = f.read().split('\n')[:-1]
     return parse_off(src)
 

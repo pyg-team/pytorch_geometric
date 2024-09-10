@@ -132,7 +132,7 @@ def run(args: argparse.ArgumentParser):
         if args.device == 'cpu':
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
         elif args.device == 'cuda':
-            amp = torch.cuda.amp.autocast(enabled=False)
+            amp = torch.amp.autocast('cuda', enabled=False)
         elif args.device == 'xpu':
             amp = torch.xpu.amp.autocast(enabled=False)
         else:

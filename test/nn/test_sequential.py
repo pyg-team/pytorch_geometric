@@ -28,7 +28,7 @@ def test_sequential_basic():
         (GCNConv(64, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
         Linear(64, 7),
-    ])
+    ]).cpu()
     model.reset_parameters()
 
     assert len(model) == 5

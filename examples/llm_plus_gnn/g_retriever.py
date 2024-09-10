@@ -25,7 +25,11 @@ from torch_geometric.nn.nlp import LLM
 from torch_geometric.nn.nlp.llm import max_new_tokens
 
 
-def detect_hallucinate(pred, label):
+def detect_hallucinate(pred: str, label: str):
+    r"""An approximation for the unsolved task of detecting hallucinations.
+    We define a hallucination as an output that contains no instances of
+    acceptable label.
+    """
     try:
         split_pred = pred.split('[/s]')[0].strip().split('|')
         correct_hit = len(re.findall(split_pred[0], label)) > 0
@@ -117,7 +121,12 @@ def inference_step(model, batch, model_save_name,
         out = model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc, max_out_tokens=max_out_tokens)
-    output["label"] = batch.label
+    eval_data = {
+                "pred": out,
+                "question": batch.question,
+                "desc": batch.desc,
+                "label": batch.label
+            }
     return out
 
 
@@ -167,7 +176,8 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
                 mlp_out_dim=2048,
             )
         else:
-            model = GRetriever(gnn_hidden_channels=hidden_channels,
+            model = GRetriever(llm_to_use="meta-llama/Llama-2-7b-chat-hf",
+                               gnn_hidden_channels=hidden_channels,
                                num_gnn_layers=num_gnn_layers)
     if num_gnn_layers is not None:
         model_save_name = "gnn_llm"
@@ -184,11 +194,6 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
         },
     ], betas=(0.9, 0.95))
     grad_steps = 2
-    if model is None:
-        trainable_params, all_param = model.print_trainable_params()
-        print(f"trainable params: {trainable_params} || \
-            all params: {all_param} || \
-            trainable%: {100 * trainable_params / all_param}")
 
     best_val_loss = float('inf')
     # Step 4 Training
@@ -249,8 +254,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
-            output = inference_fn(model, batch, model_save_name)
-            eval_output.append(output)
+            eval_output.append(inference_fn(model, batch, model_save_name))
         progress_bar_test.update(1)
 
     # Step 6 Post-processing & compute metrics
@@ -282,7 +286,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             num_params=1,
         )
     else:
-        pure_llm = LLM()
+        pure_llm = LLM(model_name="meta-llama/Llama-2-7b-chat-hf",
+                       num_params=7)
     if path.exists("demo_save_dict.pt"):
         print("Saved outputs for the first step of the demo found.")
         print("Would you like to redo?")
@@ -302,8 +307,9 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
         if skip_pretrained_LLM:
             print("Checking GNN+LLM for hallucinations...")
         else:
-            print("Checking pretrained LLM vs trained\
-                  GNN+LLM for hallucinations...")
+            print(
+                "Checking pretrained LLM vs trained GNN+LLM for hallucinations..."  # noqa
+            )
         for i, batch in enumerate(tqdm(loader)):
             question = batch.question[0]
             correct_answer = batch.label[0]
@@ -313,9 +319,8 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
             else:
                 # GNN+LLM only using 32 tokens to answer.
                 # Allow more output tokens for untrained LLM
-                pure_llm_out = pure_llm.inference(batch.question, batch.desc,
-                                                  max_out_tokens=256)
-                pure_llm_pred = pure_llm_out['pred'][0]
+                pure_llm_pred = pure_llm.inference(batch.question, batch.desc,
+                                                   max_tokens=256)
                 pure_llm_hallucinates = detect_hallucinate(
                     pure_llm_pred, correct_answer)
             untuned_llm_save_list += [(pure_llm_pred, pure_llm_hallucinates)]
@@ -367,10 +372,10 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
     if retrain:
         print("Finetuning LLM...")
         since = time.time()
-        _, _, pure_llm_eval_outputs = train(since, 1, None, None, batch_size,
-                                            eval_batch_size, lr, loss_fn,
-                                            inference_fn, model=pure_llm,
-                                            dataset=dataset)
+        _, _, pure_llm_eval_outputs = train(since, epochs, None, None,
+                                            batch_size, eval_batch_size, lr,
+                                            loss_fn, inference_fn,
+                                            model=pure_llm, dataset=dataset)
         e2e_time = round(time.time() - since, 2)
         print("E2E time (e2e_time) =", e2e_time, "seconds")
     else:

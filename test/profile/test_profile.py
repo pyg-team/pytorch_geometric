@@ -49,7 +49,7 @@ def test_timeit(device):
 def test_profileit_cuda(get_dataset):
     warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
 
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0].cuda()
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
                       out_channels=dataset.num_classes).cuda()
@@ -91,7 +91,7 @@ def test_profileit_cuda(get_dataset):
 def test_profileit_xpu(get_dataset):
     warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
 
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     device = torch.device('xpu')
     data = dataset[0].to(device)
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
@@ -133,7 +133,7 @@ def test_profileit_xpu(get_dataset):
 @withDevice
 @onlyOnline
 def test_torch_profile(capfd, get_dataset, device):
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0].to(device)
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
                       out_channels=dataset.num_classes).to(device)
@@ -155,7 +155,7 @@ def test_torch_profile(capfd, get_dataset, device):
 @onlyOnline
 @pytest.mark.parametrize('export_chrome_trace', [False, True])
 def test_xpu_profile(capfd, get_dataset, export_chrome_trace):
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     device = torch.device('xpu')
     data = dataset[0].to(device)
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,

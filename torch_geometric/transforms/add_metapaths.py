@@ -37,7 +37,7 @@ class AddMetaPaths(BaseTransform):
     :class:`~torch_geometric.data.HeteroData` object as edge type
     :obj:`(src_node_type, "metapath_*", dst_node_type)`, where
     :obj:`src_node_type` and :obj:`dst_node_type` denote :math:`\mathcal{V}_1`
-    and :math:`\mathcal{V}_{\ell}`, repectively.
+    and :math:`\mathcal{V}_{\ell}`, respectively.
 
     In addition, a :obj:`metapath_dict` object is added to the
     :class:`~torch_geometric.data.HeteroData` object which maps the
@@ -108,12 +108,12 @@ class AddMetaPaths(BaseTransform):
         **kwargs: bool,
     ) -> None:
         if 'drop_orig_edges' in kwargs:
-            warnings.warn("'drop_orig_edges' is dprecated. Use "
+            warnings.warn("'drop_orig_edges' is deprecated. Use "
                           "'drop_orig_edge_types' instead")
             drop_orig_edge_types = kwargs['drop_orig_edges']
 
         if 'drop_unconnected_nodes' in kwargs:
-            warnings.warn("'drop_unconnected_nodes' is dprecated. Use "
+            warnings.warn("'drop_unconnected_nodes' is deprecated. Use "
                           "'drop_unconnected_node_types' instead")
             drop_unconnected_node_types = kwargs['drop_unconnected_nodes']
 
@@ -231,7 +231,7 @@ class AddRandomMetaPaths(BaseTransform):
             will drop node types not connected by any edge type.
             (default: :obj:`False`)
         walks_per_node (int, List[int], optional): The number of random walks
-            for each starting node in a metapth. (default: :obj:`1`)
+            for each starting node in a metapath. (default: :obj:`1`)
         sample_ratio (float, optional): The ratio of source nodes to start
             random walks from. (default: :obj:`1.0`)
     """
