@@ -7,18 +7,21 @@ since = time.time()
 
 def get_loss(model, batch) -> torch.Tensor:
     return model(batch.question, batch.x, batch.edge_index, batch.batch,
-                     batch.ptr, '_'.join(batch.label), batch.edge_attr, batch.desc)
+                     batch.ptr, '|'.join(batch.label), batch.edge_attr, batch.desc)
 
 
 def inference_step(model, batch):
-    return model.inference(batch.question, batch.x, batch.edge_index,
+	out = model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
+	out["label"] = '|'.join(batch.label)
+    return 
 
-prep_time, _, gnn_llm_eval_outs = train(
+
+prep_time, _, _ = train(
     since, epochs=5, gnn_hidden_channels=1024, num_gnn_layers=4,
-    batch_size=16, eval_batch_size=32, lr=1e-5, get_loss,
-    inference_step, checkpointing=True, dataset=OGBG_Code2())
+    batch_size=16, eval_batch_size=32, lr=1e-5, get_loss=get_loss,
+    inference_step=inference_step, checkpointing=True, dataset=OGBG_Code2())
 torch.cuda.empty_cache()
 torch.cuda.reset_max_memory_allocated()
 gc.collect()

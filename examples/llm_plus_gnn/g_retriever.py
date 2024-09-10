@@ -111,16 +111,18 @@ def get_loss(model, batch, model_save_name) -> torch.Tensor:
 def inference_step(model, batch, model_save_name,
                    max_out_tokens=max_new_tokens):
     if model_save_name == "llm":
-        return model.inference(batch.question, batch.desc,
+        out = model.inference(batch.question, batch.desc,
                                max_out_tokens=max_out_tokens)
     else:
-        return model.inference(batch.question, batch.x, batch.edge_index,
+        out = model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc, max_out_tokens=max_out_tokens)
+    output["label"] = batch.label
+    return out
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
-          eval_batch_size, lr, loss_fn, inference_fn, model=None, dataset=None,
+          eval_batch_size, lr, loss_fn, inference_fn, compute_accuracy, model=None, dataset=None,
           checkpointing=False, tiny_llama=False):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
@@ -248,7 +250,6 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
             output = inference_fn(model, batch, model_save_name)
-            output["label"] = batch.label
             eval_output.append(output)
         progress_bar_test.update(1)
 
@@ -454,7 +455,7 @@ if __name__ == "__main__":
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
             args.batch_size, args.eval_batch_size, args.lr, get_loss,
-            inference_step, checkpointing=args.checkpointing,
+            inference_step, compute_accuracy, checkpointing=args.checkpointing,
             tiny_llama=args.tiny_llama)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
