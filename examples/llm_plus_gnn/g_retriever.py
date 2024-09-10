@@ -108,7 +108,7 @@ def get_loss(model, batch, model_save_name) -> torch.Tensor:
         return model(batch.question, batch.label, batch.desc)
     else:
         return model(batch.question, batch.x, batch.edge_index, batch.batch,
-                    batch.label, batch.edge_attr, batch.desc)
+                     batch.label, batch.edge_attr, batch.desc)
 
 
 def inference_step(model, batch, model_save_name):
@@ -116,8 +116,7 @@ def inference_step(model, batch, model_save_name):
         return model.inference(batch.question, batch.desc)
     else:
         return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr,
-                               batch.desc)
+                               batch.batch, batch.edge_attr, batch.desc)
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
