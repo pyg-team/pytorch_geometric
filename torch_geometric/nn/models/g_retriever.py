@@ -3,7 +3,6 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.nn.models import GAT
 from torch_geometric.nn.nlp.llm import BOS, LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
@@ -43,7 +42,6 @@ class GRetriever(torch.nn.Module):
         llm: LLM,
         gnn: torch.nn.Module,
         use_lora: bool = False,
-        gnn_to_use=GAT,
         mlp_out_channels: int = 4096,
     ) -> None:
         super().__init__()
@@ -126,7 +124,14 @@ class GRetriever(torch.nn.Module):
         """
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
-        xs = x.split(x.size(0), dim=0)
+        xs = x.split(1, dim=0)
+        batch_unique = torch.unique(batch)
+        batch_size = len(question)
+        # handle questions with no node features
+        if len(batch_unique) < batch_size:
+            xs = [
+                xs[i] if i in batch_unique else None for i in range(batch_size)
+            ]
 
         (
             inputs_embeds,
@@ -174,8 +179,14 @@ class GRetriever(torch.nn.Module):
         """
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
-        xs = x.split(x.size(0), dim=0)
-
+        xs = x.split(1, dim=0)
+        batch_unique = torch.unique(batch)
+        batch_size = len(question)
+        # handle questions with no node features
+        if len(batch_unique) < batch_size:
+            xs = [
+                xs[i] if i in batch_unique else None for i in range(batch_size)
+            ]
         inputs_embeds, attention_mask, _ = self.llm._get_embeds(
             question, additional_text_context, xs)
 
