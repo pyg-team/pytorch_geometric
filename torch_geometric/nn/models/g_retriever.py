@@ -159,7 +159,7 @@ class GRetriever(torch.nn.Module):
 
         Args:
             question (List[str]): The questions/prompts.
-            node_feat (torch.Tensor): The input node features.
+            x (torch.Tensor): The input node features.
             edge_index (torch.Tensor): The edge indices.
             batch (torch.Tensor): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
