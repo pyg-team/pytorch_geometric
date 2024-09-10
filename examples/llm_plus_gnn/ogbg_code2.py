@@ -5,17 +5,19 @@ from g_retriever import train
 
 since = time.time()
 
-def get_loss():
-	pass
+def get_loss(model, batch) -> torch.Tensor:
+    return model(batch.question, batch.x, batch.edge_index, batch.batch,
+                     batch.ptr, '_'.join(batch.label), batch.edge_attr, batch.desc)
 
 
-def inference_step():
-	pass
-
+def inference_step(model, batch):
+    return model.inference(batch.question, batch.x, batch.edge_index,
+                               batch.batch, batch.ptr, batch.edge_attr,
+                               batch.desc)
 
 prep_time, _, gnn_llm_eval_outs = train(
-    since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
-    args.batch_size, args.eval_batch_size, args.lr, get_loss,
+    since, epochs=5, gnn_hidden_channels=1024, num_gnn_layers=4,
+    batch_size=16, eval_batch_size=32, lr=1e-5, get_loss,
     inference_step, checkpointing=True, dataset=OGBG_Code2())
 torch.cuda.empty_cache()
 torch.cuda.reset_max_memory_allocated()
