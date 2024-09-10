@@ -75,7 +75,7 @@ class GRetriever(torch.nn.Module):
 
         mlp_hidden_channels = int((self.gnn.out_channels + mlp_out_channels) / 2)
         self.projector = torch.nn.Sequential(
-            torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
+            torch.nn.Linear(self.gnn.out_channels, mlp_hidden_channels),
             torch.nn.Sigmoid(),
             torch.nn.Linear(mlp_hidden_channels, mlp_out_channels),
         ).to(self.llm.device)
