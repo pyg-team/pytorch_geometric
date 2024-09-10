@@ -2,8 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.nn import ClusterPooling
+from torch_geometric.testing import withPackage
 
 
+@withPackage('scipy')
 @pytest.mark.parametrize('edge_score_method', [
     'tanh',
     'sigmoid',

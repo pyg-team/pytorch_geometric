@@ -32,7 +32,7 @@ class ClusterPooling(torch.nn.Module):
         in_channels (int): Size of each input sample.
         edge_score_method (str, optional): The function to apply
             to compute the edge score from raw edge scores (:obj:`"tanh"`,
-            "sigmoid", :obj:`"log_softmax"`). (default: :obj:`"tanh"`)
+            :obj:`"sigmoid"`, :obj:`"log_softmax"`). (default: :obj:`"tanh"`)
         dropout (float, optional): The probability with
             which to drop edge scores during training. (default: :obj:`0.0`)
         threshold (float, optional): The threshold of edge scores. If set to
@@ -72,18 +72,17 @@ class ClusterPooling(torch.nn.Module):
         r"""Forward pass.
 
         Args:
-            x (Tensor): The node features.
-            edge_index (LongTensor): The edge indices.
-            batch (LongTensor): Batch vector
+            x (torch.Tensor): The node features.
+            edge_index (torch.Tensor): The edge indices.
+            batch (torch.Tensor): Batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each node to a specific example.
 
         Return types:
-            * **x** *(Tensor)* - The pooled node features.
-            * **edge_index** *(LongTensor)* - The coarsened edge indices.
-            * **batch** *(LongTensor)* - The coarsened batch vector.
-            * **unpool_info** *(unpool_description)* - Information that is
-              consumed by :func:`ClusterPooling.unpool` for unpooling.
+            * **x** *(torch.Tensor)* - The pooled node features.
+            * **edge_index** *(torch.Tensor)* - The coarsened edge indices.
+            * **batch** *(torch.Tensor)* - The coarsened batch vector.
+            * **unpool_info** *(UnpoolInfo)* - Information that for unpooling.
         """
         mask = edge_index[0] != edge_index[1]
         edge_index = edge_index[:, mask]
