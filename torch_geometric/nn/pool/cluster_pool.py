@@ -82,7 +82,8 @@ class ClusterPooling(torch.nn.Module):
             * **x** *(torch.Tensor)* - The pooled node features.
             * **edge_index** *(torch.Tensor)* - The coarsened edge indices.
             * **batch** *(torch.Tensor)* - The coarsened batch vector.
-            * **unpool_info** *(UnpoolInfo)* - Information that for unpooling.
+            * **unpool_info** *(UnpoolInfo)* - Information that can be consumed
+              for unpooling.
         """
         mask = edge_index[0] != edge_index[1]
         edge_index = edge_index[:, mask]
