@@ -157,8 +157,7 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     if model is None:
         gc.collect()
         gnn_to_use = GAT(in_channels=1024, hidden_channels=hidden_channels,
-                         out_channels=1024, num_layers=num_gnn_layers,
-                         heads=4)
+                         out_channels=1024, num_layers=num_gnn_layers, heads=4)
         if tiny_llama:
             llm_to_use = LLM(
                 model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
