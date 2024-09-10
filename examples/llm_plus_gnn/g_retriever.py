@@ -116,23 +116,23 @@ def inference_step(model, batch, model_save_name,
                    max_out_tokens=MAX_NEW_TOKENS):
     if model_save_name == "llm":
         out = model.inference(batch.question, batch.desc,
-                               max_out_tokens=max_out_tokens)
+                              max_out_tokens=max_out_tokens)
     else:
         out = model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr,
-                               batch.desc, max_out_tokens=max_out_tokens)
+                              batch.batch, batch.edge_attr, batch.desc,
+                              max_out_tokens=max_out_tokens)
     eval_data = {
-                "pred": out,
-                "question": batch.question,
-                "desc": batch.desc,
-                "label": batch.label
-            }
+        "pred": out,
+        "question": batch.question,
+        "desc": batch.desc,
+        "label": batch.label
+    }
     return out
 
 
 def train(since, num_epochs, gnn_hidden_channels, num_gnn_layers, batch_size,
-          eval_batch_size, lr, loss_fn, inference_fn, compute_accuracy, model=None, dataset=None,
-          checkpointing=False, tiny_llama=False):
+          eval_batch_size, lr, loss_fn, inference_fn, compute_accuracy,
+          model=None, dataset=None, checkpointing=False, tiny_llama=False):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6

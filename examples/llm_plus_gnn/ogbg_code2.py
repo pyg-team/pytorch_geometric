@@ -1,9 +1,9 @@
 # This example shows how to top the OGBG leaderboard using GNN+LLM
 # hyperparams are hardcoded
-from torch_geometric.datasets import OGBG_Code2
 from g_retriever import train
-from torch_geometric.nn.models import GRetriever
 
+from torch_geometric.datasets import OGBG_Code2
+from torch_geometric.nn.models import GRetriever
 
 since = time.time()
 
@@ -22,7 +22,7 @@ def inference_step(model, batch):
                 "desc": batch.desc,
                 "label": '|'.join(batch.label)
             }
-    return 
+    return
 
 CodeRetriever = GRetriever(llm_to_use="deepseek-ai/DeepSeek-Coder-V2-Base",
                                gnn_hidden_channels=1024,
