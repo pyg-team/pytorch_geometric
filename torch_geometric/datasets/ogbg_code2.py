@@ -137,7 +137,7 @@ class OGBG_Code2(InMemoryDataset):
         }
         self.df = make_df_from_raw_data(self.raw_dataset)
 
-    def get_raw_python_from_df(func_name_tokens):
+    def get_raw_python_from_df(self, func_name_tokens):
         # the ordering of code_search_net does not match ogbg-code2
         # have to search for matching python
         func_name = self.df.index
