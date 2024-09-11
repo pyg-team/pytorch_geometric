@@ -123,8 +123,8 @@ class OGBG_Code2(InMemoryDataset):
         self.ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
         dataset = datasets.load_dataset("claudios/code_search_net", "python")
         self.raw_dataset = datasets.concatenate_datasets([
-            raw_dataset["train"], raw_dataset["validation"],
-            raw_dataset["test"]
+            dataset["train"], dataset["validation"],
+            dataset["test"]
         ])
         self.split_idxs = {
             "train":
