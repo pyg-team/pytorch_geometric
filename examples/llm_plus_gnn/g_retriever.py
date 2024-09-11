@@ -131,7 +131,7 @@ def inference_step(model, batch, model_save_name,
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
-          eval_batch_size, lr, loss_fn, inference_fn, compute_accuracy,
+          eval_batch_size, lr, loss_fn, inference_fn,
           model=None, dataset=None, checkpointing=False, tiny_llama=False):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
@@ -465,7 +465,7 @@ if __name__ == "__main__":
         prep_time, dataset, gnn_llm_eval_outs = train(
             since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
             args.batch_size, args.eval_batch_size, args.lr, get_loss,
-            inference_step, compute_accuracy, checkpointing=args.checkpointing,
+            inference_step, checkpointing=args.checkpointing,
             tiny_llama=args.tiny_llama)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
