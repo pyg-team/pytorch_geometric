@@ -127,7 +127,7 @@ def inference_step(model, batch, model_save_name,
         "desc": batch.desc,
         "label": batch.label
     }
-    return out
+    return eval_data
 
 
 def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,

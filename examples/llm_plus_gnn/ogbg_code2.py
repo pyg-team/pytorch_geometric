@@ -22,7 +22,7 @@ def inference_step(model, batch):
                 "desc": batch.desc,
                 "label": '|'.join(batch.label)
             }
-    return
+    return eval_data
 
 CodeRetriever = GRetriever(llm_to_use="deepseek-ai/DeepSeek-Coder-V2-Base",
                                gnn_hidden_channels=1024,
