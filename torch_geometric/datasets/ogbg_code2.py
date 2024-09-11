@@ -58,7 +58,7 @@ def make_df_from_raw_data(raw_dataset):
             filtered_func_names.append(split_name[-1].lower())
         else:
             filtered_func_names.append(i.lower())
-    df = pd.DataFrame({
+    df = DataFrame({
         'func_name': filtered_func_names,
         "whole_func_string": raw_dataset["whole_func_string"]
     })
