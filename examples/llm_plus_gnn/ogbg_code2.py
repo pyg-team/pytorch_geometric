@@ -7,12 +7,12 @@ from torch_geometric.nn.models import GRetriever
 
 since = time.time()
 
-def get_loss(model, batch) -> torch.Tensor:
+def get_loss(model, batch, **kwargs) -> torch.Tensor:
     return model(batch.question, batch.x, batch.edge_index, batch.batch,
                      batch.ptr, '|'.join(batch.label), batch.edge_attr, batch.desc)
 
 
-def inference_step(model, batch):
+def inference_step(model, batch, **kwargs):
 	out = model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
