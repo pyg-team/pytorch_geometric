@@ -24,14 +24,12 @@ def inference_step(model, batch, **kwargs):
             }
     return eval_data
 
-gnn_to_use = GAT(in_channels=1024, hidden_channels=1024,
-                         out_channels=1024, num_layers=4, heads=4)
+gnn_to_use = GAT(in_channels=1024, hidden_channels=1024, out_channels=1024, num_layers=4, heads=4)
 llm_to_use = LLM(model_name="meta-llama/CodeLlama-7b-Python-hf",
-                 num_params=236)
+                 num_params=7)
 # This would require a data center scale hardware setup
 # llm_to_use = LLM(model_name="deepseek-ai/DeepSeek-Coder-V2-Base",
 #                  num_params=236)
-            model = 
 CodeRetriever = GRetriever(llm=llm_to_use, gnn=gnn_to_use,)
 
 prep_time, _, _ = train(
