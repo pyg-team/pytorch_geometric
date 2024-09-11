@@ -13,10 +13,10 @@ def get_loss(model, batch, **kwargs) -> torch.Tensor:
 
 
 def inference_step(model, batch, **kwargs):
-	pred = model.inference(batch.question, batch.x, batch.edge_index,
+    pred = model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
-	eval_data = {
+    eval_data = {
         "pred": pred,
         "question": batch.question,
         "desc": batch.desc,
