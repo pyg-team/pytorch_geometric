@@ -116,17 +116,17 @@ def inference_step(model, batch, model_save_name,
                    max_out_tokens=MAX_NEW_TOKENS):
     if model_save_name == "llm":
         out = model.inference(batch.question, batch.desc,
-                               max_out_tokens=max_out_tokens)
+                              max_out_tokens=max_out_tokens)
     else:
         out = model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr,
-                               batch.desc, max_out_tokens=max_out_tokens)
+                              batch.batch, batch.edge_attr, batch.desc,
+                              max_out_tokens=max_out_tokens)
     eval_data = {
-                "pred": out,
-                "question": batch.question,
-                "desc": batch.desc,
-                "label": batch.label
-            }
+        "pred": out,
+        "question": batch.question,
+        "desc": batch.desc,
+        "label": batch.label
+    }
     return out
 
 
