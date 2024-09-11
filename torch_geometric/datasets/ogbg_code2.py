@@ -28,7 +28,7 @@ except ImportError:
 def find_wierd_names(func_name_tokens, raw_dataset):
     for i, func_name in enumerate(raw_dataset["func_name"]):
         # helper code to find wierd matches
-        # since its not clear how to apply such complex search to pandas
+        # since its non-trivial to apply such complex search to pandas
         func_name = func_name.lower()
         func_name_tokens = ["pandas", "sql", "builder"]
         all_in = all([bool(token in func_name) for token in func_name_tokens])
