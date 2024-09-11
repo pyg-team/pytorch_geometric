@@ -13,15 +13,15 @@ def get_loss(model, batch, **kwargs) -> torch.Tensor:
 
 
 def inference_step(model, batch, **kwargs):
-	out = model.inference(batch.question, batch.x, batch.edge_index,
+	pred = model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.ptr, batch.edge_attr,
                                batch.desc)
 	eval_data = {
-                "pred": out,
-                "question": batch.question,
-                "desc": batch.desc,
-                "label": '|'.join(batch.label)
-            }
+        "pred": pred,
+        "question": batch.question,
+        "desc": batch.desc,
+        "label": '|'.join(batch.label)
+    }
     return eval_data
 
 gnn_to_use = GAT(in_channels=1024, hidden_channels=1024, out_channels=1024, num_layers=4, heads=4)

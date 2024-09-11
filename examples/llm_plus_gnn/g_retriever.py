@@ -114,17 +114,17 @@ def get_loss(model, batch, model_save_name) -> torch.Tensor:
 
 def inference_step(model, batch, model_save_name, max_tokens=MAX_NEW_TOKENS):
     if model_save_name == "llm":
-        out = model.inference(batch.question, batch.desc,
+        pred = model.inference(batch.question, batch.desc,
                               max_tokens=max_tokens)
     else:
-        out = model.inference(batch.question, batch.x, batch.edge_index,
+        pred = model.inference(batch.question, batch.x, batch.edge_index,
                               batch.batch, batch.edge_attr, batch.desc,
                               max_tokens=max_tokens)
     eval_data = {
-        "pred": out,
+        "pred": pred,
         "question": batch.question,
         "desc": batch.desc,
-        "label": batch.label
+        "label": batch.label,
     }
     return eval_data
 
