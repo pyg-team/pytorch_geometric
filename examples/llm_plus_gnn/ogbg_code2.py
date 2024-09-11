@@ -3,7 +3,7 @@
 from g_retriever import train
 
 from torch_geometric.datasets import OGBG_Code2
-from torch_geometric.nn.models import GRetriever
+from torch_geometric.nn.models import GAT, GRetriever
 import time
 import torch
 
