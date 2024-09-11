@@ -4,6 +4,8 @@ from g_retriever import train
 
 from torch_geometric.datasets import OGBG_Code2
 from torch_geometric.nn.models import GAT, GRetriever
+from torch_geometric.nn.nlp import LLM
+
 import time
 import torch
 
