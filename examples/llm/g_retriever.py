@@ -1,19 +1,21 @@
-"""This example implements G-retriever using PyG.
-Original Paper: https://arxiv.org/abs/2402.07630
-“G-Retriever significantly reduces hallucinations
-by 54% compared to the [LLM] baseline“.
-Requirements on top of basic PyG:
-`pip install datasets transformers pcst_fast sentencepiece tqdm accelerate`.
+"""This example implements the G-Retriever model
+(https://arxiv.org/abs/2402.07630) using PyG.
+
+“G-Retriever significantly reduces hallucinations by 54% compared to the
+stand-alone LLM baseline.
+
+Requirements:
+`pip install datasets transformers pcst_fast sentencepiece accelerate`
 """
 import argparse
-import gc
 import math
+import os.path as osp
 import re
 import time
-from os import path
 
 import pandas as pd
 import torch
+from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
@@ -71,6 +73,7 @@ def compute_accuracy(eval_output) -> float:
             print(f'Pred: {pred}')
             print(f'Exception: {e}')
             print('------------------')
+
     hit = sum(all_hit) / len(all_hit)
     precision = sum(all_precision) / len(all_precision)
     recall = sum(all_recall) / len(all_recall)
@@ -92,8 +95,7 @@ def save_params_dict(model, save_path):
     }
     for k in list(state_dict.keys()):
         if k in param_grad_dict.keys() and not param_grad_dict[k]:
-            # delete parameters that do not require gradient
-            del state_dict[k]
+            del state_dict[k]  # Delete parameters that do not require gradient
     torch.save(state_dict, save_path)
 
 
@@ -103,8 +105,8 @@ def load_params_dict(model, save_path):
     return model
 
 
-def get_loss(model, batch, model_save_name) -> torch.Tensor:
-    if model_save_name == "llm":
+def get_loss(model, batch, model_save_name) -> Tensor:
+    if model_save_name == 'llm':
         return model(batch.question, batch.label, batch.desc)
     else:
         return model(batch.question, batch.x, batch.edge_index, batch.batch,
@@ -112,16 +114,23 @@ def get_loss(model, batch, model_save_name) -> torch.Tensor:
 
 
 def inference_step(model, batch, model_save_name):
-    if model_save_name == "llm":
+    if model_save_name == 'llm':
         return model.inference(batch.question, batch.desc)
     else:
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.edge_attr, batch.desc)
 
 
-def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
-          eval_batch_size, lr, loss_fn, inference_fn, model=None, dataset=None,
-          checkpointing=False, tiny_llama=False):
+def train(
+    num_epochs,
+    hidden_channels,
+    num_gnn_layers,
+    batch_size,
+    eval_batch_size,
+    lr,
+    checkpointing=False,
+    tiny_llama=False,
+):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -132,19 +141,17 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
             lr = min_lr + (LR - min_lr) * 0.5 * (
                 1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
                                (num_epochs - warmup_epochs)))
-        param_group["lr"] = lr
+        param_group['lr'] = lr
         return lr
 
-    seed_everything(42)
-    if dataset is None:
-        dataset = WebQSPDataset()
-        gc.collect()
-    idx_split = dataset.split_idxs
+    start_time = time.time()
+    path = osp.dirname(osp.realpath(__file__))
+    path = osp.join(path, '..', '..', 'data', 'WebQSPDataset')
+    train_dataset = WebQSPDataset(path, split='train')
+    val_dataset = WebQSPDataset(path, split='val')
+    test_dataset = WebQSPDataset(path, split='test')
 
-    # Step 1: Build Node Classification Dataset
-    train_dataset = [dataset[i] for i in idx_split['train']]
-    val_dataset = [dataset[i] for i in idx_split['val']]
-    test_dataset = [dataset[i] for i in idx_split['test']]
+    seed_everything(42)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size,
                               drop_last=True, pin_memory=True, shuffle=True)
@@ -153,57 +160,48 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
     test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
-    # Step 2: Build Model
-    if model is None:
-        gc.collect()
-        gnn_to_use = GAT(in_channels=1024, hidden_channels=hidden_channels,
-                         out_channels=1024, num_layers=num_gnn_layers, heads=4)
-        if tiny_llama:
-            llm_to_use = LLM(
-                model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-                num_params=1,
-            )
-            model = GRetriever(llm=llm_to_use, gnn=gnn_to_use,
-                               mlp_out_channels=2048)
-        else:
-            llm_to_use = LLM(model_name="meta-llama/Llama-2-7b-chat-hf",
-                             num_params=7)
-            model = GRetriever(
-                llm=llm_to_use,
-                gnn=gnn_to_use,
-            )
-
-    if num_gnn_layers is not None:
-        model_save_name = "gnn_llm"
+    gnn = GAT(
+        in_channels=1024,
+        hidden_channels=hidden_channels,
+        out_channels=1024,
+        num_layers=num_gnn_layers,
+        heads=4,
+    )
+    if tiny_llama:
+        llm = LLM(
+            model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+            num_params=1,
+        )
+        model = GRetriever(llm=llm, gnn=gnn, mlp_out_channels=2048)
     else:
-        model_save_name = "llm"
+        llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
+        model = GRetriever(llm=llm, gnn=gnn)
 
-    # Step 3 Set Optimizer
+    model_save_name = 'gnn_llm' if num_gnn_layers is not None else 'llm'
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
             'params': params,
             'lr': lr,
-            'weight_decay': .05
+            'weight_decay': 0.05
         },
     ], betas=(0.9, 0.95))
     grad_steps = 2
 
-    best_val_loss = float('inf')
-    # Step 4 Training
     best_epoch = 0
+    best_val_loss = float('inf')
     for epoch in range(num_epochs):
         model.train()
-        epoch_loss = 0.
+        epoch_loss = 0
         if epoch == 0:
-            prep_time = round(time.time() - since, 2)
-            print("Total Prep Time (prep_time) =", prep_time)
+            print(f"Total Preparation Time: {time.time() - start_time:2f}s")
+            start_time = time.time()
             print("Training beginning...")
-        epoch_str = f"Epoch: {epoch + 1}|{num_epochs}"
+        epoch_str = f'Epoch: {epoch + 1}|{num_epochs}'
         loader = tqdm(train_loader, desc=epoch_str)
         for step, batch in enumerate(loader):
             optimizer.zero_grad()
-            loss = loss_fn(model, batch, model_save_name)
+            loss = get_loss(model, batch, model_save_name)
             loss.backward()
 
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
@@ -213,220 +211,61 @@ def train(since, num_epochs, hidden_channels, num_gnn_layers, batch_size,
                                      step / len(train_loader) + epoch)
 
             optimizer.step()
-            epoch_loss = epoch_loss + loss.item()
+            epoch_loss = epoch_loss + float(loss)
 
             if (step + 1) % grad_steps == 0:
-                lr = optimizer.param_groups[0]["lr"]
+                lr = optimizer.param_groups[0]['lr']
         train_loss = epoch_loss / len(train_loader)
-        print(epoch_str + f",Train Loss (Epoch Mean): {train_loss}")
+        print(epoch_str + f', Train Loss: {train_loss:4f}')
 
-        val_loss = 0.
+        val_loss = 0
         eval_output = []
         model.eval()
         with torch.no_grad():
             for step, batch in enumerate(val_loader):
-                loss = loss_fn(model, batch, model_save_name)
+                loss = get_loss(model, batch, model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
-            print(epoch_str + f", Val Loss: {val_loss}")
+            print(epoch_str + f", Val Loss: {val_loss:4f}")
         if checkpointing and val_loss < best_val_loss:
-            print("Checkpointing best val loss model...")
+            print("Checkpointing best model...")
             best_val_loss = val_loss
             best_epoch = epoch
-            save_params_dict(model, model_save_name + "_best_val_loss_ckpt.pt")
+            save_params_dict(model, f'{model_save_name}_best_val_loss_ckpt.pt')
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
-    # Step 5 Evaluating
     if checkpointing and best_epoch != num_epochs - 1:
         print("Loading best checkpoint...")
-        model = load_params_dict(model,
-                                 model_save_name + "_best_val_loss_ckpt.pt")
+        model = load_params_dict(
+            model,
+            f'{model_save_name}_best_val_loss_ckpt.pt',
+        )
+
     model.eval()
     eval_output = []
-    print("Final Evaluation...")
+    print("Final evaluation...")
     progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
-            pred = inference_fn(model, batch, model_save_name)
+            pred = inference_step(model, batch, model_save_name)
             eval_data = {
-                "pred": pred,
-                "question": batch.question,
-                "desc": batch.desc,
-                "label": batch.label
+                'pred': pred,
+                'question': batch.question,
+                'desc': batch.desc,
+                'label': batch.label
             }
             eval_output.append(eval_data)
         progress_bar_test.update(1)
 
-    # Step 6 Post-processing & compute metrics
     acc = compute_accuracy(eval_output)
-    print(f'Test Acc {acc}')
-    # save model
-    print("Saving Model...")
-    save_params_dict(model, model_save_name + ".pt")
-    print("Saving eval output for downstream demo...")
-    torch.save(eval_output, model_save_name + "_eval_outs.pt")
-    print("Done!")
-    return prep_time, dataset, eval_output
+    print(f'Test Acc: {acc}')
+    print(f"Total Training Time: {time.time() - start_time:2f}s")
+    save_params_dict(model, f'{model_save_name}.pt')
+    torch.save(eval_output, f'{model_save_name}_eval_outs.pt')
 
 
-def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
-                 eval_batch_size, loss_fn, inference_fn,
-                 skip_pretrained_LLM=False, tiny_llama=False):
-    if not skip_pretrained_LLM:
-        print("First comparing against a pretrained LLM...")
-    # Step 1: Define a single batch size test loader
-    idx_split = dataset.split_idxs
-    test_dataset = [dataset[i] for i in idx_split['test']]
-    # batch size 1 loader for simplicity
-    loader = DataLoader(test_dataset, batch_size=1, drop_last=False,
-                        pin_memory=True, shuffle=False)
-    if tiny_llama:
-        pure_llm = LLM(
-            model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-            num_params=1,
-        )
-    else:
-        pure_llm = LLM(model_name="meta-llama/Llama-2-7b-chat-hf",
-                       num_params=7)
-    if path.exists("demo_save_dict.pt"):
-        print("Saved outputs for the first step of the demo found.")
-        print("Would you like to redo?")
-        user_input = str(input("(y/n):")).lower()
-        skip_step_one = user_input == "n"
-    else:
-        skip_step_one = False
-
-    if not skip_step_one:
-        gnn_llm_hallucin_sum = 0
-        pure_llm_hallucin_sum = 0
-        gnn_save_list = []
-        untuned_llm_save_list = []
-        gnn_llm_preds = []
-        for out in gnn_llm_eval_outs:
-            gnn_llm_preds += out['pred']
-        if skip_pretrained_LLM:
-            print("Checking GNN+LLM for hallucinations...")
-        else:
-            print(
-                "Checking pretrained LLM vs trained GNN+LLM for hallucinations..."  # noqa
-            )
-        for i, batch in enumerate(tqdm(loader)):
-            question = batch.question[0]
-            correct_answer = batch.label[0]
-            if skip_pretrained_LLM:
-                pure_llm_pred = None
-                pure_llm_hallucinates = False
-            else:
-                # GNN+LLM only using 32 tokens to answer.
-                # Allow more output tokens for untrained LLM
-                pure_llm_pred = pure_llm.inference(batch.question, batch.desc,
-                                                   max_tokens=256)
-                pure_llm_hallucinates = detect_hallucinate(
-                    pure_llm_pred, correct_answer)
-            untuned_llm_save_list += [(pure_llm_pred, pure_llm_hallucinates)]
-
-            gnn_llm_pred = gnn_llm_preds[i]
-            gnn_llm_hallucinates = detect_hallucinate(gnn_llm_pred,
-                                                      correct_answer)
-            gnn_save_list += [(gnn_llm_pred, gnn_llm_hallucinates)]
-
-            if gnn_llm_hallucinates == "skip" or pure_llm_hallucinates == "skip":  # noqa
-                # skipping when hallucination is hard to eval
-                continue
-            gnn_llm_hallucin_sum += int(gnn_llm_hallucinates)
-            pure_llm_hallucin_sum += int(pure_llm_hallucinates)
-        if not skip_pretrained_LLM:
-            print("Total Pure LLM Hallucinations:", pure_llm_hallucin_sum)
-            print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
-            percent = 100.0 * round(
-                1 - (gnn_llm_hallucin_sum / pure_llm_hallucin_sum), 2)
-            print(f"GNN reduces pretrained LLM hallucinations by: ~{percent}%")
-            print("Note: hallucinations detected by regex hence the ~")
-            print("Now we see how the LLM compares when finetuned...")
-            print("Saving outputs of GNN+LLM and pretrained LLM...")
-        save_dict = {
-            "gnn_save_list": gnn_save_list,
-            "untuned_llm_save_list": untuned_llm_save_list,
-            "gnn_llm_hallucin_sum": gnn_llm_hallucin_sum,
-            "pure_llm_hallucin_sum": pure_llm_hallucin_sum
-        }
-        torch.save(save_dict, "demo_save_dict.pt")
-        print("Done!")
-    else:
-        save_dict = torch.load("demo_save_dict.pt")
-        gnn_save_list = save_dict["gnn_save_list"]
-        untuned_llm_save_list = save_dict["untuned_llm_save_list"]
-        gnn_llm_hallucin_sum = save_dict["gnn_llm_hallucin_sum"]
-        pure_llm_hallucin_sum = save_dict["pure_llm_hallucin_sum"]
-
-    trained_llm_hallucin_sum = 0
-    untuned_llm_hallucin_sum = pure_llm_hallucin_sum
-    final_prnt_str = ""
-    if path.exists("llm.pt") and path.exists("llm_eval_outs.pt"):
-        print("Existing finetuned LLM found.")
-        print("Would you like to retrain?")
-        user_input = str(input("(y/n):")).lower()
-        retrain = user_input == "y"
-    else:
-        retrain = True
-    if retrain:
-        print("Finetuning LLM...")
-        since = time.time()
-        _, _, pure_llm_eval_outputs = train(since, epochs, None, None,
-                                            batch_size, eval_batch_size, lr,
-                                            loss_fn, inference_fn,
-                                            model=pure_llm, dataset=dataset)
-        e2e_time = round(time.time() - since, 2)
-        print("E2E time (e2e_time) =", e2e_time, "seconds")
-    else:
-        pure_llm_eval_outputs = torch.load("llm_eval_outs.pt")
-    pure_llm_preds = []
-    for out in pure_llm_eval_outputs:
-        pure_llm_preds += out['pred']
-    print("Final comparison between all models...")
-    for i, batch in enumerate(tqdm(loader)):
-        question = batch.question[0]
-        correct_answer = batch.label[0]
-        gnn_llm_pred, gnn_llm_hallucinates = gnn_save_list[i]
-        untuned_llm_pred, untuned_llm_hallucinates = untuned_llm_save_list[i]
-        if gnn_llm_hallucinates == "skip" or untuned_llm_hallucinates == "skip":  # noqa
-            continue
-        pure_llm_pred = pure_llm_preds[i]
-        pure_llm_hallucinates = detect_hallucinate(pure_llm_pred,
-                                                   correct_answer)
-        if pure_llm_hallucinates == "skip":
-            continue
-        trained_llm_hallucin_sum += int(pure_llm_hallucinates)
-        if skip_pretrained_LLM:
-            # we did not check the untrained LLM, so do not decide to demo
-            # based on this.
-            untuned_llm_hallucinates = True
-        if untuned_llm_hallucinates and pure_llm_hallucinates and not gnn_llm_hallucinates:  # noqa
-            final_prnt_str += "Prompt: '" + question + "'\n"
-            final_prnt_str += "Label: '" + correct_answer + "'\n"
-            if not skip_pretrained_LLM:
-                final_prnt_str += "Untuned LLM Output: '" + untuned_llm_pred + "'\n"  # noqa
-            final_prnt_str += "Tuned LLM Output: '" + pure_llm_pred + "'\n"
-            final_prnt_str += "GNN+LLM Output: '" + gnn_llm_pred + "'\n"
-            final_prnt_str += "\n" + "#" * 20 + "\n\n"
-    if not skip_pretrained_LLM:
-        print("Total untuned LLM Hallucinations:", untuned_llm_hallucin_sum)
-    print("Total tuned LLM Hallucinations:", trained_llm_hallucin_sum)
-    print("Total GNN+LLM Hallucinations:", gnn_llm_hallucin_sum)
-    if not skip_pretrained_LLM:
-        percent = 100.0 * round(
-            1 - (gnn_llm_hallucin_sum / untuned_llm_hallucin_sum), 2)
-        print(f"GNN reduces untuned LLM hallucinations by: ~{percent}%")
-    tuned_percent = 100.0 * round(
-        1 - (gnn_llm_hallucin_sum / trained_llm_hallucin_sum), 2)
-    print(f"GNN reduces tuned LLM hallucinations by: ~{tuned_percent}%")
-    print("Note: hallucinations detected by regex hence the ~")
-    print("Potential instances where GNN solves the hallucinations of LLM:")
-    print(final_prnt_str)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--gnn_hidden_channels', type=int, default=1024)
     parser.add_argument('--num_gnn_layers', type=int, default=4)
@@ -434,47 +273,19 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=2)
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
-    parser.add_argument(
-        "--checkpointing", action="store_true",
-        help="Use this flag to checkpoint each time a \
-        new best val loss is achieved")
-    parser.add_argument(
-        "--tiny_llama", action="store_true",
-        help="This example uses LLAMA2 (7B) by default. \
-        This flag will run the example with TinyLLAMA (1B).")
-    parser.add_argument(
-        "--skip_pretrained_llm_eval", action="store_true",
-        help="This flag will skip the evaluation of the pretrained LLM.")
-
+    parser.add_argument('--checkpointing', action='store_true')
+    parser.add_argument('--tiny_llama', action='store_true')
     args = parser.parse_args()
-    # check if saved model
-    retrain = True
-    if path.exists("gnn_llm.pt") and path.exists("gnn_llm_eval_outs.pt"):
-        print("Existing trained model found.")
-        print("Would you like to retrain?")
-        user_input = str(input("(y/n):")).lower()
-        retrain = user_input == "y"
-    else:
-        retrain = True
-    if retrain:
-        since = time.time()
-        prep_time, dataset, gnn_llm_eval_outs = train(
-            since, args.epochs, args.gnn_hidden_channels, args.num_gnn_layers,
-            args.batch_size, args.eval_batch_size, args.lr, get_loss,
-            inference_step, checkpointing=args.checkpointing,
-            tiny_llama=args.tiny_llama)
-        torch.cuda.empty_cache()
-        torch.cuda.reset_max_memory_allocated()
-        gc.collect()
-        e2e_time = round(time.time() - since, 2)
-        print("E2E time (e2e_time) =", e2e_time, "seconds")
-        print("E2E tme minus Prep Time =", e2e_time - prep_time, "seconds")
-    else:
-        gnn_llm_eval_outs = torch.load("gnn_llm_eval_outs.pt")
-        dataset = WebQSPDataset()
-    print("Here's a demo showcasing how GNN reduces LLM hallucinations:")
-    minimal_demo(gnn_llm_eval_outs, dataset, args.lr, args.epochs,
-                 args.batch_size, args.eval_batch_size, get_loss,
-                 inference_step,
-                 skip_pretrained_LLM=args.skip_pretrained_llm_eval,
-                 tiny_llama=args.tiny_llama)
+
+    start_time = time.time()
+    train(
+        args.epochs,
+        args.gnn_hidden_channels,
+        args.num_gnn_layers,
+        args.batch_size,
+        args.eval_batch_size,
+        args.lr,
+        checkpointing=args.checkpointing,
+        tiny_llama=args.tiny_llama,
+    )
+    print(f"Total Time: {time.time() - start_time:2f}s")
