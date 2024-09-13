@@ -1,7 +1,7 @@
 """This example implements the G-Retriever model
 (https://arxiv.org/abs/2402.07630) using PyG.
 
-“G-Retriever significantly reduces hallucinations by 54% compared to the
+G-Retriever significantly reduces hallucinations by 54% compared to the
 stand-alone LLM baseline.
 
 Requirements:
