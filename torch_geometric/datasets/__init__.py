@@ -111,7 +111,6 @@ from .ba_shapes import BAShapes
 import torch_geometric.datasets.utils
 
 homo_datasets = [
-    'WebQSPDataset',
     'KarateClub',
     'TUDataset',
     'GNNBenchmarkDataset',
