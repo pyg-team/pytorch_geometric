@@ -26,7 +26,7 @@ from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
 
 
-def compute_accuracy(eval_output) -> float:
+def compute_metrics(eval_output):
     df = pd.concat([pd.DataFrame(d) for d in eval_output])
     all_hit = []
     all_precision = []
@@ -67,8 +67,6 @@ def compute_accuracy(eval_output) -> float:
     print(f'Precision: {precision:.4f}')
     print(f'Recall: {recall:.4f}')
     print(f'F1: {f1:.4f}')
-
-    return hit
 
 
 def save_params_dict(model, save_path):
@@ -242,8 +240,7 @@ def train(
             eval_output.append(eval_data)
         progress_bar_test.update(1)
 
-    acc = compute_accuracy(eval_output)
-    print(f'Test Acc: {acc}')
+    compute_metrics(eval_output)
     print(f"Total Training Time: {time.time() - start_time:2f}s")
     save_params_dict(model, f'{model_save_name}.pt')
     torch.save(eval_output, f'{model_save_name}_eval_outs.pt')
