@@ -30,6 +30,7 @@ class TAGDataset(InMemoryDataset):
     NeighborLoader(for GNN training). In addition, this class can be use as a
     wrapper class by convert a InMemoryDataset with Tokenizer and text into
     Text Attributed Graph.
+
     Args:
         root (str): Root directory where the dataset should be saved.
         dataset (InMemoryDataset): The name of the dataset
@@ -176,6 +177,7 @@ class TAGDataset(InMemoryDataset):
 
     def get_gold(self, node_idx: IndexType) -> Tensor:
         r"""Get gold mask for given node_idx.
+
         Args:
             node_idx (torch.tensor): a tensor contain node idx
         """
@@ -224,6 +226,7 @@ class TAGDataset(InMemoryDataset):
 
     def tokenize_graph(self, batch_size: int = 256) -> Dict[str, Tensor]:
         r"""Tokenizing the text associate with each node, running in cpu.
+
         Args:
             batch_size (Optional[int]): batch size of list of text for
                 generating emebdding
@@ -283,6 +286,7 @@ class TAGDataset(InMemoryDataset):
     class TextDataset(torch.utils.data.Dataset):
         r"""This nested dataset provides textual data for each node in
         the graph. Factory method to create TextDataset from TAGDataset.
+
         Args:
             tag_dataset (TAGDataset): the parent dataset
         """
@@ -297,6 +301,7 @@ class TAGDataset(InMemoryDataset):
 
         def get_token(self, node_idx: IndexType) -> Dict[str, Tensor]:
             r"""This function will be called in __getitem__().
+
             Args:
                 node_idx (IndexType): selected node idx in each batch
             Returns:
@@ -313,6 +318,7 @@ class TAGDataset(InMemoryDataset):
             torch.utils.data.Dataset, and will be called when you
             iterate batch in the dataloader, make sure all following
             key value pairs are present in the return dict.
+
             Args:
                 node_id (List[int]): list of node idx for selecting tokens,
                     labels etc. when iterating data loader for LM

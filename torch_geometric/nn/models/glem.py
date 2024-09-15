@@ -12,6 +12,7 @@ class GLEM(torch.nn.Module):
     r"""This GNN+LM co-training model is based on GLEM from the `"Learning on
     Large-scale Text-attributed Graphs via Variational Inference"
     <https://arxiv.org/abs/2210.14709>`_ paper.
+
     Args:
         lm_to_use (str): A TextEncoder from huggingface model repo
                 with a classifier(default: TinyBERT)
@@ -125,6 +126,7 @@ class GLEM(torch.nn.Module):
               optimizer: torch.optim.Optimizer, pseudo_labels: torch.Tensor,
               epoch: int, is_augmented: bool = False, verbose: bool = False):
         r"""GLEM training step, EM steps.
+
         Args:
             em_phase(str): 'gnn' or 'lm' choose which phase you are training on
             train_loader(Union[DataLoader, NeighborLoader]): use DataLoader for
@@ -154,6 +156,7 @@ class GLEM(torch.nn.Module):
                  pseudo_labels: torch.Tensor = None,
                  is_augmented: bool = False, verbose: bool = True):
         r"""Language model Training in every epoch.
+
         Args:
             train_loader (loader.dataloader.DataLoader): text token dataloader
             optimizer (torch.optim.Optimizer): model optimizer
@@ -207,6 +210,7 @@ class GLEM(torch.nn.Module):
                   pseudo_labels: torch.Tensor = None,
                   is_augmented: bool = False, verbose: bool = True):
         r"""GNN training step in every epoch.
+
         Args:
             train_loader (loader.NeighborLoader): gnn Neighbor node loader
             optimizer (torch.optim.Optimizer): model optimizer
@@ -260,6 +264,7 @@ class GLEM(torch.nn.Module):
                                                           DataLoader],
                   verbose: bool = False):
         r"""GLEM inference step.
+
         Args:
             em_phase(str): 'gnn' or 'lm'
             data_loader(dataloader or Neighborloader):
@@ -282,6 +287,7 @@ class GLEM(torch.nn.Module):
     @torch.no_grad()
     def inference_lm(self, data_loader: DataLoader, verbose: bool = True):
         r"""LM inference step.
+
         Args:
             data_loader (Dataloader): include token, labels, and gold mask
             verbose (bool): print progress bar or not
@@ -308,6 +314,7 @@ class GLEM(torch.nn.Module):
     @torch.no_grad()
     def inference_gnn(self, data_loader: NeighborLoader, verbose: bool = True):
         r"""GNN inference step.
+
         Args:
             data_loader(NeighborLoader): include x, edge_index,
             verbose (bool): print progress bar or not

@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.7.0\] - 2024-MM-DD
 
 ### Added
+
 - Added `nn.Models.GLEM` ([#9661](https://github.com/pyg-team/pytorch_geometric/pull/9661))
 - Added `TAGDataset` ([#9661](https://github.com/pyg-team/pytorch_geometric/pull/9661))
+
 ### Changed
 
 ### Deprecated
