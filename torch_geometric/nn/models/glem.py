@@ -32,6 +32,7 @@ class GLEM(torch.nn.Module):
             (default: True)
         lora_target_modules: The names of the target modules to apply the lora
             adapter to, e.g. ['q_proj', 'v_proj'] for LLM , (default: None)
+
     .. note::
         See `examples/llm_plus_gnn/glem.py` for example usage.
     """
@@ -138,6 +139,7 @@ class GLEM(torch.nn.Module):
             epoch (int): current epoch
             is_augmented (bool): will use pseudo_labels or not
             verbose (bool): print training progress bar or not
+
         Returns:
             acc (float): training accuracy
             loss (float): loss value
@@ -164,9 +166,11 @@ class GLEM(torch.nn.Module):
             pseudo_labels (torch.Tensor): 1-D tensor, predictions from gnn
             is_augmented (bool): train with pseudo labels or not
             verbose (bool): print training progress bar or not
+
         Returns:
             approx_acc (torch.tensor): training accuracy
             loss (torch.float): loss value
+
         """
         all_out = []
         total_loss = total_correct = 0
@@ -218,6 +222,7 @@ class GLEM(torch.nn.Module):
             pseudo_labels(torch.tensor): 1-D tensor, predictions from lm
             is_augmented(bool): use pseudo labeled node or not
             verbose (bool): print training progress or not
+
         Returns:
             approx_acc (torch.tensor): training accuracy
             loss (torch.float): loss value
@@ -271,6 +276,7 @@ class GLEM(torch.nn.Module):
                 dataloader: for lm training, include tokenized data
                 nodeloader: for gnn training, include x, edge_index
             verbose(bool): print inference progress or not
+
         Returns:
             out (torch.Tensor): n * m tensor, m is number of classes,
                 n is number of nodes
@@ -291,6 +297,7 @@ class GLEM(torch.nn.Module):
         Args:
             data_loader (Dataloader): include token, labels, and gold mask
             verbose (bool): print progress bar or not
+
         Returns:
             preds (tensor): prediction from GNN, convert to pseudo labels
                 by preds.argmax(dim=-1).unsqueeze(1)
@@ -318,6 +325,7 @@ class GLEM(torch.nn.Module):
         Args:
             data_loader(NeighborLoader): include x, edge_index,
             verbose (bool): print progress bar or not
+
         Returns:
             preds (tensor): prediction from GNN,
                 convert to pseudo labels by preds.argmax(dim=-1).unsqueeze(1)
@@ -345,8 +353,10 @@ class GLEM(torch.nn.Module):
         r"""Core function of variational EM inference, this function is aming
         on combining loss value on gold(original train) and loss value on
         pseudo labels.
+
         Reference:
         <https://github.com/AndyJZhao/GLEM/blob/main/src/models/GLEM/GLEM_utils.py> # noqa
+
         Args:
             logits(torch.tensor): predict results from LM or GNN
             labels(torch.tensor): combined node labels from ground truth and
@@ -358,6 +368,7 @@ class GLEM(torch.nn.Module):
             pl_weight: the pseudo labels used in E-step and M-step optimization
                         alpha in E-step, beta in M-step respectively
             is_augmented: use EM or just train GNN and LM with gold data
+
         """
         def deal_nan(x):
             return 0 if torch.isnan(x) else x
