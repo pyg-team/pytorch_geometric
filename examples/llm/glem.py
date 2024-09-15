@@ -241,11 +241,9 @@ def main(args):
         if em_phase == 'lm':
             model.lm = model.lm.to(device, non_blocking=True)
             optimizer = torch.optim.Adam(model.lm.parameters(), lr=lm_lr)
-            # print(f'Load language model train with {epoch} epochs')
         if em_phase == 'gnn':
             model.gnn = model.gnn.to(device, non_blocking=True)
             optimizer = torch.optim.Adam(model.gnn.parameters(), lr=gnn_lr)
-            # print(f'Load GNN model train with {epoch} epochs')
         return optimizer
 
     # ================================= Run GLEM ==============================
@@ -334,10 +332,8 @@ def main(args):
     for em_it in range(1, num_em_iters * 2 + 1):
         pseudo_labels = preds.argmax(dim=-1)
         best_val_acc = final_test_acc = 0.0
-        # pseudo_labels = preds
         print(f'EM iteration: {em_it}, EM phase: {em_phase}')
         optimizer = load_model(em_phase)
-        # model_to_device(em_phase)
         num_epochs = lm_epochs
         train_loader = text_train_loader
         test_loader = text_data_loader
