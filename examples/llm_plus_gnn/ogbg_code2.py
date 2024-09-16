@@ -37,9 +37,9 @@ llm_to_use = LLM(model_name="meta-llama/CodeLlama-7b-Python-hf",
 CodeRetriever = GRetriever(llm=llm_to_use, gnn=gnn_to_use,)
 
 prep_time, _, _ = train(
-    since, epochs=5, gnn_hidden_channels=None, num_gnn_layers=None,
-    batch_size=16, eval_batch_size=32, lr=1e-5, get_loss=get_loss,
-    inference_step=inference_step, checkpointing=True, model=CodeRetriever, dataset=OGBG_Code2())
+    since, num_epochs=5, hidden_channels=None, num_gnn_layers=None,
+    batch_size=16, eval_batch_size=32, lr=1e-5, loss_fn=get_loss,
+    inference_fn=inference_step, checkpointing=True, model=CodeRetriever, dataset=OGBG_Code2())
 torch.cuda.empty_cache()
 torch.cuda.reset_max_memory_allocated()
 gc.collect()
