@@ -173,7 +173,7 @@ class EdgeIndex(Tensor):
     :meth:`EdgeIndex.fill_cache_`, and are maintained and adjusted over its
     lifespan (*e.g.*, when calling :meth:`EdgeIndex.flip`).
 
-    This representation ensures for optimal computation in GNN message passing
+    This representation ensures optimal computation in GNN message passing
     schemes, while preserving the ease-of-use of regular COO-based :pyg:`PyG`
     workflows.
 

@@ -1,3 +1,4 @@
+import warnings
 from contextlib import nullcontext
 from typing import Any, Dict, List, Optional
 
@@ -85,6 +86,7 @@ class LLM(torch.nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
 
         if 'max_memory' not in kwargs:  # Pure CPU:
+            warnings.warn("LLM is being used on CPU, which may be slow")
             self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:
