@@ -6,13 +6,6 @@ from tqdm import tqdm
 from torch_geometric.data import Data, InMemoryDataset
 
 try:
-    from pandas import DataFrame
-    WITH_PANDAS = True
-except ImportError:
-    DataFrame = None
-    WITH_PANDAS = False
-
-try:
     from ogb.graphproppred import PygGraphPropPredDataset
     WITH_OGB = True
 except ImportError:
@@ -95,7 +88,13 @@ class OGBG_Code2(InMemoryDataset):
         except Exception:
             print("Note: OGBG_Code2 PyG dataset uses pandas.")
             print("Install NVIDIA CUDF for massive speedups in preproc.")
-
+        try:
+            # This needs to be done after cudf.pandas.install to use CUDF
+            from pandas import DataFrame
+            WITH_PANDAS = True
+        except ImportError:
+            DataFrame = None
+            WITH_PANDAS = False
         if not WITH_OGB:
             missing_str_list.append('ogb')
         if not WITH_DATASETS:
