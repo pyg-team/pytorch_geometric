@@ -17,6 +17,20 @@ try:
 except ImportError:
     WITH_DATASETS = False
 
+try:
+    import cudf.pandas
+    cudf.pandas.install()
+    WITH_CUDF = True
+except Exception:
+    WITH_CUDF = False
+
+try:
+    # This needs to be done after cudf.pandas.install to use CUDF
+    from pandas import DataFrame
+    WITH_PANDAS = True
+except ImportError:
+    DataFrame = None
+    WITH_PANDAS = False
 
 def find_wierd_names(func_name_tokens, raw_dataset):
     for i, func_name in enumerate(raw_dataset["func_name"]):
@@ -82,19 +96,6 @@ class OGBG_Code2(InMemoryDataset):
         include_raw_python: bool = True,
     ) -> None:
         missing_str_list = []
-        try:
-            import cudf.pandas
-            cudf.pandas.install()
-        except Exception:
-            print("Note: OGBG_Code2 PyG dataset uses pandas.")
-            print("Install NVIDIA CUDF for massive speedups in preproc.")
-        try:
-            # This needs to be done after cudf.pandas.install to use CUDF
-            from pandas import DataFrame
-            WITH_PANDAS = True
-        except ImportError:
-            DataFrame = None
-            WITH_PANDAS = False
         if not WITH_OGB:
             missing_str_list.append('ogb')
         if not WITH_DATASETS:
@@ -105,6 +106,9 @@ class OGBG_Code2(InMemoryDataset):
             missing_str = ' '.join(missing_str_list)
             error_out = f"`pip install {missing_str}` to use this dataset."
             raise ImportError(error_out)
+        if not WITH_CUDF:
+            print("Note: OGBG_Code2 PyG dataset uses pandas.")
+            print("Install NVIDIA CUDF for massive speedups in preproc.")
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         super().__init__(root, None, None, force_reload=force_reload)
