@@ -196,8 +196,10 @@ class WebQSPDataset(InMemoryDataset):
                 nodes = pd.DataFrame([{
                     "node_id": v,
                     "node_attr": k,
-                } for k, v in raw_nodes.items()], columns=["node_id", "node_attr"])
-                edges = pd.DataFrame(raw_edges, columns=["src", "edge_attr", "dst"])
+                } for k, v in raw_nodes.items()],
+                                     columns=["node_id", "node_attr"])
+                edges = pd.DataFrame(raw_edges,
+                                     columns=["src", "edge_attr", "dst"])
 
                 nodes.node_attr = nodes.node_attr.fillna("")
                 x = model.encode(
