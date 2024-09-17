@@ -261,7 +261,7 @@ if verbose:
 if verbose:
     print("Testing...")
 test_final_acc = test(test_loader)
-print(f'Test Accuracy: {test_final_acc:.4f}')
+print(f'Test Accuracy: {100.0 * test_final_acc:.2f}%')
 if verbose:
     total_time = round(time.perf_counter() - wall_clock_start, 2)
     print("Total Program Runtime (total_time) =", total_time, "seconds")
