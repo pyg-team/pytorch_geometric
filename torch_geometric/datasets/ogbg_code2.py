@@ -32,6 +32,7 @@ except ImportError:
     DataFrame = None
     WITH_PANDAS = False
 
+
 def find_wierd_names(func_name_tokens, raw_dataset):
     for i, func_name in enumerate(raw_dataset["func_name"]):
         # helper code to find wierd matches
@@ -79,6 +80,7 @@ class OGBG_Code2(InMemoryDataset):
     This PyG mirror builds on the original dataset by adding the raw python
     tokens to the dataset so that users can train GNN+LLM systems to beat the
     current GNN only SOTA results in the leaderboard.
+
     Args:
         root (str): Root directory where the dataset should be saved.
         force_reload (bool, optional): Whether to re-process the dataset.
@@ -123,10 +125,8 @@ class OGBG_Code2(InMemoryDataset):
     def download(self) -> None:
         self.ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
         dataset = datasets.load_dataset("claudios/code_search_net", "python")
-        self.raw_dataset = datasets.concatenate_datasets([
-            dataset["train"], dataset["validation"],
-            dataset["test"]
-        ])
+        self.raw_dataset = datasets.concatenate_datasets(
+            [dataset["train"], dataset["validation"], dataset["test"]])
         self.split_idxs = {
             "train":
             torch.arange(len(dataset["train"])),
