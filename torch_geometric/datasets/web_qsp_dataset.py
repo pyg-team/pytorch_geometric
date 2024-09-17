@@ -196,8 +196,10 @@ class WebQSPDataset(InMemoryDataset):
                 nodes = pd.DataFrame([{
                     "node_id": v,
                     "node_attr": k,
-                } for k, v in raw_nodes.items()])
-                edges = pd.DataFrame(raw_edges)
+                } for k, v in raw_nodes.items()],
+                                     columns=["node_id", "node_attr"])
+                edges = pd.DataFrame(raw_edges,
+                                     columns=["src", "edge_attr", "dst"])
 
                 nodes.node_attr = nodes.node_attr.fillna("")
                 x = model.encode(
@@ -213,7 +215,7 @@ class WebQSPDataset(InMemoryDataset):
                 edge_index = torch.tensor([
                     edges.src.tolist(),
                     edges.dst.tolist(),
-                ])
+                ], dtype=torch.long)
 
                 question = f"Question: {example['question']}\nAnswer: "
                 label = ('|').join(example['answer']).lower()
