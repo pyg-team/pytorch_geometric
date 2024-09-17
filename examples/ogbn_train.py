@@ -235,7 +235,7 @@ for epoch in range(1, num_epochs + 1):
     print(
         f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Time: {train_end - train_start:.4f}s'
     )
-    print(f'Val: {val_acc * 100.0:.4f}%,', f'Test: {test_acc * 100.0:.4f}%')
+    print(f'Val: {val_acc * 100.0:.2f}%,', f'Test: {test_acc * 100.0:.2f}%')
 
     if val_acc > best_val:
         best_val = val_acc
