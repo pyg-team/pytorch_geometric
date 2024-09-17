@@ -24,7 +24,7 @@ from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
-
+from torch_geometric.nn.nlp.llm import MAX_NEW_TOKENS
 
 def compute_metrics(eval_output):
     df = pd.concat([pd.DataFrame(d) for d in eval_output])
@@ -95,12 +95,18 @@ def get_loss(model, batch, model_save_name) -> Tensor:
                      batch.label, batch.edge_attr, batch.desc)
 
 
-def inference_step(model, batch, model_save_name):
+def inference_step(model, batch, model_save_name, max_tokens=MAX_NEW_TOKENS):
     if model_save_name == 'llm':
-        return model.inference(batch.question, batch.desc)
+        pred = model.inference(batch.question, batch.desc, max_tokens=max_tokens)
     else:
-        return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr, batch.desc)
+        pred = model.inference(batch.question, batch.x, batch.edge_index,
+                               batch.batch, batch.edge_attr, batch.desc, max_tokens=max_tokens)
+    return {
+        'pred': pred,
+        'question': batch.question,
+        'desc': batch.desc,
+        'label': batch.label,
+    }
 
 
 def train(
@@ -230,14 +236,7 @@ def train(
     progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
-            pred = inference_step(model, batch, model_save_name)
-            eval_data = {
-                'pred': pred,
-                'question': batch.question,
-                'desc': batch.desc,
-                'label': batch.label
-            }
-            eval_output.append(eval_data)
+            eval_output.append(inference_step(model, batch, model_save_name))
         progress_bar_test.update(1)
 
     compute_metrics(eval_output)

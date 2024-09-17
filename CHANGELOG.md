@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added G-retriever interactive demo ([#9417](https://github.com/pyg-team/pytorch_geometric/pull/9417))
+
 ### Changed
 
 ### Deprecated
