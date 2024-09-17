@@ -49,8 +49,7 @@ def find_wierd_names(func_name_tokens, raw_dataset):
         matches = (all_in & all_in_order)
         if matches:
             return raw_dataset["whole_func_string"][i]
-    ValueError("nothing found for func_name_tokens =",
-               func_name_tokens)
+    ValueError("nothing found for func_name_tokens =", func_name_tokens)
 
 
 def make_df_from_raw_data(raw_dataset):
