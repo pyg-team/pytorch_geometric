@@ -212,10 +212,10 @@ class WebQSPDataset(InMemoryDataset):
                     batch_size=256,
                     output_device='cpu',
                 )
-                edge_index = torch.LongTensor([
+                edge_index = torch.tensor([
                     edges.src.tolist(),
                     edges.dst.tolist(),
-                ])
+                ], dtype=torch.long)
 
                 question = f"Question: {example['question']}\nAnswer: "
                 label = ('|').join(example['answer']).lower()
