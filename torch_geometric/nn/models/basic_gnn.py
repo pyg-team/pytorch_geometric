@@ -557,11 +557,11 @@ class GIN(BasicGNN):
         **kwargs,
     ):
         super().__init__(
-            in_channels: int,
-            hidden_channels: int,
-            num_layers: int,
-            out_channels: Optional[int] = None,
-            dropout: float = 0.0,
+            in_channels,
+            hidden_channels,
+            num_layers,
+            out_channels,
+            dropout,
             act,
             act_first,
             act_kwargs,
