@@ -96,7 +96,8 @@ def get_loss(model, batch, model_save_name) -> Tensor:
                      batch.label, batch.edge_attr, batch.desc)
 
 
-def inference_step(model, batch, model_save_name, max_out_tokens=MAX_NEW_TOKENS):
+def inference_step(model, batch, model_save_name,
+                   max_out_tokens=MAX_NEW_TOKENS):
     if model_save_name == 'llm':
         pred = model.inference(batch.question, batch.desc,
                                max_out_tokens=max_out_tokens)
