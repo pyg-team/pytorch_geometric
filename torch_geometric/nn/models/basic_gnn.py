@@ -115,7 +115,8 @@ class BasicGNN(torch.nn.Module):
             else:
                 in_channels = hidden_channels
             if self.root_weight:
-                self.lin_rs.append(Linear(in_channels, hidden_channels, bias=False))
+                self.lin_rs.append(
+                    Linear(in_channels, hidden_channels, bias=False))
         for _ in range(num_layers - 2):
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
@@ -124,18 +125,21 @@ class BasicGNN(torch.nn.Module):
             else:
                 in_channels = hidden_channels
             if self.root_weight:
-                self.lin_rs.append(Linear(hidden_channels, hidden_channels, bias=False))
+                self.lin_rs.append(
+                    Linear(hidden_channels, hidden_channels, bias=False))
         if out_channels is not None and jk is None:
             self._is_conv_to_out = True
             self.convs.append(
                 self.init_conv(in_channels, out_channels, **kwargs))
             if self.root_weight:
-                self.lin_rs.append(Linear(in_channels, out_channels, bias=False))
+                self.lin_rs.append(
+                    Linear(in_channels, out_channels, bias=False))
         else:
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
             if self.root_weight:
-                self.lin_rs.append(Linear(in_channels, hidden_channels, bias=False))
+                self.lin_rs.append(
+                    Linear(in_channels, hidden_channels, bias=False))
         self.norms = ModuleList()
         norm_layer = normalization_resolver(
             norm,
@@ -285,7 +289,6 @@ class BasicGNN(torch.nn.Module):
 
         x = self.jk(xs) if hasattr(self, 'jk') else x
         x = self.lin(x) if hasattr(self, 'lin') else x
-
 
         return x
 
@@ -495,7 +498,8 @@ class GraphSAGE(BasicGNN):
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
         # avoid duplicating the root weight
-        return SAGEConv(in_channels, out_channels, root_weight=not self.root_weight, **kwargs)
+        return SAGEConv(in_channels, out_channels,
+                        root_weight=not self.root_weight, **kwargs)
 
 
 class GIN(BasicGNN):
