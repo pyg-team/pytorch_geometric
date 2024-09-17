@@ -437,9 +437,9 @@ class GCN(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        root_weight (bool, optional): If set to :obj:`False`, each layer will
-            not add transformed root node features to the output.
-            (default: :obj:`True`)
+        root_weight (bool, optional): If set to :obj:`True`, each layer will
+            add transformed root node features to the output.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
@@ -485,9 +485,9 @@ class GraphSAGE(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        root_weight (bool, optional): If set to :obj:`False`, each layer will
-            not add transformed root node features to the output.
-            (default: :obj:`True`)
+        root_weight (bool, optional): If set to :obj:`True`, each layer will
+            add transformed root node features to the output.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
@@ -497,9 +497,8 @@ class GraphSAGE(BasicGNN):
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
-        # avoid duplicating the root weight
         return SAGEConv(in_channels, out_channels,
-                        root_weight=not self.root_weight, **kwargs)
+                        root_weight=False, **kwargs)
 
 
 class GIN(BasicGNN):
@@ -541,7 +540,37 @@ class GIN(BasicGNN):
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
     supports_norm_batch: Final[bool]
-
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        num_layers: int,
+        out_channels: Optional[int] = None,
+        dropout: float = 0.0,
+        act: Union[str, Callable, None] = "relu",
+        act_first: bool = False,
+        act_kwargs: Optional[Dict[str, Any]] = None,
+        norm: Union[str, Callable, None] = None,
+        norm_kwargs: Optional[Dict[str, Any]] = None,
+        jk: Optional[str] = None,
+        root_weight: bool = True,
+        **kwargs,
+    ):
+        super().__init__(
+            in_channels: int,
+            hidden_channels: int,
+            num_layers: int,
+            out_channels: Optional[int] = None,
+            dropout: float = 0.0,
+            act,
+            act_first,
+            act_kwargs,
+            norm,
+            norm_kwargs,
+            jk,
+            root_weight,
+            **kwargs,
+        )
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         mlp = MLP(
@@ -593,9 +622,9 @@ class GAT(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        root_weight (bool, optional): If set to :obj:`False`, each layer will
-            not add transformed root node features to the output.
-            (default: :obj:`True`)
+        root_weight (bool, optional): If set to :obj:`True`, each layer will
+            add transformed root node features to the output.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GATConv` or
             :class:`torch_geometric.nn.conv.GATv2Conv`.
@@ -660,9 +689,9 @@ class PNA(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        root_weight (bool, optional): If set to :obj:`False`, each layer will
-            not add transformed root node features to the output.
-            (default: :obj:`True`)
+        root_weight (bool, optional): If set to :obj:`True`, each layer will
+            add transformed root node features to the output.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """
@@ -705,9 +734,9 @@ class EdgeCNN(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        root_weight (bool, optional): If set to :obj:`False`, each layer will
-            not add transformed root node features to the output.
-            (default: :obj:`True`)
+        root_weight (bool, optional): If set to :obj:`True`, each layer will
+            add transformed root node features to the output.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.EdgeConv`.
     """
