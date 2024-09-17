@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.7.0\] - 2024-MM-DD
 
 ### Added
+- Added skip connections to basic GNNs ([#9481](https://github.com/pyg-team/pytorch_geometric/pull/9673))
 
 ### Changed
 
