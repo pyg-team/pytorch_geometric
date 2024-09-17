@@ -497,8 +497,7 @@ class GraphSAGE(BasicGNN):
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
-        return SAGEConv(in_channels, out_channels,
-                        root_weight=False, **kwargs)
+        return SAGEConv(in_channels, out_channels, root_weight=False, **kwargs)
 
 
 class GIN(BasicGNN):
@@ -540,6 +539,7 @@ class GIN(BasicGNN):
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
     supports_norm_batch: Final[bool]
+
     def __init__(
         self,
         in_channels: int,
@@ -571,6 +571,7 @@ class GIN(BasicGNN):
             root_weight,
             **kwargs,
         )
+
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
         mlp = MLP(
