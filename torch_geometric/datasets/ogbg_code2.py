@@ -1,4 +1,4 @@
-from typing import List
+3from typing import List
 
 import torch
 from tqdm import tqdm
@@ -49,7 +49,7 @@ def find_wierd_names(func_name_tokens, raw_dataset):
         matches = (all_in and all_in_order)
         if matches:
             return raw_dataset["whole_func_string"][i]
-    ValueError("nothing found for func_name_tokens =", func_name_tokens)
+    raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
 
 
 def make_df_from_raw_data(raw_dataset):
