@@ -46,7 +46,7 @@ def find_wierd_names(func_name_tokens, raw_dataset):
             all_in_order = last_pos < cur_pos
             if not all_in_order:
                 break
-        matches = (all_in & all_in_order)
+        matches = (all_in and all_in_order)
         if matches:
             return raw_dataset["whole_func_string"][i]
     ValueError("nothing found for func_name_tokens =", func_name_tokens)
