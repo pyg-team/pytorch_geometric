@@ -44,11 +44,6 @@ parser.add_argument(
     action='store_true',
     help='Whether or not to generate statistical report',
 )
-parser.add_argument(
-    '--test_inference',
-    action='store_true',
-    help='Whether or not to test inference method',
-)
 parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('-e', '--epochs', type=int, default=10,
                     help='number of training epochs.')
@@ -186,20 +181,20 @@ def test(loader: NeighborLoader, val_steps=None) -> float:
 if args.use_gat:
     from torch_geometric.nn.models import GAT
     model = GAT(
-        dataset.num_features,
-        num_hidden_channels,
-        dataset.num_classes,
+        in_channels=dataset.num_features,
+        hidden_channels=num_hidden_channels,
         num_layers=num_layers,
+        out_channels=dataset.num_classes,
         dropout=args.dropout,
         heads=args.num_heads,
     )
 else:
     from torch_geometric.nn.models import GraphSAGE
     model = GraphSAGE(
-        dataset.num_features,
-        num_hidden_channels,
-        dataset.num_classes,
+        in_channels=dataset.num_features,
+        hidden_channels=num_hidden_channels,
         num_layers=num_layers,
+        out_channels=dataset.num_classes,
         dropout=args.dropout,
     )
 
@@ -267,10 +262,7 @@ if verbose:
 
 if verbose:
     print("Testing...")
-if args.test_inference:
-    test_final_acc = test_inference("test")
-else:
-    test_final_acc = test(test_loader)
+test_final_acc = test(test_loader)
 print(f'Test Accuracy: {test_final_acc:.4f}')
 if verbose:
     total_time = round(time.perf_counter() - wall_clock_start, 2)
