@@ -42,7 +42,7 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
     # 'numpy': ('http://docs.scipy.org/doc/numpy', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
-    'torch': ('https://pytorch.org/docs/master', None),
+    'torch': ('https://pytorch.org/docs/main', None),
 }
 
 nbsphinx_thumbnails = {
