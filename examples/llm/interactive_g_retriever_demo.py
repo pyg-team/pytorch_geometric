@@ -86,8 +86,9 @@ def user_input_data():
         else:
             edges.append(tuple(most_recent_edge.split(',')))
     print("Creating data object...")
-    text_encoder = SentenceTransformer()
-    data_obj = make_data_obj(text_encoder, question, nodes, edges)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    text_encoder = SentenceTransformer('sentence-transformers/all-roberta-large-v1').to(device)
+    data_obj = make_data_obj(text_encoder, question, nodes, edges).to(device)
     print("Done!")
     print("data =", data_obj)
     return data_obj
