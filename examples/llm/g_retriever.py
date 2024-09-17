@@ -26,6 +26,7 @@ from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
 from torch_geometric.nn.nlp.llm import MAX_NEW_TOKENS
 
+
 def compute_metrics(eval_output):
     df = pd.concat([pd.DataFrame(d) for d in eval_output])
     all_hit = []
@@ -95,17 +96,19 @@ def get_loss(model, batch, model_save_name) -> Tensor:
                      batch.label, batch.edge_attr, batch.desc)
 
 
-def inference_step(model, batch, model_save_name, max_tokens=MAX_NEW_TOKENS):
+def inference_step(model, batch, model_save_name, max_out_tokens=MAX_NEW_TOKENS):
     if model_save_name == 'llm':
-        pred = model.inference(batch.question, batch.desc, max_tokens=max_tokens)
+        pred = model.inference(batch.question, batch.desc,
+                               max_out_tokens=max_out_tokens)
     else:
         pred = model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr, batch.desc, max_tokens=max_tokens)
+                               batch.batch, batch.edge_attr, batch.desc,
+                               max_out_tokens=max_out_tokens)
     return {
         'pred': pred,
         'question': batch.question,
         'desc': batch.desc,
-        'label': batch.label
+        'label': batch.label,
     }
 
 
