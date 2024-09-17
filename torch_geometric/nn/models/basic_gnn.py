@@ -60,9 +60,9 @@ class BasicGNN(torch.nn.Module):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        root_weight (bool, optional): If set to :obj:`False`, each layer will
-            not add transformed root node features to the output.
-            (default: :obj:`True`)
+        root_weight (bool, optional): If set to :obj:`True`, each layer will
+            add transformed root node features to the output.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
@@ -83,7 +83,7 @@ class BasicGNN(torch.nn.Module):
         norm: Union[str, Callable, None] = None,
         norm_kwargs: Optional[Dict[str, Any]] = None,
         jk: Optional[str] = None,
-        root_weight: bool = True,
+        root_weight: bool = False,
         **kwargs,
     ):
         super().__init__()
