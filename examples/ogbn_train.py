@@ -221,22 +221,20 @@ optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 for epoch in range(1, num_epochs + 1):
     train_start = time.time()
-    loss, acc = train(epoch)
+    loss, train_acc = train(epoch)
     train_end = time.time()
     train_times.append(train_end - train_start)
 
     inference_start = time.time()
-    train_acc = test(train_loader)
     val_acc = test(val_loader)
     test_acc = test(test_loader)
 
     inference_times.append(time.time() - inference_start)
     test_accs.append(test_acc)
     val_accs.append(val_acc)
-    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train:'
-          f' {acc:.4f} Time: {train_end - train_start:.4f}s')
-    print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-          f'Test: {test_acc:.4f}')
+    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Time: {train_end - train_start:.4f}s')
+    print(f'Train: {train_acc * 100.0:.4f}%, Val: {val_acc * 100.0:.4f}%, '
+          f'Test: {test_acc * 100.0:.4f}%')
 
     if val_acc > best_val:
         best_val = val_acc
