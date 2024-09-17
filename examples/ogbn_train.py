@@ -8,11 +8,9 @@ import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from torch import Tensor
-from torch.nn import Linear
 from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import GATConv, SAGEConv
 from torch_geometric.utils import to_undirected
 
 parser = argparse.ArgumentParser(
