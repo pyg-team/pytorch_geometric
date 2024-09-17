@@ -138,137 +138,6 @@ test_loader = NeighborLoader(
     num_workers=num_workers,
     persistent_workers=True,
 )
-subgraph_loader = NeighborLoader(
-    data,
-    input_nodes=None,
-    num_neighbors=[-1],
-    batch_size=batch_size,
-    num_workers=num_workers,
-    persistent_workers=True,
-)
-
-
-class SAGE(torch.nn.Module):
-    def __init__(
-        self,
-        in_channels: int,
-        hidden_channels: int,
-        out_channels: int,
-        num_layers: int,
-        dropout: float,
-    ) -> None:
-        super().__init__()
-        self.num_layers = num_layers
-        self.convs = torch.nn.ModuleList()
-        self.convs.append(SAGEConv(in_channels, hidden_channels))
-        for _ in range(num_layers - 2):
-            self.convs.append(SAGEConv(hidden_channels, hidden_channels))
-        self.convs.append(SAGEConv(hidden_channels, out_channels))
-        self.dropout = dropout
-
-    def reset_parameters(self) -> None:
-        for conv in self.convs:
-            conv.reset_parameters()
-
-    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        for i, conv in enumerate(self.convs):
-            x = conv(x, edge_index)
-            if i != self.num_layers - 1:
-                x = x.relu()
-                x = F.dropout(x, p=self.dropout, training=self.training)
-        return x
-
-    def inference(self, x_all: Tensor) -> Tensor:
-        pbar = tqdm(total=x_all.size(0) * self.num_layers)
-        pbar.set_description('Evaluating')
-
-        # Compute representations of nodes layer by layer, using *all*
-        # available edges. This leads to faster computation in contrast to
-        # immediately computing the final representations of each batch.
-        for i in range(self.num_layers):
-            xs = []
-            for batch in subgraph_loader:
-                x = x_all[batch.n_id].to(device)
-                edge_index = batch.edge_index.to(device)
-                x = self.convs[i](x, edge_index)
-                x = x[:batch.batch_size]
-                if i != self.num_layers - 1:
-                    x = x.relu()
-                xs.append(x.cpu())
-                pbar.update(batch.batch_size)
-
-            x_all = torch.cat(xs, dim=0)
-
-        pbar.close()
-        return x_all
-
-
-class GAT(torch.nn.Module):
-    def __init__(
-        self,
-        in_channels: int,
-        hidden_channels: int,
-        out_channels: int,
-        num_layers: int,
-        dropout: float,
-        heads: int,
-    ) -> None:
-        super().__init__()
-        self.num_layers = num_layers
-        self.convs = torch.nn.ModuleList()
-        self.convs.append(GATConv(in_channels, hidden_channels, heads))
-        for _ in range(num_layers - 2):
-            self.convs.append(
-                GATConv(heads * hidden_channels, hidden_channels, heads))
-        self.convs.append(
-            GATConv(heads * hidden_channels, out_channels, heads,
-                    concat=False))
-
-        self.skips = torch.nn.ModuleList()
-        self.skips.append(Linear(in_channels, hidden_channels * heads))
-        for _ in range(num_layers - 2):
-            self.skips.append(
-                Linear(hidden_channels * heads, hidden_channels * heads))
-        self.skips.append(Linear(hidden_channels * heads, out_channels))
-        self.dropout = dropout
-
-    def reset_parameters(self) -> None:
-        for conv in self.convs:
-            conv.reset_parameters()
-        for skip in self.skips:
-            skip.reset_parameters()
-
-    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        for i, (conv, skip) in enumerate(zip(self.convs, self.skips)):
-            x = conv(x, edge_index) + skip(x)
-            if i != self.num_layers - 1:
-                x = F.elu(x)
-                x = F.dropout(x, p=self.dropout, training=self.training)
-        return x
-
-    def inference(self, x_all: Tensor) -> Tensor:
-        pbar = tqdm(total=x_all.size(0) * self.num_layers)
-        pbar.set_description('Evaluating')
-
-        # Compute representations of nodes layer by layer, using *all*
-        # available edges. This leads to faster computation in contrast to
-        # immediately computing the final representations of each batch.
-        for i in range(self.num_layers):
-            xs = []
-            for batch in subgraph_loader:
-                x = x_all[batch.n_id].to(device)
-                edge_index = batch.edge_index.to(device)
-                x = self.convs[i](x, edge_index) + self.skips[i](x)
-                x = x[:batch.batch_size]
-                if i != self.num_layers - 1:
-                    x = F.elu(x)
-                xs.append(x.cpu())
-                pbar.update(batch.batch_size)
-
-            x_all = torch.cat(xs, dim=0)
-
-        pbar.close()
-        return x_all
 
 
 def train(epoch: int) -> Tuple[Tensor, float]:
@@ -314,23 +183,6 @@ def test(loader: NeighborLoader, val_steps=None) -> float:
         total_examples += y.size(0)
 
     return total_correct / total_examples
-
-
-@torch.no_grad()
-def test_inference(mode: str) -> float:
-    model.eval()
-
-    out = model.inference(data.x)
-
-    y_true = data.y.cpu()
-    y_pred = out.argmax(dim=-1, keepdim=True)
-
-    acc = evaluator.eval({
-        'y_true': y_true[split_idx[mode]],
-        'y_pred': y_pred[split_idx[mode]],
-    })['acc']
-
-    return acc
 
 
 if args.use_gat:
@@ -379,14 +231,9 @@ for epoch in range(1, num_epochs + 1):
     train_times.append(train_end - train_start)
 
     inference_start = time.time()
-    if args.test_inference:
-        train_acc = test_inference("train")
-        val_acc = test_inference("valid")
-        test_acc = test_inference("test")
-    else:
-        train_acc = test(train_loader)
-        val_acc = test(val_loader)
-        test_acc = test(test_loader)
+    train_acc = test(train_loader)
+    val_acc = test(val_loader)
+    test_acc = test(test_loader)
 
     inference_times.append(time.time() - inference_start)
     test_accs.append(test_acc)
