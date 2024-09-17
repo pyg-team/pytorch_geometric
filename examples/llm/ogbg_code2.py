@@ -28,6 +28,7 @@ def inference_step(model, batch, **kwargs):
     }
     return eval_data
 
+
 dataset = OGBG_Code2()
 gnn_to_use = GAT(in_channels=1024, hidden_channels=1024, out_channels=1024,
                  num_layers=4, heads=4)
