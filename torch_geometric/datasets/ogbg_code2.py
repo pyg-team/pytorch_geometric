@@ -1,4 +1,4 @@
-3from typing import List
+from typing import List
 
 import torch
 from tqdm import tqdm
@@ -37,7 +37,7 @@ def find_wierd_names(func_name_tokens, raw_dataset):
     for i, func_name in enumerate(raw_dataset["func_name"]):
         # helper code to find wierd matches
         # since its non-trivial to apply such complex search to pandas
-        func_name = func_name.lower()
+        func_name = func_name.split('.')[-1].lower()
         all_in = all([bool(token in func_name) for token in func_name_tokens])
         last_pos = func_name.find(func_name_tokens[0])
         all_in_order = True
