@@ -232,7 +232,9 @@ for epoch in range(1, num_epochs + 1):
     inference_times.append(time.time() - inference_start)
     test_accs.append(test_acc)
     val_accs.append(val_acc)
-    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Time: {train_end - train_start:.4f}s')
+    print(
+        f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Time: {train_end - train_start:.4f}s'
+    )
     print(f'Train: {train_acc * 100.0:.4f}%, Val: {val_acc * 100.0:.4f}%, '
           f'Test: {test_acc * 100.0:.4f}%')
 
