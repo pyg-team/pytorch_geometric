@@ -184,6 +184,7 @@ def test(loader: NeighborLoader, val_steps=None) -> float:
 
 
 if args.use_gat:
+    from torch_geometric.nn.models import GAT
     model = GAT(
         dataset.num_features,
         num_hidden_channels,
@@ -193,7 +194,8 @@ if args.use_gat:
         heads=args.num_heads,
     )
 else:
-    model = SAGE(
+    from torch_geometric.nn.models import GraphSAGE
+    model = GraphSAGE(
         dataset.num_features,
         num_hidden_channels,
         dataset.num_classes,
