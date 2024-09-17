@@ -110,13 +110,14 @@ class BasicGNN(torch.nn.Module):
         if num_layers > 1:
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
+            if self.root_weight:
+                self.lin_rs.append(
+                    Linear(in_channels, hidden_channels, bias=False))
             if isinstance(in_channels, (tuple, list)):
                 in_channels = (hidden_channels, hidden_channels)
             else:
                 in_channels = hidden_channels
-            if self.root_weight:
-                self.lin_rs.append(
-                    Linear(in_channels, hidden_channels, bias=False))
+
         for _ in range(num_layers - 2):
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
