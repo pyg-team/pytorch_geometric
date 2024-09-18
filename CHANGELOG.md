@@ -3,10 +3,32 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## \[2.6.0\] - 2024-MM-DD
+## \[2.7.0\] - 2024-MM-DD
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Fixed
+
+- Fixed `WebQSDataset.process` raising exceptions ([#9665](https://github.com/pyg-team/pytorch_geometric/pull/9665))
+
+### Removed
+
+## \[2.6.0\] - 2024-09-13
+
+### Added
+
+- Added the `WebQSPDataset` dataset ([#9481](https://github.com/pyg-team/pytorch_geometric/pull/9481))
+- Added the `GRetriever` model and an example ([#9480](https://github.com/pyg-team/pytorch_geometric/pull/9480), [#9167](https://github.com/pyg-team/pytorch_geometric/pull/9167))
+- Added the `ClusterPooling` layer ([#9627](https://github.com/pyg-team/pytorch_geometric/pull/9627))
+- Added the `LinkPredMRR` metric ([#9632](https://github.com/pyg-team/pytorch_geometric/pull/9632))
+- Added PyTorch 2.4 support ([#9594](https://github.com/pyg-team/pytorch_geometric/pull/9594))
+- Added `utils.normalize_edge_index` for symmetric/asymmetric normalization of graph edges ([#9554](https://github.com/pyg-team/pytorch_geometric/pull/9554))
+- Added the `RemoveSelfLoops` transformation ([#9562](https://github.com/pyg-team/pytorch_geometric/pull/9562))
+- Added ONNX export for `scatter` with min/max reductions ([#9587](https://github.com/pyg-team/pytorch_geometric/pull/9587))
 - Added a `residual` option in `GATConv` and `GATv2Conv` ([#9515](https://github.com/pyg-team/pytorch_geometric/pull/9515))
 - Added the `PatchTransformerAggregation` layer ([#9487](https://github.com/pyg-team/pytorch_geometric/pull/9487))
 - Added the `nn.nlp.LLM` model ([#9462](https://github.com/pyg-team/pytorch_geometric/pull/9462))
@@ -38,6 +60,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Use `torch.load(weights_only=True)` by default ([#9618](https://github.com/pyg-team/pytorch_geometric/pull/9618))
 - Adapt `cugraph` examples to its new API ([#9541](https://github.com/pyg-team/pytorch_geometric/pull/9541))
 - Allow optional but untyped tensors in `MessagePassing` ([#9494](https://github.com/pyg-team/pytorch_geometric/pull/9494))
 - Added support for modifying `filename` of the stored partitioned file in `ClusterLoader` ([#9448](https://github.com/pyg-team/pytorch_geometric/pull/9448))
@@ -61,6 +84,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed `VirtualNode` transform for empty edge indices ([#9605](https://github.com/pyg-team/pytorch_geometric/pull/9605))
 - Fixed an issue where import order in the multi-GPU `cugraph` example could cause an `rmm` error ([#9577](https://github.com/pyg-team/pytorch_geometric/pull/9577))
 - Made the output of the single-GPU `cugraph` example more readable ([#9577](https://github.com/pyg-team/pytorch_geometric/pull/9577))
 - Fixed `load_state_dict` behavior with lazy parameters in `HeteroDictLinear` ([#9493](https://github.com/pyg-team/pytorch_geometric/pull/9493))

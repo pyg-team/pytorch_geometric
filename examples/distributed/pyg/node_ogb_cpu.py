@@ -16,6 +16,7 @@ from torch_geometric.distributed import (
     LocalFeatureStore,
     LocalGraphStore,
 )
+from torch_geometric.io import fs
 from torch_geometric.nn import GraphSAGE, to_hetero
 
 
@@ -184,13 +185,13 @@ def run_proc(
     print('--- Loading data partition files ...')
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), dataset_root_dir)
     node_label_file = osp.join(root_dir, f'{dataset}-label', 'label.pt')
-    train_idx = torch.load(
+    train_idx = fs.torch_load(
         osp.join(
             root_dir,
             f'{dataset}-train-partitions',
             f'partition{node_rank}.pt',
         ))
-    test_idx = torch.load(
+    test_idx = fs.torch_load(
         osp.join(
             root_dir,
             f'{dataset}-test-partitions',
@@ -207,7 +208,7 @@ def run_proc(
     # Load partition into local feature store:
     feature = LocalFeatureStore.from_partition(
         osp.join(root_dir, f'{dataset}-partitions'), node_rank)
-    feature.labels = torch.load(node_label_file)
+    feature.labels = fs.torch_load(node_label_file)
     partition_data = (feature, graph)
     print(f'Partition metadata: {graph.meta}')
 

@@ -5,6 +5,8 @@ from typing import Any, List, NamedTuple, Optional, Tuple
 import torch
 import torch.profiler as torch_profiler
 
+import torch_geometric.typing
+
 # predefined namedtuple for variable setting (global template)
 Trace = namedtuple('Trace', ['path', 'leaf', 'module'])
 
@@ -325,6 +327,8 @@ def _flatten_tree(t, depth=0):
 
 
 def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
+    device_str = 'device' if torch_geometric.typing.WITH_PT24 else 'cuda'
+
     # memory profiling supported in torch >= 1.6
     self_cpu_memory = None
     has_self_cpu_memory = any(
@@ -339,29 +343,34 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
             [getattr(e, "cpu_memory_usage", 0) or 0 for e in events])
     self_cuda_memory = None
     has_self_cuda_memory = any(
-        hasattr(e, "self_cuda_memory_usage") for e in events)
+        hasattr(e, f"self_{device_str}_memory_usage") for e in events)
     if has_self_cuda_memory:
-        self_cuda_memory = sum(
-            [getattr(e, "self_cuda_memory_usage", 0) or 0 for e in events])
+        self_cuda_memory = sum([
+            getattr(e, f"self_{device_str}_memory_usage", 0) or 0
+            for e in events
+        ])
     cuda_memory = None
-    has_cuda_memory = any(hasattr(e, "cuda_memory_usage") for e in events)
+    has_cuda_memory = any(
+        hasattr(e, f"{device_str}_memory_usage") for e in events)
     if has_cuda_memory:
         cuda_memory = sum(
-            [getattr(e, "cuda_memory_usage", 0) or 0 for e in events])
+            [getattr(e, f"{device_str}_memory_usage", 0) or 0 for e in events])
 
     # self CUDA time supported in torch >= 1.7
     self_cuda_total = None
     has_self_cuda_time = any(
-        hasattr(e, "self_cuda_time_total") for e in events)
+        hasattr(e, f"self_{device_str}_time_total") for e in events)
     if has_self_cuda_time:
-        self_cuda_total = sum(
-            [getattr(e, "self_cuda_time_total", 0) or 0 for e in events])
+        self_cuda_total = sum([
+            getattr(e, f"self_{device_str}_time_total", 0) or 0 for e in events
+        ])
 
     return Measure(
         self_cpu_total=sum([e.self_cpu_time_total or 0 for e in events]),
         cpu_total=sum([e.cpu_time_total or 0 for e in events]),
         self_cuda_total=self_cuda_total,
-        cuda_total=sum([e.cuda_time_total or 0 for e in events]),
+        cuda_total=sum(
+            [getattr(e, f"{device_str}_time_total") or 0 for e in events]),
         self_cpu_memory=self_cpu_memory,
         cpu_memory=cpu_memory,
         self_cuda_memory=self_cuda_memory,

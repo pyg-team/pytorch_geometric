@@ -10,6 +10,7 @@ from torch_geometric.data import (
     download_url,
     extract_tar,
 )
+from torch_geometric.io import fs
 
 
 class Wikidata5M(InMemoryDataset):
@@ -99,7 +100,7 @@ class Wikidata5M(InMemoryDataset):
                 values = line.strip().split('\t')
                 entity_to_id[values[0]] = i
 
-        x = torch.load(self.raw_paths[1])
+        x = fs.torch_load(self.raw_paths[1])
 
         edge_indices = []
         edge_types = []

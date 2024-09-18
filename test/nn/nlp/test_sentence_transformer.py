@@ -23,9 +23,13 @@ def test_sentence_transformer(batch_size, pooling_strategy, device):
     ]
 
     out = model.encode(text, batch_size=batch_size)
+    assert out.device == device
+    assert out.size() == (2, 128)
+
+    out = model.encode(text, batch_size=batch_size, output_device='cpu')
     assert out.is_cpu
     assert out.size() == (2, 128)
 
-    out = model.encode(text, batch_size=batch_size, output_device=device)
+    out = model.encode([], batch_size=batch_size)
     assert out.device == device
-    assert out.size() == (2, 128)
+    assert out.size() == (0, 128)
