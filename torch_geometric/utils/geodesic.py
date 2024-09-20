@@ -2,6 +2,7 @@ import multiprocessing as mp
 import warnings
 from typing import Optional
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -82,54 +83,55 @@ def geodesic_distance(  # noqa: D417
 
     dtype = pos.dtype
 
-    pos = pos.detach().cpu().to(torch.double).numpy()
-    face = face.detach().t().cpu().to(torch.int).numpy()
+    pos_np = pos.detach().cpu().to(torch.double).numpy()
+    face_np = face.detach().t().cpu().to(torch.int).numpy()
 
     if src is None and dst is None:
-        out = gdist.local_gdist_matrix(pos, face,
-                                       max_distance * scale).toarray() / scale
+        out = gdist.local_gdist_matrix(
+            pos_np,
+            face_np,
+            max_distance * scale,
+        ).toarray() / scale
         return torch.from_numpy(out).to(dtype)
 
     if src is None:
-        src = torch.arange(pos.shape[0], dtype=torch.int).numpy()
+        src_np = torch.arange(pos.size(0), dtype=torch.int).numpy()
     else:
-        src = src.detach().cpu().to(torch.int).numpy()
-    assert src is not None
+        src_np = src.detach().cpu().to(torch.int).numpy()
 
-    dst = None if dst is None else dst.detach().cpu().to(torch.int).numpy()
+    dst_np = None if dst is None else dst.detach().cpu().to(torch.int).numpy()
 
     def _parallel_loop(
-        pos: Tensor,
-        face: Tensor,
-        src: Tensor,
-        dst: Optional[Tensor],
+        pos_np: np.ndarray,
+        face_np: np.ndarray,
+        src_np: np.ndarray,
+        dst_np: Optional[np.ndarray],
         max_distance: float,
         scale: float,
         i: int,
         dtype: torch.dtype,
     ) -> Tensor:
-        s = src[i:i + 1]
-        d = None if dst is None else dst[i:i + 1]
-        out = gdist.compute_gdist(pos, face, s, d, max_distance * scale)
+        s = src_np[i:i + 1]
+        d = None if dst_np is None else dst_np[i:i + 1]
+        out = gdist.compute_gdist(pos_np, face_np, s, d, max_distance * scale)
         out = out / scale
         return torch.from_numpy(out).to(dtype)
 
     num_workers = mp.cpu_count() if num_workers <= -1 else num_workers
     if num_workers > 0:
         with mp.Pool(num_workers) as pool:
-            outs = pool.starmap(
-                _parallel_loop,
-                [(pos, face, src, dst, max_distance, scale, i, dtype)
-                 for i in range(len(src))])
+            data = [(pos_np, face_np, src_np, dst_np, max_distance, scale, i,
+                     dtype) for i in range(len(src_np))]
+            outs = pool.starmap(_parallel_loop, data)
     else:
         outs = [
-            _parallel_loop(pos, face, src, dst, max_distance, scale, i, dtype)
-            for i in range(len(src))
+            _parallel_loop(pos_np, face_np, src_np, dst_np, max_distance,
+                           scale, i, dtype) for i in range(len(src_np))
         ]
 
     out = torch.cat(outs, dim=0)
 
     if dst is None:
-        out = out.view(-1, pos.shape[0])
+        out = out.view(-1, pos.size(0))
 
     return out

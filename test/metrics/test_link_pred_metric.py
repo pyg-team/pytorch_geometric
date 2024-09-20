@@ -6,6 +6,7 @@ import torch
 from torch_geometric.metrics import (
     LinkPredF1,
     LinkPredMAP,
+    LinkPredMRR,
     LinkPredNDCG,
     LinkPredPrecision,
     LinkPredRecall,
@@ -98,3 +99,15 @@ def test_ndcg():
     result = metric.compute()
 
     assert float(result) == pytest.approx(0.6934264)
+
+
+def test_mrr():
+    pred_mat = torch.tensor([[1, 0], [1, 2], [0, 2], [0, 1]])
+    edge_label_index = torch.tensor([[0, 0, 2, 2, 3], [0, 1, 2, 1, 2]])
+
+    metric = LinkPredMRR(k=2)
+    assert str(metric) == 'LinkPredMRR(k=2)'
+    metric.update(pred_mat, edge_label_index)
+    result = metric.compute()
+
+    assert float(result) == pytest.approx((1 + 0.5 + 0) / 3)

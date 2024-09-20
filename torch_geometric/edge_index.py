@@ -173,7 +173,7 @@ class EdgeIndex(Tensor):
     :meth:`EdgeIndex.fill_cache_`, and are maintained and adjusted over its
     lifespan (*e.g.*, when calling :meth:`EdgeIndex.flip`).
 
-    This representation ensures for optimal computation in GNN message passing
+    This representation ensures optimal computation in GNN message passing
     schemes, while preserving the ease-of-use of regular COO-based :pyg:`PyG`
     workflows.
 
@@ -820,18 +820,27 @@ class EdgeIndex(Tensor):
                 :obj:`1.0`. (default: :obj:`None`)
         """
         value = self._get_value() if value is None else value
-        out = torch.sparse_coo_tensor(
+
+        if not torch_geometric.typing.WITH_PT21:
+            out = torch.sparse_coo_tensor(
+                indices=self._data,
+                values=value,
+                size=self.get_sparse_size(),
+                device=self.device,
+                requires_grad=value.requires_grad,
+            )
+            if self.is_sorted_by_row:
+                out = out._coalesced_(True)
+            return out
+
+        return torch.sparse_coo_tensor(
             indices=self._data,
             values=value,
             size=self.get_sparse_size(),
             device=self.device,
             requires_grad=value.requires_grad,
+            is_coalesced=True if self.is_sorted_by_row else None,
         )
-
-        if self.is_sorted_by_row:
-            out = out._coalesced_(True)
-
-        return out
 
     def to_sparse_csr(  # type: ignore
             self,
@@ -1928,7 +1937,7 @@ def _spmm(
     if transpose and not input.is_sorted_by_col:
         cls_name = input.__class__.__name__
         raise ValueError(f"'matmul(..., transpose=True)' requires "
-                         f"'{cls_name}' to be sorted by colums")
+                         f"'{cls_name}' to be sorted by columns")
 
     if (torch_geometric.typing.WITH_TORCH_SPARSE and not is_compiling()
             and other.is_cuda):  # pragma: no cover

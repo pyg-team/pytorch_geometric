@@ -5,6 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.io import fs
 from torch_geometric.utils import one_hot
 
 
@@ -115,9 +116,9 @@ class LINKXDataset(InMemoryDataset):
 
     def _process_wiki(self) -> Data:
         paths = {x.split('/')[-1]: x for x in self.raw_paths}
-        x = torch.load(paths['wiki_features2M.pt'])
-        edge_index = torch.load(paths['wiki_edges2M.pt']).t().contiguous()
-        y = torch.load(paths['wiki_views2M.pt'])
+        x = fs.torch_load(paths['wiki_features2M.pt'])
+        edge_index = fs.torch_load(paths['wiki_edges2M.pt']).t().contiguous()
+        y = fs.torch_load(paths['wiki_views2M.pt'])
 
         return Data(x=x, edge_index=edge_index, y=y)
 

@@ -631,7 +631,7 @@ def edge_sample(
             if edge_label_time is not None:
                 dst_time = edge_label_time.repeat(1 + neg_sampling.amount)
 
-    # Heterogeneus Neighborhood Sampling ######################################
+    # Heterogeneous Neighborhood Sampling #####################################
 
     if input_type is not None:
         seed_time_dict = None
@@ -724,7 +724,7 @@ def edge_sample(
                 src_time,
             )
 
-    # Homogeneus Neighborhood Sampling ########################################
+    # Homogeneous Neighborhood Sampling #######################################
 
     else:
 

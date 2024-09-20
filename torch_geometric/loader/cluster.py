@@ -12,6 +12,7 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.index import index2ptr, ptr2index
+from torch_geometric.io import fs
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort, narrow, select, sort_edge_index
 from torch_geometric.utils.map import map_index
@@ -77,7 +78,7 @@ class ClusterData(torch.utils.data.Dataset):
         path = osp.join(root_dir, filename or 'metis.pt')
 
         if save_dir is not None and osp.exists(path):
-            self.partition = torch.load(path)
+            self.partition = fs.torch_load(path)
         else:
             if log:  # pragma: no cover
                 print('Computing METIS partitioning...', file=sys.stderr)

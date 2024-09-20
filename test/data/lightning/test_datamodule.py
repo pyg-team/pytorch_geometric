@@ -1,4 +1,5 @@
 import math
+from contextlib import contextmanager
 
 import pytest
 import torch
@@ -81,6 +82,15 @@ class LinearGraphModule(LightningModule):
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_dataset(get_dataset, strategy_type):
     import pytorch_lightning as pl
+    from pytorch_lightning.utilities import rank_zero_only
+
+    @contextmanager
+    def expect_rank_zero_user_warning(match: str):
+        if rank_zero_only.rank == 0:
+            with pytest.warns(UserWarning, match=match):
+                yield
+        else:
+            yield
 
     dataset = get_dataset(name='MUTAG').shuffle()
     train_dataset = dataset[:50]
@@ -128,7 +138,7 @@ def test_lightning_dataset(get_dataset, strategy_type):
                                    'pin_memory=True, '
                                    'persistent_workers=False)')
 
-        with pytest.warns(UserWarning, match="defined a `validation_step`"):
+        with expect_rank_zero_user_warning("defined a `validation_step`"):
             trainer.fit(model, datamodule)
 
         assert not trainer.validate_loop._data_source.is_defined()
@@ -276,11 +286,20 @@ class LinearHeteroNodeModule(LightningModule):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
+@pytest.fixture
+def preserve_context():
+    num_threads = torch.get_num_threads()
+    yield
+    if torch.distributed.is_initialized():
+        torch.distributed.destroy_process_group()
+    torch.set_num_threads(num_threads)
+
+
 @onlyCUDA
 @onlyFullTest
 @onlyNeighborSampler
 @withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
-def test_lightning_hetero_node_data(get_dataset):
+def test_lightning_hetero_node_data(preserve_context, get_dataset):
     import pytorch_lightning as pl
 
     data = get_dataset(name='hetero')[0]
