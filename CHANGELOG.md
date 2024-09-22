@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed a typo in explainability docs ([#9676](https://github.com/pyg-team/pytorch_geometric/pull/9676))
+
 ### Deprecated
 
 ### Fixed
