@@ -11,7 +11,7 @@ torch_geometric.explain
 .. contents:: Contents
     :local:
 
-Philoshopy
+Philosophy
 ----------
 
 This module provides a set of tools to explain the predictions of a PyG model or to explain the underlying phenomenon of a dataset (see the `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper for more details).
