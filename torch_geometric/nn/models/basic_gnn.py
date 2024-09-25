@@ -567,7 +567,7 @@ class GIN(BasicGNN):
             :obj:`"lstm"`). (default: :obj:`None`)
         root_weight (bool, optional): If set to :obj:`True`, each layer will
             add transformed root node features to the output.
-            (default: :obj:`True`)
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
