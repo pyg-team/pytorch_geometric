@@ -2,7 +2,7 @@ from typing import List
 
 import torch
 from tqdm import tqdm
-
+import re
 from torch_geometric.data import Data, InMemoryDataset
 
 try:
@@ -38,16 +38,12 @@ def find_wierd_names(func_name_tokens, raw_dataset):
         # helper code to find wierd matches
         # since its non-trivial to apply such complex search to pandas
         func_name = func_name.split('.')[-1].lower()
-        all_in = all([bool(token in func_name) for token in func_name_tokens])
-        last_pos = func_name.find(func_name_tokens[0])
-        all_in_order = True
-        for token in func_name_tokens[1:]:
-            cur_pos = func_name.find(token)
-            all_in_order = last_pos < cur_pos
-            if not all_in_order:
-                break
-        matches = (all_in and all_in_order)
-        if matches:
+        escaped_tokens = [re.escape(item).lower() for item in func_name_tokens]
+        # REGEX by ChatGPT
+        pattern = r'(^|_)?(' + '|'.join(escaped_tokens) + r')(_|$)?'
+        final_pattern = r'^(?:' + pattern + r')+$'
+        regex = re.compile(final_pattern)
+        if regex.match(func_name):
             return raw_dataset["whole_func_string"][i]
     raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
 
@@ -158,6 +154,9 @@ class OGBG_Code2(InMemoryDataset):
             basic_matches = basic_matches | (
                 func_name == ''.join(func_name_tokens[:-1]).lower() + "_" +
                 func_name_tokens[-1].lower())
+            # basic_matches = basic_matches | (
+            #     func_name == '_'.join(func_name_tokens[:-1]).lower() +
+            #     func_name_tokens[-1].lower())
         matches = basic_matches
         result = self.df[matches]
         if len(result) > 0:
