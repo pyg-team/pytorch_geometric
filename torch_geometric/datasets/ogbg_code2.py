@@ -1,8 +1,9 @@
+import re
 from typing import List
 
 import torch
 from tqdm import tqdm
-import re
+
 from torch_geometric.data import Data, InMemoryDataset
 
 try:
