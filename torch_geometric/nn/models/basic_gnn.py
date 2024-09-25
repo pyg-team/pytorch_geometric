@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Final, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch.nn import Linear, ModuleList
+from torch.nn import ModuleList
 from tqdm import tqdm
 
 from torch_geometric.data import Data
@@ -19,6 +19,7 @@ from torch_geometric.nn.conv import (
     PNAConv,
     SAGEConv,
 )
+from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
 from torch_geometric.nn.resolver import (
@@ -61,14 +62,16 @@ class BasicGNN(torch.nn.Module):
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
         root_weight (bool, optional): If set to :obj:`True`, each layer will
-            add transformed root node features to the output.
-            (default: :obj:`False`)
+            add transformed root node features to the output. If set to
+            :obj:`None`, defaults to the original GNN instance definition.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
     supports_edge_weight: Final[bool]
     supports_edge_attr: Final[bool]
     supports_norm_batch: Final[bool]
+    default_root_weight: Final[bool]
 
     def __init__(
         self,
@@ -83,10 +86,13 @@ class BasicGNN(torch.nn.Module):
         norm: Union[str, Callable, None] = None,
         norm_kwargs: Optional[Dict[str, Any]] = None,
         jk: Optional[str] = None,
-        root_weight: bool = False,
+        root_weight: Optional[bool] = None,
         **kwargs,
     ):
         super().__init__()
+
+        if root_weight is None:
+            root_weight = self.default_root_weight
 
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -105,14 +111,13 @@ class BasicGNN(torch.nn.Module):
             self.out_channels = hidden_channels
 
         self.convs = ModuleList()
-        if self.root_weight:
-            self.lin_rs = ModuleList()
+        self.root_lins = ModuleList()
+
         if num_layers > 1:
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
-            if self.root_weight:
-                self.lin_rs.append(
-                    Linear(in_channels, hidden_channels, bias=False))
+            self.root_lins.append(
+                self.init_root_weight(in_channels, hidden_channels))
             if isinstance(in_channels, (tuple, list)):
                 in_channels = (hidden_channels, hidden_channels)
             else:
@@ -121,26 +126,24 @@ class BasicGNN(torch.nn.Module):
         for _ in range(num_layers - 2):
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
+            self.root_lins.append(
+                self.init_root_weight(in_channels, hidden_channels))
             if isinstance(in_channels, (tuple, list)):
                 in_channels = (hidden_channels, hidden_channels)
             else:
                 in_channels = hidden_channels
-            if self.root_weight:
-                self.lin_rs.append(
-                    Linear(hidden_channels, hidden_channels, bias=False))
         if out_channels is not None and jk is None:
             self._is_conv_to_out = True
             self.convs.append(
                 self.init_conv(in_channels, out_channels, **kwargs))
-            if self.root_weight:
-                self.lin_rs.append(
-                    Linear(in_channels, out_channels, bias=False))
+            self.root_lins.append(
+                self.init_root_weight(in_channels, out_channels))
         else:
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
-            if self.root_weight:
-                self.lin_rs.append(
-                    Linear(in_channels, hidden_channels, bias=False))
+            self.root_lins.append(
+                self.init_root_weight(in_channels, hidden_channels))
+
         self.norms = ModuleList()
         norm_layer = normalization_resolver(
             norm,
@@ -181,10 +184,23 @@ class BasicGNN(torch.nn.Module):
                   out_channels: int, **kwargs) -> MessagePassing:
         raise NotImplementedError
 
+    def init_root_weight(self, in_channels: Union[int, Tuple[int, int]],
+                         out_channels: int) -> torch.nn.Module:
+        if not self.root_weight:
+            return torch.nn.Identity()
+
+        if isinstance(in_channels, (tuple, list)):
+            in_channels = in_channels[1]
+
+        return Linear(in_channels, out_channels, bias=False)
+
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         for conv in self.convs:
             conv.reset_parameters()
+        for lin in self.root_lins:
+            if hasattr(lin, 'reset_parameters'):
+                lin.reset_parameters()
         for norm in self.norms:
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
@@ -243,8 +259,14 @@ class BasicGNN(torch.nn.Module):
                                       "'edge_weight' and 'edge_attr'")
 
         xs: List[Tensor] = []
+        assert len(self.convs) == len(self.root_lins)
         assert len(self.convs) == len(self.norms)
-        for i, (conv, norm) in enumerate(zip(self.convs, self.norms)):
+        for i, (conv, root_lin, norm) in enumerate(
+                zip(
+                    self.convs,
+                    self.root_lins,
+                    self.norms,
+                )):
             if (not torch.jit.is_scripting()
                     and num_sampled_nodes_per_hop is not None):
                 x, edge_index, value = self._trim(
@@ -259,8 +281,11 @@ class BasicGNN(torch.nn.Module):
                     edge_weight = value
                 else:
                     edge_attr = value
+
+            x_root: Optional[Tensor] = None
             if self.root_weight:
-                x_r = x
+                x_root = x if isinstance(x, Tensor) else x[1]
+
             # Tracing the module is not allowed with *args and **kwargs :(
             # As such, we rely on a static solution to pass optional edge
             # weights and edge attributes to the module.
@@ -273,8 +298,10 @@ class BasicGNN(torch.nn.Module):
                 x = conv(x, edge_index, edge_attr=edge_attr)
             else:
                 x = conv(x, edge_index)
-            if self.root_weight and x_r is not None:
-                x = x + self.lin_rs[i](x_r)
+
+            if x_root is not None:
+                x = x + root_lin(x_root)
+
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:
                     x = self.act(x)
@@ -302,7 +329,12 @@ class BasicGNN(torch.nn.Module):
         batch_size: int,
     ) -> Tensor:
 
+        x_root = x if self.root_weight else None
+
         x = self.convs[layer](x, edge_index)[:batch_size]
+
+        if x_root is not None:
+            x = x + self.root_lins[layer](x_root)
 
         if layer == self.num_layers - 1 and self.jk_mode is None:
             return x
@@ -447,6 +479,7 @@ class GCN(BasicGNN):
     supports_edge_weight: Final[bool] = True
     supports_edge_attr: Final[bool] = False
     supports_norm_batch: Final[bool]
+    default_root_weight: Final[bool] = False
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -488,13 +521,14 @@ class GraphSAGE(BasicGNN):
             :obj:`"lstm"`). (default: :obj:`None`)
         root_weight (bool, optional): If set to :obj:`True`, each layer will
             add transformed root node features to the output.
-            (default: :obj:`False`)
+            (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
     supports_norm_batch: Final[bool]
+    default_root_weight: Final[bool] = True
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -531,8 +565,8 @@ class GIN(BasicGNN):
             node embeddings to the expected output feature dimensionality.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
-        root_weight (bool, optional): If set to :obj:`False`, each layer will
-            not add transformed root node features to the output.
+        root_weight (bool, optional): If set to :obj:`True`, each layer will
+            add transformed root node features to the output.
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
@@ -540,38 +574,7 @@ class GIN(BasicGNN):
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
     supports_norm_batch: Final[bool]
-
-    def __init__(
-        self,
-        in_channels: int,
-        hidden_channels: int,
-        num_layers: int,
-        out_channels: Optional[int] = None,
-        dropout: float = 0.0,
-        act: Union[str, Callable, None] = "relu",
-        act_first: bool = False,
-        act_kwargs: Optional[Dict[str, Any]] = None,
-        norm: Union[str, Callable, None] = None,
-        norm_kwargs: Optional[Dict[str, Any]] = None,
-        jk: Optional[str] = None,
-        root_weight: bool = True,
-        **kwargs,
-    ):
-        super().__init__(
-            in_channels,
-            hidden_channels,
-            num_layers,
-            out_channels,
-            dropout,
-            act,
-            act_first,
-            act_kwargs,
-            norm,
-            norm_kwargs,
-            jk,
-            root_weight,
-            **kwargs,
-        )
+    default_root_weight: Final[bool] = False
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -634,6 +637,7 @@ class GAT(BasicGNN):
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = True
     supports_norm_batch: Final[bool]
+    default_root_weight: Final[bool] = False
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -700,6 +704,7 @@ class PNA(BasicGNN):
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = True
     supports_norm_batch: Final[bool]
+    default_root_weight: Final[bool] = False
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -745,6 +750,7 @@ class EdgeCNN(BasicGNN):
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
     supports_norm_batch: Final[bool]
+    default_root_weight: Final[bool] = False
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
