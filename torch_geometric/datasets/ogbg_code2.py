@@ -140,6 +140,9 @@ class OGBG_Code2(InMemoryDataset):
         basic_matches = (func_name == ''.join(func_name_tokens).lower()) | (
             func_name == '_'.join(func_name_tokens).lower()) | (
                 func_name == "_" + "_".join(func_name_tokens).lower())
+        
+        basic_matches = basic_matches | (func_name ==
+                                         ''.join(func_name_tokens).lower())
         basic_matches = basic_matches | (func_name == "_" +
                                          ''.join(func_name_tokens).lower())
         basic_matches = basic_matches | (
@@ -155,9 +158,9 @@ class OGBG_Code2(InMemoryDataset):
             basic_matches = basic_matches | (
                 func_name == ''.join(func_name_tokens[:-1]).lower() + "_" +
                 func_name_tokens[-1].lower())
-            # basic_matches = basic_matches | (
-            #     func_name == '_'.join(func_name_tokens[:-1]).lower() +
-            #     func_name_tokens[-1].lower())
+            basic_matches = basic_matches | (
+                func_name == '_'.join(func_name_tokens[:-1]).lower() +
+                func_name_tokens[-1].lower())
         matches = basic_matches
         result = self.df[matches]
         if len(result) > 0:
