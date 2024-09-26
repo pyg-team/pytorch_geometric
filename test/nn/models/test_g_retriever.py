@@ -1,70 +1,101 @@
 import torch
 
-from torch_geometric.data import Data
-from torch_geometric.nn.models import GRetriever
+from torch_geometric.nn import GAT, GRetriever
+from torch_geometric.nn.nlp import LLM
 from torch_geometric.testing import onlyFullTest, withPackage
-
-
-def _setup_batch() -> Data:
-    batch = Data()
-    batch.question = ["Is PyG the best open-source GNN library?"]
-    batch.label = ["yes!"]
-    batch.num_nodes = 10
-    batch.n_id = torch.arange(10).to(torch.int64)
-    batch.num_edges = 20
-    batch.x = torch.randn((10, 1024))
-    batch.edge_attr = torch.randn((20, 1024))
-    # Model expects batches sampled from Dataloader
-    # hardcoding values for single item batch
-    batch.batch = torch.zeros(batch.num_nodes).to(torch.int64)
-    batch.ptr = torch.tensor([0, batch.num_nodes]).to(torch.int64)
-    # simple cycle graph
-    batch.edge_index = torch.tensor(
-        [list(range(10)), list(range(1, 10)) + [0]])
-    return batch
-
-
-def _eval_train_call(model, batch):
-    # test train
-    loss = model(batch.question, batch.x, batch.edge_index, batch.batch,
-                 batch.ptr, batch.label, batch.edge_attr)
-    assert loss is not None
-
-
-def _eval_inference_call(model, batch):
-    # test inference
-    pred = model.inference(batch.question, batch.x, batch.edge_index,
-                           batch.batch, batch.ptr, batch.edge_attr)
-    assert pred is not None
 
 
 @onlyFullTest
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever() -> None:
-    batch = _setup_batch()
+    llm = LLM(
+        model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+        num_params=1,
+        dtype=torch.float16,
+    )
+
+    gnn = GAT(
+        in_channels=1024,
+        out_channels=1024,
+        hidden_channels=1024,
+        num_layers=2,
+        heads=4,
+        norm='batch_norm',
+    )
 
     model = GRetriever(
-        llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-        num_llm_params=1,  # 1 Billion
-        mlp_out_dim=2048,
+        llm=llm,
+        gnn=gnn,
+        mlp_out_channels=2048,
     )
-    batch = batch.to(model.llm_device)
+    assert str(model) == ('GRetriever(\n'
+                          '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
+                          '  gnn=GAT(1024, 1024, num_layers=2),\n'
+                          ')')
 
-    _eval_train_call(model, batch)
-    _eval_inference_call(model, batch)
+    x = torch.randn(10, 1024)
+    edge_index = torch.tensor([
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+    ])
+    edge_attr = torch.randn(edge_index.size(1), 1024)
+    batch = torch.zeros(x.size(0), dtype=torch.long)
 
+    question = ["Is PyG the best open-source GNN library?"]
+    label = ["yes!"]
+
+    # Test train:
+    loss = model(question, x, edge_index, batch, label, edge_attr)
+    assert loss >= 0
+
+    # Test inference:
+    pred = model.inference(question, x, edge_index, batch, edge_attr)
+    assert len(pred) == 1
 
 @onlyFullTest
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever_many_tokens() -> None:
-    batch = _setup_batch()
+    llm = LLM(
+        model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+        num_params=1,
+        dtype=torch.float16,
+    )
+
+    gnn = GAT(
+        in_channels=1024,
+        out_channels=1024,
+        hidden_channels=1024,
+        num_layers=2,
+        heads=4,
+        norm='batch_norm',
+    )
 
     model = GRetriever(
-        llm_to_use="TinyLlama/TinyLlama-1.1B-Chat-v0.1",
-        num_llm_params=1,  # 1 Billion
-        mlp_out_dim=2048,
-        mlp_out_tokens=2)
-    batch = batch.to(model.llm_device)
+        llm=llm,
+        gnn=gnn,
+        mlp_out_channels=2048,
+        mlp_out_tokens=2,
+    )
+    assert str(model) == ('GRetriever(\n'
+                          '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
+                          '  gnn=GAT(1024, 1024, num_layers=2),\n'
+                          ')')
 
-    _eval_train_call(model, batch)
-    _eval_inference_call(model, batch)
+    x = torch.randn(10, 1024)
+    edge_index = torch.tensor([
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+    ])
+    edge_attr = torch.randn(edge_index.size(1), 1024)
+    batch = torch.zeros(x.size(0), dtype=torch.long)
+
+    question = ["Is PyG the best open-source GNN library?"]
+    label = ["yes!"]
+
+    # Test train:
+    loss = model(question, x, edge_index, batch, label, edge_attr)
+    assert loss >= 0
+
+    # Test inference:
+    pred = model.inference(question, x, edge_index, batch, edge_attr)
+    assert len(pred) == 1

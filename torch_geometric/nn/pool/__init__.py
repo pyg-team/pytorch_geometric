@@ -7,18 +7,19 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.typing import OptTensor, torch_cluster
 
-from .asap import ASAPooling
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
-from .edge_pool import EdgePooling
 from .glob import global_add_pool, global_max_pool, global_mean_pool
 from .knn import (KNNIndex, L2KNNIndex, MIPSKNNIndex, ApproxL2KNNIndex,
                   ApproxMIPSKNNIndex)
 from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
-from .mem_pool import MemPooling
-from .pan_pool import PANPooling
-from .sag_pool import SAGPooling
 from .topk_pool import TopKPooling
+from .sag_pool import SAGPooling
+from .edge_pool import EdgePooling
+from .cluster_pool import ClusterPooling
+from .asap import ASAPooling
+from .pan_pool import PANPooling
+from .mem_pool import MemPooling
 from .voxel_grid import voxel_grid
 from .approx_knn import approx_knn, approx_knn_graph
 
@@ -344,6 +345,7 @@ __all__ = [
     'TopKPooling',
     'SAGPooling',
     'EdgePooling',
+    'ClusterPooling',
     'ASAPooling',
     'PANPooling',
     'MemPooling',

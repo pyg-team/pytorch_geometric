@@ -54,10 +54,11 @@ class SentenceTransformer(torch.nn.Module):
         self,
         text: List[str],
         batch_size: Optional[int] = None,
-        output_device: Optional[torch.device] = None,
+        output_device: Optional[Union[torch.device, str]] = None,
     ) -> Tensor:
-        if len(text) == 0:
-            return torch.zeros((0, 1024))
+        is_empty = len(text) == 0
+        text = ['dummy'] if is_empty else text
+
         batch_size = len(text) if batch_size is None else batch_size
 
         embs: List[Tensor] = []
@@ -72,11 +73,13 @@ class SentenceTransformer(torch.nn.Module):
             emb = self(
                 input_ids=token.input_ids.to(self.device),
                 attention_mask=token.attention_mask.to(self.device),
-            ).to(output_device or 'cpu')
+            ).to(output_device)
 
             embs.append(emb)
 
-        return torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
+        out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
+        out = out[:0] if is_empty else out
+        return out
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(model_name={self.model_name})'
