@@ -46,7 +46,7 @@ def find_wierd_names(func_name_tokens, raw_dataset):
         regex = re.compile(final_pattern)
         if regex.match(func_name):
             return raw_dataset["whole_func_string"][i]
-    raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
+    return None
 
 
 def make_df_from_raw_data(raw_dataset):
@@ -171,6 +171,10 @@ class OGBG_Code2(InMemoryDataset):
             func_str = str(selected_result.iloc[0]["whole_func_string"])
         else:
             func_str = find_wierd_names(func_name_tokens, self.raw_dataset)
+            if func_str is None:
+                # raw python data is missing from raw huggingface mirror
+                # return empty strings
+                return "", ""
         return func_str[func_str.find("def"):(
             func_str.find(":"))], func_str[func_str.find('"""'):]
 
