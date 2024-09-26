@@ -6,7 +6,14 @@ import torch
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    LargeGraphIndexer,
+    TripletLike,
+    get_features_for_triplets_groups,
+)
+
 from torch_geometric.nn.nlp import SentenceTransformer
 
 
