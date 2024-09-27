@@ -13,7 +13,6 @@ from torch_geometric.data import (
     TripletLike,
     get_features_for_triplets_groups,
 )
-
 from torch_geometric.nn.nlp import SentenceTransformer
 
 
