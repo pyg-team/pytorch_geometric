@@ -80,7 +80,8 @@ class GRetriever(torch.nn.Module):
         self.projector = torch.nn.Sequential(
             torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
             torch.nn.Sigmoid(),
-            torch.nn.Linear(mlp_hidden_channels, mlp_out_channels * mlp_out_tokens),
+            torch.nn.Linear(mlp_hidden_channels,
+                            mlp_out_channels * mlp_out_tokens),
             torch.nn.Unflatten(-1, (mlp_out_tokens, mlp_out_channels)),
         ).to(self.llm.device)
 

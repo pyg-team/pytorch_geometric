@@ -17,9 +17,12 @@ from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.profile.nvtx import nvtxit
 
 sys.path.append('..')
-from g_retriever_utils.rag_backend_utils import create_remote_backend_from_triplets  # noqa: E402
-from g_retriever_utils.rag_feature_store import SentenceTransformerFeatureStore  # noqa: E402
-from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore  # noqa: E402
+from g_retriever_utils.rag_backend_utils import \
+    create_remote_backend_from_triplets  # noqa: E402
+from g_retriever_utils.rag_feature_store import \
+    SentenceTransformerFeatureStore  # noqa: E402
+from g_retriever_utils.rag_graph_store import \
+    NeighborSamplingRAGGraphStore  # noqa: E402
 
 # %%
 # Patch FeatureStore and GraphStore

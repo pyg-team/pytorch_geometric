@@ -1,5 +1,5 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
-from typing import Any, Dict, List, Tuple, no_type_check
+from typing import Any, List, Tuple, no_type_check
 
 import numpy as np
 import torch
@@ -213,7 +213,7 @@ class WebQSPDataset(InMemoryDataset):
             "pre_transform.pt",
             "large_graph_indexer",
         ]
-        split_file = file_lst.pop(['train','val','test'].index(self.split))
+        split_file = file_lst.pop(['train', 'val', 'test'].index(self.split))
         file_lst.insert(0, split_file)
         return file_lst
 
@@ -295,7 +295,7 @@ class WebQSPDataset(InMemoryDataset):
             self.indexer, (ds['graph'] for ds in self.raw_dataset),
             pre_transform=preprocess_triplet, verbose=self.verbose)
 
-        for index in tqdm(range(len(self.raw_dataset)), 
+        for index in tqdm(range(len(self.raw_dataset)),
                           disable=not self.verbose):
             data_i = self.raw_dataset[index]
             graph = next(graph_gen)

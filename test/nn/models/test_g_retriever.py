@@ -52,6 +52,7 @@ def test_g_retriever() -> None:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
 
+
 @onlyFullTest
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever_many_tokens() -> None:

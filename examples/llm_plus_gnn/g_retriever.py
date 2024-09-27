@@ -347,7 +347,7 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
                 num_params=1,
             )
         else:
-            pure_llm = LLM(model_name="meta-llama/Llama-2-7b-chat-hf", 
+            pure_llm = LLM(model_name="meta-llama/Llama-2-7b-chat-hf",
                            num_params=7)
 
         if force or not path.exists(root_dir + "/pure_llm_model_log.pt"):
@@ -538,7 +538,7 @@ def minimal_demo(gnn_llm_eval_outs, dataset, lr, epochs, batch_size,
                     pure_llm_pred, correct_answer)
             else:
                 pure_llm_pred = [''] * len(gnn_llm_hallucinates)
-                pure_llm_hallucinates = [False]* len(gnn_llm_hallucinates)
+                pure_llm_hallucinates = [False] * len(gnn_llm_hallucinates)
             untuned_llm_save_list += [
                 tup for tup in zip(pure_llm_pred, pure_llm_hallucinates)
             ]
