@@ -1,5 +1,6 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
 import os
+from itertools import chain
 from typing import Any, Iterator, List, Tuple, no_type_check
 
 import numpy as np
@@ -176,7 +177,7 @@ class WebQSPDataset(InMemoryDataset):
         self.limit = limit
         self.split = split
         self.include_pcst = include_pcst
-        # TODO Confirm why the dependency checks and device setting were removed here
+        # TODO Confirm why the dependency checks and device setting were removed here # noqa
         '''
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
@@ -230,12 +231,15 @@ class WebQSPDataset(InMemoryDataset):
         torch.save(self.split_idxs, self.raw_paths[1])
 
     def _load_raw_data(self) -> None:
+        import datasets
         if not hasattr(self, "raw_dataset"):
             self.raw_dataset = datasets.load_from_disk(self.raw_paths[0])
         if not hasattr(self, "split_idxs"):
             self.split_idxs = torch.load(self.raw_paths[1])
 
     def download(self) -> None:
+        import datasets
+
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
         self.raw_dataset = datasets.concatenate_datasets(
             [dataset["train"], dataset["validation"], dataset["test"]])
@@ -332,6 +336,7 @@ class WebQSPDataset(InMemoryDataset):
         self.save(list_of_graphs, self.processed_paths[0])
 
     def process(self) -> None:
+        from pandas import DataFrame
         self._load_raw_data()
         self.model = SentenceTransformer(
             'sentence-transformers/all-roberta-large-v1').to(self.device)
