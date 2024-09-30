@@ -166,10 +166,14 @@ class OGBG_Code2(InMemoryDataset):
 
     def process(self) -> None:
         self.ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
-        self.raw_dataset = datasets.load_dataset("claudios/code_search_net", "python")
+        self.raw_dataset = datasets.load_dataset("claudios/code_search_net",
+                                                 "python")
         self.df = make_df_from_raw_data(self.raw_dataset)
         for dataset, path in zip(
-            [self.raw_dataset['train'], self.raw_dataset['validation'], self.raw_dataset['test']],
+            [
+                self.raw_dataset['train'], self.raw_dataset['validation'],
+                self.raw_dataset['test']
+            ],
                 self.processed_paths,
         ):
             new_set = []
@@ -179,9 +183,9 @@ class OGBG_Code2(InMemoryDataset):
                 old_obj = self.ogbg_dataset[i]
                 new_obj = Data()
                 # combine all node information into a single feature tensor, let the GNN+LLM figure it out
-                new_obj.x = torch.cat((old_obj.x, old_obj.node_is_attributed,
-                                       old_obj.node_dfs_order, old_obj.node_depth),
-                                      dim=1)
+                new_obj.x = torch.cat(
+                    (old_obj.x, old_obj.node_is_attributed,
+                     old_obj.node_dfs_order, old_obj.node_depth), dim=1)
                 # extract raw python function for use by LLM
                 func_name_tokens = old_obj.y
                 new_obj.func_signature, new_obj.desc = self.get_raw_python_from_df(
