@@ -25,6 +25,7 @@ def inference_step(model, batch, **kwargs):
         "desc": batch.desc,
         "label": '|'.join(batch.label)
     }
+    print("using correct func")
     return eval_data
 
 
