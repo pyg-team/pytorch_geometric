@@ -156,7 +156,7 @@ class OGBG_Code2(InMemoryDataset):
             selected_result = result.sample()
             func_str = str(selected_result.iloc[0]["whole_func_string"])
         else:
-            func_str = find_wierd_names(func_name_tokens, self.raw_dataset)
+            func_str = find_wierd_names(func_name_tokens, self.combined_rawset)
             if func_str is None:
                 # raw python data is missing from raw huggingface mirror
                 # return empty strings
@@ -166,13 +166,15 @@ class OGBG_Code2(InMemoryDataset):
 
     def process(self) -> None:
         self.ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
-        self.raw_dataset = datasets.load_dataset("claudios/code_search_net",
+        datasets = datasets.load_dataset("claudios/code_search_net",
                                                  "python")
+        self.combined_rawset = datasets.concatenate_datasets(
+            [dataset["train"], dataset["validation"], dataset["test"]])
         self.df = make_df_from_raw_data(self.raw_dataset)
         for dataset, path in zip(
             [
-                self.raw_dataset['train'], self.raw_dataset['validation'],
-                self.raw_dataset['test']
+                datasets['train'], datasets['validation'],
+                datasets['test']
             ],
                 self.processed_paths,
         ):
