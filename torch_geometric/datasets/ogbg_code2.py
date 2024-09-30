@@ -80,16 +80,12 @@ class OGBG_Code2(InMemoryDataset):
         root (str): Root directory where the dataset should be saved.
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
-        include_raw_python (bool, optional): Whether to include raw python
-            text alongside the graph data.
-            (default: :obj:`True`)
     """
     def __init__(
         self,
         root: str = "",
         split: str = "train",
         force_reload: bool = False,
-        include_raw_python: bool = True,
     ) -> None:
         missing_str_list = []
         if not WITH_OGB:

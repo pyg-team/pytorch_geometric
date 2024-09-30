@@ -165,10 +165,11 @@ class WebQSPDataset(InMemoryDataset):
         model = SentenceTransformer(model_name).to(device)
         model.eval()
 
-        for dataset, path in zip(
-            [datasets['train'], datasets['validation'], datasets['test']],
+        for split, path in zip(
+            ['train', 'validation', 'test'],
                 self.processed_paths,
         ):
+            dataset = datasets[split]
             questions = [example["question"] for example in dataset]
             question_embs = model.encode(
                 questions,
@@ -177,7 +178,7 @@ class WebQSPDataset(InMemoryDataset):
             )
 
             data_list = []
-            for i, example in enumerate(tqdm(dataset)):
+            for i, example in enumerate(tqdm(dataset, desc=split)):
                 raw_nodes: Dict[str, int] = {}
                 raw_edges = []
                 for tri in example["graph"]:
