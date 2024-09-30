@@ -122,6 +122,7 @@ def train(
     lr,
     checkpointing=False,
     tiny_llama=False,
+    model=None,
 ):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
@@ -151,25 +152,25 @@ def train(
                             drop_last=False, pin_memory=True, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
-
-    gnn = GAT(
-        in_channels=1024,
-        hidden_channels=hidden_channels,
-        out_channels=1024,
-        num_layers=num_gnn_layers,
-        heads=4,
-    )
-    if tiny_llama:
-        llm = LLM(
-            model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
-            num_params=1,
+    if model is not None:
+        gnn = GAT(
+            in_channels=1024,
+            hidden_channels=hidden_channels,
+            out_channels=1024,
+            num_layers=num_gnn_layers,
+            heads=4,
         )
-        model = GRetriever(llm=llm, gnn=gnn, mlp_out_channels=2048)
-    else:
-        llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
-        model = GRetriever(llm=llm, gnn=gnn)
+        if tiny_llama:
+            llm = LLM(
+                model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+                num_params=1,
+            )
+            model = GRetriever(llm=llm, gnn=gnn, mlp_out_channels=2048)
+        else:
+            llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
+            model = GRetriever(llm=llm, gnn=gnn)
 
-    model_save_name = 'gnn_llm' if num_gnn_layers is not None else 'llm'
+    model_save_name = 'gnn_llm' if num_gnn_layers is not None else str(model).lower()
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
