@@ -338,9 +338,9 @@ class BasicGNN(torch.nn.Module):
 
         if x_root is not None:
             if isinstance(x, Tensor):
-                x = x + root_lins[layer](x_root)
+                x = x + self.root_lins[layer](x_root)
             else:
-                x = x[0] + root_lins[layer](x_root)
+                x = x[0] + self.root_lins[layer](x_root)
 
         if layer == self.num_layers - 1 and self.jk_mode is None:
             return x
