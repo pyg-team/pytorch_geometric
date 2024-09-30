@@ -40,7 +40,7 @@ CodeRetriever = GRetriever(
     gnn=gnn_to_use,
 )
 
-prep_time, _, _ = train(since, num_epochs=5, hidden_channels=None,
+prep_time, _, _ = train(num_epochs=5, hidden_channels=None,
                         num_gnn_layers=None, batch_size=16, eval_batch_size=32,
                         lr=1e-5, checkpointing=True, model=CodeRetriever,
                         dataset='OGBG_Code2')
