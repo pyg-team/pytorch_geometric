@@ -131,6 +131,9 @@ class GRetriever(torch.nn.Module):
         x = self.projector(x)
         xs = x.split(1, dim=0)
 
+        # Handle case where theres more than one embedding for each sample
+        xs = [x.squeeze(0) for x in xs]
+
         # Handle questions without node features:
         batch_unique = batch.unique()
         batch_size = len(question)
@@ -186,6 +189,9 @@ class GRetriever(torch.nn.Module):
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
         xs = x.split(1, dim=0)
+
+        # Handle case where theres more than one embedding for each sample
+        xs = [x.squeeze(0) for x in xs]
 
         # Handle questions without node features:
         batch_unique = batch.unique()

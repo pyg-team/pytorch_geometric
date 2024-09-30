@@ -279,13 +279,15 @@ class WebQSPDataset(InMemoryDataset):
 
         # Nodes:
         nodes = self.indexer.get_unique_node_features()
-        x = self.model.encode(nodes, batch_size=256)  # type: ignore
+        x = self.model.encode(nodes, batch_size=256,
+                              output_device='cpu')  # type: ignore
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
         edges = self.indexer.get_unique_edge_features(
             feature_name=EDGE_RELATION)
-        edge_attr = self.model.encode(edges, batch_size=256)  # type: ignore
+        edge_attr = self.model.encode(edges, batch_size=256,
+                                      output_device='cpu')  # type: ignore
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
             new_feature_vals=edge_attr,
@@ -298,7 +300,8 @@ class WebQSPDataset(InMemoryDataset):
     def _retrieve_subgraphs(self) -> None:
         print("Encoding questions...")
         self.questions = [str(ds["question"]) for ds in self.raw_dataset]
-        q_embs = self.model.encode(self.questions, batch_size=256)
+        q_embs = self.model.encode(self.questions, batch_size=256,
+                                   output_device='cpu')
         list_of_graphs = []
         print("Retrieving subgraphs...")
         textual_nodes = self.textual_nodes
@@ -338,8 +341,10 @@ class WebQSPDataset(InMemoryDataset):
     def process(self) -> None:
         from pandas import DataFrame
         self._load_raw_data()
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = SentenceTransformer(
-            'sentence-transformers/all-roberta-large-v1').to(self.device)
+            'sentence-transformers/all-roberta-large-v1').to(device)
         self.model.eval()
         if self.force_reload or not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")

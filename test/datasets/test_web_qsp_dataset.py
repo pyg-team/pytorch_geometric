@@ -15,15 +15,15 @@ def test_web_qsp_dataset():
 
 @onlyOnline
 @onlyFullTest
-def test_web_qsp_dataset_limit():
-    dataset = WebQSPDataset(limit=100)
+def test_web_qsp_dataset_limit(tmp_path):
+    dataset = WebQSPDataset(root=tmp_path, limit=100)
     assert len(dataset) == 100
     assert str(dataset) == "WebQSPDataset(100)"
 
 
 @onlyOnline
 @onlyFullTest
-def test_web_qsp_dataset_limit_no_pcst():
-    dataset = WebQSPDataset(limit=100, include_pcst=False)
+def test_web_qsp_dataset_limit_no_pcst(tmp_path):
+    dataset = WebQSPDataset(root=tmp_path, limit=100, include_pcst=False)
     assert len(dataset) == 100
     assert str(dataset) == "WebQSPDataset(100)"
