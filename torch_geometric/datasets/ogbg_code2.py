@@ -173,7 +173,7 @@ class OGBG_Code2(InMemoryDataset):
             raw_datasets["test"]
         ])
         self.df = make_df_from_raw_data(self.combined_rawset)
-        for idxs, path in zip(self.ogbg_dataset.get_idx_split(),
+        for idxs, path in zip(self.ogbg_dataset.get_idx_split().values(),
                               self.processed_paths):
             new_set = []
             print("idxs=", idxs)
