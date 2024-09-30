@@ -169,7 +169,7 @@ class OGBG_Code2(InMemoryDataset):
         raw_datasets = datasets.load_dataset("claudios/code_search_net",
                                                  "python")
         self.combined_rawset = datasets.concatenate_datasets(
-            [dataset["train"], dataset["validation"], dataset["test"]])
+            [raw_datasets["train"], raw_datasets["validation"], raw_datasets["test"]])
         self.df = make_df_from_raw_data(self.raw_dataset)
         for dataset, path in zip(
             [
