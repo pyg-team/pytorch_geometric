@@ -284,7 +284,7 @@ class WebQSPDataset(InMemoryDataset):
 
         # Edges:
         edges: List[str] = self.indexer.get_unique_edge_features(
-            feature_name=EDGE_RELATION)
+            feature_name=EDGE_RELATION)  # type: ignore
         edge_attr = self.model.encode(edges, batch_size=256,
                                       output_device='cpu')
         self.indexer.add_edge_feature(
