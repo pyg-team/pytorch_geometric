@@ -19,6 +19,7 @@ from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
+from torch_geometric.datasets import WebQSPDataset
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GAT, GRetriever
@@ -140,9 +141,9 @@ def train(
     start_time = time.time()
     path = osp.dirname(osp.realpath(__file__))
     path = osp.join(path, '..', '..', 'data', str(dataset).split('.')[-1][:-2])
-    train_dataset = eval(dataset)(path, split='train')
-    val_dataset = eval(dataset)(path, split='val')
-    test_dataset = eval(dataset)(path, split='test')
+    train_dataset = dataset(path, split='train')
+    val_dataset = dataset(path, split='val')
+    test_dataset = dataset(path, split='test')
 
     seed_everything(42)
 
