@@ -173,9 +173,10 @@ class OGBG_Code2(InMemoryDataset):
             raw_datasets["test"]
         ])
         self.df = make_df_from_raw_data(self.combined_rawset)
-        for idxs, path in zip(self.ogbg_dataset.get_idx_split(), self.processed_paths):
+        for idxs, path in zip(self.ogbg_dataset.get_idx_split(),
+                              self.processed_paths):
             new_set = []
-            len_set = len(idxs)
+            len(idxs)
             #print("num_data_pts =", len_set)
             for idx in tqdm(idxs, label=path):
                 old_obj = self.ogbg_dataset[i]
