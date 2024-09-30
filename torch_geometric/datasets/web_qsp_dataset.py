@@ -1,5 +1,5 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
-from typing import Any, List, Tuple, no_type_check
+from typing import Any, List, Tuple, no_type_check, Iterator
 
 import numpy as np
 import torch
@@ -13,6 +13,8 @@ from torch_geometric.data import (
     TripletLike,
     get_features_for_triplets_groups,
 )
+from torch_geometric.data.large_graph_indexer import EDGE_RELATION
+import os
 from torch_geometric.nn.nlp import SentenceTransformer
 
 
