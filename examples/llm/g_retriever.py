@@ -123,6 +123,7 @@ def train(
     checkpointing=False,
     tiny_llama=False,
     model=None,
+    dataset='WebQSPDataset',
 ):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
@@ -139,10 +140,10 @@ def train(
 
     start_time = time.time()
     path = osp.dirname(osp.realpath(__file__))
-    path = osp.join(path, '..', '..', 'data', 'WebQSPDataset')
-    train_dataset = WebQSPDataset(path, split='train')
-    val_dataset = WebQSPDataset(path, split='val')
-    test_dataset = WebQSPDataset(path, split='test')
+    path = osp.join(path, '..', '..', 'data', dataset)
+    train_dataset = eval(dataset)(path, split='train')
+    val_dataset = eval(dataset)(path, split='val')
+    test_dataset = eval(dataset)(path, split='test')
 
     seed_everything(42)
 

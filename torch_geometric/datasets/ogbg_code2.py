@@ -87,6 +87,7 @@ class OGBG_Code2(InMemoryDataset):
     def __init__(
         self,
         root: str = "",
+        split: str = "train",
         force_reload: bool = False,
         include_raw_python: bool = True,
     ) -> None:
@@ -106,32 +107,17 @@ class OGBG_Code2(InMemoryDataset):
             print("Install NVIDIA CUDF for massive speedups in preproc.")
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        super().__init__(root, None, None, force_reload=force_reload)
-        self.load(self.processed_paths[0])
+        super().__init__(root, force_reload=force_reload)
 
-    @property
-    def raw_file_names(self) -> List[str]:
-        return []
+        if split not in {'train', 'val', 'test'}:
+            raise ValueError(f"Invalid 'split' argument (got {split})")
+
+        path = self.processed_paths[['train', 'val', 'test'].index(split)]
+        self.load(path)
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ["list_of_graphs.pt", "pre_filter.pt", "pre_transform.pt"]
-
-    def download(self) -> None:
-        self.ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
-        dataset = datasets.load_dataset("claudios/code_search_net", "python")
-        self.raw_dataset = datasets.concatenate_datasets(
-            [dataset["train"], dataset["validation"], dataset["test"]])
-        self.split_idxs = {
-            "train":
-            torch.arange(len(dataset["train"])),
-            "val":
-            torch.arange(len(dataset["validation"])) + len(dataset["train"]),
-            "test":
-            torch.arange(len(dataset["test"])) + len(dataset["train"]) +
-            len(dataset["validation"])
-        }
-        self.df = make_df_from_raw_data(self.raw_dataset)
+        return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
     def get_raw_python_from_df(self, func_name_tokens):
         # the ordering of code_search_net does not match ogbg-code2
@@ -179,24 +165,31 @@ class OGBG_Code2(InMemoryDataset):
             func_str.find(":"))], func_str[func_str.find('"""'):]
 
     def process(self) -> None:
-        new_set = []
-        len_set = len(self.ogbg_dataset)
-        #print("num_data_pts =", len_set)
-        for i in tqdm(range(len_set)):
-            old_obj = self.ogbg_dataset[i]
-            new_obj = Data()
-            # combine all node information into a single feature tensor, let the GNN+LLM figure it out
-            new_obj.x = torch.cat((old_obj.x, old_obj.node_is_attributed,
-                                   old_obj.node_dfs_order, old_obj.node_depth),
-                                  dim=1)
-            # extract raw python function for use by LLM
-            func_name_tokens = old_obj.y
-            new_obj.func_signature, new_obj.desc = self.get_raw_python_from_df(
-                func_name_tokens)
-            # extract other data needed for GNN+LLM
-            new_obj.y = old_obj.y
-            new_obj.edge_index = old_obj.edge_index
-            new_obj.num_nodes = old_obj.num_nodes
-            new_set.append(new_obj)
-            del old_obj
-        self.save(new_set, self.processed_paths[0])
+        self.ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
+        self.raw_dataset = datasets.load_dataset("claudios/code_search_net", "python")
+        self.df = make_df_from_raw_data(self.raw_dataset)
+        for dataset, path in zip(
+            [self.raw_dataset['train'], self.raw_dataset['validation'], self.raw_dataset['test']],
+                self.processed_paths,
+        ):
+            new_set = []
+            len_set = len(self.ogbg_dataset)
+            #print("num_data_pts =", len_set)
+            for i in tqdm(range(len_set)):
+                old_obj = self.ogbg_dataset[i]
+                new_obj = Data()
+                # combine all node information into a single feature tensor, let the GNN+LLM figure it out
+                new_obj.x = torch.cat((old_obj.x, old_obj.node_is_attributed,
+                                       old_obj.node_dfs_order, old_obj.node_depth),
+                                      dim=1)
+                # extract raw python function for use by LLM
+                func_name_tokens = old_obj.y
+                new_obj.func_signature, new_obj.desc = self.get_raw_python_from_df(
+                    func_name_tokens)
+                # extract other data needed for GNN+LLM
+                new_obj.y = old_obj.y
+                new_obj.edge_index = old_obj.edge_index
+                new_obj.num_nodes = old_obj.num_nodes
+                new_set.append(new_obj)
+                del old_obj
+            self.save(new_set, path)

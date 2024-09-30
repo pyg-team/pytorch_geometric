@@ -29,7 +29,6 @@ def inference_step(model, batch, **kwargs):
     return eval_data
 
 
-dataset = OGBG_Code2()
 gnn_to_use = GAT(in_channels=1024, hidden_channels=1024, out_channels=1024,
                  num_layers=4, heads=4)
 llm_to_use = LLM(model_name="meta-llama/CodeLlama-7b-Python-hf", num_params=7)
@@ -45,7 +44,7 @@ prep_time, _, _ = train(since, num_epochs=5, hidden_channels=None,
                         num_gnn_layers=None, batch_size=16, eval_batch_size=32,
                         lr=1e-5, loss_fn=get_loss, inference_fn=inference_step,
                         checkpointing=True, model=CodeRetriever,
-                        dataset=dataset)
+                        dataset='OGBG_Code2')
 torch.cuda.empty_cache()
 torch.cuda.reset_max_memory_allocated()
 gc.collect()
