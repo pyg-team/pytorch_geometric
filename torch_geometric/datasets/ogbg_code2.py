@@ -171,17 +171,11 @@ class OGBG_Code2(InMemoryDataset):
         self.combined_rawset = datasets.concatenate_datasets(
             [raw_datasets["train"], raw_datasets["validation"], raw_datasets["test"]])
         self.df = make_df_from_raw_data(self.combined_rawset)
-        for dataset, path in zip(
-            [
-                raw_datasets['train'], raw_datasets['validation'],
-                raw_datasets['test']
-            ],
-                self.processed_paths,
-        ):
+        for idxs, path in zip(self.ogbg_dataset.get_idx_split(), self.processed_paths):
             new_set = []
-            len_set = len(self.ogbg_dataset)
+            len_set = len(idxs)
             #print("num_data_pts =", len_set)
-            for i in tqdm(range(len_set)):
+            for idx in tqdm(idxs, label=path):
                 old_obj = self.ogbg_dataset[i]
                 new_obj = Data()
                 # combine all node information into a single feature tensor, let the GNN+LLM figure it out
