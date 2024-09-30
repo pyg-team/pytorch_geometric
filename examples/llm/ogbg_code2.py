@@ -9,11 +9,13 @@ from torch_geometric.nn.nlp import LLM
 
 
 def get_loss(model, batch, **kwargs) -> torch.Tensor:
+    print("correct loss")
     return model(batch.question, batch.x, batch.edge_index, batch.batch,
                  batch.ptr, '|'.join(batch.label), batch.edge_attr, batch.desc)
 
 
 def inference_step(model, batch, **kwargs):
+    print("using correct inferencefunc")
     pred = model.inference(batch.question, batch.x, batch.edge_index,
                            batch.batch, batch.ptr, batch.edge_attr, batch.desc)
     eval_data = {
@@ -22,7 +24,6 @@ def inference_step(model, batch, **kwargs):
         "desc": batch.desc,
         "label": '|'.join(batch.label)
     }
-    print("using correct func")
     return eval_data
 
 
