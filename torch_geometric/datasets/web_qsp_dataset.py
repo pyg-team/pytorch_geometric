@@ -278,15 +278,17 @@ class WebQSPDataset(InMemoryDataset):
             trips, pre_transform=preprocess_triplet)
 
         # Nodes:
-        nodes: List[str] = self.indexer.get_unique_node_features()
+        nodes = self.indexer.get_unique_node_features()
         x = self.model.encode(nodes, batch_size=256, output_device='cpu')
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
-        edges: List[str] = self.indexer.get_unique_edge_features(
-            feature_name=EDGE_RELATION)  # type: ignore
-        edge_attr = self.model.encode(edges, batch_size=256,
-                                      output_device='cpu')
+        edges = self.indexer.get_unique_edge_features(
+            feature_name=EDGE_RELATION)
+        edge_attr = self.model.encode(
+            edges,  # type: ignore
+            batch_size=256,
+            output_device='cpu')
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
             new_feature_vals=edge_attr,
