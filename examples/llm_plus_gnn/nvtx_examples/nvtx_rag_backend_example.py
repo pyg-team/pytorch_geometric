@@ -54,7 +54,8 @@ num_edges = len(ds.indexer._edges)
 
 # %%
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = SentenceTransformer().to(device)
+model = SentenceTransformer('sentence-transformers/all-roberta-large-v1').to(
+    device)
 
 # %%
 fs, gs = create_remote_backend_from_triplets(

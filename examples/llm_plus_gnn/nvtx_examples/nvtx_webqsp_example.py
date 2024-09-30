@@ -17,6 +17,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.capture_torch_kernels:
         with torch.autograd.profiler.emit_nvtx():
-            ds = web_qsp_dataset.WebQSPDataset('baseline')
+            ds = web_qsp_dataset.WebQSPDataset('baseline', limit=10)
     else:
-        ds = web_qsp_dataset.WebQSPDataset('baseline')
+        ds = web_qsp_dataset.WebQSPDataset('baseline', limit=10)
