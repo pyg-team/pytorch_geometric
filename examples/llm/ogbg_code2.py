@@ -7,7 +7,7 @@ from g_retriever import train
 
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
-
+from torch_geometric.datasets import OGBG_Code2
 since = time.time()
 
 
