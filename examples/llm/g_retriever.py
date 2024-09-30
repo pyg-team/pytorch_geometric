@@ -170,7 +170,8 @@ def train(
             llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
             model = GRetriever(llm=llm, gnn=gnn)
 
-    model_save_name = 'gnn_llm' if num_gnn_layers is not None else str(model).lower()
+    model_save_name = 'gnn_llm' if num_gnn_layers is not None else str(
+        model).lower()
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
