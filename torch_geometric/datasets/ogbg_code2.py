@@ -167,7 +167,7 @@ class OGBG_Code2(InMemoryDataset):
     def process(self) -> None:
         self.ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
         raw_datasets = datasets.load_dataset("claudios/code_search_net",
-                                                 "python")
+                                             "python")
         self.combined_rawset = datasets.concatenate_datasets(
             [raw_datasets["train"], raw_datasets["validation"], raw_datasets["test"]])
         self.df = make_df_from_raw_data(self.raw_dataset)
