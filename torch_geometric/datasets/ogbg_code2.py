@@ -170,7 +170,7 @@ class OGBG_Code2(InMemoryDataset):
                                              "python")
         self.combined_rawset = datasets.concatenate_datasets(
             [raw_datasets["train"], raw_datasets["validation"], raw_datasets["test"]])
-        self.df = make_df_from_raw_data(self.raw_dataset)
+        self.df = make_df_from_raw_data(self.combined_rawset)
         for dataset, path in zip(
             [
                 raw_datasets['train'], raw_datasets['validation'],
