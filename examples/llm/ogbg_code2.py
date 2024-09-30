@@ -3,9 +3,9 @@
 import torch
 from g_retriever import train
 
+from torch_geometric.datasets import OGBG_Code2
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
-from torch_geometric.datasets import OGBG_Code2
 
 
 def get_loss(model, batch, **kwargs) -> torch.Tensor:
@@ -37,10 +37,9 @@ CodeRetriever = GRetriever(
     gnn=gnn_to_use,
 )
 
-train(num_epochs=5, hidden_channels=None,
-    num_gnn_layers=None, batch_size=16, eval_batch_size=32,
-    lr=1e-5, checkpointing=True, model=CodeRetriever,
-    dataset=OGBG_Code2)
+train(num_epochs=5, hidden_channels=None, num_gnn_layers=None, batch_size=16,
+      eval_batch_size=32, lr=1e-5, checkpointing=True, model=CodeRetriever,
+      dataset=OGBG_Code2)
 torch.cuda.empty_cache()
 torch.cuda.reset_max_memory_allocated()
 gc.collect()
