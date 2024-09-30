@@ -300,7 +300,10 @@ class BasicGNN(torch.nn.Module):
                 x = conv(x, edge_index)
 
             if x_root is not None:
-                x = x + root_lin(x_root)
+                if isinstance(x, Tensor):
+                    x = x + root_lin(x_root)
+                else:
+                    x = x[0] + root_lin(x_root)
 
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:
@@ -334,7 +337,10 @@ class BasicGNN(torch.nn.Module):
         x = self.convs[layer](x, edge_index)[:batch_size]
 
         if x_root is not None:
-            x = x + self.root_lins[layer](x_root)
+            if isinstance(x, Tensor):
+                x = x + root_lins[layer](x_root)
+            else:
+                x = x[0] + root_lins[layer](x_root)
 
         if layer == self.num_layers - 1 and self.jk_mode is None:
             return x
