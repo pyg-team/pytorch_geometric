@@ -179,7 +179,7 @@ class OGBG_Code2(InMemoryDataset):
             len(idxs)
             #print("num_data_pts =", len_set)
             for idx in tqdm(idxs, desc=path):
-                old_obj = self.ogbg_dataset[i]
+                old_obj = self.ogbg_dataset[idx]
                 new_obj = Data()
                 # combine all node information into a single feature tensor, let the GNN+LLM figure it out
                 new_obj.x = torch.cat(
