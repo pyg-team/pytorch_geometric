@@ -279,7 +279,10 @@ class WebQSPDataset(InMemoryDataset):
 
         # Nodes:
         nodes = self.indexer.get_unique_node_features()
-        x = self.model.encode(nodes, batch_size=256, output_device='cpu')
+        x = self.model.encode(
+            nodes,  # type: ignore
+            batch_size=256,
+            output_device='cpu')
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
