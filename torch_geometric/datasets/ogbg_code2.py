@@ -179,7 +179,7 @@ class OGBG_Code2(InMemoryDataset):
                 # combine all node information into a single feature tensor, let the GNN+LLM figure it out
                 new_obj.x = torch.cat(
                     (old_obj.x, old_obj.node_is_attributed,
-                     old_obj.node_dfs_order, old_obj.node_depth), dim=1)
+                     old_obj.node_dfs_order, old_obj.node_depth), dim=1).to(torch.float)
                 # extract raw python function for use by LLM
                 func_name_tokens = old_obj.y
                 new_obj.func_signature, new_obj.desc = self.get_raw_python_from_df(
