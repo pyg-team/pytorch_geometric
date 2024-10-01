@@ -43,8 +43,9 @@ CodeRetriever = GRetriever(
     gnn=gnn_to_use,
 )
 
-train(num_epochs=5, hidden_channels=None, num_gnn_layers=None, batch_size=12,
-      eval_batch_size=24, lr=1e-5, checkpointing=True, model=CodeRetriever,
+# TODO, try more epochs
+train(num_epochs=1, hidden_channels=None, num_gnn_layers=None, batch_size=12,
+      eval_batch_size=24, lr=1e-5, checkpointing=False, model=CodeRetriever,
       dataset=OGBG_Code2, get_loss=get_loss_ogbg,
       inference_step=inference_step_ogbg, model_save_name="code_retriever")
 torch.cuda.empty_cache()
