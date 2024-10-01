@@ -186,6 +186,9 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
         epoch_str = f'Epoch: {epoch + 1}|{num_epochs}'
         loader = tqdm(train_loader, desc=epoch_str)
         for step, batch in enumerate(loader):
+            if step > 500:
+                print("training on 500 random instances to start...")
+                break
             optimizer.zero_grad()
             loss = get_loss(model, batch, model_save_name=model_save_name)
             loss.backward()
