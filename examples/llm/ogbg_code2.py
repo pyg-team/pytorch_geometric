@@ -7,16 +7,18 @@ from torch_geometric.datasets import OGBG_Code2
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
 
-
+master_prompt = "Please provide the name of the python function"
 def get_loss(model, batch, **kwargs) -> torch.Tensor:
     print("correct loss")
-    return model(batch.question, batch.x, batch.edge_index, batch.batch,
+    questions = [master_prompt for i in range(len(batch.label))]
+    return model(questions, batch.x, batch.edge_index, batch.batch,
                  batch.ptr, '|'.join(batch.label), batch.edge_attr, batch.desc)
 
 
 def inference_step(model, batch, **kwargs):
     print("using correct inferencefunc")
-    pred = model.inference(batch.question, batch.x, batch.edge_index,
+    questions = [master_prompt for i in range(len(batch.label))]
+    pred = model.inference(questions, batch.x, batch.edge_index,
                            batch.batch, batch.ptr, batch.edge_attr, batch.desc)
     eval_data = {
         "pred": pred,
