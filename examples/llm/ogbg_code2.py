@@ -31,7 +31,7 @@ def inference_step_ogbg(model, batch, **kwargs):
     return eval_data
 
 
-gnn_to_use = GAT(in_channels=5, hidden_channels=1024, out_channels=1024,
+gnn_to_use = GAT(in_channels=5, hidden_channels=512, out_channels=512,
                  num_layers=4, heads=4)
 llm_to_use = LLM(model_name="meta-llama/CodeLlama-7b-Python-hf", num_params=7)
 # This would require a data center scale hardware setup
