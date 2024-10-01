@@ -113,21 +113,10 @@ def inference_step(model, batch, model_save_name,
     }
 
 
-def train(
-    num_epochs,
-    hidden_channels,
-    num_gnn_layers,
-    batch_size,
-    eval_batch_size,
-    lr,
-    checkpointing=False,
-    tiny_llama=False,
-    model=None,
-    dataset=WebQSPDataset,
-    get_loss=get_loss,
-    inference_step=inference_step,
-    model_save_name = "g_retriever"
-):
+def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
+          eval_batch_size, lr, checkpointing=False, tiny_llama=False,
+          model=None, dataset=WebQSPDataset, get_loss=get_loss,
+          inference_step=inference_step, model_save_name="g_retriever"):
     # Set `model_save_name` to be "llm" if you want to train/eval a pure LLM
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
