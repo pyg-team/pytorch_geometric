@@ -205,8 +205,7 @@ class GRetriever(torch.nn.Module):
                 attention_mask=attention_mask,
                 bos_token_id=bos_token,
                 use_cache=True,  # Important to set!
-                pad_token_id=tokenizer.eos_token_id
-            )
+                pad_token_id=tokenizer.eos_token_id)
 
         return self.llm.tokenizer.batch_decode(
             outputs,
