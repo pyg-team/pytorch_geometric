@@ -1,8 +1,10 @@
 # This example shows how to top the OGBG leaderboard using GNN+LLM
 # hyperparams are hardcoded
+import gc
+
 import torch
 from g_retriever import train
-import gc
+
 from torch_geometric.datasets import OGBG_Code2
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
