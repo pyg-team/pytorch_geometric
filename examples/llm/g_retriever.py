@@ -186,7 +186,7 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
         epoch_str = f'Epoch: {epoch + 1}|{num_epochs}'
         loader = tqdm(train_loader, desc=epoch_str)
         for step, batch in enumerate(loader):
-            if step > 1000:
+            if step > 100:
                 break
             optimizer.zero_grad()
             loss = get_loss(model, batch, model_save_name=model_save_name)
@@ -211,7 +211,7 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
         model.eval()
         with torch.no_grad():
             for step, batch in enumerate(val_loader):
-                if step > 1000:
+                if step > 10:
                     break
                 loss = get_loss(model, batch, model_save_name=model_save_name)
                 val_loss += loss.item()
@@ -237,7 +237,7 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
     print("Final evaluation...")
     progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
-        if step > 1000:
+        if step > 10:
             break
         with torch.no_grad():
             eval_output.append(
