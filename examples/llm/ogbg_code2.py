@@ -14,14 +14,15 @@ def get_loss_ogbg(model, batch, **kwargs) -> torch.Tensor:
     questions = [master_prompt for i in range(len(batch.y))]
     labels = ['|'.join(label) for label in batch.y]
     print("batch.desc=", batch.desc)
-    return model(questions, batch.x.to(torch.float), batch.edge_index, batch.batch, labels,
-                 batch.edge_attr, batch.desc)
+    return model(questions, batch.x.to(torch.float), batch.edge_index,
+                 batch.batch, labels, batch.edge_attr, batch.desc)
 
 
 def inference_step_ogbg(model, batch, **kwargs):
     questions = [master_prompt for i in range(len(batch.y))]
-    pred = model.inference(questions, batch.x.to(torch.float), batch.edge_index, batch.batch,
-                           batch.edge_attr, batch.desc)
+    pred = model.inference(questions, batch.x.to(torch.float),
+                           batch.edge_index, batch.batch, batch.edge_attr,
+                           batch.desc)
     labels = ['|'.join(label) for label in batch.y]
     eval_data = {
         "pred": pred,
