@@ -314,6 +314,7 @@ class LLM(torch.nn.Module):
                 max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
                 use_cache=True,
+                pad_token_id=tokenizer.eos_token_id
             )
 
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)

@@ -45,7 +45,7 @@ CodeRetriever = GRetriever(
     gnn=gnn_to_use,
 )
 
-# TODO, try more epochs
+# TODO, try more epochs with checkpointing on
 train(num_epochs=1, hidden_channels=None, num_gnn_layers=None, batch_size=8,
       eval_batch_size=16, lr=1e-5, checkpointing=False, model=CodeRetriever,
       dataset=OGBG_Code2, get_loss=get_loss_ogbg,
