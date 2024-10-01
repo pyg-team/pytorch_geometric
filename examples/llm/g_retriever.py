@@ -126,7 +126,9 @@ def train(
     dataset=WebQSPDataset,
     get_loss=get_loss,
     inference_step=inference_step,
+    model_save_name = "g_retriever"
 ):
+    # Set `model_save_name` to be "llm" if you want to train/eval a pure LLM
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -173,8 +175,6 @@ def train(
             llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
             model = GRetriever(llm=llm, gnn=gnn)
 
-    model_save_name = 'gnn_llm' if num_gnn_layers is not None else str(
-        model).lower()
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
