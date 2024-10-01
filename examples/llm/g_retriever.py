@@ -243,7 +243,8 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
             print("testing on 50 random instances to start...")
             break
         with torch.no_grad():
-            eval_output.append(inference_step(model, batch, model_save_name=model_save_name))
+            eval_output.append(
+                inference_step(model, batch, model_save_name=model_save_name))
         progress_bar_test.update(1)
 
     compute_metrics(eval_output)
