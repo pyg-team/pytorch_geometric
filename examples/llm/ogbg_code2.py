@@ -13,7 +13,6 @@ master_prompt = "Please provide the name of the python function."
 def get_loss_ogbg(model, batch, **kwargs) -> torch.Tensor:
     questions = [master_prompt for i in range(len(batch.y))]
     labels = ['|'.join(label) for label in batch.y]
-    print("batch.x=",batch.x)
     return model(questions, batch.x, batch.edge_index, batch.batch, labels,
                  batch.edge_attr, batch.desc)
 
@@ -32,7 +31,7 @@ def inference_step_ogbg(model, batch, **kwargs):
     return eval_data
 
 
-gnn_to_use = GAT(in_channels=1024, hidden_channels=1024, out_channels=1024,
+gnn_to_use = GAT(in_channels=5, hidden_channels=1024, out_channels=1024,
                  num_layers=4, heads=4)
 llm_to_use = LLM(model_name="meta-llama/CodeLlama-7b-Python-hf", num_params=7)
 # This would require a data center scale hardware setup
