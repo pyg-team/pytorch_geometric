@@ -212,6 +212,9 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
         model.eval()
         with torch.no_grad():
             for step, batch in enumerate(val_loader):
+                if step > 500:
+                    print("val'ing on 500 random instances to start...")
+                    break
                 loss = get_loss(model, batch, model_save_name=model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
@@ -236,6 +239,9 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
     print("Final evaluation...")
     progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
+        if step > 500:
+            print("testing on 500 random instances to start...")
+            break
         with torch.no_grad():
             eval_output.append(inference_step(model, batch, model_save_name))
         progress_bar_test.update(1)
