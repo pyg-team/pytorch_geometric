@@ -36,6 +36,8 @@ def compute_metrics(eval_output):
 
     for pred, label in zip(df.pred.tolist(), df.label.tolist()):
         try:
+            print("pred=", pred)
+            print("label=", label)
             pred = pred.split('[/s]')[0].strip().split('|')
             hit = re.findall(pred[0], label)
             all_hit.append(len(hit) > 0)
