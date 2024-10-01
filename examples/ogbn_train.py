@@ -232,10 +232,8 @@ for epoch in range(1, num_epochs + 1):
     inference_times.append(time.time() - inference_start)
     test_accs.append(test_acc)
     val_accs.append(val_acc)
-    print(
-        f'Epoch {epoch:02d}, Loss: {loss:.4f}, ', 
-        f'Train Time: {train_end - train_start:.4f}s'
-    )
+    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, ',
+          f'Train Time: {train_end - train_start:.4f}s')
     print(f'Val: {val_acc * 100.0:.2f}%,', f'Test: {test_acc * 100.0:.2f}%')
 
     if val_acc > best_val:
