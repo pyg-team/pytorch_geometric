@@ -11,14 +11,12 @@ master_prompt = "Please provide the name of the python function."
 
 
 def get_loss_ogbg(model, batch, **kwargs) -> torch.Tensor:
-    print("correct loss")
     questions = [master_prompt for i in range(len(batch.y))]
     return model(questions, batch.x, batch.edge_index, batch.batch, batch.ptr,
                  '|'.join(batch.y), batch.edge_attr, batch.desc)
 
 
 def inference_step_ogbg(model, batch, **kwargs):
-    print("using correct inferencefunc")
     questions = [master_prompt for i in range(len(batch.y))]
     pred = model.inference(questions, batch.x, batch.edge_index, batch.batch,
                            batch.ptr, batch.edge_attr, batch.desc)
