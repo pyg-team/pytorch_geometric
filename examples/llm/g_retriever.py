@@ -153,7 +153,7 @@ def train(
                             drop_last=False, pin_memory=True, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
-    if model is not None:
+    if model is None:
         gnn = GAT(
             in_channels=1024,
             hidden_channels=hidden_channels,
