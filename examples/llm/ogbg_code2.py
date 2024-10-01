@@ -25,7 +25,7 @@ def inference_step_ogbg(model, batch, **kwargs):
     labels = ['|'.join(label) for label in batch.y]
     eval_data = {
         "pred": pred,
-        "question": batch.question,
+        "question": questions,
         "desc": batch.desc,
         "label": labels
     }
