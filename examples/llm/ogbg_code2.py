@@ -7,7 +7,7 @@ from torch_geometric.datasets import OGBG_Code2
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
 
-master_prompt = "Please provide the name of the python function"
+master_prompt = "Please provide the name of the python function."
 def get_loss(model, batch, **kwargs) -> torch.Tensor:
     print("correct loss")
     questions = [master_prompt for i in range(len(batch.label))]
