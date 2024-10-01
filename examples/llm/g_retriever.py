@@ -124,6 +124,8 @@ def train(
     tiny_llama=False,
     model=None,
     dataset=WebQSPDataset,
+    get_loss=get_loss,
+    inference_step=inference_step,
 ):
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup

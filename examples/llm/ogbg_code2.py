@@ -10,14 +10,14 @@ from torch_geometric.nn.nlp import LLM
 master_prompt = "Please provide the name of the python function."
 
 
-def get_loss(model, batch, **kwargs) -> torch.Tensor:
+def get_loss_ogbg(model, batch, **kwargs) -> torch.Tensor:
     print("correct loss")
     questions = [master_prompt for i in range(len(batch.label))]
     return model(questions, batch.x, batch.edge_index, batch.batch, batch.ptr,
                  '|'.join(batch.label), batch.edge_attr, batch.desc)
 
 
-def inference_step(model, batch, **kwargs):
+def inference_step_ogbg(model, batch, **kwargs):
     print("using correct inferencefunc")
     questions = [master_prompt for i in range(len(batch.label))]
     pred = model.inference(questions, batch.x, batch.edge_index, batch.batch,
@@ -44,7 +44,7 @@ CodeRetriever = GRetriever(
 
 train(num_epochs=5, hidden_channels=None, num_gnn_layers=None, batch_size=16,
       eval_batch_size=32, lr=1e-5, checkpointing=True, model=CodeRetriever,
-      dataset=OGBG_Code2)
+      dataset=OGBG_Code2, get_loss=get_loss_ogbg, inference_step=inference_step_ogbg)
 torch.cuda.empty_cache()
 torch.cuda.reset_max_memory_allocated()
 gc.collect()
