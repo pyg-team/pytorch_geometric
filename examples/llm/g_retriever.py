@@ -198,7 +198,7 @@ def train(
         loader = tqdm(train_loader, desc=epoch_str)
         for step, batch in enumerate(loader):
             optimizer.zero_grad()
-            loss = get_loss(model, batch, model_save_name)
+            loss = get_loss(model, batch, model_save_name=model_save_name)
             loss.backward()
 
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
@@ -220,7 +220,7 @@ def train(
         model.eval()
         with torch.no_grad():
             for step, batch in enumerate(val_loader):
-                loss = get_loss(model, batch, model_save_name)
+                loss = get_loss(model, batch, model_save_name=model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
             print(epoch_str + f", Val Loss: {val_loss:4f}")
