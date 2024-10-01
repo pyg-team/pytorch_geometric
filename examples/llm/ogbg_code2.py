@@ -10,14 +10,14 @@ from torch_geometric.nn.nlp import LLM
 master_prompt = "Please provide the name of the python function."
 
 
-def get_loss_ogbg(model, batch, **kwargs) -> torch.Tensor:
+def get_loss_ogbg(model, batch, **args, **kwargs) -> torch.Tensor:
     print("correct loss")
     questions = [master_prompt for i in range(len(batch.label))]
     return model(questions, batch.x, batch.edge_index, batch.batch, batch.ptr,
                  '|'.join(batch.label), batch.edge_attr, batch.desc)
 
 
-def inference_step_ogbg(model, batch, **kwargs):
+def inference_step_ogbg(model, batch, **args, **kwargs):
     print("using correct inferencefunc")
     questions = [master_prompt for i in range(len(batch.label))]
     pred = model.inference(questions, batch.x, batch.edge_index, batch.batch,
