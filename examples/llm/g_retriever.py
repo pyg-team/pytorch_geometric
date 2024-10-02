@@ -41,8 +41,8 @@ def compute_metrics(eval_output):
 
             label = label.split('|')
             matches = set(pred).intersection(set(label))
-            precision = len(matches) / len(set(label))
-            recall = len(matches) / len(set(pred))
+            precision = len(matches) / len(set(pred))
+            recall = len(matches) / len(set(label))
             if recall + precision == 0:
                 f1 = 0
             else:
