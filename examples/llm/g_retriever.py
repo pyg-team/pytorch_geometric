@@ -118,11 +118,11 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
           model=None, dataset=WebQSPDataset, get_loss=get_loss,
           inference_step=inference_step, model_save_name="g_retriever",
           percent_train=100):
-    """
-    Tips:
+    """Tips:
     1) Set `model_save_name` to be "llm" if you want to train/eval a pure LLM
     """
     assert percent_train <= 100 and percent_train > 0, "percent_train must be in (0,100]"
+
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -193,8 +193,9 @@ def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
         total_batches = len(loader)
         for step, batch in enumerate(loader):
             if percent_train < 100:
-                if float(step) / float(total_batches) >= float(percent_train) / 100.0:
-                        break
+                if float(step) / float(total_batches) >= float(
+                        percent_train) / 100.0:
+                    break
             optimizer.zero_grad()
             loss = get_loss(model, batch, model_save_name=model_save_name)
             loss.backward()
