@@ -214,7 +214,7 @@ times = []
 train_times = []
 inference_times = []
 best_val = best_test = 0.
-start = time.time()
+start = time.perf_counter()
 
 model.reset_parameters()
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
