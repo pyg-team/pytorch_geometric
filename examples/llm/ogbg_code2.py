@@ -3,6 +3,7 @@
 import argparse
 import gc
 
+import time
 import torch
 from g_retriever import train
 
@@ -51,6 +52,7 @@ if __name__ == '__main__':
         help="Select how much of the training data to use, passing an integer in (0,100]" )
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
+    args = parser.parse_args()
 
     start_time = time.time()
     # TODO, try more epochs with checkpointing on
@@ -58,7 +60,7 @@ if __name__ == '__main__':
           eval_batch_size=args.eval_batch_size, lr=1e-5, checkpointing=False, model=CodeRetriever,
           dataset=OGBG_Code2, get_loss=get_loss_ogbg,
           inference_step=inference_step_ogbg, model_save_name="code_retriever",
-          percent_train=args.percent_train,
+          percent_train=args.percent_train,)
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     gc.collect()

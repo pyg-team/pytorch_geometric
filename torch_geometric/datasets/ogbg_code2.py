@@ -34,7 +34,7 @@ except ImportError:
     WITH_PANDAS = False
 
 
-def find_wierd_names(func_name_tokens, raw_dataset):
+def find_weird_names(func_name_tokens, raw_dataset):
     for i, func_name in enumerate(raw_dataset["func_name"]):
         # helper code to find wierd matches
         # since its non-trivial to apply such complex search to pandas
@@ -152,7 +152,7 @@ class OGBG_Code2(InMemoryDataset):
             selected_result = result.sample()
             func_str = str(selected_result.iloc[0]["whole_func_string"])
         else:
-            func_str = find_wierd_names(func_name_tokens, self.combined_rawset)
+            func_str = find_weird_names(func_name_tokens, self.combined_rawset)
             if func_str is None:
                 # raw python data is missing from raw huggingface mirror
                 # return empty strings
