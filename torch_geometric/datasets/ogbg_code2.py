@@ -115,7 +115,7 @@ class OGBG_Code2(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
-    def get_raw_python_from_df(self, func_name_tokens) ->  Tuple[str, str]:
+    def get_raw_python_from_df(self, func_name_tokens) -> Tuple[str, str]:
         # the ordering of code_search_net does not match ogbg-code2
         # have to search for matching python
         func_name = self.df.index
