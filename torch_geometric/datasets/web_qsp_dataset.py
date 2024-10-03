@@ -178,7 +178,8 @@ class WebQSPDataset(InMemoryDataset):
             )
 
             data_list = []
-            for i, example in enumerate(tqdm(dataset, desc=split + "_preproc")):
+            for i, example in enumerate(tqdm(dataset,
+                                             desc=split + "_preproc")):
                 raw_nodes: Dict[str, int] = {}
                 raw_edges = []
                 for tri in example["graph"]:
