@@ -2,8 +2,8 @@
 # hyperparams are hardcoded
 import argparse
 import gc
-
 import time
+
 import torch
 from g_retriever import train
 
@@ -35,11 +35,13 @@ def inference_step_ogbg(model, batch, **kwargs):
     }
     return eval_data
 
+
 if __name__ == '__main__':
     gnn_to_use = GAT(in_channels=5, hidden_channels=1024, out_channels=1024,
                      num_layers=4, heads=4)
     # Fits on one GraceHopper
-    llm_to_use = LLM(model_name="meta-llama/CodeLlama-7b-Python-hf", num_params=7)
+    llm_to_use = LLM(model_name="meta-llama/CodeLlama-7b-Python-hf",
+                     num_params=7)
     # This would require a data center scale hardware setup
     # llm_to_use = LLM(model_name="deepseek-ai/DeepSeek-Coder-V2-Base",
     #                  num_params=236)
@@ -48,19 +50,31 @@ if __name__ == '__main__':
         gnn=gnn_to_use,
     )
     parser = argparse.ArgumentParser()
-    parser.add_argument('--percent_train', type=int, default=100,
-        help="Select how much of the training data to use, passing an integer in (0,100]" )
+    parser.add_argument(
+        '--percent_train', type=int, default=100, help=
+        "Select how much of the training data to use, passing an integer in (0,100]"
+    )
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
     args = parser.parse_args()
 
     start_time = time.time()
     # TODO, try more epochs with checkpointing on
-    train(num_epochs=1, hidden_channels=None, num_gnn_layers=None, batch_size=args.batch_size,
-          eval_batch_size=args.eval_batch_size, lr=1e-5, checkpointing=False, model=CodeRetriever,
-          dataset=OGBG_Code2, get_loss=get_loss_ogbg,
-          inference_step=inference_step_ogbg, model_save_name="code_retriever",
-          percent_train=args.percent_train,)
+    train(
+        num_epochs=1,
+        hidden_channels=None,
+        num_gnn_layers=None,
+        batch_size=args.batch_size,
+        eval_batch_size=args.eval_batch_size,
+        lr=1e-5,
+        checkpointing=False,
+        model=CodeRetriever,
+        dataset=OGBG_Code2,
+        get_loss=get_loss_ogbg,
+        inference_step=inference_step_ogbg,
+        model_save_name="code_retriever",
+        percent_train=args.percent_train,
+    )
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     gc.collect()
