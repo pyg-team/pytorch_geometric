@@ -157,6 +157,7 @@ class OGBG_Code2(InMemoryDataset):
                 # raw python data is missing from raw huggingface mirror
                 # return empty strings
                 return "", ""
+        # save th func_signature and then the rest of function seperately
         return func_str[func_str.find("def"):(
             func_str.find(":"))], func_str[func_str.find('"""'):]
 

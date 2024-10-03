@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.7.0\] - 2024-MM-DD
 
 ### Added
+- Added an example using G-retriever to achieve SOTA on OGBG_Code2 ([#9671](https://github.com/pyg-team/pytorch_geometric/pull/9671))
 
 ### Changed
 
