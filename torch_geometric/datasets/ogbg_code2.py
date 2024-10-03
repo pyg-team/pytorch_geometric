@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Tuple
 
 import torch
 from tqdm import tqdm
@@ -49,7 +49,7 @@ def find_weird_names(func_name_tokens, raw_dataset):
     return None
 
 
-def make_df_from_raw_data(raw_dataset):
+def make_df_from_raw_data(raw_dataset) -> DataFrame:
     # Create a Data Frame with
     # column 1: "func_name"
     # column 2: "whole_func_string"
@@ -115,7 +115,7 @@ class OGBG_Code2(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
-    def get_raw_python_from_df(self, func_name_tokens):
+    def get_raw_python_from_df(self, func_name_tokens) ->  Tuple[str, str]:
         # the ordering of code_search_net does not match ogbg-code2
         # have to search for matching python
         func_name = self.df.index
