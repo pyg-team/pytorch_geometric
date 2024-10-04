@@ -51,8 +51,9 @@ if __name__ == '__main__':
     )
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--percent_train', type=int, default=100, help=
-        "Select how much of the training data to use, passing an integer in (0,100]"
+        '--percent_train', type=int, default=100,
+        help="Select how much of the training data to use,\
+        passing an integer in (0,100]"
     )
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
