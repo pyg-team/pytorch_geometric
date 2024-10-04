@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Callable, List, Literal, Optional
+from typing import Callable, List, Optional
 
 import torch
 
@@ -14,19 +14,22 @@ class Airports(InMemoryDataset):
     and labels correspond to activity levels.
     Features are given by one-hot encoded node identifiers, as described in the
     `"GraLSP: Graph Neural Networks with Local Structural Patterns"
-    <https://arxiv.org/abs/1911.07675>`_ paper.
+    ` <https://arxiv.org/abs/1911.07675>`_ paper.
 
     Args:
-        root: Root directory where the dataset should be saved.
-        name: The name of the dataset.
-        transform: A function/transform that takes in an
-            :class:`torch_geometric.data.Data` object and returns a transformed
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"USA"`, :obj:`"Brazil"`,
+            :obj:`"Europe"`).
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-        pre_transform: A function/transform that takes in a
-            :class:`torch_geometric.data.Data` object and returns a
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk.
-        force_reload: Whether to re-process the dataset.
+            being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     edge_url = ('https://github.com/leoribeiro/struc2vec/'
                 'raw/master/graph/{}-airports.edgelist')
@@ -36,7 +39,7 @@ class Airports(InMemoryDataset):
     def __init__(
         self,
         root: str,
-        name: Literal['USA', 'Brazil', 'Europe'],
+        name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
