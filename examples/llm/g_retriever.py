@@ -11,7 +11,6 @@ import argparse
 import gc
 import math
 import multiprocessing as mp
-import os.path as osp
 import re
 import time
 from typing import Any, Callable, Dict, List, Type
