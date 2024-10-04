@@ -24,6 +24,7 @@ from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
+from torch_geometric.nn.nlp.llm import MAX_NEW_TOKENS
 
 
 def compute_metrics(eval_output):
@@ -95,24 +96,33 @@ def get_loss(model, batch, model_save_name) -> Tensor:
                      batch.label, batch.edge_attr, batch.desc)
 
 
-def inference_step(model, batch, model_save_name):
+def inference_step(model, batch, model_save_name,
+                   max_out_tokens=MAX_NEW_TOKENS):
     if model_save_name == 'llm':
-        return model.inference(batch.question, batch.desc)
+        pred = model.inference(batch.question, batch.desc,
+                               max_out_tokens=max_out_tokens)
     else:
-        return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr, batch.desc)
+        pred = model.inference(batch.question, batch.x, batch.edge_index,
+                               batch.batch, batch.edge_attr, batch.desc,
+                               max_out_tokens=max_out_tokens)
+    return {
+        'pred': pred,
+        'question': batch.question,
+        'desc': batch.desc,
+        'label': batch.label,
+    }
 
 
-def train(
-    num_epochs,
-    hidden_channels,
-    num_gnn_layers,
-    batch_size,
-    eval_batch_size,
-    lr,
-    checkpointing=False,
-    tiny_llama=False,
-):
+def train(num_epochs, hidden_channels, num_gnn_layers, batch_size,
+          eval_batch_size, lr, checkpointing=False, tiny_llama=False,
+          model=None, dataset=WebQSPDataset, get_loss=get_loss,
+          inference_step=inference_step, model_save_name="g_retriever",
+          percent_train=100):
+    """Tips:
+    1) Set `model_save_name` to be "llm" if you want to train/eval a pure LLM
+    """
+    assert percent_train <= 100 and percent_train > 0, "percent_train must be in (0,100]"
+
     def adjust_learning_rate(param_group, LR, epoch):
         # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
@@ -128,10 +138,10 @@ def train(
 
     start_time = time.time()
     path = osp.dirname(osp.realpath(__file__))
-    path = osp.join(path, '..', '..', 'data', 'WebQSPDataset')
-    train_dataset = WebQSPDataset(path, split='train')
-    val_dataset = WebQSPDataset(path, split='val')
-    test_dataset = WebQSPDataset(path, split='test')
+    path = osp.join(path, '..', '..', 'data', str(dataset).split('.')[-1][:-2])
+    train_dataset = dataset(path, split='train')
+    val_dataset = dataset(path, split='val')
+    test_dataset = dataset(path, split='test')
 
     seed_everything(42)
 
@@ -141,25 +151,24 @@ def train(
                             drop_last=False, pin_memory=True, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
-
-    gnn = GAT(
-        in_channels=1024,
-        hidden_channels=hidden_channels,
-        out_channels=1024,
-        num_layers=num_gnn_layers,
-        heads=4,
-    )
-    if tiny_llama:
-        llm = LLM(
-            model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
-            num_params=1,
+    if model is None:
+        gnn = GAT(
+            in_channels=1024,
+            hidden_channels=hidden_channels,
+            out_channels=1024,
+            num_layers=num_gnn_layers,
+            heads=4,
         )
-        model = GRetriever(llm=llm, gnn=gnn, mlp_out_channels=2048)
-    else:
-        llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
-        model = GRetriever(llm=llm, gnn=gnn)
+        if tiny_llama:
+            llm = LLM(
+                model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+                num_params=1,
+            )
+            model = GRetriever(llm=llm, gnn=gnn, mlp_out_channels=2048)
+        else:
+            llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
+            model = GRetriever(llm=llm, gnn=gnn)
 
-    model_save_name = 'gnn_llm' if num_gnn_layers is not None else 'llm'
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
@@ -181,9 +190,14 @@ def train(
             print("Training beginning...")
         epoch_str = f'Epoch: {epoch + 1}|{num_epochs}'
         loader = tqdm(train_loader, desc=epoch_str)
+        total_batches = len(loader)
         for step, batch in enumerate(loader):
+            if percent_train < 100:
+                if float(step) / float(total_batches) >= float(
+                        percent_train) / 100.0:
+                    break
             optimizer.zero_grad()
-            loss = get_loss(model, batch, model_save_name)
+            loss = get_loss(model, batch, model_save_name=model_save_name)
             loss.backward()
 
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
@@ -205,7 +219,7 @@ def train(
         model.eval()
         with torch.no_grad():
             for step, batch in enumerate(val_loader):
-                loss = get_loss(model, batch, model_save_name)
+                loss = get_loss(model, batch, model_save_name=model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
             print(epoch_str + f", Val Loss: {val_loss:4f}")
@@ -230,14 +244,8 @@ def train(
     progress_bar_test = tqdm(range(len(test_loader)))
     for step, batch in enumerate(test_loader):
         with torch.no_grad():
-            pred = inference_step(model, batch, model_save_name)
-            eval_data = {
-                'pred': pred,
-                'question': batch.question,
-                'desc': batch.desc,
-                'label': batch.label
-            }
-            eval_output.append(eval_data)
+            eval_output.append(
+                inference_step(model, batch, model_save_name=model_save_name))
         progress_bar_test.update(1)
 
     compute_metrics(eval_output)
