@@ -138,6 +138,7 @@ class NGCF(nn.Module):
             node_id (torch.Tensor, optional): The indices of the nodes involved
                 for deriving a prediction for both positive and negative edges.
                 If set to :obj:`None`, all nodes will be used.
+                (default: :obj:`None`)
             lambda_reg (int, optional): The :math:`L_2` regularization strength
                 of the Bayesian Personalized Ranking (BPR) loss.
                 (default: :obj:`1e-4`)
