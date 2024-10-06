@@ -119,10 +119,32 @@ class NGCF(nn.Module):
         self,
         pos_edge_rank: Tensor,
         neg_edge_rank: Tensor,
-        node_id: Tensor | None = None,
+        node_id: OptTensor = None,
         lambda_reg: float = 1e-4,
         **kwargs,
     ) -> Tensor:
+        r"""Computes the model loss for a ranking objective via the Bayesian
+        Personalized Ranking (BPR) loss.
+
+        .. note::
+
+            The i-th entry in the :obj:`pos_edge_rank` vector and i-th entry
+            in the :obj:`neg_edge_rank` entry must correspond to ranks of
+            positive and negative edges of the same entity (*e.g.*, user).
+
+        Args:
+            pos_edge_rank (torch.Tensor): Positive edge rankings.
+            neg_edge_rank (torch.Tensor): Negative edge rankings.
+            node_id (torch.Tensor, optional): The indices of the nodes involved
+                for deriving a prediction for both positive and negative edges.
+                If set to :obj:`None`, all nodes will be used.
+            lambda_reg (int, optional): The :math:`L_2` regularization strength
+                of the Bayesian Personalized Ranking (BPR) loss.
+                (default: :obj:`1e-4`)
+            **kwargs (optional): Additional arguments of the underlying
+                :class:`torch_geometric.nn.models.lightgcn.BPRLoss` loss
+                function.
+        """
         loss_fn = BPRLoss(lambda_reg, **kwargs)
         emb = self.emb.weight
         emb = emb if node_id is None else emb[node_id]
