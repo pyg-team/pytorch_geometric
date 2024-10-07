@@ -196,8 +196,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                              weight_decay=args.wd)
 
 prep_time = round(time.perf_counter() - wall_clock_start, 2)
-print("Total time before training begins (prep_time)=", prep_time,
-      "seconds")
+print("Total time before training begins (prep_time)=", prep_time, "seconds")
 print("Training...")
 
 val_accs = []
