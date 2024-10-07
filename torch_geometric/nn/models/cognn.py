@@ -1,17 +1,18 @@
-from typing import Optional, Dict, Any, List
-from torch.nn import Module, Dropout
-from torch import Tensor
+from typing import Any, Dict, List, Optional
+
 import torch.nn.functional as F
+from torch import Tensor
+from torch.nn import Dropout, Module
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj
 from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.typing import Adj
 
 
 class CoGNN(Module):
     r"""The CoGNN model from the `"Cooperative Graph Neural Netowrks"
     <https://arxiv.org/abs/2310.01267>`_ paper.
-    
+
     Args:
         env_net (List[MessagePassing]): A list of MessagePassing modules, which compose the environment network.
         action_net (Module): The action network.
@@ -42,7 +43,8 @@ class CoGNN(Module):
 
         self.env_net = env_net
         self.action_net = action_net
-        self.activation = activation_resolver(env_activation, **(env_activation_kwargs or {}))
+        self.activation = activation_resolver(env_activation,
+                                              **(env_activation_kwargs or {}))
         self.temp = temp
         self.dropout = Dropout(p=dropout)
 
@@ -50,11 +52,14 @@ class CoGNN(Module):
         u, v = edge_index
 
         for env_layer in self.env_net:
-            action_logits = self.action_net(x=x, edge_index=edge_index)  # (N, 4)
+            action_logits = self.action_net(x=x,
+                                            edge_index=edge_index)  # (N, 4)
 
             # sampling actions
-            incoming_edge_prob = F.gumbel_softmax(logits=action_logits[:, :2], tau=self.temp, hard=True)
-            outgoing_edge_prob = F.gumbel_softmax(logits=action_logits[:, 2:], tau=self.temp, hard=True)
+            incoming_edge_prob = F.gumbel_softmax(logits=action_logits[:, :2],
+                                                  tau=self.temp, hard=True)
+            outgoing_edge_prob = F.gumbel_softmax(logits=action_logits[:, 2:],
+                                                  tau=self.temp, hard=True)
 
             # creating subgraph
             keep_incoming_prob = incoming_edge_prob[:, 0]

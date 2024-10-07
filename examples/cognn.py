@@ -1,8 +1,7 @@
 import os.path as osp
 
 import torch
-from torch.nn import ModuleList
-from torch.nn import CrossEntropyLoss
+from torch.nn import CrossEntropyLoss, ModuleList
 
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCN

@@ -1,5 +1,6 @@
 import torch
 from torch.nn import ModuleList
+
 from torch_geometric.nn import GCN
 from torch_geometric.nn.conv import GCNConv
 from torch_geometric.nn.models.cognn import CoGNN
