@@ -1,8 +1,10 @@
-from typing import Optional, Dict, Any
-from torch.nn import Module, Dropout, ModuleList
+from typing import Optional, Dict, Any, List
+from torch.nn import Module, Dropout
 from torch import Tensor
-from torch_geometric.typing import Adj
 import torch.nn.functional as F
+
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import Adj
 from torch_geometric.nn.resolver import activation_resolver
 
 
@@ -11,7 +13,7 @@ class CoGNN(Module):
     <https://arxiv.org/abs/2310.01267>`_ paper.
     
     Args:
-        env_net (Module): The environment network.
+        env_net (List[MessagePassing]): A list of MessagePassing modules, which compose the environment network.
         action_net (Module): The action network.
         env_activation (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
@@ -29,7 +31,7 @@ class CoGNN(Module):
     """
     def __init__(
         self,
-        env_net: ModuleList,
+        env_net: List[MessagePassing],
         action_net: Module,
         env_activation: str = 'relu',
         env_activation_kwargs: Optional[Dict[str, Any]] = None,
