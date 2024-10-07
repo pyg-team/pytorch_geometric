@@ -15,12 +15,31 @@ class NGCF(nn.Module):
     <https://arxiv.org/abs/1905.08108>`_ paper.
 
     :class:`~torch_geometric.nn.models.NGCF` learns embeddings by explicitly
-    injecting collaborative signal into the embedding process.
+    injecting collaborative signal into the embedding process where each
+    layer's embedding is computed as
 
     .. math::
         \mathbf{E}^{(l)} = \text{LeakyReLU} \left( (\mathcal{L} + \mathbf{I})
         \mathbf{E}^{(l-1)} \mathbf{W}_1^{(l)} + \mathcal{L} \mathbf{E}^{(l-1)}
         \odot \mathbf{E}^{(l-1)} \mathbf{W}_2^{(l)} \right)
+
+    The **recommendation** head and loss function are provided (via
+    :meth:`~torch_geometric.nn.models.NGCF.recommendation_loss` and
+    :meth:`~torch_geometric.nn.models.NGCF.recommend`).
+
+    .. note::
+
+        The :obj:`edge_index` and :obj:`edge_weight` passed to
+        :meth:`~torch_geometric.nn.models.NGCF.forward`,
+        :meth:`~torch_geometric.nn.models.NGCF.recommend`, and
+        :meth:`~torch_geometric.nn.models.NGCF.get_embedding` must be
+        transformed by the GCN normalization.
+
+    .. note::
+
+        For an example of using :class:`NGCF`, see `examples/ngcf.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        ngcf.py>`_.
 
     Args:
         num_nodes (int): The number of nodes in the graph.
