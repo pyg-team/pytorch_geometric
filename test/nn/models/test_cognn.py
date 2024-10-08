@@ -42,7 +42,7 @@ def test_cognn() -> None:
         action_net=action_net,
         env_activation='relu',
         temp=0.1,
-        dropout=0.1,
+        dropout=0.0,
     )
     assert str(model) == '''CoGNN(
   (env_net): ModuleList(
@@ -51,7 +51,7 @@ def test_cognn() -> None:
   )
   (action_net): GCN(128, 4, num_layers=2)
   (activation): ReLU()
-  (dropout): Dropout(p=0.1, inplace=False)
+  (dropout): Dropout(p=0.0, inplace=False)
 )'''
 
     # Train:
