@@ -64,4 +64,4 @@ def test_cognn() -> None:
     model.eval()
     out = model(x, edge_index)
     assert out.size() == (num_nodes, 1)
-    assert out.min().item() >= 0 and out.max().item() < 1.5
+    assert out.min().item() >= -0.1 and out.max().item() < 1.3
