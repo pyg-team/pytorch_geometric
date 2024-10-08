@@ -6,7 +6,7 @@ from typing import Tuple
 import psutil
 import torch
 import torch.nn.functional as F
-from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
+from ogb.nodeproppred impor PygNodePropPredDataset
 from torch import Tensor
 from tqdm import tqdm
 
@@ -89,7 +89,6 @@ root = osp.join(args.dataset_dir, args.dataset_subdir)
 print('The root is: ', root)
 dataset = PygNodePropPredDataset(name=args.dataset, root=root)
 split_idx = dataset.get_idx_split()
-evaluator = Evaluator(name=args.dataset)
 
 data = dataset[0]
 if not args.use_directed_graph:
