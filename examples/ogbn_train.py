@@ -6,7 +6,7 @@ from typing import Tuple
 import psutil
 import torch
 import torch.nn.functional as F
-from ogb.nodeproppred impor PygNodePropPredDataset
+from ogb.nodeproppred import PygNodePropPredDataset
 from torch import Tensor
 from tqdm import tqdm
 
