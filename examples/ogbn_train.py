@@ -66,7 +66,7 @@ parser.add_argument(
 args = parser.parse_args()
 if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
                                       (1024**3)) < 390:
-    print("Warning: may not have enough RAM to use this many GPUs.")
+    print("Warning: may not have enough RAM to run this example.")
     print("Consider upgrading RAM if an error occurs.")
     print("Estimated RAM Needed: ~390GB.")
 wall_clock_start = time.perf_counter()
@@ -210,23 +210,22 @@ model.reset_parameters()
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 for epoch in range(1, num_epochs + 1):
-    train_start = time.time()
+    train_start = time.perf_counter()
     loss, _ = train(epoch)
-    train_end = time.time()
-    train_times.append(train_end - train_start)
+    train_times.append(time.perf_counter() - train_start)
 
-    inference_start = time.time()
+    inference_start = time.perf_counter()
     val_acc = test(val_loader)
 
-    inference_times.append(time.time() - inference_start)
+    inference_times.append(time.perf_counter() - inference_start)
     val_accs.append(val_acc)
     print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, ',
-          f'Train Time: {train_end - train_start:.4f}s')
+          f'Train Time: {train_times[-1]:.4f}s')
     print(f'Val: {val_acc * 100.0:.2f}%,')
 
     if val_acc > best_val:
         best_val = val_acc
-    times.append(time.time() - train_start)
+    times.append(time.perf_counter() - train_start)
 
 val_acc = torch.tensor(val_accs)
 print('============================')
