@@ -38,7 +38,7 @@ repos:
     hooks:
       - id: pyupgrade
         name: Upgrade Python syntax
-        args: [--py39-plus]
+        args: [--py39-plus, --keep-runtime-typing]
 
   - repo: https://github.com/PyCQA/autoflake
     rev: v2.3.1
