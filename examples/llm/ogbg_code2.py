@@ -45,10 +45,10 @@ if __name__ == '__main__':
     # This would require a data center scale hardware setup
     # llm_to_use = LLM(model_name="deepseek-ai/DeepSeek-Coder-V2-Base",
     #                  num_params=236)
-    CodeRetriever = torch.compile(GRetriever(
+    CodeRetriever = GRetriever(
         llm=llm_to_use,
         gnn=gnn_to_use,
-    ))
+    )
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--percent_train', type=int, default=100,
