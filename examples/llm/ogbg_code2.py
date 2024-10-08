@@ -41,7 +41,7 @@ if __name__ == '__main__':
                      num_layers=4, heads=4)
     # Fits on one GraceHopper
     llm_to_use = LLM(model_name="meta-llama/Meta-Llama-3-8B",
-                     num_params=7)
+                     num_params=8)
     # This would require a data center scale hardware setup
     # llm_to_use = LLM(model_name="deepseek-ai/DeepSeek-Coder-V2-Base",
     #                  num_params=236)
