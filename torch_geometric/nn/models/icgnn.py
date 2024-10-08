@@ -1,12 +1,13 @@
 import math
+from typing import Any, Dict, Iterator, Optional
+
 import torch
 from torch import Tensor
-from torch.nn import Parameter, Module, init, ModuleList, Linear, Dropout
-from typing import Optional, Dict, Any, Iterator
+from torch.nn import Dropout, Linear, Module, ModuleList, Parameter, init
 
+from torch_geometric.nn.conv.simple_conv import MessagePassing
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.nn.conv.simple_conv import MessagePassing
 
 
 class FrobeniusNormMessagePassing(MessagePassing):
@@ -17,16 +18,20 @@ class FrobeniusNormMessagePassing(MessagePassing):
         super().__init__(aggr='sum')
         self.community_scalars = community_scalars  # (K,)
 
-    def message(self, x_i: Tensor, x_j: Tensor, edge_weight: OptTensor = None) -> Tensor:
+    def message(self, x_i: Tensor, x_j: Tensor,
+                edge_weight: OptTensor = None) -> Tensor:
         # x_i is the target node of dim (E, K)
         # x_j is the source node of dim (E, K)
-        message_term = (x_i * self.community_scalars * x_j).sum(dim=1, keepdims=True)  # (E, )
+        message_term = (x_i * self.community_scalars * x_j).sum(
+            dim=1, keepdims=True)  # (E, )
         if edge_weight is not None:
             message_term = message_term * edge_weight.unsqueeze(dim=1)
         return message_term
 
-    def forward(self, affiliate_mat: Tensor, edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
-        node_based_result = self.propagate(edge_index, x=affiliate_mat, edge_weight=edge_weight)  # (N, 1)
+    def forward(self, affiliate_mat: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
+        node_based_result = self.propagate(edge_index, x=affiliate_mat,
+                                           edge_weight=edge_weight)  # (N, 1)
         return node_based_result.squeeze(dim=1).sum(dim=0)  # (,)
 
 
@@ -47,7 +52,7 @@ class ICGFitter(Module):
 
         # learned icg parameters
         self._affiliate_mat = Parameter(torch.zeros((num_nodes, K)))
-        self.community_scalars = Parameter(torch.zeros((K,)))
+        self.community_scalars = Parameter(torch.zeros((K, )))
         self.feat_mat = Parameter(torch.zeros((K, in_channel)))
 
     def reset_parameters(self):
@@ -77,16 +82,21 @@ class ICGFitter(Module):
         self.train()
 
         num_nodes, num_feat = x.shape[0], x.shape[1]
-        frobenius_norm_mp = FrobeniusNormMessagePassing(community_scalars=self.community_scalars).to(device=x.device)
+        frobenius_norm_mp = FrobeniusNormMessagePassing(
+            community_scalars=self.community_scalars).to(device=x.device)
 
         # loss terms
         global_term = torch.trace(self.affiliate_mat.T @ self.affiliate_times_scalar @ self.affiliate_mat.T \
                                   @ (self.affiliate_mat * self.community_scalars))  # (,)
-        local_term = 2 * frobenius_norm_mp(affiliate_mat=self.affiliate_mat, edge_index=edge_index)  # (,)
+        local_term = 2 * frobenius_norm_mp(affiliate_mat=self.affiliate_mat,
+                                           edge_index=edge_index)  # (,)
         loss = (global_term - local_term + edge_index.shape[1]) / num_nodes
 
         if self.feature_scale > 0:
-            feature_loss = torch.sum((x - (self.affiliate_mat * self.community_scalars) @ self.feat_mat) ** 2) / num_feat
+            feature_loss = torch.sum(
+                (x -
+                 (self.affiliate_mat * self.community_scalars) @ self.feat_mat)
+                **2) / num_feat
             loss = loss + self.feature_scale * feature_loss
         self.eval()
         return loss
@@ -94,10 +104,10 @@ class ICGFitter(Module):
 
 class ICGNNLayer(Module):
     def __init__(
-            self,
-            K: int,
-            in_channel: int,
-            out_channel: int,
+        self,
+        K: int,
+        in_channel: int,
+        out_channel: int,
     ):
         super().__init__()
 
@@ -106,34 +116,40 @@ class ICGNNLayer(Module):
         self.lin_community = Linear(out_channel, out_channel)
 
     def forward(self, x: Tensor, affiliate_times_scalar: Tensor) -> Tensor:
-        out = self.lin_community(affiliate_times_scalar @ self.community_mat)  # (N, C)
+        out = self.lin_community(
+            affiliate_times_scalar @ self.community_mat)  # (N, C)
         out = out + self.lin_node(x)
         return out  # (N, C)
 
 
 class ICGNNSequence(Module):
     def __init__(
-            self,
-            K: int,
-            in_channel: int,
-            hidden_channel: int,
-            out_channel: int,
-            num_layers: int,
-            dropout: float,
-            activation: str = 'relu',
-            activation_kwargs: Optional[Dict[str, Any]] = None,
+        self,
+        K: int,
+        in_channel: int,
+        hidden_channel: int,
+        out_channel: int,
+        num_layers: int,
+        dropout: float,
+        activation: str = 'relu',
+        activation_kwargs: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
 
-        dim_list = [in_channel] + [hidden_channel] * (num_layers - 1) + [out_channel]
-        self.layers = ModuleList([ICGNNLayer(K=K, in_channel=in_channels, out_channel=out_channels)
-                                  for in_channels, out_channels in zip(dim_list[:-1], dim_list[1:])])
+        dim_list = [in_channel
+                    ] + [hidden_channel] * (num_layers - 1) + [out_channel]
+        self.layers = ModuleList([
+            ICGNNLayer(K=K, in_channel=in_channels, out_channel=out_channels)
+            for in_channels, out_channels in zip(dim_list[:-1], dim_list[1:])
+        ])
         self.dropout = Dropout(dropout)
-        self.activation = activation_resolver(activation, **(activation_kwargs or {}))
+        self.activation = activation_resolver(activation,
+                                              **(activation_kwargs or {}))
 
     def forward(self, x: Tensor, affiliate_times_scalar: Tensor) -> Tensor:
         for layer in self.layers[:-1]:
-            x = layer(x=x, affiliate_times_scalar=affiliate_times_scalar)  # (N, C)
+            x = layer(x=x,
+                      affiliate_times_scalar=affiliate_times_scalar)  # (N, C)
             x = self.activation(x)
             x = self.dropout(x)
         x = self.layers[-1](x=x, affiliate_times_scalar=affiliate_times_scalar)
