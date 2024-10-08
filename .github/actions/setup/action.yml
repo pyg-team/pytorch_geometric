@@ -3,7 +3,7 @@ name: Setup
 inputs:
   python-version:
     required: false
-    default: '3.8'
+    default: '3.9'
   torch-version:
     required: false
     default: '2.4.0'
@@ -22,7 +22,7 @@ runs:
 
   steps:
     - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v4.3.0
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
         check-latest: true
