@@ -24,6 +24,7 @@ Functions
 
 .. automodule:: torch_geometric.compile
     :members:
+    :exclude-members: compile
 
 .. automodule:: torch_geometric.debug
     :members:
