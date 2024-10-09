@@ -291,7 +291,7 @@ class InstanceSegmentationInLUT3D(InLUT3D):
                 categories,
                 instances,
         ) in self.iter_over_setups():
-            data = Data(pos=xyz, x=rgb, y=(categories, instances))
+            data = Data(pos=xyz, x=rgb, y=(categories, instances)) # type: ignore[no-untyped-def]
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
             if self.pre_transform is not None:
