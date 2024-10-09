@@ -30,6 +30,12 @@ runs:
         cache-dependency-path: |
           pyproject.toml
 
+    - name: Install numpy
+      if: ${{ runner.os != 'Windows' }}
+      run: |
+        pip install "numpy<2"
+      shell: bash
+
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
