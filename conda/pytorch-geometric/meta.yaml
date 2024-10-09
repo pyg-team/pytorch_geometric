@@ -1,9 +1,9 @@
 package:
   name: pytorch-geometric
-  version: 2.5.2
+  version: 2.6.1
 
 source:
-  url: https://files.pythonhosted.org/packages/2b/52/e6d298d328858aaebf91ca78d81195e3ccaa99ba3b33b0ffc0af5ec0c86d/torch_geometric-2.5.2.tar.gz
+  url: https://files.pythonhosted.org/packages/e8/81/e1b015494cb9e0bf4c47cc8426e49736120248733be0e22072a5628ae9ed/torch_geometric-2.6.1.tar.gz
 
 requirements:
   host:
