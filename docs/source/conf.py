@@ -46,6 +46,9 @@ intersphinx_mapping = {
     'torch': ('https://pytorch.org/docs/main', None),
 }
 
+typehints_use_rtype = False
+typehints_defaults = 'comma'
+
 nbsphinx_thumbnails = {
     'tutorial/create_gnn':
     '_static/thumbnails/create_gnn.png',
