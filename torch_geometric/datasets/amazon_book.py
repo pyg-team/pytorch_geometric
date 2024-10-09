@@ -14,17 +14,16 @@ class AmazonBook(InMemoryDataset):
     No labels or features are provided.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.HeteroData` object and returns a
+        root: Root directory where the dataset should be saved.
+        transform: A function/transform that takes in an
+            :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
-            every access. (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.HeteroData` object and returns a
+            every access.
+        pre_transform: A function/transform that takes in an
+            :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
+            being saved to disk.
+        force_reload: Whether to re-process the dataset.
     """
     url = ('https://raw.githubusercontent.com/gusye1234/LightGCN-PyTorch/'
            'master/data/amazon-book')
