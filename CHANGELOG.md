@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added skip connections to basic GNNs ([#9481](https://github.com/pyg-team/pytorch_geometric/pull/9673))
+
 ### Changed
 
 - Dropped Python 3.8 support ([#9696](https://github.com/pyg-team/pytorch_geometric/pull/9606))
