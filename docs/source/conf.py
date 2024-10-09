@@ -82,5 +82,9 @@ def rst_jinja_render(app, _, source):
 
 
 def setup(app):
+    r"""Setup sphinx application."""
     app.connect('source-read', rst_jinja_render)
     app.add_js_file('js/version_alert.js')
+
+    # Do not drop type hints in signatures:
+    del app.events.listeners['autodoc-process-signature']
