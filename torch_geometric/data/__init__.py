@@ -15,7 +15,8 @@ from .in_memory_dataset import InMemoryDataset
 from .on_disk_dataset import OnDiskDataset
 from .makedirs import makedirs
 from .download import download_url, download_google_url
-from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
+from .extract import (extract_tar, extract_zip, extract_bz2, extract_gz,
+                      extract_tar_gz)
 
 from torch_geometric.lazy_loader import LazyLoader
 
