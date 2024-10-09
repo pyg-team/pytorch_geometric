@@ -106,7 +106,7 @@ class Index(Tensor):
     :meth:`Index.fill_cache_`, and are maintaned and adjusted over its
     lifespan.
 
-    This representation ensures for optimal computation in GNN message passing
+    This representation ensures optimal computation in GNN message passing
     schemes, while preserving the ease-of-use of regular COO-based :pyg:`PyG`
     workflows.
 
@@ -120,7 +120,7 @@ class Index(Tensor):
         assert index.is_sorted
 
         # Flipping order:
-        edge_index.flip(0)
+        index.flip(0)
         >>> Index([[2, 1, 1, 0], dim_size=3)
         assert not index.is_sorted
 

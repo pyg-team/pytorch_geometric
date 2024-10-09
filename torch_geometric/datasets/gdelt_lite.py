@@ -9,6 +9,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class GDELTLite(InMemoryDataset):
@@ -80,9 +81,9 @@ class GDELTLite(InMemoryDataset):
     def process(self) -> None:
         import pandas as pd
 
-        x = torch.load(self.raw_paths[0])
+        x = fs.torch_load(self.raw_paths[0])
         df = pd.read_csv(self.raw_paths[1])
-        edge_attr = torch.load(self.raw_paths[2])
+        edge_attr = fs.torch_load(self.raw_paths[2])
 
         row = torch.from_numpy(df['src'].values)
         col = torch.from_numpy(df['dst'].values)

@@ -10,6 +10,7 @@ from ogb.nodeproppred import Evaluator
 from torch import Tensor
 from torch.nn.parallel import DistributedDataParallel
 
+from torch_geometric.io import fs
 from torch_geometric.nn import GraphSAGE
 
 
@@ -281,10 +282,10 @@ if __name__ == '__main__':
     )
     train_file = osp.join(root_dir, f'{args.dataset}-train-partitions',
                           f'partition{data_pidx}.pt')
-    train_idx = torch.load(train_file)
+    train_idx = fs.torch_load(train_file)
     test_file = osp.join(root_dir, f'{args.dataset}-test-partitions',
                          f'partition{data_pidx}.pt')
-    test_idx = torch.load(test_file)
+    test_idx = fs.torch_load(test_file)
     train_idx.share_memory_()
     test_idx.share_memory_()
 

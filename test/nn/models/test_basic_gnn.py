@@ -235,7 +235,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
-    model = torch.load(path)
+    model = torch.load(path, weights_only=False)
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 

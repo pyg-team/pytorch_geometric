@@ -36,3 +36,17 @@ def test_virtual_node():
     assert data.num_nodes == 5
 
     assert data.edge_type.tolist() == [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
+
+    data = Data(x=x, edge_index=torch.empty(2, 0, dtype=torch.long))
+    data = VirtualNode()(data)
+    assert len(data) == 3
+
+    assert data.x.size() == (5, 16)
+    assert torch.allclose(data.x[:4], x)
+    assert data.x[4:].abs().sum() == 0
+
+    assert data.edge_index.tolist() == [
+        [0, 1, 2, 3, 4, 4, 4, 4],
+        [4, 4, 4, 4, 0, 1, 2, 3],
+    ]
+    assert data.edge_type.tolist() == [1, 1, 1, 1, 2, 2, 2, 2]
