@@ -56,13 +56,13 @@ runs:
       shell: bash
 
     - name: Install faiss-cpu
-      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os != 'macOS' }}
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os == 'Linux' }}
       run: |
         pip install faiss-cpu==1.7.2
       shell: bash
 
     - name: Install faiss-gpu
-      if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' }}
+      if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' && runner.os == 'Linux' }}
       run: |
         pip install faiss-gpu==1.7.2
       shell: bash
