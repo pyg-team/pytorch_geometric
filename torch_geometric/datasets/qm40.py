@@ -22,6 +22,27 @@ import pandas as pd
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
 
+conversion = torch.tensor(
+    [
+        HAR2EV,
+        HAR2EV,
+        HAR2EV,
+        HAR2EV,
+        1.0,
+        1.0,
+        1.0,
+        KCALMOL2EV,
+        1.0,
+        1.0,
+        1.0,
+        HAR2EV,
+        HAR2EV,
+        HAR2EV,
+        KCALMOL2EV,
+        KCALMOL2EV,
+    ]
+)
+
 class QM40(InMemoryDataset):
 
     raw_url = None
@@ -118,7 +139,7 @@ class QM40(InMemoryDataset):
         for mol_idx, row in tqdm(main_df.iterrows(), total=len(main_df)):
             ID = row['Zinc_id']
             SMILES = row['smile']
-            y = row.iloc[2:].values.astype(np.float32)
+            y = torch.tensor(row.iloc[2:].values.astype(np.float32), dtype=torch.float)
 
             mol_xyz = xyz_df_grouped.get_group(ID).reset_index(drop=True)
             mol_bonds = bond_df_grouped.get_group(ID).reset_index(drop=True)
@@ -171,12 +192,12 @@ class QM40(InMemoryDataset):
 
             # Create node features
             x1 = one_hot(torch.tensor(type_idx), num_classes=len(types))
-            x2 = torch.tensor(np.array([atomic_numbers, aromatic, sp, sp2, sp3, num_hs]), dtype=torch.float).t().contiguous()
+            x2 = torch.tensor(np.array([aromatic, sp, sp2, sp3, num_hs]), dtype=torch.float).t().contiguous()
             x = torch.cat([x1, x2], dim=-1)
 
             data = Data(
                 x=x, z=z, pos=pos, edge_index=edge_index, smiles=SMILES,
-                edge_attr=edge_attr, edge_attr2=edge_attr2, y=y, name=ID, idx=mol_idx,
+                edge_attr=edge_attr, edge_attr2=edge_attr2, y=y * conversion.view(1, -1), name=ID, idx=mol_idx,
             )
 
             if self.pre_filter is not None and not self.pre_filter(data):
