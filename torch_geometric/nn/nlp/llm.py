@@ -83,7 +83,10 @@ class LLM(torch.nn.Module):
         self.tokenizer.pad_token_id = PAD_TOKEN_ID
         self.tokenizer.padding_side = PADDING_SIDE
         self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
-        self.word_embedding = self.llm.model.get_input_embeddings()
+        if 'ChemBERTa' in model_name:
+            self.word_embedding = self.llm.roberta.get_input_embeddings()
+        else:
+            self.word_embedding = self.llm.model.get_input_embeddings()
 
         if 'max_memory' not in kwargs:  # Pure CPU:
             warnings.warn("LLM is being used on CPU, which may be slow")
