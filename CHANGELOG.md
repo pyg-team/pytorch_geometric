@@ -7,8 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added `nn.Models.GLEM` ([#9661](https://github.com/pyg-team/pytorch_geometric/pull/9661))
-- Added `TAGDataset` ([#9661](https://github.com/pyg-team/pytorch_geometric/pull/9661))
+- Added `nn.models.GLEM` ([#9662](https://github.com/pyg-team/pytorch_geometric/pull/9662))
+- Added `TAGDataset` ([#9662](https://github.com/pyg-team/pytorch_geometric/pull/9662))
+- Consolidated `examples/ogbn_{papers_100m,products_gat,products_sage}.py` into `examples/ogbn_train.py` ([#9467](https://github.com/pyg-team/pytorch_geometric/pull/9467))
 
 ### Changed
 
