@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 import torch
 from torch import Tensor
@@ -46,36 +46,43 @@ class MoleculeGPT(torch.nn.Module):
 
         self.word_embedding = self.llm.word_embedding
         self.llm_generator = self.llm.llm
-        mlp_hidden_channels = self.gnn.out_channels
         # TODO: Add Q-Former layer
-        self.projector = torch.nn.Sequential(
-            torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
-            torch.nn.ReLU(),
-            torch.nn.Linear(mlp_hidden_channels, mlp_out_channels),
-        ).to(self.llm.device)
 
-    def encode(
+    def graph_encode(
         self,
         x: Tensor,
         edge_index: Tensor,
         batch: Tensor,
         edge_attr: Optional[Tensor],
-        smiles: Optional[Tensor],
     ) -> Tensor:
         x = x.to(self.llm.device)
         edge_index = edge_index.to(self.llm.device)
         if edge_attr is not None:
             edge_attr = edge_attr.to(self.llm.device)
         batch = batch.to(self.llm.device)
-        smiles = smiles.to(self.llm.device)
 
-        out = self.gnn(x, edge_index, edge_attr=edge_attr)
-        graph_embedding = scatter(out, batch, dim=0, reduce='mean')
-        smiles_embedding = self.smiles_encoder(smiles)
-        return graph_embedding, smiles_embedding
+        out = self.graph_encoder(x, edge_index, edge_attr=edge_attr)
+        return scatter(out, batch, dim=0, reduce='mean')
 
-    def forward(self):
+    def smiles_encode(
+        self,
+        smiles: List[str],
+    ):
         pass
+
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Tensor,
+        edge_attr: Optional[Tensor],
+        smiles: List[str],
+    ):
+        x = self.graph_encode(x, edge_index, batch,
+                              edge_attr)  # graph branch [bs, d]
+
+        import pdb
+        pdb.set_trace()
 
     @torch.no_grad()
     def inference(self):
@@ -84,5 +91,6 @@ class MoleculeGPT(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(\n'
                 f'  llm={self.llm},\n'
-                f'  gnn={self.gnn},\n'
+                f'  graph={self.graph_encoder},\n'
+                f'  smiles={self.smiles_encoder},\n'
                 f')')
