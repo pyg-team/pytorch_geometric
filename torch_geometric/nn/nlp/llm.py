@@ -56,7 +56,7 @@ class LLM(torch.nn.Module):
         allocate the correct number of GPUs needed, given the available GPU
         memory of your GPUs.
     dtype (torch.dtype, optional): The data type to use for the LLM.
-        (default :obj: `torch.bloat16`)
+        (default :obj: `torch.bfloat16`)
     """
     def __init__(
         self,
@@ -154,6 +154,7 @@ class LLM(torch.nn.Module):
         if embedding is not None and embedding[i] is not None:
             to_cat.append(embedding[i])
         to_cat.append(inputs_embeds)
+        # import pdb; pdb.set_trace()
         return torch.cat(to_cat, dim=0).to(self.device)
 
     def _append_embeds(
