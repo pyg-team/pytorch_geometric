@@ -15,7 +15,7 @@ def test_molecule_gpt() -> None:
         dtype=torch.bfloat16,
     )
 
-    graph_encoder = GINEConv(nn=Seq(Lin(16, 32), ReLU(), Lin(32, 32)),
+    graph_encoder = GINEConv(nn=Seq(Lin(16, 768), ReLU(), Lin(768, 768)),
                              train_eps=True, edge_dim=16)
 
     smiles_encoder = SentenceTransformer(

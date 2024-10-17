@@ -2,9 +2,25 @@ from typing import List, Optional
 
 import torch
 from torch import Tensor
+from transformers import BertModel
 
 from torch_geometric.nn.nlp.llm import BOS, LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import to_dense_batch
+
+
+def pad_or_truncate(embeddings: Tensor, max_seq_len: int,
+                    padding_value: int = 0) -> Tensor:
+    batch_size, current_seq_len, d = embeddings.size()
+
+    if current_seq_len > max_seq_len:
+        return embeddings[:, :max_seq_len, :]
+    elif current_seq_len < max_seq_len:
+        pad_tensor = torch.full((batch_size, max_seq_len - current_seq_len, d),
+                                padding_value, dtype=embeddings.dtype,
+                                device=embeddings.device)
+        return torch.cat([embeddings, pad_tensor], dim=1)
+    else:
+        return embeddings
 
 
 class MoleculeGPT(torch.nn.Module):
@@ -37,22 +53,37 @@ class MoleculeGPT(torch.nn.Module):
         llm: LLM,
         graph_encoder: torch.nn.Module,
         smiles_encoder: torch.nn.Module,
-        mlp_in_channels: int = 4928,
-        mlp_out_channels: int = 2048,
+        max_tokens: Optional[int] = 20,
     ) -> None:
         super().__init__()
         self.llm = llm
         self.graph_encoder = graph_encoder.to(self.llm.device)
         self.smiles_encoder = smiles_encoder.to(self.llm.device)
+        self.graph_bert = BertModel.from_pretrained('bert-base-cased').to(
+            self.llm.device)
+        self.smiles_bert = BertModel.from_pretrained('bert-base-cased').to(
+            self.llm.device)
+        self.max_tokens = max_tokens
 
         self.word_embedding = self.llm.word_embedding
         self.llm_generator = self.llm.llm
-        # TODO: Add Q-Former layer
 
-        self.projector = torch.nn.Sequential(
-            torch.nn.Linear(mlp_in_channels, mlp_in_channels),
+        # 1D SMILES Branch
+        in_dim = self.smiles_encoder.model.pooler.dense.out_features
+        out_dim = self.smiles_bert.embeddings.word_embeddings.embedding_dim
+        self.smiles_projector = torch.nn.Sequential(
+            torch.nn.Linear(in_dim, in_dim),
             torch.nn.Sigmoid(),
-            torch.nn.Linear(mlp_in_channels, mlp_out_channels),
+            torch.nn.Linear(in_dim, out_dim),
+        ).to(self.llm.device)
+
+        # LLMs
+        in_dim = 2 * out_dim * max_tokens
+        out_dim = self.llm.llm.model.embed_tokens.embedding_dim
+        self.projector = torch.nn.Sequential(
+            torch.nn.Linear(in_dim, in_dim),
+            torch.nn.Sigmoid(),
+            torch.nn.Linear(in_dim, out_dim),
         ).to(self.llm.device)
 
     def encode(
@@ -63,6 +94,7 @@ class MoleculeGPT(torch.nn.Module):
         edge_attr: Optional[Tensor],
         smiles: List[str],
     ) -> Tensor:
+        batch_size = len(smiles)
         # 2D Graph Branch: [bs, node_len, d]
         x = x.to(self.llm.device)
         edge_index = edge_index.to(self.llm.device)
@@ -71,16 +103,24 @@ class MoleculeGPT(torch.nn.Module):
         batch = batch.to(self.llm.device)
 
         x_graph = self.graph_encoder(x, edge_index, edge_attr=edge_attr)
-        x_graph = to_dense_batch(x_graph, batch)[0].view(1, -1)
-        # 1D SMILES Branch: [bs, seq_len, d]
-        x_smiles = self.smiles_encoder.encode(
-            smiles, output_device=self.llm.device).view(1, -1)
+        x_graph = to_dense_batch(x_graph, batch)[0]
+        out_graph = self.graph_bert(inputs_embeds=x_graph).last_hidden_state
+        out_graph = pad_or_truncate(out_graph, max_seq_len=self.max_tokens,
+                                    padding_value=0)
+        out_graph = out_graph.view(batch_size, -1)
 
-        # TODO: Add Q-Former
+        # 1D SMILES Branch: [bs, seq_len, d]
+        x_smiles = self.smiles_encoder.encode(smiles,
+                                              output_device=self.llm.device)
+        x_smiles = self.smiles_projector(x_smiles)
+        out_smiles = self.smiles_bert(inputs_embeds=x_smiles).last_hidden_state
+        out_smiles = pad_or_truncate(out_smiles, max_seq_len=self.max_tokens,
+                                     padding_value=0)
+        out_smiles = out_smiles.view(batch_size, -1)
 
         # Merge into LLMs
-        x_cat = torch.cat([x_graph, x_smiles], dim=1)
-        return x_cat  # mock[bs, d]
+        x_cat = torch.cat([out_graph, out_smiles], dim=1)
+        return x_cat
 
     def forward(
         self,
