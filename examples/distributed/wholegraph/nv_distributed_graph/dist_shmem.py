@@ -1,5 +1,6 @@
-"""Utilities for launching distributed GNN tasks. """
+"""Utilities for launching distributed GNN tasks."""
 import os
+
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
@@ -8,13 +9,15 @@ _LOCAL_ROOT_GLOBAL_RANK = None
 _LOCAL_ROOT_AUTH_KEY = None
 nprocs_per_node = 1
 
+
 def init_process_group_per_node():
     """Initialize the distributed process group for each node."""
     if _LOCAL_PROCESS_GROUP is None:
         create_process_group_per_node()
         return
     else:
-        assert dist.get_process_group_ranks(_LOCAL_PROCESS_GROUP)[0] == _LOCAL_ROOT_GLOBAL_RANK
+        assert dist.get_process_group_ranks(
+            _LOCAL_PROCESS_GROUP)[0] == _LOCAL_ROOT_GLOBAL_RANK
         return
 
 
@@ -23,9 +26,12 @@ def create_process_group_per_node():
     global _LOCAL_PROCESS_GROUP, _LOCAL_ROOT_GLOBAL_RANK
     global nprocs_per_node
     assert _LOCAL_PROCESS_GROUP is None and _LOCAL_ROOT_GLOBAL_RANK is None
-    assert dist.is_initialized(), "torch.distributed is not initialized. Please call torch.distributed.init_process_group() first."
+    assert dist.is_initialized(
+    ), "torch.distributed is not initialized. Please call torch.distributed.init_process_group() first."
 
-    nprocs_per_node = int(os.environ.get('LOCAL_WORLD_SIZE', os.environ.get('SLURM_NTASKS_PER_NODE')))
+    nprocs_per_node = int(
+        os.environ.get('LOCAL_WORLD_SIZE',
+                       os.environ.get('SLURM_NTASKS_PER_NODE')))
     world_size = dist.get_world_size()
     rank = dist.get_rank() if dist.is_initialized() else 0
     assert world_size % nprocs_per_node == 0
@@ -33,12 +39,14 @@ def create_process_group_per_node():
     num_nodes = world_size // nprocs_per_node
     node_id = rank // nprocs_per_node
     for i in range(num_nodes):
-        node_ranks = list(range(i * nprocs_per_node, (i + 1) * nprocs_per_node))
+        node_ranks = list(range(i * nprocs_per_node,
+                                (i + 1) * nprocs_per_node))
         pg = dist.new_group(node_ranks)
         if i == node_id:
             _LOCAL_PROCESS_GROUP = pg
     assert _LOCAL_PROCESS_GROUP is not None
-    _LOCAL_ROOT_GLOBAL_RANK = dist.get_process_group_ranks(_LOCAL_PROCESS_GROUP)[0]
+    _LOCAL_ROOT_GLOBAL_RANK = dist.get_process_group_ranks(
+        _LOCAL_PROCESS_GROUP)[0]
 
 
 def get_local_process_group():
@@ -104,7 +112,7 @@ def to_shmem(dataset):
         The objects can be DGLGraph and Pytorch Tensor, or any customized objects with the same mechanism
         of using shared memory during pickling process.
 
-    Returns
+    Returns:
     -------
     dataset : Reconstructed dataset in shared memory
         Returned dataset preserves the same object hierarchy of the input.
@@ -127,5 +135,7 @@ def to_shmem(dataset):
     if dist.get_rank() != local_root:
         # only non-root process performs pickle.loads()
         dataset = mp.reductions.ForkingPickler.loads(handle)
-    dist.barrier(group=local_group)  # necessary to prevent unexpected close of any procs beyond this function
+    dist.barrier(
+        group=local_group
+    )  # necessary to prevent unexpected close of any procs beyond this function
     return dataset

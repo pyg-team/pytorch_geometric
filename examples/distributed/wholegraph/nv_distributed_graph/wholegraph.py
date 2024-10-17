@@ -1,12 +1,13 @@
-from typing import Tuple, List, Union
+from typing import List, Tuple, Union
 
+import pylibwholegraph.torch as wgth
 import torch
 import torch.distributed as dist
 
-import pylibwholegraph.torch as wgth
 from . import dist_shmem
 
 _wm_global = False
+
 
 def init_wholegraph():
     global _wm_global
@@ -17,12 +18,16 @@ def init_wholegraph():
     local_size = dist_shmem.get_local_size()
     local_rank = dist_shmem.get_local_rank()
 
-    wgth.init(dist.get_rank(), dist.get_world_size(), local_rank, local_size=local_size, wm_log_level="info")
-    print(f"[Rank {dist.get_rank()}] WholeGraph Initialization: "
-        f"{dist.get_world_size()} GPUs are used with {local_size} GPUs per node.")
+    wgth.init(dist.get_rank(), dist.get_world_size(), local_rank,
+              local_size=local_size, wm_log_level="info")
+    print(
+        f"[Rank {dist.get_rank()}] WholeGraph Initialization: "
+        f"{dist.get_world_size()} GPUs are used with {local_size} GPUs per node."
+    )
     global_comm = wgth.comm.get_global_communicator("nccl")
     _wm_global = True
     return global_comm
+
 
 def finalize_wholegraph():
     global _wm_global
@@ -31,9 +36,9 @@ def finalize_wholegraph():
     wgth.finalize()
     _wm_global = False
 
+
 def nvlink_network():
-    r"""
-    Check if the current hardware supports cross-node NVLink network.
+    r"""Check if the current hardware supports cross-node NVLink network.
     """
     if not _wm_global:
         raise RuntimeError("WholeGraph is not initialized.")
@@ -56,19 +61,18 @@ def nvlink_network():
 
     return False
 
-def copy_host_global_tensor_to_local(
-    wm_tensor, host_tensor, wm_comm
-):
-    local_tensor, local_start = wm_tensor.get_local_tensor(
-        host_view=False
-    )
+
+def copy_host_global_tensor_to_local(wm_tensor, host_tensor, wm_comm):
+    local_tensor, local_start = wm_tensor.get_local_tensor(host_view=False)
     ## enable these checks when the wholegraph is updated to 24.10
     #local_ref_start = wm_tensor.get_local_entry_start()
     #local_ref_count = wm_tensor.get_local_entry_count()
     #assert local_start == local_ref_start
     #assert local_tensor.shape[0] == local_ref_count
-    local_tensor.copy_(host_tensor[local_start : local_start + local_tensor.shape[0]])
+    local_tensor.copy_(host_tensor[local_start:local_start +
+                                   local_tensor.shape[0]])
     wm_comm.barrier()
+
 
 def create_pyg_subgraph(WG_SampleOutput) -> Tuple:
     # PyG_SampleOutput (node, row, col, edge, batch...):
@@ -85,8 +89,9 @@ def create_pyg_subgraph(WG_SampleOutput) -> Tuple:
     num_sampled_nodes = []
     node = sampled_nodes_list[0]
 
-    for hop in range(len(sampled_nodes_list)-1):
-        sampled_nodes = len(sampled_nodes_list[hop]) - len(sampled_nodes_list[hop+1])
+    for hop in range(len(sampled_nodes_list) - 1):
+        sampled_nodes = len(sampled_nodes_list[hop]) - len(
+            sampled_nodes_list[hop + 1])
         num_sampled_nodes.append(sampled_nodes)
     num_sampled_nodes.append(len(sampled_nodes_list[-1]))
     num_sampled_nodes.reverse()
@@ -95,14 +100,16 @@ def create_pyg_subgraph(WG_SampleOutput) -> Tuple:
     num_sampled_edges = [len(csr_col_ind_list[-1])]
     # Loop in reverse order, starting from the second last layer
     for layer in range(layers - 2, -1, -1):
-        num_sampled_edges.append(len(csr_col_ind_list[layer] - len(csr_col_ind_list[layer + 1])))
+        num_sampled_edges.append(
+            len(csr_col_ind_list[layer] - len(csr_col_ind_list[layer + 1])))
 
     row = csr_col_ind_list[0]  # rows
-    col = edge_indice_list[0][1] # dst node
+    col = edge_indice_list[0][1]  # dst node
 
     edge = None
     batch = None
     return node, row, col, edge, batch, num_sampled_nodes, num_sampled_edges
+
 
 def sample_nodes_wmb_fn(wg_sampler, seeds, fanouts):
     # WG_SampleOutput (target_gids, edge_indice, csr_row_ptr, csr_col_ind):
@@ -110,17 +117,19 @@ def sample_nodes_wmb_fn(wg_sampler, seeds, fanouts):
     # edge_indice [rank-2 tensors]: edge list [src, des] for each layer, in local node id (start from 0 for each layer) to confirm
     # csr_row_ptr [1D tensors]: csr row ptrs for each subgraph in each layer (starting from  0 for each subgraph)
     # csr_col_ind [1D tensors]: csr col indx for each subgraph in each layer
-    WG_SampleOutput = wg_sampler.multilayer_sample_without_replacement(seeds, fanouts, None)
+    WG_SampleOutput = wg_sampler.multilayer_sample_without_replacement(
+        seeds, fanouts, None)
     return create_pyg_subgraph(WG_SampleOutput)
 
+
 def create_wg_dist_tensor(
-    shape: list,
-    dtype: torch.dtype,
-    location: str = "cpu",
-    partition_book: Union[List[int], None] = None, # default is even partition
-    backend: str = "nccl", # default is nccl; support nccl, vmm, nvshmem...
-    **kwargs
-):
+        shape: list,
+        dtype: torch.dtype,
+        location: str = "cpu",
+        partition_book: Union[List[int],
+                              None] = None,  # default is even partition
+        backend: str = "nccl",  # default is nccl; support nccl, vmm, nvshmem...
+        **kwargs):
     """Create a WholeGraph-managed distributed tensor.
 
     Parameters
@@ -161,13 +170,14 @@ def create_wg_dist_tensor(
             embedding_wholememory_location,
             dtype,
             shape,
-            cache_policy=cache_policy, # disable cache for now
+            cache_policy=cache_policy,  # disable cache for now
             #embedding_entry_partition=partition_book,
             **kwargs
             #tensor_entry_partition=None  # important to do load balance
         )
     else:
-        assert len(shape) == 2 or len(shape) == 1, "The shape of the tensor must be 2D or 1D."
+        assert len(shape) == 2 or len(
+            shape) == 1, "The shape of the tensor must be 2D or 1D."
         wm_embedding = wgth.create_wholememory_tensor(
             global_comm,
             embedding_wholememory_type,
@@ -179,15 +189,16 @@ def create_wg_dist_tensor(
         )
     return wm_embedding
 
+
 def create_wg_dist_tensor_from_files(
-    file_list: List[str],
-    shape: list,
-    dtype: torch.dtype,
-    location: str = "cpu",
-    partition_book: Union[List[int], None] = None, # default is even partition
-    backend: str = "nccl", # default is nccl; support nccl, vmm, nvshmem...
-    **kwargs
-):
+        file_list: List[str],
+        shape: list,
+        dtype: torch.dtype,
+        location: str = "cpu",
+        partition_book: Union[List[int],
+                              None] = None,  # default is even partition
+        backend: str = "nccl",  # default is nccl; support nccl, vmm, nvshmem...
+        **kwargs):
     """Create a WholeGraph-managed distributed tensor from a list of files.
 
     Parameters
@@ -231,12 +242,12 @@ def create_wg_dist_tensor_from_files(
             file_list,
             dtype,
             shape[1],
-            cache_policy=cache_policy, # disable cache for now
+            cache_policy=cache_policy,  # disable cache for now
             #embedding_entry_partition=partition_book,
-            **kwargs
-        )
+            **kwargs)
     else:
-        assert len(shape) == 2 or len(shape) == 1, "The shape of the tensor must be 2D or 1D."
+        assert len(shape) == 2 or len(
+            shape) == 1, "The shape of the tensor must be 2D or 1D."
         last_dim_size = 0 if len(shape) == 1 else shape[1]
         wm_embedding = wgth.create_wholememory_tensor_from_filelist(
             global_comm,

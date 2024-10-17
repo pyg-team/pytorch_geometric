@@ -6,32 +6,31 @@ srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
 --container-mounts=/ogb-papers100m/:/workspace/dataset
 python3 path_to_script.py
 """
+import argparse
 import os
 import time
 from typing import Optional
-import argparse
 
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
+from feature_store import WholeGraphFeatureStore
+from graph_store import WholeGraphGraphStore
+from nv_distributed_graph import dist_shmem
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
-from torch_geometric.loader import NodeLoader, NeighborLoader
+from torch_geometric.loader import NeighborLoader, NodeLoader
 from torch_geometric.nn import GCN
-
 from torch_geometric.sampler import BaseSampler
 
-from nv_distributed_graph import dist_shmem
-from feature_store import WholeGraphFeatureStore
-from graph_store import WholeGraphGraphStore
 
 class WholeGraphSampler(BaseSampler):
-    r"""
-    A naive sampler class for WholeGraph graph storage that only supports uniform node-based sampling on homogeneous graph.
+    r"""A naive sampler class for WholeGraph graph storage that only supports uniform node-based sampling on homogeneous graph.
     """
-    from torch_geometric.sampler import SamplerOutput, NodeSamplerInput
+    from torch_geometric.sampler import NodeSamplerInput, SamplerOutput
+
     def __init__(
         self,
         graph: WholeGraphGraphStore,
@@ -44,18 +43,17 @@ class WholeGraphSampler(BaseSampler):
         row_indx, col_ptrs, _ = graph.csc()
         self.wg_sampler.set_csr_graph(col_ptrs._tensor, row_indx._tensor)
 
-    def sample_from_nodes(
-        self,
-        inputs: NodeSamplerInput
-    ) -> SamplerOutput:
-        r"""
-        Sample subgraphs from the given nodes based on uniform node-based sampling.
+    def sample_from_nodes(self, inputs: NodeSamplerInput) -> SamplerOutput:
+        r"""Sample subgraphs from the given nodes based on uniform node-based sampling.
         """
-        seed = inputs.node.cuda(non_blocking=True) # WholeGraph Sampler needs all seeds on device
-        WG_SampleOutput = self.wg_sampler.multilayer_sample_without_replacement(seed, self.num_neighbors, None)
+        seed = inputs.node.cuda(
+            non_blocking=True)  # WholeGraph Sampler needs all seeds on device
+        WG_SampleOutput = self.wg_sampler.multilayer_sample_without_replacement(
+            seed, self.num_neighbors, None)
         out = WholeGraphGraphStore.create_pyg_subgraph(WG_SampleOutput)
         out.metadata = (inputs.input_id, inputs.time)
         return out
+
 
 def run(world_size, rank, local_rank, device, mode):
     wall_clock_start = time.perf_counter()
@@ -67,10 +65,11 @@ def run(world_size, rank, local_rank, device, mode):
 
     # Load the dataset in the local root process and share it with local ranks
     if dist_shmem.get_local_rank() == 0:
-        dataset = PygNodePropPredDataset(name='ogbn-products', root='/workspace')
+        dataset = PygNodePropPredDataset(name='ogbn-products',
+                                         root='/workspace')
     else:
         dataset = None
-    dataset = dist_shmem.to_shmem(dataset) # move dataset to shmem
+    dataset = dist_shmem.to_shmem(dataset)  # move dataset to shmem
 
     split_idx = dataset.get_idx_split()
     split_idx['train'] = split_idx['train'].split(
@@ -109,7 +108,8 @@ def run(world_size, rank, local_rank, device, mode):
             batch_size=1024,
             num_neighbors=[30, 30],
             num_workers=4,
-            filter_per_worker=False, # WholeGraph feature fetching is not fork-safe
+            filter_per_worker=
+            False,  # WholeGraph feature fetching is not fork-safe
         )
         train_loader = NeighborLoader(
             input_nodes=split_idx['train'],
@@ -127,8 +127,9 @@ def run(world_size, rank, local_rank, device, mode):
         kwargs = dict(
             data=data,
             batch_size=1024,
-            num_workers=0, # with wholegraph sampler you don't need workers
-            filter_per_worker=False, # WholeGraph feature fetching is not fork-safe
+            num_workers=0,  # with wholegraph sampler you don't need workers
+            filter_per_worker=
+            False,  # WholeGraph feature fetching is not fork-safe
         )
         node_sampler = WholeGraphSampler(
             graph_store,
@@ -141,15 +142,17 @@ def run(world_size, rank, local_rank, device, mode):
             drop_last=True,
             **kwargs,
         )
-        val_loader = NodeLoader(input_nodes=split_idx['valid'], node_sampler=node_sampler, **kwargs)
-        test_loader = NodeLoader(input_nodes=split_idx['test'], node_sampler=node_sampler, **kwargs)
+        val_loader = NodeLoader(input_nodes=split_idx['valid'],
+                                node_sampler=node_sampler, **kwargs)
+        test_loader = NodeLoader(input_nodes=split_idx['test'],
+                                 node_sampler=node_sampler, **kwargs)
 
     eval_steps = 1000
     model = GCN(num_features, 256, 2, num_classes)
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(device)
     model = DistributedDataParallel(model.to(device), device_ids=[local_rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001,
-                                weight_decay=5e-4)
+                                 weight_decay=5e-4)
 
     if rank == 0:
         prep_time = round(time.perf_counter() - wall_clock_start, 2)
@@ -195,11 +198,9 @@ def run(world_size, rank, local_rank, device, mode):
         eval_acc = test(val_loader, num_steps=eval_steps)
         if rank == 0:
             print(f"Val Accuracy: {eval_acc:.4f}%", )
-            print(
-                f"Epoch {epoch:05d} | "
-                f"Accuracy {eval_acc:.4f} | "
-                f"Time {epoch_end - start:.2f}"
-            )
+            print(f"Epoch {epoch:05d} | "
+                  f"Accuracy {eval_acc:.4f} | "
+                  f"Time {epoch_end - start:.2f}")
 
         acc.reset()
         dist.barrier()
@@ -209,9 +210,11 @@ def run(world_size, rank, local_rank, device, mode):
         print(f"Test Accuracy: {test_acc:.4f}%", )
     dist.destroy_process_group() if dist.is_initialized() else None
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mode', type=str, default='baseline', choices=['baseline', 'UVA-features', 'UVA'])
+    parser.add_argument('--mode', type=str, default='baseline',
+                        choices=['baseline', 'UVA-features', 'UVA'])
     args = parser.parse_args()
 
     # Get the world size from the WORLD_SIZE variable or directly from SLURM:
@@ -226,4 +229,3 @@ if __name__ == '__main__':
     device = torch.device(local_rank)
     torch.cuda.set_device(device)
     run(world_size, rank, local_rank, device, args.mode)
-
