@@ -4,31 +4,29 @@ from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 
 from torch_geometric.nn import GINEConv, MoleculeGPT
-from torch_geometric.nn.nlp import LLM
+from torch_geometric.nn.nlp import LLM, SentenceTransformer
 
 
 def test_molecule_gpt() -> None:
     llm = LLM(
         # model_name='lmsys/vicuna-7b-v1.5',
-        model_name='DeepChem/ChemBERTa-77M-MTR',
-        num_params=7,
+        model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+        num_params=1,
         dtype=torch.bfloat16,
     )
 
     graph_encoder = GINEConv(nn=Seq(Lin(16, 32), ReLU(), Lin(32, 32)),
                              train_eps=True, edge_dim=16)
 
-    smiles_encoder = LLM(
+    smiles_encoder = SentenceTransformer(
         model_name='DeepChem/ChemBERTa-77M-MTR',
-        num_params=1,
-        dtype=torch.bfloat16,
+        pooling_strategy='last_hidden_state',
     )
 
     model = MoleculeGPT(
         llm=llm,
         graph_encoder=graph_encoder,
         smiles_encoder=smiles_encoder,
-        mlp_out_channels=4096,
     )
 
     assert 'MoleculeGPT' in str(model)
@@ -41,5 +39,9 @@ def test_molecule_gpt() -> None:
     edge_attr = torch.randn(edge_index.size(1), 16)
     batch = torch.zeros(x.size(0), dtype=torch.long)
     smiles = ['CCCCCCCCCC']
+    instructions = ['What is ∼ functional related to?']
+    label = ['I do not know!']
 
-    model(x, edge_index, batch, edge_attr, smiles)
+    # Test train:
+    loss = model(x, edge_index, batch, edge_attr, smiles, instructions, label)
+    assert loss >= 0

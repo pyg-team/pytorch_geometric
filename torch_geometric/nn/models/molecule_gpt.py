@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.nlp.llm import LLM
-from torch_geometric.utils import scatter
+from torch_geometric.utils import to_dense_batch
 
 
 class MoleculeGPT(torch.nn.Module):
@@ -37,7 +37,8 @@ class MoleculeGPT(torch.nn.Module):
         llm: LLM,
         graph_encoder: torch.nn.Module,
         smiles_encoder: torch.nn.Module,
-        mlp_out_channels: int = 4096,
+        mlp_in_channels: int = 4928,
+        mlp_out_channels: int = 2048,
     ) -> None:
         super().__init__()
         self.llm = llm
@@ -48,27 +49,11 @@ class MoleculeGPT(torch.nn.Module):
         self.llm_generator = self.llm.llm
         # TODO: Add Q-Former layer
 
-    def graph_encode(
-        self,
-        x: Tensor,
-        edge_index: Tensor,
-        batch: Tensor,
-        edge_attr: Optional[Tensor],
-    ) -> Tensor:
-        x = x.to(self.llm.device)
-        edge_index = edge_index.to(self.llm.device)
-        if edge_attr is not None:
-            edge_attr = edge_attr.to(self.llm.device)
-        batch = batch.to(self.llm.device)
-
-        out = self.graph_encoder(x, edge_index, edge_attr=edge_attr)
-        return scatter(out, batch, dim=0, reduce='mean')
-
-    def smiles_encode(
-        self,
-        smiles: List[str],
-    ):
-        pass
+        self.projector = torch.nn.Sequential(
+            torch.nn.Linear(mlp_in_channels, mlp_in_channels),
+            torch.nn.Sigmoid(),
+            torch.nn.Linear(mlp_in_channels, mlp_out_channels),
+        ).to(self.llm.device)
 
     def forward(
         self,
@@ -77,12 +62,51 @@ class MoleculeGPT(torch.nn.Module):
         batch: Tensor,
         edge_attr: Optional[Tensor],
         smiles: List[str],
+        instructions: List[str],
+        label: List[str],
+        additional_text_context: Optional[List[str]] = None,
     ):
-        x = self.graph_encode(x, edge_index, batch,
-                              edge_attr)  # graph branch [bs, d]
+        batch_unique = batch.unique()
+        batch_size = len(instructions)
+        # 2D Graph Branch: [bs, node_len, d]
+        x = x.to(self.llm.device)
+        edge_index = edge_index.to(self.llm.device)
+        if edge_attr is not None:
+            edge_attr = edge_attr.to(self.llm.device)
+        batch = batch.to(self.llm.device)
 
-        import pdb
-        pdb.set_trace()
+        x_graph = self.graph_encoder(x, edge_index, edge_attr=edge_attr)
+        x_graph = to_dense_batch(x_graph, batch)[0].view(batch_size, -1)
+        # 1D SMILES Branch: [bs, seq_len, d]
+        x_smiles = self.smiles_encoder.encode(
+            smiles, output_device=self.llm.device).view(batch_size, -1)
+
+        # TODO: Add Q-Former
+
+        # Merge into LLMs
+        x_cat = torch.cat([x_graph, x_smiles], dim=1)
+        xs = self.projector(x_cat).split(1, dim=0)  # mock[bs, d]
+        if len(batch_unique) < batch_size:
+            xs = [
+                xs[i] if i in batch_unique else None for i in range(batch_size)
+            ]
+
+        (
+            inputs_embeds,
+            attention_mask,
+            label_input_ids,
+        ) = self.llm._get_embeds(instructions, additional_text_context, xs,
+                                 label)
+
+        with self.llm.autocast_context:
+            outputs = self.llm_generator(
+                inputs_embeds=inputs_embeds,
+                attention_mask=attention_mask,
+                return_dict=True,
+                labels=label_input_ids,
+            )
+
+        return outputs.loss
 
     @torch.no_grad()
     def inference(self):
