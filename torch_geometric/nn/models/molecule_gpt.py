@@ -3,7 +3,7 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.nn.nlp.llm import LLM
+from torch_geometric.nn.nlp.llm import BOS, LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import to_dense_batch
 
 
@@ -55,6 +55,33 @@ class MoleculeGPT(torch.nn.Module):
             torch.nn.Linear(mlp_in_channels, mlp_out_channels),
         ).to(self.llm.device)
 
+    def encode(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Tensor,
+        edge_attr: Optional[Tensor],
+        smiles: List[str],
+    ) -> Tensor:
+        # 2D Graph Branch: [bs, node_len, d]
+        x = x.to(self.llm.device)
+        edge_index = edge_index.to(self.llm.device)
+        if edge_attr is not None:
+            edge_attr = edge_attr.to(self.llm.device)
+        batch = batch.to(self.llm.device)
+
+        x_graph = self.graph_encoder(x, edge_index, edge_attr=edge_attr)
+        x_graph = to_dense_batch(x_graph, batch)[0].view(1, -1)
+        # 1D SMILES Branch: [bs, seq_len, d]
+        x_smiles = self.smiles_encoder.encode(
+            smiles, output_device=self.llm.device).view(1, -1)
+
+        # TODO: Add Q-Former
+
+        # Merge into LLMs
+        x_cat = torch.cat([x_graph, x_smiles], dim=1)
+        return x_cat  # mock[bs, d]
+
     def forward(
         self,
         x: Tensor,
@@ -66,26 +93,12 @@ class MoleculeGPT(torch.nn.Module):
         label: List[str],
         additional_text_context: Optional[List[str]] = None,
     ):
+        x = self.encode(x, edge_index, batch, edge_attr, smiles)
+        x = self.projector(x)
+        xs = x.split(1, dim=0)
+
         batch_unique = batch.unique()
         batch_size = len(instructions)
-        # 2D Graph Branch: [bs, node_len, d]
-        x = x.to(self.llm.device)
-        edge_index = edge_index.to(self.llm.device)
-        if edge_attr is not None:
-            edge_attr = edge_attr.to(self.llm.device)
-        batch = batch.to(self.llm.device)
-
-        x_graph = self.graph_encoder(x, edge_index, edge_attr=edge_attr)
-        x_graph = to_dense_batch(x_graph, batch)[0].view(batch_size, -1)
-        # 1D SMILES Branch: [bs, seq_len, d]
-        x_smiles = self.smiles_encoder.encode(
-            smiles, output_device=self.llm.device).view(batch_size, -1)
-
-        # TODO: Add Q-Former
-
-        # Merge into LLMs
-        x_cat = torch.cat([x_graph, x_smiles], dim=1)
-        xs = self.projector(x_cat).split(1, dim=0)  # mock[bs, d]
         if len(batch_unique) < batch_size:
             xs = [
                 xs[i] if i in batch_unique else None for i in range(batch_size)
@@ -109,8 +122,50 @@ class MoleculeGPT(torch.nn.Module):
         return outputs.loss
 
     @torch.no_grad()
-    def inference(self):
-        pass
+    def inference(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Tensor,
+        edge_attr: Optional[Tensor],
+        smiles: List[str],
+        instructions: List[str],
+        additional_text_context: Optional[List[str]] = None,
+        max_out_tokens: Optional[int] = MAX_NEW_TOKENS,
+    ):
+        x = self.encode(x, edge_index, batch, edge_attr, smiles)
+        x = self.projector(x)
+        xs = x.split(1, dim=0)
+
+        # Handle questions without node features:
+        batch_unique = batch.unique()
+        batch_size = len(instructions)
+        if len(batch_unique) < batch_size:
+            xs = [
+                xs[i] if i in batch_unique else None for i in range(batch_size)
+            ]
+
+        inputs_embeds, attention_mask, _ = self.llm._get_embeds(
+            instructions, additional_text_context, xs)
+
+        bos_token = self.llm.tokenizer(
+            BOS,
+            add_special_tokens=False,
+        ).input_ids[0]
+
+        with self.llm.autocast_context:
+            outputs = self.llm_generator.generate(
+                inputs_embeds=inputs_embeds,
+                max_new_tokens=max_out_tokens,
+                attention_mask=attention_mask,
+                bos_token_id=bos_token,
+                use_cache=True  # Important to set!
+            )
+
+        return self.llm.tokenizer.batch_decode(
+            outputs,
+            skip_special_tokens=True,
+        )
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(\n'

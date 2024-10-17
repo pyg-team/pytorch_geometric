@@ -45,3 +45,8 @@ def test_molecule_gpt() -> None:
     # Test train:
     loss = model(x, edge_index, batch, edge_attr, smiles, instructions, label)
     assert loss >= 0
+
+    # Test inference:
+    pred = model.inference(x, edge_index, batch, edge_attr, smiles,
+                           instructions)
+    assert len(pred) == 1
