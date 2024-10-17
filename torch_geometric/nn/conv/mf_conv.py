@@ -5,7 +5,7 @@ from torch import Tensor
 from torch.nn import ModuleList
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.dense.linear import HeteroLinear
 from torch_geometric.typing import Adj, OptPairTensor, Size, SparseTensor
 from torch_geometric.utils import degree, spmm
 
@@ -55,24 +55,19 @@ class MFConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lins_l = ModuleList([
-            Linear(in_channels[0], out_channels, bias=bias)
-            for _ in range(max_degree + 1)
-        ])
-
-        self.lins_r = ModuleList([
-            Linear(in_channels[1], out_channels, bias=False)
-            for _ in range(max_degree + 1)
-        ])
+        self.lin_l = HeteroLinear(in_channels[0], out_channels,
+                                  num_types=max_degree + 1, is_sorted=True,
+                                  bias=bias)
+        self.lin_r = HeteroLinear(in_channels[1], out_channels,
+                                  num_types=max_degree + 1, is_sorted=True,
+                                  bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         super().reset_parameters()
-        for lin in self.lins_l:
-            lin.reset_parameters()
-        for lin in self.lins_r:
-            lin.reset_parameters()
+        self.lin_l.reset_parameters()
+        self.lin_r.reset_parameters()
 
     def forward(
         self,
@@ -101,15 +96,33 @@ class MFConv(MessagePassing):
         h = self.propagate(edge_index, x=x, size=size)
 
         out = h.new_empty(list(h.size())[:-1] + [self.out_channels])
-        for i, (lin_l, lin_r) in enumerate(zip(self.lins_l, self.lins_r)):
-            idx = (deg == i).nonzero().view(-1)
-            r = lin_l(h.index_select(self.node_dim, idx))
 
+        # idx select loop for l
+        h_sel_list, type_list, r_sel_list, idx_list = [], [], [], []
+        for i in range(self.max_degree + 1):
+            idx_i = (deg == i).nonzero().view(-1)
+            N = idx_i.numel()
+            if N == 0:
+                continue
+            idx_list.append(idx_i)
+            h_idx_sel = h.index_select(self.node_dim, idx_i)
             if x_r is not None:
-                r = r + lin_r(x_r.index_select(self.node_dim, idx))
+                r_idx_sel = x_r.index_select(self.node_dim, idx_i)
+                r_sel_list.append(r_idx_sel)
+            h_sel_list.append(h_idx_sel)
+            type_list.append(torch.full((N, ), i, dtype=torch.long))
+        x_l = torch.cat(h_sel_list, dim=0)
+        type_vec = torch.cat(type_list, dim=0)
+        original_idx = torch.cat(idx_list, dim=0)
 
-            out.index_copy_(self.node_dim, idx, r)
+        # apply lin_l
+        r = self.lin_l(x_l, type_vec)
+        # apply lin_r
+        if x_r is not None:
+            x_r_sel = torch.cat(r_sel_list, dim=0)
+            r += self.lin_r(x_r_sel, type_vec)
 
+        out.index_copy_(self.node_dim, original_idx, r)
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
