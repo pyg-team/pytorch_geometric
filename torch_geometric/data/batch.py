@@ -1,10 +1,12 @@
 import inspect
+from collections import defaultdict
 from collections.abc import Sequence
-from typing import Any, List, Optional, Type, Union
+from typing import Any, List, Literal, Optional, Tuple, Type, Union
 
 import numpy as np
 import torch
-from torch import Tensor
+from torch import LongTensor, Tensor
+from torch.nn.functional import pad
 from typing_extensions import Self
 
 from torch_geometric.data.collate import collate
@@ -80,6 +82,24 @@ class Batch(metaclass=DynamicInheritance):
     tensors of the same attribute should be concatenated together.
     """
     @classmethod
+    def from_empty(cls, num_nodes: Union[Tensor, Sequence]) -> Self:
+        if isinstance(num_nodes, Sequence):
+            num_nodes = torch.tensor(num_nodes, dtype=torch.long)
+        if not num_nodes.dtype == torch.long:
+            raise Exception('`num_nodes` dtype must be torch.long')
+        if not num_nodes.dim() == 1:
+            raise Exception('`num_nodes` must have one dimension')
+        if (num_nodes < 0).any():
+            raise Exception('`num_nodes` must be positive')
+
+        batch = Batch()
+        batch.batch, batch.ptr = cls._batch_ptr_from_num_nodes(cls, num_nodes)
+        batch._num_graphs = int(batch.batch.max() + 1)
+        batch._slice_dict = defaultdict(dict)
+        batch._inc_dict = defaultdict(dict)
+        return batch
+
+    @classmethod
     def from_data_list(
         cls,
         data_list: List[BaseData],
@@ -89,7 +109,7 @@ class Batch(metaclass=DynamicInheritance):
         r"""Constructs a :class:`~torch_geometric.data.Batch` object from a
         list of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects.
-        The assignment vector :obj:`batch` is created on the fly.
+        The assignment vector :obj:`batch` is adjusted on the fly.
         In addition, creates assignment vectors for each key in
         :obj:`follow_batch`.
         Will exclude any keys given in :obj:`exclude_keys`.
@@ -109,6 +129,42 @@ class Batch(metaclass=DynamicInheritance):
 
         return batch
 
+    @classmethod
+    def from_batch_list(cls, batches: List[Self]) -> Self:
+        r"""Same as :meth:`~Batch.from_data_list```,
+        but for concatenating existing batches.
+        Constructs a :class:`~torch_geometric.data.Batch` object from a
+        list of :class:`~torch_geometric.data.Batch` objects.
+        The assignment vector :obj:`batch` is created on the fly.
+        In addition, creates assignment vectors for each key in
+        :obj:`follow_batch`.
+        Will exclude any keys given in :obj:`exclude_keys`.
+        """
+        batch = cls.from_data_list(batches)
+
+        del batch._slice_dict['batch'], batch._inc_dict['batch']
+
+        batch.batch, batch.ptr = cls._batch_ptr_from_num_nodes(
+            cls, torch.concat([g.ptr.diff() for g in batches]))
+
+        for k in set(batch.keys()) - {'batch', 'ptr'}:
+            batch._slice_dict[k] = batch._pad_zero(
+                torch.concat([be._slice_dict[k].diff()
+                              for be in batches]).cumsum(0))
+            if k != 'edge_index':
+                inc_shift = batch._pad_zero(
+                    torch.tensor([sum(be._inc_dict[k])
+                                  for be in batches])).cumsum(0)
+            else:
+                inc_shift = batch._pad_zero(
+                    torch.tensor([be.num_nodes for be in batches])).cumsum(0)
+
+            batch._inc_dict[k] = torch.cat([
+                be._inc_dict[k] + inc_shift[ibatch]
+                for ibatch, be in enumerate(batches)
+            ])
+        return batch
+
     def get_example(self, idx: int) -> BaseData:
         r"""Gets the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object at index :obj:`idx`.
@@ -124,15 +180,16 @@ class Batch(metaclass=DynamicInheritance):
         data = separate(
             cls=self.__class__.__bases__[-1],
             batch=self,
-            idx=idx,
+            idx=torch.tensor([idx]).long(),
             slice_dict=getattr(self, '_slice_dict'),
             inc_dict=getattr(self, '_inc_dict'),
             decrement=True,
+            return_batch=False,
         )
 
         return data
 
-    def index_select(self, idx: IndexType) -> List[BaseData]:
+    def index_select(self, idx: IndexType) -> Self:
         r"""Creates a subset of :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` objects from specified
         indices :obj:`idx`.
@@ -143,42 +200,87 @@ class Batch(metaclass=DynamicInheritance):
         via :meth:`from_data_list` in order to be able to reconstruct the
         initial objects.
         """
-        index: Sequence[int]
-        if isinstance(idx, slice):
-            index = list(range(self.num_graphs)[idx])
-
-        elif isinstance(idx, Tensor) and idx.dtype == torch.long:
-            index = idx.flatten().tolist()
-
-        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
-            index = idx.flatten().nonzero(as_tuple=False).flatten().tolist()
-
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
-            index = idx.flatten().tolist()
-
-        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
-            index = idx.flatten().nonzero()[0].flatten().tolist()
-
-        elif isinstance(idx, Sequence) and not isinstance(idx, str):
-            index = idx
-
-        else:
+        if not isinstance(idx, (slice, Sequence, torch.Tensor, np.ndarray)):
             raise IndexError(
                 f"Only slices (':'), list, tuples, torch.tensor and "
-                f"np.ndarray of dtype long or bool are valid indices (got "
+                f'np.ndarray of dtype long or bool are valid indices (got '
                 f"'{type(idx).__name__}')")
 
-        return [self.get_example(i) for i in index]
+        index: torch.Tensor
+
+        def _to_tidx(o):
+            return torch.tensor(o, device=self.ptr.device)
+
+        # convert numpt to torch tensors
+        if isinstance(idx, np.ndarray):
+            idx = _to_tidx(idx)
+        if isinstance(idx, slice):
+            index = _to_tidx(range(self.num_graphs)[idx]).long()
+        elif isinstance(idx, Sequence):
+            index = _to_tidx(idx).long()
+        elif isinstance(idx, Tensor) and idx.dtype == torch.long:
+            index = idx
+        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
+            if not len(idx) == self.num_graphs:
+                IndexError(
+                    f'Boolen vector length does not match number of graphs'
+                    f' (got {len(idx)} vector size '
+                    f'vs. {self.num_graphs} graphs).')
+            index = idx.nonzero().flatten()
+        else:
+            raise IndexError(
+                f"Could not convert index (got '{type(idx).__name__}')")
+
+        if index.dim() != 1:
+            raise IndexError(
+                f'Index must have a single dimension (got {index.dim()})')
+
+        self.ptr.device
+
+        subbatch = separate(
+            cls=self.__class__,
+            batch=self,
+            idx=index,
+            slice_dict=self._slice_dict,
+            inc_dict=self._inc_dict,
+            decrement=True,
+        )
+
+        nodes_per_graph = self.ptr.diff()
+        num_nodes = nodes_per_graph[index]
+
+        subbatch.batch, subbatch.ptr = self._batch_ptr_from_num_nodes(
+            num_nodes)
+
+        # fix the _slice_dict and _inc_dict
+        subbatch._slice_dict = defaultdict(dict)
+        subbatch._inc_dict = defaultdict(dict)
+        for k in set(self.keys()) - {'ptr', 'batch'}:
+            if k not in self._slice_dict:
+                continue
+            subbatch._slice_dict[k] = pad(self._slice_dict[k].diff()[index],
+                                          (1, 0)).cumsum(0)
+            if k not in self._inc_dict:
+                continue
+            if self._inc_dict[k] is None:
+                subbatch._inc_dict[k] = None
+                continue
+            subbatch._inc_dict[k] = pad(self._inc_dict[k].diff()[index[:-1]],
+                                        (1, 0)).cumsum(0)
+        return subbatch
 
     def __getitem__(self, idx: Union[int, np.integer, str, IndexType]) -> Any:
+        # Return single Graph
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
             return self.get_example(idx)  # type: ignore
+        # Return stored objects
         elif isinstance(idx, str) or (isinstance(idx, tuple)
                                       and isinstance(idx[0], str)):
             # Accessing attributes or node/edge types:
             return super().__getitem__(idx)  # type: ignore
+        # Return subset of the batch
         else:
             return self.index_select(idx)
 
@@ -192,6 +294,115 @@ class Batch(metaclass=DynamicInheritance):
         """
         return [self.get_example(i) for i in range(self.num_graphs)]
 
+    def set_attr(self, attrname: str, attr: Tensor,
+                 attrtype: Literal["node", "graph", "edge"] = "node") -> None:
+        r"""Set an attribute for the nodes, graphs, or edges.
+
+        Args:
+            attrname (str): Name of the attribute.
+            attr (torch.Tensor): The attribute tensor.
+            attrtype (str): Indicates if the attribution belongs to the nodes,
+                graphs or edges (`node`, `graph`, `edge`), default: `node`.
+
+        """
+        if attrname == "edge_attr" and attrtype != "edge":
+            raise Exception(
+                "For the attribute `edge_attr`, the `attrtype` must be `edge`."
+            )
+
+        if attrname == "edge_index":
+            raise Exception(
+                """To overwrite the edges, use `set_edge_index`.""")
+
+        assert attrtype in ["node", "graph", "edge"]
+
+        assert attr.device == self.batch.device
+        batch_idxs = self.batch
+
+        self[attrname] = attr
+
+        if attrtype == "node":
+            assert attr.shape[0] == self.num_nodes
+            out = batch_idxs.unique(return_counts=True)[1]
+            out = out.cumsum(dim=0)
+            self._slice_dict[attrname] = self._pad_zero(out).cpu()
+
+            self._inc_dict[attrname] = torch.zeros(self._num_graphs,
+                                                   dtype=torch.long)
+        elif attrtype == "graph":
+            assert attr.shape[0] == self.num_graphs
+            self._slice_dict[attrname] = torch.arange(self.num_graphs + 1,
+                                                      dtype=torch.long)
+            self._inc_dict[attrname] = torch.zeros(self.num_graphs,
+                                                   dtype=torch.long)
+        elif attrtype == "edge":
+            assert attr.shape[0] == self.num_edges
+            assert (hasattr(self, 'edge_index')
+                    and self['edge_index'].dtype == torch.long)
+            self._slice_dict['edge_attr'] = self._slice_dict['edge_index']
+            self._inc_dict['edge_attr'] = torch.zeros(self.num_graphs)
+        else:
+            raise NotImplementedError()
+
+    def set_edge_index(self, edge_index: Union[List[LongTensor], LongTensor],
+                       batchidx_per_edge: Optional[LongTensor] = None) -> None:
+        r"""Overwrites the :obj:`edge_index`.
+        :obj:`~Batch.ptr` will be used to assign the elements to
+        the correct graph.
+
+        Args:
+            edge_index (Union[List[LongTensor], LongTensor]): Either a
+                list of the new edges for each graph, or a tensor containing
+                the new edges. In the latter case the assignment to the graphs
+                must be give by `batchidx_per_edge`.
+            batchidx_per_edge (Optional[LongTensor]): The index tensor
+                that maps each of the edges to a graph.
+        """
+        if isinstance(edge_index, list):
+            device = edge_index[0].device
+            edges_per_graph = torch.tensor([e.shape[1] for e in edge_index])
+            batchidx_per_edge = torch.arange(
+                self.num_graphs).repeat_interleave(edges_per_graph).to(device)
+            edge_index = torch.hstack(edge_index)
+        else:
+            edges_per_graph = batchidx_per_edge.unique(return_counts=True)[1]
+
+            assert (batchidx_per_edge.diff()
+                    >= 0).all(), 'Edges must be ordered by batch'
+            assert batchidx_per_edge.shape == torch.Size(
+                (edge_index.shape[1], ))
+
+            assert edge_index.dim() == 2
+            assert edge_index.shape[0] == 2
+
+        assert edge_index.dtype == batchidx_per_edge.dtype == torch.long
+        assert (edge_index.device == batchidx_per_edge.device ==
+                self.batch.device)
+
+        # Edges must be shifted by the number sum of the nodes
+        # in the previous graphs
+        self.edge_index = edge_index + self.ptr[batchidx_per_edge]
+        # Fix _slice_dict
+        self._slice_dict['edge_index'] = self._pad_zero(
+            edges_per_graph.cumsum(0)).cpu()
+        self._inc_dict['edge_index'] = self.ptr[:-1].cpu()
+
+    def _pad_zero(self, arr: torch.Tensor) -> torch.Tensor:
+        return torch.cat([
+            torch.tensor(0, dtype=arr.dtype, device=arr.device).unsqueeze(0),
+            arr,
+        ])
+
+    def _batch_ptr_from_num_nodes(
+            self, num_nodes: Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        if not num_nodes.dtype == torch.long:
+            raise TypeError("Argument must have type `torch.long`")
+        batch = torch.arange(
+            len(num_nodes),
+            device=num_nodes.device).repeat_interleave(num_nodes)
+        ptr = pad(num_nodes, (1, 0), "constant", 0).cumsum(0)
+        return batch, ptr
+
     @property
     def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
@@ -202,7 +413,7 @@ class Batch(metaclass=DynamicInheritance):
         elif hasattr(self, 'batch'):
             return int(self.batch.max()) + 1
         else:
-            raise ValueError("Can not infer the number of graphs")
+            raise ValueError('Can not infer the number of graphs')
 
     @property
     def batch_size(self) -> int:
