@@ -15,8 +15,7 @@ class WholeGraphEdgeAttr(EdgeAttr):
     r"""Edge attribute class for WholeGraph GraphStore enforcing layout to be CSC."""
     def __init__(
         self,
-        edge_type: Optional[
-            EdgeType] = None,
+        edge_type: Optional[EdgeType] = None,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
     ):
@@ -85,8 +84,7 @@ class WholeGraphGraphStore(GraphStore):
                 if 'adj_t' not in edge_store:
                     row, col = None, None
                     if dist_shmem.get_local_rank() == 0:
-                        row, col, _ = edge_store.csc(
-                        )
+                        row, col, _ = edge_store.csc()
                     row = dist_shmem.to_shmem(row)
                     col = dist_shmem.to_shmem(col)
                     size = edge_store.size()
