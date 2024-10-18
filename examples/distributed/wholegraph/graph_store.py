@@ -16,7 +16,7 @@ class WholeGraphEdgeAttr(EdgeAttr):
     def __init__(
         self,
         edge_type: Optional[
-            EdgeType] = None,  # use string to represent edge type for simplicity
+            EdgeType] = None,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
     ):
@@ -41,7 +41,7 @@ class WholeGraphGraphStore(GraphStore):
 
         if format == 'wholegraph':
             pinned_shared = False
-            if dist_shmem.get_local_rank() == dist.get_rank():
+            if dist_shmem.get_local_size() == dist.get_world_size():
                 backend = 'vmm'
             else:
                 backend = 'vmm' if nvlink_network() else 'nccl'
@@ -57,12 +57,11 @@ class WholeGraphGraphStore(GraphStore):
             if 'adj_t' not in pyg_data:
                 row, col = None, None
                 if dist_shmem.get_local_rank() == 0:
-                    row, col, _ = pyg_data.csc()  # discard permutation for now
+                    row, col, _ = pyg_data.csc()
                 row = dist_shmem.to_shmem(row)
                 col = dist_shmem.to_shmem(col)
                 size = pyg_data.size()
             else:
-                # issue: it wont work if adj_t is a SparseTensor
                 col = pyg_data.adj_t.crow_indices()
                 row = pyg_data.adj_t.col_indices()
                 size = pyg_data.adj_t.size()[::-1]
@@ -87,12 +86,11 @@ class WholeGraphGraphStore(GraphStore):
                     row, col = None, None
                     if dist_shmem.get_local_rank() == 0:
                         row, col, _ = edge_store.csc(
-                        )  # discard permutation for now
+                        )
                     row = dist_shmem.to_shmem(row)
                     col = dist_shmem.to_shmem(col)
                     size = edge_store.size()
                 else:
-                    # issue: this will also if adj_t is a SparseTensor
                     col = edge_store.adj_t.crow_indices()
                     row = edge_store.adj_t.col_indices()
                     size = edge_store.adj_t.size()[::-1]
@@ -106,21 +104,18 @@ class WholeGraphGraphStore(GraphStore):
                     self.put_adj_t(graph, edge_type=edge_type, size=size)
 
     def put_adj_t(self, adj_t: DistGraphCSC, *args, **kwargs) -> bool:
-        r"""Synchronously adds an :obj:`edge_index` tuple to the
-        :class:`GraphStore`.
+        """Add an adj_t (adj with transpose) matrix, :obj:`DistGraphCSC`
+        to :class:`WholeGraphGraphStore`.
         Returns whether insertion was successful.
-
-        Args:
-            edge_index (Tuple[torch.Tensor, torch.Tensor]): The
-                :obj:`edge_index` tuple in a format specified in
-                :class:`EdgeAttr`.
-            *args: Arguments passed to :class:`EdgeAttr`.
-            **kwargs: Keyword arguments passed to :class:`EdgeAttr`.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._put_adj_t(adj_t, edge_attr)
 
     def get_adj_t(self, *args, **kwargs) -> DistGraphCSC:
+        """Retrieves an adj_t (adj with transpose) matrix, :obj:`DistGraphCSC`
+        from :class:`WholeGraphGraphStore`.
+        Return: :obj:`DistGraphCSC`
+        """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         graph_adj_t = self._get_adj_t(edge_attr)
         if graph_adj_t is None:

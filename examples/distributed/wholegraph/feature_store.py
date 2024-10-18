@@ -42,7 +42,7 @@ class WholeGraphFeatureStore(FeatureStore):
         self._store = {
         }  # A dictionary of tuple to hold the feature embeddings
 
-        if dist_shmem.get_local_rank() == dist.get_rank():
+        if dist_shmem.get_local_size() == dist.get_world_size():
             self.backend = 'vmm'
         else:
             self.backend = 'vmm' if nvlink_network() else 'nccl'
@@ -63,17 +63,6 @@ class WholeGraphFeatureStore(FeatureStore):
                         self.put_tensor(pyg_data[group_name][attr_name],
                                         group_name=group_name,
                                         attr_name=attr_name, index=None)
-                    # This is a hack for MAG240M dataset, to add node features for 'institution' and 'author' nodes.
-                    # This should not be presented in the upstream code.
-                    elif attr_name == 'num_nodes':
-                        feature_dim = 768
-                        num_nodes = group[attr_name]
-                        shape = [num_nodes, feature_dim]
-                        self[group_name, 'x',
-                             None] = DistEmbedding(shape=shape,
-                                                   dtype=torch.float16,
-                                                   device="cpu",
-                                                   backend=self.backend)
         else:
             raise TypeError(
                 "Expected pyg_data to be of type torch_geometric.data.Data or torch_geometric.data.HeteroData."
@@ -82,10 +71,6 @@ class WholeGraphFeatureStore(FeatureStore):
     def _put_tensor(self, tensor: torch.Tensor, attr):
         """Creates and stores features (either DistTensor or DistEmbedding) from the given tensor,
         using a key derived from the group and attribute name.
-
-        Args:
-            tensor (torch.Tensor): The tensor to be passed to the feature store.
-            attr: PyG's TensorAttr to fully specify each feature store.
         """
         key = (attr.group_name, attr.attr_name)
         out = self._store.get(key)
