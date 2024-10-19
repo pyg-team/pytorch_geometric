@@ -17,6 +17,7 @@ class QFormer(torch.nn.Module):
         num_layers (int): The number of sub-encoder-layers in the encoder.
         dropout (int): The dropout value in each encoder layer.
 
+
     .. note::
         This is a simplified version of the original Q-Former implementation.
     """
