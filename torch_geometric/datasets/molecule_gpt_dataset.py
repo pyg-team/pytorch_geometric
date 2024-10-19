@@ -21,6 +21,58 @@ samples = [
         'ground_truth':
         '∼ is a 2-oxo monocarboxylic acid and a branched-chain keto acid'
     },
+    {
+        'smiles': 'CCCCC(=O)N',
+        'instruction': 'What is ∼ functional related to?',
+        'ground_truth': '∼ is functionally related to a valeric acid'
+    },
+    {
+        'smiles':
+        'CC(C)C(=O)C(=O)O',
+        'instruction':
+        'What is the chemical structure of the molecule represented by ∼?',
+        'ground_truth':
+        '∼ is a 2-oxo monocarboxylic acid and a branched-chain keto acid'
+    },
+    {
+        'smiles': 'CCCCC(=O)N',
+        'instruction': 'What is ∼ functional related to?',
+        'ground_truth': '∼ is functionally related to a valeric acid'
+    },
+    {
+        'smiles':
+        'CC(C)C(=O)C(=O)O',
+        'instruction':
+        'What is the chemical structure of the molecule represented by ∼?',
+        'ground_truth':
+        '∼ is a 2-oxo monocarboxylic acid and a branched-chain keto acid'
+    },
+    {
+        'smiles': 'CCCCC(=O)N',
+        'instruction': 'What is ∼ functional related to?',
+        'ground_truth': '∼ is functionally related to a valeric acid'
+    },
+    {
+        'smiles':
+        'CC(C)C(=O)C(=O)O',
+        'instruction':
+        'What is the chemical structure of the molecule represented by ∼?',
+        'ground_truth':
+        '∼ is a 2-oxo monocarboxylic acid and a branched-chain keto acid'
+    },
+    {
+        'smiles': 'CCCCC(=O)N',
+        'instruction': 'What is ∼ functional related to?',
+        'ground_truth': '∼ is functionally related to a valeric acid'
+    },
+    {
+        'smiles':
+        'CC(C)C(=O)C(=O)O',
+        'instruction':
+        'What is the chemical structure of the molecule represented by ∼?',
+        'ground_truth':
+        '∼ is a 2-oxo monocarboxylic acid and a branched-chain keto acid'
+    },
 ]
 
 
