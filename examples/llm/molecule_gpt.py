@@ -30,12 +30,6 @@ def save_params_dict(model, save_path):
     torch.save(state_dict, save_path)
 
 
-def load_params_dict(model, save_path):
-    state_dict = torch.load(save_path)
-    model.load_state_dict(state_dict)
-    return model
-
-
 @torch.no_grad()
 def eval(model, data_loader):
     model.eval()
@@ -97,7 +91,7 @@ def train(
 
     graph_encoder = GINEConv(
         nn=torch.nn.Sequential(
-            torch.nn.Linear(5, 768),
+            torch.nn.Linear(6, 768),
             torch.nn.ReLU(),
             torch.nn.Linear(768, 768),
         ),
