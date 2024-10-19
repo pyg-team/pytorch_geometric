@@ -2,8 +2,8 @@ from typing import List, Optional
 
 import torch
 from torch import Tensor
-from transformers import BertModel
 
+from torch_geometric.nn.attention import QFormer
 from torch_geometric.nn.nlp.llm import BOS, LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import to_dense_batch
 
@@ -32,7 +32,10 @@ class MoleculeGPT(torch.nn.Module):
         llm (LLM): The LLM to use.
         graph_encoder (torch.nn.Module): Encode 2D molecule graph.
         smiles_encoder (torch.nn.Module): Encode 1D SMILES.
+        mlp_out_channels (int, optional): The size of each embedding
+            after qformer encoding. (default: :obj:`32`)
         max_tokens (int, optional): Max output tokens of 1D/2D encoder.
+            (default: :obj:`20`)
 
     .. warning::
         This module has been tested with the following HuggingFace models
@@ -53,32 +56,37 @@ class MoleculeGPT(torch.nn.Module):
         llm: LLM,
         graph_encoder: torch.nn.Module,
         smiles_encoder: torch.nn.Module,
+        mlp_out_channels: int = 32,
         max_tokens: Optional[int] = 20,
     ) -> None:
         super().__init__()
         self.llm = llm
         self.graph_encoder = graph_encoder.to(self.llm.device)
         self.smiles_encoder = smiles_encoder.to(self.llm.device)
-        self.graph_bert = BertModel.from_pretrained('bert-base-cased').to(
-            self.llm.device)
-        self.smiles_bert = BertModel.from_pretrained('bert-base-cased').to(
-            self.llm.device)
+
+        self.graph_qformer = QFormer(
+            input_dim=self.graph_encoder.nn[-1].out_features,
+            hidden_dim=mlp_out_channels,
+            output_dim=mlp_out_channels,
+            num_heads=4,
+            num_layers=2,
+        ).to(self.llm.device)
+
+        self.smiles_qformer = QFormer(
+            input_dim=self.smiles_encoder.model.pooler.dense.out_features,
+            hidden_dim=mlp_out_channels,
+            output_dim=mlp_out_channels,
+            num_heads=4,
+            num_layers=2,
+        ).to(self.llm.device)
+
         self.max_tokens = max_tokens
 
         self.word_embedding = self.llm.word_embedding
         self.llm_generator = self.llm.llm
 
-        # 1D SMILES Branch
-        in_dim = self.smiles_encoder.model.pooler.dense.out_features
-        out_dim = self.smiles_bert.embeddings.word_embeddings.embedding_dim
-        self.smiles_projector = torch.nn.Sequential(
-            torch.nn.Linear(in_dim, in_dim),
-            torch.nn.Sigmoid(),
-            torch.nn.Linear(in_dim, out_dim),
-        ).to(self.llm.device)
-
         # LLMs
-        in_dim = 2 * out_dim * max_tokens
+        in_dim = 2 * mlp_out_channels * max_tokens
         out_dim = self.llm.llm.model.embed_tokens.embedding_dim
         self.projector = torch.nn.Sequential(
             torch.nn.Linear(in_dim, in_dim),
@@ -104,7 +112,7 @@ class MoleculeGPT(torch.nn.Module):
 
         x_graph = self.graph_encoder(x, edge_index, edge_attr=edge_attr)
         x_graph = to_dense_batch(x_graph, batch)[0]
-        out_graph = self.graph_bert(inputs_embeds=x_graph).last_hidden_state
+        out_graph = self.graph_qformer(x_graph)
         out_graph = pad_or_truncate(out_graph, max_seq_len=self.max_tokens,
                                     padding_value=0)
         out_graph = out_graph.view(batch_size, -1)
@@ -112,8 +120,7 @@ class MoleculeGPT(torch.nn.Module):
         # 1D SMILES Branch: [bs, seq_len, d]
         x_smiles = self.smiles_encoder.encode(smiles,
                                               output_device=self.llm.device)
-        x_smiles = self.smiles_projector(x_smiles)
-        out_smiles = self.smiles_bert(inputs_embeds=x_smiles).last_hidden_state
+        out_smiles = self.smiles_qformer(x_smiles)
         out_smiles = pad_or_truncate(out_smiles, max_seq_len=self.max_tokens,
                                      padding_value=0)
         out_smiles = out_smiles.view(batch_size, -1)
@@ -210,6 +217,6 @@ class MoleculeGPT(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(\n'
                 f'  llm={self.llm},\n'
-                f'  graph={self.graph_encoder},\n'
+                f'  graph={self.graph_encoder.__class__.__name__},\n'
                 f'  smiles={self.smiles_encoder},\n'
                 f')')

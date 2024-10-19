@@ -18,7 +18,7 @@ def test_molecule_gpt() -> None:
         dtype=torch.bfloat16,
     )
 
-    graph_encoder = GINEConv(nn=Seq(Lin(16, 768), ReLU(), Lin(768, 768)),
+    graph_encoder = GINEConv(nn=Seq(Lin(16, 16), ReLU(), Lin(16, 16)),
                              train_eps=True, edge_dim=16)
 
     smiles_encoder = SentenceTransformer(
@@ -32,7 +32,12 @@ def test_molecule_gpt() -> None:
         smiles_encoder=smiles_encoder,
     )
 
-    assert 'MoleculeGPT' in str(model)
+    assert str(model) == (
+        'MoleculeGPT(\n'
+        '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
+        '  graph=GINEConv,\n'
+        '  smiles=SentenceTransformer(model_name=DeepChem/ChemBERTa-77M-MTR),\n'  # noqa: E501
+        ')')
 
     x = torch.randn(10, 16)
     edge_index = torch.tensor([
