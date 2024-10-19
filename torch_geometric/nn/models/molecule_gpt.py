@@ -30,9 +30,9 @@ class MoleculeGPT(torch.nn.Module):
 
     Args:
         llm (LLM): The LLM to use.
-        gnn (torch.nn.Module): The GNN to use.
-        mlp_out_channels (int, optional): The size of each graph embedding
-            after projection. (default: :obj:`4096`)
+        graph_encoder (torch.nn.Module): Encode 2D molecule graph.
+        smiles_encoder (torch.nn.Module): Encode 1D SMILES.
+        max_tokens (int, optional): Max output tokens of 1D/2D encoder.
 
     .. warning::
         This module has been tested with the following HuggingFace models

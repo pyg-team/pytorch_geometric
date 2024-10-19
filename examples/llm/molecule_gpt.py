@@ -41,7 +41,7 @@ def eval(model, data_loader):
     model.eval()
     loss = 0
 
-    for step, batch in enumerate(data_loader):
+    for batch in data_loader:
         batch_loss = model(batch.x, batch.edge_index, batch.batch,
                            batch.edge_attr, batch.smiles, batch.instruction,
                            batch.y)
