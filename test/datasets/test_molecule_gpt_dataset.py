@@ -1,6 +1,8 @@
 from torch_geometric.datasets import MoleculeGPTDataset
+from torch_geometric.testing import onlyOnline
 
 
+@onlyOnline
 def test_fake_dataset():
     dataset = MoleculeGPTDataset(root='./data/MoleculeGPT')
 
