@@ -5,10 +5,10 @@ from torch.nn import Sequential as Seq
 
 from torch_geometric.nn import GINEConv, MoleculeGPT
 from torch_geometric.nn.nlp import LLM, SentenceTransformer
-from torch_geometric.testing import onlyOnline, withPackage
+from torch_geometric.testing import onlyFullTest, withPackage
 
 
-@onlyOnline
+@onlyFullTest
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_molecule_gpt() -> None:
     llm = LLM(
