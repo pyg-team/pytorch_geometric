@@ -420,7 +420,7 @@ class NodeStorage(BaseStorage):
     @property
     def num_nodes(self) -> Optional[int]:
         # We sequentially access attributes that reveal the number of nodes.
-        if 'num_nodes' in self:
+        if 'num_nodes' in self._mapping:
             return self['num_nodes']
         for key, value in self.items():
             if isinstance(value, Tensor) and key in N_KEYS:
