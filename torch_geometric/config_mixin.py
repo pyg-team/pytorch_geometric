@@ -82,7 +82,10 @@ def _recursive_from_config(value: Any) -> Any:
     cls: Any = None
     if is_dataclass(value):
         if getattr(value, '_target_', None):
-            cls = _locate_cls(value._target_)
+            try:
+                cls = _locate_cls(value._target_)  # type: ignore
+            except ImportError:
+                pass  # Keep the dataclass as it is.
         else:
             cls = class_from_dataclass(value.__class__)
     elif isinstance(value, dict) and '_target_' in value:

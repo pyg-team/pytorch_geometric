@@ -20,6 +20,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinx_autodoc_typehints',
+    'sphinx_copybutton',
     'nbsphinx',
     'pyg',
 ]
@@ -41,8 +43,11 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
     # 'numpy': ('http://docs.scipy.org/doc/numpy', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
-    'torch': ('https://pytorch.org/docs/master', None),
+    'torch': ('https://pytorch.org/docs/main', None),
 }
+
+typehints_use_rtype = False
+typehints_defaults = 'comma'
 
 nbsphinx_thumbnails = {
     'tutorial/create_gnn':
@@ -77,5 +82,9 @@ def rst_jinja_render(app, _, source):
 
 
 def setup(app):
+    r"""Setup sphinx application."""
     app.connect('source-read', rst_jinja_render)
     app.add_js_file('js/version_alert.js')
+
+    # Do not drop type hints in signatures:
+    del app.events.listeners['autodoc-process-signature']

@@ -2,7 +2,6 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
-from scipy.linalg import expm
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -22,7 +21,7 @@ from torch_geometric.utils import (
 @functional_transform('gdc')
 class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
-    `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
+    `"Diffusion Improves Graph Learning" <https://arxiv.org/abs/1911.05485>`_
     paper (functional name: :obj:`gdc`).
 
     .. note::
@@ -473,6 +472,8 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`Tensor`)
         """
+        from scipy.linalg import expm
+
         if symmetric:
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()

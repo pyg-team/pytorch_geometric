@@ -53,7 +53,7 @@ class NodePropertySplit(BaseTransform):
 
         property_name = 'popularity'
         ratios = [0.3, 0.1, 0.1, 0.3, 0.2]
-        tranaform = NodePropertySplit(property_name, ratios)
+        transform = NodePropertySplit(property_name, ratios)
 
         data = transform(data)
     """

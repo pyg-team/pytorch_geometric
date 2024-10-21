@@ -102,7 +102,7 @@ class HeteroConv(torch.nn.Module):
                 individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
                 :class:`torch_sparse.SparseTensor`.
-            *args_dict (optional): Additional forward arguments of invididual
+            *args_dict (optional): Additional forward arguments of individual
                 :class:`torch_geometric.nn.conv.MessagePassing` layers.
             **kwargs_dict (optional): Additional forward arguments of
                 individual :class:`torch_geometric.nn.conv.MessagePassing`

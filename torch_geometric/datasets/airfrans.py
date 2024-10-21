@@ -2,14 +2,13 @@ import json
 import os
 from typing import Callable, List, Optional
 
-import torch
-
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class AirfRANS(InMemoryDataset):
@@ -47,26 +46,24 @@ class AirfRANS(InMemoryDataset):
         :obj:`torch_geometric.transforms.RadiusGraph` transform.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        task (str): The task to study (:obj:`"full"`, :obj:`"scarce"`,
+        root: Root directory where the dataset should be saved.
+        task: The task to study (:obj:`"full"`, :obj:`"scarce"`,
             :obj:`"reynolds"`, :obj:`"aoa"`) that defines the utilized training
             and test splits.
-        train (bool, optional): If :obj:`True`, loads the training dataset,
-            otherwise the test dataset. (default: :obj:`True`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+        train: If :obj:`True`, loads the training dataset, otherwise the test
+            dataset.
+        transform: A function/transform that takes in an
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
+        pre_transform: A function/transform that takes in an
+            :class:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
+            being saved to disk.
+        pre_filter: A function that takes in an
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
+            final dataset.
+        force_reload: Whether to re-process the dataset.
 
     **STATS:**
 
@@ -129,7 +126,7 @@ class AirfRANS(InMemoryDataset):
         partial = set(manifest[f'{self.task}_{self.split}'])
 
         data_list = []
-        raw_data = torch.load(self.raw_paths[0])
+        raw_data = fs.torch_load(self.raw_paths[0])
         for k, s in enumerate(total):
             if s in partial:
                 data = Data(**raw_data[k])

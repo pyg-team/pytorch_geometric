@@ -58,7 +58,7 @@ def reset_bias_(bias: Optional[Tensor], in_channels: int,
 
 
 class Linear(torch.nn.Module):
-    r"""Applies a linear tranformation to the incoming data.
+    r"""Applies a linear transformation to the incoming data.
 
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
@@ -192,7 +192,7 @@ class Linear(torch.nn.Module):
 
 
 class HeteroLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data according
+    r"""Applies separate linear transformations to the incoming data according
     to types.
 
     For type :math:`\kappa`, it computes
@@ -365,7 +365,8 @@ class HeteroLinear(torch.nn.Module):
 
 
 class HeteroDictLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data dictionary.
+    r"""Applies separate linear transformations to the incoming data
+    dictionary.
 
     For key :math:`\kappa`, it computes
 
@@ -479,7 +480,7 @@ class HeteroDictLinear(torch.nn.Module):
             lin = self.lins[key]
             if is_uninitialized_parameter(lin.weight):
                 self.lins[key].initialize_parameters(None, x)
-        self.reset_parameters()
+                self.lins[key].reset_parameters()
         self._hook.remove()
         self.in_channels = {key: x.size(-1) for key, x in input[0].items()}
         delattr(self, '_hook')
