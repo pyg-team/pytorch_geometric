@@ -10,6 +10,7 @@ class PoolingStrategy(Enum):
     MEAN = 'mean'
     LAST = 'last'
     CLS = 'cls'
+    LAST_HIDDEN_STATE = 'last_hidden_state'
 
 
 class SentenceTransformer(torch.nn.Module):
@@ -38,6 +39,8 @@ class SentenceTransformer(torch.nn.Module):
             emb = mean_pooling(emb, attention_mask)
         elif self.pooling_strategy == PoolingStrategy.LAST:
             emb = last_pooling(emb, attention_mask)
+        elif self.pooling_strategy == PoolingStrategy.LAST_HIDDEN_STATE:
+            emb = out.last_hidden_state
         else:
             assert self.pooling_strategy == PoolingStrategy.CLS
             emb = emb[:, 0, :]
