@@ -11,7 +11,7 @@ from torch_geometric.nn import DenseGCNConv, GCNConv
 
 
 class GraphWaveNet(nn.Module):
-    r""" GraphWaveNet implementation from the
+    r"""GraphWaveNet implementation from the
     `Graph WaveNet for Deep Spatial-Temporal Graph Modeling
     <https://arxiv.org/abs/1906.00121>`_ paper. The model takes a list of
     node embeddings across several time steps and predicts the output
@@ -51,7 +51,7 @@ class GraphWaveNet(nn.Module):
                  dropout=0.3, residual_channels=32, dilation_channels=32,
                  skip_channels=256, end_channels=512):
 
-        super(GraphWaveNet, self).__init__()
+        super().__init__()
 
         self.total_dilation = sum(dilations)
         self.num_dilations = len(dilations)
@@ -114,8 +114,7 @@ class GraphWaveNet(nn.Module):
                               kernel_size=(1, 1))
 
     def forward(self, x, edge_index, edge_weight=None):
-        r"""
-        The forward pass for the GraphWaveNet
+        r"""The forward pass for the GraphWaveNet
 
         Args:
             x (torch.Tensor): The temporal node features of shape
@@ -129,7 +128,6 @@ class GraphWaveNet(nn.Module):
             * **x** (*torch.Tensor*): Predicted temporal node features of shape
               :math:`(*, t_{output}, |\mathcal{V}|, F_{out})`
         """
-
         # Both batched and unbatched input is supported
         # In the case of a single batch, the input is broadcast
         is_batched = True
@@ -236,8 +234,7 @@ class GraphWaveNet(nn.Module):
         return x
 
     def __batch_timesteps__(self, x, edge_index, edge_weight=None):
-        r"""
-        This method batches the data for several time steps into a single batch
+        r"""This method batches the data for several time steps into a single batch
         """
         edge_index = edge_index.expand(x.size(0), *edge_index.shape)
 

@@ -6,9 +6,8 @@ import scipy.sparse as sp
 import torch
 
 
-class DataLoader(object):
-    """
-    This class loads the train, val and test data to be fed to the model
+class DataLoader:
+    """This class loads the train, val and test data to be fed to the model
     """
     def __init__(self, xs, ys, batch_size):
         self.batch_size = batch_size
@@ -46,8 +45,7 @@ class DataLoader(object):
 
 
 class StandardScaler():
-    """
-    Standardize the input
+    """Standardize the input
     """
     def __init__(self, mean, std):
         self.mean = mean
@@ -120,7 +118,7 @@ def masked_mse(preds, labels, null_val=np.nan):
     else:
         mask = (labels != null_val)
     mask = mask.float()
-    mask /= torch.mean((mask))
+    mask /= torch.mean(mask)
     mask = torch.where(torch.isnan(mask), torch.zeros_like(mask), mask)
     loss = (preds - labels)**2
     loss = loss * mask
@@ -139,7 +137,7 @@ def masked_mae(preds, labels, null_val=np.nan):
     else:
         mask = (labels != null_val)
     mask = mask.float()
-    mask /= torch.mean((mask))
+    mask /= torch.mean(mask)
     mask = torch.where(torch.isnan(mask), torch.zeros_like(mask), mask)
     loss = torch.abs(preds - labels)
     loss = loss * mask
@@ -153,7 +151,7 @@ def masked_mape(preds, labels, null_val=np.nan):
     else:
         mask = (labels != null_val)
     mask = mask.float()
-    mask /= torch.mean((mask))
+    mask /= torch.mean(mask)
     mask = torch.where(torch.isnan(mask), torch.zeros_like(mask), mask)
     loss = torch.abs(preds - labels) / labels
     loss = loss * mask

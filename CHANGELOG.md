@@ -409,6 +409,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.3.0\] - 2023-03-23
 
 ### Added
+
 - Added the `Graph Wavenet` implementation ([#7015](https://github.com/pyg-team/pytorch_geometric/pull/7015))
 - Added a memory-efficient `utils.one_hot` implementation ([#7005](https://github.com/pyg-team/pytorch_geometric/pull/7005))
 - Added `HeteroDictLinear` and an optimized `FastHGTConv` module ([#6178](https://github.com/pyg-team/pytorch_geometric/pull/6178), [#6998](https://github.com/pyg-team/pytorch_geometric/pull/6998))

@@ -137,7 +137,7 @@ def main():
                        mvalid_mape, mvalid_rmse, (t2 - t1)), flush=True)
     print("Average Training Time: {:.4f} secs/epoch".format(
         np.mean(train_time)))
-    print("Average Inference Time: {:.4f} secs".format(np.mean(val_time)))
+    print(f"Average Inference Time: {np.mean(val_time):.4f} secs")
 
     # testing
     engine.gwnet.load_state_dict(
@@ -181,4 +181,4 @@ if __name__ == "__main__":
     t1 = time.time()
     main()
     t2 = time.time()
-    print("Total time spent: {:.4f}".format(t2 - t1))
+    print(f"Total time spent: {t2 - t1:.4f}")
