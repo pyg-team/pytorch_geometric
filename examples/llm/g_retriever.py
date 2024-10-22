@@ -41,8 +41,8 @@ def compute_metrics(eval_output):
 
             label = label.split('|')
             matches = set(pred).intersection(set(label))
-            precision = len(matches) / len(set(label))
-            recall = len(matches) / len(set(pred))
+            precision = len(matches) / len(set(pred))
+            recall = len(matches) / len(set(label))
             if recall + precision == 0:
                 f1 = 0
             else:
@@ -159,7 +159,10 @@ def train(
         llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
         model = GRetriever(llm=llm, gnn=gnn)
 
-    model_save_name = 'gnn_llm' if num_gnn_layers is not None else 'llm'
+    model_save_name = 'gnn_llm' if num_gnn_layers != 0 else 'llm'
+    if model_save_name == 'llm':
+        model = llm
+
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
