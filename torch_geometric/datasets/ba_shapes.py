@@ -1,13 +1,14 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.deprecation import deprecated
 from torch_geometric.utils import barabasi_albert_graph
 
 
-def house():
+def house() -> Tuple[Tensor, Tensor]:
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4],
                                [1, 3, 4, 4, 2, 0, 1, 3, 2, 0, 0, 1]])
     label = torch.tensor([1, 1, 2, 2, 3])
@@ -29,19 +30,21 @@ class BAShapes(InMemoryDataset):
         :class:`torch_geometric.datasets.graph_generator.BAGraph` instead.
 
     Args:
-        connection_distribution (str, optional): Specifies how the houses
-            and the BA graph get connected. Valid inputs are :obj:`"random"`
+        connection_distribution: Specifies how the houses and the BA graph get
+            connected. Valid inputs are :obj:`"random"`
             (random BA graph nodes are selected for connection to the houses),
             and :obj:`"uniform"` (uniformly distributed BA graph nodes are
-            selected for connection to the houses). (default: :obj:`"random"`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+            selected for connection to the houses).
+        transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
     """
-    def __init__(self, connection_distribution: str = "random",
-                 transform: Optional[Callable] = None):
-        super().__init__('.', transform)
+    def __init__(
+        self,
+        connection_distribution: str = "random",
+        transform: Optional[Callable] = None,
+    ) -> None:
+        super().__init__(None, transform)
         assert connection_distribution in ['random', 'uniform']
 
         # Build the Barabasi-Albert graph:

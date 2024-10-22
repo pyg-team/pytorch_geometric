@@ -8,7 +8,7 @@ from torch_geometric.graphgym.config import cfg
 
 
 def get_gpu_memory_map():
-    '''Get the current gpu usage.'''
+    """Get the current GPU usage."""
     result = subprocess.check_output([
         'nvidia-smi', '--query-gpu=memory.used',
         '--format=csv,nounits,noheader'
@@ -18,9 +18,7 @@ def get_gpu_memory_map():
 
 
 def get_current_gpu_usage():
-    '''
-    Get the current GPU memory usage.
-    '''
+    """Get the current GPU memory usage."""
     if cfg.gpu_mem and cfg.device != 'cpu' and torch.cuda.is_available():
         result = subprocess.check_output([
             'nvidia-smi', '--query-compute-apps=pid,used_memory',

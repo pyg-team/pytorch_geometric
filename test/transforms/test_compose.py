@@ -21,6 +21,21 @@ def test_compose():
     assert data.edge_index.size() == (2, 7)
 
 
+def test_compose_data_list():
+    transform = T.Compose([T.Center(), T.AddSelfLoops()])
+
+    pos = torch.tensor([[0.0, 0.0], [2.0, 0.0], [4.0, 0.0]])
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    data_list = [Data(edge_index=edge_index, pos=pos) for _ in range(3)]
+    data_list = transform(data_list)
+    assert len(data_list) == 3
+    for data in data_list:
+        assert len(data) == 2
+        assert data.pos.tolist() == [[-2.0, 0.0], [0.0, 0.0], [2.0, 0.0]]
+        assert data.edge_index.size() == (2, 7)
+
+
 def test_compose_filters():
     filter_fn = T.ComposeFilters([
         lambda d: d.num_nodes > 2,

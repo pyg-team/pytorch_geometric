@@ -5,6 +5,8 @@ from typing import Any, List, NamedTuple, Optional, Tuple
 import torch
 import torch.profiler as torch_profiler
 
+import torch_geometric.typing
+
 # predefined namedtuple for variable setting (global template)
 Trace = namedtuple('Trace', ['path', 'leaf', 'module'])
 
@@ -105,8 +107,7 @@ class Profiler:
 
             @functools.wraps(_forward)
             def wrap_forward(*args, **kwargs):
-                """The forward pass is decorated and profiled here
-                """
+                """The forward pass is decorated and profiled here."""
                 # only torch 1.8.1+ is supported
                 torch_version = torch.__version__
                 if torch_version <= '1.8.1':
@@ -133,8 +134,7 @@ class Profiler:
         return trace
 
     def _remove_hook_trace(self, trace):
-        """Clean it up after the profiling is done.
-        """
+        """Clean it up after the profiling is done."""
         [path, leaf, module] = trace
         _id = id(module)
         if _id in self._ids:
@@ -327,41 +327,50 @@ def _flatten_tree(t, depth=0):
 
 
 def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
+    device_str = 'device' if torch_geometric.typing.WITH_PT24 else 'cuda'
+
     # memory profiling supported in torch >= 1.6
     self_cpu_memory = None
     has_self_cpu_memory = any(
         hasattr(e, "self_cpu_memory_usage") for e in events)
     if has_self_cpu_memory:
         self_cpu_memory = sum(
-            [getattr(e, "self_cpu_memory_usage", 0) for e in events])
+            [getattr(e, "self_cpu_memory_usage", 0) or 0 for e in events])
     cpu_memory = None
     has_cpu_memory = any(hasattr(e, "cpu_memory_usage") for e in events)
     if has_cpu_memory:
-        cpu_memory = sum([getattr(e, "cpu_memory_usage", 0) for e in events])
+        cpu_memory = sum(
+            [getattr(e, "cpu_memory_usage", 0) or 0 for e in events])
     self_cuda_memory = None
     has_self_cuda_memory = any(
-        hasattr(e, "self_cuda_memory_usage") for e in events)
+        hasattr(e, f"self_{device_str}_memory_usage") for e in events)
     if has_self_cuda_memory:
-        self_cuda_memory = sum(
-            [getattr(e, "self_cuda_memory_usage", 0) for e in events])
+        self_cuda_memory = sum([
+            getattr(e, f"self_{device_str}_memory_usage", 0) or 0
+            for e in events
+        ])
     cuda_memory = None
-    has_cuda_memory = any(hasattr(e, "cuda_memory_usage") for e in events)
+    has_cuda_memory = any(
+        hasattr(e, f"{device_str}_memory_usage") for e in events)
     if has_cuda_memory:
-        cuda_memory = sum([getattr(e, "cuda_memory_usage", 0) for e in events])
+        cuda_memory = sum(
+            [getattr(e, f"{device_str}_memory_usage", 0) or 0 for e in events])
 
     # self CUDA time supported in torch >= 1.7
     self_cuda_total = None
     has_self_cuda_time = any(
-        hasattr(e, "self_cuda_time_total") for e in events)
+        hasattr(e, f"self_{device_str}_time_total") for e in events)
     if has_self_cuda_time:
-        self_cuda_total = sum(
-            [getattr(e, "self_cuda_time_total", 0) for e in events])
+        self_cuda_total = sum([
+            getattr(e, f"self_{device_str}_time_total", 0) or 0 for e in events
+        ])
 
     return Measure(
-        self_cpu_total=sum([e.self_cpu_time_total for e in events]),
-        cpu_total=sum([e.cpu_time_total for e in events]),
+        self_cpu_total=sum([e.self_cpu_time_total or 0 for e in events]),
+        cpu_total=sum([e.cpu_time_total or 0 for e in events]),
         self_cuda_total=self_cuda_total,
-        cuda_total=sum([e.cuda_time_total for e in events]),
+        cuda_total=sum(
+            [getattr(e, f"{device_str}_time_total") or 0 for e in events]),
         self_cpu_memory=self_cpu_memory,
         cpu_memory=cpu_memory,
         self_cuda_memory=self_cuda_memory,
@@ -436,10 +445,10 @@ def format_time(time_us: int) -> str:
     US_IN_SECOND = 1000.0 * 1000.0
     US_IN_MS = 1000.0
     if time_us >= US_IN_SECOND:
-        return '{:.3f}s'.format(time_us / US_IN_SECOND)
+        return f'{time_us / US_IN_SECOND:.3f}s'
     if time_us >= US_IN_MS:
-        return '{:.3f}ms'.format(time_us / US_IN_MS)
-    return '{:.3f}us'.format(time_us)
+        return f'{time_us / US_IN_MS:.3f}ms'
+    return f'{time_us:.3f}us'
 
 
 def format_memory(nbytes: int) -> str:
@@ -448,10 +457,10 @@ def format_memory(nbytes: int) -> str:
     MB = 1024 * KB
     GB = 1024 * MB
     if (abs(nbytes) >= GB):
-        return '{:.2f} Gb'.format(nbytes * 1.0 / GB)
+        return f'{nbytes * 1.0 / GB:.2f} Gb'
     elif (abs(nbytes) >= MB):
-        return '{:.2f} Mb'.format(nbytes * 1.0 / MB)
+        return f'{nbytes * 1.0 / MB:.2f} Mb'
     elif (abs(nbytes) >= KB):
-        return '{:.2f} Kb'.format(nbytes * 1.0 / KB)
+        return f'{nbytes * 1.0 / KB:.2f} Kb'
     else:
         return str(nbytes) + ' b'

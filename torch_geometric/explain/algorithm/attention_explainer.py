@@ -58,7 +58,8 @@ class AttentionExplainer(ExplainerAlgorithm):
 
         hook_handles = []
         for module in model.modules():  # Register message forward hooks:
-            if isinstance(module, MessagePassing):
+            if (isinstance(module, MessagePassing)
+                    and module.explain is not False):
                 hook_handles.append(module.register_message_forward_hook(hook))
 
         model(x, edge_index, **kwargs)

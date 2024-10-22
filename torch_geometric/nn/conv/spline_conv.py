@@ -5,23 +5,23 @@ import torch
 from torch import Tensor, nn
 from torch.nn import Parameter
 
+import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils.repeat import repeat
 
-try:
+if torch_geometric.typing.WITH_TORCH_SPLINE_CONV:
     from torch_spline_conv import spline_basis, spline_weighting
-except (ImportError, OSError):  # Fail gracefully on GLIBC errors
-    spline_basis = None
-    spline_weighting = None
+else:
+    spline_basis = spline_weighting = None
 
 
 class SplineConv(MessagePassing):
     r"""The spline-based convolutional operator from the `"SplineCNN: Fast
     Geometric Deep Learning with Continuous B-Spline Kernels"
-    <https://arxiv.org/abs/1711.08920>`_ paper
+    <https://arxiv.org/abs/1711.08920>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|} \sum_{j \in
@@ -127,7 +127,7 @@ class SplineConv(MessagePassing):
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         if not x[0].is_cuda:
             warnings.warn(

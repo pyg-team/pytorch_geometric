@@ -20,6 +20,7 @@ from .md17 import MD17
 from .zinc import ZINC
 from .aqsol import AQSOL
 from .molecule_net import MoleculeNet
+from .pcqm4m import PCQM4Mv2
 from .entities import Entities
 from .rel_link_pred_dataset import RelLinkPredDataset
 from .ged_dataset import GEDDataset
@@ -72,6 +73,10 @@ from .hydro_net import HydroNet
 from .airfrans import AirfRANS
 from .jodie import JODIEDataset
 from .wikidata import Wikidata5M
+from .myket import MyketDataset
+from .brca_tgca import BrcaTcga
+from .neurograph import NeuroGraphDataset
+from .web_qsp_dataset import WebQSPDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -88,6 +93,10 @@ from .igmc_dataset import IGMCDataset
 from .amazon_book import AmazonBook
 from .hm import HM
 from .ose_gvcs import OSE_GVCS
+from .rcdd import RCDD
+from .opf import OPFDataset
+
+from .cornell import CornellTemporalHyperGraphDataset
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -99,7 +108,7 @@ from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
 
-import torch_geometric.datasets.utils  # noqa
+import torch_geometric.datasets.utils
 
 homo_datasets = [
     'KarateClub',
@@ -123,6 +132,7 @@ homo_datasets = [
     'ZINC',
     'AQSOL',
     'MoleculeNet',
+    'PCQM4Mv2',
     'Entities',
     'RelLinkPredDataset',
     'GEDDataset',
@@ -176,6 +186,10 @@ homo_datasets = [
     'AirfRANS',
     'JODIEDataset',
     'Wikidata5M',
+    'MyketDataset',
+    'BrcaTcga',
+    'NeuroGraphDataset',
+    'WebQSPDataset',
 ]
 
 hetero_datasets = [
@@ -194,6 +208,11 @@ hetero_datasets = [
     'AmazonBook',
     'HM',
     'OSE_GVCS',
+    'RCDD',
+    'OPFDataset',
+]
+hyper_datasets = [
+    'CornellTemporalHyperGraphDataset',
 ]
 synthetic_datasets = [
     'FakeDataset',
@@ -208,4 +227,4 @@ synthetic_datasets = [
     'BAShapes',
 ]
 
-__all__ = homo_datasets + hetero_datasets + synthetic_datasets
+__all__ = homo_datasets + hetero_datasets + hyper_datasets + synthetic_datasets

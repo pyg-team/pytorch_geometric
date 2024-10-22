@@ -36,6 +36,8 @@ class EllipticBitcoinTemporalDataset(EllipticBitcoinDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -58,12 +60,14 @@ class EllipticBitcoinTemporalDataset(EllipticBitcoinDataset):
         t: int,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
     ):
         if t < 1 or t > 49:
             raise ValueError("'t' needs to be between 1 and 49")
 
         self.t = t
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
 
     @property
     def processed_file_names(self) -> str:

@@ -148,10 +148,10 @@ def test_summary_with_leaf_module(gcn):
 | ├─(act)ReLU                             | [100, 16]          | [100, 16]      | --       |
 | ├─(convs)ModuleList                     | --                 | --             | 1,072    |
 | │    └─(0)GCNConv                       | [100, 32], [2, 20] | [100, 16]      | 528      |
-| │    │    └─(aggr_module)SumAggregation | [120, 16], [120]   | [100, 16]      | --       |
+| │    │    └─(aggr_module)SumAggregation | [120, 16]          | [100, 16]      | --       |
 | │    │    └─(lin)Linear                 | [100, 32]          | [100, 16]      | 512      |
 | │    └─(1)GCNConv                       | [100, 16], [2, 20] | [100, 32]      | 544      |
-| │    │    └─(aggr_module)SumAggregation | [120, 32], [120]   | [100, 32]      | --       |
+| │    │    └─(aggr_module)SumAggregation | [120, 32]          | [100, 32]      | --       |
 | │    │    └─(lin)Linear                 | [100, 16]          | [100, 32]      | 512      |
 | ├─(norms)ModuleList                     | --                 | --             | --       |
 | │    └─(0)Identity                      | [100, 16]          | [100, 16]      | --       |

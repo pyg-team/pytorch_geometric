@@ -14,6 +14,7 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+from torch_geometric.io import fs
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import (
@@ -87,7 +88,7 @@ def run(args: argparse.ArgumentParser):
             raise ValueError("Layer-wise inference requires `steps=-1`")
 
         if args.device == 'cuda':
-            amp = torch.cuda.amp.autocast(enabled=False)
+            amp = torch.amp.autocast('cuda', enabled=False)
         elif args.device == 'xpu':
             amp = torch.xpu.amp.autocast(enabled=False)
         else:
@@ -186,7 +187,7 @@ def run(args: argparse.ArgumentParser):
                         model = model.to(device)
                         # TODO: Migrate to ModelHubMixin.
                         if args.ckpt_path:
-                            state_dict = torch.load(args.ckpt_path)
+                            state_dict = fs.torch_load(args.ckpt_path)
                             model.load_state_dict(state_dict)
                         model.eval()
                         if args.device == 'xpu':

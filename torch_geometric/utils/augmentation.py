@@ -3,7 +3,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import negative_sampling, scatter
+from torch_geometric.utils import cumsum, negative_sampling, scatter
 
 
 def shuffle_node(
@@ -12,7 +12,7 @@ def shuffle_node(
     training: bool = True,
 ) -> Tuple[Tensor, Tensor]:
     r"""Randomly shuffle the feature matrix :obj:`x` along the
-    first dimmension.
+    first dimension.
 
     The method returns (1) the shuffled :obj:`x`, (2) the permutation
     indicating the orders of original nodes after shuffling.
@@ -28,7 +28,6 @@ def shuffle_node(
     :rtype: (:class:`FloatTensor`, :class:`LongTensor`)
 
     Example:
-
         >>> # Standard case
         >>> x = torch.tensor([[0, 1, 2],
         ...                   [3, 4, 5],
@@ -61,10 +60,10 @@ def shuffle_node(
         perm = torch.randperm(x.size(0), device=x.device)
         return x[perm], perm
     num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0, reduce='sum')
-    cumsum = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
+    ptr = cumsum(num_nodes)
     perm = torch.cat([
         torch.randperm(n, device=x.device) + offset
-        for offset, n in zip(cumsum[:-1], num_nodes)
+        for offset, n in zip(ptr[:-1], num_nodes)
     ])
     return x[perm], perm
 
@@ -102,7 +101,6 @@ def mask_feature(
     :rtype: (:class:`FloatTensor`, :class:`BoolTensor`)
 
     Examples:
-
         >>> # Masked features are column-wise sampled
         >>> x = torch.tensor([[1, 2, 3],
         ...                   [4, 5, 6],
@@ -156,7 +154,7 @@ def mask_feature(
 
 
 def add_random_edge(
-    edge_index,
+    edge_index: Tensor,
     p: float = 0.5,
     force_undirected: bool = False,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
@@ -184,7 +182,6 @@ def add_random_edge(
     :rtype: (:class:`LongTensor`, :class:`LongTensor`)
 
     Examples:
-
         >>> # Standard case
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])

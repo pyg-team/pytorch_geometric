@@ -4,8 +4,7 @@ from torch_geometric.utils import negative_sampling
 
 
 def create_link_label(pos_edge_index, neg_edge_index):
-    """
-    Create labels for link prediction, based on positive and negative edges
+    """Create labels for link prediction, based on positive and negative edges.
 
     Args:
         pos_edge_index (torch.tensor): Positive edge index [2, num_edges]
@@ -22,8 +21,7 @@ def create_link_label(pos_edge_index, neg_edge_index):
 
 
 def neg_sampling_transform(data):
-    """
-    Do negative sampling for link prediction tasks
+    """Do negative sampling for link prediction tasks.
 
     Args:
         data (torch_geometric.data): Input data object

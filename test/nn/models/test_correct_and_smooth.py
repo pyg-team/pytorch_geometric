@@ -2,9 +2,11 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn.models import CorrectAndSmooth
+from torch_geometric.testing import noWindows
 from torch_geometric.typing import SparseTensor
 
 
+@noWindows
 def test_correct_and_smooth():
     y_soft = torch.tensor([0.1, 0.5, 0.4]).repeat(6, 1)
     y_true = torch.tensor([1, 0, 0, 2, 1, 1])

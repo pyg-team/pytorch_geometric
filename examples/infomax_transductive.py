@@ -13,7 +13,7 @@ dataset = Planetoid(path, dataset)
 class Encoder(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels):
         super().__init__()
-        self.conv = GCNConv(in_channels, hidden_channels, cached=True)
+        self.conv = GCNConv(in_channels, hidden_channels)
         self.prelu = torch.nn.PReLU(hidden_channels)
 
     def forward(self, x, edge_index):

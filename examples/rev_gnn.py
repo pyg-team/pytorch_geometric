@@ -9,6 +9,7 @@ import time
 
 import torch
 import torch.nn.functional as F
+from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from torch.nn import LayerNorm, Linear
 from tqdm import tqdm
 
@@ -78,8 +79,6 @@ class RevGNN(torch.nn.Module):
         x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin2(x)
 
-
-from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 transform = T.Compose([T.ToDevice(device), T.ToSparseTensor()])

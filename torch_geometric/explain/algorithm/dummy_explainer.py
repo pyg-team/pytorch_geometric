@@ -12,7 +12,8 @@ from torch_geometric.typing import EdgeType, NodeType
 
 class DummyExplainer(ExplainerAlgorithm):
     r"""A dummy explainer that returns random explanations (useful for testing
-    purposes)."""
+    purposes).
+    """
     def forward(
         self,
         model: torch.nn.Module,

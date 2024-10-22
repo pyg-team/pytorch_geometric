@@ -9,7 +9,7 @@ from torch_geometric.utils import spmm
 class LGConv(MessagePassing):
     r"""The Light Graph Convolution (LGC) operator from the `"LightGCN:
     Simplifying and Powering Graph Convolution Network for Recommendation"
-    <https://arxiv.org/abs/2002.02126>`_ paper
+    <https://arxiv.org/abs/2002.02126>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)}
@@ -47,11 +47,10 @@ class LGConv(MessagePassing):
                                   dtype=x.dtype)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        return self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                              size=None)
+        return self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)

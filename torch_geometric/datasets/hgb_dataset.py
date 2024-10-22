@@ -2,14 +2,14 @@ import json
 import os
 import os.path as osp
 from collections import defaultdict
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import torch
 
 from torch_geometric.data import (
     HeteroData,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_zip,
 )
 
@@ -39,6 +39,8 @@ class HGBDataset(InMemoryDataset):
             an :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     names = {
         'acm': 'ACM',
@@ -47,15 +49,11 @@ class HGBDataset(InMemoryDataset):
         'imdb': 'IMDB',
     }
 
-    urls = {
-        'acm': ('https://drive.google.com/uc?'
-                'export=download&id=1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz'),
-        'dblp': ('https://drive.google.com/uc?'
-                 'export=download&id=1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC'),
-        'freebase': ('https://drive.google.com/uc?'
-                     'export=download&id=1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7'),
-        'imdb': ('https://drive.google.com/uc?'
-                 'export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2'),
+    file_ids = {
+        'acm': '1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz',
+        'dblp': '1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC',
+        'freebase': '1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7',
+        'imdb': '18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2',
     }
 
     def __init__(
@@ -64,11 +62,13 @@ class HGBDataset(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         assert self.name in set(self.names.keys())
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_dir(self) -> str:
@@ -87,19 +87,19 @@ class HGBDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
-        url = self.urls[self.name]
-        path = download_url(url, self.raw_dir)
+    def download(self) -> None:
+        id = self.file_ids[self.name]
+        path = download_google_url(id, self.raw_dir, 'data.zip')
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         data = HeteroData()
 
         # node_types = {0: 'paper', 1, 'author', ...}
         # edge_types = {0: ('paper', 'cite', 'paper'), ...}
         if self.name in ['acm', 'dblp', 'imdb']:
-            with open(self.raw_paths[0], 'r') as f:  # `info.dat`
+            with open(self.raw_paths[0]) as f:  # `info.dat`
                 info = json.load(f)
             n_types = info['node.dat']['node type']
             n_types = {int(k): v for k, v in n_types.items()}
@@ -112,7 +112,7 @@ class HGBDataset(InMemoryDataset):
                 e_types[key] = (src, rel, dst)
             num_classes = len(info['label.dat']['node type']['0'])
         elif self.name in ['freebase']:
-            with open(self.raw_paths[0], 'r') as f:  # `info.dat`
+            with open(self.raw_paths[0]) as f:  # `info.dat`
                 info = f.read().split('\n')
             start = info.index('TYPE\tMEANING') + 1
             end = info[start:].index('')
@@ -124,7 +124,7 @@ class HGBDataset(InMemoryDataset):
             end = info[start:].index('')
             for key, row in enumerate(info[start:start + end]):
                 row = row.split('\t')[1:]
-                src, dst, rel = [v for v in row if v != '']
+                src, dst, rel = (v for v in row if v != '')
                 src, dst = n_types[int(src)], n_types[int(dst)]
                 rel = rel.split('-')[1]
                 e_types[key] = (src, rel, dst)
@@ -134,8 +134,8 @@ class HGBDataset(InMemoryDataset):
         # Extract node information:
         mapping_dict = {}  # Maps global node indices to local ones.
         x_dict = defaultdict(list)
-        num_nodes_dict = defaultdict(lambda: 0)
-        with open(self.raw_paths[1], 'r') as f:  # `node.dat`
+        num_nodes_dict: Dict[str, int] = defaultdict(int)
+        with open(self.raw_paths[1]) as f:  # `node.dat`
             xs = [v.split('\t') for v in f.read().split('\n')[:-1]]
         for x in xs:
             n_id, n_type = int(x[0]), n_types[int(x[2])]
@@ -151,7 +151,7 @@ class HGBDataset(InMemoryDataset):
 
         edge_index_dict = defaultdict(list)
         edge_weight_dict = defaultdict(list)
-        with open(self.raw_paths[2], 'r') as f:  # `link.dat`
+        with open(self.raw_paths[2]) as f:  # `link.dat`
             edges = [v.split('\t') for v in f.read().split('\n')[:-1]]
         for src, dst, rel, weight in edges:
             e_type = e_types[int(rel)]
@@ -168,9 +168,9 @@ class HGBDataset(InMemoryDataset):
 
         # Node classification:
         if self.name in ['acm', 'dblp', 'freebase', 'imdb']:
-            with open(self.raw_paths[3], 'r') as f:  # `label.dat`
+            with open(self.raw_paths[3]) as f:  # `label.dat`
                 train_ys = [v.split('\t') for v in f.read().split('\n')[:-1]]
-            with open(self.raw_paths[4], 'r') as f:  # `label.dat.test`
+            with open(self.raw_paths[4]) as f:  # `label.dat.test`
                 test_ys = [v.split('\t') for v in f.read().split('\n')[:-1]]
             for y in train_ys:
                 n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]
@@ -205,7 +205,7 @@ class HGBDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.names[self.name]}()'

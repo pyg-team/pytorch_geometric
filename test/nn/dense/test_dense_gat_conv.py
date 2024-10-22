@@ -14,7 +14,7 @@ def test_dense_gat_conv(heads, concat):
     assert str(dense_conv) == f'DenseGATConv(16, 16, heads={heads})'
 
     # Ensure same weights and bias:
-    dense_conv.lin = sparse_conv.lin_src
+    dense_conv.lin = sparse_conv.lin
     dense_conv.att_src = sparse_conv.att_src
     dense_conv.att_dst = sparse_conv.att_dst
     dense_conv.bias = sparse_conv.bias

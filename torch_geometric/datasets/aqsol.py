@@ -1,7 +1,6 @@
 import os
 import os.path as osp
 import pickle
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -12,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class AQSOL(InMemoryDataset):
@@ -30,23 +30,22 @@ class AQSOL(InMemoryDataset):
     the :class:`~torch_geometric.datasets.ZINC` dataset.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        split (str, optional): If :obj:`"train"`, loads the training dataset.
+        root: Root directory where the dataset should be saved.
+        split: If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
-            (default: :obj:`"train"`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+        transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
+        pre_transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
+            being saved to disk.
         pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
+            :class:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in
-            the final dataset. (default: :obj:`None`)
+            the final dataset.
+        force_reload: Whether to re-process the dataset.
 
     **STATS:**
 
@@ -67,14 +66,20 @@ class AQSOL(InMemoryDataset):
     """
     url = 'https://www.dropbox.com/s/lzu9lmukwov12kt/aqsol_graph_raw.zip?dl=1'
 
-    def __init__(self, root: str, split: str = 'train',
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        split: str = 'train',
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ):
         assert split in ['train', 'val', 'test']
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         path = osp.join(self.processed_dir, f'{split}.pt')
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -87,14 +92,14 @@ class AQSOL(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
-        shutil.rmtree(self.raw_dir)
+    def download(self) -> None:
+        fs.rm(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, 'asqol_graph_raw'), self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         for raw_path, path in zip(self.raw_paths, self.processed_paths):
             with open(raw_path, 'rb') as f:
                 graphs = pickle.load(f)
@@ -122,7 +127,7 @@ class AQSOL(InMemoryDataset):
 
                 data_list.append(data)
 
-            torch.save(self.collate(data_list), path)
+            self.save(data_list, path)
 
     def atoms(self) -> List[str]:
         return [

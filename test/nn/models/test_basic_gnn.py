@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import random
 import sys
 import warnings
 
@@ -8,19 +9,17 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.typing
-from torch_geometric.compile import to_jittable
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
-    disableExtensions,
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
     onlyOnline,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 
@@ -139,11 +138,11 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-def test_jittable():
+def test_jit():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
-    model = GCN(8, 16, num_layers=2).jittable()
+    model = GCN(8, 16, num_layers=2)
     model = torch.jit.script(model)
 
     assert model(x, edge_index).size() == (3, 16)
@@ -160,11 +159,33 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@pytest.mark.parametrize('norm', [
+    'BatchNorm',
+    'GraphNorm',
+    'InstanceNorm',
+    'LayerNorm',
+])
+def test_batch(norm):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    batch = torch.tensor([0, 0, 1])
+
+    model = GraphSAGE(8, 16, num_layers=2, norm=norm)
+    assert model.supports_norm_batch == (norm != 'BatchNorm')
+
+    out = model(x, edge_index, batch=batch)
+    assert out.size() == (3, 16)
+
+    if model.supports_norm_batch:
+        with pytest.raises(RuntimeError, match="out of bounds"):
+            model(x, edge_index, batch=batch, batch_size=1)
+
+
 @onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0]
 
     model = GraphSAGE(dataset.num_features, hidden_channels=16, num_layers=2,
@@ -182,17 +203,16 @@ def test_basic_gnn_inference(get_dataset, jk):
     assert 'n_id' not in data
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @onlyFullTest
-@disableExtensions
 @withPackage('torch>=2.0.0')
-def test_compile(device):
+def test_compile_basic(device):
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
     model = GCN(8, 16, num_layers=3).to(device)
-    compiled_model = torch_geometric.compile(model)
+    compiled_model = torch.compile(model)
 
     expected = model(x, edge_index)
     out = compiled_model(x, edge_index)
@@ -215,7 +235,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
-    model = torch.load(path)
+    model = torch.load(path, weights_only=False)
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 
@@ -223,7 +243,8 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
-        pe.extern('torch_geometric.utils.trim_to_layer')
+        pe.extern('torch_geometric.inspector')
+        pe.extern('torch_geometric.utils._trim_to_layer')
         pe.extern('_operator')
         pe.save_pickle('models', 'model.pkl', model)
 
@@ -233,7 +254,6 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
-@withPackage('torch>=1.12.0')
 @withPackage('onnx', 'onnxruntime')
 def test_onnx(tmp_path):
     import onnx
@@ -306,20 +326,15 @@ def test_trim_to_layer():
     )[:2]
     assert out2.size() == (2, 16)
 
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
-@disableExtensions
-@withPackage('torch>=2.0.0')
+@withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
 def test_compile_graph_breaks(Model, device):
     import torch._dynamo as dynamo
-
-    # TODO EdgeCNN and PNA currently lead to graph breaks on CUDA :(
-    if Model in {EdgeCNN, PNA} and device.type == 'cuda':
-        return
 
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
@@ -334,14 +349,15 @@ def test_compile_graph_breaks(Model, device):
         kwargs['scalers'] = ['identity', 'amplification', 'attenuation']
         kwargs['deg'] = torch.tensor([1, 2, 1])
 
-    model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
-    model = to_jittable(model).to(device)
+    model = Model(
+        in_channels=8,
+        hidden_channels=16,
+        num_layers=2,
+        **kwargs,
+    ).to(device)
 
-    explanation = dynamo.explain(model, x, edge_index)
-    if hasattr(explanation, 'graph_break_count'):
-        assert explanation.graph_break_count == 0
-    else:
-        assert 'with 0 graph break' in explanation[0]
+    explanation = dynamo.explain(model)(x, edge_index)
+    assert explanation.graph_break_count == 0
 
 
 @withPackage('pyg_lib')
@@ -373,22 +389,35 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
+    parser.add_argument('--dynamic', action='store_true')
     args = parser.parse_args()
 
-    num_nodes, num_edges = 10_000, 200_000
-    x = torch.randn(num_nodes, 64, device=args.device)
-    edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
+    if args.dynamic:
+        min_num_nodes, max_num_nodes = 10_000, 15_000
+        min_num_edges, max_num_edges = 200_000, 300_000
+    else:
+        min_num_nodes, max_num_nodes = 10_000, 10_000
+        min_num_edges, max_num_edges = 200_000, 200_000
+
+    def gen_args():
+        N = random.randint(min_num_nodes, max_num_nodes)
+        E = random.randint(min_num_edges, max_num_edges)
+
+        x = torch.randn(N, 64, device=args.device)
+        edge_index = torch.randint(N, (2, E), device=args.device)
+
+        return x, edge_index
 
     for Model in [GCN, GraphSAGE, GIN, EdgeCNN]:
         print(f'Model: {Model.__name__}')
 
         model = Model(64, 64, num_layers=3).to(args.device)
-        compiled_model = torch_geometric.compile(model)
+        compiled_model = torch.compile(model)
 
         benchmark(
             funcs=[model, compiled_model],
             func_names=['Vanilla', 'Compiled'],
-            args=(x, edge_index),
+            args=gen_args,
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
             backward=args.backward,

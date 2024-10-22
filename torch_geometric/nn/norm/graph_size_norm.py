@@ -11,7 +11,7 @@ class GraphSizeNorm(torch.nn.Module):
     r"""Applies Graph Size Normalization over each individual graph in a batch
     of node features as described in the
     `"Benchmarking Graph Neural Networks" <https://arxiv.org/abs/2003.00982>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x}_i}{\sqrt{|\mathcal{V}|}}
@@ -21,7 +21,8 @@ class GraphSizeNorm(torch.nn.Module):
 
     def forward(self, x: Tensor, batch: OptTensor = None,
                 batch_size: Optional[int] = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector

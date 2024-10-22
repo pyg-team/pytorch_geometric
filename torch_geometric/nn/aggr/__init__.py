@@ -23,6 +23,9 @@ from .attention import AttentionalAggregation
 from .mlp import MLPAggregation
 from .deep_sets import DeepSetsAggregation
 from .set_transformer import SetTransformerAggregation
+from .lcm import LCMAggregation
+from .variance_preserving import VariancePreservingAggregation
+from .patch_transformer import PatchTransformerAggregation
 
 __all__ = classes = [
     'Aggregation',
@@ -49,4 +52,7 @@ __all__ = classes = [
     'MLPAggregation',
     'DeepSetsAggregation',
     'SetTransformerAggregation',
+    'LCMAggregation',
+    'VariancePreservingAggregation',
+    'PatchTransformerAggregation',
 ]

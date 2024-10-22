@@ -1,3 +1,4 @@
+import typing
 from typing import Optional, Tuple, Union
 
 import torch
@@ -10,6 +11,7 @@ from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
     Adj,
+    NoneType,
     OptTensor,
     PairTensor,
     SparseTensor,
@@ -23,6 +25,11 @@ from torch_geometric.utils import (
 )
 from torch_geometric.utils.sparse import set_sparse_value
 
+if typing.TYPE_CHECKING:
+    from typing import overload
+else:
+    from torch.jit import _overload_method as overload
+
 
 class GATv2Conv(MessagePassing):
     r"""The GATv2 operator from the `"How Attentive are Graph Attention
@@ -34,20 +41,20 @@ class GATv2Conv(MessagePassing):
     In contrast, in :class:`GATv2`, every node can attend to any other node.
 
     .. math::
-        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
-        \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}\mathbf{x}_{j},
+        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup \{ i \}}
+        \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
 
     .. math::
         \alpha_{i,j} =
         \frac{
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_j]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_j
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_k]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_k
         \right)\right)}.
 
     If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
@@ -56,19 +63,23 @@ class GATv2Conv(MessagePassing):
     .. math::
         \alpha_{i,j} =
         \frac{
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_j \, \Vert \, \mathbf{e}_{i,j}]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i
+        + \mathbf{\Theta}_{t} \mathbf{x}_j
+        + \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
-        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
-        [\mathbf{x}_i \, \Vert \, \mathbf{x}_k \, \Vert \, \mathbf{e}_{i,k}]
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
+        \mathbf{\Theta}_{s} \mathbf{x}_i
+        + \mathbf{\Theta}_{t} \mathbf{x}_k
+        + \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]
         \right)\right)}.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
-            dimensionalities.
+            dimensionalities in case of a bipartite graph.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -96,8 +107,11 @@ class GATv2Conv(MessagePassing):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
-            will be applied to the source and the target node of every edge.
+            will be applied to the source and the target node of every edge,
+            *i.e.* :math:`\mathbf{\Theta}_{s} = \mathbf{\Theta}_{t}`.
             (default: :obj:`False`)
+        residual (bool, optional): If set to :obj:`True`, the layer will add
+            a learnable skip-connection. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -116,8 +130,6 @@ class GATv2Conv(MessagePassing):
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
           (|\mathcal{E}|, H)))` if bipartite
     """
-    _alpha: OptTensor
-
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -131,6 +143,7 @@ class GATv2Conv(MessagePassing):
         fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
         share_weights: bool = False,
+        residual: bool = False,
         **kwargs,
     ):
         super().__init__(node_dim=0, **kwargs)
@@ -144,6 +157,7 @@ class GATv2Conv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.edge_dim = edge_dim
         self.fill_value = fill_value
+        self.residual = residual
         self.share_weights = share_weights
 
         if isinstance(in_channels, int):
@@ -171,14 +185,24 @@ class GATv2Conv(MessagePassing):
         else:
             self.lin_edge = None
 
-        if bias and concat:
-            self.bias = Parameter(torch.empty(heads * out_channels))
-        elif bias and not concat:
-            self.bias = Parameter(torch.empty(out_channels))
+        # The number of output channels:
+        total_out_channels = out_channels * (heads if concat else 1)
+
+        if residual:
+            self.res = Linear(
+                in_channels
+                if isinstance(in_channels, int) else in_channels[1],
+                total_out_channels,
+                bias=False,
+                weight_initializer='glorot',
+            )
+        else:
+            self.register_parameter('res', None)
+
+        if bias:
+            self.bias = Parameter(torch.empty(total_out_channels))
         else:
             self.register_parameter('bias', None)
-
-        self._alpha = None
 
         self.reset_parameters()
 
@@ -188,19 +212,60 @@ class GATv2Conv(MessagePassing):
         self.lin_r.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
+        if self.res is not None:
+            self.res.reset_parameters()
         glorot(self.att)
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None,
-                return_attention_weights: bool = None):
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+    @overload
+    def forward(
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        return_attention_weights: NoneType = None,
+    ) -> Tensor:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Tensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
+        pass
+
+    @overload
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: SparseTensor,
+        edge_attr: OptTensor = None,
+        return_attention_weights: bool = None,
+    ) -> Tuple[Tensor, SparseTensor]:
+        pass
+
+    def forward(  # noqa: F811
+        self,
+        x: Union[Tensor, PairTensor],
+        edge_index: Adj,
+        edge_attr: OptTensor = None,
+        return_attention_weights: Optional[bool] = None,
+    ) -> Union[
+            Tensor,
+            Tuple[Tensor, Tuple[Tensor, Tensor]],
+            Tuple[Tensor, SparseTensor],
+    ]:
         r"""Runs the forward pass of the module.
 
         Args:
+            x (torch.Tensor or (torch.Tensor, torch.Tensor)): The input node
+                features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed
@@ -208,10 +273,16 @@ class GATv2Conv(MessagePassing):
         """
         H, C = self.heads, self.out_channels
 
+        res: Optional[Tensor] = None
+
         x_l: OptTensor = None
         x_r: OptTensor = None
         if isinstance(x, Tensor):
             assert x.dim() == 2
+
+            if self.res is not None:
+                res = self.res(x)
+
             x_l = self.lin_l(x).view(-1, H, C)
             if self.share_weights:
                 x_r = x_l
@@ -220,6 +291,10 @@ class GATv2Conv(MessagePassing):
         else:
             x_l, x_r = x[0], x[1]
             assert x[0].dim() == 2
+
+            if x_r is not None and self.res is not None:
+                res = self.res(x_r)
+
             x_l = self.lin_l(x_l).view(-1, H, C)
             if x_r is not None:
                 x_r = self.lin_r(x_r).view(-1, H, C)
@@ -246,18 +321,20 @@ class GATv2Conv(MessagePassing):
                         "simultaneously is currently not yet supported for "
                         "'edge_index' in a 'SparseTensor' form")
 
-        # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr,
-                             size=None)
+        # edge_updater_type: (x: PairTensor, edge_attr: OptTensor)
+        alpha = self.edge_updater(edge_index, x=(x_l, x_r),
+                                  edge_attr=edge_attr)
 
-        alpha = self._alpha
-        assert alpha is not None
-        self._alpha = None
+        # propagate_type: (x: PairTensor, alpha: Tensor)
+        out = self.propagate(edge_index, x=(x_l, x_r), alpha=alpha)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
         else:
             out = out.mean(dim=1)
+
+        if res is not None:
+            out = out + res
 
         if self.bias is not None:
             out = out + self.bias
@@ -275,9 +352,9 @@ class GATv2Conv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
-                index: Tensor, ptr: OptTensor,
-                size_i: Optional[int]) -> Tensor:
+    def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
+                    index: Tensor, ptr: OptTensor,
+                    dim_size: Optional[int]) -> Tensor:
         x = x_i + x_j
 
         if edge_attr is not None:
@@ -290,9 +367,11 @@ class GATv2Conv(MessagePassing):
 
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
-        alpha = softmax(alpha, index, ptr, size_i)
-        self._alpha = alpha
+        alpha = softmax(alpha, index, ptr, dim_size)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
+        return alpha
+
+    def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
         return x_j * alpha.unsqueeze(-1)
 
     def __repr__(self) -> str:

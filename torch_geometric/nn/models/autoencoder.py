@@ -13,20 +13,26 @@ MAX_LOGSTD = 10
 
 class InnerProductDecoder(torch.nn.Module):
     r"""The inner product decoder from the `"Variational Graph Auto-Encoders"
-    <https://arxiv.org/abs/1611.07308>`_ paper
+    <https://arxiv.org/abs/1611.07308>`_ paper.
 
     .. math::
         \sigma(\mathbf{Z}\mathbf{Z}^{\top})
 
     where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent
-    space produced by the encoder."""
-    def forward(self, z: Tensor, edge_index: Tensor,
-                sigmoid: bool = True) -> Tensor:
+    space produced by the encoder.
+    """
+    def forward(
+        self,
+        z: Tensor,
+        edge_index: Tensor,
+        sigmoid: bool = True,
+    ) -> Tensor:
         r"""Decodes the latent variables :obj:`z` into edge probabilities for
         the given node-pairs :obj:`edge_index`.
 
         Args:
             z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
+            edge_index (torch.Tensor): The edge indices.
             sigmoid (bool, optional): If set to :obj:`False`, does not apply
                 the logistic sigmoid function to the output.
                 (default: :obj:`True`)
@@ -159,7 +165,7 @@ class VGAE(GAE):
             return mu
 
     def encode(self, *args, **kwargs) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         self.__mu__, self.__logstd__ = self.encoder(*args, **kwargs)
         self.__logstd__ = self.__logstd__.clamp(max=MAX_LOGSTD)
         z = self.reparametrize(self.__mu__, self.__logstd__)
@@ -270,7 +276,7 @@ class ARGVA(ARGA):
         return self.VGAE.reparametrize(mu, logstd)
 
     def encode(self, *args, **kwargs) -> Tensor:
-        """"""
+        """"""  # noqa: D419
         return self.VGAE.encode(*args, **kwargs)
 
     def kl_loss(

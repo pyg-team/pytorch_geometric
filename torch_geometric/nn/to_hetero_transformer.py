@@ -31,7 +31,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
     which node representations are learned for each node type in
     :obj:`metadata[0]`, and messages are exchanged between each edge type in
     :obj:`metadata[1]`, as denoted in the `"Modeling Relational Data with Graph
-    Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper:
+    Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper.
 
     .. code-block:: python
 

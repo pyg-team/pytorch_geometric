@@ -53,16 +53,14 @@ def test_set_clear_mask(hetero_data):
     set_hetero_masks(model, edge_mask_dict, hetero_data.edge_index_dict)
     for edge_type in hetero_data.edge_types:
         # Check that masks are correctly set:
-        str_edge_type = '__'.join(edge_type)
-        assert torch.allclose(model.conv1.convs[str_edge_type]._edge_mask,
+        assert torch.allclose(model.conv1.convs[edge_type]._edge_mask,
                               edge_mask_dict[edge_type])
-        assert model.conv1.convs[str_edge_type].explain
+        assert model.conv1.convs[edge_type].explain
 
     clear_masks(model)
     for edge_type in hetero_data.edge_types:
-        str_edge_type = '__'.join(edge_type)
-        assert model.conv1.convs[str_edge_type]._edge_mask is None
-        assert not model.conv1.convs[str_edge_type].explain
+        assert model.conv1.convs[edge_type]._edge_mask is None
+        assert not model.conv1.convs[edge_type].explain
 
     model = to_hetero(GraphSAGE(), hetero_data.metadata(), debug=False)
 

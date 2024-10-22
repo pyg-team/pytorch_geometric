@@ -14,7 +14,7 @@ from torch_geometric.typing import Adj
 class AntiSymmetricConv(torch.nn.Module):
     r"""The anti-symmetric graph convolutional operator from the
     `"Anti-Symmetric DGN: a stable architecture for Deep Graph Networks"
-    <https://openreview.net/forum?id=J3Y7cgZOOS>`_ paper
+    <https://openreview.net/forum?id=J3Y7cgZOOS>`_ paper.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{x}_i + \epsilon \cdot \sigma \left(

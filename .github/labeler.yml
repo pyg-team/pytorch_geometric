@@ -1,41 +1,58 @@
 documentation:
-  - docs/**/*
+  - changed-files:
+      - any-glob-to-any-file: "docs/**/*"
 
 example:
-  - examples/**/*
+  - changed-files:
+      - any-glob-to-any-file: "examples/**/*"
 
 data:
-  - torch_geometric/data/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/data/**/*"
 
 dataset:
-  - torch_geometric/io/**/*
-  - torch_geometric/datasets/**/*
+  - changed-files:
+      - any-glob-to-any-file: ["torch_geometric/io/**/*", "torch_geometric/datasets/**/*"]
 
 sampler:
-  - torch_geometric/sampler/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/sampler/**/*"
 
 loader:
-  - torch_geometric/loader/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/loader/**/*"
 
 nn:
-  - torch_geometric/nn/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/nn/**/*"
 
 explain:
-  - torch_geometric/explain/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/explain/**/*"
 
 transform:
-  - torch_geometric/transforms/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/transforms/**/*"
 
 utils:
-  - torch_geometric/utils/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/utils/**/*"
+
+distributed:
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/distributed/**/*"
 
 contrib:
-  - torch_geometric/contrib/**/*
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/contrib/**/*"
 
 graphgym:
-  - graphgym/**/*
-  - torch_geometric/graphgym/**/*
+  - changed-files:
+      - any-glob-to-any-file: ["graphgym/**/*", "torch_geometric/graphgym/**/*"]
 
 benchmark:
-  - benchmark/**/*
-  - torch_geometric/profile/**/*
+  - changed-files:
+      - any-glob-to-any-file: ["benchmark/**/*", "torch_geometric/profile/**/*"]
+
+auto-skip-changelog:
+  - head-branch: ['^skip', '^pre-commit-ci']

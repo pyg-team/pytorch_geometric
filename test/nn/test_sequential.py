@@ -17,7 +17,7 @@ from torch_geometric.nn import (
 from torch_geometric.typing import SparseTensor
 
 
-def test_sequential():
+def test_sequential_basic():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     batch = torch.zeros(4, dtype=torch.long)
@@ -28,17 +28,17 @@ def test_sequential():
         (GCNConv(64, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
         Linear(64, 7),
-    ])
+    ]).cpu()
     model.reset_parameters()
 
     assert len(model) == 5
     assert str(model) == (
         'Sequential(\n'
-        '  (0): GCNConv(16, 64)\n'
-        '  (1): ReLU(inplace=True)\n'
-        '  (2): GCNConv(64, 64)\n'
-        '  (3): ReLU(inplace=True)\n'
-        '  (4): Linear(in_features=64, out_features=7, bias=True)\n'
+        '  (0) - GCNConv(16, 64): x, edge_index -> x\n'
+        '  (1) - ReLU(inplace=True): x -> x\n'
+        '  (2) - GCNConv(64, 64): x, edge_index -> x\n'
+        '  (3) - ReLU(inplace=True): x -> x\n'
+        '  (4) - Linear(in_features=64, out_features=7, bias=True): x -> x\n'
         ')')
 
     assert isinstance(model[0], GCNConv)
@@ -67,14 +67,14 @@ def test_sequential():
     assert out.size() == (1, 7)
 
 
-def test_sequential_jittable():
+def test_sequential_jit():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
     model = Sequential('x: Tensor, edge_index: Tensor', [
-        (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
+        (GCNConv(16, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
-        (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
+        (GCNConv(64, 64), 'x, edge_index -> x'),
         ReLU(inplace=True),
         Linear(64, 7),
     ])
@@ -84,9 +84,9 @@ def test_sequential_jittable():
         adj_t = SparseTensor.from_edge_index(edge_index).t()
 
         model = Sequential('x: Tensor, edge_index: SparseTensor', [
-            (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
+            (GCNConv(16, 64), 'x, edge_index -> x'),
             ReLU(inplace=True),
-            (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
+            (GCNConv(64, 64), 'x, edge_index -> x'),
             ReLU(inplace=True),
             Linear(64, 7),
         ])

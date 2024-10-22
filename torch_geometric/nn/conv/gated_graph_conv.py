@@ -4,13 +4,13 @@ from torch.nn import Parameter as Param
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import uniform
-from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import spmm
 
 
 class GatedGraphConv(MessagePassing):
     r"""The gated graph convolution operator from the `"Gated Graph Sequence
-    Neural Networks" <https://arxiv.org/abs/1511.05493>`_ paper
+    Neural Networks" <https://arxiv.org/abs/1511.05493>`_ paper.
 
     .. math::
         \mathbf{h}_i^{(0)} &= \mathbf{x}_i \, \Vert \, \mathbf{0}
@@ -76,8 +76,7 @@ class GatedGraphConv(MessagePassing):
         for i in range(self.num_layers):
             m = torch.matmul(x, self.weight[i])
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            m = self.propagate(edge_index, x=m, edge_weight=edge_weight,
-                               size=None)
+            m = self.propagate(edge_index, x=m, edge_weight=edge_weight)
             x = self.rnn(m, x)
 
         return x
@@ -85,7 +84,7 @@ class GatedGraphConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:

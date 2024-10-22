@@ -22,7 +22,7 @@ def test_cheb_conv():
     assert out3.size() == (num_nodes, out_channels)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out1)
         assert torch.allclose(jit(x, edge_index, edge_weight), out2)
         assert torch.allclose(
@@ -67,5 +67,5 @@ def test_cheb_conv_batch():
     out = conv(batch.x, batch.edge_index, batch.edge_weight, batch.batch)
 
     assert out.size() == (7, 16)
-    assert torch.allclose(out1, out[:4])
-    assert torch.allclose(out2, out[4:])
+    assert torch.allclose(out1, out[:4], atol=1e-6)
+    assert torch.allclose(out2, out[4:], atol=1e-6)

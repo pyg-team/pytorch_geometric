@@ -25,14 +25,11 @@ def test_arma_conv():
         assert torch.allclose(conv(x, adj2.t()), out)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj2.t()), out, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, adj2.t()), out, atol=1e-6)
 
 
 def test_lazy_arma_conv():
@@ -43,3 +40,14 @@ def test_lazy_arma_conv():
     assert str(conv) == 'ARMAConv(-1, 32, num_stacks=8, num_layers=4)'
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x, adj2.t()), out)
+
+    if is_full_test():
+        jit = torch.jit.script(conv)
+        assert torch.allclose(jit(x, edge_index), out)
+
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, adj2.t()), out, atol=1e-6)

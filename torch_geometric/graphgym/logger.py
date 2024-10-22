@@ -1,12 +1,12 @@
 import logging
 import math
+import os
 import sys
 import time
 from typing import Any, Dict, Optional
 
 import torch
 
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym import register
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.imports import Callback, pl
@@ -15,14 +15,11 @@ from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
 
 def set_printing():
-    """
-    Set up printing options
-
-    """
+    """Set up printing options."""
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
-    makedirs(cfg.run_dir)
-    h_file = logging.FileHandler('{}/logging.log'.format(cfg.run_dir))
+    os.makedirs(cfg.run_dir, exist_ok=True)
+    h_file = logging.FileHandler(f'{cfg.run_dir}/logging.log')
     h_stdout = logging.StreamHandler(sys.stdout)
     if cfg.print == 'file':
         logging_cfg['handlers'] = [h_file]
@@ -43,8 +40,8 @@ class Logger:
         self._epoch_total = cfg.optim.max_epoch
         self._time_total = 0  # won't be reset
 
-        self.out_dir = '{}/{}'.format(cfg.run_dir, name)
-        makedirs(self.out_dir)
+        self.out_dir = f'{cfg.run_dir}/{name}'
+        os.makedirs(self.out_dir, exist_ok=True)
         if cfg.tensorboard_each_run:
             from tensorboardX import SummaryWriter
             self.tb_writer = SummaryWriter(self.out_dir)
@@ -213,9 +210,9 @@ class Logger:
             }
 
         # print
-        logging.info('{}: {}'.format(self.name, stats))
+        logging.info(f'{self.name}: {stats}')
         # json
-        dict_to_json(stats, '{}/stats.json'.format(self.out_dir))
+        dict_to_json(stats, f'{self.out_dir}/stats.json')
         # tensorboard
         if cfg.tensorboard_each_run:
             dict_to_tb(stats, self.tb_writer, cur_epoch)

@@ -58,7 +58,7 @@ class EdgePooling(torch.nn.Module):
         self,
         in_channels: int,
         edge_score_method: Optional[Callable] = None,
-        dropout: Optional[float] = 0.0,
+        dropout: float = 0.0,
         add_to_edge_score: float = 0.5,
     ):
         super().__init__()
@@ -110,7 +110,8 @@ class EdgePooling(torch.nn.Module):
         edge_index: Tensor,
         batch: Tensor,
     ) -> Tuple[Tensor, Tensor, Tensor, UnpoolInfo]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The node features.
             edge_index (torch.Tensor): The edge indices.

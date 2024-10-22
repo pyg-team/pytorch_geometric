@@ -1,6 +1,8 @@
+r"""Model package."""
+
 from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
-from .jumping_knowledge import JumpingKnowledge
+from .jumping_knowledge import JumpingKnowledge, HeteroJumpingKnowledge
 from .meta import MetaLayer
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -10,7 +12,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
-from .captum import to_captum_model, to_captum_input, captum_output_to_dicts
+from .captum import to_captum_model
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -24,6 +26,13 @@ from .mask_label import MaskLabel
 from .rev_gnn import GroupAddRev
 from .gnnff import GNNFF
 from .pmlp import PMLP
+from .neural_fingerprint import NeuralFingerprint
+from .visnet import ViSNet
+from .g_retriever import GRetriever
+
+# Deprecated:
+from torch_geometric.explain.algorithm.captum import (to_captum_input,
+                                                      captum_output_to_dicts)
 
 __all__ = classes = [
     'MLP',
@@ -34,6 +43,7 @@ __all__ = classes = [
     'PNA',
     'EdgeCNN',
     'JumpingKnowledge',
+    'HeteroJumpingKnowledge',
     'MetaLayer',
     'Node2Vec',
     'DeepGraphInfomax',
@@ -64,4 +74,7 @@ __all__ = classes = [
     'GroupAddRev',
     'GNNFF',
     'PMLP',
+    'NeuralFingerprint',
+    'ViSNet',
+    'GRetriever',
 ]

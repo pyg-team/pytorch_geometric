@@ -20,11 +20,11 @@ from torch_geometric.utils import k_hop_subgraph, to_scipy_sparse_matrix
 
 class SEALDataset(InMemoryDataset):
     def __init__(self, dataset, num_hops, split='train'):
-        self.data = dataset[0]
+        self._data = dataset[0]
         self.num_hops = num_hops
         super().__init__(dataset.root)
         index = ['train', 'val', 'test'].index(split)
-        self.data, self.slices = torch.load(self.processed_paths[index])
+        self.load(self.processed_paths[index])
 
     @property
     def processed_file_names(self):
@@ -33,7 +33,7 @@ class SEALDataset(InMemoryDataset):
     def process(self):
         transform = RandomLinkSplit(num_val=0.05, num_test=0.1,
                                     is_undirected=True, split_labels=True)
-        train_data, val_data, test_data = transform(self.data)
+        train_data, val_data, test_data = transform(self._data)
 
         self._max_z = 0
 
@@ -60,12 +60,12 @@ class SEALDataset(InMemoryDataset):
             # We solely learn links from structure, dropping any node features:
             data.x = F.one_hot(data.z, self._max_z + 1).to(torch.float)
 
-        torch.save(self.collate(train_pos_data_list + train_neg_data_list),
-                   self.processed_paths[0])
-        torch.save(self.collate(val_pos_data_list + val_neg_data_list),
-                   self.processed_paths[1])
-        torch.save(self.collate(test_pos_data_list + test_neg_data_list),
-                   self.processed_paths[2])
+        train_data_list = train_pos_data_list + train_neg_data_list
+        self.save(train_data_list, self.processed_paths[0])
+        val_data_list = val_pos_data_list + val_neg_data_list
+        self.save(val_data_list, self.processed_paths[1])
+        test_data_list = test_pos_data_list + test_neg_data_list
+        self.save(test_data_list, self.processed_paths[2])
 
     def extract_enclosing_subgraphs(self, edge_index, edge_label_index, y):
         data_list = []
@@ -83,7 +83,7 @@ class SEALDataset(InMemoryDataset):
             z = self.drnl_node_labeling(sub_edge_index, src, dst,
                                         num_nodes=sub_nodes.size(0))
 
-            data = Data(x=self.data.x[sub_nodes], z=z,
+            data = Data(x=self._data.x[sub_nodes], z=z,
                         edge_index=sub_edge_index, y=y)
             data_list.append(data)
 

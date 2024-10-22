@@ -12,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import remove_self_loops
 
 
@@ -45,6 +46,8 @@ class GNNBenchmarkDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -59,31 +62,31 @@ class GNNBenchmarkDataset(InMemoryDataset):
           - #features
           - #classes
         * - PATTERN
-          - 10,000
+          - 14,000
           - ~118.9
           - ~6,098.9
           - 3
           - 2
         * - CLUSTER
-          - 10,000
+          - 12,000
           - ~117.2
           - ~4,303.9
           - 7
           - 6
         * - MNIST
-          - 55,000
+          - 70,000
           - ~70.6
           - ~564.5
           - 3
           - 10
         * - CIFAR10
-          - 45,000
+          - 60,000
           - ~117.6
           - ~941.2
           - 5
           - 10
         * - TSP
-          - 10,000
+          - 12,000
           - ~275.4
           - ~6,885.0
           - 2
@@ -108,21 +111,28 @@ class GNNBenchmarkDataset(InMemoryDataset):
         'CSL': 'https://www.dropbox.com/s/rnbkp5ubgk82ocu/CSL.zip?dl=1',
     }
 
-    def __init__(self, root: str, name: str, split: str = "train",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        split: str = "train",
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name
         assert self.name in self.names
 
         if self.name == 'CSL' and split != 'train':
             split = 'train'
             logging.warning(
-                ("Dataset 'CSL' does not provide a standardized splitting. "
-                 "Instead, it is recommended to perform 5-fold cross "
-                 "validation with stratifed sampling"))
+                "Dataset 'CSL' does not provide a standardized splitting. "
+                "Instead, it is recommended to perform 5-fold cross "
+                "validation with stratifed sampling")
 
-        super().__init__(root, transform, pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
 
         if split == 'train':
             path = self.processed_paths[0]
@@ -134,7 +144,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
             raise ValueError(f"Split '{split}' found, but expected either "
                              f"'train', 'val', or 'test'")
 
-        self.data, self.slices = torch.load(path)
+        self.load(path)
 
     @property
     def raw_dir(self) -> str:
@@ -162,17 +172,17 @@ class GNNBenchmarkDataset(InMemoryDataset):
         else:
             return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.urls[self.name], self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         if self.name == 'CSL':
             data_list = self.process_CSL()
-            torch.save(self.collate(data_list), self.processed_paths[0])
+            self.save(data_list, self.processed_paths[0])
         else:
-            inputs = torch.load(self.raw_paths[0])
+            inputs = fs.torch_load(self.raw_paths[0])
             for i in range(len(inputs)):
                 data_list = [Data(**data_dict) for data_dict in inputs[i]]
 
@@ -182,13 +192,13 @@ class GNNBenchmarkDataset(InMemoryDataset):
                 if self.pre_transform is not None:
                     data_list = [self.pre_transform(d) for d in data_list]
 
-                torch.save(self.collate(data_list), self.processed_paths[i])
+                self.save(data_list, self.processed_paths[i])
 
     def process_CSL(self) -> List[Data]:
         with open(self.raw_paths[0], 'rb') as f:
             adjs = pickle.load(f)
 
-        ys = torch.load(self.raw_paths[1]).tolist()
+        ys = fs.torch_load(self.raw_paths[1]).tolist()
 
         data_list = []
         for adj, y in zip(adjs, ys):
