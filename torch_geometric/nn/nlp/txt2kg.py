@@ -7,7 +7,12 @@ from torch import Tensor
 
 
 class TXT2KG():
-    # Uses NVIDIA NIMs + Prompt engineering to extract KG from text
+    """
+    Uses NVIDIA NIMs + Prompt engineering to extract KG from text
+    nvidia/llama-3.1-nemotron-70b-instruct is on par or better than GPT4o
+    in benchmarks. We need a high quality model to ensure high quality KG.
+    Otherwise garbage in garbage out.
+    """
     def __init__(
         self,
         NVIDIA_API_KEY,
@@ -23,14 +28,22 @@ class TXT2KG():
         self.chunk_size = 512
         self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
         self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
-        self.triples = []
+        self.triples_per_doc_id = {}
+        # keep track of which doc each triple comes from
+        # useful for approximating recall of subgraph retrieval algos
+        self.doc_id_counter = 0
+        self.relevant_docs_per_q_a_pair = {}
 
-
-
-    def parse_txt_2_KG(self, txt: str) -> None:
+    def add_doc_2_KG(self, txt: str, QA_pair: Optional[Tuple(str,str)],) -> None:
+        # if QA_pair is not None, store with matching doc ids
+        # useful for approximating recall
         chunks = [txt[i:(i+1) * self.chunk_size] for i in range(math.ceil(len(txt)/self.chunk_size))]
         for chunk in chunks:
-            self.triples += parse_n_check_triples(chunk_to_triples_str(chunk))
+            self.triples_per_doc_id[self.doc_id_counter] += parse_n_check_triples(chunk_to_triples_str(chunk))
+        if QA_pair:
+
+        self.doc_id_counter += 1
+
 
     def chunk_to_triples_str(self, txt: str) -> List[Tuple[str, str, str]]:
         # call LLM on text
@@ -50,7 +63,4 @@ class TXT2KG():
 
     def parse_n_check_triples(self, triples: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
-
-    def get_KG(self, ) -> List[Tuple[str, str, str]]:
-        return self.triples
 
