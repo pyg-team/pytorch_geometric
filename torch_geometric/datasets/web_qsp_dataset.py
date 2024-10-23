@@ -21,12 +21,6 @@ def retrieval_via_pcst(
     cost_e: float = 0.5,
 ) -> Tuple[Data, str]:
     c = 0.01
-    if len(textual_nodes) == 0 or len(textual_edges) == 0:
-        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
-            index=False,
-            columns=["src", "edge_attr", "dst"],
-        )
-        return data, desc
 
     from pcst_fast import pcst_fast
 
@@ -135,13 +129,17 @@ class WebQSPDataset(InMemoryDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        use_pcst (bool, optional): Whether to preprocess the dataset's graph
+                    with PCST or return the full graphs. (default: :obj:`True`)
     """
     def __init__(
         self,
         root: str,
         split: str = "train",
         force_reload: bool = False,
+        use_pcst: bool = True,
     ) -> None:
+        self.use_pcst = use_pcst
         super().__init__(root, force_reload=force_reload)
 
         if split not in {'train', 'val', 'test'}:
@@ -224,15 +222,22 @@ class WebQSPDataset(InMemoryDataset):
                     edge_index=edge_index,
                     edge_attr=edge_attr,
                 )
-                data, desc = retrieval_via_pcst(
-                    data,
-                    question_embs[i],
-                    nodes,
-                    edges,
-                    topk=3,
-                    topk_e=5,
-                    cost_e=0.5,
-                )
+                if self.use_pcst and len(nodes) > 0 and len(edges) > 0:
+                    data, desc = retrieval_via_pcst(
+                        data,
+                        question_embs[i],
+                        nodes,
+                        edges,
+                        topk=3,
+                        topk_e=5,
+                        cost_e=0.5,
+                    )
+                else:
+                    desc = nodes.to_csv(index=False) + "\n" + edges.to_csv(
+                        index=False,
+                        columns=["src", "edge_attr", "dst"],
+                    )
+
                 data.question = question
                 data.label = label
                 data.desc = desc
