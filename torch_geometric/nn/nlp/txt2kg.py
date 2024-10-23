@@ -1,5 +1,5 @@
 from typing import List, Optional, Tuple
-
+import math
 
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
@@ -26,33 +26,6 @@ class TXT2KG():
         self.doc_id_counter = 0
         self.relevant_docs_per_q_a_pair = {}
 
-    def add_doc_2_KG(
-        self,
-        txt: str,
-        QA_pair: Optional[Tuple(str, str)],
-    ) -> None:
-        # if QA_pair is not None, store with matching doc ids
-        # useful for approximating recall
-        chunks = [
-            txt[i:(i + 1) * self.chunk_size]
-            for i in range(math.ceil(len(txt) / self.chunk_size))
-        ]
-        self.triples_per_doc_id[self.doc_id_counter] = []
-        for chunk in chunks:
-            self.triples_per_doc_id[
-                self.doc_id_counter] += parse_n_check_triples(
-                    chunk_to_triples_str(chunk))
-        if QA_pair:
-            if QA_pair in self.relevant_docs_per_q_a_pair.keys():
-                self.relevant_docs_per_q_a_pair[QA_pair] += [
-                    self.doc_id_counter
-                ]
-            else:
-                self.relevant_docs_per_q_a_pair[QA_pair] = [
-                    self.doc_id_counter
-                ]
-        self.doc_id_counter += 1
-
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
         completion = self.client.chat.completions.create(
@@ -73,3 +46,32 @@ class TXT2KG():
         # use pythonic checks for triples
         print(triples_str)
         # (TODO) make pythonic logic to parse into triples
+
+    def add_doc_2_KG(
+        self,
+        txt: str,
+        QA_pair: Optional[Tuple[str, str]],
+    ) -> None:
+        # if QA_pair is not None, store with matching doc ids
+        # useful for approximating recall
+        chunks = [
+            txt[i:min((i + 1) * self.chunk_size, len(txt))]
+            for i in range(math.ceil(len(txt) / self.chunk_size))
+        ]
+        self.triples_per_doc_id[self.doc_id_counter] = []
+        for chunk in chunks:
+            self.triples_per_doc_id[
+                self.doc_id_counter] += self.parse_n_check_triples(
+                    self.chunk_to_triples_str(chunk))
+        if QA_pair:
+            if QA_pair in self.relevant_docs_per_q_a_pair.keys():
+                self.relevant_docs_per_q_a_pair[QA_pair] += [
+                    self.doc_id_counter
+                ]
+            else:
+                self.relevant_docs_per_q_a_pair[QA_pair] = [
+                    self.doc_id_counter
+                ]
+        self.doc_id_counter += 1
+
+
