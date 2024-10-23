@@ -38,10 +38,14 @@ class TXT2KG():
         # if QA_pair is not None, store with matching doc ids
         # useful for approximating recall
         chunks = [txt[i:(i+1) * self.chunk_size] for i in range(math.ceil(len(txt)/self.chunk_size))]
+        self.triples_per_doc_id[self.doc_id_counter] = []
         for chunk in chunks:
             self.triples_per_doc_id[self.doc_id_counter] += parse_n_check_triples(chunk_to_triples_str(chunk))
         if QA_pair:
-
+            if QA_pair in self.relevant_docs_per_q_a_pair.keys():
+                self.relevant_docs_per_q_a_pair[QA_pair] += [self.doc_id_counter]
+            else:
+                self.relevant_docs_per_q_a_pair[QA_pair] = [self.doc_id_counter]
         self.doc_id_counter += 1
 
 
@@ -63,3 +67,5 @@ class TXT2KG():
 
     def parse_n_check_triples(self, triples_str: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
+        print(triples_str)
+        # (TODO) make pythonic logic to parse into triples
