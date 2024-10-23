@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -53,4 +53,3 @@ class TXT2KG():
 
     def get_KG(self, ) -> List[Tuple[str, str, str]]:
         return self.triples
-
