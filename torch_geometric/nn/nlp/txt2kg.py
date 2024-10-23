@@ -45,7 +45,7 @@ class TXT2KG():
         self.doc_id_counter += 1
 
 
-    def chunk_to_triples_str(self, txt: str) -> List[Tuple[str, str, str]]:
+    def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
         completion = self.client.chat.completions.create(
           model=self.model,
@@ -61,5 +61,5 @@ class TXT2KG():
             out_str += chunk.choices[0].delta.content
         return out_str
 
-    def parse_n_check_triples(self, triples: str) -> List[Tuple[str, str, str]]:
+    def parse_n_check_triples(self, triples_str: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
