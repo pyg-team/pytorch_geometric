@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Union, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -63,4 +63,3 @@ class TXT2KG():
 
     def parse_n_check_triples(self, triples: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
-
