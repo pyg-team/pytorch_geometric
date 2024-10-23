@@ -1,5 +1,6 @@
-from typing import List, Optional, Tuple
 import math
+from typing import List, Optional, Tuple
+
 
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
@@ -73,5 +74,3 @@ class TXT2KG():
                     self.doc_id_counter
                 ]
         self.doc_id_counter += 1
-
-
