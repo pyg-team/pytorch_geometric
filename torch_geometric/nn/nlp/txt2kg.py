@@ -50,7 +50,7 @@ class TXT2KG():
         for triple_str in triples_str.split("\n"):
             try:
                 potential_trip = eval(triple_str)
-            except: # noqa
+            except:  # noqa
                 print("triple_str failed=", triple_str)
                 continue
             print("potential_trip=", potential_trip)
