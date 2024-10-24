@@ -46,8 +46,15 @@ class TXT2KG():
                               triples_str: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
         print("triples_str=", triples_str)
-        print("triples_str split w backn=",triples_str.split("\n"))
+        processed = []
+        for triple_str in triples_str.split("\n")
+            potential_trip = eval(triples_str)
+            if type(potential_trip) == Tuple[str, str, str]
+                processed.append(potential_trip)
+        print("processed=",processed)
         # (TODO) make pythonic logic to parse into triples
+        # check for duplicates against existing KG
+        return processed
 
     def add_doc_2_KG(
         self,
