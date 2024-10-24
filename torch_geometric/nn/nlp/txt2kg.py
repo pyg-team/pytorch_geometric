@@ -46,7 +46,7 @@ class TXT2KG():
                               triples_str: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
         print("triples_str=", triples_str)
-        print("triples_str split w backn=",triples_str.split("\n"))
+        print("triples_str split w backn=", triples_str.split("\n"))
         # (TODO) make pythonic logic to parse into triples
 
     def add_doc_2_KG(
