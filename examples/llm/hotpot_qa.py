@@ -31,13 +31,13 @@ for data_point in raw_dataset:
         QA_pair=(q, a),
     )
     print("kg_maker.triples_per_doc_id=", kg_maker.triples_per_doc_id)
-    print("kg_maker.relevant_docs_per_q_a_pair=", kg_maker.relevant_docs_per_q_a_pair)
+    print("kg_maker.relevant_docs_per_q_a_pair=",
+          kg_maker.relevant_docs_per_q_a_pair)
     print("**"*10)
 # make RAGQueryLoader
 
 # measure recall@5 for the training set
 ########
-
 
 # basic txt2kg use example
 # kg_maker.add_doc_2_KG(
