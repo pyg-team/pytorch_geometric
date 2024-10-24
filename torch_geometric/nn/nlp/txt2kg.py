@@ -51,13 +51,10 @@ class TXT2KG():
             try:
                 potential_trip = eval(triple_str)
             except:  # noqa
-                print("triple_str failed=", triple_str)
                 continue
             if 'tuple' in str(type(potential_trip)):
                 processed.append(potential_trip)
-        print("processed=", processed)
         # (TODO) check for duplicates against existing KG
-        quit()
         return processed
 
     def add_doc_2_KG(
