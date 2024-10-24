@@ -47,14 +47,14 @@ class HotPotQA(InMemoryDataset):
         import datasets
         import pandas as pd
 
-        
+
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model_name = 'sentence-transformers/all-roberta-large-v1'
         model = SentenceTransformer(model_name).to(device)
         model.eval()
 
-        
+
             questions = [example["question"] for example in dataset]
             question_embs = model.encode(
                 questions,
