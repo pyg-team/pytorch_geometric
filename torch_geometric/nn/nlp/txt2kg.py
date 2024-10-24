@@ -53,7 +53,6 @@ class TXT2KG():
                 continue
             if 'tuple' in str(type(potential_trip)):
                 processed.append(potential_trip)
-        # (TODO) check for duplicates against existing KG
         return processed
 
     def add_doc_2_KG(

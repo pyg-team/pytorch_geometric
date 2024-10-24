@@ -1,4 +1,3 @@
-# from torch_geometric.datasets import HotPotQA
 import argparse
 
 from torch_geometric.nn.nlp import TXT2KG
@@ -8,7 +7,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--NV_NIM_KEY', type=str, required=True)
 args = parser.parse_args()
 
+
 # initialize dataset
+datasets = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki')
+for dataset, path in zip(
+            [datasets['train'], datasets['validation'], datasets['test']],
+                self.processed_paths,
+        ):
 kg_maker = TXT2KG(
     NVIDIA_API_KEY=args.NV_NIM_KEY,
     chunk_size=512,

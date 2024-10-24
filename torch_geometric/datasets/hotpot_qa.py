@@ -9,6 +9,7 @@
 # otherwise follow webqsp design for finetuning a G-retriever model but rely on RAG Query Loader
 
 # make sure include flag to support only loading a % of the dataset
+from torch_geometric.nn.nlp import SentenceTransformer
 
 
 class HotPotQA(InMemoryDataset):
@@ -46,17 +47,14 @@ class HotPotQA(InMemoryDataset):
         import datasets
         import pandas as pd
 
-        datasets = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki')
+        
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model_name = 'sentence-transformers/all-roberta-large-v1'
         model = SentenceTransformer(model_name).to(device)
         model.eval()
 
-        for dataset, path in zip(
-            [datasets['train'], datasets['validation'], datasets['test']],
-                self.processed_paths,
-        ):
+        
             questions = [example["question"] for example in dataset]
             question_embs = model.encode(
                 questions,
