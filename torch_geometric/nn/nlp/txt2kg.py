@@ -49,7 +49,7 @@ class TXT2KG():
         processed = []
         for triple_str in triples_str.split("\n"):
             potential_trip = eval(triples_str)
-            if type(potential_trip) == Tuple[str, str, str]
+            if type(potential_trip) == Tuple[str, str, str]:
                 processed.append(potential_trip)
         print("processed=",processed)
         # (TODO) check for duplicates against existing KG
