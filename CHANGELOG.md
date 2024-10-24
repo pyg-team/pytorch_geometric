@@ -8,8 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Added ability to use `CaptumExplainer` to explain heterogeneous GNNs with `HANConv` and `HGTConv` layers ([#8512](https://github.com/pyg-team/pytorch_geometric/pull/8512))
+- Consolidated `examples/ogbn_{papers_100m,products_gat,products_sage}.py` into `examples/ogbn_train.py` ([#9467](https://github.com/pyg-team/pytorch_geometric/pull/9467))
 
 ### Changed
+
+- Dropped Python 3.8 support ([#9696](https://github.com/pyg-team/pytorch_geometric/pull/9606))
 
 ### Deprecated
 
