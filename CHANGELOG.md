@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Consolidated `examples/ogbn_{papers_100m,products_gat,products_sage}.py` into `examples/ogbn_train.py` ([#9467](https://github.com/pyg-team/pytorch_geometric/pull/9467))
+- Added the `SSMAAggregation` method from the paper "Sequential Signal Mixing Aggregation for Message Passing Graph Neural Networks" ([#9731](https://github.com/pyg-team/pytorch_geometric/pull/9731))
 
 ### Changed
 
