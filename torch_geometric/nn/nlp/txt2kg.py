@@ -1,5 +1,6 @@
-from typing import List, Optional, Tuple
 import math
+from typing import List, Optional, Tuple
+
 
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
