@@ -6,18 +6,18 @@ from torch_geometric.nn.nlp import TXT2KG
 parser = argparse.ArgumentParser()
 parser.add_argument('--NV_NIM_KEY', type=str, required=True)
 args = parser.parse_args()
+
 # (TODO make main)
-###
+########
 # Use training set for now since our retrieval method is nonparametric
 #datasets = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki')["train"]
 
 # build KG
 
-
 # make RAGQueryLoader
 
 # measure recall@5 for the training set
-####
+########
 
 kg_maker = TXT2KG(
     NVIDIA_API_KEY=args.NV_NIM_KEY,
