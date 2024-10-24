@@ -54,7 +54,7 @@ class TXT2KG():
                 print("triple_str failed=", triple_str)
             if type(potential_trip) == Tuple[str, str, str]:
                 processed.append(potential_trip)
-        print("processed=",processed)
+        print("processed=", processed)
         # (TODO) check for duplicates against existing KG
         return processed
 
