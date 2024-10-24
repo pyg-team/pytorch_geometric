@@ -9,6 +9,7 @@ datasets['train'][0]
 # Zack's PR: https://github.com/pyg-team/pytorch_geometric/pull/9666
 # otherwise follow webqsp design for finetuning a G-retriever model but rely on RAG Query Loader
 
+# make sure include flag to support only loading a % of the dataset
 
 class HotPotQA(InMemoryDataset):
     r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
