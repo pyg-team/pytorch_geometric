@@ -73,11 +73,11 @@ class TXT2KG():
                     self.chunk_to_triples_str(chunk))
         if QA_pair:
             if QA_pair in self.relevant_docs_per_q_a_pair.keys():
-                self.relevant_docs_per_q_a_pair[QA_pair] += [
-                    self.doc_id_counter
+                self.relevant_docs_per_q_a_pair[self.doc_id_counter] += [
+                    QA_pair
                 ]
             else:
-                self.relevant_docs_per_q_a_pair[QA_pair] = [
-                    self.doc_id_counter
+                self.relevant_docs_per_q_a_pair[self.doc_id_counter] = [
+                    QA_pair
                 ]
         self.doc_id_counter += 1
