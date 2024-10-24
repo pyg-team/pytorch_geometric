@@ -1,5 +1,7 @@
 import argparse
+
 import datasets
+
 from torch_geometric.nn.nlp import TXT2KG
 
 # argpars NV_NIM_KEY
@@ -33,7 +35,7 @@ for idx, data_point in enumerate(raw_dataset):
     print("kg_maker.triples_per_doc_id=", kg_maker.triples_per_doc_id)
     print("kg_maker.relevant_docs_per_q_a_pair=",
           kg_maker.relevant_docs_per_q_a_pair)
-    print("**"*10)
+    print("**" * 10)
 # make RAGQueryLoader
 
 # measure recall@5 for the training set
