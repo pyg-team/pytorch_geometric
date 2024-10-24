@@ -47,7 +47,7 @@ class TXT2KG():
         # use pythonic checks for triples
         print("triples_str=", triples_str)
         processed = []
-        for triple_str in triples_str.split("\n")
+        for triple_str in triples_str.split("\n"):
             potential_trip = eval(triples_str)
             if type(potential_trip) == Tuple[str, str, str]
                 processed.append(potential_trip)
