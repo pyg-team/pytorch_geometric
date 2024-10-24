@@ -52,8 +52,7 @@ class TXT2KG():
             if type(potential_trip) == Tuple[str, str, str]
                 processed.append(potential_trip)
         print("processed=",processed)
-        # (TODO) make pythonic logic to parse into triples
-        # check for duplicates against existing KG
+        # (TODO) check for duplicates against existing KG
         return processed
 
     def add_doc_2_KG(
