@@ -63,8 +63,10 @@ class TXT2KG():
     ) -> None:
         # if QA_pair is not None, store with matching doc ids
         # useful for approximating recall
+        print("len(txt)=", len(txt))
+        print("num_chunks=", math.ceil(len(txt) / self.chunk_size))
         chunks = [
-            txt[i:min((i + 1) * self.chunk_size, len(txt))]
+            txt[i * self.chunk_size:min((i + 1) * self.chunk_size, len(txt))]
             for i in range(math.ceil(len(txt) / self.chunk_size))
         ]
         self.triples_per_doc_id[self.doc_id_counter] = []
