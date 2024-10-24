@@ -1,5 +1,7 @@
 import argparse
+
 import datasets
+
 from torch_geometric.nn.nlp import TXT2KG
 
 # argpars NV_NIM_KEY
