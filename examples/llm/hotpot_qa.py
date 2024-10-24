@@ -1,9 +1,10 @@
 import argparse
 
 import datasets
+from tqdm import tqdm
 
 from torch_geometric.nn.nlp import TXT2KG
-from tqdm import tqdm
+
 # argpars NV_NIM_KEY
 parser = argparse.ArgumentParser()
 parser.add_argument('--NV_NIM_KEY', type=str, required=True)
