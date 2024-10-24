@@ -48,7 +48,10 @@ class TXT2KG():
         print("triples_str=", triples_str)
         processed = []
         for triple_str in triples_str.split("\n"):
-            potential_trip = eval(triples_str)
+            try:
+                potential_trip = eval(triple_str)
+            except: # noqa
+                continue
             if type(potential_trip) == Tuple[str, str, str]:
                 processed.append(potential_trip)
         print("processed=",processed)
