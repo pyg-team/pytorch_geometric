@@ -4,8 +4,9 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn import MessagePassing
-from torch_geometric.typing import EdgeType
+from torch_geometric.nn import HANConv, HGTConv, MessagePassing
+from torch_geometric.typing import EDGE_TYPE_STR_SPLIT, EdgeType
+from torch_geometric.utils import is_sparse
 
 
 def set_masks(
@@ -51,8 +52,9 @@ def set_hetero_masks(
             for edge_type in mask_dict.keys():
                 if edge_type in module:
                     edge_level_module = module[edge_type]
-                elif '__'.join(edge_type) in module:
-                    edge_level_module = module['__'.join(edge_type)]
+                elif EDGE_TYPE_STR_SPLIT.join(edge_type) in module:
+                    edge_level_module = module[EDGE_TYPE_STR_SPLIT.join(
+                        edge_type)]
                 else:
                     continue
 
@@ -62,6 +64,44 @@ def set_hetero_masks(
                     edge_index_dict[edge_type],
                     apply_sigmoid=apply_sigmoid,
                 )
+
+        elif (isinstance(module, (HANConv, HGTConv))):
+            # Skip if explicitly set for skipping
+            if (module.explain is False):
+                continue
+
+            # Check if edge index is sparse (unsupported)
+            for edge_index in edge_index_dict.values():
+                if is_sparse(edge_index):
+                    raise ValueError("Sparse edge index not supported "
+                                     "for HAN and HGT graph layers "
+                                     "in explaining edge-level masks.")
+
+            loop_mask_dict = {
+                EDGE_TYPE_STR_SPLIT.join(k): edge_index[0] != edge_index[1]
+                for k, edge_index in edge_index_dict.items()
+            }
+
+            edge_mask_dict = {
+                EDGE_TYPE_STR_SPLIT.join(k): mask
+                for k, mask in mask_dict.items()
+            }
+
+            # Dictionary key order is guaranteed to be in the
+            # order of insertion from Python 3.7+
+            # so while this would be dangerous on older versions,
+            # it is safe to assume the order here will be the same
+            # order passed to the convolution's forward
+            edge_keys_dict = [
+                EDGE_TYPE_STR_SPLIT.join(k) for k in edge_index_dict.keys()
+            ]
+
+            module.explain = True
+            module._edge_mask = edge_mask_dict
+            module._loop_mask = loop_mask_dict
+            module._apply_sigmoid = apply_sigmoid
+            module._edge_keys = edge_keys_dict
+            module._current_edge_key_index = 0
 
 
 def clear_masks(model: torch.nn.Module):
