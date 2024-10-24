@@ -5,10 +5,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
-from torch_scatter import scatter_add, scatter_mean, scatter_sum
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 
 class SSMAAggregation(Aggregation):
@@ -147,9 +146,8 @@ class SSMAAggregation(Aggregation):
             x_ = x.unsqueeze(2)  # [E, #groups, 1, #hidden]
             edge_att = self._edge_attention_ste.unsqueeze(
                 -1)  # [E, #groups, #neighbors, 1]
-            x_ = scatter_sum(src=x_ * edge_att, index=index, dim=0,
-                             dim_size=dim_size)  # [E~, #groups, #neighbors,
-            # #hidden]
+            x_ = scatter(src=x_ * edge_att, index=index, dim=0,
+                         reduce="sum")  # [E~, #groups, #neighbors, #hidden]
             x_ = torch.permute(x_, (2, 0, 1, 3))
             x = x_.reshape(x_.shape[0] * x_.shape[1], x_.shape[2],
                            x_.shape[3])  # [E~ * #neighbors, #groups, #hidden]
@@ -168,10 +166,10 @@ class SSMAAggregation(Aggregation):
         x_fft_abs_log = (x_fft_abs + 1e-6).log()
         x_fft_angle = x_fft.angle()
 
-        x_fft_abs_agg = scatter_mean(src=x_fft_abs_log, index=index, dim=0,
-                                     dim_size=dim_size).exp()
-        x_fft_angle_agg = scatter_add(src=x_fft_angle, index=index, dim=0,
-                                      dim_size=dim_size)
+        x_fft_abs_agg = scatter(src=x_fft_abs_log, index=index, dim=0,
+                                dim_size=dim_size, reduce="mean").exp()
+        x_fft_angle_agg = scatter(src=x_fft_angle, index=index, dim=0,
+                                  dim_size=dim_size, reduce="sum")
         x_fft_agg = torch.polar(abs=x_fft_abs_agg, angle=x_fft_angle_agg)
 
         # Perform IFFT

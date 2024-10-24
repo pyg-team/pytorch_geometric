@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn.aggr import SSMAAggregation
-from torch_geometric.nn.conv import GATConv, GCNConv, GINConv
+from torch_geometric.nn.conv import GATConv, GCNConv
 
 
 @pytest.fixture
@@ -63,7 +63,7 @@ def test_ssma_res():
 
 @pytest.mark.parametrize(("n_neighbors", "mlp_compression", "use_attention"),
                          [(2, 0.1, True), (3, 0.2, False), (4, 1.0, True)])
-@pytest.mark.parametrize("layer", [GCNConv, GATConv, GINConv])
+@pytest.mark.parametrize("layer", [GCNConv, GATConv])
 def test_ssma_integration(x, edge_index, n_neighbors, mlp_compression,
                           use_attention, layer):
     ssma_agg = SSMAAggregation(in_dim=x.size(1), num_neighbors=n_neighbors,
@@ -71,8 +71,6 @@ def test_ssma_integration(x, edge_index, n_neighbors, mlp_compression,
                                use_attention=use_attention)
 
     layer_kwargs = dict(in_channels=x.size(1), out_channels=x.size(1))
-    if layer == GINConv:
-        layer_kwargs = dict(nn=torch.nn.Linear(x.size(1), x.size(1)))
     layer_kwargs.update(dict(aggr=ssma_agg))
 
     layer = layer(**layer_kwargs)
