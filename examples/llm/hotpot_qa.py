@@ -21,6 +21,7 @@ kg_maker.add_doc_2_KG(
     ("Which magazine was started first Arthur's Magazine or First for Women?",
      "Arthur's Magazine"),
 )
+print("Final:")
 print("kg_maker.triples_per_doc_id=", kg_maker.triples_per_doc_id)
 # have it output the RAG Query Loader (KNN+NeighborSampling+PCST)
 # measure the recall of the subgraph retrieval algo for RAG Query Loader

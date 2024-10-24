@@ -69,9 +69,12 @@ class TXT2KG():
         ]
         self.triples_per_doc_id[self.doc_id_counter] = []
         for chunk in chunks:
+            print("Chunk=", chunk)
             self.triples_per_doc_id[
                 self.doc_id_counter] += self.parse_n_check_triples(
                     self.chunk_to_triples_str(chunk))
+            print("triples=", self.triples_per_doc_id[
+                self.doc_id_counter])
         if QA_pair:
             if QA_pair in self.relevant_docs_per_q_a_pair.keys():
                 self.relevant_docs_per_q_a_pair[QA_pair] += [
