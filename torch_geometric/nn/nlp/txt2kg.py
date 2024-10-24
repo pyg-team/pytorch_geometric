@@ -45,7 +45,6 @@ class TXT2KG():
     def parse_n_check_triples(self,
                               triples_str: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
-        print("triples_str=", triples_str)
         processed = []
         for triple_str in triples_str.split("\n"):
             try:
