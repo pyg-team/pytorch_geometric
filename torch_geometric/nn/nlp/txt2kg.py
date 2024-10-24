@@ -54,10 +54,12 @@ class TXT2KG():
                 print("triple_str failed=", triple_str)
                 continue
             print("potential_trip=", potential_trip)
+            print(type(potential_trip))
             if type(potential_trip) == Tuple[str, str, str]:
                 processed.append(potential_trip)
         print("processed=", processed)
         # (TODO) check for duplicates against existing KG
+        quit()
         return processed
 
     def add_doc_2_KG(
