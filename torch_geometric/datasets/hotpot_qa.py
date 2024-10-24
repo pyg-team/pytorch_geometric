@@ -8,7 +8,7 @@ datasets['train'][0]
 """
 # design Dataset that can return a RAGQueryLoader (for inference time) based on Zacks PR
 # Zack's PR: https://github.com/pyg-team/pytorch_geometric/pull/9666
-# otherwise follow webqsp design for finetuning a G-retriever model
+# otherwise follow webqsp design for finetuning a G-retriever model but rely on RAG Query Loader
 
 
 class HotPotQA(InMemoryDataset):
