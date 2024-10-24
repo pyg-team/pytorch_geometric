@@ -33,7 +33,7 @@ for idx in tqdm(range(num_data_pts), desc="Building KG"):
     )
 # (TODO) make RAGQueryLoader, need rebase onto Zack's PR
 
-# (TODO) estimate precision for the training
+# (TODO) estimate retrieval precision for the training set
 """
 approx precision = num_triples_from_a_relevant_doc/num_retrieved_triples
 We will use precision as a proxy for recall. This is because for recall,
