@@ -20,7 +20,6 @@ args = parser.parse_args()
 #     for i in data_point["context"]["sentences"]:
 #         for sentence in i:
 #             context_doc += sentence
-    
 
 # build KG
 
