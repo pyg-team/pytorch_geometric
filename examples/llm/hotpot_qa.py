@@ -1,5 +1,5 @@
-from torch_geometric.datasets import HotPotQA
-
+# from torch_geometric.datasets import HotPotQA
+from torch_geometric.nn.nlp import TXT2KG
 import argparse
 # argpars NV_NIM_KEY
 parser = argparse.ArgumentParser()
