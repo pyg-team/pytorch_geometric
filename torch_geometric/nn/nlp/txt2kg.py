@@ -52,6 +52,7 @@ class TXT2KG():
                 potential_trip = eval(triple_str)
             except: # noqa
                 print("triple_str failed=", triple_str)
+                continue
             if type(potential_trip) == Tuple[str, str, str]:
                 processed.append(potential_trip)
         print("processed=", processed)
