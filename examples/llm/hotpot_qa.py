@@ -34,6 +34,8 @@ for idx in tqdm(data_idxs, desc="Building KG"):
         QA_pair=(q, a),
     )
 # (TODO) make RAGQueryLoader, need rebase onto Zack's PR
+# based on example:
+# https://github.com/pyg-team/pytorch_geometric/blob/f607374fc8250e5f08b10e82e8ada2adf2ed18cc/examples/llm/g_retriever_utils/rag_generate.py
 
 # (TODO) estimate retrieval precision for the training set
 """
