@@ -6,6 +6,7 @@ from tqdm import tqdm
 from torch_geometric.nn.nlp import TXT2KG
 
 # argpars NV_NIM_KEY
+# (TODO) add data percent to use flag, make sampling random
 parser = argparse.ArgumentParser()
 parser.add_argument('--NV_NIM_KEY', type=str, required=True)
 args = parser.parse_args()
