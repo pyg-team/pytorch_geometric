@@ -19,21 +19,19 @@ class AttributedGraphDataset(InMemoryDataset):
     <https://arxiv.org/abs/2009.00826>`_ paper.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        name (str): The name of the dataset (:obj:`"Wiki"`, :obj:`"Cora"`
+        root: Root directory where the dataset should be saved.
+        name: The name of the dataset (:obj:`"Wiki"`, :obj:`"Cora"`,
             :obj:`"CiteSeer"`, :obj:`"PubMed"`, :obj:`"BlogCatalog"`,
             :obj:`"PPI"`, :obj:`"Flickr"`, :obj:`"Facebook"`, :obj:`"Twitter"`,
             :obj:`"TWeibo"`, :obj:`"MAG"`).
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+        transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
+        pre_transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
+            being saved to disk.
+        force_reload: Whether to re-process the dataset.
 
     **STATS:**
 
