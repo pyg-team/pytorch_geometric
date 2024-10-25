@@ -19,7 +19,9 @@ kg_maker = TXT2KG(
 raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki')["train"]
 # Build KG
 num_data_pts = len(raw_dataset)
-data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts*float(args.percent_data)/100.0)]
+data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
+                                               float(args.percent_data) /
+                                               100.0)]
 for idx in tqdm(data_idxs, desc="Building KG"):
     data_point = raw_dataset[idx]
     q = data_point["question"]
