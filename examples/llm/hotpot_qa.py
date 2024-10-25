@@ -49,6 +49,6 @@ precisions = []
 for QA_pair in kg_maker.relevant_triples.keys()
     relevant_triples = kg_maker.relevant_triples[QA_pair]
     retrieved_triples = #(TODO) call RAGQueryLoader
-    num_relevant_out_of_retrieved = float(sum([retrieved_triple in relevant_triples for retrieved_triple in retrieved_triples]))
+    num_relevant_out_of_retrieved = float(sum([int(bool(retrieved_triple in relevant_triples)) for retrieved_triple in retrieved_triples]))
     precisions.append(num_relevant_out_of_retrieved/len(retrieved_triples))
 approx_precision = mean(precisions)
