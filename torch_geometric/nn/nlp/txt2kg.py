@@ -21,11 +21,9 @@ class TXT2KG():
         self.chunk_size = 512
         self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
         self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
-        self.triples_per_doc_id = {}
-        # keep track of which doc each triple comes from
         # useful for approximating recall of subgraph retrieval algos
         self.doc_id_counter = 0
-        self.relevant_docs_per_q_a_pair = {}
+        self.relevant_triples = {}
 
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
@@ -60,24 +58,18 @@ class TXT2KG():
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
-        # if QA_pair is not None, store with matching doc ids
-        # useful for approximating recall
         chunks = [
             txt[i * self.chunk_size:min((i + 1) * self.chunk_size, len(txt))]
             for i in range(math.ceil(len(txt) / self.chunk_size))
         ]
-        self.triples_per_doc_id[self.doc_id_counter] = []
-        for chunk in chunks:
-            self.triples_per_doc_id[
-                self.doc_id_counter] += self.parse_n_check_triples(
-                    self.chunk_to_triples_str(chunk))
         if QA_pair:
-            if QA_pair in self.relevant_docs_per_q_a_pair.keys():
-                self.relevant_docs_per_q_a_pair[self.doc_id_counter] += [
-                    QA_pair
-                ]
-            else:
-                self.relevant_docs_per_q_a_pair[self.doc_id_counter] = [
-                    QA_pair
-                ]
+            # QA_pairs should be unique keys
+            assert QA_pair not in self.relevant_docs_per_q_a_pair.keys()
+            key = QA_pair
+        else:
+            key = self.doc_id_counter
+        self.relevant_triples[key] = []
+        for chunk in chunks:
+            self.relevant_triples[key] += self.parse_n_check_triples(
+                    self.chunk_to_triples_str(chunk))
         self.doc_id_counter += 1

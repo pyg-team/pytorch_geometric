@@ -14,7 +14,7 @@ kg_maker = TXT2KG(
     NVIDIA_API_KEY=args.NV_NIM_KEY,
     chunk_size=512,
 )
-########
+
 # Use training set for simplicity since our retrieval method is nonparametric
 raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki')["train"]
 # Build KG
@@ -31,14 +31,14 @@ for idx in tqdm(data_idxs, desc="Building KG"):
         for sentence in i:
             context_doc += sentence
 
+    QA_pair = (q, a)
     kg_maker.add_doc_2_KG(
         txt=context_doc,
-        QA_pair=(q, a),
+        QA_pair=QA_pair,
     )
-# (TODO) make RAGQueryLoader, need rebase onto Zack's PR
+# (TODO) make RAGQueryLoader from kg_maker, need rebase onto Zack's PR
 # based on example:
 # https://github.com/pyg-team/pytorch_geometric/blob/f607374fc8250e5f08b10e82e8ada2adf2ed18cc/examples/llm/g_retriever_utils/rag_generate.py
-
 # (TODO) estimate retrieval precision for the training set
 """
 approx precision = num_triples_from_a_relevant_doc/num_retrieved_triples
@@ -46,4 +46,11 @@ We will use precision as a proxy for recall. This is because for recall,
 we must know how many relevant triples exist for each question,
 but this is not known.
 """
-########
+precisions = []
+for QA_pair in kg_maker.relevant_triples.keys()
+    relevant_triples = kg_maker.relevant_triples[QA_pair]
+    retrieved_triples = #(TODO) call RAGQueryLoader
+    num_relevant_out_of_retrieved = float(sum([retrieved_triple in relevant_triples for retrieved_triple in retrieved_triples]))
+    precisions.append(num_relevant_out_of_retrieved/len(retrieved_triples))
+approx_precision = mean(precisions)
+
