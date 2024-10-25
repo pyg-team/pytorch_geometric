@@ -564,3 +564,51 @@ nodes in the dataset. If you want to see a full example, look at
 ``rag_generate.py``, or ``rag_generate_multihop.py`` These examples
 generate datasets for the entirety of the WebQSP dataset, or the
 WikiData Multihop datasets that are discussed in Section 0.
+
+Evaluating Runtime Performance
+------------------------------
+
+Pytorch Geometric provides multiple methods for evalutaing runtime
+performance. In this notebook, we utilize NVTX to profile the different
+components of our RAG Query Loader.
+
+The method ``nvtxit`` allows for profiling the utilization and timings
+of any methods that get wrapped by it in a Python script.
+
+To see an example of this, check out
+``nvtx_examples/nvtx_rag_backend_example.py``.
+
+This script mirrors this notebook’s functionality, but notably, it
+includes the following code snippet:
+
+.. code:: python
+
+   # Patch FeatureStore and GraphStore
+
+   SentenceTransformerFeatureStore.retrieve_seed_nodes = nvtxit()(SentenceTransformerFeatureStore.retrieve_seed_nodes)
+   SentenceTransformerFeatureStore.retrieve_seed_edges = nvtxit()(SentenceTransformerFeatureStore.retrieve_seed_edges)
+   SentenceTransformerFeatureStore.load_subgraph = nvtxit()(SentenceTransformerFeatureStore.load_subgraph)
+   NeighborSamplingRAGGraphStore.sample_subgraph = nvtxit()(NeighborSamplingRAGGraphStore.sample_subgraph)
+   rag_loader.RAGQueryLoader.query = nvtxit()(rag_loader.RAGQueryLoader.query)
+
+Importantly, this snippet wraps the methods of FeatureStore, GraphStore,
+and the Query method from QueryLoader so that it will be recognized as a
+unique frame in NVTX.
+
+This can be executed by the included shell script ``nvtx_run.sh``:
+
+.. code:: bash
+
+   ...
+
+   # Get the base name of the Python file
+   python_file=$(basename "$1")
+
+   # Run nsys profile on the Python file
+   nsys profile -c cudaProfilerApi --capture-range-end repeat -t cuda,nvtx,osrt,cudnn,cublas --cuda-memory-usage true --cudabacktrace all --force-overwrite true --output=profile_${python_file%.py} python "$1"
+
+   echo "Profile data saved as profile_${python_file%.py}.nsys-rep"
+
+The generated resulting ``.nsys-rep`` file can be visualized using tools
+like Nsight Systems or Nsight Compute, that can show the relative
+timings of the FeatureStore, GraphStore, and QueryLoader methods.
