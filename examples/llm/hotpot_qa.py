@@ -41,7 +41,7 @@ for idx in tqdm(data_idxs, desc="Building KG"):
 # https://github.com/pyg-team/pytorch_geometric/blob/f607374fc8250e5f08b10e82e8ada2adf2ed18cc/examples/llm/g_retriever_utils/rag_generate.py
 # (TODO) estimate retrieval precision for the training set
 """
-approx precision = num_triples_from_a_relevant_doc/num_retrieved_triples
+approx precision = num_relevant_out_of_retrieved/num_retrieved_triples
 We will use precision as a proxy for recall. This is because for recall,
 we must know how many relevant triples exist for each question,
 but this is not known.
