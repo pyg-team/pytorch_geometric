@@ -38,16 +38,18 @@ for idx in tqdm(data_idxs, desc="Building KG"):
     )
 # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
 from itertools import chain
+
+from g_retriever_utils import apply_retrieval_via_pcst
+from rag_backend_utils import create_remote_backend_from_triplets
+from rag_feature_store import SentenceTransformerFeatureStore
+from rag_graph_store import NeighborSamplingRAGGraphStore
+
 from torch_geometric.datasets.web_qsp_dataset import (
     preprocess_triplet,
     retrieval_via_pcst,
 )
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
-from rag_backend_utils import create_remote_backend_from_triplets
-from rag_feature_store import SentenceTransformerFeatureStore
-from rag_graph_store import NeighborSamplingRAGGraphStore
-from g_retriever_utils import apply_retrieval_via_pcst
 
 triples = chain.from_iterable(triple_set for triple_set in kg_maker.relevant_triples.values())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
