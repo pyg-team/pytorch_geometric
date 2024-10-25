@@ -53,4 +53,3 @@ for QA_pair in kg_maker.relevant_triples.keys()
     num_relevant_out_of_retrieved = float(sum([retrieved_triple in relevant_triples for retrieved_triple in retrieved_triples]))
     precisions.append(num_relevant_out_of_retrieved/len(retrieved_triples))
 approx_precision = mean(precisions)
-

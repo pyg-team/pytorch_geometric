@@ -71,5 +71,5 @@ class TXT2KG():
         self.relevant_triples[key] = []
         for chunk in chunks:
             self.relevant_triples[key] += self.parse_n_check_triples(
-                    self.chunk_to_triples_str(chunk))
+                self.chunk_to_triples_str(chunk))
         self.doc_id_counter += 1
