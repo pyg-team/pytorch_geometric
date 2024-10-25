@@ -39,7 +39,6 @@ for idx in tqdm(data_idxs, desc="Building KG"):
 # (TODO) make RAGQueryLoader from kg_maker, need rebase onto Zack's PR
 # based on example:
 # https://github.com/pyg-team/pytorch_geometric/blob/f607374fc8250e5f08b10e82e8ada2adf2ed18cc/examples/llm/g_retriever_utils/rag_generate.py
-# (TODO) estimate retrieval precision for the training set
 """
 approx precision = num_relevant_out_of_retrieved/num_retrieved_triples
 We will use precision as a proxy for recall. This is because for recall,
