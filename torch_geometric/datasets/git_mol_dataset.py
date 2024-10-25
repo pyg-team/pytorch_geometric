@@ -222,11 +222,14 @@ class GitMolDataset(InMemoryDataset):
                     edge_features_list.append(edge_feature)
 
                 edge_index = torch.tensor(
-                    np.array(edges_list).T, dtype=torch.long)
-                edge_attr = torch.tensor(np.array(edge_features_list),
-                                         dtype=torch.long)
+                    np.array(edges_list).T,
+                    dtype=torch.long,
+                )
+                edge_attr = torch.tensor(
+                    np.array(edge_features_list),
+                    dtype=torch.long,
+                )
 
-                data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
                 data = Data(
                     x=x,
                     edge_index=edge_index,
