@@ -22,7 +22,7 @@ def test_git_mol():
     batch = torch.zeros(x.size(0), dtype=torch.long)
     smiles = ['CC(C)([C@H]1CC2=C(O1)C=CC3=C2OC(=O)C=C3)O']
     captions = ['The molecule is the (R)-(-)-enantiomer of columbianetin.']
-    images = torch.randn(3, 224, 224)
+    images = torch.randn(1, 3, 224, 224)
 
     # Test train:
     loss = model(x, edge_index, batch, edge_attr, smiles, captions, images)
