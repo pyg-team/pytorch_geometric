@@ -79,12 +79,16 @@ class GraphUNet(torch.nn.Module):
         for conv in self.up_convs:
             conv.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Tensor,
+    def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor = None,
                 batch: OptTensor = None) -> Tensor:
         """"""  # noqa: D419
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
-        edge_weight = x.new_ones(edge_index.size(1))
+
+        if edge_weight is None:
+            edge_weight = x.new_ones(edge_index.size(1))
+        else:
+            assert edge_weight.size(0) == edge_index.size(1)
 
         x = self.down_convs[0](x, edge_index, edge_weight)
         x = self.act(x)
