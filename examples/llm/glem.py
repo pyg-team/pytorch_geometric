@@ -24,10 +24,7 @@ from torch_geometric import seed_everything
 from torch_geometric.data import download_google_url
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
-
-# Add the parent directory to sys.path
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(parent_dir)
+from ogb.nodeproppred import PygNodePropPredDataset
 
 
 def get_n_params(model):
@@ -43,7 +40,7 @@ def get_n_params(model):
 def main(args):
     gpu = args.gpu
     dataset_name = args.dataset
-    root = osp.join(parent_dir, 'data', 'ogb')
+    root = osp.join('data', 'ogb')
     hf_model = args.hf_model
     pl_ratio = args.pl_ratio
     gnn_lr = args.gnn_lr
@@ -72,14 +69,14 @@ def main(args):
     if not train_without_ext_pred:
         ext_pred_path = download_google_url(
             id='15sO2m7BeW7C1Upmdw3Cx1JS__6nxTAzY',
-            folder='/work/users/junhaos/glem_data/ogbn_products/ext_preds',
+            folder='data/ogb/ogbn_products/ext_preds',
             filename='giant_sagn_scr.pt', log=True)
         ext_pred = torch.load(ext_pred_path, map_location=device)
         ext_pseudo_labels = ext_pred.argmax(dim=-1)
         pretrain_augmented = True
 
     seed_everything(42)
-    from ogb.nodeproppred import PygNodePropPredDataset
+    
     dataset = PygNodePropPredDataset(f'ogbn-{dataset_name}', root=root)
     split_idx = dataset.get_idx_split()
     data = dataset.data
@@ -96,6 +93,7 @@ def main(args):
 
     # GLEM train with augmented data, mark original train data as gold data,
     gold_idx = split_idx['train']
+    valid_idx = split_idx['valid']
     test_idx = split_idx['test']
 
     # randome sample pseudo labels nodes, generate their index
@@ -113,6 +111,8 @@ def main(args):
                                            indices=gold_idx)
     train_dataset = torch.utils.data.Subset(dataset=text_dataset,
                                             indices=train_idx)
+    valid_dataset = torch.utils.data.Subset(dataset=text_dataset,
+                                            indices=valid_idx)
     # ========================== LM Data Loader ===============================
 
     print('Building language model dataloader...', end='-->')
@@ -126,7 +126,7 @@ def main(args):
     text_train_loader = DataLoader(train_dataset, batch_size=lm_batch_size,
                                    drop_last=False, pin_memory=True,
                                    shuffle=True)
-    text_data_loader = DataLoader(text_dataset, batch_size=lm_batch_size * 4,
+    text_test_loader = DataLoader(text_dataset, batch_size=lm_batch_size * 4,
                                   drop_last=False, pin_memory=True,
                                   shuffle=False)
     print('done')
@@ -272,7 +272,7 @@ def main(args):
         print('pretraining lm to generate pseudo labels')
         pretrain_num_epochs = lm_epochs
         pretrain_loader = text_pretrain_loader
-        test_loader = text_data_loader
+        test_loader = text_test_loader
         pretrain_opt = lm_opt
         if not train_without_ext_pred:
             pretrain_loader = text_train_loader
@@ -287,11 +287,10 @@ def main(args):
         if epoch >= 5 or epoch == pretrain_num_epochs:
             pretrain_preds = model.inference(pretrain_phase, test_loader,
                                              verbose=verbose)
-            train_acc, val_acc, test_acc = evaluate(pretrain_preds,
-                                                    ['train', 'valid', 'test'])
-
-            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                  f'Test: {test_acc:.4f}')
+            train_acc, val_acc, _ = evaluate(pretrain_preds,
+                                                    ['train', 'valid'])
+            
+            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}')
 
             if val_acc <= best_val_acc:
                 early_stopping += 1
@@ -300,14 +299,15 @@ def main(args):
                     break
             else:
                 best_val_acc = val_acc
-                final_test_acc = test_acc
-                preds = pretrain_preds
-
+    preds = model.inference(pretrain_phase, test_loader, 
+                                         verbose=verbose)
+    train_acc, val_acc, test_acc = evaluate(
+            preds, ['train', 'valid', 'test'])
     if pretrain_phase == 'gnn':
-        gnn_test_acc = max(gnn_test_acc, final_test_acc)
+        gnn_test_acc = max(gnn_test_acc, test_acc)
         model.gnn = model.gnn.to('cpu', non_blocking=True)
     else:
-        lm_test_acc = max(lm_test_acc, final_test_acc)
+        lm_test_acc = max(lm_test_acc, test_acc)
         model.lm = model.lm.to('cpu', non_blocking=True)
     torch.cuda.empty_cache()
 
@@ -336,7 +336,7 @@ def main(args):
         optimizer = load_model(em_phase)
         num_epochs = lm_epochs
         train_loader = text_train_loader
-        test_loader = text_data_loader
+        test_loader = text_test_loader
         early_stopping = 0
         if em_phase == 'gnn':
             train_loader = graph_train_loader
@@ -348,29 +348,31 @@ def main(args):
             if epoch >= 5 or epoch == num_epochs:
                 cur_preds = model.inference(em_phase, test_loader,
                                             verbose=verbose)
-                train_acc, val_acc, test_acc = evaluate(
-                    cur_preds, ['train', 'valid', 'test'])
+                train_acc, val_acc, _ = evaluate(
+                    cur_preds, ['train', 'valid'])
 
-                print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                      f'Test: {test_acc:.4f}')
+                print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f},')
 
                 if val_acc <= best_val_acc:
                     early_stopping += 1
                     if early_stopping > patience:
                         print(f'''Early stopped by Epoch: {epoch}, \
-                            Best acc: {final_test_acc}''')
+                            Best acc: {best_val_acc}''')
                         break
                 else:
                     best_val_acc = val_acc
-                    final_test_acc = test_acc
-                    preds = cur_preds
-
+                    
+        test_preds = model.inference(em_phase, test_loader, 
+                                         verbose=verbose)
+        preds = test_preds
+        train_acc, val_acc, test_acc = evaluate(
+                test_preds, ['train', 'valid', 'test'])
         if em_phase == 'gnn':
-            gnn_test_acc = max(gnn_test_acc, final_test_acc)
+            gnn_test_acc = max(gnn_test_acc, test_acc)
             model.gnn = model.gnn.to('cpu', non_blocking=True)
             em_phase = 'lm'
         else:
-            lm_test_acc = max(lm_test_acc, final_test_acc)
+            lm_test_acc = max(lm_test_acc, test_acc)
             model.lm = model.lm.to('cpu', non_blocking=True)
             em_phase = 'gnn'
         torch.cuda.empty_cache()
