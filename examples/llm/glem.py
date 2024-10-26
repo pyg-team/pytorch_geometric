@@ -15,16 +15,15 @@ from peft.
 import argparse
 import os
 import os.path as osp
-import sys
 import time
 
 import torch
+from ogb.nodeproppred import PygNodePropPredDataset
 
 from torch_geometric import seed_everything
 from torch_geometric.data import download_google_url
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
-from ogb.nodeproppred import PygNodePropPredDataset
 
 
 def get_n_params(model):
@@ -76,7 +75,7 @@ def main(args):
         pretrain_augmented = True
 
     seed_everything(42)
-    
+
     dataset = PygNodePropPredDataset(f'ogbn-{dataset_name}', root=root)
     split_idx = dataset.get_idx_split()
     data = dataset.data
@@ -288,8 +287,8 @@ def main(args):
             pretrain_preds = model.inference(pretrain_phase, test_loader,
                                              verbose=verbose)
             train_acc, val_acc, _ = evaluate(pretrain_preds,
-                                                    ['train', 'valid'])
-            
+                                             ['train', 'valid'])
+
             print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}')
 
             if val_acc <= best_val_acc:
@@ -299,10 +298,8 @@ def main(args):
                     break
             else:
                 best_val_acc = val_acc
-    preds = model.inference(pretrain_phase, test_loader, 
-                                         verbose=verbose)
-    train_acc, val_acc, test_acc = evaluate(
-            preds, ['train', 'valid', 'test'])
+    preds = model.inference(pretrain_phase, test_loader, verbose=verbose)
+    train_acc, val_acc, test_acc = evaluate(preds, ['train', 'valid', 'test'])
     if pretrain_phase == 'gnn':
         gnn_test_acc = max(gnn_test_acc, test_acc)
         model.gnn = model.gnn.to('cpu', non_blocking=True)
@@ -348,8 +345,7 @@ def main(args):
             if epoch >= 5 or epoch == num_epochs:
                 cur_preds = model.inference(em_phase, test_loader,
                                             verbose=verbose)
-                train_acc, val_acc, _ = evaluate(
-                    cur_preds, ['train', 'valid'])
+                train_acc, val_acc, _ = evaluate(cur_preds, ['train', 'valid'])
 
                 print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f},')
 
@@ -361,12 +357,11 @@ def main(args):
                         break
                 else:
                     best_val_acc = val_acc
-                    
-        test_preds = model.inference(em_phase, test_loader, 
-                                         verbose=verbose)
+
+        test_preds = model.inference(em_phase, test_loader, verbose=verbose)
         preds = test_preds
-        train_acc, val_acc, test_acc = evaluate(
-                test_preds, ['train', 'valid', 'test'])
+        train_acc, val_acc, test_acc = evaluate(test_preds,
+                                                ['train', 'valid', 'test'])
         if em_phase == 'gnn':
             gnn_test_acc = max(gnn_test_acc, test_acc)
             model.gnn = model.gnn.to('cpu', non_blocking=True)
