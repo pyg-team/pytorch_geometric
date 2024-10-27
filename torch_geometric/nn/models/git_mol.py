@@ -94,6 +94,11 @@ class GitMol(torch.nn.Module):
         self.task = []
         self.input_modal = modal['inputs_modal']
         self.output_modal = modal['outputs_modal']
+
+        # itm - Image-Text Matching, itc - Image-Text Contrastive Learning
+        # ctm - Caption-Text Matching, ctc - Caption-Text Contrastive Learning
+        # gtm - Graph-Text Matching, gtc - Graph-Text Contrastive Learning
+
         if 'isoSMILES' in self.output_modal:
             if 'image2d' in self.input_modal:
                 self.task.append('itm')
@@ -101,6 +106,7 @@ class GitMol(torch.nn.Module):
             if 'caption' in self.input_modal:
                 self.task.append('ctm')
                 self.task.append('ctc')
+
         if 'caption' in self.output_modal:
             if 'image2d' in self.input_modal:
                 self.task.append('itm')
