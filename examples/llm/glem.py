@@ -110,8 +110,6 @@ def main(args):
                                            indices=gold_idx)
     train_dataset = torch.utils.data.Subset(dataset=text_dataset,
                                             indices=train_idx)
-    valid_dataset = torch.utils.data.Subset(dataset=text_dataset,
-                                            indices=valid_idx)
     # ========================== LM Data Loader ===============================
 
     print('Building language model dataloader...', end='-->')
@@ -328,7 +326,7 @@ def main(args):
     """
     for em_it in range(1, num_em_iters * 2 + 1):
         pseudo_labels = preds.argmax(dim=-1)
-        best_val_acc = final_test_acc = 0.0
+        best_val_acc = 0.0
         print(f'EM iteration: {em_it}, EM phase: {em_phase}')
         optimizer = load_model(em_phase)
         num_epochs = lm_epochs
