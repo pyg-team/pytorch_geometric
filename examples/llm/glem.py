@@ -18,12 +18,13 @@ import os.path as osp
 import time
 
 import torch
-from ogb.nodeproppred import PygNodePropPredDataset
-
 from torch_geometric import seed_everything
 from torch_geometric.data import download_google_url
+from torch_geometric.loader import DataLoader, NeighborLoader
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.nn.models import GAT, GCN, GLEM, GraphSAGE
+from ogb.nodeproppred import PygNodePropPredDataset
+from ogb.nodeproppred import Evaluator
 
 
 def get_n_params(model):
@@ -113,8 +114,7 @@ def main(args):
     # ========================== LM Data Loader ===============================
 
     print('Building language model dataloader...', end='-->')
-    from torch_geometric.loader import DataLoader
-
+    
     # if set train_without_ext_pred == True, use this for pretrain
     text_pretrain_loader = DataLoader(gold_dataset, batch_size=lm_batch_size,
                                       drop_last=False, pin_memory=True,
@@ -141,7 +141,7 @@ def main(args):
     print(f'GPU memory usage -- data to gpu: {gpu_usage:.2f} GB')
 
     print('build GNN dataloader(GraphSAGE NeighborLoader)', end='-->')
-    from torch_geometric.loader import NeighborLoader
+
 
     # train on gold data w/o pseudo labels
     graph_pretrain_loader = NeighborLoader(
@@ -176,7 +176,6 @@ def main(args):
     )
     # =========================== internal function ===========================
 
-    from ogb.nodeproppred import Evaluator
     evaluator = Evaluator(name=f'ogbn-{dataset_name}')
 
     def evaluate(out, split):
@@ -276,7 +275,7 @@ def main(args):
         preds_filename = 'lm_pretrain'
 
     early_stopping = 0
-    best_val_acc = final_test_acc = 0.0
+    best_val_acc = 0.0
     for epoch in range(1, pretrain_num_epochs + 1):
         acc, loss = model.train(pretrain_phase, pretrain_loader, pretrain_opt,
                                 ext_pseudo_labels, epoch, pretrain_augmented,
