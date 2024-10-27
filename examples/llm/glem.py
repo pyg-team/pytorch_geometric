@@ -92,7 +92,7 @@ def main(args):
 
     # GLEM train with augmented data, mark original train data as gold data,
     gold_idx = split_idx['train']
-    valid_idx = split_idx['valid']
+    split_idx['valid']
     test_idx = split_idx['test']
 
     # randome sample pseudo labels nodes, generate their index
