@@ -7,8 +7,8 @@ from torch_geometric.testing import onlyFullTest, onlyOnline
 @pytest.mark.skip(reason="Times out")
 @onlyOnline
 @onlyFullTest
-def test_web_qsp_dataset():
-    dataset = WebQSPDataset()
+def test_web_qsp_dataset(tmp_path):
+    dataset = WebQSPDataset(root=tmp_path)
     assert len(dataset) == 4700
     assert str(dataset) == "WebQSPDataset(4700)"
 
