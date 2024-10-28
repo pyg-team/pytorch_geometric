@@ -13,9 +13,9 @@ For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see 
 - [`ogbn_proteins_deepgcn.py`](./ogbn_proteins_deepgcn.py) is an example to showcase how to train deep GNNs on the `ogbn-proteins` dataset.
 - [`ogbn_papers_100m_cugraph.py`](./ogbn_papers_100m_cugraph.py) shows how to accelerate the `ogbn-papers100m` workflow using [CuGraph](https://github.com/rapidsai/cugraph).
 
-For examples on co-training LLM with GNN, see examples and README under [`examples/llm_plus_gnn`](./llm_plus_gnn).
+For examples on using `torch.compile`, see the examples under [`examples/compile`](./compile).
 
-For examples on using `torch.compile`, see examples and README under [`examples/compile`](./compile).
+For examples on scaling PyG up via multi-GPUs, see the examples under [`examples/multi_gpu`](./multi_gpu).
 
 For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
 
