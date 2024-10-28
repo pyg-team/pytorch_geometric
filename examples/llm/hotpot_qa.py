@@ -37,6 +37,7 @@ for idx in tqdm(data_idxs, desc="Building KG"):
         QA_pair=QA_pair,
     )
 # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
+# Note: code below here will not work until the rebase is done
 from itertools import chain
 
 from g_retriever_utils import apply_retrieval_via_pcst
