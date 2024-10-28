@@ -130,7 +130,7 @@ class WebQSPDataset(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
-                    with PCST or return the full graphs. (default: :obj:`True`)
+            with PCST or return the full graphs. (default: :obj:`True`)
     """
     def __init__(
         self,
