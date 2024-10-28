@@ -161,9 +161,9 @@ class WebQSPDataset(InMemoryDataset):
             (default: :obj:`False`)
         limit (int, optional): Construct only the first n samples.
             Defaults to -1 to construct all samples.
-        include_pcst (bool, optional): Whether to include PCST step
-            (See GRetriever paper). Defaults to True.
         verbose (bool, optional): Whether to print output. Defaults to False.
+        use_pcst (bool, optional): Whether to preprocess the dataset's graph
+            with PCST or return the full graphs. (default: :obj:`True`)
     """
     def __init__(
         self,
@@ -171,12 +171,12 @@ class WebQSPDataset(InMemoryDataset):
         split: str = "train",
         force_reload: bool = False,
         limit: int = -1,
-        include_pcst: bool = True,
         verbose: bool = False,
+        use_pcst: bool = True,
     ) -> None:
         self.limit = limit
         self.split = split
-        self.include_pcst = include_pcst
+        self.use_pcst = use_pcst
         # TODO Confirm why the dependency checks and device setting were removed here # noqa
         '''
         self.device = torch.device(
@@ -309,7 +309,7 @@ class WebQSPDataset(InMemoryDataset):
                 topk=3,
                 topk_e=5,
                 cost_e=0.5,
-                override=not self.include_pcst,
+                override=not self.use_pcst,
             )
             question = f"Question: {data_i['question']}\nAnswer: "
             label = ("|").join(data_i["answer"]).lower()
