@@ -1,6 +1,8 @@
 import math
 from typing import List, Optional, Tuple
+
 import torch
+
 
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
@@ -25,10 +27,10 @@ class TXT2KG():
         self.doc_id_counter = 0
         self.relevant_triples = {}
 
-    def save_kg(self, path:str) -> None:
+    def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
 
-    def load_kg(self, path:str) -> None:
+    def load_kg(self, path: str) -> None:
         self.relevant_triples = torch.load(path)
 
     def chunk_to_triples_str(self, txt: str) -> str:
