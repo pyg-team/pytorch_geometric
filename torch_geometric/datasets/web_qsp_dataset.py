@@ -155,7 +155,7 @@ class WebQSPDataset(InMemoryDataset):
     Args:
         root (str): Root directory where the dataset should be saved.
         split (str, optional): If :obj:`"train"`, loads the training dataset.
-            If :obj:`"validation"`, loads the validation dataset.
+            If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
@@ -210,13 +210,13 @@ class WebQSPDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["train", "validation", "test"]
+        return ["train", "val", "test"]
 
     @property
     def processed_file_names(self) -> List[str]:
         file_lst = [
             "train_data.pt",
-            "validation_data.pt",
+            "val_data.pt",
             "test_data.pt",
             "pre_filter.pt",
             "pre_transform.pt",
@@ -228,6 +228,9 @@ class WebQSPDataset(InMemoryDataset):
 
     def _save_raw_data(self, dataset) -> None:
         for i, split in enumerate(self.raw_file_names):
+            # edge case
+            if split == "val":
+                split = "validation"
             dataset[split].save_to_disk(self.raw_paths[i])
 
     def _load_raw_data(self) -> None:
