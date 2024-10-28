@@ -74,7 +74,7 @@ we must know how many relevant triples exist for each question,
 but this is not known.
 """
 precisions = []
-for QA_pair in kg_maker.relevant_triples.keys()
+for QA_pair in kg_maker.relevant_triples.keys():
     relevant_triples = kg_maker.relevant_triples[QA_pair]
     q = QA_pair[0]
     retrieved_subgraph = query_loader.query(q)
