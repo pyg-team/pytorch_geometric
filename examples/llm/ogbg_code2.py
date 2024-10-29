@@ -20,10 +20,9 @@ def get_loss_ogbg(model, batch, **kwargs) -> torch.Tensor:
     Randomly drop the Graph features.
     Goal is to have the model learn to reason about both types
     of features alone and together.
-    """
-    randy = random.random()
-    if randy <= .3:
-        batch.desc = ''
+    """ 
+    if random.random() <= .3:
+        batch.desc = ['' for i in range(len(batch.desc))]
     questions = [master_prompt for i in range(len(batch.y))]
     labels = ['|'.join(label) for label in batch.y]
     return model(questions, batch.x.to(torch.float), batch.edge_index,
