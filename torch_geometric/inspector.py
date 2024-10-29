@@ -451,7 +451,7 @@ def type_repr(obj: Any, _globals: Dict[str, Any]) -> str:
 
         if not hasattr(obj, '_name'):
             return repr(obj)
-        
+
         name = obj._name
         if name is None:  # In some cases, `_name` is not populated.
             name = str(obj.__origin__).split('.')[-1]
