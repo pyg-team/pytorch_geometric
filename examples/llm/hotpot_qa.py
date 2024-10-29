@@ -23,7 +23,7 @@ data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
                                                float(args.percent_data) /
                                                100.0)]
 if os.path.exists("hotpot_kg.pt"):
-    kg_maker.load("hotpot_kg")
+    kg_maker.load_kg("hotpot_kg")
 else:
     for idx in tqdm(data_idxs, desc="Building KG"):
         data_point = raw_dataset[idx]
@@ -39,7 +39,7 @@ else:
             txt=context_doc,
             QA_pair=QA_pair,
         )
-    kg_maker.save("hotpot_kg.pt")
+    kg_maker.save_kg("hotpot_kg.pt")
 # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
 # Note: code below here will not work until the rebase is done
 # from itertools import chain
