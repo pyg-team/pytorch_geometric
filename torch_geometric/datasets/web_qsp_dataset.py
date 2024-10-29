@@ -222,7 +222,7 @@ class WebQSPDataset(InMemoryDataset):
             "pre_transform.pt",
             "large_graph_indexer",
         ]
-        split_file = file_lst.pop(self.raw_file_names.index(self.split))
+        split_file = file_lst.pop(self.raw_file_names().index(self.split))
         file_lst.insert(0, split_file)
         return file_lst
 
@@ -237,7 +237,7 @@ class WebQSPDataset(InMemoryDataset):
         import datasets
         if not hasattr(self, "raw_dataset"):
             self.raw_dataset = datasets.load_from_disk(
-                self.raw_paths[self.raw_file_names.index[self.split]])
+                self.raw_paths[self.raw_file_names().index[self.split]])
 
         if self.limit >= 0:
             self.raw_dataset = self.raw_dataset.select(
