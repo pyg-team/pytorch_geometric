@@ -322,6 +322,7 @@ def main(args):
     em iterations, so the total number of iterations is num_em_iter * 2 and
     we switch the em_phase at end of each iteration in following loop
     """
+    gnn_val_acc = lm_val_acc = 0.0
     for em_it in range(1, num_em_iters * 2 + 1):
         pseudo_labels = preds.argmax(dim=-1)
         best_val_acc = 0.0
@@ -354,21 +355,29 @@ def main(args):
                 else:
                     best_val_acc = val_acc
 
-        test_preds = model.inference(em_phase, test_loader, verbose=verbose)
-        preds = test_preds
-        train_acc, val_acc, test_acc = evaluate(test_preds,
-                                                ['train', 'valid', 'test'])
+        preds = model.inference(em_phase, test_loader, verbose=verbose)
         if em_phase == 'gnn':
-            gnn_test_acc = max(gnn_test_acc, test_acc)
+            gnn_val_acc = max(gnn_val_acc, best_val_acc)
             model.gnn = model.gnn.to('cpu', non_blocking=True)
             em_phase = 'lm'
         else:
-            lm_test_acc = max(lm_test_acc, test_acc)
+            lm_val_acc = max(lm_val_acc, best_val_acc)
             model.lm = model.lm.to('cpu', non_blocking=True)
             em_phase = 'gnn'
         torch.cuda.empty_cache()
-    print(f'Best GNN acc: {gnn_test_acc}, LM acc: {lm_test_acc}')
+    print(f'Best GNN validation acc: {gnn_val_acc}, LM validation acc: {lm_val_acc}')
     print('============================')
+    if gnn_val_acc > lm_val_acc:
+        em_phase = 'gnn'
+        model.gnn = model.gnn.to(device, non_blocking=True)
+    else:
+        em_phase = 'lm'
+        model.lm = model.lm.to(device, non_blocking=True)
+    test_preds = model.inference(em_phase, test_loader, verbose=verbose)
+    train_acc, val_acc, test_acc = evaluate(test_preds,
+                                            ['train', 'valid', 'test'])
+    final_test_acc = max(gnn_test_acc, max(lm_test_acc, test_acc))
+    print(f'Best test acc: {final_test_acc}, model: {em_phase}')
     end_time = time.time()
     running_time = (end_time - start_time) / 3600
     print(f'Total running time: {running_time:.2f} hours')
