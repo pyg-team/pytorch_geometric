@@ -1,8 +1,9 @@
 import argparse
+import os
 
 import datasets
 from tqdm import tqdm
-import os
+
 from torch_geometric.nn.nlp import TXT2KG
 
 parser = argparse.ArgumentParser()
