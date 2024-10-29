@@ -64,13 +64,14 @@ if __name__ == '__main__':
         help="Select how much of the training data to use,\
         passing an integer in (0,100]")
     parser.add_argument('--batch_size', type=int, default=8)
+    parser.add_argument('--epochs', type=int, default=1)
     parser.add_argument('--eval_batch_size', type=int, default=16)
     args = parser.parse_args()
 
     start_time = time.time()
     # TODO, try more epochs with checkpointing on
     train(
-        num_epochs=1,
+        num_epochs=args.epochs,
         hidden_channels=None,
         num_gnn_layers=None,
         batch_size=args.batch_size,
