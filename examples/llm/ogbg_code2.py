@@ -10,11 +10,20 @@ from g_retriever import train
 from torch_geometric.datasets import OGBG_Code2
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
-
+import random
 master_prompt = "Please provide the name of the Python function."
 
 
 def get_loss_ogbg(model, batch, **kwargs) -> torch.Tensor:
+    """
+    Testing data modification technique "Graph Dropout":
+    Randomly drop the Graph features.
+    Goal is to have the model learn to reason about both types
+    of features alone and together.
+    """
+    randy = random.random()
+    if randy <= .3:
+        batch.desc = ''
     questions = [master_prompt for i in range(len(batch.y))]
     labels = ['|'.join(label) for label in batch.y]
     return model(questions, batch.x.to(torch.float), batch.edge_index,
