@@ -365,7 +365,9 @@ def main(args):
             model.lm = model.lm.to('cpu', non_blocking=True)
             em_phase = 'gnn'
         torch.cuda.empty_cache()
-    print(f'Best GNN validation acc: {gnn_val_acc}, LM validation acc: {lm_val_acc}')
+    print(
+        f'Best GNN validation acc: {gnn_val_acc}, LM validation acc: {lm_val_acc}'
+    )
     print('============================')
     if gnn_val_acc > lm_val_acc:
         em_phase = 'gnn'
