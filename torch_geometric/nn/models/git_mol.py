@@ -1,11 +1,13 @@
+# flake8: noqa
 from typing import List, Optional
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import BatchNorm1d, Linear, ReLU, Sequential
+from torch.nn import BatchNorm1d, LayerNorm, Linear, ReLU, Sequential
 
 from torch_geometric.nn import GINEConv
+from torch_geometric.nn.attention.gitformer import BertConfig, BertLMHeadModel
 from torch_geometric.nn.cv import SwinTransformer
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.utils import to_dense_batch
@@ -51,21 +53,50 @@ class GraphEncoder(torch.nn.Module):
                 x = F.relu(x)
             x = F.dropout(x, self.dropout, training=self.training)
 
-        x, _ = to_dense_batch(x, batch)
-        return x
+        x, mask = to_dense_batch(x, batch)
+        return x, mask
+
+
+class GITFormer(torch.nn.Module):
+    def __init__(self, num_query_token, vision_graph_width,
+                 cross_attention_freq=2):
+        super().__init__()
+        encoder_config = BertConfig.from_pretrained(
+            "allenai/scibert_scivocab_uncased")
+        encoder_config.encoder_width = vision_graph_width
+        # insert cross-attention layer every other block
+        encoder_config.add_cross_attention = True
+        encoder_config.cross_attention_freq = cross_attention_freq
+        encoder_config.query_length = num_query_token
+        self.Qformer = BertLMHeadModel.from_pretrained(
+            "allenai/scibert_scivocab_uncased", config=encoder_config)
+        self.query_tokens = torch.nn.Parameter(
+            torch.zeros(1, num_query_token, encoder_config.hidden_size))
+        self.query_tokens.data.normal_(mean=0.0,
+                                       std=encoder_config.initializer_range)
 
 
 class GITMol(torch.nn.Module):
+    r"""Assume pretrain task = image + graph + smiles --> caption."""
     def __init__(self, ) -> None:
         super().__init__()
         self.graph_encoder = GraphEncoder(num_layers=2, in_channels=16)
         self.graph_proj = Linear(16, 768)
+        self.ln_graph = LayerNorm(768)
         self.text_encoder = SentenceTransformer(
             model_name='allenai/scibert_scivocab_uncased',
             pooling_strategy='last_hidden_state',
         )
+        self.ln_text = LayerNorm(768)
         self.vision_encoder = SwinTransformer()
         self.vision_proj = Linear(1536, 768)
+        self.ln_vision = LayerNorm(768)
+
+        self.gitformer = GITFormer(384, 768)
+
+        self.itm_head = Linear(self.gitformer.Qformer.config.hidden_size, 2)
+        self.gtm_head = Linear(self.gitformer.Qformer.config.hidden_size, 2)
+        self.ctm_head = Linear(self.gitformer.Qformer.config.hidden_size, 2)
 
     def forward(
         self,
@@ -77,17 +108,138 @@ class GITMol(torch.nn.Module):
         captions: List[str],
         images: Tensor,
     ) -> Tensor:
-        # TODO: add atom and bond embedding
-        x_graph = self.graph_encoder(x, edge_index, batch, edge_attr)
-        x_graph = self.graph_proj(x_graph)  # [bs, node_len, 16]
-        x_smiles = self.text_encoder.encode(smiles)  # [bs, seq_len, d]
-        x_captions = self.text_encoder.encode(captions)  # [bs, seq_len, d]
+        batch_size = len(smiles)
+
         x_vision = self.vision_encoder(images)
-        x_vision = self.vision_proj(x_vision)  # [bs, patch_len, d]
+        x_vision = self.vision_proj(x_vision)
+        x_vision = self.ln_vision(x_vision)  # [bs, patch_len, d]
+        # vision_atts = torch.ones(x_vision.size()[:-1],
+        #                          dtype=torch.long).to(x_vision.device)
+        torch.arange(batch_size).to(x_vision.device)
+
+        # TODO: add atom and bond embedding
+        x_graph, graph_atts = self.graph_encoder(x, edge_index, batch,
+                                                 edge_attr)
+        x_graph = self.graph_proj(x_graph)
+        x_graph = self.ln_graph(x_graph)  # [bs, node_len, d]
+        torch.arange(batch_size).to(x_graph.device)
+
+        x_smiles = self.text_encoder.encode(smiles)  # [bs, seq_len, d]
+        # smiles_atts = torch.ones(x_smiles.size()[:-1],
+        #                          dtype=torch.long).to(x_smiles.device)
+        torch.arange(batch_size).to(x_smiles.device)
+
+        x_captions = self.text_encoder.encode(captions)  # [bs, seq_len, d]
+        caption_input_ids, caption_attention_masks = self.text_encoder.get_input_ids(
+            captions)
+        torch.arange(batch_size).to(x_captions.device)
+
         print(x_graph.size(), x_smiles.size(), x_captions.size(),
               x_vision.size())
+        self._calc_itm_loss(x_vision, caption_input_ids,
+                            caption_attention_masks)
         import pdb
         pdb.set_trace()
+
+    def _calc_itm_loss(
+        self,
+        image_embeds: Tensor,
+        input_ids: Tensor,
+        attention_mask: Tensor,
+    ) -> Tensor:
+        # Initializing lists to hold the original and negative samples
+        image_embeds_list = []
+        text_input_ids_list = []
+        text_attention_mask_list = []
+
+        batch_size = image_embeds.size(0)
+        for i in range(batch_size):
+            # Original samples
+            image_embeds_list.append(image_embeds[i])
+            text_input_ids_list.append(input_ids[i, :])
+            text_attention_mask_list.append(attention_mask[i, :])
+
+            if batch_size > 1:
+                # Negative samples (neg_text_input_ids corresponds to image_embeds)
+                neg_text_input_ids = input_ids[
+                    i - 1, :] if i == batch_size - 1 else input_ids[i + 1, :]
+                neg_text_attention_mask = attention_mask[
+                    i - 1, :] if i == batch_size - 1 else attention_mask[i +
+                                                                         1, :]
+                text_input_ids_list.append(neg_text_input_ids)
+                text_attention_mask_list.append(neg_text_attention_mask)
+                image_embeds_list.append(image_embeds[i, :])
+
+                # Negative samples (text_input_ids corresponds to neg_image_embeds)
+                neg_image_embeds = image_embeds[
+                    i - 1, :] if i == batch_size - 1 else image_embeds[i +
+                                                                       1, :]
+                image_embeds_list.append(neg_image_embeds)
+                text_input_ids_list.append(input_ids[i, :])
+                text_attention_mask_list.append(attention_mask[i, :])
+
+        # Stack all samples into two large tensors
+        image_embeds_all = torch.stack(image_embeds_list,
+                                       dim=1).reshape(-1, image_embeds.size(1),
+                                                      image_embeds.size(2))
+        text_input_ids_all = torch.stack(text_input_ids_list,
+                                         dim=1).reshape(-1, input_ids.size(1))
+        text_attention_mask_all = torch.stack(text_attention_mask_list,
+                                              dim=1).reshape(
+                                                  -1, attention_mask.size(1))
+        # Create image attention masks for the concatenated tensor
+        image_atts_all = torch.ones(image_embeds_all.size()[:-1],
+                                    dtype=torch.long).to(
+                                        image_embeds_all.device)
+        query_tokens_itm = self.gitformer.query_tokens.expand(
+            text_input_ids_all.shape[0], -1, -1)
+        query_atts_itm = torch.ones(query_tokens_itm.size()[:-1],
+                                    dtype=torch.long).to(
+                                        image_embeds_all.device)
+        attention_mask_all = torch.cat(
+            [query_atts_itm, text_attention_mask_all], dim=1)
+
+        output_itm = self.gitformer.Qformer.bert(
+            text_input_ids_all,
+            query_embeds=query_tokens_itm,
+            attention_mask=attention_mask_all,
+            encoder_hidden_states=image_embeds_all,
+            encoder_attention_mask=image_atts_all,
+            modal='image',
+            return_dict=True,
+        )
+        itm_embeddings = output_itm.last_hidden_state[:, :query_tokens_itm.
+                                                      size(1), :]
+
+        itm_logit = self.itm_head(itm_embeddings)
+        itm_logit = itm_logit.mean(dim=1)
+        #itm_logit = self.itm_head(itm_embeddings)
+        # Create labels: 1 for the original samples, 0 for the negative samples
+        if batch_size > 1:
+            labels = torch.cat(
+                [torch.ones(batch_size),
+                 torch.zeros(batch_size * 2)], dim=0)
+        else:
+            labels = torch.ones(batch_size)
+        labels = labels.long().to(itm_logit.device)
+
+        # Calculate cross entropy loss
+        return F.cross_entropy(itm_logit, labels)
+
+    def _calc_gtm_loss(self, ) -> Tensor:
+        pass
+
+    def _calc_ctm_loss(self, ) -> Tensor:
+        pass
+
+    def _calc_itc_loss(self, ) -> Tensor:
+        pass
+
+    def _calc_gtc_loss(self, ) -> Tensor:
+        pass
+
+    def _calc_ctc_loss(self, ) -> Tensor:
+        pass
 
     def pretrain(
         self,

@@ -6,13 +6,6 @@ from torch_geometric.nn.models import GITMol
 def test_git_mol():
     model = GITMol()
 
-    # assert str(model) == (
-    #     'MoleculeGPT(\n'
-    #     '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
-    #     '  graph=GINEConv,\n'
-    #     '  smiles=SentenceTransformer(model_name=DeepChem/ChemBERTa-77M-MTR),\n'  # noqa: E501
-    #     ')')
-
     x = torch.randn(10, 16)
     edge_index = torch.tensor([
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
