@@ -165,8 +165,6 @@ class WebQSPDataset(InMemoryDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
     """
-    split_vals = ["train", "val", "test"]
-
     def __init__(
         self,
         root: str,
@@ -189,7 +187,7 @@ class WebQSPDataset(InMemoryDataset):
         self.force_reload = force_reload
         super().__init__(root, force_reload=force_reload)
 
-        if split not in set(self.split_vals):
+        if split not in set(self.raw_file_names):
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
         self._load_raw_data()
@@ -212,7 +210,7 @@ class WebQSPDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return self.split_vals
+        return ["train", "val", "test"]
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -224,7 +222,7 @@ class WebQSPDataset(InMemoryDataset):
             "pre_transform.pt",
             "large_graph_indexer",
         ]
-        split_file = file_lst.pop(self.split_vals.index(self.split))
+        split_file = file_lst.pop(self.raw_file_names.index(self.split))
         file_lst.insert(0, split_file)
         return file_lst
 
@@ -239,7 +237,7 @@ class WebQSPDataset(InMemoryDataset):
         import datasets
         if not hasattr(self, "raw_dataset"):
             self.raw_dataset = datasets.load_from_disk(
-                self.raw_paths[self.split_vals.index[self.split]])
+                self.raw_paths[self.raw_file_names.index(self.split)])
 
         if self.limit >= 0:
             self.raw_dataset = self.raw_dataset.select(
