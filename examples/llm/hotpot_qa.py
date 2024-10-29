@@ -24,7 +24,7 @@ data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
                                                float(args.percent_data) /
                                                100.0)]
 if os.path.exists("hotpot_kg.pt"):
-    kg_maker.load_kg("hotpot_kg")
+    kg_maker.load_kg("hotpot_kg.pt")
 else:
     for idx in tqdm(data_idxs, desc="Building KG"):
         data_point = raw_dataset[idx]
