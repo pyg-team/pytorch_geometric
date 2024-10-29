@@ -2,7 +2,7 @@ import argparse
 
 import datasets
 from tqdm import tqdm
-
+import os
 from torch_geometric.nn.nlp import TXT2KG
 
 parser = argparse.ArgumentParser()
@@ -22,20 +22,24 @@ num_data_pts = len(raw_dataset)
 data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
                                                float(args.percent_data) /
                                                100.0)]
-for idx in tqdm(data_idxs, desc="Building KG"):
-    data_point = raw_dataset[idx]
-    q = data_point["question"]
-    a = data_point["answer"]
-    context_doc = ''
-    for i in data_point["context"]["sentences"]:
-        for sentence in i:
-            context_doc += sentence
+if os.path.exists("hotpot_kg.pt"):
+    kg_maker.load("hotpot_kg")
+else:
+    for idx in tqdm(data_idxs, desc="Building KG"):
+        data_point = raw_dataset[idx]
+        q = data_point["question"]
+        a = data_point["answer"]
+        context_doc = ''
+        for i in data_point["context"]["sentences"]:
+            for sentence in i:
+                context_doc += sentence
 
-    QA_pair = (q, a)
-    kg_maker.add_doc_2_KG(
-        txt=context_doc,
-        QA_pair=QA_pair,
-    )
+        QA_pair = (q, a)
+        kg_maker.add_doc_2_KG(
+            txt=context_doc,
+            QA_pair=QA_pair,
+        )
+    kg_maker.save("hotpot_kg.pt")
 # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
 from itertools import chain
 
