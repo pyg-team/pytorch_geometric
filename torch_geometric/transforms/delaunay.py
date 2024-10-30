@@ -10,6 +10,7 @@ from torch_geometric.transforms import BaseTransform
 class _QhullTransform(BaseTransform):
     r"""Q-hull implementation of Delaunay triangulation, uses NumPy arrays."""
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
         import scipy.spatial
 
         pos = data.pos.cpu().numpy()
@@ -25,6 +26,7 @@ class _ShullTransform(BaseTransform):
     tensors.
     """
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
         from torch_delaunay.functional import shull2d
 
         face = shull2d(data.pos.cpu())
