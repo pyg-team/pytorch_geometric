@@ -446,7 +446,7 @@ class MoleculeGPTDataset(InMemoryDataset):
 
                 x: torch.Tensor = torch.tensor([
                     types[atom.GetSymbol()] if atom.GetSymbol() in types else 5
-                    for atom in m.GetAtoms()
+                    for atom in m.GetAtoms()  # type: ignore
                 ])
                 x = one_hot(x, num_classes=len(types), dtype=torch.float)
 
