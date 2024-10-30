@@ -8,6 +8,7 @@ Requirements:
 `pip install datasets transformers pcst_fast sentencepiece accelerate`
 """
 import argparse
+import gc
 import math
 import os.path as osp
 import re
@@ -18,7 +19,6 @@ import torch
 from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
-import gc
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
