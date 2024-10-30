@@ -5,23 +5,20 @@ import os
 import sys
 from collections import defaultdict
 from multiprocessing import Pool
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 import requests
 import torch
-from rdkit import Chem, RDLogger
-from rdkit.Chem.rdchem import BondType as BT
 from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.io import fs
 from torch_geometric.nn.nlp import LLM
 from torch_geometric.utils import one_hot
 
-RDLogger.DisableLog('rdApp.*')  # type: ignore
 
-
-def clean_up_description(description):
+def clean_up_description(description: str) -> str:
     description = description + " "
 
     # extra adj Pure
@@ -125,7 +122,7 @@ def clean_up_description(description):
     return first_sentence
 
 
-def extract_name(name_raw, description):
+def extract_name(name_raw: str, description: str) -> Tuple[str, str, str]:
     first_sentence = clean_up_description(description)
 
     splitter = '  --  --  '
@@ -226,10 +223,10 @@ class MoleculeGPTDataset(InMemoryDataset):
         return ['pubchem.csv']
 
     @property
-    def processed_file_names(self) -> str:
+    def processed_file_names(self) -> List[str]:
         return ['data.pt']
 
-    def download(self, use_mp=False) -> None:
+    def download(self) -> None:
         # Step 01. Extract description
         step1_folder = f"{self.raw_dir}/step_01_PubChemSTM_description"
         if not os.path.exists(step1_folder):
@@ -312,7 +309,35 @@ class MoleculeGPTDataset(InMemoryDataset):
                 download_url(f"{self.compound_url}/{compound_file_name}",
                              step2_folder)
 
+    def process(self, use_mp: bool = False) -> None:
+        try:
+            from rdkit import Chem, RDLogger
+            from rdkit.Chem.rdchem import BondType as BT
+            RDLogger.DisableLog('rdApp.*')  # type: ignore
+            WITH_RDKIT = True
+
+        except ImportError:
+            WITH_RDKIT = False
+
+        if not WITH_RDKIT:
+            print(("Using a pre-processed version of the dataset. Please "
+                   "install 'rdkit' to alternatively process the raw data."),
+                  file=sys.stderr)
+
+            data_list = fs.torch_load(self.raw_paths[0])
+            data_list = [Data(**data_dict) for data_dict in data_list]
+
+            if self.pre_filter is not None:
+                data_list = [d for d in data_list if self.pre_filter(d)]
+
+            if self.pre_transform is not None:
+                data_list = [self.pre_transform(d) for d in data_list]
+
+            self.save(data_list, self.processed_paths[0])
+            return
+
         # Step 03. Filter out SDF
+        step2_folder = f"{self.raw_dir}/step_02_PubChemSTM_SDF"
         step3_folder = f"{self.raw_dir}/step_03_PubChemSTM_filtered"
         if not os.path.exists(step3_folder):
             os.makedirs(step3_folder)
@@ -386,7 +411,7 @@ class MoleculeGPTDataset(InMemoryDataset):
 
         print(f"In total: {len(found_CID_set)} molecules")
 
-    def process(self) -> None:
+        # Step 05. Convert to PyG data format
         types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4, 'Unknow': 5}
         bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
@@ -421,13 +446,12 @@ class MoleculeGPTDataset(InMemoryDataset):
 
                 instruction = llm.inference([prompt.format(ground_truth)])[0]
 
-                # Convert to PyG data format
                 x = [
                     types[atom.GetSymbol()] if atom.GetSymbol() in types else 5
                     for atom in RDKit_mol.GetAtoms()
                 ]
-                x = one_hot(torch.tensor(x), num_classes=len(types))
-                x = x.to(torch.float)
+                x = one_hot(torch.tensor(x), num_classes=len(types),
+                            dtype=torch.float)
 
                 rows, cols, edge_types = [], [], []
                 for bond in RDKit_mol.GetBonds():
