@@ -231,7 +231,7 @@ class MoleculeGPTDataset(InMemoryDataset):
         step1_folder = f"{self.raw_dir}/step_01_PubChemSTM_description"
         if not os.path.exists(step1_folder):
             os.makedirs(step1_folder)
-            valid_CID_list = set()
+            valid_CID_set = set()
             CID2name_raw, CID2name_extracted = defaultdict(list), defaultdict(
                 list)
             CID2text_raw, CID2text_extracted = defaultdict(list), defaultdict(
@@ -273,13 +273,13 @@ class MoleculeGPTDataset(InMemoryDataset):
                             CID2text_extracted[CID].append(
                                 extracted_description)
 
-                            valid_CID_list.add(CID)
+                            valid_CID_set.add(CID)
                             f_out.write(f"{CID}\n")
                             f_out.write(f"{extracted_description}\n\n")
                     except Exception:
                         continue
 
-            valid_CID_list = sorted(list(set(valid_CID_list)))
+            valid_CID_list = sorted(list(valid_CID_set))
             print(f"Total CID (with raw name) {len(CID2name_raw)}")
             print(f"Total CID (with extracted name) {len(CID2name_extracted)}")
             print(f"Total CID {len(valid_CID_list)}")
@@ -310,9 +310,8 @@ class MoleculeGPTDataset(InMemoryDataset):
 
     def process(self, use_mp: bool = False) -> None:
         try:
-            from rdkit import Chem, RDLogger
+            from rdkit import Chem
             from rdkit.Chem.rdchem import BondType as BT
-            RDLogger.DisableLog('rdApp.*')
             WITH_RDKIT = True
 
         except ImportError:
@@ -436,7 +435,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                 CID = mol.GetProp("PUBCHEM_COMPOUND_CID")
                 CAN_SMILES = mol.GetProp("PUBCHEM_OPENEYE_CAN_SMILES")
 
-                RDKit_mol = Chem.MolFromSmiles(CAN_SMILES)
+                RDKit_mol: Chem.Mol = Chem.MolFromSmiles(CAN_SMILES)
                 if RDKit_mol is None:
                     continue
                 RDKit_CAN_SMILES = Chem.MolToSmiles(RDKit_mol)
@@ -445,12 +444,11 @@ class MoleculeGPTDataset(InMemoryDataset):
 
                 instruction = llm.inference([prompt.format(ground_truth)])[0]
 
-                x = [
+                x: torch.Tensor = torch.tensor([
                     types[atom.GetSymbol()] if atom.GetSymbol() in types else 5
                     for atom in RDKit_mol.GetAtoms()
-                ]
-                x = one_hot(torch.tensor(x), num_classes=len(types),
-                            dtype=torch.float)
+                ])
+                x = one_hot(x, num_classes=len(types), dtype=torch.float)
 
                 rows, cols, edge_types = [], [], []
                 for bond in RDKit_mol.GetBonds():
