@@ -235,26 +235,39 @@ class WebQSPDataset(InMemoryDataset):
 
     def _load_raw_data(self) -> None:
         import datasets
-        if not hasattr(self, "raw_dataset"):
-            self.raw_dataset = datasets.load_from_disk(
-                self.raw_paths[self.raw_file_names.index(self.split)])
+        dataset = {
+            split:
+            datasets.load_from_disk(
+                self.raw_paths[self.raw_file_names.index(split)])
+            for split in self.raw_file_names
+        }
+        self.raw_dataset = datasets.concatenate_datasets(
+            [dataset[split] for split in self.raw_file_names])
+
+        # Set up indices for train/val/test splits
+        split_ranges = np.cumsum(
+            [len(dataset[split]) for split in self.raw_file_names])
+        self.split_indices = {
+            'train': np.arange(split_ranges[0]),
+            'val': np.arange(split_ranges[0], split_ranges[1]),
+            'test': np.arange(split_ranges[1], split_ranges[2])
+        }
 
         if self.limit >= 0:
-            self.raw_dataset = self.raw_dataset.select(
-                range(min(self.limit, len(self.raw_dataset))))
+            self.split_indices[self.split] = self.split_indices[
+                self.split][:self.limit]
 
     def download(self) -> None:
         import datasets
-
         dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
         self._save_raw_data(dataset)
-        self.raw_dataset = dataset[self.split]
 
     def _get_trips(self) -> Iterator[TripletLike]:
         return chain.from_iterable(
             iter(ds["graph"]) for ds in self.raw_dataset)
 
     def _build_graph(self) -> None:
+        # The graph always gets built on the entire dataset
         trips = self._get_trips()
         self.indexer: LargeGraphIndexer = LargeGraphIndexer.from_triplets(
             trips, pre_transform=preprocess_triplet)
@@ -284,8 +297,9 @@ class WebQSPDataset(InMemoryDataset):
         self.indexer.save(self.processed_paths[-1])
 
     def _retrieve_subgraphs(self) -> None:
+        split_dataset = self.raw_dataset.select(self.split_indices[self.split])
         print("Encoding questions...")
-        self.questions = [str(ds["question"]) for ds in self.raw_dataset]
+        self.questions = [str(ds["question"]) for ds in split_dataset]
         q_embs = self.model.encode(self.questions, batch_size=256,
                                    output_device='cpu')
         list_of_graphs = []
@@ -293,12 +307,10 @@ class WebQSPDataset(InMemoryDataset):
         textual_nodes = self.textual_nodes
         textual_edges = self.textual_edges
         graph_gen = get_features_for_triplets_groups(
-            self.indexer, (ds['graph'] for ds in self.raw_dataset),
+            self.indexer, (ds['graph'] for ds in split_dataset),
             pre_transform=preprocess_triplet, verbose=self.verbose)
 
-        for index in tqdm(range(len(self.raw_dataset)),
-                          disable=not self.verbose):
-            data_i = self.raw_dataset[index]
+        for index, data_i in tqdm(enumerate(split_dataset)):
             graph = next(graph_gen)
             textual_nodes = self.textual_nodes.iloc[
                 graph["node_idx"]].reset_index()
@@ -321,9 +333,10 @@ class WebQSPDataset(InMemoryDataset):
             pcst_subgraph["label"] = label
             pcst_subgraph["desc"] = desc
             list_of_graphs.append(pcst_subgraph.to("cpu"))
-        print("Saving subgraphs...")
-        self.save(list_of_graphs,
-                  self.processed_paths[0] + "" * (self.limit >= 0))
+        if self.limit < 0:
+            # We only save if it's a complete split
+            print("Saving subgraphs...")
+            self.save(list_of_graphs, self.processed_paths[0])
 
     def process(self) -> None:
         from pandas import DataFrame
