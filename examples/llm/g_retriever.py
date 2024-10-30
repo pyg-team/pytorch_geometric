@@ -18,6 +18,7 @@ import torch
 from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
+import gc
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
@@ -142,6 +143,9 @@ def train(
     test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
+    # To clean up after Data Preproc
+    gc.collect()
+    torch.cuda.empty_cache()
     gnn = GAT(
         in_channels=1024,
         hidden_channels=hidden_channels,
