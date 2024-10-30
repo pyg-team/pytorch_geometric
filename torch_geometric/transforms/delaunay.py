@@ -53,6 +53,7 @@ class _SequentialTransform(BaseTransform):
             except ModuleNotFoundError as e:
                 if i == len(self.transforms) - 1:
                     raise e
+        return data
 
 
 @functional_transform('delaunay')
