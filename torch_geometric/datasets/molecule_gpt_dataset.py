@@ -435,10 +435,10 @@ class MoleculeGPTDataset(InMemoryDataset):
                 CID = mol.GetProp("PUBCHEM_COMPOUND_CID")
                 CAN_SMILES = mol.GetProp("PUBCHEM_OPENEYE_CAN_SMILES")
 
-                RDKit_mol: Chem.Mol = Chem.MolFromSmiles(CAN_SMILES)
-                if RDKit_mol is None:
+                m: Chem.Mol = Chem.MolFromSmiles(CAN_SMILES)
+                if m is None:
                     continue
-                RDKit_CAN_SMILES = Chem.MolToSmiles(RDKit_mol)
+                RDKit_CAN_SMILES = Chem.MolToSmiles(m)
 
                 ground_truth = CID2text_data[CID][0]
 
@@ -446,12 +446,12 @@ class MoleculeGPTDataset(InMemoryDataset):
 
                 x: torch.Tensor = torch.tensor([
                     types[atom.GetSymbol()] if atom.GetSymbol() in types else 5
-                    for atom in RDKit_mol.GetAtoms()
+                    for atom in m.GetAtoms()
                 ])
                 x = one_hot(x, num_classes=len(types), dtype=torch.float)
 
                 rows, cols, edge_types = [], [], []
-                for bond in RDKit_mol.GetBonds():
+                for bond in m.GetBonds():
                     i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                     edge_types += [bonds[bond.GetBondType()]] * 2
                     rows += [i, j]
