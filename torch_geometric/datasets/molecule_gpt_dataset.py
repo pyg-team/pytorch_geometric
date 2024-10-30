@@ -451,7 +451,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                 x = one_hot(x, num_classes=len(types), dtype=torch.float)
 
                 rows, cols, edge_types = [], [], []
-                for bond in m.GetBonds():
+                for bond in m.GetBonds():  # type: ignore
                     i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                     edge_types += [bonds[bond.GetBondType()]] * 2
                     rows += [i, j]
