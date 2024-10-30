@@ -208,8 +208,8 @@ class MoleculeGPTDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-        total_page_num: Optional[int] = 10,
-        total_block_num: Optional[int] = 1,
+        total_page_num: int = 10,
+        total_block_num: int = 1,
     ):
         self.total_page_num = total_page_num
         self.total_block_num = total_block_num
@@ -279,8 +279,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                     except Exception:
                         continue
 
-            valid_CID_list = list(set(valid_CID_list))
-            valid_CID_list = sorted(valid_CID_list)
+            valid_CID_list = sorted(list(set(valid_CID_list)))
             print(f"Total CID (with raw name) {len(CID2name_raw)}")
             print(f"Total CID (with extracted name) {len(CID2name_extracted)}")
             print(f"Total CID {len(valid_CID_list)}")
@@ -313,7 +312,7 @@ class MoleculeGPTDataset(InMemoryDataset):
         try:
             from rdkit import Chem, RDLogger
             from rdkit.Chem.rdchem import BondType as BT
-            RDLogger.DisableLog('rdApp.*')  # type: ignore
+            RDLogger.DisableLog('rdApp.*')
             WITH_RDKIT = True
 
         except ImportError:
@@ -347,7 +346,7 @@ class MoleculeGPTDataset(InMemoryDataset):
 
             block_size = 500000
 
-            def extract_one_SDF_file(block_id):
+            def extract_one_SDF_file(block_id: int) -> None:
                 valid_mol_count = 0
 
                 writer = Chem.SDWriter(
