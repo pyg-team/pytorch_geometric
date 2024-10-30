@@ -42,6 +42,7 @@ else:
         )
     kg_maker.save_kg("hotpot_kg.pt")
 # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
+# Zacks PR: https://github.com/pyg-team/pytorch_geometric/pull/9666
 # Note: code below here will not work until the rebase is done
 # from itertools import chain
 
