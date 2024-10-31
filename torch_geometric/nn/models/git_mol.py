@@ -94,9 +94,11 @@ class GITMol(torch.nn.Module):
 
         self.gitformer = GITFormer(384, 768)
 
-        self.itm_head = Linear(self.gitformer.Qformer.config.hidden_size, 2)
-        self.gtm_head = Linear(self.gitformer.Qformer.config.hidden_size, 2)
-        self.ctm_head = Linear(self.gitformer.Qformer.config.hidden_size, 2)
+        self.xtm_head = {
+            'image': Linear(self.gitformer.Qformer.config.hidden_size, 2),
+            'graph': Linear(self.gitformer.Qformer.config.hidden_size, 2),
+            'cs_text': Linear(self.gitformer.Qformer.config.hidden_size, 2),
+        }
 
     def forward(
         self,
@@ -136,84 +138,80 @@ class GITMol(torch.nn.Module):
 
         print(x_graph.size(), x_smiles.size(), x_captions.size(),
               x_vision.size())
-        self._calc_itm_loss(x_vision, caption_input_ids,
-                            caption_attention_masks)
-        import pdb
-        pdb.set_trace()
+        loss = 0
+        for x_embed, modal in zip([x_graph, x_smiles, x_vision],
+                                  ['graph', 'cs_text', 'image']):
+            loss += self._calc_xtm_loss(x_embed, caption_input_ids,
+                                        caption_attention_masks, modal)
 
-    def _calc_itm_loss(
+        return loss
+
+    def _calc_xtm_loss(
         self,
-        image_embeds: Tensor,
+        x_embeds: Tensor,
         input_ids: Tensor,
         attention_mask: Tensor,
+        modal: str,
     ) -> Tensor:
         # Initializing lists to hold the original and negative samples
-        image_embeds_list = []
+        x_embeds_list = []
         text_input_ids_list = []
         text_attention_mask_list = []
 
-        batch_size = image_embeds.size(0)
+        batch_size = x_embeds.size(0)
         for i in range(batch_size):
             # Original samples
-            image_embeds_list.append(image_embeds[i])
+            x_embeds_list.append(x_embeds[i])
             text_input_ids_list.append(input_ids[i, :])
             text_attention_mask_list.append(attention_mask[i, :])
 
             if batch_size > 1:
-                # Negative samples (neg_text_input_ids corresponds to image_embeds)
-                neg_text_input_ids = input_ids[
-                    i - 1, :] if i == batch_size - 1 else input_ids[i + 1, :]
-                neg_text_attention_mask = attention_mask[
-                    i - 1, :] if i == batch_size - 1 else attention_mask[i +
-                                                                         1, :]
+                # Negative samples (neg_text_input_ids corresponds to x_embeds)
+                neg_text_input_ids = input_ids[i - 1 if i == batch_size -
+                                               1 else i + 1, :]
+                neg_text_attention_mask = attention_mask[i -
+                                                         1 if i == batch_size -
+                                                         1 else i + 1, :]
                 text_input_ids_list.append(neg_text_input_ids)
                 text_attention_mask_list.append(neg_text_attention_mask)
-                image_embeds_list.append(image_embeds[i, :])
+                x_embeds_list.append(x_embeds[i, :])
 
-                # Negative samples (text_input_ids corresponds to neg_image_embeds)
-                neg_image_embeds = image_embeds[
-                    i - 1, :] if i == batch_size - 1 else image_embeds[i +
-                                                                       1, :]
-                image_embeds_list.append(neg_image_embeds)
+                # Negative samples (text_input_ids corresponds to neg_x_embeds)
+                neg_x_embeds = x_embeds[i - 1 if i == batch_size - 1 else i +
+                                        1, :]
+                x_embeds_list.append(neg_x_embeds)
                 text_input_ids_list.append(input_ids[i, :])
                 text_attention_mask_list.append(attention_mask[i, :])
 
         # Stack all samples into two large tensors
-        image_embeds_all = torch.stack(image_embeds_list,
-                                       dim=1).reshape(-1, image_embeds.size(1),
-                                                      image_embeds.size(2))
-        text_input_ids_all = torch.stack(text_input_ids_list,
-                                         dim=1).reshape(-1, input_ids.size(1))
-        text_attention_mask_all = torch.stack(text_attention_mask_list,
-                                              dim=1).reshape(
-                                                  -1, attention_mask.size(1))
+        x_embeds_all = torch.stack(x_embeds_list, dim=1) \
+            .reshape(-1, x_embeds.size(1), x_embeds.size(2))
+        text_input_ids_all = torch.stack(text_input_ids_list, dim=1) \
+            .reshape(-1, input_ids.size(1))
+        text_attention_mask_all = torch.stack(text_attention_mask_list, dim=1) \
+            .reshape(-1, attention_mask.size(1))
         # Create image attention masks for the concatenated tensor
-        image_atts_all = torch.ones(image_embeds_all.size()[:-1],
-                                    dtype=torch.long).to(
-                                        image_embeds_all.device)
-        query_tokens_itm = self.gitformer.query_tokens.expand(
+        image_atts_all = torch.ones(x_embeds_all.size()[:-1], dtype=torch.long) \
+            .to(x_embeds_all.device)
+        query_tokens_xtm = self.gitformer.query_tokens.expand(
             text_input_ids_all.shape[0], -1, -1)
-        query_atts_itm = torch.ones(query_tokens_itm.size()[:-1],
-                                    dtype=torch.long).to(
-                                        image_embeds_all.device)
+        query_atts_xtm = torch.ones(query_tokens_xtm.size()[:-1], dtype=torch.long) \
+            .to(x_embeds_all.device)
         attention_mask_all = torch.cat(
-            [query_atts_itm, text_attention_mask_all], dim=1)
+            [query_atts_xtm, text_attention_mask_all], dim=1)
 
-        output_itm = self.gitformer.Qformer.bert(
+        output_xtm = self.gitformer.Qformer.bert(
             text_input_ids_all,
-            query_embeds=query_tokens_itm,
+            query_embeds=query_tokens_xtm,
             attention_mask=attention_mask_all,
-            encoder_hidden_states=image_embeds_all,
+            encoder_hidden_states=x_embeds_all,
             encoder_attention_mask=image_atts_all,
-            modal='image',
+            modal=modal,
             return_dict=True,
-        )
-        itm_embeddings = output_itm.last_hidden_state[:, :query_tokens_itm.
-                                                      size(1), :]
+        ).last_hidden_state
+        xtm_embeddings = output_xtm[:, :query_tokens_xtm.size(1), :]
 
-        itm_logit = self.itm_head(itm_embeddings)
-        itm_logit = itm_logit.mean(dim=1)
-        #itm_logit = self.itm_head(itm_embeddings)
+        xtm_logit = self.xtm_head[modal](xtm_embeddings).mean(dim=1)
         # Create labels: 1 for the original samples, 0 for the negative samples
         if batch_size > 1:
             labels = torch.cat(
@@ -221,16 +219,10 @@ class GITMol(torch.nn.Module):
                  torch.zeros(batch_size * 2)], dim=0)
         else:
             labels = torch.ones(batch_size)
-        labels = labels.long().to(itm_logit.device)
+        labels = labels.long().to(xtm_logit.device)
 
         # Calculate cross entropy loss
-        return F.cross_entropy(itm_logit, labels)
-
-    def _calc_gtm_loss(self, ) -> Tensor:
-        pass
-
-    def _calc_ctm_loss(self, ) -> Tensor:
-        pass
+        return F.cross_entropy(xtm_logit, labels)
 
     def _calc_itc_loss(self, ) -> Tensor:
         pass
