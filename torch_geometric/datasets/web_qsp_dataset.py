@@ -1,4 +1,5 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
+import gc
 import os
 from itertools import chain
 from typing import Any, Iterator, List, Tuple, no_type_check
@@ -191,7 +192,7 @@ class WebQSPDataset(InMemoryDataset):
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
         self._load_raw_data()
-        self.load(self.processed_paths[0] + "" * (self.limit >= 0))
+        self.load(self.processed_paths[0] + "_" * (self.limit >= 0))
 
     '''
     def _check_dependencies(self) -> None:
@@ -297,7 +298,8 @@ class WebQSPDataset(InMemoryDataset):
         self.indexer.save(self.processed_paths[-1])
 
     def _retrieve_subgraphs(self) -> None:
-        split_dataset = self.raw_dataset.select(self.split_indices[self.split])
+        split_dataset = self.raw_dataset.select(self.split_indices[self.split],
+                                                keep_in_memory=True)
         print("Encoding questions...")
         self.questions = [str(ds["question"]) for ds in split_dataset]
         q_embs = self.model.encode(self.questions, batch_size=256,
@@ -307,7 +309,7 @@ class WebQSPDataset(InMemoryDataset):
         textual_nodes = self.textual_nodes
         textual_edges = self.textual_edges
         graph_gen = get_features_for_triplets_groups(
-            self.indexer, (ds['graph'] for ds in split_dataset),
+            self.indexer, iter(ds['graph'] for ds in split_dataset),
             pre_transform=preprocess_triplet, verbose=self.verbose)
 
         for index, data_i in tqdm(enumerate(split_dataset)):
@@ -333,10 +335,12 @@ class WebQSPDataset(InMemoryDataset):
             pcst_subgraph["label"] = label
             pcst_subgraph["desc"] = desc
             list_of_graphs.append(pcst_subgraph.to("cpu"))
-        if self.limit < 0:
-            # We only save if it's a complete split
-            print("Saving subgraphs...")
-            self.save(list_of_graphs, self.processed_paths[0])
+
+        self.save(list_of_graphs,
+                  self.processed_paths[0] + "_" * (self.limit >= 0))
+        del list_of_graphs
+        torch.cuda.empty_cache()
+        gc.collect()
 
     def process(self) -> None:
         from pandas import DataFrame
@@ -366,3 +370,6 @@ class WebQSPDataset(InMemoryDataset):
             self.indexer._nodes[h] for h in self.textual_edges["dst"]
         ]
         self._retrieve_subgraphs()
+        del self.indexer
+        torch.cuda.empty_cache()
+        gc.collect()
