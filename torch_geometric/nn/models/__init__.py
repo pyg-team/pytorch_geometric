@@ -29,6 +29,7 @@ from .pmlp import PMLP
 from .neural_fingerprint import NeuralFingerprint
 from .visnet import ViSNet
 from .g_retriever import GRetriever
+from .icgnn import ICGNN
 
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
