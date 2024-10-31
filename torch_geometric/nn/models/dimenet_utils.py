@@ -1,5 +1,7 @@
 # Shameless steal from: https://github.com/klicperajo/dimenet
 
+import math
+
 import numpy as np
 import sympy as sym
 from scipy import special as sp
@@ -62,8 +64,8 @@ def bessel_basis(n, k):
 
 
 def sph_harm_prefactor(k, m):
-    return ((2 * k + 1) * np.math.factorial(k - abs(m)) /
-            (4 * np.pi * np.math.factorial(k + abs(m))))**0.5
+    return ((2 * k + 1) * math.factorial(k - abs(m)) /
+            (4 * np.pi * math.factorial(k + abs(m))))**0.5
 
 
 def associated_legendre_polynomials(k, zero_m_only=True):
