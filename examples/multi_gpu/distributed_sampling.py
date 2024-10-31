@@ -56,11 +56,14 @@ def run(rank, world_size, dataset):
 
     # Split indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
+    train_idx = train_idx.split(
+        (train_idx.size(0) + world_size - 1) // world_size)[rank]
     val_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
-    val_idx = val_idx.split(val_idx.size(0) // world_size)[rank]
+    val_idx = val_idx.split(
+        (val_idx.size(0) + world_size - 1) // world_size)[rank]
     test_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
-    test_idx = test_idx.split(test_idx.size(0) // world_size)[rank]
+    test_idx = test_idx.split(
+        (test_idx.size(0) + world_size - 1) // world_size)[rank]
 
     kwargs = dict(
         data=data,

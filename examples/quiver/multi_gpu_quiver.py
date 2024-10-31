@@ -69,7 +69,8 @@ def run(rank, world_size, dataset, quiver_feature, quiver_sampler):
 
     data = dataset[0]
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
+    train_idx = train_idx.split(
+        (train_idx.size(0) + world_size - 1) // world_size)[rank]
 
     train_loader = torch.utils.data.DataLoader(train_idx, batch_size=1024,
                                                shuffle=True, num_workers=0)

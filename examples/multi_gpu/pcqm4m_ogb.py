@@ -433,7 +433,8 @@ def run(rank, dataset, args):
         train_idx = split_idx["train"]
 
     if num_devices > 1:
-        train_idx = train_idx.split(train_idx.size(0) // num_devices)[rank]
+        train_idx = train_idx.split(
+            (train_idx.size(0) + num_devices - 1) // num_devices)[rank]
 
     if args.train_subset:
         subset_ratio = 0.1
