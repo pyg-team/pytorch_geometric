@@ -191,7 +191,7 @@ class WebQSPDataset(InMemoryDataset):
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
         self._load_raw_data()
-        self.load(self.processed_paths[0] + "" * (self.limit >= 0))
+        self.load(self.processed_paths[0] + "_" * (self.limit >= 0))
 
     '''
     def _check_dependencies(self) -> None:
@@ -222,8 +222,10 @@ class WebQSPDataset(InMemoryDataset):
             "pre_transform.pt",
             "large_graph_indexer",
         ]
-        split_file = file_lst.pop(self.raw_file_names.index(self.split))
+        split_idx = self.raw_file_names.index(self.split)
+        split_file = file_lst.pop(split_idx)
         file_lst.insert(0, split_file)
+        file_lst[-1] += f"_{self.split}"
         return file_lst
 
     def _save_raw_data(self, dataset) -> None:
@@ -323,7 +325,7 @@ class WebQSPDataset(InMemoryDataset):
             list_of_graphs.append(pcst_subgraph.to("cpu"))
         print("Saving subgraphs...")
         self.save(list_of_graphs,
-                  self.processed_paths[0] + "" * (self.limit >= 0))
+                  self.processed_paths[0] + "_" * (self.limit >= 0))
 
     def process(self) -> None:
         from pandas import DataFrame
