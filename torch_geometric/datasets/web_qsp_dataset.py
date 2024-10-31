@@ -1,4 +1,5 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
+import gc
 import os
 from itertools import chain
 from typing import Any, Iterator, List, Tuple, no_type_check
@@ -290,6 +291,10 @@ class WebQSPDataset(InMemoryDataset):
         self.questions = [str(ds["question"]) for ds in self.raw_dataset]
         q_embs = self.model.encode(self.questions, batch_size=256,
                                    output_device='cpu')
+
+        del self.model
+        gc.collect()
+        torch.cuda.empty_cache()
         list_of_graphs = []
         print("Retrieving subgraphs...")
         textual_nodes = self.textual_nodes
@@ -355,3 +360,6 @@ class WebQSPDataset(InMemoryDataset):
             self.indexer._nodes[h] for h in self.textual_edges["dst"]
         ]
         self._retrieve_subgraphs()
+
+        gc.collect()
+        torch.cuda.empty_cache()
