@@ -19,11 +19,26 @@ class GraphEncoder(torch.nn.Module):
         num_layers: int,
         in_channels: int,
         dropout: float = 0.,
+        num_atom_type: int = 120,
+        num_chirality_tag: int = 3,
+        num_bond_type: int = 6,
+        num_bond_direction: int = 3,
     ) -> None:
         super().__init__()
 
         self.num_layers = num_layers
         self.dropout = dropout
+
+        self.x_embed1 = torch.nn.Embedding(num_atom_type, in_channels)
+        self.x_embed2 = torch.nn.Embedding(num_chirality_tag, in_channels)
+        self.edge_embed1 = torch.nn.Embedding(num_bond_type, in_channels)
+        self.edge_embed2 = torch.nn.Embedding(num_bond_direction, in_channels)
+
+        torch.nn.init.xavier_uniform_(self.x_embed1.weight.data)
+        torch.nn.init.xavier_uniform_(self.x_embed2.weight.data)
+        torch.nn.init.xavier_uniform_(self.edge_embed1.weight.data)
+        torch.nn.init.xavier_uniform_(self.edge_embed2.weight.data)
+
         self.gnns = torch.nn.ModuleList()
         self.batch_norms = torch.nn.ModuleList()
         for _ in range(num_layers):
@@ -46,6 +61,9 @@ class GraphEncoder(torch.nn.Module):
         batch: Tensor,
         edge_attr: Tensor,
     ) -> Tensor:
+        x = self.x_embed1(x[:, 0].long()) + self.x_embed2(x[:, 1].long())
+        edge_attr = self.edge_embed1(edge_attr[:, 0]) + self.edge_embed2(
+            edge_attr[:, 1])
         for i, (gnn, bn) in enumerate(zip(self.gnns, self.batch_norms)):
             x = gnn(x, edge_index, edge_attr)
             x = bn(x)
@@ -98,17 +116,23 @@ class GITMol(torch.nn.Module):
         # cross-attention
         self.gitformer = GITFormer(384, 768)
 
-        self.xtm_head = {
-            'image': Linear(self.gitformer.Qformer.config.hidden_size, 2),
-            'graph': Linear(self.gitformer.Qformer.config.hidden_size, 2),
-            'cs_text': Linear(self.gitformer.Qformer.config.hidden_size, 2),
-        }
+        self.xtm_head = torch.nn.ModuleDict({
+            'image':
+            Linear(self.gitformer.Qformer.config.hidden_size, 2),
+            'graph':
+            Linear(self.gitformer.Qformer.config.hidden_size, 2),
+            'cs_text':
+            Linear(self.gitformer.Qformer.config.hidden_size, 2),
+        })
 
-        self.xtc_proj = {
-            'image': Linear(self.gitformer.Qformer.config.hidden_size, 768),
-            'graph': Linear(self.gitformer.Qformer.config.hidden_size, 768),
-            'cs_text': Linear(self.gitformer.Qformer.config.hidden_size, 768),
-        }
+        self.xtc_proj = torch.nn.ModuleDict({
+            'image':
+            Linear(self.gitformer.Qformer.config.hidden_size, 768),
+            'graph':
+            Linear(self.gitformer.Qformer.config.hidden_size, 768),
+            'cs_text':
+            Linear(self.gitformer.Qformer.config.hidden_size, 768),
+        })
         self.temp = torch.nn.Parameter(0.07 * torch.ones([]))
 
     def forward(
@@ -142,7 +166,6 @@ class GITMol(torch.nn.Module):
                                  dtype=torch.long).to(x_smiles.device)
         smiles_targets = torch.arange(batch_size).to(x_smiles.device)
 
-        x_captions = self.text_encoder.encode(captions)  # [bs, seq_len, d]
         caption_input_ids, caption_attention_masks = self.text_encoder.get_input_ids(
             captions)
 
@@ -153,9 +176,6 @@ class GITMol(torch.nn.Module):
         )
         text_feat = F.normalize(
             self.text_proj(text_output.last_hidden_state[:, 0, :]), dim=-1)
-
-        print(x_graph.size(), x_smiles.size(), x_captions.size(),
-              x_vision.size())
 
         loss = 0
         for x_embed, x_atts, x_targets, modal in zip(

@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.io import fs
+from torch_geometric.utils import add_self_loops
 
 
 def safe_index(lst: List, e: int) -> int:
@@ -170,7 +171,7 @@ class GitMolDataset(InMemoryDataset):
                 img = Image.open(
                     f'{self.raw_dir}/igcdata_toy/imgs/CID_{cid}.png').convert(
                         'RGB')
-                img = self.img_transform(img)
+                img = self.img_transform(img).unsqueeze(0)
                 # graph
                 atom_features_list = []
                 for atom in mol.GetAtoms():
@@ -229,6 +230,10 @@ class GitMolDataset(InMemoryDataset):
                     np.array(edge_features_list),
                     dtype=torch.long,
                 )
+
+                edge_index, edge_attr = add_self_loops(edge_index, edge_attr,
+                                                       fill_value=0,
+                                                       num_nodes=x.size(0))
 
                 data = Data(
                     x=x,
