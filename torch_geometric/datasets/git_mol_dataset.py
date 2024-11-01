@@ -1,5 +1,5 @@
 import sys
-from typing import Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from torch_geometric.io import fs
 from torch_geometric.utils import add_self_loops
 
 
-def safe_index(lst: List, e: int) -> int:
+def safe_index(lst: List[Any], e: int) -> int:
     return lst.index(e) if e in lst else len(lst) - 1
 
 
@@ -75,7 +75,7 @@ class GitMolDataset(InMemoryDataset):
         self.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self) -> List[str]:
+    def raw_file_names(self) -> str:
         return ['train_3500.pkl', 'valid_450.pkl', 'test_450.pkl'][self.split]
 
     @property
@@ -111,7 +111,7 @@ class GitMolDataset(InMemoryDataset):
             self.save(data_list, self.processed_paths[0])
             return
 
-        allowable_features = {
+        allowable_features: Dict[str, List[Any]] = {
             'possible_atomic_num_list':
             list(range(1, 119)) + ['misc'],
             'possible_formal_charge_list':
@@ -174,7 +174,7 @@ class GitMolDataset(InMemoryDataset):
                 img = self.img_transform(img).unsqueeze(0)
                 # graph
                 atom_features_list = []
-                for atom in mol.GetAtoms():
+                for atom in mol.GetAtoms():  # type: ignore
                     atom_feature = [
                         safe_index(
                             allowable_features['possible_atomic_num_list'],
