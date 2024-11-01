@@ -66,8 +66,6 @@ def train(
     test_loader = accelerator.prepare_data_loader(test_loader,
                                                   device_placement=True)
 
-    # import pdb
-    # pdb.set_trace()
     # Train and eval ============================================
     best_epoch = 0
     best_val_loss = float('inf')
