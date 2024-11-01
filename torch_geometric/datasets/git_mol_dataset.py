@@ -206,7 +206,7 @@ class GitMolDataset(InMemoryDataset):
 
                 edges_list = []
                 edge_features_list = []
-                for bond in mol.GetBonds():
+                for bond in mol.GetBonds():  # type: ignore
                     i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                     edge_feature = [
                         safe_index(
