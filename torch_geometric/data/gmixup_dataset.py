@@ -74,7 +74,13 @@ class GMixupDataset(Dataset):
         self.generate_graphons()
         
     def generate_graphons(self) -> None:
-        self.graphons = None
+        self.graphons = [None] * len(self)
+        
+        for i in range(len(self)):
+            data = self[i]
+            # stuff
+            self.graphons[i] = None
+            
         return None
 
     def generate_graphs(self, idx: IndexType, mixing_param: float) -> 'Dataset':
