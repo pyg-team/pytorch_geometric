@@ -2,8 +2,9 @@ import argparse
 import os
 
 import datasets
-from tqdm import tqdm
 import torch
+from tqdm import tqdm
+
 from torch_geometric.nn.nlp import TXT2KG
 
 parser = argparse.ArgumentParser()
