@@ -28,7 +28,7 @@ if os.path.exists("hotpot_kg.pt"):
     kg_maker.load_kg("hotpot_kg.pt")
 else:
     for idx in tqdm(data_idxs, desc="Building KG"):
-        data_point = raw_dataset[idx]
+        data_point = raw_dataset[int(idx)]
         q = data_point["question"]
         a = data_point["answer"]
         context_doc = ''
