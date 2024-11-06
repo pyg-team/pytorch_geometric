@@ -41,7 +41,9 @@ else:
             QA_pair=QA_pair,
         )
     kg_maker.save_kg("hotpot_kg.pt")
-print("Size of KG (number of triples) =", sum([len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()]))
+print(
+    "Size of KG (number of triples) =",
+    sum([len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()]))
 # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
 # Zacks PR: https://github.com/pyg-team/pytorch_geometric/pull/9666
 # Note: code below here will not work until the rebase is done
