@@ -183,6 +183,9 @@ except Exception as e:
                        has_value: bool = True) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
+        def copy(self) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
         def size(self, dim: int) -> int:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
@@ -216,6 +219,9 @@ except Exception as e:
             self,
             dtype: Optional[torch.dtype] = None,
         ) -> Tensor:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def to_dense(self) -> torch.Tensor:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
     class torch_sparse:  # type: ignore

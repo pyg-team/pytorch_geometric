@@ -22,14 +22,101 @@ from torch_geometric.utils import (
     add_self_loops,
     is_torch_sparse_tensor,
     remove_self_loops,
+    scatter,
     softmax,
 )
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import set_sparse_value
 
 if typing.TYPE_CHECKING:
     from typing import overload
 else:
     from torch.jit import _overload_method as overload
+
+
+@torch.jit._overload
+def gat_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, flow, dtype):
+    # type: (Tensor, Tensor, Optional[int], str, Optional[int]) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def gat_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, flow, dtype):
+    # type: (SparseTensor, Tensor, Optional[int], str, Optional[int]) -> Tuple[SparseTensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def gat_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, flow, dtype):
+    # type: (Adj, Tensor, Optional[int], str, Optional[int]) -> Tuple[Adj, Tensor]  # noqa
+    pass
+
+
+def gat_norm(  # noqa: F811
+    edge_index: Adj,
+    edge_weight: Tensor,
+    num_nodes: Optional[int] = None,
+    flow: str = "source_to_target",
+    dtype: Optional[torch.dtype] = None,
+):
+    fill_value = 1.0
+
+    if isinstance(edge_index, SparseTensor):
+        assert edge_index.size(0) == edge_index.size(1)
+
+        adj_t = edge_index
+
+        if not adj_t.has_value():
+            adj_t = adj_t.fill_value(1., dtype=dtype)
+
+        deg = torch_sparse.sum(adj_t, dim=1)
+        att_mat = edge_index.copy()
+        att_mat = att_mat.set_value(edge_weight)
+        att_mat = torch_sparse.mul(att_mat,
+                                   deg)  # unnormalized attention matrix
+
+        # Add self-loop, also called renormalization trick
+        att_mat = torch_sparse.fill_diag(att_mat, fill_value)
+        deg_tilde = deg + 1
+        deg_tilde_inv_sqrt = deg_tilde.pow_(-0.5)
+        deg_tilde_inv_sqrt.masked_fill_(deg_tilde_inv_sqrt == float('inf'), 0.)
+
+        att_mat = torch_sparse.mul(att_mat, deg_tilde_inv_sqrt.view(-1, 1))
+        att_mat = torch_sparse.mul(att_mat, deg_tilde_inv_sqrt.view(1, -1))
+
+        return adj_t, att_mat.to_dense()
+
+    if is_torch_sparse_tensor(edge_index):
+        raise NotImplementedError("Sparse CSC and COO matrices are not yet "
+                                  "supported in 'gat_norm'")
+
+    assert flow in ['source_to_target', 'target_to_source']
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+    adj_t = torch.ones((edge_index.size(1), ), dtype=dtype,
+                       device=edge_index.device)
+
+    row, col = edge_index[0], edge_index[1]
+    idx = col if flow == 'source_to_target' else row
+    deg = scatter(adj_t, idx, dim=0, dim_size=num_nodes, reduce='sum')
+    deg_expand = deg[col]
+    att_mat = (deg_expand.unsqueeze(1).mul(edge_weight)
+               )  # unnormalized attention matrix
+
+    # Add self-loop, also called renormalization trick
+    adj_t, att_mat = add_self_loops(edge_index, att_mat, fill_value=fill_value,
+                                    num_nodes=num_nodes)
+    row, col = adj_t[0], adj_t[1]
+    deg_tilde = deg + 1
+    deg_tilde_inv_sqrt = deg_tilde.pow_(-0.5)
+    deg_tilde_inv_sqrt.masked_fill_(deg_tilde_inv_sqrt == float('inf'), 0)
+    att_mat = deg_tilde_inv_sqrt[row].unsqueeze(
+        1) * att_mat * deg_tilde_inv_sqrt[col].unsqueeze(1)
+
+    return adj_t, att_mat
 
 
 class GATConv(MessagePassing):
@@ -76,6 +163,21 @@ class GATConv(MessagePassing):
     If the graph is not bipartite, :math:`\mathbf{\Theta}_{s} =
     \mathbf{\Theta}_{t}`.
 
+    Normalization will be computed as presented in `"Bag of Tricks for Node
+    Classification with Graph Neural Networks"
+     <https://arxiv.org/pdf/2103.13355>`_ paper.
+
+    .. math::
+        \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}_{att}}
+        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},
+
+    where :math:`\mathbf{\hat{A}_{att}} = A_{att} + \mathbf{I}` denotes the
+    unnormalized attention matrix :math:`\mathbf{\hat{A}_{att}}
+    = \mathbf{D}\mathbf{alpha}`
+    with inserted self-loops and :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}`
+    its diagonal degree matrix based on the adjacency matrix with inserted
+    self-loops :math:`\hat{A} = A + I`.
+
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
@@ -109,6 +211,8 @@ class GATConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         residual (bool, optional): If set to :obj:`True`, the layer will add
             a learnable skip-connection. (default: :obj:`False`)
+        normalize (bool, optional): If set to :obj:`True`, will add
+            self-loops to the input graph. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -140,10 +244,14 @@ class GATConv(MessagePassing):
         fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
         residual: bool = False,
+        normalize: bool = False,
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(node_dim=0, **kwargs)
+
+        if normalize:
+            add_self_loops = False
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -155,6 +263,7 @@ class GATConv(MessagePassing):
         self.edge_dim = edge_dim
         self.fill_value = fill_value
         self.residual = residual
+        self.normalize = normalize
 
         # In case we are operating in bipartite graphs, we apply separate
         # transformations 'lin_src' and 'lin_dst' to source and target nodes:
@@ -358,9 +467,19 @@ class GATConv(MessagePassing):
                         "simultaneously is currently not yet supported for "
                         "'edge_index' in a 'SparseTensor' form")
 
+        if self.normalize:
+            if isinstance(edge_index, Tensor):
+                edge_index, edge_attr = remove_self_loops(
+                    edge_index, edge_attr)
+            elif isinstance(edge_index, SparseTensor):
+                edge_index = torch_sparse.fill_diag(edge_index, 0.0)
+
         # edge_updater_type: (alpha: OptPairTensor, edge_attr: OptTensor)
         alpha = self.edge_updater(edge_index, alpha=alpha, edge_attr=edge_attr,
                                   size=size)
+
+        if self.normalize:
+            edge_index, alpha = gat_norm(edge_index, alpha)  # yapf: disable
 
         # propagate_type: (x: OptPairTensor, alpha: Tensor)
         out = self.propagate(edge_index, x=x, alpha=alpha, size=size)

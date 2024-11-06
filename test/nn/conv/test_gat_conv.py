@@ -155,6 +155,23 @@ def test_gat_conv(residual):
             assert torch.allclose(jit((x1, x2), adj2.t()), out1, atol=1e-6)
             assert torch.allclose(jit((x1, None), adj2.t()), out2, atol=1e-6)
 
+    # Test GAT normalization:
+    x1 = torch.randn(4, 8)
+    x2 = torch.randn(2, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+
+    conv = GATConv(8, 32, heads=2, residual=residual, normalize=True)
+    assert str(conv) == 'GATConv(8, 32, heads=2)'
+    out = conv(x1, edge_index)
+    assert out.size() == (4, 64)
+    assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out)
+    # assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
+
 
 def test_gat_conv_with_edge_attr():
     x = torch.randn(4, 8)
