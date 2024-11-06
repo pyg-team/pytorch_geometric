@@ -9,7 +9,7 @@ from torch_geometric.nn.nlp import TXT2KG
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--NV_NIM_KEY', type=str, required=True)
-parser.add_argument('--percent_data', type=int, default=10)
+parser.add_argument('--percent_data', type=float, default=10.0)
 args = parser.parse_args()
 assert args.percent_data <= 100 and args.percent_data > 0
 kg_maker = TXT2KG(
@@ -22,9 +22,7 @@ raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
                                     trust_remote_code=True)["train"]
 # Build KG
 num_data_pts = len(raw_dataset)
-data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
-                                               float(args.percent_data) /
-                                               100.0)]
+data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts * args.percent_data / 100.0)]
 if os.path.exists("hotpot_kg.pt"):
     kg_maker.load_kg("hotpot_kg.pt")
 else:
