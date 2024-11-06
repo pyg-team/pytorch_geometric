@@ -9,7 +9,7 @@ from torch_geometric.nn.nlp import TXT2KG
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--NV_NIM_KEY', type=str, required=True)
-parser.add_argument('--percent_data', type=float, default=10.0)
+parser.add_argument('--percent_data', type=float, default=1.0)
 args = parser.parse_args()
 assert args.percent_data <= 100 and args.percent_data > 0
 kg_maker = TXT2KG(
