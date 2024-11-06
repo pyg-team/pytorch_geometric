@@ -72,7 +72,7 @@ class TXT2KG():
         ]
         if QA_pair:
             # QA_pairs should be unique keys
-            assert QA_pair not in self.relevant_docs_per_q_a_pair.keys()
+            assert QA_pair not in self.relevant_triples.keys()
             key = QA_pair
         else:
             key = self.doc_id_counter
