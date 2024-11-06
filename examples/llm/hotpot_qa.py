@@ -17,7 +17,7 @@ kg_maker = TXT2KG(
 )
 
 # Use training set for simplicity since our retrieval method is nonparametric
-raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki')["train"]
+raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki', trust_remote_code=True)["train"]
 # Build KG
 num_data_pts = len(raw_dataset)
 data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
