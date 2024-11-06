@@ -5,6 +5,9 @@ srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> \
 --container-name=cont --container-image=<image_url> \
 --container-mounts=/ogb-papers100m/:/workspace/dataset
 python3 path_to_script.py
+
+This example is for learning purposes only.
+NVIDIA recommends using the examples in examples/distributed/NVIDIA-RAPIDS for performance and scalability.
 """
 import os
 import time

@@ -1,3 +1,8 @@
+"""Single-node, multi-GPU example on mag240m.
+
+This example is for learning purposes only.
+NVIDIA recommends using the examples in examples/distributed/NVIDIA-RAPIDS for performance and scalability.
+"""
 import argparse
 import os
 

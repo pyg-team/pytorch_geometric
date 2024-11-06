@@ -1,3 +1,8 @@
+"""Multi-node, multi-GPU example on reddit.
+
+This example is for learning purposes only.
+NVIDIA recommends using the examples in examples/distributed/NVIDIA-RAPIDS for performance and scalability.
+"""
 import copy
 import os
 

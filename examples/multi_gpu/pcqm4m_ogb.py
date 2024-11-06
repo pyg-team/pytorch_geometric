@@ -1,5 +1,7 @@
 # Code adapted from OGB.
 # https://github.com/snap-stanford/ogb/tree/master/examples/lsc/pcqm4m-v2
+# This example is for learning purposes only.
+# NVIDIA recommends using the examples in examples/distributed/NVIDIA-RAPIDS for performance and scalability.
 import argparse
 import os
 

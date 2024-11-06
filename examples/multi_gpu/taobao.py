@@ -1,5 +1,7 @@
 # An Multi GPU implementation of unsupervised bipartite GraphSAGE
-# using the Alibaba Taobao dataset.
+# using the Alibaba Taobao dataset
+# This example is for learning purposes only.
+# NVIDIA recommends using the examples in examples/distributed/NVIDIA-RAPIDS for performance and scalability.
 import argparse
 import os
 import os.path as osp
