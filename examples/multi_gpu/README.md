@@ -1,6 +1,7 @@
 # Examples for Distributed Training
 
 ## Examples with NVIDIA GPUs
+
 MultiGPU examples here are for learning purposes only. NVIDIA recommends using the examples in [`distributed/NVIDIA-RAPIDS`](../distributed/NVIDIA-RAPIDS/) for performance and scalability.
 
 | Example                                                                            | Scalability | Description                                                                                                                                                                                                                                                                                     |

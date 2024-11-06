@@ -1,5 +1,4 @@
-"""
-This example is for learning purposes only.
+"""This example is for learning purposes only.
 NVIDIA recommends using the examples in examples/distributed/NVIDIA-RAPIDS for performance and scalability.
 """
 import os
