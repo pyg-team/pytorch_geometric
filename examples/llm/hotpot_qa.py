@@ -3,7 +3,7 @@ import os
 
 import datasets
 from tqdm import tqdm
-
+import torch
 from torch_geometric.nn.nlp import TXT2KG
 
 parser = argparse.ArgumentParser()
