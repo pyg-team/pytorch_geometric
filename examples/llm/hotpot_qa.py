@@ -22,7 +22,8 @@ raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
                                     trust_remote_code=True)["train"]
 # Build KG
 num_data_pts = len(raw_dataset)
-data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts * args.percent_data / 100.0)]
+data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
+                                               args.percent_data / 100.0)]
 if os.path.exists("hotpot_kg.pt"):
     kg_maker.load_kg("hotpot_kg.pt")
 else:
