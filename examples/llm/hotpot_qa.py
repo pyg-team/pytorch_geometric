@@ -76,7 +76,7 @@ if __name__ == '__main__':
             "batch_size": min(len(data_idxs), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=SentenceTransformerFeatureStore).load()
-    # (TODO) change apply retrieval_via_pcst to work w/ general dataset
+    # (TODO) change apply retrieval_via_pcst to work w/ general dataset (essentially torch_geometric.nn.nlp.rag)
     # from g_retriever_utils.rag_generate import apply_retrieval_via_pcst
     # query_loader = RAGQueryLoader(data=(fs, gs),
     #                               seed_nodes_kwargs={"k_nodes": 5},
