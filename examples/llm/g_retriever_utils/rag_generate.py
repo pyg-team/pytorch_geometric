@@ -21,7 +21,6 @@ from torch_geometric.datasets.web_qsp_dataset import (
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
 
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
         model_name='sentence-transformers/all-roberta-large-v1').to(device)
