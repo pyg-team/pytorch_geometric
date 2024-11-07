@@ -47,7 +47,7 @@ class TXT2KG():
         if self.local_small_lm:
             out_str = self.model.inference(
                 question=[txt + '\n' + self.system_prompt],
-                max_tokens=self.chunk_size * 2)
+                max_tokens=self.chunk_size)[0]
         else:
             completion = self.client.chat.completions.create(
                 model=self.model, messages=[{
