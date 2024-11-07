@@ -2,7 +2,7 @@
 import os
 
 import torch.distributed as dist
-import torch.multiprocessing as mp
+import multiprocessing as mp
 
 _LOCAL_PROCESS_GROUP = None
 _LOCAL_ROOT_GLOBAL_RANK = None
@@ -125,7 +125,7 @@ def to_shmem(dataset):
     if dist.get_rank() == local_root:
         # each non-root process should have a dedicated pickle.dumps()
         handles = [None] + [
-            bytes(mp.reductions.ForkingPickler.dumps(dataset))
+            bytes(mp.reduction.ForkingPickler.dumps(dataset))
             for _ in range(dist.get_world_size(group=local_group) - 1)
         ]
     else:
@@ -134,7 +134,7 @@ def to_shmem(dataset):
     handle = handles[dist.get_rank(group=local_group)]
     if dist.get_rank() != local_root:
         # only non-root process performs pickle.loads()
-        dataset = mp.reductions.ForkingPickler.loads(handle)
+        dataset = mp.reduction.ForkingPickler.loads(handle)
     dist.barrier(
         group=local_group
     )  # necessary to prevent unexpected close of any procs beyond this function
