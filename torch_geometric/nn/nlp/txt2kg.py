@@ -19,7 +19,7 @@ class TXT2KG():
         chunk_size: int = 512,
     ) -> None:
         self.local_LM = local_LM
-        if self.local_small_lm:
+        if self.local_LM:
             from torch_geometric.nn.nlp import LLM
             if LM_name == '':
                 LM_name = "meta-llama/Meta-Llama-3-8B"
@@ -46,7 +46,7 @@ class TXT2KG():
 
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
-        if self.local_small_lm:
+        if self.local_LM:
             out_str = self.model.inference(
                 question=[txt + '\n' + self.system_prompt],
                 max_tokens=self.chunk_size)[0]
