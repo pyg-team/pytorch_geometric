@@ -6,9 +6,9 @@ from typing import Tuple
 import pandas as pd
 import torch
 import tqdm
-from rag_backend_utils import create_remote_backend_from_triplets
-from rag_feature_store import SentenceTransformerFeatureStore
-from rag_graph_store import NeighborSamplingRAGGraphStore
+from g_retriever_utils.rag_backend_utils import create_remote_backend_from_triplets
+from g_retriever_utils.rag_feature_store import SentenceTransformerFeatureStore
+from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import WebQSPDataset
