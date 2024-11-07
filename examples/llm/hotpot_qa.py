@@ -9,14 +9,21 @@ from torch_geometric.nn.nlp import TXT2KG
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--NV_NIM_KEY', type=str, required=True)
+    parser.add_argument('--NV_NIM_KEY', type=str, default="")
+    parser.add_argument('--local_small_lm', action="store_true")
     parser.add_argument('--percent_data', type=float, default=1.0)
     args = parser.parse_args()
     assert args.percent_data <= 100 and args.percent_data > 0
-    kg_maker = TXT2KG(
-        NVIDIA_API_KEY=args.NV_NIM_KEY,
-        chunk_size=512,
-    )
+    if args.local_small_lm:
+        kg_maker = TXT2KG(
+            local_small_lm=True,
+            chunk_size=512,
+        )
+    else:
+        kg_maker = TXT2KG(
+            NVIDIA_API_KEY=args.NV_NIM_KEY,
+            chunk_size=512,
+        )
 
     # Use training set for simplicity since our retrieval method is nonparametric
     raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
