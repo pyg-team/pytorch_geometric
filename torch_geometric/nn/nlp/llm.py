@@ -20,7 +20,7 @@ PAD_TOKEN_ID = 0
 PADDING_SIDE = 'left'
 
 
-def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
+def get_llm_kwargs(required_memory: float, dtype=torch.dtype) -> Dict[str, Any]:
     torch.cuda.empty_cache()
 
     gpu_memory: List[int] = []
@@ -61,7 +61,7 @@ class LLM(torch.nn.Module):
     def __init__(
         self,
         model_name: str,
-        num_params: int,
+        num_params: float,
         dtype=torch.bfloat16,
     ) -> None:
         super().__init__()

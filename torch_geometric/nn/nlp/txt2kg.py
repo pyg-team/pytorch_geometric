@@ -9,20 +9,27 @@ class TXT2KG():
     nvidia/llama-3.1-nemotron-70b-instruct is on par or better than GPT4o
     in benchmarks. We need a high quality model to ensure high quality KG.
     Otherwise garbage in garbage out.
+    Use local_small_lm flag for debugging.
     """
     def __init__(
         self,
-        NVIDIA_API_KEY,
-        chunk_size=512,
+        NVIDIA_API_KEY: Optional[str] = '',
+        local_small_lm: bool = False,
+        chunk_size: int = 512,
     ) -> None:
-        # We use NIMs since most PyG users may not be able to run a 70B+ model
-        from openai import OpenAI
-
-        self.client = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
-                             api_key=NVIDIA_API_KEY)
+        self.local_small_lm = local_small_lm
+        if self.local_small_lm:
+            from torch_geometric.nn.nlp import LLM
+            self.model = LLM("HuggingFaceTB/SmolLM2-1.7B-Instruct", num_params=2)
+        else:
+            # We use NIMs since most PyG users may not be able to run a 70B+ model
+            assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
+            from openai import OpenAI
+            self.client = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
+                                 api_key=NVIDIA_API_KEY)
+            self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
         self.chunk_size = 512
         self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
-        self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
         # useful for approximating recall of subgraph retrieval algos
         self.doc_id_counter = 0
         self.relevant_triples = {}
@@ -35,17 +42,20 @@ class TXT2KG():
 
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
-        completion = self.client.chat.completions.create(
-            model=self.model, messages=[{
-                "role":
-                "user",
-                "content":
-                txt + '\n' + self.system_prompt
-            }], temperature=0, top_p=1, max_tokens=1024, stream=True)
-        out_str = ""
-        for chunk in completion:
-            if chunk.choices[0].delta.content is not None:
-                out_str += chunk.choices[0].delta.content
+        if self.local_small_lm:
+            out_str = self.model.inference(question=[txt + '\n' + self.system_prompt], max_tokens=self.chunk_size*2)
+        else:
+            completion = self.client.chat.completions.create(
+                model=self.model, messages=[{
+                    "role":
+                    "user",
+                    "content":
+                    txt + '\n' + self.system_prompt
+                }], temperature=0, top_p=1, max_tokens=1024, stream=True)
+            out_str = ""
+            for chunk in completion:
+                if chunk.choices[0].delta.content is not None:
+                    out_str += chunk.choices[0].delta.content
         return out_str
 
     def parse_n_check_triples(self,
@@ -57,7 +67,7 @@ class TXT2KG():
                 potential_trip = eval(triple_str)
             except:  # noqa
                 continue
-            if 'tuple' in str(type(potential_trip)):
+            if 'tuple' in str(type(potential_trip)) and len(potential_trip) == 3:
                 processed.append(potential_trip)
         return processed
 
