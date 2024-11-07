@@ -48,9 +48,7 @@ if __name__ == '__main__':
         sum([
             len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()
         ]))
-    # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
-    # Zacks PR: https://github.com/pyg-team/pytorch_geometric/pull/9666
-    # Note: code below here will not work until the rebase is done
+    # (TODO) move g_retriever_utils to torch_geometric.utils.rag
     # from itertools import chain
 
     # from g_retriever_utils.rag_backend_utils import (
@@ -76,7 +74,6 @@ if __name__ == '__main__':
     #         "batch_size": min(len(data_idxs), 256)
     #     }, graph_db=NeighborSamplingRAGGraphStore,
     #     feature_db=SentenceTransformerFeatureStore).load()
-    # (TODO) change apply retrieval_via_pcst to work w/ general dataset (essentially torch_geometric.nn.nlp.rag)
     # from g_retriever_utils.rag_generate import apply_retrieval_via_pcst
     # query_loader = RAGQueryLoader(data=(fs, gs),
     #                               seed_nodes_kwargs={"k_nodes": 5},
