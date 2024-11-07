@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--percent_data', type=float, default=1.0)
     args = parser.parse_args()
     assert args.percent_data <= 100 and args.percent_data > 0
-    if args.local_small_lm:
+    if args.local_lm:
         kg_maker = TXT2KG(
             local_LM=True,
             chunk_size=512,
