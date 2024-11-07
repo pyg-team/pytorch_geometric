@@ -51,31 +51,31 @@ if __name__ == '__main__':
     # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
     # Zacks PR: https://github.com/pyg-team/pytorch_geometric/pull/9666
     # Note: code below here will not work until the rebase is done
-    from itertools import chain
+    # from itertools import chain
 
-    from g_retriever_utils.rag_backend_utils import (
-        create_remote_backend_from_triplets,
-    )
-    from g_retriever_utils.rag_feature_store import (
-        SentenceTransformerFeatureStore,
-    )
-    from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore
+    # from g_retriever_utils.rag_backend_utils import (
+    #     create_remote_backend_from_triplets,
+    # )
+    # from g_retriever_utils.rag_feature_store import (
+    #     SentenceTransformerFeatureStore,
+    # )
+    # from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore
 
-    from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
-    from torch_geometric.nn.nlp import SentenceTransformer
+    # from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
+    # from torch_geometric.nn.nlp import SentenceTransformer
 
-    triples = chain.from_iterable(
-        triple_set for triple_set in kg_maker.relevant_triples.values())
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = SentenceTransformer(
-        model_name='sentence-transformers/all-roberta-large-v1').to(device)
-    fs, gs = create_remote_backend_from_triplets(
-        triplets=triples, node_embedding_model=model,
-        node_method_to_call="encode", path="backend",
-        pre_transform=preprocess_triplet, node_method_kwargs={
-            "batch_size": min(len(data_idxs), 256)
-        }, graph_db=NeighborSamplingRAGGraphStore,
-        feature_db=SentenceTransformerFeatureStore).load()
+    # triples = chain.from_iterable(
+    #     triple_set for triple_set in kg_maker.relevant_triples.values())
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # model = SentenceTransformer(
+    #     model_name='sentence-transformers/all-roberta-large-v1').to(device)
+    # fs, gs = create_remote_backend_from_triplets(
+    #     triplets=triples, node_embedding_model=model,
+    #     node_method_to_call="encode", path="backend",
+    #     pre_transform=preprocess_triplet, node_method_kwargs={
+    #         "batch_size": min(len(data_idxs), 256)
+    #     }, graph_db=NeighborSamplingRAGGraphStore,
+    #     feature_db=SentenceTransformerFeatureStore).load()
     # (TODO) change apply retrieval_via_pcst to work w/ general dataset (essentially torch_geometric.nn.nlp.rag)
     # from g_retriever_utils.rag_generate import apply_retrieval_via_pcst
     # query_loader = RAGQueryLoader(data=(fs, gs),
