@@ -23,7 +23,7 @@ class TXT2KG():
             from torch_geometric.nn.nlp import LLM
             if LM_name == '':
                 LM_name = "meta-llama/Llama-3.1-8B"
-            self.model = LLM(LM_name, num_params=2)
+            self.model = LLM(LM_name, num_params=2).eval()
         else:
             # We use NIMs since most PyG users may not be able to run a 70B+ model
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
