@@ -59,6 +59,7 @@ if __name__ == '__main__':
     #     preprocess_triplet,
     #     retrieval_via_pcst,
     # )
+    # from itertools import chain
     # from torch_geometric.loader import RAGQueryLoader
     # from torch_geometric.nn.nlp import SentenceTransformer
 
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     # model = SentenceTransformer(
     #     model_name='sentence-transformers/all-roberta-large-v1').to(device)
     # fs, gs = create_remote_backend_from_triplets(
-    #     triplets=triplets, node_embedding_model=model,
+    #     triplets=triples, node_embedding_model=model,
     #     node_method_to_call="encode", path="backend",
     #     pre_transform=preprocess_triplet, node_method_kwargs={
     #         "batch_size": 256
