@@ -1,8 +1,8 @@
 """Utilities for launching distributed GNN tasks."""
+import multiprocessing as mp
 import os
 
 import torch.distributed as dist
-import multiprocessing as mp
 
 _LOCAL_PROCESS_GROUP = None
 _LOCAL_ROOT_GLOBAL_RANK = None
