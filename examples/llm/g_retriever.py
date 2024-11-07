@@ -8,6 +8,7 @@ Requirements:
 `pip install datasets transformers pcst_fast sentencepiece accelerate`
 """
 import argparse
+import gc
 import math
 import os.path as osp
 import re
@@ -142,6 +143,9 @@ def train(
     test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
+    # To clean up after Data Preproc
+    gc.collect()
+    torch.cuda.empty_cache()
     gnn = GAT(
         in_channels=1024,
         hidden_channels=hidden_channels,
