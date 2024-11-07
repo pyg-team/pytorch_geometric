@@ -14,16 +14,16 @@ class TXT2KG():
     def __init__(
         self,
         NVIDIA_API_KEY: Optional[str] = '',
-        local_lm: bool = False,
-        lm_name: Optional[str] = ''
+        local_LM: bool = False,
+        LM_name: Optional[str] = ''
         chunk_size: int = 512,
     ) -> None:
-        self.local_small_lm = local_small_lm
+        self.local_LM = local_LM
         if self.local_small_lm:
             from torch_geometric.nn.nlp import LLM
-            if lm_name == '':
-                lm_name = "meta-llama/Meta-Llama-3-8B"
-            self.model = LLM(lm_name, num_params=2)
+            if LM_name == '':
+                LM_name = "meta-llama/Meta-Llama-3-8B"
+            self.model = LLM(LM_name, num_params=2)
         else:
             # We use NIMs since most PyG users may not be able to run a 70B+ model
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
