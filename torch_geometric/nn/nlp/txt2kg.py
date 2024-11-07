@@ -22,7 +22,7 @@ class TXT2KG():
         if self.local_LM:
             from torch_geometric.nn.nlp import LLM
             if LM_name == '':
-                LM_name = "meta-llama/Meta-Llama-3-8B"
+                LM_name = "meta-llama/Llama-3.1-8B"
             self.model = LLM(LM_name, num_params=2)
         else:
             # We use NIMs since most PyG users may not be able to run a 70B+ model
