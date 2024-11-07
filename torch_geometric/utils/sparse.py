@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric.index import index2ptr, ptr2index
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce, cumsum
 
@@ -197,15 +198,23 @@ def to_torch_coo_tensor(
         # edge_attr = edge_attr.expand(edge_index.size(1))
         edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
 
-    adj = torch.sparse_coo_tensor(
+    if not torch_geometric.typing.WITH_PT21:
+        adj = torch.sparse_coo_tensor(
+            indices=edge_index,
+            values=edge_attr,
+            size=tuple(size) + edge_attr.size()[1:],
+            device=edge_index.device,
+        )
+        adj = adj._coalesced_(True)
+        return adj
+
+    return torch.sparse_coo_tensor(
         indices=edge_index,
         values=edge_attr,
         size=tuple(size) + edge_attr.size()[1:],
         device=edge_index.device,
+        is_coalesced=True,
     )
-    adj = adj._coalesced_(True)
-
-    return adj
 
 
 def to_torch_csr_tensor(
@@ -483,19 +492,6 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
     raise ValueError(f"Unexpected sparse tensor layout (got '{adj.layout}')")
 
 
-def ptr2index(ptr: Tensor, output_size: Optional[int] = None) -> Tensor:
-    index = torch.arange(ptr.numel() - 1, dtype=ptr.dtype, device=ptr.device)
-    return index.repeat_interleave(ptr.diff(), output_size=output_size)
-
-
-def index2ptr(index: Tensor, size: Optional[int] = None) -> Tensor:
-    if size is None:
-        size = int(index.max()) + 1 if index.numel() > 0 else 0
-
-    return torch._convert_indices_from_coo_to_csr(
-        index, size, out_int32=index.dtype == torch.int32)
-
-
 def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
     assert dim in {0, 1, (0, 1)}
     assert tensors[0].layout == torch.sparse_coo
@@ -543,17 +539,24 @@ def cat_coo(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
             if not tensor.is_coalesced():
                 is_coalesced = False
 
-    out = torch.sparse_coo_tensor(
+    if not torch_geometric.typing.WITH_PT21:
+        out = torch.sparse_coo_tensor(
+            indices=torch.cat(indices, dim=-1),
+            values=torch.cat(values),
+            size=(num_rows, num_cols) + values[-1].size()[1:],
+            device=tensor.device,
+        )
+        if is_coalesced:
+            out = out._coalesced_(True)
+        return out
+
+    return torch.sparse_coo_tensor(
         indices=torch.cat(indices, dim=-1),
         values=torch.cat(values),
         size=(num_rows, num_cols) + values[-1].size()[1:],
         device=tensor.device,
+        is_coalesced=True if is_coalesced else None,
     )
-
-    if is_coalesced:
-        out = out._coalesced_(True)
-
-    return out
 
 
 def cat_csr(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:

@@ -2,7 +2,7 @@ import copy
 import math
 import sys
 import warnings
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Literal, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -168,7 +168,7 @@ class NeighborSampler(BaseSampler):
             attrs = [attr for attr in feature_store.get_all_tensor_attrs()]
 
             edge_attrs = graph_store.get_all_edge_attrs()
-            self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
+            self.edge_types = list({attr.edge_type for attr in edge_attrs})
 
             if weight_attr is not None:
                 raise NotImplementedError(
@@ -593,7 +593,7 @@ def edge_sample(
                 src_node_time = node_time
 
             src_neg = neg_sample(src, neg_sampling, num_src_nodes, src_time,
-                                 src_node_time)
+                                 src_node_time, endpoint='src')
             src = torch.cat([src, src_neg], dim=0)
 
             if isinstance(node_time, dict):
@@ -602,7 +602,7 @@ def edge_sample(
                 dst_node_time = node_time
 
             dst_neg = neg_sample(dst, neg_sampling, num_dst_nodes, dst_time,
-                                 dst_node_time)
+                                 dst_node_time, endpoint='dst')
             dst = torch.cat([dst, dst_neg], dim=0)
 
             if edge_label is None:
@@ -623,7 +623,7 @@ def edge_sample(
                 dst_node_time = node_time
 
             dst_neg = neg_sample(dst, neg_sampling, num_dst_nodes, dst_time,
-                                 dst_node_time)
+                                 dst_node_time, endpoint='dst')
             dst = torch.cat([dst, dst_neg], dim=0)
 
             assert edge_label is None
@@ -631,7 +631,7 @@ def edge_sample(
             if edge_label_time is not None:
                 dst_time = edge_label_time.repeat(1 + neg_sampling.amount)
 
-    # Heterogeneus Neighborhood Sampling ######################################
+    # Heterogeneous Neighborhood Sampling #####################################
 
     if input_type is not None:
         seed_time_dict = None
@@ -724,7 +724,7 @@ def edge_sample(
                 src_time,
             )
 
-    # Homogeneus Neighborhood Sampling ########################################
+    # Homogeneous Neighborhood Sampling #######################################
 
     else:
 
@@ -781,12 +781,13 @@ def neg_sample(
     num_nodes: int,
     seed_time: Optional[Tensor],
     node_time: Optional[Tensor],
+    endpoint: Literal['str', 'dst'],
 ) -> Tensor:
     num_neg = math.ceil(seed.numel() * neg_sampling.amount)
 
     # TODO: Do not sample false negatives.
     if node_time is None:
-        return neg_sampling.sample(num_neg, num_nodes)
+        return neg_sampling.sample(num_neg, endpoint, num_nodes)
 
     # If we are in a temporal-sampling scenario, we need to respect the
     # timestamp of the given nodes we can use as negative examples.
@@ -800,7 +801,7 @@ def neg_sample(
     num_samples = math.ceil(neg_sampling.amount)
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)
 
-    out = neg_sampling.sample(num_samples * seed.numel(), num_nodes)
+    out = neg_sampling.sample(num_samples * seed.numel(), endpoint, num_nodes)
     out = out.view(num_samples, seed.numel())
     mask = node_time[out] > seed_time  # holds all invalid samples.
     neg_sampling_complete = False
@@ -811,7 +812,7 @@ def neg_sample(
             break
 
         # Greedily search for alternative negatives.
-        out[mask] = tmp = neg_sampling.sample(num_invalid, num_nodes)
+        out[mask] = tmp = neg_sampling.sample(num_invalid, endpoint, num_nodes)
         mask[mask.clone()] = node_time[tmp] >= seed_time[mask]
 
     if not neg_sampling_complete:  # pragma: no cover

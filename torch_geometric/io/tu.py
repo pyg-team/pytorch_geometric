@@ -1,7 +1,6 @@
 import os.path as osp
 from typing import Dict, List, Optional, Tuple
 
-import numpy as np
 import torch
 from torch import Tensor
 
@@ -108,11 +107,11 @@ def cat(seq: List[Optional[Tensor]]) -> Optional[Tensor]:
 
 
 def split(data: Data, batch: Tensor) -> Tuple[Data, Dict[str, Tensor]]:
-    node_slice = cumsum(torch.from_numpy(np.bincount(batch)))
+    node_slice = cumsum(torch.bincount(batch))
 
     assert data.edge_index is not None
     row, _ = data.edge_index
-    edge_slice = cumsum(torch.from_numpy(np.bincount(batch[row])))
+    edge_slice = cumsum(torch.bincount(batch[row]))
 
     # Edge indices should start at zero for every graph.
     data.edge_index -= node_slice[batch[row]].unsqueeze(0)

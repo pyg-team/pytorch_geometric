@@ -3,7 +3,7 @@ from typing import Any, Type, TypeVar
 
 from torch import Tensor
 
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage
 from torch_geometric.typing import SparseTensor, TensorFrame
@@ -75,6 +75,11 @@ def _separate(
         start, end = int(slices[idx]), int(slices[idx + 1])
         value = narrow(values, cat_dim or 0, start, end - start)
         value = value.squeeze(0) if cat_dim is None else value
+
+        if isinstance(values, Index) and values._cat_metadata is not None:
+            # Reconstruct original `Index` metadata:
+            value._dim_size = values._cat_metadata.dim_size[idx]
+            value._is_sorted = values._cat_metadata.is_sorted[idx]
 
         if isinstance(values, EdgeIndex) and values._cat_metadata is not None:
             # Reconstruct original `EdgeIndex` metadata:

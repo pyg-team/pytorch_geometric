@@ -56,7 +56,8 @@ def get_dataset() -> Callable:
 
     yield functools.partial(load_dataset, root)
 
-    fs.rm(root)
+    if fs.exists(root):
+        fs.rm(root)
 
 
 @pytest.fixture

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict, List, Tuple
 
 from torch_geometric.config_store import (
     class_from_dataclass,
@@ -6,10 +6,11 @@ from torch_geometric.config_store import (
     dataclass_from_class,
     fill_config_store,
     get_config_store,
+    map_annotation,
     register,
     to_dataclass,
 )
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import minPython, withPackage
 from torch_geometric.transforms import AddSelfLoops
 
 
@@ -42,6 +43,21 @@ def test_to_dataclass():
     assert str(cfg) == ("AddSelfLoops(attr='edge_weight', fill_value=1.0, "
                         "_target_='torch_geometric.transforms.add_self_loops."
                         "AddSelfLoops')")
+
+
+@minPython('3.10')
+def test_map_annotation():
+    mapping = {int: Any}
+    assert map_annotation(dict[str, int], mapping) == dict[str, Any]
+    assert map_annotation(Dict[str, float], mapping) == Dict[str, float]
+    assert map_annotation(List[str], mapping) == List[str]
+    assert map_annotation(List[int], mapping) == List[Any]
+    assert map_annotation(Tuple[int], mapping) == Tuple[Any]
+    assert map_annotation(dict[str, int], mapping) == dict[str, Any]
+    assert map_annotation(dict[str, float], mapping) == dict[str, float]
+    assert map_annotation(list[str], mapping) == list[str]
+    assert map_annotation(list[int], mapping) == list[Any]
+    assert map_annotation(tuple[int], mapping) == tuple[Any]
 
 
 def test_register():

@@ -370,18 +370,20 @@ class BaseStorage(MutableMapping):
         self,
         start_time: Union[float, int],
         end_time: Union[float, int],
+        attr: str = 'time',
     ) -> Self:
-        if 'time' in self:
-            mask = (self.time >= start_time) & (self.time <= end_time)
+        if attr in self:
+            time = self[attr]
+            mask = (time >= start_time) & (time <= end_time)
 
-            if self.is_node_attr('time'):
+            if self.is_node_attr(attr):
                 keys = self.node_attrs()
-            elif self.is_edge_attr('time'):
+            elif self.is_edge_attr(attr):
                 keys = self.edge_attrs()
 
             self._select(keys, mask)
 
-            if self.is_node_attr('time') and 'num_nodes' in self:
+            if self.is_node_attr(attr) and 'num_nodes' in self:
                 self.num_nodes: Optional[int] = int(mask.sum())
 
         return self

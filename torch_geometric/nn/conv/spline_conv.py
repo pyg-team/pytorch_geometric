@@ -5,17 +5,17 @@ import torch
 from torch import Tensor, nn
 from torch.nn import Parameter
 
+import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils.repeat import repeat
 
-try:
+if torch_geometric.typing.WITH_TORCH_SPLINE_CONV:
     from torch_spline_conv import spline_basis, spline_weighting
-except (ImportError, OSError):  # Fail gracefully on GLIBC errors
-    spline_basis = None
-    spline_weighting = None
+else:
+    spline_basis = spline_weighting = None
 
 
 class SplineConv(MessagePassing):

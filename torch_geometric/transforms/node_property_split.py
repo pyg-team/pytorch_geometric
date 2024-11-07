@@ -44,7 +44,6 @@ class NodePropertySplit(BaseTransform):
             of the node property, so that nodes with greater values of the
             property are considered to be OOD (default: :obj:`True`)
 
-    Example:
     .. code-block:: python
 
         from torch_geometric.transforms import NodePropertySplit
@@ -54,7 +53,7 @@ class NodePropertySplit(BaseTransform):
 
         property_name = 'popularity'
         ratios = [0.3, 0.1, 0.1, 0.3, 0.2]
-        tranaform = NodePropertySplit(property_name, ratios)
+        transform = NodePropertySplit(property_name, ratios)
 
         data = transform(data)
     """

@@ -78,8 +78,8 @@ class LinkPredMetric(BaseMetric):
         ) + 1
         arange = torch.arange(
             start=0,
-            end=max_index * pred_index_mat.size(0),
-            step=max_index,
+            end=max_index * pred_index_mat.size(0),  # type: ignore
+            step=max_index,  # type: ignore
             device=pred_index_mat.device,
         ).view(-1, 1)
         flat_pred_index = (pred_index_mat + arange).view(-1)
@@ -216,3 +216,20 @@ class LinkPredNDCG(LinkPredMetric):
         out = dcg / idcg
         out[out.isnan() | out.isinf()] = 0.0
         return out
+
+
+class LinkPredMRR(LinkPredMetric):
+    r"""A link prediction metric to compute the MRR @ :math:`k` (Mean
+    Reciprocal Rank).
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    higher_is_better: bool = True
+
+    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+        rank = pred_isin_mat.type(torch.uint8).argmax(dim=-1)
+        is_correct = pred_isin_mat.gather(1, rank.view(-1, 1)).view(-1)
+        reciprocals = 1.0 / (rank + 1)
+        reciprocals[~is_correct] = 0.0
+        return reciprocals

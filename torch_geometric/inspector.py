@@ -305,7 +305,7 @@ class Inspector:
         according to its function signature from a data blob.
 
         Args:
-            func (callabel or str): The function.
+            func (callable or str): The function.
             kwargs (dict[str, Any]): The data blob which may serve as inputs.
         """
         out_dict: Dict[str, Any] = {}
@@ -346,7 +346,7 @@ class Inspector:
             type annotations are not found.
 
         Args:
-            func (callabel or str): The function.
+            func (callable or str): The function.
             exclude (list[int or str]): A list of parameters to exclude, either
                 given by their name or index. (default: :obj:`None`)
         """
@@ -448,6 +448,10 @@ def type_repr(obj: Any, _globals: Dict[str, Any]) -> str:
         return '...'
 
     if obj.__module__ == 'typing':  # Special logic for `typing.*` types:
+
+        if not hasattr(obj, '_name'):
+            return repr(obj)
+
         name = obj._name
         if name is None:  # In some cases, `_name` is not populated.
             name = str(obj.__origin__).split('.')[-1]

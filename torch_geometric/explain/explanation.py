@@ -340,10 +340,10 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         """
         node_mask_dict = self.node_mask_dict
         for node_mask in node_mask_dict.values():
-            if node_mask.dim() != 2 or node_mask.size(1) <= 1:
+            if node_mask.dim() != 2:
                 raise ValueError(f"Cannot compute feature importance for "
                                  f"object-level 'node_mask' "
-                                 f"(got shape {node_mask_dict.size()})")
+                                 f"(got shape {node_mask.size()})")
 
         if feat_labels is None:
             feat_labels = {}

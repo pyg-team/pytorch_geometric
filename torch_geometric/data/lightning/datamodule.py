@@ -13,7 +13,7 @@ from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 try:
     from pytorch_lightning import LightningDataModule as PLLightningDataModule
     no_pytorch_lightning = False
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     PLLightningDataModule = object  # type: ignore
     no_pytorch_lightning = True
 
@@ -221,7 +221,7 @@ class LightningDataset(LightningDataModule):
         speed.html>`__ are supported in order to correctly share data across
         all devices/processes:
 
-        .. code-block::
+        .. code-block:: python
 
             import pytorch_lightning as pl
             trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
@@ -332,7 +332,7 @@ class LightningNodeData(LightningData):
         speed.html>`__ are supported in order to correctly share data across
         all devices/processes:
 
-        .. code-block::
+        .. code-block:: python
 
             import pytorch_lightning as pl
             trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
@@ -525,7 +525,7 @@ class LightningLinkData(LightningData):
         speed.html>`__ are supported in order to correctly share data across
         all devices/processes:
 
-        .. code-block::
+        .. code-block:: python
 
             import pytorch_lightning as pl
             trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",

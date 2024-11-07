@@ -312,10 +312,10 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
 @onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', SUBGRAPH_TYPES)
-def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
+def test_homo_neighbor_loader_on_karate(get_dataset, subgraph_type):
     if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
         return
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0]
 
     mask = data.edge_index[0] < data.edge_index[1]
@@ -358,15 +358,15 @@ def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
 @onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', SUBGRAPH_TYPES)
-def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
+def test_hetero_neighbor_loader_on_karate(get_dataset, subgraph_type):
     if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
         return
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0]
 
     hetero_data = HeteroData()
-    hetero_data['paper'].x = data.x
-    hetero_data['paper', 'paper'].edge_index = data.edge_index
+    hetero_data['v'].x = data.x
+    hetero_data['v', 'v'].edge_index = data.edge_index
 
     split_idx = torch.arange(5, 8)
 
@@ -374,13 +374,13 @@ def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
         hetero_data,
         num_neighbors=[-1, -1],
         batch_size=split_idx.numel(),
-        input_nodes=('paper', split_idx),
+        input_nodes=('v', split_idx),
         subgraph_type=subgraph_type,
     )
     assert len(loader) == 1
 
     hetero_batch = next(iter(loader))
-    batch_size = hetero_batch['paper'].batch_size
+    batch_size = hetero_batch['v'].batch_size
 
     class GNN(torch.nn.Module):
         def __init__(self, in_channels, hidden_channels, out_channels):
@@ -398,27 +398,26 @@ def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
 
     out1 = model(data.x, data.edge_index)[split_idx]
     out2 = hetero_model(hetero_batch.x_dict,
-                        hetero_batch.edge_index_dict)['paper'][:batch_size]
+                        hetero_batch.edge_index_dict)['v'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
 @onlyOnline
 @withPackage('pyg_lib')
-def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
-    dataset = get_dataset(name='Cora')
+def test_temporal_hetero_neighbor_loader_on_karate(get_dataset):
+    dataset = get_dataset(name='karate')
     data = dataset[0]
 
     hetero_data = HeteroData()
-    hetero_data['paper'].x = data.x
-    hetero_data['paper'].time = torch.arange(data.num_nodes, 0, -1)
-    hetero_data['paper', 'paper'].edge_index = data.edge_index
+    hetero_data['v'].x = data.x
+    hetero_data['v'].time = torch.arange(data.num_nodes, 0, -1)
+    hetero_data['v', 'v'].edge_index = data.edge_index
 
     loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
-                            input_nodes='paper', time_attr='time',
-                            batch_size=1)
+                            input_nodes='v', time_attr='time', batch_size=1)
 
     for batch in loader:
-        mask = batch['paper'].time[0] >= batch['paper'].time[1:]
+        mask = batch['v'].time[0] >= batch['v'].time[1:]
         assert torch.all(mask)
 
 
@@ -550,9 +549,8 @@ def test_custom_hetero_neighbor_loader():
 
 @onlyOnline
 @withPackage('pyg_lib')
-def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
-    # Initialize dataset (once):
-    dataset = get_dataset(name='Cora')
+def test_temporal_custom_neighbor_loader_on_karate(get_dataset):
+    dataset = get_dataset(name='karate')
     data = dataset[0]
     data.time = torch.arange(data.num_nodes, 0, -1)
 
@@ -563,19 +561,19 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
 
     feature_store.put_tensor(
         data.x,
-        group_name='paper',
+        group_name='v',
         attr_name='x',
         index=None,
     )
-    hetero_data['paper'].x = data.x
+    hetero_data['v'].x = data.x
 
     feature_store.put_tensor(
         data.time,
-        group_name='paper',
+        group_name='v',
         attr_name='time',
         index=None,
     )
-    hetero_data['paper'].time = data.time
+    hetero_data['v'].time = data.time
 
     # Sort according to time in local neighborhoods:
     row, col = data.edge_index
@@ -584,17 +582,17 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
 
     graph_store.put_edge_index(
         edge_index,
-        edge_type=('paper', 'to', 'paper'),
+        edge_type=('v', 'to', 'v'),
         layout='coo',
         is_sorted=True,
         size=(data.num_nodes, data.num_nodes),
     )
-    hetero_data['paper', 'to', 'paper'].edge_index = data.edge_index
+    hetero_data['v', 'to', 'v'].edge_index = data.edge_index
 
     loader1 = NeighborLoader(
         hetero_data,
         num_neighbors=[-1, -1],
-        input_nodes='paper',
+        input_nodes='v',
         time_attr='time',
         batch_size=128,
     )
@@ -602,13 +600,13 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
     loader2 = NeighborLoader(
         (feature_store, graph_store),
         num_neighbors=[-1, -1],
-        input_nodes='paper',
+        input_nodes='v',
         time_attr='time',
         batch_size=128,
     )
 
     for batch1, batch2 in zip(loader1, loader2):
-        assert torch.equal(batch1['paper'].time, batch2['paper'].time)
+        assert torch.equal(batch1['v'].time, batch2['v'].time)
 
 
 @withPackage('pyg_lib', 'torch_sparse')
@@ -966,3 +964,32 @@ def test_neighbor_loader_input_id():
             expected = [(2 * i) + 1]
 
         assert batch['a'].input_id.tolist() == expected
+
+
+@withPackage('pyg_lib')
+def test_temporal_neighbor_loader_single_link():
+    data = HeteroData()
+    data['a'].x = torch.arange(10)
+    data['b'].x = torch.arange(10)
+    data['c'].x = torch.arange(10)
+
+    data['b'].time = torch.arange(0, 10)
+    data['c'].time = torch.arange(1, 11)
+
+    data['a', 'b'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['b', 'a'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['a', 'c'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+    data['c', 'a'].edge_index = torch.arange(10).view(1, -1).repeat(2, 1)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1],
+        input_nodes='a',
+        time_attr='time',
+        input_time=torch.arange(0, 10),
+        batch_size=10,
+    )
+    batch = next(iter(loader))
+    assert batch['a'].num_nodes == 10
+    assert batch['b'].num_nodes == 10
+    assert batch['c'].num_nodes == 0

@@ -3,11 +3,11 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch.nn import Parameter as Param
 
 import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
@@ -18,7 +18,6 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import index_sort, one_hot, scatter, spmm
-from torch_geometric.utils.sparse import index2ptr
 
 
 def masked_edge_index(edge_index: Adj, edge_mask: Tensor) -> Adj:
@@ -121,7 +120,8 @@ class RGCNConv(MessagePassing):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]
 
-        self._use_segment_matmul_heuristic_output: Optional[bool] = None
+        self._use_segment_matmul_heuristic_output: torch.jit.Attribute(
+            None, Optional[float])
 
         if num_bases is not None:
             self.weight = Parameter(
@@ -143,12 +143,12 @@ class RGCNConv(MessagePassing):
             self.register_parameter('comp', None)
 
         if root_weight:
-            self.root = Param(torch.empty(in_channels[1], out_channels))
+            self.root = Parameter(torch.empty(in_channels[1], out_channels))
         else:
             self.register_parameter('root', None)
 
         if bias:
-            self.bias = Param(torch.empty(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

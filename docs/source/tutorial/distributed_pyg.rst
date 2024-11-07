@@ -79,7 +79,7 @@ Later on, each node in the cluster then owns a single partition of this graph.
 
 The resulting structure of partitioning for a two-part split on the homogeneous :obj:`ogbn-products` is shown below:
 
-.. code-block::
+.. code-block:: none
 
     partitions
     └─ obgn-products

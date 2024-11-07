@@ -31,6 +31,7 @@ from torch_geometric.data.storage import (
     NodeStorage,
 )
 from torch_geometric.deprecation import deprecated
+from torch_geometric.index import Index
 from torch_geometric.typing import (
     EdgeTensorType,
     EdgeType,
@@ -290,13 +291,14 @@ class BaseData:
         self,
         start_time: Union[float, int],
         end_time: Union[float, int],
+        attr: str = 'time',
     ) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         in period :obj:`[start_time, end_time]`.
         """
         out = copy.copy(self)
         for store in out.stores:
-            store.snapshot(start_time, end_time)
+            store.snapshot(start_time, end_time, attr)
         return out
 
     def up_to(self, end_time: Union[float, int]) -> Self:
@@ -644,7 +646,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         return self
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if is_sparse(value) and 'adj' in key:
+        if is_sparse(value) and ('adj' in key or 'edge_index' in key):
             return (0, 1)
         elif 'index' in key or key == 'face':
             return -1
@@ -653,6 +655,8 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if 'batch' in key and isinstance(value, Tensor):
+            if isinstance(value, Index):
+                return value.get_dim_size()
             return int(value.max()) + 1
         elif 'index' in key or key == 'face':
             return self.num_nodes
@@ -934,16 +938,14 @@ class Data(BaseData, FeatureStore, GraphStore):
         r"""Iterates over all attributes in the data, yielding their attribute
         names and values.
         """
-        for key, value in self._store.items():
-            yield key, value
+        yield from self._store.items()
 
     def __call__(self, *args: str) -> Iterable:
         r"""Iterates over all attributes :obj:`*args` in the data, yielding
         their attribute names and values.
         If :obj:`*args` is not given, will iterate over all attributes.
         """
-        for key, value in self._store.items(*args):
-            yield key, value
+        yield from self._store.items(*args)
 
     @property
     def x(self) -> Optional[Tensor]:
@@ -1163,7 +1165,7 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
                f'[{value.num_rows}, {value.num_cols}])')
     elif isinstance(value, str):
         out = f"'{value}'"
-    elif isinstance(value, Sequence):
+    elif isinstance(value, (Sequence, set)):
         out = str([len(value)])
     elif isinstance(value, Mapping) and len(value) == 0:
         out = '{}'

@@ -61,7 +61,6 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .lrgb import LRGBDataset
-from .neurograph import NeuroGraphDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -76,6 +75,8 @@ from .jodie import JODIEDataset
 from .wikidata import Wikidata5M
 from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
+from .neurograph import NeuroGraphDataset
+from .web_qsp_dataset import WebQSPDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -93,6 +94,7 @@ from .amazon_book import AmazonBook
 from .hm import HM
 from .ose_gvcs import OSE_GVCS
 from .rcdd import RCDD
+from .opf import OPFDataset
 
 from .cornell import CornellTemporalHyperGraphDataset
 
@@ -187,6 +189,7 @@ homo_datasets = [
     'MyketDataset',
     'BrcaTcga',
     'NeuroGraphDataset',
+    'WebQSPDataset',
 ]
 
 hetero_datasets = [
@@ -206,6 +209,7 @@ hetero_datasets = [
     'HM',
     'OSE_GVCS',
     'RCDD',
+    'OPFDataset',
 ]
 hyper_datasets = [
     'CornellTemporalHyperGraphDataset',

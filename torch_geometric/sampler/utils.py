@@ -5,9 +5,9 @@ from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
+from torch_geometric.index import index2ptr
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import coalesce, index_sort, lexsort
-from torch_geometric.utils.sparse import index2ptr
 
 # Edge Layout Conversion ######################################################
 

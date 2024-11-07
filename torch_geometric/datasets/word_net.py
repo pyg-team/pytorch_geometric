@@ -67,7 +67,7 @@ class WordNet18(InMemoryDataset):
     def process(self) -> None:
         srcs, dsts, edge_types = [], [], []
         for path in self.raw_paths:
-            with open(path, 'r') as f:
+            with open(path) as f:
                 edges = [int(x) for x in f.read().split()[1:]]
                 edge = torch.tensor(edges, dtype=torch.long)
                 srcs.append(edge[::3])
@@ -173,7 +173,7 @@ class WordNet18RR(InMemoryDataset):
 
         srcs, dsts, edge_types = [], [], []
         for path in self.raw_paths:
-            with open(path, 'r') as f:
+            with open(path) as f:
                 edges = f.read().split()
 
                 _src = edges[::3]

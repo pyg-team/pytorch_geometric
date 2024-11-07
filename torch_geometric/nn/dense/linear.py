@@ -12,10 +12,10 @@ from torch.nn.parameter import Parameter
 import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric.index import index2ptr
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
-from torch_geometric.utils.sparse import index2ptr
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
@@ -58,7 +58,7 @@ def reset_bias_(bias: Optional[Tensor], in_channels: int,
 
 
 class Linear(torch.nn.Module):
-    r"""Applies a linear tranformation to the incoming data.
+    r"""Applies a linear transformation to the incoming data.
 
     .. math::
         \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
@@ -192,7 +192,7 @@ class Linear(torch.nn.Module):
 
 
 class HeteroLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data according
+    r"""Applies separate linear transformations to the incoming data according
     to types.
 
     For type :math:`\kappa`, it computes
@@ -222,6 +222,8 @@ class HeteroLinear(torch.nn.Module):
           type vector :math:`(*)`
         - **output:** features :math:`(*, F_{out})`
     """
+    _timing_cache: Dict[int, Tuple[float, float]]
+
     def __init__(
         self,
         in_channels: int,
@@ -245,14 +247,16 @@ class HeteroLinear(torch.nn.Module):
         else:
             self.weight = torch.nn.Parameter(
                 torch.empty(num_types, in_channels, out_channels))
+
         if kwargs.get('bias', True):
             self.bias = Parameter(torch.empty(num_types, out_channels))
         else:
             self.register_parameter('bias', None)
-        self.reset_parameters()
 
         # Timing cache for benchmarking naive vs. segment matmul usage:
         self._timing_cache: Dict[int, Tuple[float, float]] = {}
+
+        self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -361,7 +365,8 @@ class HeteroLinear(torch.nn.Module):
 
 
 class HeteroDictLinear(torch.nn.Module):
-    r"""Applies separate linear tranformations to the incoming data dictionary.
+    r"""Applies separate linear transformations to the incoming data
+    dictionary.
 
     For key :math:`\kappa`, it computes
 
@@ -475,7 +480,7 @@ class HeteroDictLinear(torch.nn.Module):
             lin = self.lins[key]
             if is_uninitialized_parameter(lin.weight):
                 self.lins[key].initialize_parameters(None, x)
-        self.reset_parameters()
+                self.lins[key].reset_parameters()
         self._hook.remove()
         self.in_channels = {key: x.size(-1) for key, x in input[0].items()}
         delattr(self, '_hook')

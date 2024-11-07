@@ -65,8 +65,6 @@ class AttentionalAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        self.assert_two_dimensional_input(x, dim)
-
         if self.gate_mlp is not None:
             gate = self.gate_mlp(x, batch=index, batch_size=dim_size)
         else:

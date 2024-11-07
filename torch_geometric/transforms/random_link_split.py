@@ -23,7 +23,7 @@ class RandomLinkSplit(BaseTransform):
     in validation and test splits; and the validation split does not include
     edges in the test split.
 
-    .. code-block::
+    .. code-block:: python
 
         from torch_geometric.transforms import RandomLinkSplit
 
