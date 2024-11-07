@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # Note: code below here will not work until the rebase is done
     from itertools import chain
 
-    from g_retriever_utils.rag_generater import apply_retrieval_via_pcst
+    from g_retriever_utils.rag_generator import apply_retrieval_via_pcst
     from g_retriever_utils.rag_backend_utils import create_remote_backend_from_triplets
     from g_retriever_utils.rag_feature_store import SentenceTransformerFeatureStore
     from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore
