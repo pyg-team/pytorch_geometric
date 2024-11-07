@@ -60,7 +60,7 @@ if __name__ == '__main__':
         SentenceTransformerFeatureStore,
     )
     from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore
-
+    from g_retriever_utils.rag_generate import apply_retrieval_via_pcst
     from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
     from torch_geometric.loader import RAGQueryLoader
     from torch_geometric.nn.nlp import SentenceTransformer
