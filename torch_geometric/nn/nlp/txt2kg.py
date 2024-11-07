@@ -15,7 +15,7 @@ class TXT2KG():
         self,
         NVIDIA_API_KEY: Optional[str] = '',
         local_LM: bool = False,
-        LM_name: Optional[str] = ''
+        LM_name: Optional[str] = '',
         chunk_size: int = 512,
     ) -> None:
         self.local_LM = local_LM
