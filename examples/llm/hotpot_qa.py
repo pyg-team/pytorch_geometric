@@ -6,6 +6,7 @@ import torch
 from tqdm import tqdm
 
 from torch_geometric.nn.nlp import TXT2KG
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_KEY', type=str, required=True)
@@ -44,7 +45,9 @@ if __name__ == '__main__':
         kg_maker.save_kg("hotpot_kg.pt")
     print(
         "Size of KG (number of triples) =",
-        sum([len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()]))
+        sum([
+            len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()
+        ]))
     # (TODO) need rebase onto Zack's PR to be able to use the RAGQueryLoader
     # Zacks PR: https://github.com/pyg-team/pytorch_geometric/pull/9666
     # Note: code below here will not work until the rebase is done
