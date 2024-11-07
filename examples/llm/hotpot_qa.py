@@ -79,7 +79,7 @@ if __name__ == '__main__':
                                   seed_nodes_kwargs={"k_nodes": 5},
                                   seed_edges_kwargs={"k_edges": 5},
                                   sampler_kwargs={"num_neighbors": [50] * 2},
-                                  local_filter=transform)
+                                  local_filter=apply_retrieval_via_pcst)
     """
     approx precision = num_relevant_out_of_retrieved/num_retrieved_triples
     We will use precision as a proxy for recall. This is because for recall,
