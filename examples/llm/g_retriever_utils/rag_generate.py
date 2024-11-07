@@ -22,6 +22,9 @@ from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
 
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = SentenceTransformer(
+        model_name='sentence-transformers/all-roberta-large-v1').to(device)
 def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3,
                              topk_e: int = 3,
                              cost_e: float = 0.5) -> Tuple[Data, str]:
@@ -68,9 +71,6 @@ if __name__ == '__main__':
     questions = ds.raw_dataset['question']
 
     # %%
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = SentenceTransformer(
-        model_name='sentence-transformers/all-roberta-large-v1').to(device)
 
     # %%
     fs, gs = create_remote_backend_from_triplets(
