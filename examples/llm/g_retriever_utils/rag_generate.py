@@ -1,26 +1,47 @@
 # %%
+import argparse
+from itertools import chain
+from typing import Tuple
+
+import pandas as pd
+import torch
+import tqdm
+from g_retriever_utils.rag_backend_utils import (
+    create_remote_backend_from_triplets,
+)
+from g_retriever_utils.rag_feature_store import SentenceTransformerFeatureStore
+from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore
+
+from torch_geometric.data import Data
+from torch_geometric.datasets import WebQSPDataset
+from torch_geometric.datasets.web_qsp_dataset import (
+    preprocess_triplet,
+    retrieval_via_pcst,
+)
+from torch_geometric.loader import RAGQueryLoader
+from torch_geometric.nn.nlp import SentenceTransformer
+def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3,
+                             topk_e: int = 3,
+                             cost_e: float = 0.5) -> Tuple[Data, str]:
+    q_emb = model.encode(query)
+    textual_nodes = ds.textual_nodes.iloc[graph["node_idx"]].reset_index()
+    textual_edges = ds.textual_edges.iloc[graph["edge_idx"]].reset_index()
+    out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes,
+                                         textual_edges, topk, topk_e, cost_e)
+    out_graph["desc"] = desc
+    return out_graph
+
+
+def apply_retrieval_with_text(graph: Data, query: str) -> Tuple[Data, str]:
+    textual_nodes = ds.textual_nodes.iloc[graph["node_idx"]].reset_index()
+    textual_edges = ds.textual_edges.iloc[graph["edge_idx"]].reset_index()
+    desc = (
+        textual_nodes.to_csv(index=False) + "\n" +
+        textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"]))
+    graph["desc"] = desc
+    return graph
+    
 if __name__ == '__main__':
-    import argparse
-    from itertools import chain
-    from typing import Tuple
-    
-    import pandas as pd
-    import torch
-    import tqdm
-    from g_retriever_utils.rag_backend_utils import (
-        create_remote_backend_from_triplets,
-    )
-    from g_retriever_utils.rag_feature_store import SentenceTransformerFeatureStore
-    from g_retriever_utils.rag_graph_store import NeighborSamplingRAGGraphStore
-    
-    from torch_geometric.data import Data
-    from torch_geometric.datasets import WebQSPDataset
-    from torch_geometric.datasets.web_qsp_dataset import (
-        preprocess_triplet,
-        retrieval_via_pcst,
-    )
-    from torch_geometric.loader import RAGQueryLoader
-    from torch_geometric.nn.nlp import SentenceTransformer
     
     # %%
     parser = argparse.ArgumentParser(description="""Generate new WebQSP subgraphs
@@ -55,31 +76,7 @@ if __name__ == '__main__':
             "batch_size": 256
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=SentenceTransformerFeatureStore).load()
-    
     # %%
-    
-    
-    def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3,
-                                 topk_e: int = 3,
-                                 cost_e: float = 0.5) -> Tuple[Data, str]:
-        q_emb = model.encode(query)
-        textual_nodes = ds.textual_nodes.iloc[graph["node_idx"]].reset_index()
-        textual_edges = ds.textual_edges.iloc[graph["edge_idx"]].reset_index()
-        out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes,
-                                             textual_edges, topk, topk_e, cost_e)
-        out_graph["desc"] = desc
-        return out_graph
-    
-    
-    def apply_retrieval_with_text(graph: Data, query: str) -> Tuple[Data, str]:
-        textual_nodes = ds.textual_nodes.iloc[graph["node_idx"]].reset_index()
-        textual_edges = ds.textual_edges.iloc[graph["edge_idx"]].reset_index()
-        desc = (
-            textual_nodes.to_csv(index=False) + "\n" +
-            textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"]))
-        graph["desc"] = desc
-        return graph
-    
     
     transform = apply_retrieval_via_pcst \
         if args.use_pcst else apply_retrieval_with_text
