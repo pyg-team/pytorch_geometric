@@ -9,19 +9,21 @@ class TXT2KG():
     nvidia/llama-3.1-nemotron-70b-instruct is on par or better than GPT4o
     in benchmarks. We need a high quality model to ensure high quality KG.
     Otherwise garbage in garbage out.
-    Use local_small_lm flag for debugging.
+    Use local_lm flag for debugging. Uses LLAMA3-3.8B by default
     """
     def __init__(
         self,
         NVIDIA_API_KEY: Optional[str] = '',
-        local_small_lm: bool = False,
+        local_lm: bool = False,
+        lm_name: Optional[str] = ''
         chunk_size: int = 512,
     ) -> None:
         self.local_small_lm = local_small_lm
         if self.local_small_lm:
             from torch_geometric.nn.nlp import LLM
-            self.model = LLM("HuggingFaceTB/SmolLM2-1.7B-Instruct",
-                             num_params=2)
+            if lm_name == '':
+                lm_name = "meta-llama/Meta-Llama-3-8B"
+            self.model = LLM(lm_name, num_params=2)
         else:
             # We use NIMs since most PyG users may not be able to run a 70B+ model
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
