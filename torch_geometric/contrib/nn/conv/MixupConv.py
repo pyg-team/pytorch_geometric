@@ -4,6 +4,57 @@ from torch_geometric.nn import MessagePassing
 
 
 class MixupConv(MessagePassing):
+    """MixupConv is a flexible graph convolution layer that supports mixup
+    logic between two sets of node features (`x1` and `x2`). It allows users
+    to utilize different types of graph convolutions (e.g., GCNConv, GATConv)
+    while maintaining the mixup logic, where messages from `x1` are passed to
+    update `x2`.
+
+    **Mixup Logic**:
+    - The MixupConv layer computes messages from one set of node features
+      (`x1`) and applies them to update the second set of node features (`x2`),
+      thus maintaining the mixup between the two feature sets.
+
+    **Supported Convolution Types**:
+    - GCNConv
+    - GATConv
+    - Other PyG convolution types can be passed during initialization.
+
+    Args:
+        conv_layer (torch.nn.Module): The PyG convolutional layer to use
+            (e.g., GCNConv, GATConv).
+        in_channels (int): Size of each input sample (number of input node
+            features).
+        out_channels (int): Size of each output sample (number of output node
+            features).
+        aggr (str, optional): The aggregation scheme to use ("add", "mean",
+            "max"). (default: :obj:`"mean"`)
+        bias (bool, optional): If set to `False`, the layer will not learn an
+            additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments passed to the convolution
+            layer.
+
+    Shapes:
+        - **Input:**
+            - `x1`: Node feature matrix of shape :obj:`[num_nodes,
+              in_channels]`
+            - `edge_index`: Graph connectivity in COO format with shape
+              :obj:`[2, num_edges]`
+            - `x2`: Node feature matrix of shape :obj:`[num_nodes,
+              in_channels]`
+        - **Output:**
+            - Node feature matrix of shape :obj:`[num_nodes, out_channels]`
+
+    Example:
+        >>> from torch_geometric.nn import GCNConv, MixupConv
+        >>> conv = MixupConv(GCNConv, in_channels=16, out_channels=32)
+        >>> x1 = torch.randn((100, 16))  # Input node features 1
+        >>> edge_index = torch.randint(0, 100, (2, 300))  # Edge index for the
+        >>> x2 = torch.randn((100, 16))  # Input node features 2
+        >>> out = conv(x1, edge_index, x2)
+        >>> print(out.shape)
+        torch.Size([100, 32])
+    """
     def __init__(self, conv_layer, in_channels, out_channels, aggr='mean',
                  bias=True, **kwargs):
         super().__init__(aggr=aggr, **kwargs)
@@ -21,6 +72,21 @@ class MixupConv(MessagePassing):
         self.lin.reset_parameters()
 
     def forward(self, x1, edge_index, x2):
+        """The forward function for the MixupConv layer.
+
+        Args:
+            x1 (Tensor): Node feature matrix of the first input graph with
+                shape :obj:`[num_nodes, in_channels]`.
+            edge_index (Tensor): Graph connectivity in COO format with shape
+                :obj:`[2, num_edges]`.
+            x2 (Tensor): Node feature matrix of the second input graph with
+                shape :obj:`[num_nodes, in_channels]`.
+
+        Returns:
+            Tensor: Node feature matrix of shape :obj:`[num_nodes,
+            out_channels]`,
+            where the messages from `x1` are used to update `x2`.
+        """
         h1 = self.conv_layer(x1, edge_index)
         return h1 + self.lin(x2)
 
