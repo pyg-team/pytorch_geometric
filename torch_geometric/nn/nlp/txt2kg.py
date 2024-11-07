@@ -20,13 +20,15 @@ class TXT2KG():
         self.local_small_lm = local_small_lm
         if self.local_small_lm:
             from torch_geometric.nn.nlp import LLM
-            self.model = LLM("HuggingFaceTB/SmolLM2-1.7B-Instruct", num_params=2)
+            self.model = LLM("HuggingFaceTB/SmolLM2-1.7B-Instruct",
+                             num_params=2)
         else:
             # We use NIMs since most PyG users may not be able to run a 70B+ model
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
             from openai import OpenAI
-            self.client = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
-                                 api_key=NVIDIA_API_KEY)
+            self.client = OpenAI(
+                base_url="https://integrate.api.nvidia.com/v1",
+                api_key=NVIDIA_API_KEY)
             self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
         self.chunk_size = 512
         self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
@@ -43,7 +45,9 @@ class TXT2KG():
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
         if self.local_small_lm:
-            out_str = self.model.inference(question=[txt + '\n' + self.system_prompt], max_tokens=self.chunk_size*2)
+            out_str = self.model.inference(
+                question=[txt + '\n' + self.system_prompt],
+                max_tokens=self.chunk_size * 2)
         else:
             completion = self.client.chat.completions.create(
                 model=self.model, messages=[{
@@ -67,7 +71,8 @@ class TXT2KG():
                 potential_trip = eval(triple_str)
             except:  # noqa
                 continue
-            if 'tuple' in str(type(potential_trip)) and len(potential_trip) == 3:
+            if 'tuple' in str(
+                    type(potential_trip)) and len(potential_trip) == 3:
                 processed.append(potential_trip)
         return processed
 
