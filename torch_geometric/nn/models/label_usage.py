@@ -13,12 +13,15 @@ class LabelUsage(torch.nn.Module):
         accordingly to include both features and classes.
 
     Args:
-        split_ratio (float): Proportion of true labels to use as features during training.
-        num_recycling_iterations (int):  Number of iterations the previously predicted soft
-            labels are used as features.
-        return_tuple (bool):  Whether we would like to return the predicted labels from the two
-            sets separately, with index corresponding to the split.
-        base_model: An instance of the model that will do the inner forward pass.
+        split_ratio (float): Proportion of true labels to use as features 
+            during training.
+        num_recycling_iterations (int):  Number of iterations the previously
+            predicted softlabels are used as features.
+        return_tuple (bool):  Whether we would like to return the predicted 
+            labels from the two sets separately, with index 
+            corresponding to the split.
+        base_model: An instance of the model that will do the 
+            inner forward pass.
         num_classes (int): Number of classes in dataset
     """
 
