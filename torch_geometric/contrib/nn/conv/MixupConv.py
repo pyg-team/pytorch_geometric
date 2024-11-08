@@ -1,5 +1,6 @@
 import torch
-
+from torch.nn import Module
+from torch_geometric.nn import GCNConv
 from torch_geometric.nn import MessagePassing
 
 
@@ -21,12 +22,12 @@ class MixupConv(MessagePassing):
     - Other PyG convolution types can be passed during initialization.
 
     Args:
-        conv_layer (torch.nn.Module): The PyG convolutional layer to use
-            (e.g., GCNConv, GATConv).
         in_channels (int): Size of each input sample (number of input node
             features).
         out_channels (int): Size of each output sample (number of output node
             features).
+        conv_layer (torch.nn.Module, optional): The PyG convolutional layer to use
+            (e.g., GCNConv, GATConv). Defaults to GCNConv.
         aggr (str, optional): The aggregation scheme to use ("add", "mean",
             "max"). (default: :obj:`"mean"`)
         bias (bool, optional): If set to `False`, the layer will not learn an
@@ -55,7 +56,7 @@ class MixupConv(MessagePassing):
         >>> print(out.shape)
         torch.Size([100, 32])
     """
-    def __init__(self, conv_layer, in_channels, out_channels, aggr='mean',
+    def __init__(self, in_channels: int, out_channels: int, conv_layer: Optional[Module] = GCNConv, aggr='mean',
                  bias=True, **kwargs):
         super().__init__(aggr=aggr, **kwargs)
 
