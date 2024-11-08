@@ -30,8 +30,7 @@ if __name__ == '__main__':
     # Build KG
     num_data_pts = len(raw_dataset)
     data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
-                                                   args.percent_data /
-                                                   100.0)]
+                                                   args.percent_data / 100.0)]
     if os.path.exists("hotpot_kg.pt"):
         print("Re-using existing KG...")
         kg_maker.load_kg("hotpot_kg.pt")
