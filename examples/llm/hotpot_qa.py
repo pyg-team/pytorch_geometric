@@ -14,7 +14,16 @@ if __name__ == '__main__':
     parser.add_argument('--percent_data', type=float, default=1.0)
     args = parser.parse_args()
     assert args.percent_data <= 100 and args.percent_data > 0
-
+    if args.local_lm:
+        kg_maker = TXT2KG(
+            local_LM=True,
+            chunk_size=512,
+        )
+    else:
+        kg_maker = TXT2KG(
+            NVIDIA_API_KEY=args.NV_NIM_KEY,
+            chunk_size=512,
+        )
     if os.path.exists("hotpot_kg.pt"):
         print("Re-using existing KG...")
         kg_maker.load_kg("hotpot_kg.pt")
@@ -27,16 +36,6 @@ if __name__ == '__main__':
         data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
                                                        args.percent_data /
                                                        100.0)]
-        if args.local_lm:
-            kg_maker = TXT2KG(
-                local_LM=True,
-                chunk_size=512,
-            )
-        else:
-            kg_maker = TXT2KG(
-                NVIDIA_API_KEY=args.NV_NIM_KEY,
-                chunk_size=512,
-            )
         for idx in tqdm(data_idxs, desc="Building KG"):
             data_point = raw_dataset[int(idx)]
             q = data_point["question"]
