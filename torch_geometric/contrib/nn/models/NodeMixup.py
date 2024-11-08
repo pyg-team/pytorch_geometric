@@ -9,7 +9,7 @@ from torch import Tensor
 from torch.nn import Module, ModuleList
 from tqdm import tqdm
 
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn import GCNConv, MessagePassing
 from torch_geometric.contrib.nn.conv import MixupConv
 
 class NodeMixup(torch.nn.Module):
@@ -36,7 +36,7 @@ class NodeMixup(torch.nn.Module):
     def __init__(
         self, 
         num_layers: int,
-        in_channel: int, 
+        in_channels: int, 
         hidden_channels: int, 
         out_channels: Optional[int] = None,
         conv_layer: Optional[Module] = GCNConv,
@@ -60,12 +60,9 @@ class NodeMixup(torch.nn.Module):
         self.convs.append(
             self.init_conv(in_channels, hidden_channels, conv_layer, **kwargs))
         
-        for _ in range(num_layers - 2):
+        for _ in range(num_layers - 1):
             self.convs.append(
                 self.init_conv(hidden_channels, hidden_channels, conv_layer, **kwargs))
-        
-        self.convs.append(
-            self.init_conv(hidden_channels, self.out_channels, conv_layer, **kwargs))
         
         self.lin = torch.nn.Linear(hidden_channels, self.out_channels)
         

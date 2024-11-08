@@ -17,7 +17,7 @@ def shuffle_data(data: Data):
     np.random.shuffle(train_id_shuffle)
     id_new_value_old[data.train_id] = train_id_shuffle
 
-    row, col = data.edge_index[0], data.edge_index[1]
+    row, col = data.edge_index[0].cpu(), data.edge_index[1].cpu()
     id_old_value_new = torch.zeros(id_new_value_old.shape[0], dtype=torch.long)
     id_old_value_new[id_new_value_old] = torch.arange(id_new_value_old.shape[0], dtype=torch.long)
     row, col = id_old_value_new[row], id_old_value_new[col]
@@ -54,7 +54,6 @@ model = NodeMixup(
 # Define optimizer and device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = model.to(device)
-data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 # Training function
@@ -63,6 +62,7 @@ def train(data):
     lam = np.random.beta(4.0, 4.0)
 
     data_b, id_new_value_old = shuffle_data(data)
+    data = data.to(device)
     data_b = data_b.to(device)
 
     optimizer.zero_grad()
