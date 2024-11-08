@@ -25,7 +25,8 @@ if __name__ == '__main__':
         # Build KG
         num_data_pts = len(raw_dataset)
         data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
-                                                       args.percent_data / 100.0)]
+                                                       args.percent_data /
+                                                       100.0)]
         if args.local_lm:
             kg_maker = TXT2KG(
                 local_LM=True,
