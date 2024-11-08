@@ -20,6 +20,13 @@ This example demonstrates how to use WholeGraph to easily distribute the graph a
   pip install pylibwholegraph-cu12
 ```
 
+## Dataset Preparation
+
+For large dataset like ogbn-papers100M, downloading and preprocessing the dataset may take very long time. Users can run the following command to download and preprocess the dataset in advance:
+```bash
+python download_papers.py
+```
+
 ## Sinlge/Multi-GPU Run
 
 Using PyTorch torchrun elastic launcher:
