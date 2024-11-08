@@ -15,11 +15,10 @@ class LabelUsage(torch.nn.Module):
     Args:
         split_ratio (float): Proportion of true labels to use as features 
             during training.
-        num_recycling_iterations (int):  Number of iterations the previously
+        num_recycling_iterations (int): Number of iterations the previously
             predicted softlabels are used as features.
-        return_tuple (bool):  Whether we would like to return the predicted 
-            labels from the two sets separately, with index 
-            corresponding to the split.
+        return_tuple (bool): Whether to return the label indices from the split
+            sets separately along with the output
         base_model: An instance of the model that will do the 
             inner forward pass.
         num_classes (int): Number of classes in dataset
@@ -59,7 +58,7 @@ class LabelUsage(torch.nn.Module):
         return torch.cat([features, onehot], dim=-1)
 
     def forward(self, x, edge_index, y, train_idx):
-        """
+        r"""
         Forward pass using label usage algorithm.
 
         Args:
@@ -87,5 +86,5 @@ class LabelUsage(torch.nn.Module):
 
         # return tuples if specified
         if self.return_tuple:
-            return output[train_labels_idx], output[train_pred_idx], train_pred_idx
+            return output, train_labels_idx, train_pred_idx
         return output
