@@ -73,17 +73,17 @@ class GATConv(MessagePassing):
         + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,k}
         \right)\right)}.
 
-    If an integer is passed for :obj:`in_channels`, :math:`\mathbf{\Theta}_{s} =
-    \mathbf{\Theta}_{t}`.
+    If an integer is passed for :obj:`in_channels`, :math:`\mathbf{\Theta}_{s}
+    = \mathbf{\Theta}_{t}`.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
-            A tuple dictates the dimensionality of distinct 
+            A tuple dictates the dimensionality of distinct
             :math:`\mathbf{\Theta}` to be used for source and target features,
-            for example, in case of a bipartite graph.  A value of :obj:`None|0`
-            for the source dimensionality fixes 
-            :math:`\mathbf{\Theta}_s=\mathbf{0}`.
+            for example, in case of a bipartite graph.  A value of
+            :obj:`None|0` for the target dimensionality fixes
+            :math:`\mathbf{\Theta}_t=\mathbf{0}`.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -119,16 +119,17 @@ class GATConv(MessagePassing):
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
-          if bipartite,
+          if :obj:`in_channels` is a tuple of positive integers,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})` or
-          :math:`((|\mathcal{V}_t|, H * F_{out})` if bipartite.
+          :math:`(|\mathcal{V}_t|, H * F_{out})` if bipartite.
           If :obj:`return_attention_weights=True`, then
           :math:`((|\mathcal{V}|, H * F_{out}),
           ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
-          (|\mathcal{E}|, H)))` if bipartite
+          (|\mathcal{E}|, H)))` if :obj:`in_channels` is a tuple of positive
+          integers.
     """
     def __init__(
         self,
@@ -159,23 +160,25 @@ class GATConv(MessagePassing):
         self.fill_value = fill_value
         self.residual = residual
 
-        # In case of e.g. bipartite graphs, we apply separate transformations 
+        # In case of e.g. bipartite graphs, we apply separate transformations
         # 'lin_src' and 'lin_dst' to source and target nodes:
         self.lin = self.lin_src = self.lin_dst = None
-        if isinstance(in_channels, int) or not in_channels[0]:
+        if isinstance(in_channels, int):
             self.lin = Linear(in_channels, heads * out_channels, bias=False,
                               weight_initializer='glorot')
         else:
             self.lin_src = Linear(in_channels[0], heads * out_channels, False,
                                   weight_initializer='glorot')
-            self.lin_dst = Linear(in_channels[1], heads * out_channels, False,
-                                  weight_initializer='glorot')
+            if in_channels[1]:
+                self.lin_dst = Linear(in_channels[1], heads * out_channels,
+                                      False, weight_initializer='glorot')
 
         # The learnable parameters to compute attention coefficients:
-        self.att_dst = Parameter(torch.empty(1, heads, out_channels))
-        self.att_src = None
-        if isinstance(in_channels, int) or in_channels[0]:
-            self.att_src = Parameter(torch.empty(1, heads, out_channels))
+        self.att_src = Parameter(torch.empty(1, heads, out_channels))
+        if isinstance(in_channels, int) or in_channels[1]:
+            self.att_dst = Parameter(torch.empty(1, heads, out_channels))
+        else:
+            self.att_dst = None
 
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
@@ -305,12 +308,15 @@ class GATConv(MessagePassing):
             if self.lin is not None:
                 x_src = x_dst = self.lin(x).view(-1, H, C)
             else:
-                # If the module is initialized with a tuple of positive 
+                # If the module is initialized with a tuple of positive
                 # in_channels, transform source and destination node features
                 # separately:
-                assert self.lin_src is not None and self.lin_dst is not None
+                assert self.lin_src is not None
                 x_src = self.lin_src(x).view(-1, H, C)
-                x_dst = self.lin_dst(x).view(-1, H, C)
+                if self.lin_dst is not None:
+                    x_dst = self.lin_dst(x).view(-1, H, C)
+                else:
+                    x_dst = None
 
         else:  # Tuple of source and target node features:
             x_src, x_dst = x
@@ -321,17 +327,21 @@ class GATConv(MessagePassing):
 
             if self.lin is not None:
                 # If the module is initialized with integer in_channels, we
-                # expect that source and destination node features have the same
-                # shape and that they their transformations are shared:
+                # expect that source and destination node features have the
+                # same shape and that they their transformations are shared:
                 x_src = self.lin(x_src).view(-1, H, C)
                 if x_dst is not None:
                     x_dst = self.lin(x_dst).view(-1, H, C)
             else:
-                assert self.lin_src is not None and self.lin_dst is not None
+                assert self.lin_src is not None
 
                 x_src = self.lin_src(x_src).view(-1, H, C)
-                if x_dst is not None:
+                if self.lin_dst is not None and x_dst is not None:
                     x_dst = self.lin_dst(x_dst).view(-1, H, C)
+                else:
+                    # TODO maybe warn user they passed dest features that won't
+                    # be used
+                    x_dst = None
 
         x = (x_src, x_dst)
 
