@@ -50,6 +50,8 @@ class TXT2KG():
             out_str = self.model.inference(
                 question=[txt + '\n' + self.system_prompt],
                 max_tokens=self.chunk_size)[0]
+            # debug
+            print(out_str)
         else:
             completion = self.client.chat.completions.create(
                 model=self.model, messages=[{
