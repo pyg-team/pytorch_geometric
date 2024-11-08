@@ -56,39 +56,39 @@ if __name__ == '__main__':
         sum([
             len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()
         ]))
-    # (TODO) move g_retriever_utils to torch_geometric.utils.rag
-    from itertools import chain
+    # (TODO) move these imports to top and uncomment once fully working
+    # from itertools import chain
 
-    from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
-    from torch_geometric.nn.nlp import SentenceTransformer
-    from torch_geometric.utils.rag.backend_utils import (
-        create_remote_backend_from_triplets,
-    )
-    from torch_geometric.utils.rag.feature_store import (
-        SentenceTransformerFeatureStore,
-    )
-    from torch_geometric.utils.rag.graph_store import (
-        NeighborSamplingRAGGraphStore,
-    )
+    # from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
+    # from torch_geometric.nn.nlp import SentenceTransformer
+    # from torch_geometric.utils.rag.backend_utils import (
+    #     create_remote_backend_from_triplets,
+    # )
+    # from torch_geometric.utils.rag.feature_store import (
+    #     SentenceTransformerFeatureStore,
+    # )
+    # from torch_geometric.utils.rag.graph_store import (
+    #     NeighborSamplingRAGGraphStore,
+    # )
 
-    triples = chain.from_iterable(
-        triple_set for triple_set in kg_maker.relevant_triples.values())
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = SentenceTransformer(
-        model_name='sentence-transformers/all-roberta-large-v1').to(device)
-    fs, gs = create_remote_backend_from_triplets(
-        triplets=triples, node_embedding_model=model,
-        node_method_to_call="encode", path="backend",
-        pre_transform=preprocess_triplet, node_method_kwargs={
-            "batch_size": min(len(data_idxs), 256)
-        }, graph_db=NeighborSamplingRAGGraphStore,
-        feature_db=SentenceTransformerFeatureStore).load()
-    from g_retriever_utils.rag_generate import apply_retrieval_via_pcst
-    query_loader = RAGQueryLoader(data=(fs, gs),
-                                  seed_nodes_kwargs={"k_nodes": 5},
-                                  seed_edges_kwargs={"k_edges": 5},
-                                  sampler_kwargs={"num_neighbors": [50] * 2},
-                                  local_filter=apply_retrieval_via_pcst)
+    # triples = chain.from_iterable(
+    #     triple_set for triple_set in kg_maker.relevant_triples.values())
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # model = SentenceTransformer(
+    #     model_name='sentence-transformers/all-roberta-large-v1').to(device)
+    # fs, gs = create_remote_backend_from_triplets(
+    #     triplets=triples, node_embedding_model=model,
+    #     node_method_to_call="encode", path="backend",
+    #     pre_transform=preprocess_triplet, node_method_kwargs={
+    #         "batch_size": min(len(data_idxs), 256)
+    #     }, graph_db=NeighborSamplingRAGGraphStore,
+    #     feature_db=SentenceTransformerFeatureStore).load()
+    # from g_retriever_utils.rag_generate import apply_retrieval_via_pcst
+    # query_loader = RAGQueryLoader(data=(fs, gs),
+    #                               seed_nodes_kwargs={"k_nodes": 5},
+    #                               seed_edges_kwargs={"k_edges": 5},
+    #                               sampler_kwargs={"num_neighbors": [50] * 2},
+    #                               local_filter=apply_retrieval_via_pcst)
     """
     approx precision = num_relevant_out_of_retrieved/num_retrieved_triples
     We will use precision as a proxy for recall. This is because for recall,
