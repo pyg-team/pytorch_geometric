@@ -34,7 +34,8 @@ if __name__ == '__main__':
         # Build KG
         num_data_pts = len(raw_dataset)
         data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
-                                                       args.percent_data / 100.0)]
+                                                       args.percent_data /
+                                                       100.0)]
         for idx in tqdm(data_idxs, desc="Building KG"):
             data_point = raw_dataset[int(idx)]
             q = data_point["question"]
