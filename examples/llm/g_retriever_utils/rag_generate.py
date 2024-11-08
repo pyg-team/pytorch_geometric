@@ -1,7 +1,6 @@
 # %%
 import argparse
 from itertools import chain
-from typing import Tuple
 
 import pandas as pd
 import torch
@@ -9,15 +8,13 @@ import tqdm
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import WebQSPDataset
-from torch_geometric.datasets.web_qsp_dataset import (
-    preprocess_triplet,
-)
+from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import (
-    create_remote_backend_from_triplets,
     apply_retrieval_via_pcst,
-    apply_retrieval_with_text
+    apply_retrieval_with_text,
+    create_remote_backend_from_triplets,
 )
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,

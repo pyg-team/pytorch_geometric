@@ -22,17 +22,14 @@ from torch_geometric.data import (
     LargeGraphIndexer,
     TripletLike,
 )
-from torch_geometric.datasets.web_qsp_dataset import (
-    retrieval_via_pcst,
-)
-from torch_geometric.nn.nlp import SentenceTransformer
-
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
+from torch_geometric.datasets.web_qsp_dataset import retrieval_via_pcst
 from torch_geometric.distributed import (
     LocalFeatureStore,
     LocalGraphStore,
     Partitioner,
 )
+from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.typing import EdgeType, NodeType
 
 RemoteGraphBackend = Tuple[FeatureStore, GraphStore]
