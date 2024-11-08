@@ -24,18 +24,18 @@ if __name__ == '__main__':
             NVIDIA_API_KEY=args.NV_NIM_KEY,
             chunk_size=512,
         )
+    # Use training set for simplicity since our retrieval method is nonparametric
+    raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
+                                        trust_remote_code=True)["train"]
+    # Build KG
+    num_data_pts = len(raw_dataset)
+    data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
+                                                   args.percent_data /
+                                                   100.0)]
     if os.path.exists("hotpot_kg.pt"):
         print("Re-using existing KG...")
         kg_maker.load_kg("hotpot_kg.pt")
     else:
-        # Use training set for simplicity since our retrieval method is nonparametric
-        raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
-                                            trust_remote_code=True)["train"]
-        # Build KG
-        num_data_pts = len(raw_dataset)
-        data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
-                                                       args.percent_data /
-                                                       100.0)]
         for idx in tqdm(data_idxs, desc="Building KG"):
             data_point = raw_dataset[int(idx)]
             q = data_point["question"]
