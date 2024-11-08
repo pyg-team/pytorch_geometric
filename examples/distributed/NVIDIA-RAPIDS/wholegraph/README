@@ -26,6 +26,7 @@ For large dataset like ogbn-papers100M, downloading and preprocessing the datase
 ```bash
 python download_papers.py
 ```
+If data is not pre-downloaded this may cause issues.
 
 ## Sinlge/Multi-GPU Run
 
