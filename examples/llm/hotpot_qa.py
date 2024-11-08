@@ -59,16 +59,17 @@ if __name__ == '__main__':
     # (TODO) move g_retriever_utils to torch_geometric.utils.rag
     from itertools import chain
 
+    from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
+    from torch_geometric.nn.nlp import SentenceTransformer
     from torch_geometric.utils.rag.backend_utils import (
         create_remote_backend_from_triplets,
     )
     from torch_geometric.utils.rag.feature_store import (
         SentenceTransformerFeatureStore,
     )
-    from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
-
-    from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
-    from torch_geometric.nn.nlp import SentenceTransformer
+    from torch_geometric.utils.rag.graph_store import (
+        NeighborSamplingRAGGraphStore,
+    )
 
     triples = chain.from_iterable(
         triple_set for triple_set in kg_maker.relevant_triples.values())

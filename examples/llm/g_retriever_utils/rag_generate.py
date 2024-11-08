@@ -6,9 +6,6 @@ from typing import Tuple
 import pandas as pd
 import torch
 import tqdm
-from torch_geometric.utils.rag.backend_utils import create_remote_backend_from_triplets
-from torch_geometric.utils.rag.feature_store import SentenceTransformerFeatureStore
-from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import WebQSPDataset
@@ -18,6 +15,13 @@ from torch_geometric.datasets.web_qsp_dataset import (
 )
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
+from torch_geometric.utils.rag.backend_utils import (
+    create_remote_backend_from_triplets,
+)
+from torch_geometric.utils.rag.feature_store import (
+    SentenceTransformerFeatureStore,
+)
+from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
 # %%
 parser = argparse.ArgumentParser(description="""Generate new WebQSP subgraphs
