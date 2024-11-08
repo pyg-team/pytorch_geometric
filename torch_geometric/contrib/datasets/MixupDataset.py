@@ -94,7 +94,7 @@ class MixupDataset(InMemoryDataset):
             return self.new_graphs[idx - len(self.dataset)]
 
 # Initial skeleton of estimation taken from https://github.com/eomeragic1/g-mixup-reproducibility/tree/main
-# TODO: implement ourselves in a cleaner way and fit for contrib
+# TODO: Fix and customize some implementation details and clean up, annotate, document for PR
 # In the paper they said that they used LG as the step function approximator, check with authors !!
 def universal_svd(aligned_graphs: List[Tensor], threshold: float = 2.02, sum_graph: Tensor = None) -> np.ndarray:
     """
