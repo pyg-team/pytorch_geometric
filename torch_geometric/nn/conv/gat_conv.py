@@ -46,13 +46,13 @@ class GATConv(MessagePassing):
         \alpha_{i,j} =
         \frac{
         \exp\left(\mathrm{LeakyReLU}\left(
-        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
-        + \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_j
+        \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_j
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathrm{LeakyReLU}\left(
-        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
-        + \mathbf{a}^{\top}_{t}\mathbf{\Theta}_{t}\mathbf{x}_k
+        \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{s}\mathbf{\Theta}_{s}\mathbf{x}_k
         \right)\right)}.
 
     If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
@@ -62,14 +62,14 @@ class GATConv(MessagePassing):
         \alpha_{i,j} =
         \frac{
         \exp\left(\mathrm{LeakyReLU}\left(
-        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
-        + \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_j
+        \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_j
         + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathrm{LeakyReLU}\left(
-        \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_i
-        + \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_k
+        \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i
+        + \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_k
         + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,k}
         \right)\right)}.
 
