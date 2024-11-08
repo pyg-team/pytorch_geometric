@@ -300,7 +300,7 @@ class Graphon:
         self.align_max_size = align_max_size
         self._graphon = graphon
             
-        if not estimation_method in ['usvt']:
+        if (not graphon) and estimation_method in ['usvt']:
             self.estimate()
     
     def estimate(self):
