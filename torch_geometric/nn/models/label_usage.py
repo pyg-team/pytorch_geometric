@@ -40,19 +40,7 @@ class LabelUsage(torch.nn.Module):
         self.base_model = base_model
         self.num_classes = num_classes
 
-        # TODO: Account for expanding input dimension
-        # self.original_in_channels = self.base_model.in_channels
-        # self.expanded_in_channels = self.original_in_channels + self.num_classes
-
     def add_labels(self, features, labels, idx):
-        """
-        Augment training nodes to include labels with features for specified training index
-
-        Args:
-          features: feature tensor (x)
-          labels: label tensor (y)
-          idx: Training index tensor with labels
-        """
         onehot = torch.zeros([features.shape[0], self.num_classes]).to(features.device)
         onehot[idx, labels[idx]] = 1  # create a one-hot encoding
         return torch.cat([features, onehot], dim=-1)
@@ -62,9 +50,9 @@ class LabelUsage(torch.nn.Module):
         Forward pass using label usage algorithm.
 
         Args:
-          x: Node feature tensor (x)
+          x: Node feature tensor 
           edge_index: The edge connectivity
-          y: Node label tensor (y)
+          y: Node label tensor 
           train_idx: Training index tensor with labels
 
         """
@@ -74,6 +62,7 @@ class LabelUsage(torch.nn.Module):
         train_pred_idx = train_idx[~mask]  # D_U: nodes to predict labels in training
 
         # add labels to features for train_labels_idx nodes
+        #
         feat = self.add_labels(x, y, train_labels_idx)
 
         # label reuse procedure
