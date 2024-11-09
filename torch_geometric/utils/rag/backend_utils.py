@@ -239,10 +239,11 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         quit()
     all_nodes = []
     print("triples=", triples)
-    for triple in triples:   
+    for triple in triples:
         all_nodes += [triple[0]] + [triple[2]]
     full_textual_nodes = list(set(all_nodes))
     print("full_textual_nodes=", full_textual_nodes)
+
     def apply_retrieval_via_pcst(
         graph: Data,
         query: str,
