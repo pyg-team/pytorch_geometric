@@ -231,13 +231,16 @@ def create_remote_backend_from_triplets(
                                         graph_db, feature_db)
 
 
-# (TODO make TXT2KG compatible with this
 def make_pcst_filter(triples: List[Tuple[str, str, str]],
                      model: SentenceTransformer):
     if DataFrame is None:
         print("PCST requires `pip install pandas`")
         quit()
-
+    all_nodes = []
+    for triple in triples:   
+        all_nodes += [triple[0]] + [triple[2]]
+    full_textual_nodes = list(set(all_nodes))
+    print("full_textual_nodes=", full_textual_nodes)
     def apply_retrieval_via_pcst(
         graph: Data,
         query: str,
@@ -246,8 +249,6 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         cost_e: float = 0.5,
     ) -> Tuple[Data, str]:
         q_emb = model.encode(query)
-        full_textual_nodes = list(
-            set([i[0] for i in triples] + [i[2] for i in triples]))
         textual_nodes = [(i, full_textual_nodes[i]) for i in graph["node_idx"]]
         textual_nodes = DataFrame(textual_nodes,
                                   columns=["node_id", "node_attr"])
