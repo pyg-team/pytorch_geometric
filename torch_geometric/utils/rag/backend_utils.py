@@ -16,12 +16,12 @@ from typing import (
 import torch
 from torch import Tensor
 from torch.nn import Module
-
 from torch_geometric.data import (
     FeatureStore,
     GraphStore,
     LargeGraphIndexer,
     TripletLike,
+    Data
 )
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.datasets.web_qsp_dataset import retrieval_via_pcst
