@@ -154,7 +154,6 @@ class LLM(torch.nn.Module):
         if embedding is not None and embedding[i] is not None:
             to_cat.append(embedding[i])
         to_cat.append(inputs_embeds)
-        # import pdb; pdb.set_trace()
         return torch.cat(to_cat, dim=0).to(self.device)
 
     def _append_embeds(
