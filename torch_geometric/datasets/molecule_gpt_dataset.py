@@ -5,23 +5,20 @@ import os
 import sys
 from collections import defaultdict
 from multiprocessing import Pool
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 import requests
 import torch
-from rdkit import Chem, RDLogger
-from rdkit.Chem.rdchem import BondType as BT
 from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.io import fs
 from torch_geometric.nn.nlp import LLM
 from torch_geometric.utils import one_hot
 
-RDLogger.DisableLog('rdApp.*')  # type: ignore
 
-
-def clean_up_description(description):
+def clean_up_description(description: str) -> str:
     description = description + " "
 
     # extra adj Pure
@@ -125,7 +122,7 @@ def clean_up_description(description):
     return first_sentence
 
 
-def extract_name(name_raw, description):
+def extract_name(name_raw: str, description: str) -> Tuple[str, str, str]:
     first_sentence = clean_up_description(description)
 
     splitter = '  --  --  '
@@ -175,7 +172,6 @@ class MoleculeGPTDataset(InMemoryDataset):
     r"""The dataset from the `"MoleculeGPT: Instruction Following Large
     Language Models for Molecular Property Prediction"
     <https://ai4d3.github.io/papers/34.pdf>`_ paper.
-
     Args:
         root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
@@ -211,8 +207,8 @@ class MoleculeGPTDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-        total_page_num: Optional[int] = 10,
-        total_block_num: Optional[int] = 1,
+        total_page_num: int = 10,
+        total_block_num: int = 1,
     ):
         self.total_page_num = total_page_num
         self.total_block_num = total_block_num
@@ -226,15 +222,15 @@ class MoleculeGPTDataset(InMemoryDataset):
         return ['pubchem.csv']
 
     @property
-    def processed_file_names(self) -> str:
+    def processed_file_names(self) -> List[str]:
         return ['data.pt']
 
-    def download(self, use_mp=False) -> None:
+    def download(self) -> None:
         # Step 01. Extract description
         step1_folder = f"{self.raw_dir}/step_01_PubChemSTM_description"
         if not os.path.exists(step1_folder):
             os.makedirs(step1_folder)
-            valid_CID_list = set()
+            valid_CID_set = set()
             CID2name_raw, CID2name_extracted = defaultdict(list), defaultdict(
                 list)
             CID2text_raw, CID2text_extracted = defaultdict(list), defaultdict(
@@ -276,14 +272,13 @@ class MoleculeGPTDataset(InMemoryDataset):
                             CID2text_extracted[CID].append(
                                 extracted_description)
 
-                            valid_CID_list.add(CID)
+                            valid_CID_set.add(CID)
                             f_out.write(f"{CID}\n")
                             f_out.write(f"{extracted_description}\n\n")
                     except Exception:
                         continue
 
-            valid_CID_list = list(set(valid_CID_list))
-            valid_CID_list = sorted(valid_CID_list)
+            valid_CID_list = sorted(list(valid_CID_set))
             print(f"Total CID (with raw name) {len(CID2name_raw)}")
             print(f"Total CID (with extracted name) {len(CID2name_extracted)}")
             print(f"Total CID {len(valid_CID_list)}")
@@ -312,7 +307,34 @@ class MoleculeGPTDataset(InMemoryDataset):
                 download_url(f"{self.compound_url}/{compound_file_name}",
                              step2_folder)
 
+    def process(self, use_mp: bool = False) -> None:
+        try:
+            from rdkit import Chem
+            from rdkit.Chem.rdchem import BondType as BT
+            WITH_RDKIT = True
+
+        except ImportError:
+            WITH_RDKIT = False
+
+        if not WITH_RDKIT:
+            print(("Using a pre-processed version of the dataset. Please "
+                   "install 'rdkit' to alternatively process the raw data."),
+                  file=sys.stderr)
+
+            data_list = fs.torch_load(self.raw_paths[0])
+            data_list = [Data(**data_dict) for data_dict in data_list]
+
+            if self.pre_filter is not None:
+                data_list = [d for d in data_list if self.pre_filter(d)]
+
+            if self.pre_transform is not None:
+                data_list = [self.pre_transform(d) for d in data_list]
+
+            self.save(data_list, self.processed_paths[0])
+            return
+
         # Step 03. Filter out SDF
+        step2_folder = f"{self.raw_dir}/step_02_PubChemSTM_SDF"
         step3_folder = f"{self.raw_dir}/step_03_PubChemSTM_filtered"
         if not os.path.exists(step3_folder):
             os.makedirs(step3_folder)
@@ -322,7 +344,7 @@ class MoleculeGPTDataset(InMemoryDataset):
 
             block_size = 500000
 
-            def extract_one_SDF_file(block_id):
+            def extract_one_SDF_file(block_id: int) -> None:
                 valid_mol_count = 0
 
                 writer = Chem.SDWriter(
@@ -386,7 +408,7 @@ class MoleculeGPTDataset(InMemoryDataset):
 
         print(f"In total: {len(found_CID_set)} molecules")
 
-    def process(self) -> None:
+        # Step 05. Convert to PyG data format
         types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4, 'Unknow': 5}
         bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
@@ -412,25 +434,23 @@ class MoleculeGPTDataset(InMemoryDataset):
                 CID = mol.GetProp("PUBCHEM_COMPOUND_CID")
                 CAN_SMILES = mol.GetProp("PUBCHEM_OPENEYE_CAN_SMILES")
 
-                RDKit_mol = Chem.MolFromSmiles(CAN_SMILES)
-                if RDKit_mol is None:
+                m: Chem.Mol = Chem.MolFromSmiles(CAN_SMILES)
+                if m is None:
                     continue
-                RDKit_CAN_SMILES = Chem.MolToSmiles(RDKit_mol)
+                RDKit_CAN_SMILES = Chem.MolToSmiles(m)
 
                 ground_truth = CID2text_data[CID][0]
 
                 instruction = llm.inference([prompt.format(ground_truth)])[0]
 
-                # Convert to PyG data format
-                x = [
+                x: torch.Tensor = torch.tensor([
                     types[atom.GetSymbol()] if atom.GetSymbol() in types else 5
-                    for atom in RDKit_mol.GetAtoms()
-                ]
-                x = one_hot(torch.tensor(x), num_classes=len(types))
-                x = x.to(torch.float)
+                    for atom in m.GetAtoms()  # type: ignore
+                ])
+                x = one_hot(x, num_classes=len(types), dtype=torch.float)
 
                 rows, cols, edge_types = [], [], []
-                for bond in RDKit_mol.GetBonds():
+                for bond in m.GetBonds():  # type: ignore
                     i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                     edge_types += [bonds[bond.GetBondType()]] * 2
                     rows += [i, j]
