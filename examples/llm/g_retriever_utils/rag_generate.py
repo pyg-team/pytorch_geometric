@@ -1,7 +1,6 @@
 # %%
 import argparse
 from itertools import chain
-from typing import Tuple
 
 import pandas as pd
 import torch
@@ -9,9 +8,7 @@ import tqdm
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import WebQSPDataset
-from torch_geometric.datasets.web_qsp_dataset import (
-    preprocess_triplet,
-)
+from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import (
