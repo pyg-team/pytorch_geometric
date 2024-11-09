@@ -22,9 +22,7 @@ class TXT2KG():
     ) -> None:
         self.local_LM = local_LM
         if self.local_LM:
-            from torch_geometric.nn.nlp import LLM
-            LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
-            self.model = LLM(LM_name, num_params=14).eval()
+            self.initd_LM = False
         else:
             # We use NIMs since most PyG users may not be able to run a 70B+ model
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
@@ -33,6 +31,7 @@ class TXT2KG():
                 base_url="https://integrate.api.nvidia.com/v1",
                 api_key=NVIDIA_API_KEY)
             self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
+
         self.chunk_size = 512
         self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
         # useful for approximating recall of subgraph retrieval algos
@@ -48,6 +47,11 @@ class TXT2KG():
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
         if self.local_LM:
+            if not initd_LM:
+                from torch_geometric.nn.nlp import LLM
+                LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
+                self.model = LLM(LM_name, num_params=14).eval()
+                self.initd_LM
             out_str = self.model.inference(
                 question=[txt + '\n' + self.system_prompt],
                 max_tokens=self.chunk_size)[0]
