@@ -71,6 +71,7 @@ if __name__ == '__main__':
         NeighborSamplingRAGGraphStore,
     )
     from torch_geometric.utils.rag.backend_utils import make_pcst_filter
+    from torch_geometric.loader import RAGQueryLoader
 
     triples = chain.from_iterable(
         triple_set for triple_set in kg_maker.relevant_triples.values())
