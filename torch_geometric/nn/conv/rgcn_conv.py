@@ -120,7 +120,8 @@ class RGCNConv(MessagePassing):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]
 
-        self._use_segment_matmul_heuristic_output: Optional[bool] = None
+        self._use_segment_matmul_heuristic_output: torch.jit.Attribute(
+            None, Optional[float])
 
         if num_bases is not None:
             self.weight = Parameter(
