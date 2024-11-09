@@ -73,8 +73,8 @@ if __name__ == '__main__':
         NeighborSamplingRAGGraphStore,
     )
 
-    triples = chain.from_iterable(
-        triple_set for triple_set in kg_maker.relevant_triples.values())
+    triples = list(chain.from_iterable(
+        triple_set for triple_set in kg_maker.relevant_triples.values()))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
         model_name='sentence-transformers/all-roberta-large-v1').to(device)
