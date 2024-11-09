@@ -60,6 +60,7 @@ if __name__ == '__main__':
     from itertools import chain
 
     from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
+    from torch_geometric.loader import RAGQueryLoader
     from torch_geometric.nn.nlp import SentenceTransformer
     from torch_geometric.utils.rag.backend_utils import (
         create_remote_backend_from_triplets,
@@ -71,8 +72,6 @@ if __name__ == '__main__':
     from torch_geometric.utils.rag.graph_store import (
         NeighborSamplingRAGGraphStore,
     )
-    from torch_geometric.utils.rag.backend_utils import make_pcst_filter
-    from torch_geometric.loader import RAGQueryLoader
 
     triples = chain.from_iterable(
         triple_set for triple_set in kg_maker.relevant_triples.values())
