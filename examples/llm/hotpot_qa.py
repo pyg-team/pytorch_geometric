@@ -63,6 +63,7 @@ if __name__ == '__main__':
     from torch_geometric.nn.nlp import SentenceTransformer
     from torch_geometric.utils.rag.backend_utils import (
         create_remote_backend_from_triplets,
+        make_pcst_filter,
     )
     from torch_geometric.utils.rag.feature_store import (
         SentenceTransformerFeatureStore,
@@ -70,7 +71,6 @@ if __name__ == '__main__':
     from torch_geometric.utils.rag.graph_store import (
         NeighborSamplingRAGGraphStore,
     )
-    from torch_geometric.utils.rag.backend_utils import make_pcst_filter
 
     triples = chain.from_iterable(
         triple_set for triple_set in kg_maker.relevant_triples.values())
@@ -84,11 +84,11 @@ if __name__ == '__main__':
             "batch_size": min(len(kg_maker.relevant_triples), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=SentenceTransformerFeatureStore).load()
-    query_loader = RAGQueryLoader(data=(fs, gs),
-                                  seed_nodes_kwargs={"k_nodes": 5},
-                                  seed_edges_kwargs={"k_edges": 5},
-                                  sampler_kwargs={"num_neighbors": [50] * 2},
-                                  local_filter=make_pcst_filter(triplets, model))
+    query_loader = RAGQueryLoader(
+        data=(fs, gs), seed_nodes_kwargs={"k_nodes":
+                                          5}, seed_edges_kwargs={"k_edges": 5},
+        sampler_kwargs={"num_neighbors": [50] * 2},
+        local_filter=make_pcst_filter(triplets, model))
     """
     approx precision = num_relevant_out_of_retrieved/num_retrieved_triples
     We will use precision as a proxy for recall. This is because for recall,

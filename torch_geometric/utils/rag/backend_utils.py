@@ -5,12 +5,12 @@ from typing import (
     Callable,
     Dict,
     Iterable,
+    List,
     Optional,
     Protocol,
     Tuple,
     Type,
     runtime_checkable,
-    List,
 )
 
 import torch
@@ -32,6 +32,7 @@ from torch_geometric.distributed import (
 )
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.typing import EdgeType, NodeType
+
 try:
     from pandas import DataFrame
 except ImportError:
@@ -232,21 +233,31 @@ def create_remote_backend_from_triplets(
 
 # (TODO make TXT2KG compatible with this
 def make_pcst_filter(triples: List[Tuple[str, str, str]],
-                    model: SentenceTransformer):
+                     model: SentenceTransformer):
     if DataFrame is None:
         print("PCST requires `pip install pandas`")
         quit()
-    def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3,
-                                 topk_e: int = 3,
-                                 cost_e: float = 0.5,) -> Tuple[Data, str]:
+
+    def apply_retrieval_via_pcst(
+        graph: Data,
+        query: str,
+        topk: int = 3,
+        topk_e: int = 3,
+        cost_e: float = 0.5,
+    ) -> Tuple[Data, str]:
         q_emb = model.encode(query)
-        full_textual_nodes = list(set([i[0] for i in triples] + [i[2] for i in triples]))
+        full_textual_nodes = list(
+            set([i[0] for i in triples] + [i[2] for i in triples]))
         textual_nodes = [(i, full_textual_nodes[i]) for i in graph["node_idx"]]
-        textual_nodes = DataFrame(textual_nodes, columns=["node_id", "node_attr"])
+        textual_nodes = DataFrame(textual_nodes,
+                                  columns=["node_id", "node_attr"])
         textual_edges = [triples[i] for i in graph["edge_idx"]]
-        textual_edges = DataFrame(textual_edges, columns=["src", "edge_attr", "dst"])
+        textual_edges = DataFrame(textual_edges,
+                                  columns=["src", "edge_attr", "dst"])
         out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes,
-                                             textual_edges, topk, topk_e, cost_e)
+                                             textual_edges, topk, topk_e,
+                                             cost_e)
         out_graph["desc"] = desc
         return out_graph
+
     return apply_retrieval_via_pcst
