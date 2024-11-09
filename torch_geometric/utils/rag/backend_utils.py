@@ -10,6 +10,7 @@ from typing import (
     Tuple,
     Type,
     runtime_checkable,
+    List,
 )
 
 import torch
@@ -34,7 +35,10 @@ from torch_geometric.distributed import (
     Partitioner,
 )
 from torch_geometric.typing import EdgeType, NodeType
-
+try:
+    from pandas import DataFrame
+except ImportError:
+    DataFrame = None
 RemoteGraphBackend = Tuple[FeatureStore, GraphStore]
 
 # TODO: Make everything compatible with Hetero graphs aswell
@@ -229,25 +233,23 @@ def create_remote_backend_from_triplets(
                                         graph_db, feature_db)
 
 
-def apply_retrieval_via_pcst(graph: Data, model: SentenceTransformer,
-                             ds: ,
-                             query: str, topk: int = 3,
-                             topk_e: int = 3,
-                             cost_e: float = 0.5,) -> Tuple[Data, str]:
-    q_emb = model.encode(query)
-    textual_nodes = ds.textual_nodes.iloc[graph["node_idx"]].reset_index()
-    textual_edges = ds.textual_edges.iloc[graph["edge_idx"]].reset_index()
-    out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes,
-                                         textual_edges, topk, topk_e, cost_e)
-    out_graph["desc"] = desc
-    return out_graph
-
-
-def apply_retrieval_with_text(graph: Data, query: str) -> Tuple[Data, str]:
-    textual_nodes = ds.textual_nodes.iloc[graph["node_idx"]].reset_index()
-    textual_edges = ds.textual_edges.iloc[graph["edge_idx"]].reset_index()
-    desc = (
-        textual_nodes.to_csv(index=False) + "\n" +
-        textual_edges.to_csv(index=False, columns=["src", "edge_attr", "dst"]))
-    graph["desc"] = desc
-    return graph
+# (TODO make TXT2KG compatible with this
+def make_pcst_filter(triples: List[Tuple[str, str, str]],
+                    model: SentenceTransformer):
+    if DataFrame is None:
+        print("PCST requires `pip install pandas`")
+        quit()
+    def apply_retrieval_via_pcst(graph: Data, query: str, topk: int = 3,
+                                 topk_e: int = 3,
+                                 cost_e: float = 0.5,) -> Tuple[Data, str]:
+        q_emb = model.encode(query)
+        full_textual_nodes = list(set([i[0] for i in triples] + [i[2] for i in triples]))
+        textual_nodes = [(i, full_textual_nodes[i]) for i in graph["node_idx"]]
+        textual_nodes = DataFrame(textual_nodes, columns=["node_id", "node_attr"])
+        textual_edges = [triples[i] for i in graph["edge_idx"]]
+        textual_edges = DataFrame(textual_edges, columns=["src", "edge_attr", "dst"])
+        out_graph, desc = retrieval_via_pcst(graph, q_emb, textual_nodes,
+                                             textual_edges, topk, topk_e, cost_e)
+        out_graph["desc"] = desc
+        return out_graph
+    return apply_retrieval_via_pcst

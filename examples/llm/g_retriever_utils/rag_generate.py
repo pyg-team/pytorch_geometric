@@ -16,8 +16,7 @@ from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
-    apply_retrieval_via_pcst,
-    apply_retrieval_with_text
+    make_pcst_filter,
 )
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
@@ -29,7 +28,6 @@ parser = argparse.ArgumentParser(description="""Generate new WebQSP subgraphs
 NOTE: Evaluating with smaller samples may result in poorer performance for the trained models compared to untrained models."""
                                  )
 # TODO: Add more arguments for configuring rag params
-parser.add_argument("--use_pcst", action="store_true")
 parser.add_argument("--num_samples", type=int, default=4700)
 parser.add_argument("--out_file", default="subg_results.pt")
 args = parser.parse_args()
@@ -59,14 +57,10 @@ fs, gs = create_remote_backend_from_triplets(
     feature_db=SentenceTransformerFeatureStore).load()
 
 # %%
-
-transform = apply_retrieval_via_pcst \
-    if args.use_pcst else apply_retrieval_with_text
-
 query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": 5},
                               seed_edges_kwargs={"k_edges": 5},
                               sampler_kwargs={"num_neighbors": [50] * 2},
-                              local_filter=transform)
+                              local_filter=make_pcst_filter(triplets, model))
 
 
 # %%
