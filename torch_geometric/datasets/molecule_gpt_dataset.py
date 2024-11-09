@@ -172,6 +172,7 @@ class MoleculeGPTDataset(InMemoryDataset):
     r"""The dataset from the `"MoleculeGPT: Instruction Following Large
     Language Models for Molecular Property Prediction"
     <https://ai4d3.github.io/papers/34.pdf>`_ paper.
+
     Args:
         root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
