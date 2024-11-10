@@ -40,11 +40,6 @@ class LabelUsage(torch.nn.Module):
         self.base_model = base_model
         self.num_classes = num_classes
 
-    def add_labels(self, features, labels, idx):
-        onehot = torch.zeros([features.shape[0], self.num_classes]).to(features.device)
-        onehot[idx, labels[idx]] = 1  # create a one-hot encoding
-        return torch.cat([features, onehot], dim=-1)
-
     def forward(self, x, edge_index, y, train_idx):
         r"""
         Forward pass using label usage algorithm.
@@ -62,8 +57,9 @@ class LabelUsage(torch.nn.Module):
         train_pred_idx = train_idx[~mask]  # D_U: nodes to predict labels in training
 
         # add labels to features for train_labels_idx nodes
-        #
-        feat = self.add_labels(x, y, train_labels_idx)
+        onehot = torch.zeros([x.shape[0], self.num_classes]).to(x.device)
+        onehot[train_labels_idx, y[idx]] = 1  # create a one-hot encoding
+        feat = torch.cat([x, onehot], dim=-1)
 
         # label reuse procedure
         for _ in range(self.num_recycling_iterations):
