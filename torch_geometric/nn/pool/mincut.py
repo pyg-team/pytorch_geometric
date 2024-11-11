@@ -15,7 +15,7 @@ def mincut_pool(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""MinCut pooling for sparse adjacency matrices.
 
-    This class mirros its dense counter-part `dense_mincut_pool`
+    This class mirrors its dense counter-part in `nn.dense.mincut_pool`.
 
     Args:
         x (torch.Tensor): Node feature tensor
