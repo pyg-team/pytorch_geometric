@@ -5,6 +5,8 @@ from torch import Tensor
 
 from torch_geometric.nn.dense.mincut_pool import _rank3_trace
 
+EPS = 1e-15
+
 
 def mincut_pool(
     x: Tensor,
@@ -52,29 +54,32 @@ def mincut_pool(
 
     out = torch.matmul(s.transpose(1, 2), x)
 
-    b, n, c = s.size()
+    num_clusters = s.size(-1)
 
     adj_bd = batched_block_diagonal_sparse(adj)
     s_bd = batched_block_diagonal_dense(s)
 
     # A' = S^T A S
     out_adj_bd = torch.sparse.mm(s_bd.T, torch.sparse.mm(adj_bd, s_bd))
-    out_adj = block_diagonal_to_batched_3d(out_adj_bd, b, c, c)
+    out_adj = block_diagonal_to_batched_3d(out_adj_bd, batch_size,
+                                           num_clusters, num_clusters)
 
     # cut numerator, trace(S^T A S)
     mincut_num = _rank3_trace(out_adj)
 
-    # TODO: einsum on coo_matrix is slower than
-    #       on csr_matrix (after some tweaks)
-    #       consider using csr_matrix
     d_flat = torch.einsum("ijk->ij", adj)
+
     d = _sparse_rank3_diag(d_flat)
     d = batched_block_diagonal_sparse(d.coalesce())
 
     # cut denumerator, trace(S^T D S)
     mincut_den = _rank3_trace(
         block_diagonal_to_batched_3d(
-            torch.sparse.mm(s_bd.T, torch.sparse.mm(d, s_bd)), b, c, c))
+            torch.sparse.mm(s_bd.T, torch.sparse.mm(d, s_bd)),
+            batch_size,
+            num_clusters,
+            num_clusters,
+        ))
 
     mincut_loss = -(mincut_num / mincut_den)
     mincut_loss = torch.mean(mincut_loss)
@@ -88,8 +93,6 @@ def mincut_pool(
         dim=(-1, -2),
     )
     ortho_loss = torch.mean(ortho_loss)
-
-    EPS = 1e-15
 
     # Fix and normalize coarsened adjacency matrix.
     ind = torch.arange(k, device=out_adj.device)
