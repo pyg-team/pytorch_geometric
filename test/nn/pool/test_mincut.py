@@ -30,7 +30,7 @@ def test__sparse_rank3_diag():
     assert (actual.to_dense() == expected).all()
 
 
-@withPackage('torch>=2.0.0')
+@withPackage("torch>=2.0.0")
 class TestMinCut:
     RTOL = 1e-6  # relative tolerance
 
@@ -97,65 +97,97 @@ class TestMinCut:
                                    rtol=self.RTOL)
 
 
-@pytest.mark.parametrize("input_is_sparse", [True, False])
-@pytest.mark.parametrize(
-    "batched_tensor, block_diagonal_tensor",
-    [
-        (
-            torch.tensor([[[1]], [[2]], [[3]]]),
-            torch.tensor([[1, 0, 0], [0, 2, 0], [0, 0, 3]]).to_sparse(),
-        ),
-        (
-            torch.tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]]),
-            torch.tensor([
-                [1, 2, 0, 0],
-                [3, 4, 0, 0],
-                [0, 0, 5, 6],
-                [0, 0, 7, 8],
-            ]).to_sparse(),
-        ),
-        (
-            # b=1
-            torch.tensor([[[1, 2], [3, 4]]]),
-            torch.tensor([
-                [1, 2],
-                [3, 4],
-            ]).to_sparse(),
-        ),
-        (
-            torch.tensor([[[1, 2]], [[3, 4]]]),
-            torch.tensor([
-                [1, 2, 0, 0],
-                [0, 0, 3, 4],
-            ]).to_sparse(),
-        ),
-        (
-            torch.tensor([[[1], [2]], [[3], [4]]]),
-            torch.tensor([
-                [1, 0],
-                [2, 0],
-                [0, 3],
-                [0, 4],
-            ]).to_sparse(),
-        ),
-    ],
-)
-def test_batched_block_diagonal_sparse_and_dense_and_vice_versa(
-        input_is_sparse, batched_tensor, block_diagonal_tensor):
-    # from batched to block diagonal
-    if input_is_sparse:
-        actual = batched_block_diagonal_sparse(batched_tensor.to_sparse())
-    else:
-        actual = batched_block_diagonal_dense(batched_tensor)
-    assert actual.is_sparse
-    assert actual.layout == torch.sparse_coo
-    torch.testing.assert_close(actual.to_dense(),
-                               block_diagonal_tensor.to_dense())
-
-    # from block diagonal to batched
-    if input_is_sparse:
-        b, h, w = batched_tensor.size()
-        actual = block_diagonal_to_batched_3d(block_diagonal_tensor, b, h, w)
-        assert not actual.is_sparse
+class TestBatchedBlockDiagonalConversion:
+    @pytest.mark.parametrize("input_is_sparse", [True, False])
+    @pytest.mark.parametrize(
+        "batched_tensor, block_diagonal_tensor",
+        [
+            (
+                torch.tensor([[[1]], [[2]], [[3]]]),
+                torch.tensor([[1, 0, 0], [0, 2, 0], [0, 0, 3]]).to_sparse(),
+            ),
+            (
+                torch.tensor([[[1, 2], [3, 4]], [[5, 6], [7, 8]]]),
+                torch.tensor([
+                    [1, 2, 0, 0],
+                    [3, 4, 0, 0],
+                    [0, 0, 5, 6],
+                    [0, 0, 7, 8],
+                ]).to_sparse(),
+            ),
+            (
+                # b=1
+                torch.tensor([[[1, 2], [3, 4]]]),
+                torch.tensor([
+                    [1, 2],
+                    [3, 4],
+                ]).to_sparse(),
+            ),
+            (
+                torch.tensor([[[1, 2]], [[3, 4]]]),
+                torch.tensor([
+                    [1, 2, 0, 0],
+                    [0, 0, 3, 4],
+                ]).to_sparse(),
+            ),
+            (
+                torch.tensor([[[1], [2]], [[3], [4]]]),
+                torch.tensor([
+                    [1, 0],
+                    [2, 0],
+                    [0, 3],
+                    [0, 4],
+                ]).to_sparse(),
+            ),
+        ],
+    )
+    def test_conversion(self, input_is_sparse, batched_tensor,
+                        block_diagonal_tensor):
+        # from batched to block diagonal
+        if input_is_sparse:
+            actual = batched_block_diagonal_sparse(batched_tensor.to_sparse())
+        else:
+            actual = batched_block_diagonal_dense(batched_tensor)
+        assert actual.is_sparse
+        assert actual.layout == torch.sparse_coo
         torch.testing.assert_close(actual.to_dense(),
-                                   batched_tensor.to_dense())
+                                   block_diagonal_tensor.to_dense())
+
+        # from block diagonal to batched
+        if input_is_sparse:
+            b, h, w = batched_tensor.size()
+            actual = block_diagonal_to_batched_3d(block_diagonal_tensor, b, h,
+                                                  w)
+            assert not actual.is_sparse
+            torch.testing.assert_close(actual.to_dense(),
+                                       batched_tensor.to_dense())
+
+    def test_invalid_input(self):
+        dense_tensor = torch.tensor([[[1]], [[2]], [[3]]])
+        sparse_tensor = dense_tensor.to_sparse()
+        with pytest.raises(TypeError, match=".*dense.*"):
+            batched_block_diagonal_dense(sparse_tensor)
+
+        with pytest.raises(TypeError):
+            batched_block_diagonal_sparse(dense_tensor)
+
+        dense_tensor_1d = dense_tensor.flatten()
+        sparse_tensor_1d = dense_tensor_1d.to_sparse()
+
+        with pytest.raises(ValueError):
+            batched_block_diagonal_dense(dense_tensor_1d)
+
+        with pytest.raises(ValueError):
+            batched_block_diagonal_sparse(sparse_tensor_1d)
+
+        with pytest.raises(TypeError, match=".*dense.*"):
+            block_diagonal_to_batched_3d(dense_tensor, 3, 1, 1)
+
+        sparse_tensor_bd = batched_block_diagonal_sparse(sparse_tensor)
+        with pytest.raises(TypeError, match=".*coo.*"):
+            block_diagonal_to_batched_3d(sparse_tensor_bd.to_sparse_csr(), 3,
+                                         1, 1)
+
+        with pytest.raises(ValueError, match=".*ndim = 2.*"):
+            block_diagonal_to_batched_3d(
+                sparse_tensor_bd.to_dense().unsqueeze(0).to_sparse(), 3, 1, 1)

@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.dense.mincut_pool import _rank3_trace
+from torch_geometric.utils import is_sparse
 
 EPS = 1e-15
 
@@ -122,14 +123,14 @@ def batched_block_diagonal_sparse(batched_tensor_sp: Tensor) -> Tensor:
     """Convert a 3D batched sparse tensor
     into a 2D block diagonal structure.
     """
-    if not batched_tensor_sp.is_sparse:
+    if not is_sparse(batched_tensor_sp):
         raise TypeError("Expects a sparse tensor, but got a dense one")
     if batched_tensor_sp.layout != torch.sparse_coo:
         raise TypeError(
             f"Expects a sparse coo matrix, but got {batched_tensor_sp.layout}")
 
     if batched_tensor_sp.ndim != 3:
-        raise TypeError(
+        raise ValueError(
             f"Expects dim to be 3, but got {batched_tensor_sp.ndim}")
 
     nnz = batched_tensor_sp._nnz()
@@ -154,10 +155,10 @@ def batched_block_diagonal_dense(batched_tensor: Tensor) -> Tensor:
     """Convert a 3D batched dense tensor into a 2D block diagonal structure
     in sparse format.
     """
-    if batched_tensor.is_sparse:
+    if is_sparse(batched_tensor):
         raise TypeError("Expects a dense tensor, but got a sparse one")
     if batched_tensor.ndim != 3:
-        raise TypeError(f"Expects dim to be 3, but got {batched_tensor.ndim}")
+        raise ValueError(f"Expects dim to be 3, but got {batched_tensor.ndim}")
 
     shape = batched_tensor.size()
     b, h, w = shape
@@ -185,8 +186,11 @@ def block_diagonal_to_batched_3d(block_diagonal: Tensor, b: int, h: int,
 
     b, h, w: dim0, dim1, dim2.
     """
-    if not block_diagonal.is_sparse:
+    if not is_sparse(block_diagonal):
         raise TypeError("Expects a sparse tensor, but got a dense one")
+    if block_diagonal.ndim != 2:
+        raise ValueError(f"Expects ndim = 2, but got {block_diagonal.ndim}")
+
     if block_diagonal.layout != torch.sparse_coo:
         raise TypeError(
             f"Expects a sparse coo matrix, but got {block_diagonal.layout}")
