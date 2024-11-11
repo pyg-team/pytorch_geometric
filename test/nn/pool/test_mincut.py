@@ -13,7 +13,7 @@ from torch_geometric.nn.pool.mincut import (
     block_diagonal_to_batched_3d,
     mincut_pool,
 )
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 
 def test__sparse_diag_2d():
@@ -30,6 +30,7 @@ def test__sparse_rank3_diag():
     assert (actual.to_dense() == expected).all()
 
 
+@withPackage('torch>=2.0.0')
 class TestMinCut:
     RTOL = 1e-6  # relative tolerance
 
