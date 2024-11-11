@@ -52,16 +52,17 @@ def mincut_pool(
 
     out = torch.matmul(s.transpose(1, 2), x)
 
-    b, n, c = s.size()
-
-    adj_bd = batched_block_diagonal_sparse(adj)
-    s_bd = batched_block_diagonal_dense(s)
-
-    # A' = S^T A S
-    out_adj_bd = torch.sparse.mm(s_bd.T, torch.sparse.mm(adj_bd, s_bd))
-    out_adj = block_diagonal_to_batched_3d(out_adj_bd, b, c, c)
-
-    # cut numerator, trace(S^T A S)
+    # we resort to a different way of doing matrix multiplication
+    # on batches of 2D matrices
+    # since using the following
+    # out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
+    # gives RuntimeError: expand is unsupported for Sparse tensors
+    # TODO: consider faster approaches
+    out_adj = torch.matmul(
+        _bmm(s.transpose(1, 2), adj),
+        s,
+    )
+    # MinCut regularization.
     mincut_num = _rank3_trace(out_adj)
 
     # TODO: einsum on coo_matrix is slower than
@@ -69,12 +70,11 @@ def mincut_pool(
     #       consider using csr_matrix
     d_flat = torch.einsum("ijk->ij", adj)
     d = _sparse_rank3_diag(d_flat)
-    d = batched_block_diagonal_sparse(d.coalesce())
 
-    # cut denumerator, trace(S^T D S)
-    mincut_den = _rank3_trace(
-        block_diagonal_to_batched_3d(
-            torch.sparse.mm(s_bd.T, torch.sparse.mm(d, s_bd)), b, c, c))
+    mincut_den = _rank3_trace(torch.matmul(
+        _bmm(s.transpose(1, 2), d),
+        s,
+    ))
 
     mincut_loss = -(mincut_num / mincut_den)
     mincut_loss = torch.mean(mincut_loss)
@@ -101,6 +101,21 @@ def mincut_pool(
     return out, out_adj, mincut_loss, ortho_loss
 
 
+def _bmm(a: Tensor, b: Tensor) -> Tensor:
+    r"""Batched multiplication over 3D dense&sparse tensors.
+
+    Args:
+        a (torch.Tensor): a 3D dense tensor.
+        b (torch.Tensor): a 3D sparse tensor.
+    """
+    dim1 = b.shape[0]
+    # TODO: check if a is dense and b is sparse and their dimensions
+    return torch.stack(
+        [torch.matmul(a[i], b[i]) for i in range(dim1)],
+        dim=0,
+    )
+
+
 def _sparse_diag_2d(diag: Tensor) -> Tensor:
     r"""Create a 2D sparse tensor given its diagonal values as input."""
     n = diag.shape[0]
@@ -113,78 +128,3 @@ def _sparse_rank3_diag(d_flat: Tensor) -> Tensor:
     """
     return torch.stack([_sparse_diag_2d(diag.to_dense()) for diag in d_flat],
                        dim=0)
-
-
-def batched_block_diagonal_sparse(batched_tensor_sp: Tensor) -> Tensor:
-    """Convert a 3D batched sparse tensor
-    into a 2D block diagonal structure.
-    """
-    if not batched_tensor_sp.is_sparse:
-        raise TypeError("Expects a sparse tensor, but got a dense one")
-    if batched_tensor_sp.layout != torch.sparse_coo:
-        raise TypeError(
-            f"Expects a sparse coo matrix, but got {batched_tensor_sp.layout}")
-
-    if batched_tensor_sp.ndim != 3:
-        raise TypeError(
-            f"Expects dim to be 3, but got {batched_tensor_sp.ndim}")
-
-    nnz = batched_tensor_sp._nnz()
-    shape = batched_tensor_sp.size()
-    b, h, w = shape
-    indices = batched_tensor_sp.indices()
-    # [b, h, w] -> [b*h, b*w]
-    new_shape = (b * h, b * w)
-
-    new_indices = torch.empty(2, nnz, device=indices.device,
-                              dtype=indices.dtype)
-    # indices: [b,h,w] -> [h+b*H, w+b*W]
-    new_indices[0, :] = indices[1, :] + indices[0, :] * h
-    new_indices[1, :] = indices[2, :] + indices[0, :] * w
-
-    return torch.sparse_coo_tensor(indices=new_indices,
-                                   values=batched_tensor_sp.values(),
-                                   size=new_shape)
-
-
-def batched_block_diagonal_dense(batched_tensor: Tensor) -> Tensor:
-    """Convert a 3D batched dense tensor into a 2D block diagonal structure
-    in sparse format.
-    """
-    if batched_tensor.is_sparse:
-        raise TypeError("Expects a dense tensor, but got a sparse one")
-    if batched_tensor.ndim != 3:
-        raise TypeError(f"Expects dim to be 3, but got {batched_tensor.ndim}")
-
-    shape = batched_tensor.size()
-    b, h, w = shape
-    nnz = b * h * w
-    # [b, h, w] -> [b*h, b*w]
-    new_shape = (b * h, b * w)
-
-    new_indices = torch.empty(2, nnz, device=batched_tensor.device,
-                              dtype=torch.int64)
-    # indices: [b,h,w] -> [h+b*H, w+b*W]
-    indices0 = torch.arange(0, b).repeat_interleave(h * w)
-    indices1 = torch.arange(0, h).repeat(w, b).T.flatten()
-    indices2 = torch.arange(0, w).repeat(h * b)
-    new_indices[0, :] = indices1 + indices0 * h
-    new_indices[1, :] = indices2 + indices0 * w
-
-    return torch.sparse_coo_tensor(indices=new_indices,
-                                   values=batched_tensor.flatten(),
-                                   size=new_shape)
-
-
-def block_diagonal_to_batched_3d(block_diagonal: Tensor, b: int, h: int,
-                                 w: int) -> Tensor:
-    """Convert a 2D block diagonal sparse matrix to 3D batched sparse one.
-
-    b, h, w: dim0, dim1, dim2.
-    """
-    if not block_diagonal.is_sparse:
-        raise TypeError("Expects a sparse tensor, but got a dense one")
-    if block_diagonal.layout != torch.sparse_coo:
-        raise TypeError(
-            f"Expects a sparse coo matrix, but got {block_diagonal.layout}")
-    return block_diagonal.values().reshape(b, h, w)
