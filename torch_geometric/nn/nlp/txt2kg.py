@@ -93,8 +93,9 @@ class TXT2KG():
             try:
                 if llm_obeyed:
                     # remove parenthesis and single quotes for parsing
-                    triple_str = triple_str.replace("(", "").replace("(", "").replace("'", "")
-                split_trip = triple_str.split(',')
+                    triple_str = triple_str.replace("(", "").replace(
+                        "(", "").replace("'", "")
+                triple_str.split(',')
                 potential_trip = tuple(clean_single_quotes)
             except:  # noqa
                 continue
