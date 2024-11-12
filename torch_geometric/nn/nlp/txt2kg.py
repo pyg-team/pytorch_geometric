@@ -51,7 +51,7 @@ class TXT2KG():
             if not self.initd_LM:
                 from torch_geometric.nn.nlp import LLM
                 LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
-                self.model = torch.compile(LLM(LM_name, num_params=14).eval())
+                self.model = LLM(LM_name, num_params=14).eval()
                 self.initd_LM = True
             out_str = self.model.inference(
                 question=[txt + '\n' + self.system_prompt],
@@ -79,7 +79,8 @@ class TXT2KG():
         processed = []
         split_by_newline = triples_str.split("\n")
         # sometimes LLM fails to obey the prompt
-        if len(split_by_newline) != 1:
+        print("split_by_newline =", split_by_newline)
+        if len(split_by_newline) > 1:
             split_triples = split_by_newline
             llm_obeyed = True
         else:
