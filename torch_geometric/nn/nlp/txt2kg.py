@@ -87,6 +87,7 @@ class TXT2KG():
             # handles form "(e, r, e) (e, r, e) ...""
             split_triples = triples_str[1:].split(") (")
             llm_obeyed = False
+        print("split_triples =", split_triples)
         for triple_str in split_triples:
             try:
                 if llm_obeyed:
