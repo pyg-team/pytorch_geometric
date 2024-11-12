@@ -90,6 +90,7 @@ class TXT2KG():
             split_triples = triples_str[1:].split(") (")
             llm_obeyed = False
         for triple_str in split_triples:
+            print("parsing triple...")
             try:
                 if llm_obeyed:
                     # remove parenthesis for parsing
