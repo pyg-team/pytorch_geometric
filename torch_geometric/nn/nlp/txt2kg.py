@@ -90,7 +90,7 @@ class TXT2KG():
         for triple_str in split_triples:
             try:
                 print("llm_obeyed =", llm_obeyed)
-                if not llm_obeyed:
+                if llm_obeyed:
                     # remove parenthesis for parsing
                     triple_str = triple_str[1:-1]
                 potential_trip = tuple(triple_str.split(', '))
