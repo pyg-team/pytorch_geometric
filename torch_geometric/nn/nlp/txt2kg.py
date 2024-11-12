@@ -93,8 +93,8 @@ class TXT2KG():
             try:
                 if llm_obeyed:
                     # remove parenthesis for parsing
-                    triple_str = triple_str[1:-1]
-                split_trip = triple_str.split(', ')
+                    triple_str = triple_str.replace("(", "").replace("(", "")
+                split_trip = triple_str.split(',')
                 clean_single_quotes = []
                 for i in split_trip:
                     if i[0] == "'" and i[-1] == "'":
