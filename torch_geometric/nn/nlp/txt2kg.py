@@ -2,7 +2,7 @@ import math
 from typing import List, Optional, Tuple
 
 import torch
-
+import time
 
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
@@ -37,6 +37,8 @@ class TXT2KG():
         # useful for approximating recall of subgraph retrieval algos
         self.doc_id_counter = 0
         self.relevant_triples = {}
+        self.total_chars_parsed = 0.0
+        self.time_to_parse = 0.0
 
     def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
@@ -46,6 +48,7 @@ class TXT2KG():
 
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
+        chunk_start_time = time.time()
         if self.local_LM:
             if not self.initd_LM:
                 from torch_geometric.nn.nlp import LLM
@@ -67,6 +70,9 @@ class TXT2KG():
             for chunk in completion:
                 if chunk.choices[0].delta.content is not None:
                     out_str += chunk.choices[0].delta.content
+        self.total_chars_parsed += len(txt)
+        self.time_to_parse += time.time() - chunk_start_time
+        self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse
         return out_str
 
     def parse_n_check_triples(self,
