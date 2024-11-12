@@ -87,10 +87,10 @@ class TXT2KG():
             # handles form "(e, r, e) (e, r, e) ...""
             split_triples = triples_str[1:].split(") (")
             llm_obeyed = False
-        print("split_triples =", split_triples)
+        print("llm_obeyed =", llm_obeyed)
         for triple_str in split_triples:
             try:
-                if llm_obeyed:
+                if not llm_obeyed:
                     # remove parenthesis for parsing
                     triple_str = triple_str[1:-1]
                 potential_trip = tuple(triples_str.split(','))
