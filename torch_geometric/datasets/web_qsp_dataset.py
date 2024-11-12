@@ -1,22 +1,12 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
-import gc
-import os
-from itertools import chain
-from typing import Any, Iterator, List, Tuple, no_type_check
+from typing import Any, Dict, List, Tuple, no_type_check
 
 import numpy as np
 import torch
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    LargeGraphIndexer,
-    TripletLike,
-    get_features_for_triplets_groups,
-)
-from torch_geometric.data.large_graph_indexer import EDGE_RELATION
+from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.nn.nlp import SentenceTransformer
 
 
@@ -29,16 +19,8 @@ def retrieval_via_pcst(
     topk: int = 3,
     topk_e: int = 3,
     cost_e: float = 0.5,
-    save_idx: bool = False,
-    override: bool = False,
 ) -> Tuple[Data, str]:
     c = 0.01
-    if len(textual_nodes) == 0 or len(textual_edges) == 0 or override:
-        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
-            index=False,
-            columns=["src", "edge_attr", "dst"],
-        )
-        return data, desc
 
     from pcst_fast import pcst_fast
 
@@ -126,26 +108,13 @@ def retrieval_via_pcst(
     src = [mapping[i] for i in edge_index[0].tolist()]
     dst = [mapping[i] for i in edge_index[1].tolist()]
 
-    # HACK Added so that the subset of nodes and edges selected can be tracked
-    if save_idx:
-        node_idx = np.array(data.node_idx)[selected_nodes]
-        edge_idx = np.array(data.edge_idx)[selected_edges]
-
     data = Data(
         x=data.x[selected_nodes],
         edge_index=torch.tensor([src, dst]),
         edge_attr=data.edge_attr[selected_edges],
     )
-    if save_idx:
-        data['node_idx'] = node_idx
-        data['edge_idx'] = edge_idx
 
     return data, desc
-
-
-def preprocess_triplet(triplet: TripletLike) -> TripletLike:
-    h, r, t = triplet
-    return str(h).lower(), str(r), str(t).lower()
 
 
 class WebQSPDataset(InMemoryDataset):
@@ -160,9 +129,6 @@ class WebQSPDataset(InMemoryDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
-        limit (int, optional): Construct only the first n samples.
-            Defaults to -1 to construct all samples.
-        verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
     """
@@ -171,195 +137,110 @@ class WebQSPDataset(InMemoryDataset):
         root: str,
         split: str = "train",
         force_reload: bool = False,
-        limit: int = -1,
-        verbose: bool = False,
         use_pcst: bool = True,
     ) -> None:
-        self.limit = limit
-        self.split = split
         self.use_pcst = use_pcst
-        # TODO Confirm why the dependency checks and device setting were removed here # noqa
-        '''
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
-        self._check_dependencies()
-        '''
-        self.verbose = verbose
-        self.force_reload = force_reload
         super().__init__(root, force_reload=force_reload)
 
-        if split not in set(self.raw_file_names):
+        if split not in {'train', 'val', 'test'}:
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
-        self._load_raw_data()
-        self.load(self.processed_paths[0] + "_" * (self.limit >= 0))
-
-    '''
-    def _check_dependencies(self) -> None:
-        missing_str_list = []
-        if not WITH_PCST:
-            missing_str_list.append('pcst_fast')
-        if not WITH_DATASETS:
-            missing_str_list.append('datasets')
-        if not WITH_PANDAS:
-            missing_str_list.append('pandas')
-        if len(missing_str_list) > 0:
-            missing_str = ' '.join(missing_str_list)
-            error_out = f"`pip install {missing_str}` to use this dataset."
-            raise ImportError(error_out)
-    '''
-
-    @property
-    def raw_file_names(self) -> List[str]:
-        return ["train", "val", "test"]
+        path = self.processed_paths[['train', 'val', 'test'].index(split)]
+        self.load(path)
 
     @property
     def processed_file_names(self) -> List[str]:
-        file_lst = [
-            "train_data.pt",
-            "val_data.pt",
-            "test_data.pt",
-            "pre_filter.pt",
-            "pre_transform.pt",
-            "large_graph_indexer",
-        ]
-        split_idx = self.raw_file_names.index(self.split)
-        split_file = file_lst.pop(split_idx)
-        file_lst.insert(0, split_file)
-        file_lst[-1] += f"_{self.split}"
-        return file_lst
-
-    def _save_raw_data(self, dataset) -> None:
-        for i, split in enumerate(self.raw_file_names):
-            # edge case
-            if split == "val":
-                split = "validation"
-            dataset[split].save_to_disk(self.raw_paths[i])
-
-    def _load_raw_data(self) -> None:
-        import datasets
-        if not hasattr(self, "raw_dataset"):
-            self.raw_dataset = datasets.load_from_disk(
-                self.raw_paths[self.raw_file_names.index(self.split)])
-
-        if self.limit >= 0:
-            self.raw_dataset = self.raw_dataset.select(
-                range(min(self.limit, len(self.raw_dataset))))
-
-    def download(self) -> None:
-        import datasets
-
-        dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
-        self._save_raw_data(dataset)
-        self.raw_dataset = dataset[self.split]
-
-    def _get_trips(self) -> Iterator[TripletLike]:
-        return chain.from_iterable(
-            iter(ds["graph"]) for ds in self.raw_dataset)
-
-    def _build_graph(self) -> None:
-        trips = self._get_trips()
-        self.indexer: LargeGraphIndexer = LargeGraphIndexer.from_triplets(
-            trips, pre_transform=preprocess_triplet)
-
-        # Nodes:
-        nodes = self.indexer.get_unique_node_features()
-        x = self.model.encode(
-            nodes,  # type: ignore
-            batch_size=256,
-            output_device='cpu')
-        self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
-
-        # Edges:
-        edges = self.indexer.get_unique_edge_features(
-            feature_name=EDGE_RELATION)
-        edge_attr = self.model.encode(
-            edges,  # type: ignore
-            batch_size=256,
-            output_device='cpu')
-        self.indexer.add_edge_feature(
-            new_feature_name="edge_attr",
-            new_feature_vals=edge_attr,
-            map_from_feature=EDGE_RELATION,
-        )
-
-        print("Saving graph...")
-        self.indexer.save(self.processed_paths[-1])
-
-    def _retrieve_subgraphs(self) -> None:
-        print("Encoding questions...")
-        self.questions = [str(ds["question"]) for ds in self.raw_dataset]
-        q_embs = self.model.encode(self.questions, batch_size=256,
-                                   output_device='cpu')
-
-        del self.model
-        gc.collect()
-        torch.cuda.empty_cache()
-        list_of_graphs = []
-        print("Retrieving subgraphs...")
-        textual_nodes = self.textual_nodes
-        textual_edges = self.textual_edges
-        graph_gen = get_features_for_triplets_groups(
-            self.indexer, (ds['graph'] for ds in self.raw_dataset),
-            pre_transform=preprocess_triplet, verbose=self.verbose)
-
-        for index in tqdm(range(len(self.raw_dataset)),
-                          disable=not self.verbose):
-            data_i = self.raw_dataset[index]
-            graph = next(graph_gen)
-            textual_nodes = self.textual_nodes.iloc[
-                graph["node_idx"]].reset_index()
-            textual_edges = self.textual_edges.iloc[
-                graph["edge_idx"]].reset_index()
-            pcst_subgraph, desc = retrieval_via_pcst(
-                graph,
-                q_embs[index],
-                textual_nodes,
-                textual_edges,
-                topk=3,
-                topk_e=5,
-                cost_e=0.5,
-                override=not self.use_pcst,
-            )
-            question = f"Question: {data_i['question']}\nAnswer: "
-            label = ("|").join(data_i["answer"]).lower()
-
-            pcst_subgraph["question"] = question
-            pcst_subgraph["label"] = label
-            pcst_subgraph["desc"] = desc
-            list_of_graphs.append(pcst_subgraph.to("cpu"))
-        print("Saving subgraphs...")
-        self.save(list_of_graphs,
-                  self.processed_paths[0] + "_" * (self.limit >= 0))
+        return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
     def process(self) -> None:
-        from pandas import DataFrame
-        self._load_raw_data()
+        import datasets
+        import pandas as pd
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = SentenceTransformer(
-            'sentence-transformers/all-roberta-large-v1').to(device)
-        self.model.eval()
-        if self.force_reload or not os.path.exists(self.processed_paths[-1]):
-            print("Encoding graph...")
-            self._build_graph()
-        else:
-            print("Loading graph...")
-            self.indexer = LargeGraphIndexer.from_disk(
-                self.processed_paths[-1])
-        self.textual_nodes = DataFrame.from_dict(
-            {"node_attr": self.indexer.get_node_features()})
-        self.textual_nodes["node_id"] = self.textual_nodes.index
-        self.textual_nodes = self.textual_nodes[["node_id", "node_attr"]]
-        self.textual_edges = DataFrame(self.indexer.get_edge_features(),
-                                       columns=["src", "edge_attr", "dst"])
-        self.textual_edges["src"] = [
-            self.indexer._nodes[h] for h in self.textual_edges["src"]
-        ]
-        self.textual_edges["dst"] = [
-            self.indexer._nodes[h] for h in self.textual_edges["dst"]
-        ]
-        self._retrieve_subgraphs()
+        datasets = datasets.load_dataset('rmanluo/RoG-webqsp')
 
-        gc.collect()
-        torch.cuda.empty_cache()
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model_name = 'sentence-transformers/all-roberta-large-v1'
+        model = SentenceTransformer(model_name).to(device)
+        model.eval()
+
+        for dataset, path in zip(
+            [datasets['train'], datasets['validation'], datasets['test']],
+                self.processed_paths,
+        ):
+            questions = [example["question"] for example in dataset]
+            question_embs = model.encode(
+                questions,
+                batch_size=256,
+                output_device='cpu',
+            )
+
+            data_list = []
+            for i, example in enumerate(tqdm(dataset)):
+                raw_nodes: Dict[str, int] = {}
+                raw_edges = []
+                for tri in example["graph"]:
+                    h, r, t = tri
+                    h = h.lower()
+                    t = t.lower()
+                    if h not in raw_nodes:
+                        raw_nodes[h] = len(raw_nodes)
+                    if t not in raw_nodes:
+                        raw_nodes[t] = len(raw_nodes)
+                    raw_edges.append({
+                        "src": raw_nodes[h],
+                        "edge_attr": r,
+                        "dst": raw_nodes[t]
+                    })
+                nodes = pd.DataFrame([{
+                    "node_id": v,
+                    "node_attr": k,
+                } for k, v in raw_nodes.items()],
+                                     columns=["node_id", "node_attr"])
+                edges = pd.DataFrame(raw_edges,
+                                     columns=["src", "edge_attr", "dst"])
+
+                nodes.node_attr = nodes.node_attr.fillna("")
+                x = model.encode(
+                    nodes.node_attr.tolist(),
+                    batch_size=256,
+                    output_device='cpu',
+                )
+                edge_attr = model.encode(
+                    edges.edge_attr.tolist(),
+                    batch_size=256,
+                    output_device='cpu',
+                )
+                edge_index = torch.tensor([
+                    edges.src.tolist(),
+                    edges.dst.tolist(),
+                ], dtype=torch.long)
+
+                question = f"Question: {example['question']}\nAnswer: "
+                label = ('|').join(example['answer']).lower()
+                data = Data(
+                    x=x,
+                    edge_index=edge_index,
+                    edge_attr=edge_attr,
+                )
+                if self.use_pcst and len(nodes) > 0 and len(edges) > 0:
+                    data, desc = retrieval_via_pcst(
+                        data,
+                        question_embs[i],
+                        nodes,
+                        edges,
+                        topk=3,
+                        topk_e=5,
+                        cost_e=0.5,
+                    )
+                else:
+                    desc = nodes.to_csv(index=False) + "\n" + edges.to_csv(
+                        index=False,
+                        columns=["src", "edge_attr", "dst"],
+                    )
+
+                data.question = question
+                data.label = label
+                data.desc = desc
+                data_list.append(data)
+
+            self.save(data_list, path)
