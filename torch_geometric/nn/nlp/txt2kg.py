@@ -84,7 +84,7 @@ class TXT2KG():
             llm_obeyed = True
         else:
             # handles form "(e, r, e) (e, r, e) ... (e, r, e)""
-            split_triples = triples_str[1:1].split(") (")
+            split_triples = triples_str[1:-1].split(") (")
             llm_obeyed = False
         for triple_str in split_triples:
             try:
