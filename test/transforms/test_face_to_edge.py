@@ -16,3 +16,11 @@ def test_face_to_edge():
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 3, 3],
                                         [1, 2, 3, 0, 2, 3, 0, 1, 0, 1]]
     assert data.num_nodes == 4
+
+    face = torch.tensor([[0, 1, 2, 3], [1, 2, 3, 4]], dtype=torch.long)
+    data = Data(face=face.T, num_nodes=5)
+
+    data = transform(data)
+    assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4],
+                                        [1, 2, 3, 0, 2, 3, 4, 0, 1, 3, 4, 0, 1, 2, 4, 1, 2, 3]]
+
