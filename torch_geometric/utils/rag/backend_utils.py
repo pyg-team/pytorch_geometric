@@ -251,7 +251,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     ) -> Tuple[Data, str]:
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
         q_emb = model.encode(query).to("cpu")
-        textual_nodes = [(int(i), full_textual_nodes[i]) for i in graph["node_idx"]]
+        textual_nodes = [(int(i), full_textual_nodes[i])
+                         for i in graph["node_idx"]]
         textual_nodes = DataFrame(textual_nodes,
                                   columns=["node_id", "node_attr"])
         textual_edges = [triples[i] for i in graph["edge_idx"]]
