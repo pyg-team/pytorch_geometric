@@ -99,6 +99,7 @@ class TXT2KG():
             if 'tuple' in str(
                     type(potential_trip)) and len(potential_trip) == 3:
                 processed.append(potential_trip)
+        print("processed=", processed)
         return processed
 
     def add_doc_2_KG(
