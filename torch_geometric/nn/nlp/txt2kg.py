@@ -92,6 +92,7 @@ class TXT2KG():
                     # remove parenthesis for parsing
                     triple_str = triple_str[1:-1]
                 potential_trip = tuple(triples_str.split(','))
+                print("potential_trip =", potential_trip)
             except:  # noqa
                 print("Failed to parse triple =", triple_str)
                 print("Full str =", triples_str)
