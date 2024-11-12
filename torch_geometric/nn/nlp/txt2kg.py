@@ -92,9 +92,9 @@ class TXT2KG():
         for triple_str in split_triples:
             try:
                 if llm_obeyed:
-                    potential_trip = eval(triple_str)
-                else:
-                    potential_trip = tuple(triples_str.split(','))
+                    # remove parenthesis for parsing
+                    triple_str = triple_str[1:-1]
+                potential_trip = tuple(triples_str.split(','))
             except:  # noqa
                 print("Failed to parse triple =", triple_str)
                 print("Full str =", triples_str)
