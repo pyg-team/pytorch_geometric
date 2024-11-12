@@ -251,7 +251,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         topk_e: int = 3,
         cost_e: float = 0.5,
     ) -> Tuple[Data, str]:
-        q_emb = model.encode(query)
+        # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
+        q_emb = model.encode(query).to("cpu")
         textual_nodes = [(i, full_textual_nodes[i]) for i in graph["node_idx"]]
         textual_nodes = DataFrame(textual_nodes,
                                   columns=["node_id", "node_attr"])
