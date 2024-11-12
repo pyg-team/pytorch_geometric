@@ -29,13 +29,16 @@ class FaceToEdge(BaseTransform):
             assert data.face is not None
             face = data.face
 
-            assert face.size(0) in [3, 4], (
-                "Expected tensor with shape [3, num_faces] or [4, num_faces], "
-                f"but got shape {face.size()}."
-            )
+            assert face.size(0) in [
+                3, 4
+            ], ("Expected tensor with shape [3, num_faces] or [4, num_faces], "
+                f"but got shape {face.size()}.")
 
             if face.size()[0] == 4:
-                edge_index = torch.cat([face[:2], face[1:3], face[2:4], face[::2], face[1::2], face[::3]], dim=1)
+                edge_index = torch.cat([
+                    face[:2], face[1:3], face[2:4], face[::2], face[1::2],
+                    face[::3]
+                ], dim=1)
             elif face.size()[0] == 3:
                 edge_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
 
