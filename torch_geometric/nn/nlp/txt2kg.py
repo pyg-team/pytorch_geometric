@@ -44,9 +44,6 @@ class TXT2KG():
     def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
 
-    def load_kg(self, path: str) -> None:
-        self.relevant_triples = torch.load(path)
-
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
         chunk_start_time = time.time()
@@ -54,7 +51,7 @@ class TXT2KG():
             if not self.initd_LM:
                 from torch_geometric.nn.nlp import LLM
                 LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
-                self.model = LLM(LM_name, num_params=14).eval()
+                self.model = torch.compile(LLM(LM_name, num_params=14).eval())
                 self.initd_LM = True
             out_str = self.model.inference(
                 question=[txt + '\n' + self.system_prompt],

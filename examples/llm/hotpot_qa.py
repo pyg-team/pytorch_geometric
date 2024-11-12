@@ -23,21 +23,22 @@ if __name__ == '__main__':
     parser.add_argument('--NV_NIM_KEY', type=str, default="")
     parser.add_argument('--local_lm', action="store_true")
     parser.add_argument('--percent_data', type=float, default=1.0)
+    parser.add_argument('--chunk_size', type=int, default=512)
     args = parser.parse_args()
     assert args.percent_data <= 100 and args.percent_data > 0
     if args.local_lm:
         kg_maker = TXT2KG(
             local_LM=True,
-            chunk_size=512,
+            chunk_size=args.chunk_size,
         )
     else:
         kg_maker = TXT2KG(
             NVIDIA_API_KEY=args.NV_NIM_KEY,
-            chunk_size=512,
+            chunk_size=args.chunk_size,
         )
     if os.path.exists("hotpot_kg.pt"):
         print("Re-using existing KG...")
-        kg_maker.load_kg("hotpot_kg.pt")
+        relevant_triples = torch.load("hotpot_kg.pt")
     else:
         # Use training set for simplicity since our retrieval method is nonparametric
         raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
@@ -62,14 +63,15 @@ if __name__ == '__main__':
                 QA_pair=QA_pair,
             )
         kg_maker.save_kg("hotpot_kg.pt")
+        relevant_triples = kg_maker.relevant_triples
+        print("Total number of context characters parsed", kg_maker.total_chars_parsed)
+        print("Average number of context characters parsed per second=",
+            kg_maker.avg_chars_parsed_per_sec)
     print(
         "Size of KG (number of triples) =",
         sum([
-            len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()
+            len(rel_trips) for rel_trips in relevant_triples.values()
         ]))
-    print("Total number of context characters parsed", kg_maker.total_chars_parsed)
-    print("Average number of context characters parsed per second=",
-          kg_maker.avg_chars_parsed_per_sec)
 
     triples = list(
         chain.from_iterable(
@@ -81,7 +83,7 @@ if __name__ == '__main__':
         triplets=triples, node_embedding_model=model,
         node_method_to_call="encode", path="backend",
         pre_transform=preprocess_triplet, node_method_kwargs={
-            "batch_size": min(len(kg_maker.relevant_triples), 256)
+            "batch_size": min(len(relevant_triples), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=SentenceTransformerFeatureStore).load()
     query_loader = RAGQueryLoader(
@@ -96,7 +98,7 @@ if __name__ == '__main__':
     but this is not known.
     """
     precisions = []
-    for QA_pair in kg_maker.relevant_triples.keys():
+    for QA_pair in relevant_triples.keys():
         relevant_triples = kg_maker.relevant_triples[QA_pair]
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
