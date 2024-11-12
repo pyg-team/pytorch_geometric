@@ -41,7 +41,7 @@ def nvlink_network():
     r"""Check if the current hardware supports cross-node NVLink network.
     """
     if not _wm_global:
-        raise RuntimeError("WholeGraph is not initialized.")
+        init_wholegraph()
 
     global_comm = wgth.comm.get_global_communicator("nccl")
     local_size = dist_shmem.get_local_size()
