@@ -258,9 +258,9 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         textual_edges = [triples[i] for i in graph["edge_idx"]]
         textual_edges = DataFrame(textual_edges,
                                   columns=["src", "edge_attr", "dst"])
-        out_graph, desc = retrieval_via_pcst(graph.to(q_emb.device), q_emb, textual_nodes,
-                                             textual_edges, topk, topk_e,
-                                             cost_e)
+        out_graph, desc = retrieval_via_pcst(graph.to(q_emb.device), q_emb,
+                                             textual_nodes, textual_edges,
+                                             topk, topk_e, cost_e)
         out_graph["desc"] = desc
         return out_graph
 
