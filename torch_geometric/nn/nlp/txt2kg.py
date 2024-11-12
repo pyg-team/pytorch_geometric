@@ -95,7 +95,8 @@ class TXT2KG():
                     # remove parenthesis and single quotes for parsing
                     triple_str = triple_str.replace("(", "").replace("(", "").replace("'", "")
                 split_trip = triple_str.split(',')
-                potential_trip = tuple(clean_single_quotes)
+                potential_trip = tuple(split_trip)
+                print("potential_trip =", potential_trip)
             except:  # noqa
                 continue
             if 'tuple' in str(
