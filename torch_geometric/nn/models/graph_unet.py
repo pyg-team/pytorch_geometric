@@ -92,6 +92,7 @@ class GraphUNet(torch.nn.Module):
 
         if edge_weight is None:
             edge_weight = x.new_ones(edge_index.size(1))
+        assert edge_weight.dim() == 1
         assert edge_weight.size(0) == edge_index.size(1)
 
         x = self.down_convs[0](x, edge_index, edge_weight)
