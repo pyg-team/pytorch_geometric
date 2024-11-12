@@ -80,9 +80,21 @@ class TXT2KG():
                               triples_str: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
         processed = []
-        for triple_str in triples_str.split("\n"):
+        split_by_newline = triples_str.split("\n")
+        # sometimes LLM fails to obey the prompt
+        if len(split_by_newline) != 1:
+            split_triples = split_by_newline
+            llm_obeyed = True
+        else:
+            # handles form "(e, r, e) (e, r, e) ...""
+            split_triples = triples_str[1:].split(") (")
+            llm_obeyed = False
+        for triple_str in split_triples:
             try:
-                potential_trip = eval(triple_str)
+                if llm_obeyed:
+                    potential_trip = eval(triple_str)
+                else:
+                    potential_trip = tuple(triples_str.split(','))
             except:  # noqa
                 print("Failed to parse triple =", triple_str)
                 print("Full str =", triples_str)
