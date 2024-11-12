@@ -47,7 +47,7 @@ class TXT2KG():
     def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
         if self.local_LM:
-            if not initd_LM:
+            if not self.initd_LM:
                 from torch_geometric.nn.nlp import LLM
                 LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
                 self.model = LLM(LM_name, num_params=14).eval()
