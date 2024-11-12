@@ -67,7 +67,7 @@ if __name__ == '__main__':
         sum([
             len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()
         ]))
-    print("Average number of characters parsed per second=",
+    print("Average number of context characters parsed per second=",
           self.avg_chars_parsed_per_sec)
 
     triples = list(
