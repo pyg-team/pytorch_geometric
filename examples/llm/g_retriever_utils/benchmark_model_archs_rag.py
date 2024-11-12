@@ -11,7 +11,7 @@ from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.nn.models import GAT, MLP, GRetriever
 
 sys.path.append('..')
-from g_retriever import (  # noqa: E402
+from minimal_demo import (  # noqa: E402
     benchmark_models,
     get_loss,
     inference_step,

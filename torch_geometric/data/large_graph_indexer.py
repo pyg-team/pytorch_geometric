@@ -64,6 +64,9 @@ class MappedFeature:
         return eq
 
 
+torch.serialization.add_safe_globals([MappedFeature])
+
+
 class LargeGraphIndexer:
     """For a dataset that consists of mulitiple subgraphs that are assumed to
     be part of a much larger graph, collate the values into a large graph store
