@@ -266,8 +266,7 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         out_graph["triples"] = desc[where_trips_start + 18:]
         parsed_trips = []
         for trip in out_graph["triples"]:
-            split_trip = tuple(trip.split(","))
-            parsed_trips.append(split_trip)
+            parsed_trips.append(tuple(trip.split(",")))
         out_graph["triples"] = parsed_trips
         return out_graph
 
