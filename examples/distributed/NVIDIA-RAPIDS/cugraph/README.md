@@ -19,6 +19,7 @@ For more documentation on how to install RAPIDS, see this [guide](https://docs.r
 To run, use sbatch
 (i.e. `sbatch -N2 -p <partition> -A <account> -J <job name>`)
 with the script shown below:
+
 ```
  head_node_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 
