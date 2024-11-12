@@ -93,7 +93,15 @@ class TXT2KG():
                 if llm_obeyed:
                     # remove parenthesis for parsing
                     triple_str = triple_str[1:-1]
-                potential_trip = tuple(triple_str.split(', '))
+                split_trip = triple_str.split(', ')
+                clean_single_quotes = []
+                for i in split_trip:
+                    if i[0] == "'" and i[-1] == "'":
+                        j = i[1:-1]
+                    else:
+                        j = i
+                clean_single_quotes.append(j)
+                potential_trip = tuple(clean_single_quotes)
             except:  # noqa
                 continue
             if 'tuple' in str(
