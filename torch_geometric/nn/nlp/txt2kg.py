@@ -96,6 +96,7 @@ class TXT2KG():
                 continue
             if 'tuple' in str(
                     type(potential_trip)) and len(potential_trip) == 3:
+                print("trip_added =", potential_trip)
                 processed.append(potential_trip)
         return processed
 
