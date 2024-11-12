@@ -38,7 +38,7 @@ class TXT2KG():
         # useful for approximating recall of subgraph retrieval algos
         self.doc_id_counter = 0
         self.relevant_triples = {}
-        self.total_chars_parsed = 0.0
+        self.total_chars_parsed = 0
         self.time_to_parse = 0.0
 
     def save_kg(self, path: str) -> None:
@@ -69,7 +69,7 @@ class TXT2KG():
                 if chunk.choices[0].delta.content is not None:
                     out_str += chunk.choices[0].delta.content
         self.total_chars_parsed += len(txt)
-        self.time_to_parse += time.time() - chunk_start_time
+        self.time_to_parse += round(time.time() - chunk_start_time, 2)
         self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse
         return out_str
 
