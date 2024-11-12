@@ -84,6 +84,7 @@ class TXT2KG():
             try:
                 potential_trip = eval(triple_str)
             except:  # noqa
+                print("Failed to parse triple =", triple_str)
                 continue
             if 'tuple' in str(
                     type(potential_trip)) and len(potential_trip) == 3:
