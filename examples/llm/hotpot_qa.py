@@ -97,7 +97,7 @@ if __name__ == '__main__':
     """
     precisions = []
     for QA_pair in relevant_triples.keys():
-        relevant_triples = kg_maker.relevant_triples[QA_pair]
+        golden_triples = kg_maker.relevant_triples[QA_pair]
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         print("retrieved_triples =", retrieved_triples)
         num_relevant_out_of_retrieved = float(
             sum([
-                int(bool(retrieved_triple in relevant_triples))
+                int(bool(retrieved_triple in golden_triples))
                 for retrieved_triple in retrieved_triples
             ]))
         precisions.append(num_relevant_out_of_retrieved /
