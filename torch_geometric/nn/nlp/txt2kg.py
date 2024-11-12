@@ -79,6 +79,7 @@ class TXT2KG():
         processed = []
         split_by_newline = triples_str.split("\n")
         # sometimes LLM fails to obey the prompt
+        print("triples_str =", triples_str)
         if len(split_by_newline) > 1:
             split_triples = split_by_newline
             llm_obeyed = True
