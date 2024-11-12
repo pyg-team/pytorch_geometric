@@ -1,8 +1,9 @@
 import math
+import time
 from typing import List, Optional, Tuple
 
 import torch
-import time
+
 
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text

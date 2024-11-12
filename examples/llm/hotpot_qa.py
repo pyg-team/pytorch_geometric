@@ -1,16 +1,14 @@
 import argparse
 import os
+from itertools import chain
 
 import datasets
 import torch
 from tqdm import tqdm
 
-from torch_geometric.nn.nlp import TXT2KG
-from itertools import chain
-
 from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 from torch_geometric.loader import RAGQueryLoader
-from torch_geometric.nn.nlp import SentenceTransformer
+from torch_geometric.nn.nlp import TXT2KG, SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
@@ -18,9 +16,8 @@ from torch_geometric.utils.rag.backend_utils import (
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
-from torch_geometric.utils.rag.graph_store import (
-    NeighborSamplingRAGGraphStore,
-)
+from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_KEY', type=str, default="")
@@ -70,8 +67,8 @@ if __name__ == '__main__':
         sum([
             len(rel_trips) for rel_trips in kg_maker.relevant_triples.values()
         ]))
-    print("Average number of characters parsed per second=", self.avg_chars_parsed_per_sec)
-
+    print("Average number of characters parsed per second=",
+          self.avg_chars_parsed_per_sec)
 
     triples = list(
         chain.from_iterable(
