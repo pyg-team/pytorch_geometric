@@ -79,7 +79,6 @@ class TXT2KG():
         processed = []
         split_by_newline = triples_str.split("\n")
         # sometimes LLM fails to obey the prompt
-        print("split_by_newline =", split_by_newline)
         if len(split_by_newline) > 1:
             split_triples = split_by_newline
             llm_obeyed = True
@@ -87,22 +86,17 @@ class TXT2KG():
             # handles form "(e, r, e) (e, r, e) ...""
             split_triples = triples_str[1:].split(") (")
             llm_obeyed = False
-        print("llm_obeyed =", llm_obeyed)
         for triple_str in split_triples:
             try:
                 if not llm_obeyed:
                     # remove parenthesis for parsing
                     triple_str = triple_str[1:-1]
                 potential_trip = tuple(triple_str.split(','))
-                print("potential_trip =", potential_trip)
             except:  # noqa
-                print("Failed to parse triple =", triple_str)
-                print("Full str =", triples_str)
                 continue
             if 'tuple' in str(
                     type(potential_trip)) and len(potential_trip) == 3:
                 processed.append(potential_trip)
-        print("processed=", processed)
         return processed
 
     def add_doc_2_KG(
