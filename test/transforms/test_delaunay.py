@@ -2,34 +2,39 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
-from torch_geometric.transforms import BaseTransform, Delaunay
+from torch_geometric.transforms import Delaunay
 
 
-def assert_one_point(delaunay: BaseTransform) -> None:
-    pos = torch.rand((1, 2), dtype=torch.float)
-    data = delaunay(Data(pos=pos))
+def assert_one_point(transform: Delaunay) -> None:
+    data = Data(pos=torch.rand(1, 2))
+    data = transform(data)
     assert len(data) == 2
     assert data.edge_index.tolist() == [[], []]
 
 
-def assert_two_points(delaunay: BaseTransform) -> None:
-    pos = torch.rand((2, 2), dtype=torch.float)
-    data = delaunay(Data(pos=pos))
+def assert_two_points(transform: Delaunay) -> None:
+    data = Data(pos=torch.rand(2, 2))
+    data = transform(data)
     assert len(data) == 2
     assert data.edge_index.tolist() == [[0, 1], [1, 0]]
 
 
-def assert_three_points(delaunay: BaseTransform) -> None:
-    pos = torch.rand((3, 2), dtype=torch.float)
-    data = delaunay(Data(pos=pos))
+def assert_three_points(transform: Delaunay) -> None:
+    data = Data(pos=torch.rand(3, 2))
+    data = transform(data)
     assert len(data) == 2
     assert data.face.tolist() == [[0], [1], [2]]
 
 
-def assert_four_points(delaunay: BaseTransform) -> None:
-    pos = torch.tensor([[-1, -1], [-1, 1], [1, 1], [0.5, -0.5]],
-                       dtype=torch.float)
-    data = delaunay(Data(pos=pos))
+def assert_four_points(transform: Delaunay) -> None:
+    pos = torch.tensor([
+        [-1.0, -1.0],
+        [-1.0, 1.0],
+        [1.0, 1.0],
+        [0.5, -0.5],
+    ])
+    data = Data(pos=pos)
+    data = transform(data)
     assert len(data) == 2
 
     # The order of the simplices does not matter, therefore assert sets.
@@ -38,7 +43,7 @@ def assert_four_points(delaunay: BaseTransform) -> None:
 
 
 @withPackage('scipy')
-def test_delaunay() -> None:
+def test_qhull_delaunay() -> None:
     transform = Delaunay()
 
     assert str(transform) == 'Delaunay()'
@@ -49,7 +54,7 @@ def test_delaunay() -> None:
 
 
 @withPackage('torch_delaunay')
-def test_shull_delaunay():
+def test_shull_delaunay() -> None:
     transform = Delaunay()
 
     assert str(transform) == 'Delaunay()'
