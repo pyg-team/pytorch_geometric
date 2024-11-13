@@ -38,4 +38,4 @@ def compile(
     """
     warnings.warn("'torch_geometric.compile' is deprecated in favor of "
                   "'torch.compile'")
-    return torch.compile(model, *args, **kwargs)
+    return torch.compile(model, *args, **kwargs)  # type: ignore
