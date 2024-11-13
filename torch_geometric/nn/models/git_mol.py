@@ -8,8 +8,7 @@ from torch.nn import BatchNorm1d, LayerNorm, Linear, ReLU, Sequential
 
 from torch_geometric.nn import GINEConv
 from torch_geometric.nn.attention.gitformer import BertConfig, BertLMHeadModel
-from torch_geometric.nn.cv import SwinTransformer
-from torch_geometric.nn.nlp import SentenceTransformer
+from torch_geometric.nn.nlp import SentenceTransformer, VisionTransformer
 from torch_geometric.utils import to_dense_batch
 
 
@@ -110,8 +109,9 @@ class GITMol(torch.nn.Module):
         self.text_proj = Linear(768, 768)
         self.ln_text = LayerNorm(768)
         # vision
-        self.vision_encoder = SwinTransformer()
-        self.vision_proj = Linear(1536, 768)
+        self.vision_encoder = VisionTransformer(
+            model_name='microsoft/swin-base-patch4-window7-224', )
+        self.vision_proj = Linear(1024, 768)
         self.ln_vision = LayerNorm(768)
         # cross-attention
         self.gitformer = GITFormer(384, 768)
