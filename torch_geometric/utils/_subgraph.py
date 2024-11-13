@@ -346,12 +346,12 @@ def k_hop_subgraph(
 
     subsets = [node_idx]
 
-    preserved_edge_mask = edge_mask.clone().fill_(False)
+    preserved_edge_mask = torch.zeros_like(edge_mask)
     for _ in range(num_hops):
         node_mask.fill_(False)
         node_mask[subsets[-1]] = True
         torch.index_select(node_mask, 0, row, out=edge_mask)
-        preserved_edge_mask = torch.logical_or(preserved_edge_mask, edge_mask)
+        preserved_edge_mask |= edge_mask
         subsets.append(col[edge_mask])
 
     subset, inv = torch.cat(subsets).unique(return_inverse=True)
