@@ -74,6 +74,8 @@ if __name__ == '__main__':
     triples = list(
         chain.from_iterable(
             triple_set for triple_set in relevant_triples.values()))
+    # debug
+    print("triples =", triples)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
         model_name='sentence-transformers/all-roberta-large-v1').to(device)
