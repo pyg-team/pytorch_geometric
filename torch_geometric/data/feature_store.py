@@ -223,8 +223,11 @@ class AttrView(CastMixin):
 
             store[group_name, attr_name]()
         """
-        assert self._attr.is_fully_specified()
-        return self._store.get_tensor(self._attr)
+        attr = copy.copy(self._attr)
+        for key in attr.__dataclass_fields__:
+            if not attr.is_set(key):
+                setattr(attr, key, None)
+        return self._store.get_tensor(attr)
 
     def __copy__(self) -> 'AttrView':
         out = self.__class__.__new__(self.__class__)
@@ -492,13 +495,15 @@ class FeatureStore(ABC):
         # If the view is not fully-specified, return a :class:`AttrView`:
         return self.view(attr)
 
-    def __delitem__(self, key: TensorAttr):
+    def __delitem__(self, attr: TensorAttr):
         r"""Supports :obj:`del store[tensor_attr]`."""
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
-        key = self._tensor_attr_cls.cast(key)
-        assert key.is_fully_specified()
-        self.remove_tensor(key)
+        attr = self._tensor_attr_cls.cast(attr)
+        for key in attr.__dataclass_fields__:
+            if not attr.is_set(key):
+                setattr(attr, key, None)
+        self.remove_tensor(attr)
 
     def __iter__(self):
         raise NotImplementedError
