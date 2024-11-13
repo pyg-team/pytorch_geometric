@@ -592,4 +592,4 @@ def test_data_inc():
         data = Data(index=torch.empty(2, 0, dtype=torch.long))
     with pytest.raises(RuntimeError, match="Unable to infer"):
         with pytest.warns(UserWarning, match="Unable to accurately infer"):
-            print(data.__inc__('index', data.edge_index))
+            data.__inc__('index', data.edge_index)
