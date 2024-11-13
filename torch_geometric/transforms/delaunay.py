@@ -45,7 +45,7 @@ class _SequentialTransform(BaseTransform):
         for i, transform in enumerate(self.transforms):
             try:
                 return transform.forward(data)
-            except Exception as e:
+            except ImportError as e:
                 if i == len(self.transforms) - 1:
                     raise e
         return data
