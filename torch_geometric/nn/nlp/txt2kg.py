@@ -96,7 +96,10 @@ class TXT2KG():
                     triple_str = triple_str.replace("(", "").replace(
                         ")", "").replace("'", "")
                 split_trip = triple_str.split(',')
+                # remove blank space at beginning or end
                 split_trip = [(i[1:] if i[0] == " " else i)
+                              for i in split_trip]
+                split_trip = [(i[:-1] if i[-1] == " " else i)
                               for i in split_trip]
                 potential_trip = tuple(split_trip)
             except:  # noqa
