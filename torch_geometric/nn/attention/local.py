@@ -1,15 +1,16 @@
+from typing import Optional
+
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 
-from typing import Optional
 from torch_geometric.nn import MessagePassing
 
 
 class LocalAttention(MessagePassing):
     """Local neighborhood attention."""
-
-    def __init__(self, hidden_dim: int, num_heads: int = 4, dropout: float = 0.1):
+    def __init__(self, hidden_dim: int, num_heads: int = 4,
+                 dropout: float = 0.1):
         super().__init__(aggr='add', node_dim=0)
         self.hidden_dim = hidden_dim
         self.num_heads = num_heads
@@ -26,18 +27,22 @@ class LocalAttention(MessagePassing):
         q = self.q_proj(x).view(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).view(-1, self.num_heads, self.head_dim)
         v = self.v_proj(x).view(-1, self.num_heads, self.head_dim)
-        edge_attention = self.edge_proj(edge_attr) if edge_attr is not None else None
-        out = self.propagate(edge_index, q=q, k=k, v=v, edge_attr=edge_attention)
+        edge_attention = self.edge_proj(
+            edge_attr) if edge_attr is not None else None
+        out = self.propagate(edge_index, q=q, k=k, v=v,
+                             edge_attr=edge_attention)
         return self.o_proj(out.view(-1, self.hidden_dim))
 
-    def message(self, q_i: torch.Tensor, k_j: torch.Tensor, v_j: torch.Tensor, edge_attr: Optional[torch.Tensor]) -> torch.Tensor:
+    def message(self, q_i: torch.Tensor, k_j: torch.Tensor, v_j: torch.Tensor,
+                edge_attr: Optional[torch.Tensor]) -> torch.Tensor:
         print(q_i.shape, k_j.shape, v_j.shape)
         attention = (q_i * k_j).sum(dim=-1) / np.sqrt(self.head_dim)
         if edge_attr is not None:
             print('edge:', edge_attr.shape, 'attention:', attention.shape)
             if edge_attr.size(0) < attention.size(0):
                 num_repeats = attention.size(0) // edge_attr.size(0) + 1
-                edge_attr = edge_attr.repeat(num_repeats, 1)[:attention.size(0)]
+                edge_attr = edge_attr.repeat(num_repeats,
+                                             1)[:attention.size(0)]
             elif edge_attr.size(0) > attention.size(0):
                 edge_attr = edge_attr[:attention.size(0)]
             attention = attention + edge_attr

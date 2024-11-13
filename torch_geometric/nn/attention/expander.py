@@ -1,14 +1,16 @@
+from typing import Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 
-from typing import Tuple
 from torch_geometric.nn import MessagePassing
 
 
 class ExpanderAttention(MessagePassing):
     """Expander graph attention using random d-regular near-Ramanujan graphs."""
-    def __init__(self, hidden_dim: int, expander_degree: int = 4, num_heads: int = 4, dropout: float = 0.1):
+    def __init__(self, hidden_dim: int, expander_degree: int = 4,
+                 num_heads: int = 4, dropout: float = 0.1):
         super().__init__(aggr='add', node_dim=0)
         self.hidden_dim = hidden_dim
         self.expander_degree = expander_degree
@@ -30,7 +32,8 @@ class ExpanderAttention(MessagePassing):
         edge_index = torch.tensor(edges, dtype=torch.long).t()
         return edge_index
 
-    def forward(self, x: torch.Tensor, num_nodes: int) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, x: torch.Tensor,
+                num_nodes: int) -> Tuple[torch.Tensor, torch.Tensor]:
         edge_index = self.generate_expander_edges(num_nodes).to(x.device)
         q = self.q_proj(x).view(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).view(-1, self.num_heads, self.head_dim)
@@ -38,7 +41,8 @@ class ExpanderAttention(MessagePassing):
         out = self.propagate(edge_index, q=q, k=k, v=v)
         return self.o_proj(out.view(-1, self.hidden_dim)), edge_index
 
-    def message(self, q_i: torch.Tensor, k_j: torch.Tensor, v_j: torch.Tensor) -> torch.Tensor:
+    def message(self, q_i: torch.Tensor, k_j: torch.Tensor,
+                v_j: torch.Tensor) -> torch.Tensor:
         attention = (q_i * k_j).sum(dim=-1) / np.sqrt(self.head_dim)
         attention = torch.softmax(attention + self.edge_embedding, dim=-1)
         attention = self.dropout(attention)

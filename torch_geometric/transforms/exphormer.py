@@ -1,16 +1,18 @@
 import torch.nn as nn
-from torch_geometric.transforms import VirtualNode
 
-from torch_geometric.nn.attention.local import LocalAttention
 from torch_geometric.nn.attention.expander import ExpanderAttention
+from torch_geometric.nn.attention.local import LocalAttention
+from torch_geometric.transforms import VirtualNode
 
 
 class EXPHORMER(nn.Module):
     """EXPHORMER architecture.
-        Based on the paper: https://arxiv.org/abs/2303.06147
+    Based on the paper: https://arxiv.org/abs/2303.06147
     """
-    def __init__(self, hidden_dim: int, num_layers: int = 3, num_heads: int = 4, expander_degree: int = 4,
-                 dropout: float = 0.1, use_expander: bool = True, use_global: bool = True, num_virtual_nodes: int = 1):
+    def __init__(self, hidden_dim: int, num_layers: int = 3,
+                 num_heads: int = 4, expander_degree: int = 4,
+                 dropout: float = 0.1, use_expander: bool = True,
+                 use_global: bool = True, num_virtual_nodes: int = 1):
         super().__init__()
         self.hidden_dim = hidden_dim
         self.use_expander = use_expander
@@ -19,15 +21,19 @@ class EXPHORMER(nn.Module):
         self.num_virtual_nodes = num_virtual_nodes
         self.layers = nn.ModuleList([
             nn.ModuleDict({
-                'local': LocalAttention(hidden_dim, num_heads=num_heads, dropout=dropout),
-                'expander': ExpanderAttention(hidden_dim, expander_degree=expander_degree, num_heads=num_heads, dropout=dropout) if use_expander else None,
-                'layer_norm': nn.LayerNorm(hidden_dim),
-                'ffn': nn.Sequential(
-                    nn.Linear(hidden_dim, 4 * hidden_dim),
-                    nn.GELU(),
-                    nn.Dropout(dropout),
-                    nn.Linear(4 * hidden_dim, hidden_dim)
-                )
+                'local':
+                LocalAttention(hidden_dim, num_heads=num_heads,
+                               dropout=dropout),
+                'expander':
+                ExpanderAttention(hidden_dim, expander_degree=expander_degree,
+                                  num_heads=num_heads, dropout=dropout)
+                if use_expander else None,
+                'layer_norm':
+                nn.LayerNorm(hidden_dim),
+                'ffn':
+                nn.Sequential(nn.Linear(hidden_dim, 4 * hidden_dim), nn.GELU(),
+                              nn.Dropout(dropout),
+                              nn.Linear(4 * hidden_dim, hidden_dim))
             }) for _ in range(num_layers)
         ])
         self.dropout = nn.Dropout(dropout)
@@ -45,7 +51,9 @@ class EXPHORMER(nn.Module):
             local_out = layer['local'](x, edge_index, edge_attr)
             expander_out = 0
             if self.use_expander and layer['expander'] is not None:
-                expander_out, _ = layer['expander'](x[:batch_size + self.num_virtual_nodes], batch_size + self.num_virtual_nodes)
+                expander_out, _ = layer['expander'](
+                    x[:batch_size + self.num_virtual_nodes],
+                    batch_size + self.num_virtual_nodes)
             x = layer['layer_norm'](residual + local_out + expander_out)
             x = x + layer['ffn'](x)
         return x[:batch_size]
