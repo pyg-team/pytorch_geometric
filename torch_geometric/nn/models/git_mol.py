@@ -5,7 +5,6 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import BatchNorm1d, LayerNorm, Linear, ReLU, Sequential
-from transformers import AutoConfig, AutoModel
 
 from torch_geometric.nn import GINEConv
 from torch_geometric.nn.nlp import SentenceTransformer, VisionTransformer
@@ -78,6 +77,8 @@ class GITFormer(torch.nn.Module):
     def __init__(self, num_query_token, vision_graph_width,
                  cross_attention_freq=2):
         super().__init__()
+        from transformers import AutoConfig, AutoModel
+
         encoder_config = AutoConfig.from_pretrained(
             "allenai/scibert_scivocab_uncased")
         encoder_config.encoder_width = vision_graph_width
