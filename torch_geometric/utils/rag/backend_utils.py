@@ -263,9 +263,9 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
                                              topk, topk_e, cost_e)
         out_graph["desc"] = desc
         where_trips_start = desc.find("src,edge_attr,dst")
-        out_graph["triples"] = desc[where_trips_start + 18:]
+        print("desc[where_trips_start + 18:]=", desc[where_trips_start + 18:])
         parsed_trips = []
-        for trip in out_graph["triples"]:
+        for trip in desc[where_trips_start + 18:]:
             parsed_trips.append(tuple(trip.split(",")))
         out_graph["triples"] = parsed_trips
         return out_graph
