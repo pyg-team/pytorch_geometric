@@ -98,7 +98,7 @@ if __name__ == '__main__':
     """
     precisions = []
     for QA_pair in relevant_triples.keys():
-        golden_triples = elevant_triples[QA_pair]
+        golden_triples = relevant_triples[QA_pair]
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
