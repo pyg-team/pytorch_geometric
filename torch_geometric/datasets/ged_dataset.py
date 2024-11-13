@@ -101,7 +101,7 @@ class GEDDataset(InMemoryDataset):
     """
     datasets = {
         'AIDS700nef': {
-            'id': '1zDssIri0VBiBr88jEL2pF4yfq32QGm9m',
+            'id': '10czBPJDEzEDI2tq7Z7mkBjLhj55F-a2z',
             'extract': extract_zip,
             'pickle': '1OpV4bCHjBkdpqI6H5Mg0-BqlA2ee2eBW',
         },
