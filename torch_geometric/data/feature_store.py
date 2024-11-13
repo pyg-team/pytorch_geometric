@@ -223,9 +223,8 @@ class AttrView(CastMixin):
 
             store[group_name, attr_name]()
         """
-        # Set all UNSET values to None:
-        out = copy.copy(self)
-        return out._store.get_tensor(out._attr)
+        assert self._attr.is_fully_specified()
+        return self._store.get_tensor(self._attr)
 
     def __copy__(self) -> 'AttrView':
         out = self.__class__.__new__(self.__class__)
@@ -471,8 +470,7 @@ class FeatureStore(ABC):
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
         key = self._tensor_attr_cls.cast(key)
-        # We need to fully-specify the key for __setitem__ as it does not make
-        # sense to work with a view here:
+        assert key.is_fully_specified()
         self.put_tensor(value, key)
 
     def __getitem__(self, key: TensorAttr) -> Any:
@@ -499,6 +497,7 @@ class FeatureStore(ABC):
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
         key = self._tensor_attr_cls.cast(key)
+        assert key.is_fully_specified()
         self.remove_tensor(key)
 
     def __iter__(self):
