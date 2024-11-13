@@ -79,7 +79,6 @@ class TXT2KG():
         processed = []
         split_by_newline = triples_str.split("\n")
         # sometimes LLM fails to obey the prompt
-        print("triples_str =", triples_str)
         if len(split_by_newline) > 1:
             split_triples = split_by_newline
             llm_obeyed = True
@@ -87,8 +86,6 @@ class TXT2KG():
             # handles form "(e, r, e) (e, r, e) ... (e, r, e)""
             split_triples = triples_str[1:-1].split(") (")
             llm_obeyed = False
-        print("split_triples =", split_triples)
-        print("llm_obeyed =", llm_obeyed)
         for triple_str in split_triples:
             try:
                 if llm_obeyed:
@@ -106,7 +103,6 @@ class TXT2KG():
                 continue
             if 'tuple' in str(
                     type(potential_trip)) and len(potential_trip) == 3:
-                print("trip_added =", potential_trip)
                 processed.append(potential_trip)
         return processed
 
