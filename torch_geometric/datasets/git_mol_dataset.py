@@ -3,7 +3,6 @@ from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import torch
-from PIL import Image
 from torchvision import transforms
 from tqdm import tqdm
 
@@ -86,6 +85,7 @@ class GitMolDataset(InMemoryDataset):
 
     def process(self) -> None:
         import pandas as pd
+        from PIL import Image
 
         try:
             from rdkit import Chem, RDLogger
