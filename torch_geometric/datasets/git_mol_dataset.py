@@ -3,7 +3,6 @@ from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import torch
-from torchvision import transforms
 from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset
@@ -48,6 +47,8 @@ class GitMolDataset(InMemoryDataset):
         force_reload: bool = False,
         split: int = 0,
     ):
+        from torchvision import transforms
+
         self.split = split
 
         if self.split == 0:
