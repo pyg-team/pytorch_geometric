@@ -27,7 +27,8 @@ class ExpanderAttention(MessagePassing):
 
     def generate_expander_edges(self, num_nodes: int) -> torch.Tensor:
         if num_nodes < self.expander_degree:
-            raise ValueError("Number of nodes is insufficient to generate expander edges.")
+            raise ValueError(
+                "Number of nodes is insufficient to generate expander edges.")
         edges = []
         for _ in range(self.expander_degree // 2):
             perm = torch.randperm(num_nodes)
