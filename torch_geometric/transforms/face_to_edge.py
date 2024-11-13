@@ -8,8 +8,9 @@ from torch_geometric.utils import to_undirected
 
 @functional_transform('face_to_edge')
 class FaceToEdge(BaseTransform):
-    r"""Converts mesh faces :obj:`[3, num_faces]` or :obj:`[4, num_faces]` to edge indices
-    :obj:`[2, num_edges]` (functional name: :obj:`face_to_edge`).
+    r"""Converts mesh faces of shape :obj:`[3, num_faces]` or shape
+    :obj:`[4, num_faces]` to edge indices :obj:`[2, num_edges]`
+    (functional name: :obj:`face_to_edge`).
 
     This transform supports both 2D triangular faces, represented by a
     tensor of shape :obj:`[3, num_faces]`, and 3D tetrahedral mesh faces,
@@ -29,18 +30,27 @@ class FaceToEdge(BaseTransform):
             assert data.face is not None
             face = data.face
 
-            assert face.size(0) in [
-                3, 4
-            ], ("Expected tensor with shape [3, num_faces] or [4, num_faces], "
-                f"but got shape {face.size()}.")
+            if face.size(0) not in [3, 4]:
+                raise RuntimeError(f"Expected 'face' tensor with shape "
+                                   f"[3, num_faces] or [4, num_faces] "
+                                   f"(got {list(face.size())})")
 
-            if face.size()[0] == 4:
+            if face.size()[0] == 3:
                 edge_index = torch.cat([
-                    face[:2], face[1:3], face[2:4], face[::2], face[1::2],
-                    face[::3]
+                    face[:2],
+                    face[1:],
+                    face[::2],
                 ], dim=1)
-            elif face.size()[0] == 3:
-                edge_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
+            else:
+                assert face.size()[0] == 4
+                edge_index = torch.cat([
+                    face[:2],
+                    face[1:3],
+                    face[2:4],
+                    face[::2],
+                    face[1::2],
+                    face[::3],
+                ], dim=1)
 
             edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
 
