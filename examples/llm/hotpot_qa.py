@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     triples = list(
         chain.from_iterable(
-            triple_set for triple_set in kg_maker.relevant_triples.values()))
+            triple_set for triple_set in relevant_triples.values()))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
         model_name='sentence-transformers/all-roberta-large-v1').to(device)
@@ -111,4 +111,4 @@ if __name__ == '__main__':
             ]))
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
-    approx_precision = mean(precisions)
+    approx_precision = sum(precisions)/len(precisions)
