@@ -2,7 +2,6 @@ import sys
 from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
-import pandas as pd
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -86,6 +85,8 @@ class GitMolDataset(InMemoryDataset):
         pass
 
     def process(self) -> None:
+        import pandas as pd
+
         try:
             from rdkit import Chem, RDLogger
             RDLogger.DisableLog('rdApp.*')  # type: ignore
