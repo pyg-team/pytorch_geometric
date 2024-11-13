@@ -75,7 +75,6 @@ if __name__ == '__main__':
         chain.from_iterable(
             triple_set for triple_set in relevant_triples.values()))
     # debug
-    print("triples =", triples)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
         model_name='sentence-transformers/all-roberta-large-v1').to(device)
@@ -99,7 +98,7 @@ if __name__ == '__main__':
     """
     precisions = []
     for QA_pair in relevant_triples.keys():
-        golden_triples = kg_maker.relevant_triples[QA_pair]
+        golden_triples = elevant_triples[QA_pair]
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
