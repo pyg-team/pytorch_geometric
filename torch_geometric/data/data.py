@@ -659,6 +659,8 @@ class Data(BaseData, FeatureStore, GraphStore):
                 return value.get_dim_size()
             return int(value.max()) + 1
         elif 'index' in key or key == 'face':
+            if self.num_nodes is None:
+                raise ValueError(f'Can not infer inc number for {key}!')
             return self.num_nodes
         else:
             return 0
