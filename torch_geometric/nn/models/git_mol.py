@@ -5,9 +5,9 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import BatchNorm1d, LayerNorm, Linear, ReLU, Sequential
+from transformers import AutoConfig, AutoModel
 
 from torch_geometric.nn import GINEConv
-from torch_geometric.nn.attention.gitformer import BertConfig, BertLMHeadModel
 from torch_geometric.nn.nlp import SentenceTransformer, VisionTransformer
 from torch_geometric.utils import to_dense_batch
 
@@ -78,14 +78,15 @@ class GITFormer(torch.nn.Module):
     def __init__(self, num_query_token, vision_graph_width,
                  cross_attention_freq=2):
         super().__init__()
-        encoder_config = BertConfig.from_pretrained(
+        encoder_config = AutoConfig.from_pretrained(
             "allenai/scibert_scivocab_uncased")
         encoder_config.encoder_width = vision_graph_width
         # insert cross-attention layer every other block
         encoder_config.add_cross_attention = True
+        encoder_config.is_decoder = True
         encoder_config.cross_attention_freq = cross_attention_freq
         encoder_config.query_length = num_query_token
-        self.Qformer = BertLMHeadModel.from_pretrained(
+        self.Qformer = AutoModel.from_pretrained(
             "allenai/scibert_scivocab_uncased", config=encoder_config)
         self.query_tokens = torch.nn.Parameter(
             torch.zeros(1, num_query_token, encoder_config.hidden_size))
@@ -154,7 +155,6 @@ class GITMol(torch.nn.Module):
                                  dtype=torch.long).to(x_vision.device)
         vision_targets = torch.arange(batch_size).to(x_vision.device)
 
-        # TODO: add atom and bond embedding
         x_graph, graph_atts = self.graph_encoder(x, edge_index, batch,
                                                  edge_attr)
         x_graph = self.graph_proj(x_graph)
@@ -169,7 +169,7 @@ class GITMol(torch.nn.Module):
         caption_input_ids, caption_attention_masks = self.text_encoder.get_input_ids(
             captions)
 
-        text_output = self.gitformer.Qformer.bert(
+        text_output = self.gitformer.Qformer(
             caption_input_ids,
             attention_mask=caption_attention_masks,
             return_dict=True,
@@ -245,15 +245,14 @@ class GITMol(torch.nn.Module):
         attention_mask_all = torch.cat(
             [query_atts_xtm, text_attention_mask_all], dim=1)
 
-        output_xtm = self.gitformer.Qformer.bert(
-            text_input_ids_all,
-            query_embeds=query_tokens_xtm,
+        output_xtm = self.gitformer.Qformer(
+            inputs_embeds=query_tokens_xtm,
             attention_mask=attention_mask_all,
             encoder_hidden_states=x_embeds_all,
             encoder_attention_mask=image_atts_all,
-            modal=modal,
             return_dict=True,
         ).last_hidden_state
+
         xtm_embeddings = output_xtm[:, :query_tokens_xtm.size(1), :]
 
         xtm_logit = self.xtm_head[modal](xtm_embeddings).mean(dim=1)
@@ -280,13 +279,13 @@ class GITMol(torch.nn.Module):
         query_tokens = self.gitformer.query_tokens.expand(
             x_embeds.shape[0], -1, -1)
 
-        query_output = self.gitformer.Qformer.bert(
-            query_embeds=query_tokens,
+        query_output = self.gitformer.Qformer(
+            inputs_embeds=query_tokens,
             encoder_hidden_states=x_embeds,
             encoder_attention_mask=x_atts,
-            modal=modal,
             return_dict=True,
         ).last_hidden_state
+
         x_feats = F.normalize(self.xtc_proj[modal](query_output), dim=-1)
 
         sim_q2t = torch.matmul(x_feats.unsqueeze(1),
