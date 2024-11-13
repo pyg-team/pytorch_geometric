@@ -57,7 +57,7 @@ class Delaunay(BaseTransform):
     (functional name: :obj:`delaunay`).
 
     .. hint::
-        Consider installing
+        Consider installing the
         `torch_delaunay <https://github.com/ybubnov/torch_delaunay>`_ package
         to speed up computation.
     """
