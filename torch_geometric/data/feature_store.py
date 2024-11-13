@@ -500,6 +500,7 @@ class FeatureStore(ABC):
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
         attr = self._tensor_attr_cls.cast(attr)
+        attr = copy.copy(attr)
         for key in attr.__dataclass_fields__:  # Set all UNSET values to None.
             if not attr.is_set(key):
                 setattr(attr, key, None)
