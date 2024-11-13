@@ -8,8 +8,8 @@ from torch_geometric.utils import to_undirected
 
 @functional_transform('face_to_edge')
 class FaceToEdge(BaseTransform):
-    r"""Converts mesh faces of shape :obj:`[3, num_faces]` or shape
-    :obj:`[4, num_faces]` to edge indices :obj:`[2, num_edges]`
+    r"""Converts mesh faces of shape :obj:`[3, num_faces]` or
+    :obj:`[4, num_faces]` to edge indices of shape :obj:`[2, num_edges]`
     (functional name: :obj:`face_to_edge`).
 
     This transform supports both 2D triangular faces, represented by a
