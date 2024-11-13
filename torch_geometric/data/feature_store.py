@@ -224,7 +224,7 @@ class AttrView(CastMixin):
             store[group_name, attr_name]()
         """
         attr = copy.copy(self._attr)
-        for key in attr.__dataclass_fields__:
+        for key in attr.__dataclass_fields__:  # Set all UNSET values to None.
             if not attr.is_set(key):
                 setattr(attr, key, None)
         return self._store.get_tensor(attr)
@@ -500,7 +500,7 @@ class FeatureStore(ABC):
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
         attr = self._tensor_attr_cls.cast(attr)
-        for key in attr.__dataclass_fields__:
+        for key in attr.__dataclass_fields__:  # Set all UNSET values to None.
             if not attr.is_set(key):
                 setattr(attr, key, None)
         self.remove_tensor(attr)
