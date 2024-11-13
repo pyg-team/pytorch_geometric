@@ -31,7 +31,6 @@ runs:
           pyproject.toml
 
     - name: Install numpy
-      if: ${{ runner.os == 'Windows' }}
       run: |
         pip install "numpy<2"
       shell: bash
