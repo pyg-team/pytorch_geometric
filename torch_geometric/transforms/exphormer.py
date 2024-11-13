@@ -18,6 +18,8 @@ class EXPHORMER(nn.Module):
         self.use_expander = use_expander
         self.use_global = use_global
         self.virtual_node_transform = VirtualNode() if use_global else None
+        if use_global and num_virtual_nodes < 1:
+            raise ValueError("num_virtual_nodes must be at least 1 if use_global is enabled.")
         self.num_virtual_nodes = num_virtual_nodes
         self.layers = nn.ModuleList([
             nn.ModuleDict({
@@ -39,6 +41,10 @@ class EXPHORMER(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, data):
+        if data.x.size(0) == 0:
+            raise ValueError("Input graph is empty.")
+        if not hasattr(data, 'edge_index') or data.edge_index is None:
+            raise ValueError("Input data must contain 'edge_index' for message passing.")
         x, edge_index = data.x, data.edge_index
         edge_attr = data.edge_attr if hasattr(data, 'edge_attr') else None
         batch_size = x.size(0)

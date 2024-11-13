@@ -14,6 +14,8 @@ class ExpanderAttention(MessagePassing):
         super().__init__(aggr='add', node_dim=0)
         self.hidden_dim = hidden_dim
         self.expander_degree = expander_degree
+        if expander_degree % 2 != 0:
+            raise ValueError("expander_degree must be an even number.")
         self.num_heads = num_heads
         self.head_dim = hidden_dim // num_heads
         self.q_proj = nn.Linear(hidden_dim, hidden_dim)
@@ -24,6 +26,8 @@ class ExpanderAttention(MessagePassing):
         self.dropout = nn.Dropout(dropout)
 
     def generate_expander_edges(self, num_nodes: int) -> torch.Tensor:
+        if num_nodes < self.expander_degree:
+            raise ValueError("Number of nodes is insufficient to generate expander edges.")
         edges = []
         for _ in range(self.expander_degree // 2):
             perm = torch.randperm(num_nodes)
