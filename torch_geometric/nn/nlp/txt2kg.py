@@ -94,7 +94,7 @@ class TXT2KG():
                 if llm_obeyed:
                     # remove parenthesis and single quotes for parsing
                     triple_str = triple_str.replace("(", "").replace(
-                        "(", "").replace("'", "")
+                        ")", "").replace("'", "")
                 split_trip = triple_str.split(',')
                 split_trip = [(i[1:] if i[0] == " " else i) for i in split_trip]
                 potential_trip = tuple(split_trip)
