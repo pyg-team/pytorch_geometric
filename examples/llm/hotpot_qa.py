@@ -113,3 +113,4 @@ if __name__ == '__main__':
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
     approx_precision = sum(precisions) / len(precisions)
+    print("approx_precision =", approx_precision)
