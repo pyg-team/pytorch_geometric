@@ -72,8 +72,8 @@ if __name__ == '__main__':
           sum([len(rel_trips) for rel_trips in relevant_triples.values()]))
 
     triples = list(
-        chain.from_iterable(
-            triple_set for triple_set in relevant_triples.values()))
+        chain.from_iterable(triple_set
+                            for triple_set in relevant_triples.values()))
     # debug
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
@@ -112,4 +112,4 @@ if __name__ == '__main__':
             ]))
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
-    approx_precision = sum(precisions)/len(precisions)
+    approx_precision = sum(precisions) / len(precisions)
