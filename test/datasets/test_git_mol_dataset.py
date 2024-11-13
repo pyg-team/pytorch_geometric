@@ -1,6 +1,8 @@
 from torch_geometric.datasets import GitMolDataset
+from torch_geometric.testing import withPackage
 
 
+@withPackage('torchvision', 'rdkit', 'PIL')
 def test_git_mol_dataset():
     dataset = GitMolDataset(root='./data/GITMol')
 
