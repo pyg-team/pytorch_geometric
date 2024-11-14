@@ -4,7 +4,7 @@ import torch.nn as nn
 from torch_geometric.nn.attention.expander import ExpanderAttention
 from torch_geometric.nn.attention.local import LocalAttention
 from torch_geometric.transforms import VirtualNode
-
+from torch_geometric.data import Data
 
 class EXPHORMER(nn.Module):
     """EXPHORMER architecture.
@@ -43,7 +43,7 @@ class EXPHORMER(nn.Module):
         ])
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self, data) -> torch.Tensor:
+    def forward(self, data:Data) -> torch.Tensor:
         if data.x.size(0) == 0:
             raise ValueError("Input graph is empty.")
         if not hasattr(data, 'edge_index') or data.edge_index is None:
