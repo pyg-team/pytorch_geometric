@@ -73,8 +73,8 @@ class TXT2KG():
         self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse
         return out_strs
 
-    def parse_n_check_triples(self,
-                              triples_strings: List[str]) -> List[Tuple[str, str, str]]:
+    def parse_n_check_triples(
+            self, triples_strings: List[str]) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
         processed = []
         for triples_str in triples_strings:
