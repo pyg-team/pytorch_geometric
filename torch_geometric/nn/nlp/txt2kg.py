@@ -136,7 +136,7 @@ class TXT2KG():
         self.doc_id_counter += 1
 
 def get_chunks(s, maxlength):
-    # split on 
+    # split on
     start = 0
     end = 0
     while start + maxlength  < len(s) and end != -1:
