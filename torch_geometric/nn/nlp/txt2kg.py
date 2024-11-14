@@ -111,10 +111,8 @@ class TXT2KG():
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
-        chunks = [
-            txt[i * self.chunk_size:min((i + 1) * self.chunk_size, len(txt))]
-            for i in range(math.ceil(len(txt) / self.chunk_size))
-        ]
+        import text_chunker
+        chunks = get_chunks(s, self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
@@ -126,3 +124,14 @@ class TXT2KG():
             self.relevant_triples[key] += self.parse_n_check_triples(
                 self.chunk_to_triples_str(chunk))
         self.doc_id_counter += 1
+
+def get_chunks(s, maxlength):
+    start = 0
+    end = 0
+    while start + maxlength  < len(s) and end != -1:
+        end = s.rfind(" ", start, start + maxlength + 1)
+        yield s[start:end]
+        start = end +1
+    yield s[start:]
+
+chunks = 
