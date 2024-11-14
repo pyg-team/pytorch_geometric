@@ -1,7 +1,6 @@
 import pytest
 import torch
 
-from torch_geometric.data import Data
 from torch_geometric.nn.attention.expander import ExpanderAttention
 from torch_geometric.nn.attention.local import LocalAttention
 from torch_geometric.transforms.exphormer import EXPHORMER
@@ -10,13 +9,13 @@ from torch_geometric.transforms.exphormer import EXPHORMER
 def create_mock_data(num_nodes, hidden_dim, edge_dim=None):
     from torch_geometric.data import Data
     x = torch.rand(num_nodes, hidden_dim)
-    edge_index = torch.randint(0, num_nodes, (2, num_nodes * 2))  # Create a few random edges
+    edge_index = torch.randint(0, num_nodes,
+                               (2, num_nodes * 2))  # Create a few random edges
 
     # Ensure edge_attr has the same number of rows as edges in edge_index
     edge_attr = torch.rand(edge_index.size(1), edge_dim) if edge_dim else None
 
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
-
 
 
 # Tests for LocalAttention
