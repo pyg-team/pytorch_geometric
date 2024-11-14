@@ -1,6 +1,6 @@
+import math
 import time
 from typing import List, Optional, Tuple
-import math
 
 import torch
 
