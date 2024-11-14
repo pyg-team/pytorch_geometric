@@ -7,7 +7,7 @@ from torch_geometric.transforms import VirtualNode
 
 class EXPHORMER(nn.Module):
     """EXPHORMER architecture.
-    
+
     Based on the paper: https://arxiv.org/abs/2303.06147
     """
     def __init__(self, hidden_dim: int, num_layers: int = 3,
