@@ -8,7 +8,7 @@ from torch_geometric.nn import MessagePassing
 
 
 class ExpanderAttention(MessagePassing):
-    """Expander graph attention using random d-regular near-Ramanujan graphs."""
+    """Expander attention with random d-regular, near-Ramanujan graphs."""
     def __init__(self, hidden_dim: int, expander_degree: int = 4,
                  num_heads: int = 4, dropout: float = 0.1):
         super().__init__(aggr='add', node_dim=0)

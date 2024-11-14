@@ -27,7 +27,7 @@ class LocalAttention(MessagePassing):
 
         if edge_attr is not None and edge_attr.size(0) != edge_index.size(1):
             raise ValueError(
-                "edge_attr size does not match the number of edges in edge_index."
+                "edge_attr size doesn't match the no of edges in edge_index."
             )
         q = self.q_proj(x).view(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).view(-1, self.num_heads, self.head_dim)
