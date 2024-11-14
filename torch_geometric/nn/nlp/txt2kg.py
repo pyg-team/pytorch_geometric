@@ -44,7 +44,7 @@ class TXT2KG():
     def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
 
-    def chunks_to_triples_str(self, txt_batch: List[str]) -> List[str]:
+    def chunks_to_triples_strs(self, txt_batch: List[str]) -> List[str]:
         # call LLM on text
         chunk_start_time = time.time()
         if self.local_LM:
@@ -141,5 +141,5 @@ class TXT2KG():
         for chunk_batch in chunk_batches:
             # (TODO Divyansh, add entity resolution/merging)
             self.relevant_triples[key] += self.parse_n_check_triples(
-                self.chunk_to_triples_str(chunk_batch))
+                self.chunks_to_triples_strs(chunk_batch))
         self.doc_id_counter += 1
