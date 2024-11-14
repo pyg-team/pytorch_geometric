@@ -10,7 +10,7 @@ from torch_geometric.nn import MessagePassing
 class ExpanderAttention(MessagePassing):
     """Expander attention with random d-regular, near-Ramanujan graphs."""
     def __init__(self, hidden_dim: int, expander_degree: int = 4,
-                 num_heads: int = 4, dropout: float = 0.1):
+                 num_heads: int = 4, dropout: float = 0.1) -> None:
         super().__init__(aggr='add', node_dim=0)
         self.hidden_dim = hidden_dim
         self.expander_degree = expander_degree
@@ -52,3 +52,9 @@ class ExpanderAttention(MessagePassing):
         attention = torch.softmax(attention + self.edge_embedding, dim=-1)
         attention = self.dropout(attention)
         return attention.unsqueeze(-1) * v_j
+
+    def edge_update(self) -> torch.Tensor:
+        raise NotImplementedError("edge_update not implemented in ExpanderAttention.")
+
+    def message_and_aggregate(self, edge_index: torch.Tensor) -> torch.Tensor:
+        raise NotImplementedError("message_and_aggregate not implemented in ExpanderAttention.")

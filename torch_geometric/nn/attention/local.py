@@ -10,7 +10,7 @@ from torch_geometric.nn import MessagePassing
 class LocalAttention(MessagePassing):
     """Local neighborhood attention."""
     def __init__(self, hidden_dim: int, num_heads: int = 4,
-                 dropout: float = 0.1):
+                 dropout: float = 0.1) -> None:
         super().__init__(aggr='add', node_dim=0)
         self.hidden_dim = hidden_dim
         self.num_heads = num_heads
@@ -57,3 +57,9 @@ class LocalAttention(MessagePassing):
         # Apply attention scores to the values
         out = attention.unsqueeze(-1) * v_j
         return out
+
+    def edge_update(self) -> torch.Tensor:
+        raise NotImplementedError("edge_update not implemented in LocalAttention.")
+
+    def message_and_aggregate(self, edge_index: torch.Tensor) -> torch.Tensor:
+        raise NotImplementedError("message_and_aggregate not implemented in LocalAttention.")

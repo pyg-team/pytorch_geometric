@@ -1,5 +1,5 @@
 import torch.nn as nn
-
+import torch
 from torch_geometric.nn.attention.expander import ExpanderAttention
 from torch_geometric.nn.attention.local import LocalAttention
 from torch_geometric.transforms import VirtualNode
@@ -13,7 +13,7 @@ class EXPHORMER(nn.Module):
     def __init__(self, hidden_dim: int, num_layers: int = 3,
                  num_heads: int = 4, expander_degree: int = 4,
                  dropout: float = 0.1, use_expander: bool = True,
-                 use_global: bool = True, num_virtual_nodes: int = 1):
+                 use_global: bool = True, num_virtual_nodes: int = 1) -> None:
         super().__init__()
         self.hidden_dim = hidden_dim
         self.use_expander = use_expander
@@ -31,7 +31,7 @@ class EXPHORMER(nn.Module):
                 'expander':
                 ExpanderAttention(hidden_dim, expander_degree=expander_degree,
                                   num_heads=num_heads, dropout=dropout)
-                if use_expander else None,
+                if use_expander else nn.Identity(),
                 'layer_norm':
                 nn.LayerNorm(hidden_dim),
                 'ffn':
@@ -42,7 +42,7 @@ class EXPHORMER(nn.Module):
         ])
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self, data):
+    def forward(self, data) -> torch.Tensor:
         if data.x.size(0) == 0:
             raise ValueError("Input graph is empty.")
         if not hasattr(data, 'edge_index') or data.edge_index is None:
