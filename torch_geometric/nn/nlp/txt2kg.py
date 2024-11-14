@@ -56,22 +56,23 @@ class TXT2KG():
             out_strs = self.model.inference(
                 question=[
                     txt + '\n' + self.system_prompt for txt in txt_batch
-                ], max_tokens=self.chunk_size)
+                ], max_tokens=self.chunk_size * 2)
         else:
-            messages = []
+            out_strs = []
             for txt in txt_batch:
-                messages.append({
+                message = {
                     "role": "user",
                     "content": txt + '\n' + self.system_prompt
-                })
-            completion = self.client.chat.completions.create(
-                model=self.model, messages=messages, temperature=0, top_p=1,
-                max_tokens=1024, stream=True)
-            out_str = ""
-            for chunk in completion:
-                if chunk.choices[0].delta.content is not None:
-                    out_str += chunk.choices[0].delta.content
-        self.total_chars_parsed += len(txt)
+                }
+                completion = self.client.chat.completions.create(
+                    model=self.model, messages=message, temperature=0, top_p=1,
+                    max_tokens=self.chunk_size * 2, stream=True)
+                out_str = ""
+                for chunk in completion:
+                    if chunk.choices[0].delta.content is not None:
+                        out_str += chunk.choices[0].delta.content
+            out_strs.append([out_str])
+        self.total_chars_parsed += sum([len(txt) for txt in txt_batch])
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
         self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse
         return out_strs
