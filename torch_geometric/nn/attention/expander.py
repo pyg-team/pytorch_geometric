@@ -54,7 +54,9 @@ class ExpanderAttention(MessagePassing):
         return attention.unsqueeze(-1) * v_j
 
     def edge_update(self) -> torch.Tensor:
-        raise NotImplementedError("edge_update not implemented in ExpanderAttention.")
+        raise NotImplementedError(
+            "edge_update not implemented in ExpanderAttention.")
 
     def message_and_aggregate(self, edge_index: torch.Tensor) -> torch.Tensor:
-        raise NotImplementedError("message_and_aggregate not implemented in ExpanderAttention.")
+        raise NotImplementedError(
+            "message_and_aggregate not implemented in ExpanderAttention.")

@@ -1,5 +1,6 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
+
 from torch_geometric.nn.attention.expander import ExpanderAttention
 from torch_geometric.nn.attention.local import LocalAttention
 from torch_geometric.transforms import VirtualNode

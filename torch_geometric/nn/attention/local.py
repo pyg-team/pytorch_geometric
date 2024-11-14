@@ -59,7 +59,9 @@ class LocalAttention(MessagePassing):
         return out
 
     def edge_update(self) -> torch.Tensor:
-        raise NotImplementedError("edge_update not implemented in LocalAttention.")
+        raise NotImplementedError(
+            "edge_update not implemented in LocalAttention.")
 
     def message_and_aggregate(self, edge_index: torch.Tensor) -> torch.Tensor:
-        raise NotImplementedError("message_and_aggregate not implemented in LocalAttention.")
+        raise NotImplementedError(
+            "message_and_aggregate not implemented in LocalAttention.")
