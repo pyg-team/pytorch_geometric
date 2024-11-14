@@ -6,6 +6,7 @@ import datasets
 import torch
 from tqdm import tqdm
 
+from torch_geometric import seed_everything
 from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import TXT2KG, SentenceTransformer
@@ -17,8 +18,6 @@ from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
-from torch_geometric import seed_everything
-
 
 if __name__ == '__main__':
     seed_everything(42)
