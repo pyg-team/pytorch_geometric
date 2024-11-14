@@ -21,8 +21,7 @@ class EXPHORMER(nn.Module):
         self.virtual_node_transform = VirtualNode() if use_global else None
         if use_global and num_virtual_nodes < 1:
             raise ValueError(
-                "num_virtual_nodes must be >= 1 if use_global is enabled."
-            )
+                "num_virtual_nodes must be >= 1 if use_global is enabled.")
         self.num_virtual_nodes = num_virtual_nodes
         self.layers = nn.ModuleList([
             nn.ModuleDict({
