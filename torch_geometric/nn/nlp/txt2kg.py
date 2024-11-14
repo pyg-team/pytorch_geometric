@@ -113,7 +113,7 @@ class TXT2KG():
         self,
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
-        batch_size: int = 4,
+        batch_size: int = 8,
     ) -> None:
         from semantic_text_splitter import TextSplitter
 
