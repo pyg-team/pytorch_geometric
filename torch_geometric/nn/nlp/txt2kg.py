@@ -122,7 +122,7 @@ class TXT2KG():
             splitter = TextSplitter(limit)
             chunks = splitter.chunks(text)
             return chunks
-        chunks = semantic_split(s, self.chunk_size)
+        chunks = semantic_split(txt, self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
