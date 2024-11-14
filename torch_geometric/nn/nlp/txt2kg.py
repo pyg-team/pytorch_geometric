@@ -134,15 +134,3 @@ class TXT2KG():
             self.relevant_triples[key] += self.parse_n_check_triples(
                 self.chunk_to_triples_str(chunk))
         self.doc_id_counter += 1
-
-def get_chunks(s, maxlength):
-    # split on
-    start = 0
-    end = 0
-    while start + maxlength  < len(s) and end != -1:
-        end = s.rfind(" ", start, start + maxlength + 1)
-        yield s[start:end]
-        start = end +1
-    yield s[start:]
-
-chunks =
