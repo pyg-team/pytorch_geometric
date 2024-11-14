@@ -17,7 +17,6 @@ from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
-from torch_geometric import seed_everything
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
