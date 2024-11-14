@@ -111,8 +111,18 @@ class TXT2KG():
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
-        import text_chunker
-        chunks = get_chunks(s, self.chunk_size)
+        from semantic_text_splitter import TextSplitter
+
+        def semantic_split(text: str, limit: int) -> list[str]:
+            """Return a list of chunks from the given text,
+            splitting it at semantically sensible boundaries
+            while applying the specified character length limit
+            for each chunk."""
+            # Ref: https://stackoverflow.com/a/78288960/
+            splitter = TextSplitter(limit)
+            chunks = splitter.chunks(text)
+            return chunks
+        chunks = semantic_split(s, self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
@@ -126,6 +136,7 @@ class TXT2KG():
         self.doc_id_counter += 1
 
 def get_chunks(s, maxlength):
+    # split on 
     start = 0
     end = 0
     while start + maxlength  < len(s) and end != -1:
