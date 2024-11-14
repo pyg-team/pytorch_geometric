@@ -41,8 +41,8 @@ def test_local_attention_no_edge_attr(local_attention_model):
 
 def test_local_attention_mismatched_edge_attr(local_attention_model):
     data = create_mock_data(num_nodes=10, hidden_dim=16, edge_dim=16)
-    with pytest.raises(Exception):
-        mismatched_edge_attr = torch.rand(data.edge_attr.size(0) - 1, 16)
+    mismatched_edge_attr = torch.rand(data.edge_attr.size(0) - 1, 16)
+    with pytest.raises(ValueError, match="edge_attr size does not match"):
         local_attention_model(data.x, data.edge_index, mismatched_edge_attr)
 
 

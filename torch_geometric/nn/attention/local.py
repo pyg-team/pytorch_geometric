@@ -24,6 +24,11 @@ class LocalAttention(MessagePassing):
 
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor,
                 edge_attr: Optional[torch.Tensor] = None) -> torch.Tensor:
+
+        if edge_attr is not None and edge_attr.size(0) != edge_index.size(1):
+            raise ValueError(
+                "edge_attr size does not match the number of edges in edge_index."
+            )
         q = self.q_proj(x).view(-1, self.num_heads, self.head_dim)
         k = self.k_proj(x).view(-1, self.num_heads, self.head_dim)
         v = self.v_proj(x).view(-1, self.num_heads, self.head_dim)
@@ -35,10 +40,10 @@ class LocalAttention(MessagePassing):
 
     def message(self, q_i: torch.Tensor, k_j: torch.Tensor, v_j: torch.Tensor,
                 edge_attr: Optional[torch.Tensor]) -> torch.Tensor:
-        print(q_i.shape, k_j.shape, v_j.shape)
+
         attention = (q_i * k_j).sum(dim=-1) / np.sqrt(self.head_dim)
         if edge_attr is not None:
-            print('edge:', edge_attr.shape, 'attention:', attention.shape)
+
             if edge_attr.size(0) < attention.size(0):
                 num_repeats = attention.size(0) // edge_attr.size(0) + 1
                 edge_attr = edge_attr.repeat(num_repeats,
