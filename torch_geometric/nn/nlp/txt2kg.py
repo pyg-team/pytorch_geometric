@@ -1,4 +1,3 @@
-import math
 import time
 from typing import List, Optional, Tuple
 
@@ -117,11 +116,13 @@ class TXT2KG():
             """Return a list of chunks from the given text,
             splitting it at semantically sensible boundaries
             while applying the specified character length limit
-            for each chunk."""
+            for each chunk.
+            """
             # Ref: https://stackoverflow.com/a/78288960/
             splitter = TextSplitter(limit)
             chunks = splitter.chunks(text)
             return chunks
+
         chunks = semantic_split(txt, self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
