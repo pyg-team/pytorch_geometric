@@ -62,8 +62,7 @@ class TXT2KG():
                     "role":
                     "user",
                     "content":
-                    txt + '\n' + self.system_prompt
-                for txt in txt_batch}], temperature=0, top_p=1, max_tokens=1024, stream=True)
+                    txt + '\n' + self.system_prompt for txt in txt_batch}], temperature=0, top_p=1, max_tokens=1024, stream=True)
             out_str = ""
             for chunk in completion:
                 if chunk.choices[0].delta.content is not None:
