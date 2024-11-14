@@ -54,7 +54,7 @@ class TXT2KG():
                 self.model = LLM(LM_name, num_params=14).eval()
                 self.initd_LM = True
             out_strs = self.model.inference(
-                question=[txt + '\n' + self.system_prompt],
+                question=[txt + '\n' + self.system_prompt for txt in txt_batch],
                 max_tokens=self.chunk_size)
         else:
             completion = self.client.chat.completions.create(
@@ -63,7 +63,7 @@ class TXT2KG():
                     "user",
                     "content":
                     txt + '\n' + self.system_prompt
-                }], temperature=0, top_p=1, max_tokens=1024, stream=True)
+                for txt in txt_batch}], temperature=0, top_p=1, max_tokens=1024, stream=True)
             out_str = ""
             for chunk in completion:
                 if chunk.choices[0].delta.content is not None:
