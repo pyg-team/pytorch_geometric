@@ -1,4 +1,3 @@
-# flake8: noqa
 from typing import List, Optional
 
 import torch
@@ -32,11 +31,6 @@ class GraphEncoder(torch.nn.Module):
         self.edge_embed1 = torch.nn.Embedding(num_bond_type, in_channels)
         self.edge_embed2 = torch.nn.Embedding(num_bond_direction, in_channels)
 
-        torch.nn.init.xavier_uniform_(self.x_embed1.weight.data)
-        torch.nn.init.xavier_uniform_(self.x_embed2.weight.data)
-        torch.nn.init.xavier_uniform_(self.edge_embed1.weight.data)
-        torch.nn.init.xavier_uniform_(self.edge_embed2.weight.data)
-
         self.gnns = torch.nn.ModuleList()
         self.batch_norms = torch.nn.ModuleList()
         for _ in range(num_layers):
@@ -51,6 +45,13 @@ class GraphEncoder(torch.nn.Module):
                     edge_dim=in_channels,
                 ))
             self.batch_norms.append(BatchNorm1d(in_channels))
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        torch.nn.init.xavier_uniform_(self.x_embed1.weight.data)
+        torch.nn.init.xavier_uniform_(self.x_embed2.weight.data)
+        torch.nn.init.xavier_uniform_(self.edge_embed1.weight.data)
+        torch.nn.init.xavier_uniform_(self.edge_embed2.weight.data)
 
     def forward(
         self,
@@ -79,24 +80,33 @@ class GITFormer(torch.nn.Module):
         super().__init__()
         from transformers import AutoConfig, AutoModel
 
-        encoder_config = AutoConfig.from_pretrained(
-            "allenai/scibert_scivocab_uncased")
-        encoder_config.encoder_width = vision_graph_width
+        config = AutoConfig.from_pretrained("allenai/scibert_scivocab_uncased")
+        config.encoder_width = vision_graph_width
         # insert cross-attention layer every other block
-        encoder_config.add_cross_attention = True
-        encoder_config.is_decoder = True
-        encoder_config.cross_attention_freq = cross_attention_freq
-        encoder_config.query_length = num_query_token
+        config.add_cross_attention = True
+        config.is_decoder = True
+        config.cross_attention_freq = cross_attention_freq
+        config.query_length = num_query_token
         self.Qformer = AutoModel.from_pretrained(
-            "allenai/scibert_scivocab_uncased", config=encoder_config)
+            "allenai/scibert_scivocab_uncased", config=config)
         self.query_tokens = torch.nn.Parameter(
-            torch.zeros(1, num_query_token, encoder_config.hidden_size))
-        self.query_tokens.data.normal_(mean=0.0,
-                                       std=encoder_config.initializer_range)
+            torch.zeros(1, num_query_token, config.hidden_size))
+        self.query_tokens.data.normal_(mean=0.0, std=config.initializer_range)
 
 
 class GITMol(torch.nn.Module):
-    r"""Assume pretrain task = image + graph + smiles --> caption."""
+    r"""The GITMol model from the `"GIT-Mol: A Multi-modal Large Language
+    Model for Molecular Science with Graph, Image, and Text"
+    <https://arxiv.org/pdf/2308.06911>`_ paper.
+
+    Args:
+        ?
+
+    .. note::
+        For an example of using :class:`GITMol`, see
+        `examples/llm/git_mol.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/llm/git_mol.py>`_.
+    """
     def __init__(self, ) -> None:
         super().__init__()
         # graph
@@ -167,7 +177,7 @@ class GITMol(torch.nn.Module):
                                  dtype=torch.long).to(x_smiles.device)
         smiles_targets = torch.arange(batch_size).to(x_smiles.device)
 
-        caption_input_ids, caption_attention_masks = self.text_encoder.get_input_ids(
+        caption_input_ids, caption_attention_masks = self.text_encoder.get_input_ids(  # noqa: E501
             captions)
 
         text_output = self.gitformer.Qformer(
@@ -234,23 +244,19 @@ class GITMol(torch.nn.Module):
             .reshape(-1, x_embeds.size(1), x_embeds.size(2))
         text_input_ids_all = torch.stack(text_input_ids_list, dim=1) \
             .reshape(-1, input_ids.size(1))
-        text_attention_mask_all = torch.stack(text_attention_mask_list, dim=1) \
-            .reshape(-1, attention_mask.size(1))
         # Create image attention masks for the concatenated tensor
-        image_atts_all = torch.ones(x_embeds_all.size()[:-1], dtype=torch.long) \
-            .to(x_embeds_all.device)
+        image_attns_all = torch.ones(x_embeds_all.size()[:-1],
+                                     dtype=torch.long).to(x_embeds_all.device)
         query_tokens_xtm = self.gitformer.query_tokens.expand(
             text_input_ids_all.shape[0], -1, -1)
-        query_atts_xtm = torch.ones(query_tokens_xtm.size()[:-1], dtype=torch.long) \
-            .to(x_embeds_all.device)
-        attention_mask_all = torch.cat(
-            [query_atts_xtm, text_attention_mask_all], dim=1)
+        query_attns_xtm = torch.ones(query_tokens_xtm.size()[:-1],
+                                     dtype=torch.long).to(x_embeds_all.device)
 
         output_xtm = self.gitformer.Qformer(
             inputs_embeds=query_tokens_xtm,
-            attention_mask=attention_mask_all,
+            attention_mask=query_attns_xtm,
             encoder_hidden_states=x_embeds_all,
-            encoder_attention_mask=image_atts_all,
+            encoder_attention_mask=image_attns_all,
             return_dict=True,
         ).last_hidden_state
 
@@ -289,29 +295,27 @@ class GITMol(torch.nn.Module):
 
         x_feats = F.normalize(self.xtc_proj[modal](query_output), dim=-1)
 
-        sim_q2t = torch.matmul(x_feats.unsqueeze(1),
-                               text_feat.unsqueeze(-1)).squeeze()
-        # [batch_size, batch_size*num_gpu, num_query_tokens]
+        sim_q2t = torch.matmul(
+            x_feats.unsqueeze(1),
+            text_feat.unsqueeze(-1),
+        ).squeeze(-1)
 
         # image-text similarity: aggregate across all query tokens
         sim_i2t, _ = sim_q2t.max(-1)
         sim_i2t = sim_i2t / self.temp
 
-        # text-query similarity: [batch_size, batch_size*num_gpu, num_query_tokens]
+        # text-query similarity
         sim_t2q = torch.matmul(
-            text_feat.unsqueeze(1).unsqueeze(1), x_feats.permute(0, 2,
-                                                                 1)).squeeze()
+            text_feat.unsqueeze(1).unsqueeze(1),
+            x_feats.permute(0, 2, 1),
+        ).squeeze(-2)
 
         # text-image similarity: aggregate across all query tokens
         sim_t2i, _ = sim_t2q.max(-1)
-        sim_t2i = sim_t2i / self.temp  # [batch_size, batch_size*num_gpu]
-
+        sim_t2i = sim_t2i / self.temp
+        # import pdb; pdb.set_trace()
         loss_itc = (
-            F.cross_entropy(sim_i2t, x_targets, label_smoothing=0.1) + \
-            F.cross_entropy(sim_t2i, x_targets, label_smoothing=0.1)
-        ) / 2
+            F.cross_entropy(sim_i2t, x_targets, label_smoothing=0.1) +
+            F.cross_entropy(sim_t2i, x_targets, label_smoothing=0.1)) / 2
 
         return loss_itc
-
-    def inference(self, ) -> Tensor:
-        pass
