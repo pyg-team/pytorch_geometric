@@ -72,7 +72,7 @@ class TXT2KG():
                 for chunk in completion:
                     if chunk.choices[0].delta.content is not None:
                         out_str += chunk.choices[0].delta.content
-            out_strs.append([out_str])
+            out_strs.append(out_str)
         self.total_chars_parsed += sum([len(txt) for txt in txt_batch])
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
         self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse
