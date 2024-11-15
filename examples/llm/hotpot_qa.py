@@ -20,7 +20,7 @@ from torch_geometric.utils.rag.feature_store import (
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
 if __name__ == '__main__':
-    seed_everything(100)
+    seed_everything(50)
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_KEY', type=str, default="")
     parser.add_argument('--local_lm', action="store_true")
