@@ -44,7 +44,7 @@ class TXT2KG():
     def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
 
-    def chunks_to_triples_strs(self, txt_batch: List[str]) -> List[str]:
+    def chunk_to_triples_str(self, txt: str) -> str:
         # call LLM on text
         chunk_start_time = time.time()
         if self.local_LM:
@@ -53,72 +53,65 @@ class TXT2KG():
                 LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
                 self.model = LLM(LM_name, num_params=14).eval()
                 self.initd_LM = True
-            out_strs = self.model.inference(
-                question=[
-                    txt + '\n' + self.system_prompt for txt in txt_batch
-                ], max_tokens=self.chunk_size)
+            out_str = self.model.inference(
+                question=[txt + '\n' + self.system_prompt],
+                max_tokens=self.chunk_size)[0]
         else:
-            out_strs = []
-            for txt in txt_batch:
-                completion = self.client.chat.completions.create(
-                    model=self.model, messages=[{
-                        "role":
-                        "user",
-                        "content":
-                        txt + '\n' + self.system_prompt
-                    }], temperature=0, top_p=1, max_tokens=self.chunk_size,
-                    stream=True)
-                out_str = ""
-                for chunk in completion:
-                    if chunk.choices[0].delta.content is not None:
-                        out_str += chunk.choices[0].delta.content
-                out_strs.append(out_str)
-        self.total_chars_parsed += sum([len(txt) for txt in txt_batch])
+            completion = self.client.chat.completions.create(
+                model=self.model, messages=[{
+                    "role":
+                    "user",
+                    "content":
+                    txt + '\n' + self.system_prompt
+                }], temperature=0, top_p=1, max_tokens=1024, stream=True)
+            out_str = ""
+            for chunk in completion:
+                if chunk.choices[0].delta.content is not None:
+                    out_str += chunk.choices[0].delta.content
+        self.total_chars_parsed += len(txt)
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
         self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse
-        return out_strs
+        return out_str
 
-    def parse_n_check_triples(
-            self, triples_strings: List[str]) -> List[Tuple[str, str, str]]:
+    def parse_n_check_triples(self,
+                              triples_str: str) -> List[Tuple[str, str, str]]:
         # use pythonic checks for triples
         processed = []
-        for triples_str in triples_strings:
-            split_by_newline = triples_str.split("\n")
-            # sometimes LLM fails to obey the prompt
-            if len(split_by_newline) > 1:
-                split_triples = split_by_newline
-                llm_obeyed = True
-            else:
-                # handles form "(e, r, e) (e, r, e) ... (e, r, e)""
-                split_triples = triples_str[1:-1].split(") (")
-                llm_obeyed = False
-            for triple_str in split_triples:
-                try:
-                    if llm_obeyed:
-                        # remove parenthesis and single quotes for parsing
-                        triple_str = triple_str.replace("(", "").replace(
-                            ")", "").replace("'", "")
-                    split_trip = triple_str.split(',')
-                    # remove blank space at beginning or end
-                    split_trip = [(i[1:] if i[0] == " " else i)
-                                  for i in split_trip]
-                    split_trip = [(i[:-1] if i[-1] == " " else i)
-                                  for i in split_trip]
-                    potential_trip = tuple(split_trip)
-                except:  # noqa
-                    continue
-                if 'tuple' in str(
-                        type(potential_trip)) and len(potential_trip) == 3:
-                    processed.append(potential_trip)
+        split_by_newline = triples_str.split("\n")
+        # sometimes LLM fails to obey the prompt
+        if len(split_by_newline) > 1:
+            split_triples = split_by_newline
+            llm_obeyed = True
+        else:
+            # handles form "(e, r, e) (e, r, e) ... (e, r, e)""
+            split_triples = triples_str[1:-1].split(") (")
+            llm_obeyed = False
+        for triple_str in split_triples:
+            try:
+                if llm_obeyed:
+                    # remove parenthesis and single quotes for parsing
+                    triple_str = triple_str.replace("(", "").replace(
+                        ")", "").replace("'", "")
+                split_trip = triple_str.split(',')
+                # remove blank space at beginning or end
+                split_trip = [(i[1:] if i[0] == " " else i)
+                              for i in split_trip]
+                split_trip = [(i[:-1] if i[-1] == " " else i)
+                              for i in split_trip]
+                potential_trip = tuple(split_trip)
+            except:  # noqa
+                continue
+            if 'tuple' in str(
+                    type(potential_trip)) and len(potential_trip) == 3:
+                processed.append(potential_trip)
         return processed
 
     def add_doc_2_KG(
         self,
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
-        batch_size: int = 8,
     ) -> None:
-        chunks = list(get_chunks(txt, self.chunk_size))
+        chunks = list(get_chunks(s, self.chunk_size))
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
@@ -126,22 +119,17 @@ class TXT2KG():
         else:
             key = self.doc_id_counter
         self.relevant_triples[key] = []
-        chunk_batches = [
-            chunks[i * batch_size:min((i + 1) * self.chunk_size, len(chunks))]
-            for i in range(math.ceil(len(txt) / self.chunk_size))
-        ]
-        for chunk_batch in chunk_batches:
-            # (TODO Divyansh) add entity resolution/merging
+        for chunk in chunks:
             self.relevant_triples[key] += self.parse_n_check_triples(
-                self.chunks_to_triples_strs(chunk_batch))
+                self.chunk_to_triples_str(chunk))
         self.doc_id_counter += 1
-
 
 def get_chunks(s, maxlength):
     start = 0
     end = 0
-    while start + maxlength < len(s) and end != -1:
+    while start + maxlength  < len(s) and end != -1:
         end = s.rfind(" ", start, start + maxlength + 1)
         yield s[start:end]
-        start = end + 1
+        start = end +1
     yield s[start:]
+
