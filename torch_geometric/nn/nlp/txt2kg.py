@@ -62,12 +62,12 @@ class TXT2KG():
             for txt in txt_batch:
                 completion = self.client.chat.completions.create(
                     model=self.model, messages=[{
-                    "role":
-                    "user",
-                    "content":
-                    txt + '\n' + self.system_prompt
-                }], temperature=0, top_p=1,
-                    max_tokens=self.chunk_size * 2, stream=True)
+                        "role":
+                        "user",
+                        "content":
+                        txt + '\n' + self.system_prompt
+                    }], temperature=0, top_p=1, max_tokens=self.chunk_size * 2,
+                    stream=True)
                 out_str = ""
                 for chunk in completion:
                     if chunk.choices[0].delta.content is not None:
