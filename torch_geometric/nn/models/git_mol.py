@@ -300,9 +300,9 @@ class GITMol(torch.nn.Module):
             text_feat.unsqueeze(-1),
         ).squeeze(-1)
 
-        # image-text similarity: aggregate across all query tokens
-        sim_i2t, _ = sim_q2t.max(-1)
-        sim_i2t = sim_i2t / self.temp
+        # modal-text similarity: aggregate across all query tokens
+        sim_x2t, _ = sim_q2t.max(-1)
+        sim_x2t = sim_x2t / self.temp
 
         # text-query similarity
         sim_t2q = torch.matmul(
@@ -310,12 +310,12 @@ class GITMol(torch.nn.Module):
             x_feats.permute(0, 2, 1),
         ).squeeze(-2)
 
-        # text-image similarity: aggregate across all query tokens
-        sim_t2i, _ = sim_t2q.max(-1)
-        sim_t2i = sim_t2i / self.temp
-        # import pdb; pdb.set_trace()
+        # text-modal similarity: aggregate across all query tokens
+        sim_t2x, _ = sim_t2q.max(-1)
+        sim_t2x = sim_t2x / self.temp
+
         loss_itc = (
-            F.cross_entropy(sim_i2t, x_targets, label_smoothing=0.1) +
-            F.cross_entropy(sim_t2i, x_targets, label_smoothing=0.1)) / 2
+            F.cross_entropy(sim_x2t, x_targets, label_smoothing=0.1) +
+            F.cross_entropy(sim_t2x, x_targets, label_smoothing=0.1)) / 2
 
         return loss_itc
