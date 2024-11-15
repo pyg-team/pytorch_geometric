@@ -56,7 +56,7 @@ class TXT2KG():
             out_strs = self.model.inference(
                 question=[
                     txt + '\n' + self.system_prompt for txt in txt_batch
-                ], max_tokens=self.chunk_size * 2)
+                ], max_tokens=self.chunk_size)
         else:
             out_strs = []
             for txt in txt_batch:
@@ -66,7 +66,7 @@ class TXT2KG():
                         "user",
                         "content":
                         txt + '\n' + self.system_prompt
-                    }], temperature=0, top_p=1, max_tokens=self.chunk_size * 2,
+                    }], temperature=0, top_p=1, max_tokens=self.chunk_size,
                     stream=True)
                 out_str = ""
                 for chunk in completion:
