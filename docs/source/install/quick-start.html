@@ -75,9 +75,9 @@
 
 <script>
   var torchList = [
+    ['torch-2.5.0', 'PyTorch 2.5.*'],
     ['torch-2.4.0', 'PyTorch 2.4.*'],
     ['torch-2.3.0', 'PyTorch 2.3.*'],
-    ['torch-2.2.0', 'PyTorch 2.2.*'],
   ];
 
   var osList = [
@@ -113,7 +113,7 @@
       $("#command pre").text('# macOS binaries do not support CUDA');
     }
 
-    else if (torch != "torch-2.4.0" && cuda == "cu124") {
+    else if (torch == "torch-2.3.0" && cuda == "cu124") {
       $("#command pre").text('# PyTorch version does not support CUDA 12.4');
     }
 
