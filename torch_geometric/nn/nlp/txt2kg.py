@@ -60,12 +60,13 @@ class TXT2KG():
         else:
             out_strs = []
             for txt in txt_batch:
-                message = {
-                    "role": "user",
-                    "content": txt + '\n' + self.system_prompt
-                }
                 completion = self.client.chat.completions.create(
-                    model=self.model, messages=message, temperature=0, top_p=1,
+                    model=self.model, messages=[{
+                    "role":
+                    "user",
+                    "content":
+                    txt + '\n' + self.system_prompt
+                }], temperature=0, top_p=1,
                     max_tokens=self.chunk_size * 2, stream=True)
                 out_str = ""
                 for chunk in completion:
