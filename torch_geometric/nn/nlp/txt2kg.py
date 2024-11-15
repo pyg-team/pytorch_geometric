@@ -117,7 +117,7 @@ class TXT2KG():
         QA_pair: Optional[Tuple[str, str]],
         batch_size: int = 8,
     ) -> None:
-        chunks = get_chunks(txt, self.chunk_size)
+        chunks = list(get_chunks(txt, self.chunk_size))
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
