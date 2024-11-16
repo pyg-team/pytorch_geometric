@@ -1,6 +1,6 @@
 FROM nvcr.io/nvidia/cuda-dl-base:24.09-cuda12.6-devel-ubuntu22.04
 
-# Based on NGC PyG 24.09 image: 
+# Based on NGC PyG 24.09 image:
 # https://docs.nvidia.com/deeplearning/frameworks/pyg-release-notes/rel-24-09.html#rel-24-09
 
 # install pip
