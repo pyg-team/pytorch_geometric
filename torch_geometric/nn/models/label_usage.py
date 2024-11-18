@@ -17,8 +17,8 @@ class LabelUsage(torch.nn.Module):
             during training.
         num_recycling_iterations (int): Number of iterations the previously
             predicted softlabels are used as features.
-        return_tuple (bool): Whether to return the label indices from the split
-            sets separately along with the output
+        return_tuple (bool): If true, returns (output, train_label_idx, 
+        train_pred_idx) otherwise returns prediction output
         base_model: An instance of the model that will do the 
             inner forward pass.
         num_classes (int): Number of classes in dataset
@@ -30,7 +30,6 @@ class LabelUsage(torch.nn.Module):
         num_recycling_iterations: int,
         return_tuple: bool,
         base_model: torch.nn.Module,
-        num_classes: int,
     ):
 
         super(LabelUsage, self).__init__()
@@ -38,7 +37,6 @@ class LabelUsage(torch.nn.Module):
         self.num_recycling_iterations = num_recycling_iterations
         self.return_tuple = return_tuple
         self.base_model = base_model
-        self.num_classes = num_classes
 
     def forward(self, x, edge_index, y, train_idx):
         r"""
@@ -57,7 +55,7 @@ class LabelUsage(torch.nn.Module):
         train_pred_idx = train_idx[~mask]  # D_U: nodes to predict labels in training
 
         # add labels to features for train_labels_idx nodes
-        onehot = torch.zeros([x.shape[0], self.num_classes]).to(x.device)
+        onehot = torch.zeros([x.shape[0], len(torch.unique(y))]).to(x.device)
         onehot[train_labels_idx, y[idx]] = 1  # create a one-hot encoding
         feat = torch.cat([x, onehot], dim=-1)
 
