@@ -132,7 +132,7 @@ def _visualize_graph_via_networkx(
             xy=pos[src],
             xytext=pos[dst],
             arrowprops=dict(
-                arrowstyle="->",
+                arrowstyle="<-",
                 alpha=data['alpha'],
                 shrinkA=sqrt(node_size) / 2.0,
                 shrinkB=sqrt(node_size) / 2.0,
