@@ -227,7 +227,7 @@ class LightGCN(torch.nn.Module):
         self,
         pos_edge_rank: Tensor,
         neg_edge_rank: Tensor,
-        node_id: Optional[Tensor] = None,
+        node_id: OptTensor = None,
         lambda_reg: float = 1e-4,
         **kwargs,
     ) -> Tensor:
@@ -243,9 +243,10 @@ class LightGCN(torch.nn.Module):
         Args:
             pos_edge_rank (torch.Tensor): Positive edge rankings.
             neg_edge_rank (torch.Tensor): Negative edge rankings.
-            node_id (torch.Tensor): The indices of the nodes involved for
-                deriving a prediction for both positive and negative edges.
+            node_id (torch.Tensor, optional): The indices of the nodes involved
+                for deriving a prediction for both positive and negative edges.
                 If set to :obj:`None`, all nodes will be used.
+                (default: :obj:`None`)
             lambda_reg (int, optional): The :math:`L_2` regularization strength
                 of the Bayesian Personalized Ranking (BPR) loss.
                 (default: :obj:`1e-4`)
