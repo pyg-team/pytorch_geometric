@@ -357,13 +357,9 @@ def group_cat(
 
 
 def group_batch(
-    src: Tensor,
-    index: Tensor,
-    dim: int = 0,
-    pad_size: Optional[int] = None,
-    pad_value: float = float("-inf"),
-    return_mask: bool = False
-) -> Union[Tuple[Tensor, Tensor], Tensor]:
+        src: Tensor, index: Tensor, dim: int = 0,
+        pad_size: Optional[int] = None, pad_value: float = float("-inf"),
+        return_mask: bool = False) -> Union[Tuple[Tensor, Tensor], Tensor]:
     r"""Tensor :obj:`src` is batched into groups according to :obj:`index`
     in the given dimension :obj:`dim`.
     Padding is applied to enforce consistent size of batched groups.
@@ -415,20 +411,13 @@ def group_batch(
     degree_missing_in_dim = (pad_size - d).to(torch.long)
     pad_index = torch.unique(index).repeat_interleave(degree_missing_in_dim)
 
-    def batching( # type: ignore
-        input,
-        fill
-    ):
-        padding_fill = torch.full(
-            input.shape,
-            fill,
-            device=device
-        ).index_select(dim, pad_index)
+    def batching(  # type: ignore
+            input, fill):
+        padding_fill = torch.full(input.shape, fill,
+                                  device=device).index_select(dim, pad_index)
         padded = group_cat([input, padding_fill], [index, pad_index], dim)
         return torch.stack(padded.split(pad_size, dim), dim)
 
     out = batching(src, pad_value)
-    return (
-        out,
-        batching(torch.full(src.shape, True, device=device), False)
-    ) if return_mask else out
+    return (out, batching(torch.full(src.shape, True, device=device),
+                          False)) if return_mask else out
