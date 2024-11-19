@@ -363,7 +363,7 @@ def group_batch(
     value: Optional[float] = float("-inf"),
     padding_size: Optional[int] = None,
     return_mask: Optional[bool] = False
-) -> Tensor:
+) -> Tuple[Tensor, Tensor]:
     r"""Create a batched tensor for :obj:`src` using :obj:`index`.
     A batch dimension is created and :obj:`src` tensor is batched along the dimension :obj:`dim`.
 
@@ -393,24 +393,20 @@ def group_batch(
         tensor([[[0.1349, 0.8266],
                  [0.3651, 0.1737],
                  [  -inf,   -inf]],
-
-                 [[0.0211, 0.7000],
+                [[0.0211, 0.7000],
                  [  -inf,   -inf],
                  [  -inf,   -inf]],
-
-                 [[0.1971, 0.2903],
+                [[0.1971, 0.2903],
                  [0.4086, 0.7221],
                  [  -inf,   -inf]]])
         >>> mask
         tensor([[[ True,  True],
                  [ True,  True],
                  [False, False]],
-
-                 [[ True,  True],
+                [[ True,  True],
                  [False, False],
                  [False, False]],
-
-                 [[ True,  True],
+                [[ True,  True],
                  [ True,  True],
                  [False, False]]])
     """
