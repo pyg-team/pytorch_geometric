@@ -422,8 +422,4 @@ def group_batch(
         return torch.stack(padded.split(padding_size, dim), dim)
 
     out = create_batched_tensor(src, value)
-    ret = (out,)
-    if return_mask:
-        mask = create_batched_tensor(torch.full(src.shape, True, device=device), False)
-        ret += (mask,)
-    return ret
+    return(out, create_batched_tensor(torch.full(src.shape, True, device=device), False)) if return_mask else out
