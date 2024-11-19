@@ -149,7 +149,7 @@ def test_group_batch(device):
     expected[1,:1,:] = src[3]
     expected[2,:2,:] = src[4:]
 
-    out, mask = group_batch(src, index, dim=0, padding_size=3, value=float("-inf"), return_mask=True)
+    out, mask = group_batch(src, index, dim=0, pad_size=3, pad_value=float("-inf"), return_mask=True)
     assert torch.equal(out, expected)
     assert torch.equal(out[mask].reshape(src.size()), src)
 

@@ -360,25 +360,26 @@ def group_batch(
     src: Tensor,
     index: Tensor,
     dim: int = 0,
-    value: float = float("-inf"),
-    padding_size: Optional[int] = None,
+    pad_size: Optional[int] = None,
+    pad_value: float = float("-inf"),
     return_mask: bool = False
 ) -> Union[Tuple[Tensor, Tensor], Tensor]:
-    r"""Create a batched tensor for :obj:`src` using :obj:`index`.
-    A batch dimension is created and :obj:`src` tensor is batched along the dimension :obj:`dim`.
+    r"""Tensor :obj:`src` is batched into groups according to :obj:`index` in the
+    given dimension :obj:`dim`.
+    Padding is applied to enforce consistent size of batched groups.
 
     Args:
         src (torch.Tensor): The srouce tensor.
         index (torch.Tensor): The index tensor.
         dim (int, optional): The dimension along which to batch.
             (default: :obj:`0`)
-        value (float, optional): The fill value used for padding.
-            (default: :obj:`float("-inf")`)
-        padding_size (int, optional): The size of the batch. If not specified, will use the 
-            the largest computed (unweighted) degree of :obj:`index`.
+        pad_size (int, optional): The size of the batch. If not specified,
+            will use the largest computed (unweighted) degree of :obj:`index`.
             (default: :obj:`None`)
-        return_mask (bool, optional):  If true, will return a tensor with masks indicating 
-            which elements within batched tensor are not padding.
+        pad_value (float, optional): The fill value used for padding.
+            (default: :obj:`float("-inf")`)
+        return_mask (bool, optional):  If true, will return a tensor with masks
+            indicating which elements within batched tensor are not padding.
             (default: :obj:`False`)
 
     Example:
@@ -388,18 +389,16 @@ def group_batch(
         ...               [0.1971, 0.2903],
         ...               [0.4086, 0.7221]])
         >>> index = torch.LongTensor([0,0,1,2,2])
-        >>> out, mask = group_batch(src, index, dim=0, padding_size=3, value=float("-inf"), return_mask=True)
-        >>> out
-        tensor([[[0.1349, 0.8266],
-                 [0.3651, 0.1737],
-                 [  -inf,   -inf]],
-                [[0.0211, 0.7000],
-                 [  -inf,   -inf],
-                 [  -inf,   -inf]],
-                [[0.1971, 0.2903],
-                 [0.4086, 0.7221],
-                 [  -inf,   -inf]]])
-        >>> mask
+        >>> group_batch(src, index, dim=0, pad_size=3, return_mask=True)
+        (tensor([[[0.1349, 0.8266],
+                  [0.3651, 0.1737],
+                  [  -inf,   -inf]],
+                 [[0.0211, 0.7000],
+                  [  -inf,   -inf],
+                  [  -inf,   -inf]],
+                 [[0.1971, 0.2903],
+                  [0.4086, 0.7221],
+                  [  -inf,   -inf]]])
         tensor([[[ True,  True],
                  [ True,  True],
                  [False, False]],
@@ -408,12 +407,12 @@ def group_batch(
                  [False, False]],
                 [[ True,  True],
                  [ True,  True],
-                 [False, False]]])
+                 [False, False]]]))
     """
     device = src.device
     d = degree(index)
-    padding_size = max(d) if padding_size is None else padding_size
-    degree_missing_along_dim = (padding_size-d).to(torch.long)
+    pad_size = max(d) if pad_size is None else pad_size
+    degree_missing_along_dim = (pad_size-d).to(torch.long)
     padding_index = torch.unique(index).repeat_interleave(degree_missing_along_dim)
 
     def create_batched_tensor( # type: ignore
@@ -422,7 +421,7 @@ def group_batch(
     ):
         padding_fill = torch.full(input.shape, fill, device=device).index_select(dim, padding_index)
         padded = group_cat([input, padding_fill], [index, padding_index], dim)
-        return torch.stack(padded.split(padding_size, dim), dim)
+        return torch.stack(padded.split(pad_size, dim), dim)
 
-    out = create_batched_tensor(src, value)
+    out = create_batched_tensor(src, pad_value)
     return(out, create_batched_tensor(torch.full(src.shape, True, device=device), False)) if return_mask else out
