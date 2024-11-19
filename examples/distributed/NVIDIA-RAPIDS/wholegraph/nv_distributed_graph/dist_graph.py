@@ -29,7 +29,7 @@ class DistGraphCSC:
         **kwargs,
     ):
         # optionally to save node/edge feature tensors (view)
-        self.data = {}  # place holder for the hetergenous graph
+        self.data = {}  # place holder for the heterogeneous graph
         self.device = device
         if partition_book is not None:
             raise NotImplementedError(
