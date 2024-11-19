@@ -416,7 +416,7 @@ def group_batch(
     degree_missing_along_dim = (padding_size-d).to(torch.long)
     padding_index = torch.unique(index).repeat_interleave(degree_missing_along_dim)
 
-    def create_batched_tensor(input, fill):
+    def create_batched_tensor(input, fill) -> Tensor:
         padding_fill = torch.full(input.shape, fill, device=device).index_select(dim, padding_index)
         padded = group_cat([input, padding_fill], [index, padding_index], dim)
         return torch.stack(padded.split(padding_size, dim), dim)
