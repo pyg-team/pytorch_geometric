@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union, Any
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -6,8 +6,8 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric import is_compiling, is_in_onnx_export, warnings
 from torch_geometric.typing import torch_scatter
-from torch_geometric.utils.functions import cumsum
 from torch_geometric.utils._degree import degree
+from torch_geometric.utils.functions import cumsum
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
@@ -357,13 +357,9 @@ def group_cat(
 
 
 def group_batch(
-    src: Tensor,
-    index: Tensor,
-    dim: int = 0,
-    pad_size: Optional[int] = None,
-    pad_value: float = float("-inf"),
-    return_mask: bool = False
-) -> Union[Tuple[Tensor, Tensor], Tensor]:
+        src: Tensor, index: Tensor, dim: int = 0,
+        pad_size: Optional[int] = None, pad_value: float = float("-inf"),
+        return_mask: bool = False) -> Union[Tuple[Tensor, Tensor], Tensor]:
     r"""Tensor :obj:`src` is batched into groups according to :obj:`index` in the
     given dimension :obj:`dim`.
     Padding is applied to enforce consistent size of batched groups.
@@ -412,16 +408,19 @@ def group_batch(
     device = src.device
     d = degree(index)
     pad_size = max(d) if pad_size is None else pad_size
-    degree_missing_along_dim = (pad_size-d).to(torch.long)
-    padding_index = torch.unique(index).repeat_interleave(degree_missing_along_dim)
+    degree_missing_along_dim = (pad_size - d).to(torch.long)
+    padding_index = torch.unique(index).repeat_interleave(
+        degree_missing_along_dim)
 
-    def create_batched_tensor( # type: ignore
-        input,
-        fill
-    ):
-        padding_fill = torch.full(input.shape, fill, device=device).index_select(dim, padding_index)
+    def create_batched_tensor(  # type: ignore
+            input, fill):
+        padding_fill = torch.full(input.shape, fill,
+                                  device=device).index_select(
+                                      dim, padding_index)
         padded = group_cat([input, padding_fill], [index, padding_index], dim)
         return torch.stack(padded.split(pad_size, dim), dim)
 
     out = create_batched_tensor(src, pad_value)
-    return(out, create_batched_tensor(torch.full(src.shape, True, device=device), False)) if return_mask else out
+    return (out,
+            create_batched_tensor(torch.full(src.shape, True, device=device),
+                                  False)) if return_mask else out
