@@ -2,7 +2,7 @@ r"""Utility package."""
 
 import copy
 
-from ._scatter import scatter, group_argsort, group_cat
+from ._scatter import scatter, group_argsort, group_cat, group_batch
 from ._segment import segment
 from ._index_sort import index_sort
 from .functions import cumsum
@@ -62,6 +62,7 @@ __all__ = [
     'scatter',
     'group_argsort',
     'group_cat',
+    'group_batch',
     'segment',
     'index_sort',
     'cumsum',
