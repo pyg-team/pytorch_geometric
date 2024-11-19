@@ -6,7 +6,7 @@ import torch
 import torch_geometric.typing
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withDevice, withPackage
-from torch_geometric.utils import group_argsort, group_cat, scatter
+from torch_geometric.utils import group_argsort, group_cat, group_batch, scatter
 from torch_geometric.utils._scatter import scatter_argmax
 
 
@@ -137,6 +137,21 @@ def test_group_cat(device):
     )
     assert torch.equal(out, expected)
     assert index.tolist() == [0, 0, 0, 1, 2, 2]
+
+
+@withDevice
+def test_group_batch(device):
+    src = torch.randn(6, 4, device=device)
+    index = torch.tensor([0, 0, 0, 1, 2, 2], device=device)
+
+    expected = torch.full((3,3,4), float("-inf"), device=device)
+    expected[0,:3,:] = src[:3]
+    expected[1,:1,:] = src[3]
+    expected[2,:2,:] = src[4:]
+
+    out, mask = group_batch(src, index, dim=0, padding_size=3, value=float("-inf"), return_mask=True)
+    assert torch.equal(out, expected)
+    assert torch.equal(out[mask].reshape(src.size()), src)
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ import torch_geometric.typing
 from torch_geometric import is_compiling, is_in_onnx_export, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
+from torch_geometric.utils._degree import degree
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
@@ -353,3 +354,80 @@ def group_cat(
     index, perm = torch.cat(indices).sort(stable=True)
     out = torch.cat(tensors, dim=dim).index_select(dim, perm)
     return (out, index) if return_index else out
+
+
+def group_batch(
+    src: Tensor,
+    index: Tensor,
+    dim: Optional[int] = 0,
+    value: Optional[float] = float("-inf"),
+    padding_size: Optional[int] = None,
+    return_mask: Optional[bool] = False
+) -> Tensor:
+    r"""Create a batched tensor for :obj:`src` using :obj:`index`.
+    A batch dimension is created and :obj:`src` tensor is batched along the dimension :obj:`dim`.
+
+    Args:
+        src (torch.Tensor): The srouce tensor.
+        index (torch.Tensor): The index tensor.
+        dim (int, optional): The dimension along which to batch.
+            (default: :obj:`0`)
+        value (float, optional): The fill value used for padding.
+            (default: :obj:`float("-inf")`)
+        padding_size (int, optional): The size of the batch. If not specified, will use the 
+            the largest computed (unweighted) degree of :obj:`index`.
+            (default: :obj:`None`)
+        return_mask (bool, optional):  If true, will return a tensor with masks indicating 
+            which elements within batched tensor are not padding.
+            (default: :obj:`False`)
+
+    Example:
+        >>> src = tensor([[0.1349, 0.8266],
+        ...               [0.3651, 0.1737],
+        ...               [0.0211, 0.7000],
+        ...               [0.1971, 0.2903],
+        ...               [0.4086, 0.7221]])
+        >>> index = torch.LongTensor([0,0,1,2,2])
+        >>> out, mask = group_batch(src, index, dim=0, padding_size=3, value=float("-inf"), return_mask=True)
+        >>> out
+        tensor([[[0.1349, 0.8266],
+                 [0.3651, 0.1737],
+                 [  -inf,   -inf]],
+
+                 [[0.0211, 0.7000],
+                 [  -inf,   -inf],
+                 [  -inf,   -inf]],
+
+                 [[0.1971, 0.2903],
+                 [0.4086, 0.7221],
+                 [  -inf,   -inf]]])
+        >>> mask
+        tensor([[[ True,  True],
+                 [ True,  True],
+                 [False, False]],
+
+                 [[ True,  True],
+                 [False, False],
+                 [False, False]],
+
+                 [[ True,  True],
+                 [ True,  True],
+                 [False, False]]])
+    """
+    device = src.device
+    d = degree(index)
+    padding_size = max(d) if padding_size is None else padding_size
+    degree_missing_along_dim = (padding_size-d).to(torch.long)
+    padding_index = torch.unique(index).repeat_interleave(degree_missing_along_dim)
+
+    def create_batched_tensor(input, fill):
+        padding_fill = torch.full(input.shape, fill, device=device).index_select(dim, padding_index)
+        padded = group_cat([input, padding_fill], [index, padding_index], dim)
+        return torch.stack(padded.split(padding_size, dim), dim)
+
+    out = create_batched_tensor(src, value)
+    ret = (out,)
+    if return_mask:
+        mask = create_batched_tensor(torch.full(src.shape, True, device=device), False)
+        ret += (mask,)
+    return ret
