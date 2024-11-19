@@ -363,7 +363,7 @@ def group_batch(
     value: Optional[float] = float("-inf"),
     padding_size: Optional[int] = None,
     return_mask: Optional[bool] = False
-) -> Tuple[Tensor, Tensor]:
+) -> Union[Tuple[Tensor, Tensor], Tensor]:
     r"""Create a batched tensor for :obj:`src` using :obj:`index`.
     A batch dimension is created and :obj:`src` tensor is batched along the dimension :obj:`dim`.
 
