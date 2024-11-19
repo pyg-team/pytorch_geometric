@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Any
 
 import torch
 from torch import Tensor
@@ -359,10 +359,10 @@ def group_cat(
 def group_batch(
     src: Tensor,
     index: Tensor,
-    dim: Optional[int] = 0,
-    value: Optional[float] = float("-inf"),
+    dim: int = 0,
+    value: float = float("-inf"),
     padding_size: Optional[int] = None,
-    return_mask: Optional[bool] = False
+    return_mask: bool = False
 ) -> Union[Tuple[Tensor, Tensor], Tensor]:
     r"""Create a batched tensor for :obj:`src` using :obj:`index`.
     A batch dimension is created and :obj:`src` tensor is batched along the dimension :obj:`dim`.
@@ -416,7 +416,10 @@ def group_batch(
     degree_missing_along_dim = (padding_size-d).to(torch.long)
     padding_index = torch.unique(index).repeat_interleave(degree_missing_along_dim)
 
-    def create_batched_tensor(input, fill) -> Tensor:
+    def create_batched_tensor( # type: ignore
+        input,
+        fill
+    ):
         padding_fill = torch.full(input.shape, fill, device=device).index_select(dim, padding_index)
         padded = group_cat([input, padding_fill], [index, padding_index], dim)
         return torch.stack(padded.split(padding_size, dim), dim)
