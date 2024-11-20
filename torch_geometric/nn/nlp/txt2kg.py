@@ -1,7 +1,7 @@
 import math
 import time
 from typing import List, Optional, Tuple
-
+import os
 import torch
 
 
@@ -32,6 +32,8 @@ class TXT2KG():
                 base_url="https://integrate.api.nvidia.com/v1",
                 api_key=NVIDIA_API_KEY)
             self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
+            import torch.multiprocessing as mp
+
 
         self.chunk_size = 512
         self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
@@ -121,8 +123,37 @@ class TXT2KG():
             key = QA_pair
         else:
             key = self.doc_id_counter
-        self.relevant_triples[key] = []
-        for chunk in chunks:
-            self.relevant_triples[key] += self.parse_n_check_triples(
-                self.chunk_to_triples_str(chunk))
+        if self.local_LM:
+            # just for debug, no need to scale
+            self.relevant_triples[key] = self.llm_then_python_parse(chunks)
+        else:
+            num_procs = min(len(chunks), get_num_procs())
+            meta_chunk_size = int(len(chunks) / num_procs)
+            in_chunks_per_proc = {j:chunks[j * meta_chunk_size:min((j + 1) * meta_chunk_size, len(chunks))] for j in range(num_procs)}
+            outs_per_proc = {}
+            mp.spawn(multiproc_helper, args=(self, in_chunks_per_proc, outs_per_proc))
+            self.relevant_triples[key] = []
+            for proc_i_out in outs_per_proc.values():
+                self.relevant_triples[key] += proc_i_out
         self.doc_id_counter += 1
+
+    def llm_then_python_parse(self, chunks):
+        relevant_triples = []
+        for chunk in chunks:
+            relevant_triples += self.parse_n_check_triples(
+                self.chunk_to_triples_str(chunk))
+        return relevant_triples
+
+    def multiproc_helper(self, rank, in_chunks_per_proc, outs_per_proc):
+        outs_per_proc[rank] = self.llm_then_python_parse(in_chunks_per_proc[rank])
+
+def get_num_procs():
+    num_work = None
+    if hasattr(os, "sched_getaffinity"):
+        try:
+            num_proc = len(os.sched_getaffinity(0)) / (2)
+        except Exception:
+            pass
+    if num_proc is None:
+        num_proc = os.cpu_count() / (2)
+    return int(num_proc)
