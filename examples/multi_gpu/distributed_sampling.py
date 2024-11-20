@@ -4,6 +4,7 @@ This example is for learning purposes only.
 NVIDIA recommends using the examples in examples/distributed/NVIDIA-RAPIDS for performance and scalability.
 """
 import os
+from math import ceil
 
 import torch
 import torch.distributed as dist
@@ -61,11 +62,11 @@ def run(rank, world_size, dataset):
 
     # Split indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
+    train_idx = train_idx.split(ceil(train_idx.size(0) / world_size))[rank]
     val_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
-    val_idx = val_idx.split(val_idx.size(0) // world_size)[rank]
+    val_idx = val_idx.split(ceil(val_idx.size(0) / world_size))[rank]
     test_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
-    test_idx = test_idx.split(test_idx.size(0) // world_size)[rank]
+    test_idx = test_idx.split(ceil(test_idx.size(0) / world_size))[rank]
 
     kwargs = dict(
         data=data,
