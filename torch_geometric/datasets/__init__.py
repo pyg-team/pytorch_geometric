@@ -78,6 +78,8 @@ from .brca_tgca import BrcaTcga
 from .neurograph import NeuroGraphDataset
 from .web_qsp_dataset import WebQSPDataset
 from .git_mol_dataset import GitMolDataset
+from .molecule_gpt_dataset import MoleculeGPTDataset
+from .tag_dataset import TAGDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -192,6 +194,8 @@ homo_datasets = [
     'NeuroGraphDataset',
     'WebQSPDataset',
     'GitMolDataset',
+    'MoleculeGPTDataset',
+    'TAGDataset',
 ]
 
 hetero_datasets = [
