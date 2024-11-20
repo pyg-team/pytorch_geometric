@@ -6,3 +6,6 @@
 | [`g_retriever_utils/`](./g_retriever_utils/) | Contains multiple scripts for benchmarking GRetriever's architecture and evaluating different retrieval methods.                                            |
 | [`multihop_rag/`](./multihop_rag/)           | Contains starter code and an example run for building a Multi-hop dataset using WikiHop5M and 2WikiMultiHopQA                                               |
 | [`nvtx_examples/`](./nvtx_examples/)         | Contains examples of how to wrap functions using the NVTX profiler for CUDA runtime analysis.                                                               |
+| [`molecule_gpt.py`](./molecule_gpt.py) | Example for MoleculeGPT: Instruction Following Large Language Models for Molecular Property Prediction                                                                                         |
+| [`glem.py`](./glem.py)                 | Example for [GLEM](https://arxiv.org/abs/2210.14709), a GNN+LLM co-training model via variational Expectation-Maximization (EM) framework on node classification tasks to achieve SOTA results |
+

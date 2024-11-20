@@ -6,6 +6,9 @@ stand-alone LLM baseline.
 
 Requirements:
 `pip install datasets transformers pcst_fast sentencepiece accelerate`
+
+Example repo for integration with Neo4j Graph DB:
+https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
 """
 import argparse
 import gc
