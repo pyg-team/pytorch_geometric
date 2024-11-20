@@ -143,7 +143,7 @@ def train(
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
 
             if (step + 1) % grad_steps == 0:
-                adjust_learning_rate(optimizer.param_groups[0]['params'], lr,
+                adjust_learning_rate(optimizer.param_groups[0], lr,
                                      step / len(train_loader) + epoch)
 
             optimizer.step()
