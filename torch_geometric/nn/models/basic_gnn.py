@@ -303,7 +303,9 @@ class BasicGNN(torch.nn.Module):
                 if isinstance(x, Tensor):
                     x = x + root_lin(x_root)
                 else:
-                    x = (x[0] + root_lin(x_root), x_root)
+                    x_left = x[0] + root_lin(x_root)
+                    x = (x_left, x_root)
+                    
 
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:
@@ -340,7 +342,8 @@ class BasicGNN(torch.nn.Module):
             if isinstance(x, Tensor):
                 x = x + self.root_lins[layer](x_root)
             else:
-                x = (x[0] + root_lins[layer](x_root), x_root)
+                x_left = x[0] + root_lin(x_root)
+                x = (x_left, x_root)
 
         if layer == self.num_layers - 1 and self.jk_mode is None:
             return x
