@@ -2,10 +2,11 @@ import sys
 from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
+import pandas as pd
 import torch
 from tqdm import tqdm
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import fs
 from torch_geometric.utils import add_self_loops
 
@@ -38,6 +39,11 @@ class GitMolDataset(InMemoryDataset):
         split (int, optional): Datasets split, train/valid/test=0/1/2.
             (default: :obj:`0`)
     """
+
+    raw_url = ("https://raw.githubusercontent.com/AI-HPC-Research-Team/"
+               "GIT-Mol/main/data/igcdata_toy")
+    ncbi_url = "https://pubchem.ncbi.nlm.nih.gov/#query={}&collection=compound"
+
     def __init__(
         self,
         root: str,
@@ -75,14 +81,23 @@ class GitMolDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        return ['train_3500.pkl', 'valid_450.pkl', 'test_450.pkl'][self.split]
+        return ['train_3500.pkl', 'valid_450.pkl', 'test_450.pkl']
 
     @property
     def processed_file_names(self) -> str:
         return ['train.pt', 'valid.pt', 'test.pt'][self.split]
 
     def download(self) -> None:
-        pass
+        for file_name in self.raw_file_names:
+            download_url(self.raw_url, self.raw_dir, filename=file_name)
+        df_lst = [
+            pd.read_pickle(f'{self.raw_dir}/{fn}')
+            for fn in self.raw_file_names
+        ]
+        query_lst = pd.concat(df_lst)[['cid'
+                                       ]].drop_duplicates()['cid'].to_list()
+        self.ncbi_url.format(','.join(query_lst))
+        # goto ncbi_query_link and click download to get the image data
 
     def process(self) -> None:
         import pandas as pd
@@ -159,7 +174,7 @@ class GitMolDataset(InMemoryDataset):
         }
 
         data = pd.read_pickle(
-            f'{self.raw_dir}/igcdata_toy/{self.raw_file_names}')
+            f'{self.raw_dir}/igcdata_toy/{self.raw_file_names[self.split]}')
 
         data_list = []
         for _, r in tqdm(data.iterrows(), total=data.shape[0]):
