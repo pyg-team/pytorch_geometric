@@ -305,7 +305,6 @@ class BasicGNN(torch.nn.Module):
                 else:
                     x_left = x[0] + root_lin(x_root)
                     x = (x_left, x_root)
-                    
 
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:
