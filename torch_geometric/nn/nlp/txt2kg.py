@@ -1,7 +1,8 @@
 import math
+import os
 import time
 from typing import List, Optional, Tuple
-import os
+
 import torch
 import torch.multiprocessing as mp
 
@@ -128,9 +129,15 @@ class TXT2KG():
         else:
             num_procs = min(len(chunks), get_num_procs())
             meta_chunk_size = int(len(chunks) / num_procs)
-            in_chunks_per_proc = {j:chunks[j * meta_chunk_size:min((j + 1) * meta_chunk_size, len(chunks))] for j in range(num_procs)}
+            in_chunks_per_proc = {
+                j:
+                chunks[j * meta_chunk_size:min((j + 1) *
+                                               meta_chunk_size, len(chunks))]
+                for j in range(num_procs)
+            }
             outs_per_proc = {}
-            mp.spawn(multiproc_helper, args=(self, in_chunks_per_proc, outs_per_proc))
+            mp.spawn(multiproc_helper,
+                     args=(self, in_chunks_per_proc, outs_per_proc))
             self.relevant_triples[key] = []
             for proc_i_out in outs_per_proc.values():
                 self.relevant_triples[key] += proc_i_out
@@ -144,10 +151,11 @@ class TXT2KG():
         return relevant_triples
 
     def multiproc_helper(self, rank, in_chunks_per_proc, outs_per_proc):
-        outs_per_proc[rank] = self.llm_then_python_parse(in_chunks_per_proc[rank])
+        outs_per_proc[rank] = self.llm_then_python_parse(
+            in_chunks_per_proc[rank])
+
 
 def get_num_procs():
-    num_work = None
     if hasattr(os, "sched_getaffinity"):
         try:
             num_proc = len(os.sched_getaffinity(0)) / (2)
