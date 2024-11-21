@@ -136,8 +136,8 @@ class TXT2KG():
                 for j in range(num_procs)
             }
             outs_per_proc = {}
-            mp.spawn(multiproc_helper,
-                     args=(self, in_chunks_per_proc, outs_per_proc))
+            mp.spawn(self.multiproc_helper,
+                     args=(in_chunks_per_proc, outs_per_proc))
             self.relevant_triples[key] = []
             for proc_i_out in outs_per_proc.values():
                 self.relevant_triples[key] += proc_i_out
