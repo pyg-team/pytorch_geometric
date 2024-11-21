@@ -3,6 +3,7 @@ import time
 from typing import List, Optional, Tuple
 import os
 import torch
+import torch.multiprocessing as mp
 
 
 class TXT2KG():
@@ -32,8 +33,6 @@ class TXT2KG():
                 base_url="https://integrate.api.nvidia.com/v1",
                 api_key=NVIDIA_API_KEY)
             self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
-            import torch.multiprocessing as mp
-
 
         self.chunk_size = 512
         self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
