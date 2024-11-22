@@ -2,11 +2,15 @@ import sys
 from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
-import pandas as pd
 import torch
 from tqdm import tqdm
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import fs
 from torch_geometric.utils import add_self_loops
 
@@ -40,9 +44,8 @@ class GitMolDataset(InMemoryDataset):
             (default: :obj:`0`)
     """
 
-    raw_url = ("https://raw.githubusercontent.com/AI-HPC-Research-Team/"
-               "GIT-Mol/main/data/igcdata_toy")
-    ncbi_url = "https://pubchem.ncbi.nlm.nih.gov/#query={}&collection=compound"
+    raw_url = ("https://drive.google.com/file/d/"
+               "1loBXabD6ncAFY-vanRsVtRUSFkEtBweg/view?usp=sharing")
 
     def __init__(
         self,
@@ -88,16 +91,18 @@ class GitMolDataset(InMemoryDataset):
         return ['train.pt', 'valid.pt', 'test.pt'][self.split]
 
     def download(self) -> None:
-        for file_name in self.raw_file_names:
-            download_url(self.raw_url, self.raw_dir, filename=file_name)
-        df_lst = [
-            pd.read_pickle(f'{self.raw_dir}/{fn}')
-            for fn in self.raw_file_names
-        ]
-        query_lst = pd.concat(df_lst)[['cid'
-                                       ]].drop_duplicates()['cid'].to_list()
-        self.ncbi_url.format(','.join(query_lst))
+        # for file_name in self.raw_file_names:
+        #     download_url(self.raw_url, self.raw_dir, filename=file_name)
+        # df_lst = [
+        #     pd.read_pickle(f'{self.raw_dir}/{fn}')
+        #     for fn in self.raw_file_names
+        # ]
+        # query_lst = pd.concat(df_lst)[['cid'
+        #                                ]].drop_duplicates()['cid'].to_list()
+        # self.ncbi_url.format(','.join(query_lst))
         # goto ncbi_query_link and click download to get the image data
+        file_path = download_url(self.raw_url, self.raw_dir)
+        extract_zip(file_path, self.raw_dir)
 
     def process(self) -> None:
         import pandas as pd
