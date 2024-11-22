@@ -1001,33 +1001,51 @@ def test_temporal_neighbor_loader_manual_sampling():
     data = HeteroData()
     num_nodes = 5
 
-    data['user'].x = (torch.arange(1,num_nodes + 1)
-                      .repeat_interleave(3)
-                      .reshape(num_nodes,3))
-    data['user'].time =  torch.arange(0, num_nodes * 2, 2).long()
+    data['user'].x = (torch.arange(1,
+                                   num_nodes + 1).repeat_interleave(3).reshape(
+                                       num_nodes, 3))
+    data['user'].time = torch.arange(0, num_nodes * 2, 2).long()
 
-    data['item'].x = (torch.arange(1, num_nodes + 1)
-                      .repeat_interleave(3)
-                      .reshape(num_nodes,3) * 10)
-    data['item'].time =  torch.arange(1, num_nodes * 2 + 1, 2).long()
+    data['item'].x = (torch.arange(
+        1, num_nodes + 1).repeat_interleave(3).reshape(num_nodes, 3) * 10)
+    data['item'].time = torch.arange(1, num_nodes * 2 + 1, 2).long()
 
-    data['user', 'buys', 'item'].edge_index = torch.tensor([
-        [0, 0, 0, 1, 2, 2, 2, 3, 3, 3, 4,],
-        [0, 1, 2, 0, 1, 2, 3, 2, 3, 4, 4,]
-    ], dtype=torch.long)
+    data['user', 'buys', 'item'].edge_index = torch.tensor([[
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        4,
+    ], [
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        3,
+        2,
+        3,
+        4,
+        4,
+    ]], dtype=torch.long)
 
-    data['item', 'rev_buys', 'user'].edge_index = (
-        data['user', 'buys', 'item'].edge_index.flip(0))
+    data['item', 'rev_buys',
+         'user'].edge_index = (data['user', 'buys', 'item'].edge_index.flip(0))
 
     loader = NeighborLoader(
         data,
-        num_neighbors=[1,1],
+        num_neighbors=[1, 1],
         input_nodes='user',
-        input_time=torch.full(
-        size=(num_nodes,),
-        fill_value=data['item'].time.max().item(),
-        dtype=torch.long
-        ),
+        input_time=torch.full(size=(num_nodes, ),
+                              fill_value=data['item'].time.max().item(),
+                              dtype=torch.long),
         time_attr="time",
     )
 

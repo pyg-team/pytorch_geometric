@@ -120,7 +120,6 @@ class NodeLoader(
         input_type, input_nodes, input_id = get_input_nodes(
             data, input_nodes, input_id)
 
-
         self.input_data = NodeSamplerInput(
             input_id=input_id,
             node=input_nodes,
@@ -137,7 +136,8 @@ class NodeLoader(
         input_time: OptTensor = None,
     ) -> Union[Data, HeteroData]:
         r"""Samples a subgraph from a list of raw input nodes and
-        optionally, corresponding seed times."""
+        optionally, corresponding seed times.
+        """
         if not isinstance(input_nodes, Tensor):
             input_nodes = torch.tensor(input_nodes, dtype=torch.long)
         input_data = NodeSamplerInput(
