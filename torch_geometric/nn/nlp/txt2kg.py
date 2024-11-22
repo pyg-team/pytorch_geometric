@@ -80,7 +80,8 @@ class TXT2KG():
             key = self.doc_id_counter
         if self.local_LM:
             # just for debug, no need to scale
-            self.relevant_triples[key] = self.llm_then_python_parse(chunks, parse_n_check_triples, self.chunk_to_triples_str_local)
+            self.relevant_triples[key] = self.llm_then_python_parse(
+                chunks, parse_n_check_triples, self.chunk_to_triples_str_local)
         else:
             num_procs = min(len(chunks), get_num_procs())
             meta_chunk_size = int(len(chunks) / num_procs)
@@ -91,28 +92,30 @@ class TXT2KG():
                 for j in range(num_procs)
             }
             outs_per_proc = {}
-            mp.spawn(multiproc_helper,
-                     args=(in_chunks_per_proc, outs_per_proc, parse_n_check_triples, chunk_to_triples_str_cloud))
+            mp.spawn(
+                multiproc_helper,
+                args=(in_chunks_per_proc, outs_per_proc, parse_n_check_triples,
+                      chunk_to_triples_str_cloud))
             self.relevant_triples[key] = []
             for proc_i_out in outs_per_proc.values():
                 self.relevant_triples[key] += proc_i_out
         self.doc_id_counter += 1
 
+
 def chunk_to_triples_str_cloud(txt: str) -> str:
     # call LLM on text
-    chunk_start_time = time.time()
+    time.time()
     completion = self.client.chat.completions.create(
         model=self.model, messages=[{
-            "role":
-            "user",
-            "content":
-            txt + '\n' + self.system_prompt
+            "role": "user",
+            "content": txt + '\n' + self.system_prompt
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
             out_str += chunk.choices[0].delta.content
     return out_str
+
 
 def parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
     # use pythonic checks for triples
@@ -130,21 +133,20 @@ def parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
         try:
             if llm_obeyed:
                 # remove parenthesis and single quotes for parsing
-                triple_str = triple_str.replace("(", "").replace(
-                    ")", "").replace("'", "")
+                triple_str = triple_str.replace("(", "").replace(")",
+                                                                 "").replace(
+                                                                     "'", "")
             split_trip = triple_str.split(',')
             # remove blank space at beginning or end
-            split_trip = [(i[1:] if i[0] == " " else i)
-                          for i in split_trip]
-            split_trip = [(i[:-1] if i[-1] == " " else i)
-                          for i in split_trip]
+            split_trip = [(i[1:] if i[0] == " " else i) for i in split_trip]
+            split_trip = [(i[:-1] if i[-1] == " " else i) for i in split_trip]
             potential_trip = tuple(split_trip)
         except:  # noqa
             continue
-        if 'tuple' in str(
-                type(potential_trip)) and len(potential_trip) == 3:
+        if 'tuple' in str(type(potential_trip)) and len(potential_trip) == 3:
             processed.append(potential_trip)
     return processed
+
 
 def llm_then_python_parse(chunks, py_fn, llm_fn):
     relevant_triples = []
@@ -152,9 +154,10 @@ def llm_then_python_parse(chunks, py_fn, llm_fn):
         relevant_triples += py_fn(llm_fn(chunk))
     return relevant_triples
 
+
 def multiproc_helper(rank, in_chunks_per_proc, outs_per_proc, py_fn, llm_fn):
-    outs_per_proc[rank] = llm_then_python_parse(
-        in_chunks_per_proc[rank], py_fn, llm_fn)
+    outs_per_proc[rank] = llm_then_python_parse(in_chunks_per_proc[rank],
+                                                py_fn, llm_fn)
 
 
 def get_num_procs():
