@@ -120,6 +120,7 @@ class NodeLoader(
         input_type, input_nodes, input_id = get_input_nodes(
             data, input_nodes, input_id)
 
+
         self.input_data = NodeSamplerInput(
             input_id=input_id,
             node=input_nodes,
@@ -132,12 +133,21 @@ class NodeLoader(
 
     def __call__(
         self,
-        index: Union[Tensor, List[int]],
+        input_nodes: Union[Tensor, List[int]],
+        input_time: OptTensor = None,
     ) -> Union[Data, HeteroData]:
-        r"""Samples a subgraph from a batch of input nodes."""
-        out = self.collate_fn(index)
-        if not self.filter_per_worker:
-            out = self.filter_fn(out)
+        r"""Samples a subgraph from a list of raw input nodes and
+        optionally, corresponding seed times."""
+        if not isinstance(input_nodes, Tensor):
+            input_nodes = torch.tensor(input_nodes, dtype=torch.long)
+        input_data = NodeSamplerInput(
+            input_id=torch.arange(input_nodes.shape[0]),
+            node=input_nodes,
+            time=input_time,
+            input_type=self.input_data.input_type,
+        )
+        out = self.node_sampler.sample_from_nodes(input_data)
+        out = self.filter_fn(out)
         return out
 
     def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
