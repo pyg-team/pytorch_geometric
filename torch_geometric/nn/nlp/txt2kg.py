@@ -137,7 +137,7 @@ class TXT2KG():
             }
             outs_per_proc = {}
             mp.spawn(multiproc_helper,
-                     args=(in_chunks_per_proc, outs_per_proc, self.llm_then_python_parse))
+                     args=(in_chunks_per_proc, outs_per_proc, self))
             self.relevant_triples[key] = []
             for proc_i_out in outs_per_proc.values():
                 self.relevant_triples[key] += proc_i_out
@@ -150,8 +150,8 @@ class TXT2KG():
                 self.chunk_to_triples_str(chunk))
         return relevant_triples
 
-def multiproc_helper(rank, in_chunks_per_proc, outs_per_proc, parse_func):
-    outs_per_proc[rank] = parse_func(
+def multiproc_helper(rank, in_chunks_per_proc, outs_per_proc, kg_obj):
+    outs_per_proc[rank] = kg_obj.llm_then_python_parse(
         in_chunks_per_proc[rank])
 
 
