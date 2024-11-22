@@ -66,12 +66,14 @@ if __name__ == '__main__':
             )
         kg_maker.save_kg("hotpot_kg.pt")
         relevant_triples = kg_maker.relevant_triples
-        print("Total number of context characters parsed by LLM",
-              kg_maker.total_chars_parsed)
-        print("Average number of context characters parsed by LLM per second=",
-              kg_maker.avg_chars_parsed_per_sec)
-    print("Size of KG (number of triples) =",
-          sum([len(rel_trips) for rel_trips in relevant_triples.values()]))
+        if args.local_lm:
+            print("Total number of context characters parsed by LLM",
+                  kg_maker.total_chars_parsed)
+            print("Average number of context characters parsed by LLM per second=",
+                  kg_maker.avg_chars_parsed_per_sec)
+
+            print("Size of KG (number of triples) =",
+                  sum([len(rel_trips) for rel_trips in relevant_triples.values()]))
 
     triples = list(
         chain.from_iterable(triple_set
