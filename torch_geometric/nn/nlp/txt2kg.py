@@ -150,6 +150,7 @@ class TXT2KG():
                 self.chunk_to_triples_str(chunk))
         return relevant_triples
 
+
 def multiproc_helper(rank, in_chunks_per_proc, outs_per_proc, kg_obj):
     outs_per_proc[rank] = kg_obj.llm_then_python_parse(
         in_chunks_per_proc[rank])
