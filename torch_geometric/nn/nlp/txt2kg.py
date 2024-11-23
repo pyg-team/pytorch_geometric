@@ -6,6 +6,12 @@ from typing import List, Optional, Tuple
 import torch
 import torch.multiprocessing as mp
 
+CLIENT_INITD = False
+
+CLIENT = None
+NIM_MODEL = None
+GLOBAL_NIM_KEY = ""
+NIM_SYSTEM_PROMPT = ""
 
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
@@ -24,19 +30,15 @@ class TXT2KG():
         chunk_size: int = 512,
     ) -> None:
         self.local_LM = local_LM
+        system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
         if self.local_LM:
-            self.initd_LM = False
+            self.initd_LM = False  
+            self.system_prompt = system_prompt
         else:
-            # We use NIMs since most PyG users may not be able to run a 70B+ model
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
-            from openai import OpenAI
-            self.client = OpenAI(
-                base_url="https://integrate.api.nvidia.com/v1",
-                api_key=NVIDIA_API_KEY)
-            self.model = "nvidia/llama-3.1-nemotron-70b-instruct"
-
+            NIM_SYSTEM_PROMPT = system_prompt
+            GLOBAL_NIM_KEY = NVIDIA_API_KEY
         self.chunk_size = 512
-        self.system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
         # useful for approximating recall of subgraph retrieval algos
         self.doc_id_counter = 0
         self.relevant_triples = {}
@@ -80,7 +82,7 @@ class TXT2KG():
             key = self.doc_id_counter
         if self.local_LM:
             # just for debug, no need to scale
-            self.relevant_triples[key] = self.llm_then_python_parse(chunks, parse_n_check_triples, self.chunk_to_triples_str_local)
+            self.relevant_triples[key] = llm_then_python_parse(chunks, parse_n_check_triples, self.chunk_to_triples_str_local)
         else:
             num_procs = min(len(chunks), get_num_procs())
             meta_chunk_size = int(len(chunks) / num_procs)
@@ -99,20 +101,26 @@ class TXT2KG():
         self.doc_id_counter += 1
 
 def chunk_to_triples_str_cloud(txt: str) -> str:
-    # call LLM on text
-    chunk_start_time = time.time()
-    completion = self.client.chat.completions.create(
-        model=self.model, messages=[{
+    if not CLIENT_INITD:
+        # We use NIMs since most PyG users may not be able to run a 70B+ model
+        from openai import OpenAI
+        CLIENT = OpenAI(
+            base_url="https://integrate.api.nvidia.com/v1",
+            api_key=GLOBAL_NIM_KEY)
+        NIM_MODEL = "nvidia/llama-3.1-nemotron-70b-instruct"
+        CLIENT_INITD = True
+    completion = CLIENT.chat.completions.create(
+        model=NIM_MODEL, messages=[{
             "role":
             "user",
             "content":
-            txt + '\n' + self.system_prompt
+            txt + '\n' + NIM_SYSTEM_PROMPT
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
             out_str += chunk.choices[0].delta.content
-    return out_str
+
 
 def parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
     # use pythonic checks for triples
