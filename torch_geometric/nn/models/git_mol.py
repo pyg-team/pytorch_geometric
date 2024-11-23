@@ -153,6 +153,14 @@ class GITMol(torch.nn.Module):
             Linear(self.gitformer.Qformer.config.hidden_size, 768),
         })
         self.temp = torch.nn.Parameter(0.07 * torch.ones([]))
+        self.model_freeze()
+
+    def model_freeze(self) -> None:
+        for param in self.graph_encoder.parameters():
+            param.requires_grad = False
+
+        for param in self.vision_encoder.parameters():
+            param.requires_grad = False
 
     def forward(
         self,
