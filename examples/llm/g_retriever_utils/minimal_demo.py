@@ -34,10 +34,8 @@ from torch_geometric.nn.nlp import LLM
 # NOTE: This used to be merged in the G-Retriever example.
 # FIXME: Getting the demos working like before is a WIP
 sys.path.append('..')
-from g_retriever import (  # noqa: E402
-    compute_metrics,
-    load_params_dict,
-    save_params_dict,
+from g_retriever import (  # noqa: E402 # isort:skip
+    compute_metrics, load_params_dict, save_params_dict,
 )
 
 
