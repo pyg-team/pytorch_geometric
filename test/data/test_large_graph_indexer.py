@@ -15,7 +15,6 @@ from torch_geometric.data.large_graph_indexer import (
     EDGE_RELATION,
     NODE_PID,
 )
-
 from torch_geometric.typing import WITH_PT20
 
 # create possible nodes and edges for graph
@@ -143,7 +142,7 @@ def test_large_graph_index():
             else:
                 print(
                     "WARNING: This test will not detect full results equality without the NetworkX package."
-                    )
+                )
                 return True
         return _sorted_tensors_are_close(
             ground_truth.x, new_method.x) \
