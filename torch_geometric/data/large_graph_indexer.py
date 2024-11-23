@@ -23,6 +23,7 @@ from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import Data
+from torch_geometric.typing import WITH_PT24
 
 TripletLike = Tuple[Hashable, Hashable, Hashable]
 
@@ -63,8 +64,8 @@ class MappedFeature:
             eq &= self.values == value.values
         return eq
 
-
-torch.serialization.add_safe_globals([MappedFeature])
+if WITH_PT24:
+    torch.serialization.add_safe_globals([MappedFeature])
 
 
 class LargeGraphIndexer:
