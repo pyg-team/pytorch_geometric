@@ -64,6 +64,7 @@ class MappedFeature:
             eq &= self.values == value.values
         return eq
 
+
 if WITH_PT24:
     torch.serialization.add_safe_globals([MappedFeature])
 
