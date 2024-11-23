@@ -7,7 +7,7 @@ from torch.nn import BatchNorm1d, LayerNorm, Linear, ReLU, Sequential
 
 from torch_geometric.nn import GINEConv
 from torch_geometric.nn.nlp import SentenceTransformer, VisionTransformer
-from torch_geometric.utils import to_dense_batch
+from torch_geometric.utils import add_self_loops, to_dense_batch
 
 
 class GraphEncoder(torch.nn.Module):
@@ -61,6 +61,12 @@ class GraphEncoder(torch.nn.Module):
         edge_attr: Tensor,
     ) -> Tensor:
         x = self.x_embed1(x[:, 0].long()) + self.x_embed2(x[:, 1].long())
+        edge_index, edge_attr = add_self_loops(
+            edge_index,
+            edge_attr,
+            fill_value=0,
+            num_nodes=x.size(0),
+        )
         edge_attr = self.edge_embed1(edge_attr[:, 0]) + self.edge_embed2(
             edge_attr[:, 1])
         for i, (gnn, bn) in enumerate(zip(self.gnns, self.batch_norms)):

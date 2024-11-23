@@ -12,7 +12,6 @@ from torch_geometric.data import (
     extract_zip,
 )
 from torch_geometric.io import fs
-from torch_geometric.utils import add_self_loops
 
 
 def safe_index(lst: List[Any], e: int) -> int:
@@ -90,18 +89,11 @@ class GitMolDataset(InMemoryDataset):
         return ['train.pt', 'valid.pt', 'test.pt'][self.split]
 
     def download(self) -> None:
-        # for file_name in self.raw_file_names:
-        #     download_url(self.raw_url, self.raw_dir, filename=file_name)
-        # df_lst = [
-        #     pd.read_pickle(f'{self.raw_dir}/{fn}')
-        #     for fn in self.raw_file_names
-        # ]
-        # query_lst = pd.concat(df_lst)[['cid'
-        #                                ]].drop_duplicates()['cid'].to_list()
-        # self.ncbi_url.format(','.join(query_lst))
-        # goto ncbi_query_link and click download to get the image data
-        file_path = download_google_url(self.raw_url_id, self.raw_dir,
-                                        'gitmol.zip')
+        file_path = download_google_url(
+            self.raw_url_id,
+            self.raw_dir,
+            'gitmol.zip',
+        )
         extract_zip(file_path, self.raw_dir)
 
     def process(self) -> None:
@@ -190,9 +182,8 @@ class GitMolDataset(InMemoryDataset):
                 summary = r['summary']
                 # image
                 cid = r['cid']
-                img = Image.open(
-                    f'{self.raw_dir}/igcdata_toy/imgs/CID_{cid}.png').convert(
-                        'RGB')
+                img_file = f'{self.raw_dir}/igcdata_toy/imgs/CID_{cid}.png'
+                img = Image.open(img_file).convert('RGB')
                 img = self.img_transform(img).unsqueeze(0)
                 # graph
                 atom_features_list = []
@@ -252,10 +243,6 @@ class GitMolDataset(InMemoryDataset):
                     np.array(edge_features_list),
                     dtype=torch.long,
                 )
-
-                edge_index, edge_attr = add_self_loops(edge_index, edge_attr,
-                                                       fill_value=0,
-                                                       num_nodes=x.size(0))
 
                 data = Data(
                     x=x,

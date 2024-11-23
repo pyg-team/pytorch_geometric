@@ -119,7 +119,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--epochs', type=int, default=3)
     parser.add_argument('--lr', type=float, default=1e-5)
-    parser.add_argument('--batch_size', type=int, default=2)
+    parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument("--weight_decay", type=float, default=0.01)
     parser.add_argument('--checkpointing', type=bool, default=True)
     args = parser.parse_args()
