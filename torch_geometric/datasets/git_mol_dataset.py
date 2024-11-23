@@ -8,7 +8,7 @@ from tqdm import tqdm
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_zip,
 )
 from torch_geometric.io import fs
@@ -44,8 +44,7 @@ class GitMolDataset(InMemoryDataset):
             (default: :obj:`0`)
     """
 
-    raw_url = ("https://drive.google.com/file/d/"
-               "1loBXabD6ncAFY-vanRsVtRUSFkEtBweg/view?usp=sharing")
+    raw_url_id = '1loBXabD6ncAFY-vanRsVtRUSFkEtBweg'
 
     def __init__(
         self,
@@ -101,7 +100,8 @@ class GitMolDataset(InMemoryDataset):
         #                                ]].drop_duplicates()['cid'].to_list()
         # self.ncbi_url.format(','.join(query_lst))
         # goto ncbi_query_link and click download to get the image data
-        file_path = download_url(self.raw_url, self.raw_dir)
+        file_path = download_google_url(self.raw_url_id, self.raw_dir,
+                                        'gitmol.zip')
         extract_zip(file_path, self.raw_dir)
 
     def process(self) -> None:
