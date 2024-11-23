@@ -134,8 +134,8 @@ def test_large_graph_index():
                               tensor2.sort()[0]) > thresh)
 
         def _graphs_are_same(tensor1, tensor2):
-            import networkx as nx
             if WITH_PT20:
+                import networkx as nx
                 return nx.weisfeiler_lehman_graph_hash(nx.Graph(
                     tensor1.T)) == nx.weisfeiler_lehman_graph_hash(
                         nx.Graph(tensor2.T))
