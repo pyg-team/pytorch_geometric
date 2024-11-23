@@ -81,8 +81,12 @@ class GraphEncoder(torch.nn.Module):
 
 
 class GITFormer(torch.nn.Module):
-    def __init__(self, num_query_token, vision_graph_width,
-                 cross_attention_freq=2):
+    def __init__(
+        self,
+        num_query_token: int,
+        vision_graph_width: int,
+        cross_attention_freq: int = 2,
+    ):
         super().__init__()
         from transformers import AutoConfig, AutoModel
 
@@ -105,15 +109,12 @@ class GITMol(torch.nn.Module):
     Model for Molecular Science with Graph, Image, and Text"
     <https://arxiv.org/pdf/2308.06911>`_ paper.
 
-    Args:
-        ?
-
     .. note::
         For an example of using :class:`GITMol`, see
         `examples/llm/git_mol.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/llm/git_mol.py>`_.
     """
-    def __init__(self, ) -> None:
+    def __init__(self) -> None:
         super().__init__()
         # graph
         self.graph_encoder = GraphEncoder(num_layers=2, in_channels=16)
