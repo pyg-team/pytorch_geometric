@@ -141,7 +141,7 @@ def test_large_graph_index():
                         nx.Graph(tensor2.T))
             else:
                 print(
-                    "WARNING: This test will not detect full results equality without the NetworkX package."
+                    "WARNING: This test will not detect full results equality without the NetworkX package." # noqa: E501
                 )
                 return True
         return _sorted_tensors_are_close(
