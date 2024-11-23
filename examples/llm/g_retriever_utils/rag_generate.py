@@ -22,8 +22,8 @@ from torch_geometric.nn.nlp import SentenceTransformer
 # %%
 parser = argparse.ArgumentParser(
     description="""Generate new WebQSP subgraphs\n""" +
-    """NOTE: Evaluating with smaller samples may result in poorer performance for the """
-    + """trained models compared to untrained models.""")
+    """NOTE: Evaluating with smaller samples may result in """
+    + """poorer performance for the trained models compared"""+""" to untrained models.""")
 # TODO: Add more arguments for configuring rag params
 parser.add_argument("--use_pcst", action="store_true")
 parser.add_argument("--num_samples", type=int, default=4700)
