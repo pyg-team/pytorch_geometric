@@ -20,8 +20,9 @@ from minimal_demo import (  # noqa: E402
 # %%
 parser = argparse.ArgumentParser(
     description="""Benchmarker for GRetriever\n""" +
-    """NOTE: Evaluating with smaller samples may result in poorer"""
-    + """ performance for the trained models compared to """+"""untrained models.""")
+    """NOTE: Evaluating with smaller samples may result in poorer""" +
+    """ performance for the trained models compared to """ +
+    """untrained models.""")
 parser.add_argument("--hidden_channels", type=int, default=1024)
 parser.add_argument("--learning_rate", type=float, default=1e-5)
 parser.add_argument("--epochs", type=int, default=2)
