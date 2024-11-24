@@ -37,6 +37,7 @@ def loge_with_logits(
     weighted = unweighted * weight if weight else unweighted
     return _apply_loss_reduction(weighted, reduction)
 
+
 def loge(
     input: Tensor,
     target: Tensor,
