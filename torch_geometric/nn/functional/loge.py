@@ -20,7 +20,7 @@ def _apply_loss_reduction(values: Tensor, reduction: str) -> Tensor:
             " 'none'.")
 
 
-def loge(
+def loge_with_logits(
     input: Tensor,
     target: Tensor,
     epsilon: float = 1 - math.log(2),
@@ -34,6 +34,22 @@ def loge(
     ce = F.cross_entropy(input, target, reduction="none")
     unweighted = torch.log(epsilon + ce) - math.log(epsilon)
     # TODO: cross_entropy weight is per class, not per batch example
+    weighted = unweighted * weight if weight else unweighted
+    return _apply_loss_reduction(weighted, reduction)
+
+def loge(
+    input: Tensor,
+    target: Tensor,
+    epsilon: float = 1 - math.log(2),
+    weight: OptTensor = None,
+    reduction: str = "mean",
+) -> Tensor:
+    r"""Compute the Log-:math:`\epsilon` loss between input logits and target.
+
+    See :class:`~torch_geometric.nn.functional.LogELoss` for details.
+    """
+    ce = F.nll_loss(input, target, reduction="none")
+    unweighted = torch.log(epsilon + ce) - math.log(epsilon)
     weighted = unweighted * weight if weight else unweighted
     return _apply_loss_reduction(weighted, reduction)
 
