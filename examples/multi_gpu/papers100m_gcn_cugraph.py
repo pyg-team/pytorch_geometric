@@ -86,8 +86,8 @@ def run(rank, data, world_size, cugraph_id, model, epochs, batch_size, fan_out,
     )] = ixr
 
     feature_store = TensorDictFeatureStore()
-    feature_store['node', 'x'] = data.x
-    feature_store['node', 'y'] = data.y
+    feature_store['node', 'x', None] = data.x
+    feature_store['node', 'y', None] = data.y
 
     dist.barrier()
 
