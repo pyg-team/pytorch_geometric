@@ -137,8 +137,8 @@ def test_large_graph_index():
         def _graphs_are_same(tensor1, tensor2):
             if not WITH_PT20:
                 pytest.skip(
-                    "This test requires a PyG version with NetworkX as a dependency."
-                )
+                    "This test requires a PyG version with NetworkX as a " +
+                    "dependency.")
             import networkx as nx
             return nx.weisfeiler_lehman_graph_hash(nx.Graph(
                 tensor1.T)) == nx.weisfeiler_lehman_graph_hash(
