@@ -21,6 +21,8 @@ class GRetriever(torch.nn.Module):
             (default: :obj:`False`)
         mlp_out_channels (int, optional): The size of each graph embedding
             after projection. (default: :obj:`4096`)
+        mlp_out_tokens (int, optional): Number of LLM prefix tokens to
+            reserve for GNN output. (default: :obj:`1`)
 
     .. warning::
         This module has been tested with the following HuggingFace models
@@ -43,6 +45,7 @@ class GRetriever(torch.nn.Module):
         gnn: torch.nn.Module,
         use_lora: bool = False,
         mlp_out_channels: int = 4096,
+        mlp_out_tokens: int = 1,
     ) -> None:
         super().__init__()
 
@@ -77,7 +80,9 @@ class GRetriever(torch.nn.Module):
         self.projector = torch.nn.Sequential(
             torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
             torch.nn.Sigmoid(),
-            torch.nn.Linear(mlp_hidden_channels, mlp_out_channels),
+            torch.nn.Linear(mlp_hidden_channels,
+                            mlp_out_channels * mlp_out_tokens),
+            torch.nn.Unflatten(-1, (mlp_out_tokens, mlp_out_channels)),
         ).to(self.llm.device)
 
     def encode(
@@ -125,6 +130,9 @@ class GRetriever(torch.nn.Module):
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
         xs = x.split(1, dim=0)
+
+        # Handle case where theres more than one embedding for each sample
+        xs = [x.squeeze(0) for x in xs]
 
         # Handle questions without node features:
         batch_unique = batch.unique()
@@ -181,6 +189,9 @@ class GRetriever(torch.nn.Module):
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
         xs = x.split(1, dim=0)
+
+        # Handle case where theres more than one embedding for each sample
+        xs = [x.squeeze(0) for x in xs]
 
         # Handle questions without node features:
         batch_unique = batch.unique()
