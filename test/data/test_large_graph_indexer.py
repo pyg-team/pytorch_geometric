@@ -1,3 +1,4 @@
+import pytest
 import random
 import string
 from typing import List
@@ -134,16 +135,13 @@ def test_large_graph_index():
                               tensor2.sort()[0]) > thresh)
 
         def _graphs_are_same(tensor1, tensor2):
-            if WITH_PT20:
-                import networkx as nx
-                return nx.weisfeiler_lehman_graph_hash(nx.Graph(
-                    tensor1.T)) == nx.weisfeiler_lehman_graph_hash(
-                        nx.Graph(tensor2.T))
-            else:
-                print(
-                    "WARNING: This test will not detect full results equality without the NetworkX package."  # noqa: E501
-                )
-                return True
+            if not WITH_PT20:
+                pytest.skip("This test requires a PyG version with NetworkX as a dependency.")
+            import networkx as nx
+            return nx.weisfeiler_lehman_graph_hash(nx.Graph(
+                tensor1.T)) == nx.weisfeiler_lehman_graph_hash(
+                    nx.Graph(tensor2.T))
+            return True
         return _sorted_tensors_are_close(
             ground_truth.x, new_method.x) \
             and _sorted_tensors_are_close(
