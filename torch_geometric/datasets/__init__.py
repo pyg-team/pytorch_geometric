@@ -77,6 +77,7 @@ from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
 from .neurograph import NeuroGraphDataset
 from .web_qsp_dataset import WebQSPDataset
+from .git_mol_dataset import GitMolDataset
 from .molecule_gpt_dataset import MoleculeGPTDataset
 from .tag_dataset import TAGDataset
 
@@ -192,6 +193,7 @@ homo_datasets = [
     'BrcaTcga',
     'NeuroGraphDataset',
     'WebQSPDataset',
+    'GitMolDataset',
     'MoleculeGPTDataset',
     'TAGDataset',
 ]
