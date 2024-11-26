@@ -98,7 +98,8 @@ class TXT2KG():
             mp.spawn(
                 multiproc_helper,
                 args=(in_chunks_per_proc, outs_per_proc, parse_n_check_triples,
-                      chunk_to_triples_str_cloud, self.NVIDIA_API_KEY))
+                      chunk_to_triples_str_cloud, self.NVIDIA_API_KEY),
+                nprocs=num_procs)
             self.relevant_triples[key] = []
             for proc_i_out in outs_per_proc.values():
                 self.relevant_triples[key] += proc_i_out
