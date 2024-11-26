@@ -94,6 +94,7 @@ class TXT2KG():
                                                meta_chunk_size, len(chunks))]
                 for j in range(num_procs)
             }
+            # TODO fix this, currently KG empty since spawn is pickling outs_per_proc
             outs_per_proc = {}
             mp.spawn(
                 multiproc_helper,
