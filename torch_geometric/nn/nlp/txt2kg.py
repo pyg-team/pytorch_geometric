@@ -106,6 +106,7 @@ class TXT2KG():
 
 
 def chunk_to_triples_str_cloud(txt: str) -> str:
+    global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
@@ -115,7 +116,6 @@ def chunk_to_triples_str_cloud(txt: str) -> str:
                         api_key=GLOBAL_NIM_KEY)
         global NIM_MODEL
         NIM_MODEL = "nvidia/llama-3.1-nemotron-70b-instruct"
-        global CLIENT_INITD
         CLIENT_INITD = True
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
