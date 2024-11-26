@@ -427,7 +427,7 @@ class NumNeighbors:
 
             # Confirm that `values` only hold valid edge types:
             if isinstance(self.values, dict):
-                edge_types_str = set(EdgeTypeStr(key) for key in edge_types)
+                edge_types_str = {EdgeTypeStr(key) for key in edge_types}
                 invalid_edge_types = set(self.values.keys()) - edge_types_str
                 if len(invalid_edge_types) > 0:
                     raise ValueError("Not all edge types specified in "
