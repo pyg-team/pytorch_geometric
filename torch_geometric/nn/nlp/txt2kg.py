@@ -125,6 +125,7 @@ def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='') -> str:
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
             out_str += chunk.choices[0].delta.content
+    return out_str
 
 
 def parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
