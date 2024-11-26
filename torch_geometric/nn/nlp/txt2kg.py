@@ -98,7 +98,8 @@ class TXT2KG():
                 nprocs=num_procs)
             self.relevant_triples[key] = []
             for rank in range(num_procs):
-                self.relevant_triples[key] += torch.load("/tmp/outs_for_proc_" + str(rank))
+                self.relevant_triples[key] += torch.load(
+                    "/tmp/outs_for_proc_" + str(rank))
                 os.remove("/tmp/outs_for_proc_" + str(rank))
         self.doc_id_counter += 1
 
@@ -164,11 +165,9 @@ def llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
-def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn,
-                     NIM_KEY):
-    out = llm_then_python_parse(in_chunks_per_proc[rank],
-                                                py_fn, llm_fn,
-                                                GLOBAL_NIM_KEY=NIM_KEY)
+def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY):
+    out = llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
+                                GLOBAL_NIM_KEY=NIM_KEY)
     torch.save(out, "/tmp/outs_for_proc_" + str(rank))
 
 
