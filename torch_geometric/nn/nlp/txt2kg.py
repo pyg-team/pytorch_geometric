@@ -13,6 +13,7 @@ NIM_MODEL = None
 GLOBAL_NIM_KEY = ""
 NIM_SYSTEM_PROMPT = ""
 
+
 class TXT2KG():
     """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
     nvidia/llama-3.1-nemotron-70b-instruct is on par or better than GPT4o
@@ -32,12 +33,10 @@ class TXT2KG():
         self.local_LM = local_LM
         system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
         if self.local_LM:
-            self.initd_LM = False  
+            self.initd_LM = False
             self.system_prompt = system_prompt
         else:
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
-            NIM_SYSTEM_PROMPT = system_prompt
-            GLOBAL_NIM_KEY = NVIDIA_API_KEY
         self.chunk_size = 512
         # useful for approximating recall of subgraph retrieval algos
         self.doc_id_counter = 0
@@ -82,7 +81,8 @@ class TXT2KG():
             key = self.doc_id_counter
         if self.local_LM:
             # just for debug, no need to scale
-            self.relevant_triples[key] = llm_then_python_parse(chunks, parse_n_check_triples, self.chunk_to_triples_str_local)
+            self.relevant_triples[key] = llm_then_python_parse(
+                chunks, parse_n_check_triples, self.chunk_to_triples_str_local)
         else:
             num_procs = min(len(chunks), get_num_procs())
             meta_chunk_size = int(len(chunks) / num_procs)
@@ -117,16 +117,13 @@ def chunk_to_triples_str_cloud(txt: str) -> str:
         CLIENT_INITD = True
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
-            "role":
-            "user",
-            "content":
-            txt + '\n' + NIM_SYSTEM_PROMPT
+            "role": "user",
+            "content": txt + '\n' + NIM_SYSTEM_PROMPT
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
             out_str += chunk.choices[0].delta.content
-
 
 
 def parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
