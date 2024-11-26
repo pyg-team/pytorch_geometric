@@ -92,16 +92,15 @@ class TXT2KG():
                                                meta_chunk_size, len(chunks))]
                 for j in range(num_procs)
             }
-            # TODO fix this, currently KG empty since spawn is pickling outs_per_proc
-            outs_per_proc = {}
             mp.spawn(
                 multiproc_helper,
-                args=(in_chunks_per_proc, outs_per_proc, parse_n_check_triples,
+                args=(in_chunks_per_proc, parse_n_check_triples,
                       chunk_to_triples_str_cloud, self.NVIDIA_API_KEY),
                 nprocs=num_procs)
             self.relevant_triples[key] = []
-            for proc_i_out in outs_per_proc.values():
-                self.relevant_triples[key] += proc_i_out
+            for rank in range(num_procs):
+                self.relevant_triples[key] += torch.load("/tmp/outs_for_proc_" + str(rank))
+                os.remove("/tmp/outs_for_proc_" + str(rank))
         self.doc_id_counter += 1
 
 
@@ -166,12 +165,12 @@ def llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
-def multiproc_helper(rank, in_chunks_per_proc, outs_per_proc, py_fn, llm_fn,
+def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn,
                      NIM_KEY):
-    outs_per_proc[rank] = llm_then_python_parse(in_chunks_per_proc[rank],
+    out = llm_then_python_parse(in_chunks_per_proc[rank],
                                                 py_fn, llm_fn,
                                                 GLOBAL_NIM_KEY=NIM_KEY)
-    print("outs_per_proc[" + str(rank) + "] =", outs_per_proc[rank])
+    torch.save(out, "/tmp/outs_for_proc_" + str(rank))
 
 
 def get_num_procs():
