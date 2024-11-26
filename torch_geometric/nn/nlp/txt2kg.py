@@ -37,6 +37,8 @@ class TXT2KG():
             self.system_prompt = system_prompt
         else:
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
+            global GLOBAL_NIM_KEY
+            GLOBAL_NIM_KEY = NVIDIA_API_KEY
         self.chunk_size = 512
         # useful for approximating recall of subgraph retrieval algos
         self.doc_id_counter = 0
@@ -107,6 +109,7 @@ def chunk_to_triples_str_cloud(txt: str) -> str:
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
+        global GLOBAL_NIM_KEY
         global CLIENT
         CLIENT = OpenAI(
             base_url="https://integrate.api.nvidia.com/v1",
