@@ -108,9 +108,8 @@ def chunk_to_triples_str_cloud(txt: str) -> str:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
         global CLIENT
-        CLIENT = OpenAI(
-            base_url="https://integrate.api.nvidia.com/v1",
-            api_key=GLOBAL_NIM_KEY)
+        CLIENT = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
+                        api_key=GLOBAL_NIM_KEY)
         global NIM_MODEL
         NIM_MODEL = "nvidia/llama-3.1-nemotron-70b-instruct"
         global CLIENT_INITD
