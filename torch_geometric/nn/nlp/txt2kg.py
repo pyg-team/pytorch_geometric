@@ -11,7 +11,7 @@ CLIENT_INITD = False
 CLIENT = None
 NIM_MODEL = None
 GLOBAL_NIM_KEY = ""
-NIM_SYSTEM_PROMPT = ""
+SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
 
 
 class TXT2KG():
@@ -31,10 +31,8 @@ class TXT2KG():
         chunk_size: int = 512,
     ) -> None:
         self.local_LM = local_LM
-        system_prompt = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
         if self.local_LM:
             self.initd_LM = False
-            self.system_prompt = system_prompt
         else:
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
             self.NVIDIA_API_KEY = NVIDIA_API_KEY
@@ -58,7 +56,7 @@ class TXT2KG():
             self.model = LLM(LM_name, num_params=14).eval()
             self.initd_LM = True
         out_str = self.model.inference(
-            question=[txt + '\n' + self.system_prompt],
+            question=[txt + '\n' + SYSTEM_PROMPT],
             max_tokens=self.chunk_size)[0]
         # for debug
         self.total_chars_parsed += len(txt)
@@ -109,7 +107,6 @@ class TXT2KG():
 
 def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='') -> str:
     global CLIENT_INITD
-    global NIM_SYSTEM_PROMPT
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
@@ -122,7 +119,7 @@ def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='') -> str:
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
             "role": "user",
-            "content": txt + '\n' + NIM_SYSTEM_PROMPT
+            "content": txt + '\n' + SYSTEM_PROMPT
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
