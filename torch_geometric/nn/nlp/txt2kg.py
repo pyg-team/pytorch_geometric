@@ -109,6 +109,7 @@ class TXT2KG():
 
 def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='') -> str:
     global CLIENT_INITD
+    global NIM_SYSTEM_PROMPT
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
