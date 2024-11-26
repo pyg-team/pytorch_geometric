@@ -171,6 +171,7 @@ def multiproc_helper(rank, in_chunks_per_proc, outs_per_proc, py_fn, llm_fn,
     outs_per_proc[rank] = llm_then_python_parse(in_chunks_per_proc[rank],
                                                 py_fn, llm_fn,
                                                 GLOBAL_NIM_KEY=NIM_KEY)
+    print("outs_per_proc[" + str(rank) + "] =", outs_per_proc[rank])
 
 
 def get_num_procs():
