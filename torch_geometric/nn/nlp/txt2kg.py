@@ -112,6 +112,7 @@ def chunk_to_triples_str_cloud(txt: str) -> str:
         from openai import OpenAI
         global GLOBAL_NIM_KEY
         global CLIENT
+        print("GLOBAL_NIM_KEY=", GLOBAL_NIM_KEY)
         CLIENT = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
                         api_key=GLOBAL_NIM_KEY)
         global NIM_MODEL
