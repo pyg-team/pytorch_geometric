@@ -55,9 +55,8 @@ class TXT2KG():
             LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
             self.model = LLM(LM_name, num_params=14).eval()
             self.initd_LM = True
-        out_str = self.model.inference(
-            question=[txt + '\n' + SYSTEM_PROMPT],
-            max_tokens=self.chunk_size)[0]
+        out_str = self.model.inference(question=[txt + '\n' + SYSTEM_PROMPT],
+                                       max_tokens=self.chunk_size)[0]
         # for debug
         self.total_chars_parsed += len(txt)
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
