@@ -15,8 +15,8 @@ class LabelUsage(torch.nn.Module):
     Args:
         split_ratio (float): Proportion of true labels to use as features 
             during training.
-        num_recycling_iterations (int): Number of iterations the previously
-            predicted softlabels are used as features.
+        num_recycling_iterations (int): Number of iterations for the label
+            reuse procedure to cycle predicted soft labels
         return_tuple (bool): If true, returns (output, train_label_idx, 
         train_pred_idx) otherwise returns prediction output
         base_model: An instance of the model that will do the 
@@ -56,11 +56,11 @@ class LabelUsage(torch.nn.Module):
 
         # add labels to features for train_labels_idx nodes
         onehot = torch.zeros([x.shape[0], len(torch.unique(y))]).to(x.device)
-        onehot[train_labels_idx, y[idx]] = 1  # create a one-hot encoding
+        onehot[train_labels_idx, y[train_labels_idx]] = 1  # create a one-hot encoding
         feat = torch.cat([x, onehot], dim=-1)
 
         # label reuse procedure
-        for _ in range(self.num_recycling_iterations):
+        for _ in range(max(1, self.num_recycling_iterations)):
             output = self.base_model(feat, edge_index)
             pred_labels = F.softmax(output, dim=1)
             feat[train_pred_idx] = torch.cat(
