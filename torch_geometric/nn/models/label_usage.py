@@ -46,15 +46,16 @@ class LabelUsage(torch.nn.Module):
           x: Node feature tensor 
           edge_index: The edge connectivity
           y: Node label tensor 
-          train_idx: Training index tensor with labels
+          train_idx: Training index tensor 
 
         """
         # random masking to split train_idx based on split ratio
         mask = torch.rand(train_idx.shape) < self.split_ratio
         train_labels_idx = train_idx[mask]  # D_L: nodes with features and labels
-        train_pred_idx = train_idx[~mask]  # D_U: nodes to predict labels in training
+        train_pred_idx = train_idx[~mask]  # D_U: nodes to predict labels 
 
         # add labels to features for train_labels_idx nodes
+        # zero value nodes in train_pred_idx
         onehot = torch.zeros([x.shape[0], len(torch.unique(y))]).to(x.device)
         onehot[train_labels_idx, y[train_labels_idx]] = 1  # create a one-hot encoding
         feat = torch.cat([x, onehot], dim=-1)
