@@ -643,8 +643,8 @@ def from_hetero_networkx(
     G: Any, node_type_attribute: str,
     edge_type_attribute: Optional[str] = None,
     graph_attrs: Optional[Iterable[str]] = None, nodes: Optional[List] = None,
-    group_node_attrs: Optional[Union[List[str], all]] = None,
-    group_edge_attrs: Optional[Union[List[str], all]] = None
+    group_node_attrs: Optional[Union[List[str], Literal['all']]] = None,
+    group_edge_attrs: Optional[Union[List[str], Literal['all']]] = None
 ) -> 'torch_geometric.data.HeteroData':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.HeteroData` instance.
@@ -665,10 +665,10 @@ def from_hetero_networkx(
         nodes (list, optional): The list of nodes whose attributes are to
             be collected. If set to :obj:`None`, all nodes of the graph
             will be included. (default: :obj:`None`)
-        group_node_attrs (List[str] or all, optional): The node attributes to
+        group_node_attrs (List[str] or "all", optional): The node attributes to
             be concatenated and added to :obj:`data.x`. They must be present
             for all nodes of each type. (default: :obj:`None`)
-        group_edge_attrs (List[str] or all, optional): The edge attributes to
+        group_edge_attrs (List[str] or "all", optional): The edge attributes to
             be concatenated and added to :obj:`data.edge_attr`. They must be
             present for all edge of each type. (default: :obj:`None`)
 
@@ -683,8 +683,8 @@ def from_hetero_networkx(
 
     from torch_geometric.data import HeteroData
 
-    def get_edge_attributes(G, edge_indexes: list,
-                            edge_attrs: list = None) -> dict:
+    def get_edge_attributes(G: Any, edge_indexes: list,
+                            edge_attrs: Optional[Iterable] = None) -> dict:
         r"""Collects the attributes of a list of graph edges in a dictionary.
 
         Args:
@@ -692,7 +692,7 @@ def from_hetero_networkx(
             edge_indexes (list, optional): The list of edge indexes whose
                 attributes are to be collected. If set to :obj:`None`, all
                 edges of the graph will be included. (default: :obj:`None`)
-            edge_attrs (list, optional): The list of expected attributes to
+            edge_attrs (iterable, optional): The list of expected attributes to
                 be found in every edge. If set to :obj:`None`, the first
                 edge encountered will set the values for the rest of the
                 process. (default: :obj:`None`)
@@ -715,8 +715,9 @@ def from_hetero_networkx(
 
         return data
 
-    def get_node_attributes(G, nodes: list,
-                            expected_node_attrs: list = None) -> dict:
+    def get_node_attributes(
+            G: Any, nodes: list,
+            expected_node_attrs: Optional[Iterable] = None) -> dict:
         r"""Collects the attributes of a list of graph nodes in a dictionary.
 
         Args:
@@ -724,7 +725,7 @@ def from_hetero_networkx(
             nodes (list, optional): The list of nodes whose attributes are to
                 be collected. If set to :obj:`None`, all nodes of the graph
                 will be included. (default: :obj:`None`)
-            expected_node_attrs (list, optional): The list of expected
+            expected_node_attrs (iterable, optional): The list of expected
                 attributes to be found in every node. If set to :obj:`None`,
                 the first node encountered will set the values for the rest
                 of the process. (default: :obj:`None`)
@@ -781,8 +782,7 @@ def from_hetero_networkx(
                     node_b] != node_type_b:
                 raise ValueError(f'Edge {node_a}-{node_b} of type\
                          {edge_data[edge_type_attribute]} joins nodes of types\
-                         {node_to_group[node_a]} and { node_to_group[node_b]}.'
-                                 )
+                         {node_to_group[node_a]} and {node_to_group[node_b]}.')
         else:
             edge_type = "to"
         group_to_edges[(node_to_group[node_a], edge_type,
@@ -795,8 +795,8 @@ def from_hetero_networkx(
             if k != node_type_attribute
         }
 
-    for group, group_edges in group_to_edges.items():
-        group_name = '__'.join(group)
+    for edge_group, group_edges in group_to_edges.items():
+        group_name = '__'.join(edge_group)
         hetero_data_dict[group_name] = {
             k: v
             for k, v in get_edge_attributes(G,
