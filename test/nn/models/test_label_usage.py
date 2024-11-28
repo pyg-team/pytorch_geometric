@@ -32,7 +32,7 @@ def test_label_usage():
     # Test zero recycling iterations
     label_usage = LabelUsage(
         split_ratio=0.5, 
-        num_recycling_iterations=10, 
+        num_recycling_iterations=0, 
         return_tuple=False, 
         base_model=base_model,
     )
