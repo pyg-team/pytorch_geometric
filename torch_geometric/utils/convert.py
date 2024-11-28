@@ -673,7 +673,6 @@ def from_hetero_networkx(
             present for all edge of each type. (default: :obj:`None`)
 
     Example:
-
         >>> data = from_hetero_networkx(G, node_type_attribute="type",
         ...                    edge_type_attribute="type")
         <torch_geometric.data.HeteroData()>
@@ -734,7 +733,6 @@ def from_hetero_networkx(
             ValueError: If some of the nodes do not share the same
             list of attributes as the rest, an error will be raised.
         """
-
         data = defaultdict(list)
 
         node_to_data = G.nodes(data=True)
