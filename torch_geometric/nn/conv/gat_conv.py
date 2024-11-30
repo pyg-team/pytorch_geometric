@@ -19,11 +19,14 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import (
+    add_remaining_self_loops,
     add_self_loops,
     is_torch_sparse_tensor,
     remove_self_loops,
     scatter,
     softmax,
+    to_edge_index,
+    to_torch_csr_tensor,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import set_sparse_value
@@ -90,8 +93,39 @@ def gat_norm(  # noqa: F811
         return adj_t, att_mat.to_dense()
 
     if is_torch_sparse_tensor(edge_index):
-        raise NotImplementedError("Sparse CSC and COO matrices are not yet "
-                                  "supported in 'gat_norm'")
+        assert edge_index.size(0) == edge_index.size(1)
+
+        if edge_index.layout == torch.sparse_csc:
+            raise NotImplementedError("Sparse CSC matrices are not yet "
+                                      "supported in 'gat_norm'")
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+        adj_t = edge_index
+        edge_index, value = to_edge_index(adj_t)
+
+        col, row = edge_index[0], edge_index[1]
+        idx = col if flow == 'source_to_target' else row
+        deg = scatter(value, idx, 0, dim_size=num_nodes, reduce='sum')
+        att_mat = deg[col].view(-1, 1) * edge_weight
+
+        # Add self-loop, also called renormalization trick
+        edge_index, att_mat = add_remaining_self_loops(edge_index, att_mat,
+                                                       fill_value=fill_value,
+                                                       num_nodes=num_nodes)
+        col, row = edge_index[0], edge_index[1]
+        deg_tilde = deg + 1
+        deg_tilde_inv_sqrt = deg_tilde.pow_(-0.5)
+        deg_tilde_inv_sqrt.masked_fill_(deg_tilde_inv_sqrt == float('inf'), 0)
+        att_mat = deg_tilde_inv_sqrt[row].view(
+            -1, 1) * att_mat * deg_tilde_inv_sqrt[col].view(-1, 1)
+
+        # Sort edge_index lexicographically
+        sorted_indices = torch.argsort(edge_index[0] * edge_index.size(1) +
+                                       edge_index[1])
+        edge_index = edge_index[:, sorted_indices]
+        att_mat = att_mat[sorted_indices]
+
+        return to_torch_csr_tensor(edge_index), att_mat
 
     assert flow in ['source_to_target', 'target_to_source']
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -102,9 +136,8 @@ def gat_norm(  # noqa: F811
     row, col = edge_index[0], edge_index[1]
     idx = col if flow == 'source_to_target' else row
     deg = scatter(adj_t, idx, dim=0, dim_size=num_nodes, reduce='sum')
-    deg_expand = deg[col]
-    att_mat = (deg_expand.unsqueeze(1).mul(edge_weight)
-               )  # unnormalized attention matrix
+    att_mat = deg[col].view(-1,
+                            1) * edge_weight  # unnormalized attention matrix
 
     # Add self-loop, also called renormalization trick
     adj_t, att_mat = add_self_loops(edge_index, att_mat, fill_value=fill_value,
@@ -163,9 +196,9 @@ class GATConv(MessagePassing):
     If the graph is not bipartite, :math:`\mathbf{\Theta}_{s} =
     \mathbf{\Theta}_{t}`.
 
-    Normalization will be computed as presented in `"Bag of Tricks for Node
-    Classification with Graph Neural Networks"
-     <https://arxiv.org/pdf/2103.13355>`_ paper.
+    Normalization will be computed as presented in
+    `"Bag of Tricks for Node Classification with Graph Neural Networks"
+    <https://arxiv.org/abs/2103.13355>`__ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}_{att}}
@@ -173,8 +206,8 @@ class GATConv(MessagePassing):
 
     where :math:`\mathbf{\hat{A}_{att}} = A_{att} + \mathbf{I}` denotes the
     unnormalized attention matrix :math:`\mathbf{\hat{A}_{att}}
-    = \mathbf{D}\mathbf{alpha}`
-    with inserted self-loops and :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}`
+    = \mathbf{D}\mathbf{\alpha}`
+    with inserted self-loops, :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}`
     its diagonal degree matrix based on the adjacency matrix with inserted
     self-loops :math:`\hat{A} = A + I`.
 
@@ -212,7 +245,8 @@ class GATConv(MessagePassing):
         residual (bool, optional): If set to :obj:`True`, the layer will add
             a learnable skip-connection. (default: :obj:`False`)
         normalize (bool, optional): If set to :obj:`True`, will add
-            self-loops to the input graph. (default: :obj:`False`)
+            self-loops to the input graph and compute symmetric normalization
+            coefficients on-the-fly. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
