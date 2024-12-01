@@ -79,11 +79,10 @@ class GATConv(MessagePassing):
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
-            A tuple dictates the dimensionality of distinct
-            :math:`\mathbf{\Theta}` to be used for source and target features,
-            for example, in case of a bipartite graph.  A value of
-            :obj:`None|0` for the target dimensionality fixes
-            :math:`\mathbf{\Theta}_t=\mathbf{0}`.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities and distinct :math:`\mathbf{\Theta}`, for example,
+            in the case of a bipartite graph.  A value of :obj:`None|0` for the
+            target dimensionality fixes :math:`\mathbf{\Theta}_t=\mathbf{0}`.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -119,17 +118,16 @@ class GATConv(MessagePassing):
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
-          if :obj:`in_channels` is a tuple of positive integers,
+          for distinct source and target features (e.g. bipartite),
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})` or
-          :math:`(|\mathcal{V}_t|, H * F_{out})` if bipartite.
+          :math:`(|\mathcal{V}_t|, H * F_{out})` if passed a tuple.
           If :obj:`return_attention_weights=True`, then
           :math:`((|\mathcal{V}|, H * F_{out}),
           ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
-          (|\mathcal{E}|, H)))` if :obj:`in_channels` is a tuple of positive
-          integers.
+          (|\mathcal{E}|, H)))` if passed a tuple
     """
     def __init__(
         self,
@@ -160,8 +158,8 @@ class GATConv(MessagePassing):
         self.fill_value = fill_value
         self.residual = residual
 
-        # In case of e.g. bipartite graphs, we apply separate transformations
-        # 'lin_src' and 'lin_dst' to source and target nodes:
+        # In case tuple in_channels, e.g. bipartite graphs, we apply separate
+        # transformations 'lin_src' and 'lin_dst' to source and target nodes:
         self.lin = self.lin_src = self.lin_dst = None
         if isinstance(in_channels, int):
             self.lin = Linear(in_channels, heads * out_channels, bias=False,
@@ -192,9 +190,11 @@ class GATConv(MessagePassing):
         total_out_channels = out_channels * (heads if concat else 1)
 
         if residual:
+            res_in_channels = in_channels
+            if not isinstance(in_channels, int):
+                res_in_channels = in_channels[1] if in_channels[1] else -1
             self.res = Linear(
-                in_channels
-                if isinstance(in_channels, int) else in_channels[1],
+                res_in_channels,
                 total_out_channels,
                 bias=False,
                 weight_initializer='glorot',
@@ -293,6 +293,7 @@ class GATConv(MessagePassing):
         # `torch.jit._overload` decorator, as we can only change the output
         # arguments conditioned on type (`None` or `bool`), not based on its
         # actual value.
+
         H, C = self.heads, self.out_channels
 
         res: Optional[Tensor] = None
@@ -336,11 +337,11 @@ class GATConv(MessagePassing):
                 assert self.lin_src is not None
 
                 x_src = self.lin_src(x_src).view(-1, H, C)
-                if self.lin_dst is not None and x_dst is not None:
+                if x_dst is not None and self.lin_dst is not None:
                     x_dst = self.lin_dst(x_dst).view(-1, H, C)
                 else:
-                    # TODO maybe warn user they passed dest features that won't
-                    # be used
+                    # TODO maybe warn user if they passed dest features that
+                    # won't be used
                     x_dst = None
 
         x = (x_src, x_dst)

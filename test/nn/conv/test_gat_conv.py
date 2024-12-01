@@ -111,6 +111,40 @@ def test_gat_conv(residual):
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
 
+    # Test no target features in attention
+    conv = GATConv((8, None), 32, heads=2, residual=residual)
+    assert str(conv) == 'GATConv((8, None), 32, heads=2)'
+    out = conv(x1, edge_index)
+    assert out.size() == (4, 64)
+    assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out)
+    assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
+
+    if is_full_test():
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Adj,
+                size: Size = None,
+            ) -> Tensor:
+                return self.conv(x, edge_index, size=size)
+
+        jit = torch.jit.script(MyModule())
+        assert torch.allclose(jit(x1, edge_index), out)
+        assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
+
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
+
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
 
