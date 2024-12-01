@@ -24,6 +24,7 @@ parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
 parser.add_argument('--bf16', action='store_true')
 parser.add_argument('--compile', action='store_true')
+parser.add_argument('--normalize', action='store_true')
 args = parser.parse_args()
 
 
@@ -31,10 +32,11 @@ class Net(torch.nn.Module):
     def __init__(self, dataset):
         super().__init__()
         self.conv1 = GATConv(dataset.num_features, args.hidden,
-                             heads=args.heads, dropout=args.dropout)
+                             heads=args.heads, dropout=args.dropout,
+                             normalize=args.normalize)
         self.conv2 = GATConv(args.hidden * args.heads, dataset.num_classes,
                              heads=args.output_heads, concat=False,
-                             dropout=args.dropout)
+                             dropout=args.dropout, normalize=args.normalize)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
