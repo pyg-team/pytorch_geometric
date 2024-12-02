@@ -100,8 +100,7 @@ def gat_norm(  # noqa: F811
                                       "supported in 'gat_norm'")
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-        adj_t = edge_index
-        edge_index, value = to_edge_index(adj_t)
+        edge_index, value = to_edge_index(edge_index)
 
         col, row = edge_index[0], edge_index[1]
         idx = col if flow == 'source_to_target' else row
@@ -513,7 +512,10 @@ class GATConv(MessagePassing):
                                   size=size)
 
         if self.normalize:
-            edge_index, alpha = gat_norm(edge_index, alpha)  # yapf: disable
+            edge_index, alpha = gat_norm(edge_index,
+                                         alpha,
+                                         flow=self.flow,
+                                         dtype=alpha.dtype)  # yapf: disable
 
         # propagate_type: (x: OptPairTensor, alpha: Tensor)
         out = self.propagate(edge_index, x=x, alpha=alpha, size=size)

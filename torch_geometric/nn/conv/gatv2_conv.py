@@ -342,7 +342,10 @@ class GATv2Conv(MessagePassing):
                                   edge_attr=edge_attr)
 
         if self.normalize:
-            edge_index, alpha = gat_norm(edge_index, alpha)  # yapf: disable
+            edge_index, alpha = gat_norm(edge_index,
+                                         alpha,
+                                         flow=self.flow,
+                                         dtype=alpha.dtype)  # yapf: disable
 
         # propagate_type: (x: PairTensor, alpha: Tensor)
         out = self.propagate(edge_index, x=(x_l, x_r), alpha=alpha)
