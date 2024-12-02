@@ -57,7 +57,7 @@ class GAT(torch.nn.Module):
 
 
 model = GAT(dataset.num_features, args.hidden_channels, dataset.num_classes,
-            args.heads, args.normalize).to(device)
+            args.heads, args.norm_adj).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 
