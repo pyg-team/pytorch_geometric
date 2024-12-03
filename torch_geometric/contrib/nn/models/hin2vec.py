@@ -24,6 +24,13 @@ class HIN2Vec(torch.nn.Module):
     embeddings in a heterogeneous graph are learned via a target sets of
     relationships in the form of meta-paths.
 
+    .. note::
+
+        For examples of using HIN2Vec, see
+        `examples/contrib/hin2vec.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        contrib/hin2vec.py>`_.
+
     Args:
         edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): Dictionary
             holding edge indices for each
@@ -246,7 +253,8 @@ class HIN2Vec(torch.nn.Module):
             edge_index_with_offset[0] += self.node_start[keys[0]]
             edge_index_with_offset[1] += self.node_start[keys[-1]]
             edge_id = torch.full((1, edge_index.size(1)),
-                                 self.edge_type_id_dict[keys])
+                                 self.edge_type_id_dict[keys],
+                                 device=edge_index.device)
             edge_index_with_offset = torch.cat(
                 (edge_index_with_offset, edge_id), dim=0)
             all_edge_index.append(edge_index_with_offset)
