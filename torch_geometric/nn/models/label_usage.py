@@ -49,7 +49,7 @@ class LabelUsage(torch.nn.Module):
         edge_index: Adj, 
         y: Tensor, 
         train_idx: Tensor,
-        batch_mask: OptTensor = None,
+        batch: OptTensor = None,
         ):
         r"""
         Forward pass using label usage algorithm.
@@ -60,12 +60,12 @@ class LabelUsage(torch.nn.Module):
             y (torch.Tensor): Node label tensor 
             train_idx (torch.Tensor): Global indices of all 
                 nodes in training set
-            batch_mask (torch.Tensor, optional): Optional mask indicating 
-                global node indices in batch (default: :obj:'None')
+            batch (torch.Tensor, optional): Optional mini-batch specification
+                indicating global node indices in batch (default: :obj:'None')
         """
         # re-assign train_idx to be nodes in mini-batch
-        if batch_mask is not None:
-            train_idx = batch_mask
+        if batch is not None:
+            train_idx = batch
 
         # random masking to split train_idx based on split ratio
         mask = torch.rand(train_idx.shape) < self.split_ratio
