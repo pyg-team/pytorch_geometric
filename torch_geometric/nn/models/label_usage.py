@@ -63,9 +63,9 @@ class LabelUsage(torch.nn.Module):
             batch_mask (torch.Tensor, optional): Optional mask indicating 
                 global node indices in batch (default: :obj:'None')
         """
-        # filter out nodes not in the mini-batch
+        # re-assign train_idx to be nodes in mini-batch
         if batch_mask is not None:
-            train_idx = train_idx[torch.isin(train_idx, batch_mask)]
+            train_idx = batch_mask
 
         # random masking to split train_idx based on split ratio
         mask = torch.rand(train_idx.shape) < self.split_ratio
