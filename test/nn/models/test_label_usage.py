@@ -13,10 +13,11 @@ def test_label_usage():
     num_classes = len(torch.unique(y))
     base_model = GCN(in_channels=x.size(1) + num_classes, hidden_channels=8, num_layers=3, out_channels=num_classes)
     label_usage = LabelUsage(
-        split_ratio=0.5, 
+        base_model=base_model,
+        num_classes=num_classes,
+        split_ratio=0.6, 
         num_recycling_iterations=10, 
         return_tuple=True, 
-        base_model=base_model,
     )
     
     output, train_labels_idx, train_pred_idx = label_usage(x, edge_index, y, train_idx)
@@ -31,10 +32,9 @@ def test_label_usage():
 
     # Test zero recycling iterations
     label_usage = LabelUsage(
-        split_ratio=0.5, 
-        num_recycling_iterations=0, 
-        return_tuple=False, 
         base_model=base_model,
+        num_classes=num_classes,
+        num_recycling_iterations=0, 
     )
     output = label_usage(x, edge_index, y, train_idx)
     assert output.size(0) == x.size(0)

@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 
+from torch_geometric.typing import OptTensor, Adj
 
 class LabelUsage(torch.nn.Module):
     r"""The label usage operator for semi-supervised node classification,
@@ -13,42 +14,59 @@ class LabelUsage(torch.nn.Module):
         accordingly to include both features and classes.
 
     Args:
-        split_ratio (float): Proportion of true labels to use as features 
-            during training.
-        num_recycling_iterations (int): Number of iterations for the label
-            reuse procedure to cycle predicted soft labels
-        return_tuple (bool): If true, returns (output, train_label_idx, 
-        train_pred_idx) otherwise returns prediction output
         base_model: An instance of the model that will do the 
             inner forward pass.
         num_classes (int): Number of classes in dataset
+        split_ratio (float): Proportion of true labels to use as features 
+            during training (default: :obj:'0.5')
+        num_recycling_iterations (int): Number of iterations for the
+            label reuse procedure to cycle predicted soft labels 
+            (default: :obj:'100')
+        return_tuple (bool): If true, returns (output, train_label_idx, 
+            train_pred_idx) otherwise returns prediction output 
+            (default :obj:'False')
     """
 
     def __init__(
         self,
-        split_ratio: float,
-        num_recycling_iterations: int,
-        return_tuple: bool,
         base_model: torch.nn.Module,
+        num_classes: int,
+        split_ratio: float = 0.5,
+        num_recycling_iterations: int = 100,
+        return_tuple: bool = False,
     ):
 
         super(LabelUsage, self).__init__()
+        self.base_model = base_model
+        self.num_classes = num_classes
         self.split_ratio = split_ratio
         self.num_recycling_iterations = num_recycling_iterations
         self.return_tuple = return_tuple
-        self.base_model = base_model
 
-    def forward(self, x, edge_index, y, train_idx):
+    def forward(
+        self,
+        x: Tensor, 
+        edge_index: Adj, 
+        y: Tensor, 
+        train_idx: Tensor,
+        batch_mask: OptTensor = None,
+        ):
         r"""
         Forward pass using label usage algorithm.
 
         Args:
-          x: Node feature tensor 
-          edge_index: The edge connectivity
-          y: Node label tensor 
-          train_idx: Training index tensor 
-
+            x (torch.Tensor): Node feature tensor 
+            edge_index (torch.Tensor or SparseTensor): The edge indices
+            y (torch.Tensor): Node label tensor 
+            train_idx (torch.Tensor): Global indices of all 
+                nodes in training set
+            batch_mask (torch.Tensor, optional): Optional mask indicating 
+                global node indices in batch (default: :obj:'None')
         """
+        # filter out nodes not in the mini-batch
+        if batch_mask is not None:
+            train_idx = train_idx[torch.isin(train_idx, batch_mask)]
+
         # random masking to split train_idx based on split ratio
         mask = torch.rand(train_idx.shape) < self.split_ratio
         train_labels_idx = train_idx[mask]  # D_L: nodes with features and labels
@@ -56,7 +74,7 @@ class LabelUsage(torch.nn.Module):
 
         # add labels to features for train_labels_idx nodes
         # zero value nodes in train_pred_idx
-        onehot = torch.zeros([x.shape[0], len(torch.unique(y))]).to(x.device)
+        onehot = torch.zeros([x.shape[0], self.num_classes]).to(x.device)
         onehot[train_labels_idx, y[train_labels_idx]] = 1  # create a one-hot encoding
         feat = torch.cat([x, onehot], dim=-1)
 
