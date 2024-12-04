@@ -131,7 +131,8 @@ class PMPNNDataset(InMemoryDataset):
 
             pdbid, chid = self.item[ID][sel_idx][0].split('_')
 
-            PREFIX = "%s/pdb/%s/%s" % (self.params['DIR'], pdbid[1:3], pdbid)
+            PREFIX = "{}/pdb/{}/{}".format(self.params['DIR'], pdbid[1:3],
+                                           pdbid)
             # load metadata
 
             if not os.path.isfile(PREFIX + ".pt"):
@@ -150,7 +151,7 @@ class PMPNNDataset(InMemoryDataset):
             }
 
             if len(asmb_candidates) < 1:
-                chain = torch.load("%s_%s.pt" % (PREFIX, chid))
+                chain = torch.load("{}_{}.pt".format(PREFIX, chid))
                 L = len(chain['seq'])
                 item_graph = Data(
                     seq=chain['seq'],
@@ -168,7 +169,7 @@ class PMPNNDataset(InMemoryDataset):
 
             # load relevant chains
             chains = {
-                c: torch.load("%s_%s.pt" % (PREFIX, c))
+                c: torch.load("{}_{}.pt".format(PREFIX, c))
                 for i in idx
                 for c in asmb_chains[i] if c in meta['chains']
             }
