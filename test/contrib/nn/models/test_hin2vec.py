@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.contrib.nn import HIN2Vec
 from torch_geometric.testing import has_package, withDevice
-from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_CLUSTER
+from torch_geometric.typing import WITH_TORCH_CLUSTER
 
 
 @withDevice
@@ -18,10 +18,9 @@ def test_hin2vec(device, reg):
     kwargs = dict(embedding_dim=16, metapath_length=2, walk_length=3,
                   walks_per_node=4, reg=reg)
 
-    if not WITH_PYG_LIB and not WITH_TORCH_CLUSTER:
-        with pytest.raises(
-                ImportError, match=("requires either the 'pyg-lib' "
-                                    "or 'torch-cluster'")):
+    if not WITH_TORCH_CLUSTER:
+        with pytest.raises(ImportError,
+                           match=("requires the 'torch-cluster'")):
             model = HIN2Vec(edge_index_dict, **kwargs)
         return
 

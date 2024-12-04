@@ -7,12 +7,7 @@ from torch.nn import Embedding, Sigmoid
 from torch.utils.data import DataLoader
 
 from torch_geometric.index import index2ptr
-from torch_geometric.typing import (
-    WITH_PYG_LIB,
-    WITH_TORCH_CLUSTER,
-    EdgeType,
-    NodeType,
-)
+from torch_geometric.typing import WITH_TORCH_CLUSTER, EdgeType, NodeType
 from torch_geometric.utils import sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 
@@ -86,15 +81,10 @@ class HIN2Vec(torch.nn.Module):
                 "Unsupported regularization function. Ensure that it is either"
                 " 'step' or 'sigmoid'.")
 
-        if WITH_PYG_LIB:
-            self.random_walk_fn = torch.ops.pyg.random_walk
-        elif WITH_TORCH_CLUSTER:
-            self.random_walk_fn = torch.ops.torch_cluster.random_walk
-        else:
+        if not WITH_TORCH_CLUSTER:
             raise ImportError(f"'{self.__class__.__name__}' "
-                              f"requires either the 'pyg-lib' or "
-                              f"'torch-cluster' package")
-
+                              f"requires the 'torch-cluster' package")
+        self.random_walk_fn = torch.ops.torch_cluster.random_walk
         self.edge_index_dict = edge_index_dict
         self.embedding_dim = embedding_dim
         self.metapath_length = metapath_length
