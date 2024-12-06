@@ -12,13 +12,15 @@ from torch_geometric.utils import to_torch_csc_tensor
 
 
 @pytest.mark.parametrize('residual', [False, True])
-def test_gatv2_conv(residual):
+@pytest.mark.parametrize('interactive_attn', [False, True])
+def test_gatv2_conv(residual, interactive_attn):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
-    conv = GATv2Conv(8, 32, heads=2, residual=residual)
+    conv = GATv2Conv(8, 32, heads=2, residual=residual,
+                     interactive_attn=interactive_attn)
     assert str(conv) == 'GATv2Conv(8, 32, heads=2)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
@@ -109,42 +111,8 @@ def test_gatv2_conv(residual):
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
 
-    # Test no target features in attention
-    conv = GATv2Conv((8, None), 32, heads=2, residual=residual)
-    assert str(conv) == 'GATv2Conv((8, None), 32, heads=2)'
-    out = conv(x1, edge_index)
-    assert out.size() == (4, 64)
-    assert torch.allclose(conv(x1, edge_index), out)
-    assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
-
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
-
-    if is_full_test():
-
-        class MyModule(torch.nn.Module):
-            def __init__(self):
-                super().__init__()
-                self.conv = conv
-
-            def forward(
-                self,
-                x: Tensor,
-                edge_index: Adj,
-            ) -> Tensor:
-                return self.conv(x, edge_index)
-
-        jit = torch.jit.script(MyModule())
-        assert torch.allclose(jit(x1, edge_index), out)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
-
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
-
-    conv = GATv2Conv(8, 32, heads=2, residual=residual)
 
     out = conv((x1, x2), edge_index)
     assert out.size() == (2, 64)

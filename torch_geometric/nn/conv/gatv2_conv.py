@@ -80,8 +80,7 @@ class GATv2Conv(MessagePassing):
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
             dimensionalities and distinct :math:`\mathbf{\Theta}`, for example,
-            in the case of a bipartite graph.  A value of :obj:`None|0` for the
-            target dimensionality fixes :math:`\mathbf{\Theta}_t=\mathbf{0}`.
+            in the case of a bipartite graph.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -146,6 +145,7 @@ class GATv2Conv(MessagePassing):
         bias: bool = True,
         share_weights: bool = False,
         residual: bool = False,
+        interactive_attn: bool = True,
         **kwargs,
     ):
         super().__init__(node_dim=0, **kwargs)
@@ -161,26 +161,26 @@ class GATv2Conv(MessagePassing):
         self.fill_value = fill_value
         self.residual = residual
         self.share_weights = share_weights
+        self.iteractive_attn = interactive_attn
 
         if isinstance(in_channels, int):
             self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
                                 weight_initializer='glorot')
-            if share_weights:
-                self.lin_r = self.lin_l
-            else:
-                self.lin_r = Linear(in_channels, heads * out_channels,
-                                    bias=bias, weight_initializer='glorot')
+            if interactive_attn:
+                if share_weights:
+                    self.lin_r = self.lin_l
+                else:
+                    self.lin_r = Linear(in_channels, heads * out_channels,
+                                        bias=bias, weight_initializer='glorot')
         else:
             self.lin_l = Linear(in_channels[0], heads * out_channels,
                                 bias=bias, weight_initializer='glorot')
-            if in_channels[1]:
+            if interactive_attn:
                 if share_weights:
                     self.lin_r = self.lin_l
                 else:
                     self.lin_r = Linear(in_channels[1], heads * out_channels,
                                         bias=bias, weight_initializer='glorot')
-            else:
-                self.lin_r = None
 
         self.att = Parameter(torch.empty(1, heads, out_channels))
 
@@ -194,11 +194,9 @@ class GATv2Conv(MessagePassing):
         total_out_channels = out_channels * (heads if concat else 1)
 
         if residual:
-            res_in_channels = in_channels
-            if not isinstance(in_channels, int):
-                res_in_channels = in_channels[1] if in_channels[1] else -1
             self.res = Linear(
-                res_in_channels,
+                in_channels
+                if isinstance(in_channels, int) else in_channels[1],
                 total_out_channels,
                 bias=False,
                 weight_initializer='glorot',
@@ -216,7 +214,7 @@ class GATv2Conv(MessagePassing):
     def reset_parameters(self):
         super().reset_parameters()
         self.lin_l.reset_parameters()
-        if self.lin_r is not None:
+        if self.iteractive_attn:
             self.lin_r.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
@@ -290,12 +288,11 @@ class GATv2Conv(MessagePassing):
 
             if self.res is not None:
                 res = self.res(x)
-                print(f"x shape {x.shape}, res shape {res.shape}")
 
             x_l = self.lin_l(x).view(-1, H, C)
-            if self.share_weights:
+            if self.share_weights or not self.iteractive_attn:
                 x_r = x_l
-            elif self.lin_r is not None:
+            else:
                 x_r = self.lin_r(x).view(-1, H, C)
         else:
             x_l, x_r = x[0], x[1]
@@ -305,14 +302,11 @@ class GATv2Conv(MessagePassing):
                 res = self.res(x_r)
 
             x_l = self.lin_l(x_l).view(-1, H, C)
-            if x_r is not None and self.lin_r is not None:
+            if x_r is not None and self.iteractive_attn:
                 x_r = self.lin_r(x_r).view(-1, H, C)
-            else:
-                # TODO maybe warn user if they passed dest features that won't
-                # be used
-                x_r = None
 
         assert x_l is not None
+        assert x_r is not None
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
@@ -346,7 +340,6 @@ class GATv2Conv(MessagePassing):
             out = out.mean(dim=1)
 
         if res is not None:
-            print(f"out shape {out.shape} res shape {res.shape}")
             out = out + res
 
         if self.bias is not None:
@@ -368,8 +361,7 @@ class GATv2Conv(MessagePassing):
     def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
                     index: Tensor, ptr: OptTensor,
                     dim_size: Optional[int]) -> Tensor:
-        print("share weights", self.share_weights)
-        x = x_j if x_i is None else x_i + x_j
+        x = x_i + x_j if self.iteractive_attn else x_j
 
         if edge_attr is not None:
             if edge_attr.dim() == 1:

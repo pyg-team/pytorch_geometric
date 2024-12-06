@@ -81,8 +81,7 @@ class GATConv(MessagePassing):
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
             dimensionalities and distinct :math:`\mathbf{\Theta}`, for example,
-            in the case of a bipartite graph.  A value of :obj:`None|0` for the
-            target dimensionality fixes :math:`\mathbf{\Theta}_t=\mathbf{0}`.
+            in the case of a bipartite graph.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -142,6 +141,7 @@ class GATConv(MessagePassing):
         fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
         residual: bool = False,
+        interactive_attn: bool = True,
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
@@ -157,9 +157,10 @@ class GATConv(MessagePassing):
         self.edge_dim = edge_dim
         self.fill_value = fill_value
         self.residual = residual
+        self.interactive_attn = interactive_attn
 
-        # In case tuple in_channels, e.g. bipartite graphs, we apply separate
-        # transformations 'lin_src' and 'lin_dst' to source and target nodes:
+        # In case tuple in_channels, we apply separate transformations
+        # 'lin_src' and 'lin_dst' to source and target nodes:
         self.lin = self.lin_src = self.lin_dst = None
         if isinstance(in_channels, int):
             self.lin = Linear(in_channels, heads * out_channels, bias=False,
@@ -167,16 +168,14 @@ class GATConv(MessagePassing):
         else:
             self.lin_src = Linear(in_channels[0], heads * out_channels, False,
                                   weight_initializer='glorot')
-            if in_channels[1]:
+            if interactive_attn:
                 self.lin_dst = Linear(in_channels[1], heads * out_channels,
                                       False, weight_initializer='glorot')
 
         # The learnable parameters to compute attention coefficients:
         self.att_src = Parameter(torch.empty(1, heads, out_channels))
-        if isinstance(in_channels, int) or in_channels[1]:
+        if interactive_attn:
             self.att_dst = Parameter(torch.empty(1, heads, out_channels))
-        else:
-            self.att_dst = None
 
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
@@ -190,11 +189,9 @@ class GATConv(MessagePassing):
         total_out_channels = out_channels * (heads if concat else 1)
 
         if residual:
-            res_in_channels = in_channels
-            if not isinstance(in_channels, int):
-                res_in_channels = in_channels[1] if in_channels[1] else -1
             self.res = Linear(
-                res_in_channels,
+                in_channels
+                if isinstance(in_channels, int) else in_channels[1],
                 total_out_channels,
                 bias=False,
                 weight_initializer='glorot',
@@ -222,7 +219,8 @@ class GATConv(MessagePassing):
         if self.res is not None:
             self.res.reset_parameters()
         glorot(self.att_src)
-        glorot(self.att_dst)
+        if self.interactive_attn:
+            glorot(self.att_dst)
         glorot(self.att_edge)
         zeros(self.bias)
 
@@ -307,17 +305,15 @@ class GATConv(MessagePassing):
                 res = self.res(x)
 
             if self.lin is not None:
-                x_src = x_dst = self.lin(x).view(-1, H, C)
+                x_src = self.lin(x).view(-1, H, C)
+                x_dst = x_src if self.interactive_attn else None
             else:
-                # If the module is initialized with a tuple of positive
-                # in_channels, transform source and destination node features
-                # separately:
+                # If the module is initialized with tuple in_channels,
+                # transform source and destination node features separately:
                 assert self.lin_src is not None
                 x_src = self.lin_src(x).view(-1, H, C)
-                if self.lin_dst is not None:
-                    x_dst = self.lin_dst(x).view(-1, H, C)
-                else:
-                    x_dst = None
+                x_dst = (self.lin_dst(x).view(-1, H, C)
+                         if self.interactive_attn else None)
 
         else:  # Tuple of source and target node features:
             x_src, x_dst = x
@@ -326,30 +322,32 @@ class GATConv(MessagePassing):
             if x_dst is not None and self.res is not None:
                 res = self.res(x_dst)
 
+            # In the case of non-interactive attention, we do not update x_dst
+            # below. Except in the case of a residual above, its value won't
+            # be used, but its size may be used when computing self loops.
             if self.lin is not None:
                 # If the module is initialized with integer in_channels, we
                 # expect that source and destination node features have the
                 # same shape and that they their transformations are shared:
                 x_src = self.lin(x_src).view(-1, H, C)
-                if x_dst is not None:
+                if x_dst is not None and self.interactive_attn:
+                    assert self.lin_dst is not None
                     x_dst = self.lin(x_dst).view(-1, H, C)
             else:
                 assert self.lin_src is not None
 
                 x_src = self.lin_src(x_src).view(-1, H, C)
-                if x_dst is not None and self.lin_dst is not None:
+                if x_dst is not None and self.interactive_attn:
+                    assert self.lin_dst is not None
                     x_dst = self.lin_dst(x_dst).view(-1, H, C)
-                else:
-                    # TODO maybe warn user if they passed dest features that
-                    # won't be used
-                    x_dst = None
 
         x = (x_src, x_dst)
 
         # Next, we compute node-level attention coefficients, both for source
         # and target nodes (if present):
         alpha_src = (x_src * self.att_src).sum(dim=-1)
-        alpha_dst = None if x_dst is None else (x_dst * self.att_dst).sum(-1)
+        alpha_dst = ((x_dst * self.att_dst).sum(-1)
+                     if x_dst is not None and self.interactive_attn else None)
         alpha = (alpha_src, alpha_dst)
 
         if self.add_self_loops:
