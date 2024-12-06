@@ -49,9 +49,9 @@ class TokenGT(nn.Module):
                                       bias=False, device=device)
         self._type_id_enc = nn.Embedding(2, dim_embedding, device=device)
         if include_graph_token:
-            self._gt_emb = nn.Embedding(1, dim_embedding, device=device)
+            self._graph_emb = nn.Embedding(1, dim_embedding, device=device)
         else:
-            self._gt_emb = None
+            self._graph_emb = None
 
         # standard encoder-only transformer
         enc_layer = nn.TransformerEncoderLayer(
@@ -79,18 +79,17 @@ class TokenGT(nn.Module):
         batched_emb, src_key_padding_mask, node_mask = (
             self._get_tokenwise_batched_emb(x, edge_index, edge_attr, ptr,
                                             batch))
-        if self._gt_emb is not None:
+        if self._graph_emb is not None:
             # append special graph token
             b_s = batched_emb.shape[0]
-            gt_emb_expanded = self._gt_emb.weight.expand(b_s, 1, -1)
-            batched_emb = torch.concat((gt_emb_expanded, batched_emb), dim=1)
+            graph_emb = self._graph_emb.weight.expand(b_s, 1, -1)
+            batched_emb = torch.concat((graph_emb, batched_emb), dim=1)
             bool_t = torch.tensor([False], device=self._device).expand(b_s, -1)
             src_key_padding_mask = torch.concat((bool_t, src_key_padding_mask),
                                                 dim=1)
 
-        batched_emb = self._encoder(batched_emb,
-                                    src_key_padding_mask=src_key_padding_mask)
-        if self._gt_emb is not None:
+        batched_emb = self._encoder(batched_emb, None, src_key_padding_mask)
+        if self._graph_emb is not None:
             # grab graph token embedding from each batch
             graph_emb = batched_emb[:, 0, :]
             batched_emb = batched_emb[:, 1:, :]
@@ -115,13 +114,11 @@ class TokenGT(nn.Module):
 
         # node and edge token embeddings
         if self._use_lap_node_identifiers:
-            node_identifiers = self._get_lap_node_identifiers(
-                unbatched_edge_indices)
+            node_ids = self._get_lap_node_ids(unbatched_edge_indices)
         else:
-            node_identifiers = self._get_orf_node_identifiers(n_nodes)
-        node_emb = self._get_node_token_emb(x, node_identifiers)
-        edge_emb = self._get_edge_token_emb(edge_attr, edge_index,
-                                            node_identifiers)
+            node_ids = self._get_orf_node_ids(n_nodes)
+        node_emb = self._get_node_token_emb(x, node_ids)
+        edge_emb = self._get_edge_token_emb(edge_attr, edge_index, node_ids)
 
         # combine node + edge tokens; split into padded batches -> (b, t, c)
         n_edges = self._get_n_edges(unbatched_edge_indices)
@@ -143,15 +140,14 @@ class TokenGT(nn.Module):
 
         return batched_emb, src_key_padding_mask, node_mask
 
-    def _get_node_token_emb(self, x: Tensor,
-                            node_identifiers: Tensor) -> Tensor:
+    def _get_node_token_emb(self, x: Tensor, node_ids: Tensor) -> Tensor:
         # node token embedding: x_proj + node_id_proj + type_id
         total_nodes = x.shape[0]
-        node_emb = (self._node_features_enc(x) + self._node_id_enc(
-            torch.concat((node_identifiers, node_identifiers), dim=1)) +
-                    self._type_id_enc(
-                        torch.zeros(total_nodes, dtype=torch.long,
-                                    device=self._device))
+        node_emb = (self._node_features_enc(x) +
+                    self._node_id_enc(torch.concat(
+                        (node_ids, node_ids), dim=1)) + self._type_id_enc(
+                            torch.zeros(total_nodes, dtype=torch.long,
+                                        device=self._device))
                     )  # (total_nodes, dim_embedding)
         return node_emb
 
@@ -159,7 +155,7 @@ class TokenGT(nn.Module):
         self,
         edge_attr: Optional[Tensor],
         edge_index: Tensor,
-        node_identifiers: Tensor,
+        node_ids: Tensor,
     ) -> Tensor:
         # edge token embedding: edge_attr_proj + node_id_proj + type_id
         total_edges = edge_index.shape[1]
@@ -168,8 +164,8 @@ class TokenGT(nn.Module):
                               (total_edges,
                                self._dim_embedding), device=self._device))
         node_ids_proj = self._node_id_enc(
-            torch.concat((node_identifiers[edge_index[0]],
-                          node_identifiers[edge_index[1]]), dim=1))
+            torch.concat((node_ids[edge_index[0]], node_ids[edge_index[1]]),
+                         dim=1))
         edge_emb = (edge_attr_proj + node_ids_proj + self._type_id_enc(
             torch.ones(total_edges, dtype=torch.long, device=self._device))
                     )  # (total_edges, dim_embedding)
@@ -222,23 +218,23 @@ class TokenGT(nn.Module):
         ], dtype=torch.long, device=self._device)
         return n_edges
 
-    def _get_orf_node_identifiers(self, n_nodes: Tensor) -> Tensor:
+    def _get_orf_node_ids(self, n_nodes: Tensor) -> Tensor:
         """Generate ORF independently for each graph; concat into 2d tensor."""
-        orf_node_identifiers = []
+        orf_node_ids = []
         for n in n_nodes:
             orth_mat = orthogonal_matrix(n, n)
             orth_mat = self._get_reshaped_orth_mat(orth_mat, n)
-            orf_node_identifiers.append(orth_mat)
-        orf = torch.concat(orf_node_identifiers, dim=0).to(self._device)
+            orf_node_ids.append(orth_mat)
+        orf = torch.concat(orf_node_ids, dim=0).to(self._device)
         orf = F.normalize(orf, p=2, dim=1)
         return orf
 
-    def _get_lap_node_identifiers(
-            self, unbatched_edge_indices: List[Tensor]) -> Tensor:
+    def _get_lap_node_ids(self,
+                          unbatched_edge_indices: List[Tensor]) -> Tensor:
         """Generate laplacian eigenvectors independently for each graph,
         then concat into 2d tensor.
         """
-        lap_node_identifiers = []
+        lap_node_ids = []
         for unbatched_edge_index in unbatched_edge_indices:
             lap_edge_index, lap_edge_attr = get_laplacian(
                 unbatched_edge_index, normalization="sym")
@@ -248,8 +244,8 @@ class TokenGT(nn.Module):
 
             n = eigenvectors.shape[0]
             orth_mat = self._get_reshaped_orth_mat(eigenvectors, n)
-            lap_node_identifiers.append(orth_mat)
-        return torch.concat(lap_node_identifiers, dim=0)
+            lap_node_ids.append(orth_mat)
+        return torch.concat(lap_node_ids, dim=0)
 
     def _get_reshaped_orth_mat(self, orth_mat: Tensor, n: int) -> Tensor:
         if n < self._dim_node_identifier:
@@ -268,8 +264,8 @@ class TokenGT(nn.Module):
 
     @staticmethod
     def _init_params(module, num_encoder_layers) -> None:
-        # modified from https://github.com/jw9730/tokengt/
-        # blob/main/large-scale-regression/tokengt/modules/tokenizer.py
+        # modified from https://github.com/jw9730/tokengt/blob/main/
+        # large-scale-regression/tokengt/modules/tokenizer.py
         if isinstance(module, nn.Linear):
             module.weight.data.normal_(
                 mean=0.0, std=0.02 / math.sqrt(num_encoder_layers))
