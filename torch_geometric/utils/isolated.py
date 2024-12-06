@@ -8,8 +8,9 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def num_isolated_nodes(
-        edge_index: Tensor,
-        num_nodes: Optional[Union[int, Tuple[int, int]]] = None) -> int:
+    edge_index: Tensor,
+    num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+) -> Union[int, Tuple[int, int]]:
     r"""Returns the number of isolated nodes in the graph given by
     :attr:`edge_index`. Please specify :obj:`num_nodes` as a tuple of two
     integers if the graph is bipartite. For normal graph, self loops are
@@ -22,7 +23,7 @@ def num_isolated_nodes(
             provide a tuple of two integers `(num_src_nodes, num_dst_nodes)`.
             (default: :obj:`None`)
 
-    :rtype: int
+    :rtype: int or tuple
 
     Examples:
         >>> edge_index = torch.tensor([[0, 1, 0],
@@ -32,9 +33,11 @@ def num_isolated_nodes(
         >>> bi_edge_index = torch.tensor([[0, 0],
         ...                               [1, 1]])
         >>> num_isolated_nodes(bi_edge_index, num_nodes=(2, 2))
-        0
+        (0, 0)
+        >>> num_isolated_nodes(bi_edge_index, num_nodes=(2, 3))
+        (0, 1)
         >>> num_isolated_nodes(bi_edge_index, num_nodes=(3, 3))
-        2
+        (1, 1)
     """
     if not isinstance(num_nodes, tuple):
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -42,10 +45,11 @@ def num_isolated_nodes(
         return num_nodes - torch.unique(edge_index.view(-1)).numel()
     else:
         num_src_nodes, num_dst_nodes = num_nodes
-        edge_index = edge_index.clone()
-        edge_index[1, :] += num_src_nodes
-    return (num_src_nodes + num_dst_nodes) - torch.unique(
-        edge_index.view(-1)).numel()
+        num_src_isolated = num_src_nodes - torch.unique(
+            edge_index[0, :]).numel()
+        num_dst_isolated = num_dst_nodes - torch.unique(
+            edge_index[1, :]).numel()
+    return (num_src_isolated, num_dst_isolated)
 
 
 def contains_isolated_nodes(

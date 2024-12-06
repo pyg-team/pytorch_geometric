@@ -24,15 +24,15 @@ def test_num_isolated_nodes():
 
 def test_bipartite_num_isolated_nodes():
     edge_index = torch.tensor([[0, 1], [0, 1]])
-    assert num_isolated_nodes(edge_index, num_nodes=(2, 2)) == 0
-    assert num_isolated_nodes(edge_index, num_nodes=(2, 3)) == 1
-    assert num_isolated_nodes(edge_index, num_nodes=(3, 3)) == 2
+    assert num_isolated_nodes(edge_index, num_nodes=(2, 2)) == (0, 0)
+    assert num_isolated_nodes(edge_index, num_nodes=(2, 3)) == (0, 1)
+    assert num_isolated_nodes(edge_index, num_nodes=(3, 3)) == (1, 1)
 
     if is_full_test():
         jit = torch.jit.script(num_isolated_nodes)
-        assert jit(edge_index, num_nodes=(2, 2)) == 0
-        assert jit(edge_index, num_nodes=(2, 3)) == 1
-        assert jit(edge_index, num_nodes=(3, 3)) == 2
+        assert jit(edge_index, num_nodes=(2, 2)) == (0, 0)
+        assert jit(edge_index, num_nodes=(2, 3)) == (0, 1)
+        assert jit(edge_index, num_nodes=(3, 3)) == (1, 1)
 
 
 def test_contains_isolated_nodes():
