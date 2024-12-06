@@ -8,7 +8,8 @@ from torch_geometric.typing import WITH_TORCH_CLUSTER
 
 @withDevice
 @pytest.mark.parametrize('reg', ['sigmoid', 'step'])
-def test_hin2vec(device, reg):
+@pytest.mark.parametrize('same_neg_node_type', [True, False])
+def test_hin2vec(device, reg, same_neg_node_type):
     edge_index_dict = {
         ('author', 'writes', 'paper'):
         torch.tensor([[0, 1, 1, 2, 3], [0, 0, 1, 1, 0]], device=device),
@@ -16,7 +17,8 @@ def test_hin2vec(device, reg):
         torch.tensor([[0, 0, 1, 1, 0], [0, 1, 1, 2, 3]], device=device)
     }
     kwargs = dict(embedding_dim=16, metapath_length=2, walk_length=3,
-                  walks_per_node=4, reg=reg)
+                  walks_per_node=4, reg=reg,
+                  same_neg_node_type=same_neg_node_type)
 
     if not WITH_TORCH_CLUSTER:
         with pytest.raises(ImportError,

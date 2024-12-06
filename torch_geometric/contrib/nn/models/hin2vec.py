@@ -47,6 +47,9 @@ class HIN2Vec(torch.nn.Module):
         allow_circle (bool, optional): If set to :obj:`True`, allows circle in
             the metapath, ie. start node equal to end node.
             (default: :obj:`False`)
+        same_neg_node_type (bool, optional): If set to :obj:`True`, the
+            negative sample has same node type as positive sample.
+            (default: :obj:`False`)
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             weight matrix will be sparse. (default: :obj:`False`)
     """
@@ -61,6 +64,7 @@ class HIN2Vec(torch.nn.Module):
         reg: str = 'step',
         num_nodes_dict: Optional[Dict[NodeType, int]] = None,
         allow_circle: bool = False,
+        same_neg_node_type: bool = False,
         sparse: bool = False,
     ):
         super().__init__()
@@ -92,6 +96,7 @@ class HIN2Vec(torch.nn.Module):
         self.walks_per_node = walks_per_node
         self.num_negative_samples = num_negative_samples
         self.allow_circle = allow_circle
+        self.same_neg_node_type = same_neg_node_type
         self.sparse = sparse
         self.EPS = 1e-15
         self.num_nodes_dict = maybe_num_nodes_dict(edge_index_dict,
@@ -105,6 +110,18 @@ class HIN2Vec(torch.nn.Module):
             node_count += num_nodes
             self.node_end[node_type] = node_count
         self.node_count = node_count
+
+        if self.same_neg_node_type:
+            # Each row corresponds to a node and has (node_count, start_idx) of
+            # same node type of the node.
+            self.node_type_table = torch.zeros((self.node_count, 2),
+                                               dtype=torch.long)
+            for node_type in self.node_start:
+                start_idx = self.node_start[node_type]
+                end_idx = self.node_end[node_type]
+                self.node_type_table[start_idx:end_idx,
+                                     0] = end_idx - start_idx
+                self.node_type_table[start_idx:end_idx, 1] = start_idx
 
         self.edge_type_id_dict = {}
         self.rowptr, self.col, self.edge_id = self._process_edge_index_dict(
@@ -192,8 +209,16 @@ class HIN2Vec(torch.nn.Module):
 
         # Corrupt the tail to generate negative sample
         neg_sample = pos_sample.repeat(self.num_negative_samples, 1)
-        neg_sample[:, 1] = torch.randint(0, self.node_count - 1,
-                                         (neg_sample.size(0), ))
+        if self.same_neg_node_type:
+            neg_node_idx = torch.rand((neg_sample.size(0), ))
+            # Multiply with count of same node type as positive sample
+            neg_node_idx = torch.floor(
+                neg_node_idx * self.node_type_table[neg_sample[:, 1], 0])
+            neg_node_idx += self.node_type_table[neg_sample[:, 1], 1]
+            neg_sample[:, 1] = neg_node_idx.long()
+        else:
+            neg_sample[:, 1] = torch.randint(0, self.node_count - 1,
+                                             (neg_sample.size(0), ))
         if not self.allow_circle:
             neg_sample = self._remove_circle(neg_sample)
 
