@@ -143,8 +143,8 @@ class GraphFeatureTokenizer(nn.Module):
         edge_batch = batch[edge_index[0]] 
         edge_num = scatter(torch.ones(num_edges, device=device), edge_batch, dim=0, reduce='sum') 
 
-        max_node_num = node_num.max().item()
-        max_edge_num = edge_num.max().item()
+        max_node_num = int(node_num.max().item())
+        max_edge_num = int(edge_num.max().item())
 
         seq_len = max_node_num + max_edge_num
         if self.use_graph_token:
@@ -163,15 +163,15 @@ class GraphFeatureTokenizer(nn.Module):
                 attention_masks[i, idx] = True
                 idx += 1
 
-            n_start = node_ptr[i].item()
-            n_end = node_ptr[i + 1].item()
+            n_start = int(node_ptr[i].item())
+            n_end = int(node_ptr[i + 1].item())
             n_nodes = n_end - n_start
             tokens[i, idx:idx + n_nodes] = X_v_proj[n_start:n_end]
             attention_masks[i, idx:idx + n_nodes] = True
             idx += max_node_num 
 
-            e_start = edge_ptr[i].item()
-            e_end = edge_ptr[i + 1].item()
+            e_start = int(edge_ptr[i].item())
+            e_end = int(edge_ptr[i + 1].item())
             n_edges = e_end - e_start
             tokens[i, idx:idx + n_edges] = X_e_proj[e_start:e_end]
             attention_masks[i, idx:idx + n_edges] = True
