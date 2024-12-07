@@ -15,10 +15,10 @@ class LabelUsage(torch.nn.Module):
         accordingly to include both features and classes.
 
     Args:
-        base_model: An instance of the model that will do the 
+        base_model: An instance of the model that will do the
             inner forward pass.
         num_classes (int): Number of classes in dataset
-        split_ratio (float): Proportion of true labels to use as features 
+        split_ratio (float): Proportion of true labels to use as features
             during training (default: :obj:'0.5')
         num_recycling_iterations (int): Number of iterations for the
             label reuse procedure to cycle predicted soft labels 
@@ -27,7 +27,6 @@ class LabelUsage(torch.nn.Module):
             train_pred_idx) otherwise returns prediction output 
             (default :obj:'False')
     """
-
     def __init__(
         self,
         base_model: torch.nn.Module,
@@ -37,7 +36,7 @@ class LabelUsage(torch.nn.Module):
         return_tuple: bool = False,
     ):
 
-        super(LabelUsage, self).__init__()
+        super().__init__()
         self.base_model = base_model
         self.num_classes = num_classes
         self.split_ratio = split_ratio
