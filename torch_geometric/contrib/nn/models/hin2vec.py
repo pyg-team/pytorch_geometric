@@ -352,13 +352,8 @@ class HIN2Vec(torch.nn.Module):
 class _BinaryStepFunction(Function):
     r"""Implement differentiable binary step function."""
     @staticmethod
-    def forward(input: Tensor) -> Tensor:
+    def forward(ctx: Any, input: Tensor) -> Tensor:
         return (input > 0).float()
-
-    @staticmethod
-    def setup_context(ctx: Any, inputs: Any, output: Any):
-        input, = inputs
-        ctx.save_for_backward(input)
 
     @staticmethod
     def backward(ctx: Any, grad_output: Tensor) -> Tensor:
