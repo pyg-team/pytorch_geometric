@@ -77,10 +77,11 @@ class LabelUsage(torch.nn.Module):
 
         # random split mask based on split ratio
         split_mask = torch.rand(mask.shape) < self.split_ratio
-        train_labels_idx = mask[
-            split_mask]  # D_L: nodes with features and labels
-        train_pred_idx = mask[~split_mask]  # D_U: nodes to predict labels
+        train_labels_idx = mask[split_mask] # D_L: nodes with labels
+        train_pred_idx = mask[~split_mask] # D_U: nodes to predict labels
 
+        assert y.dim() == 1 or (y.dim() == 2 and y.size(1) == 1),\
+            "Expected y to be either (N,) or (N, 1), but got shape {y.shape}"
         # add labels to features for train_labels_idx nodes
         # zero value nodes in train_pred_idx
         onehot = torch.zeros([feat.shape[0], self.num_classes]).to(feat.device)
@@ -98,7 +99,7 @@ class LabelUsage(torch.nn.Module):
         for _ in range(max(1, self.num_recycling_iterations + 1)):
             pred = pred.detach()
             feat[unlabeled_idx,
-                 -self.num_classes:] = F.softmax(pred[unlabeled_idx], dim=-1)
+                -self.num_classes:] = F.softmax(pred[unlabeled_idx], dim=-1)
             pred = self.base_model(feat, edge_index)
 
         # return tuples if specified
