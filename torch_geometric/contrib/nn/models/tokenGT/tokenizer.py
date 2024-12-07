@@ -102,9 +102,10 @@ class GraphFeatureTokenizer(nn.Module):
         device = x.device
 
         if self.method == 'orf':
-            P = torch.empty((num_nodes, self.d_p), device=device).normal_(mean=0, std=1)
+            P = torch.empty((self.d_p, self.d_p), device=device).normal_(mean=0, std=1)
             # Orthonormalize
-            P, _ = torch.qr(P)  
+            P, _ = torch.linalg.qr(P)  
+            P = P[:num_nodes, :]
         elif self.method == 'laplacian':
             P_list = []
             for i in range(data.num_graphs):
