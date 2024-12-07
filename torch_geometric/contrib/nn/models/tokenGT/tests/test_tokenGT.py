@@ -6,26 +6,26 @@ from torch_geometric.nn.models.tokengt import TokenGT
 class TestTokenGT(unittest.TestCase):
     def test_tokengt_forward(self):
         # Create a simple graph with 5 nodes with 16-dimensional features
-        x = torch.randn(5, 16)  #
+        input_feat_dim = 17
+        x = torch.randn(5, input_feat_dim)  #
         edge_index = torch.tensor([
             [0, 1, 2, 3],
             [1, 2, 3, 4]
         ])  
-        edge_attr = torch.randn(4, 8) 
+        edge_attr = torch.randn(4, input_feat_dim) 
         data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
         data.batch = torch.zeros(5, dtype=torch.long) 
 
-        batch = Batch.from_data_list([data, data])  
+        batch = Batch.from_data_list([data])
 
         model = TokenGT(
-            node_feat_dim=16,
-            edge_feat_dim=8,
+            input_feat_dim=input_feat_dim,
             hidden_dim=32,
             num_layers=2,
             num_heads=4,
             num_classes=3,
             method='orf',
-            d_p=8,
+            d_p=9,
             d_e=4,
             use_graph_token=True
         )

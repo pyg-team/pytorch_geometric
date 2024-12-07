@@ -18,7 +18,7 @@ class GraphFeatureTokenizer(nn.Module):
         d_e (int): Dimension of type identifiers.
         use_graph_token (bool): Whether to include the [graph] token.
     """
-    def __init__(self, node_feat_dim: int, edge_feat_dim: int,
+    def __init__(self, input_feat_dim: int,
                  hidden_dim: int, method: str, d_p: int, d_e: int,
                  use_graph_token: bool = True):
         super(GraphFeatureTokenizer, self).__init__()
@@ -33,7 +33,7 @@ class GraphFeatureTokenizer(nn.Module):
         self.E_E = nn.Parameter(torch.Tensor(1, d_e))
 
         # Projection matrix w_in
-        self.input_dim = node_feat_dim + 2 * d_p + d_e
+        self.input_dim = input_feat_dim + 2 * d_p + d_e
         self.w_in = nn.Linear(self.input_dim, hidden_dim)
 
         # Embedding for [graph] token

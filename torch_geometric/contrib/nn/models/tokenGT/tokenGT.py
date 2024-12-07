@@ -22,13 +22,13 @@ class TokenGT(nn.Module):
         use_graph_token (bool): Whether to include the [graph] token.
         dropout (float): Dropout rate.
     """
-    def __init__(self, node_feat_dim: int, edge_feat_dim: int,
+    def __init__(self, input_feat_dim: int,
                  hidden_dim: int, num_layers: int, num_heads: int,
                  num_classes: int, method: str, d_p: int, d_e: int,
                  use_graph_token: bool = True, dropout: float = 0.1):
         super(TokenGT, self).__init__()
         self.tokenizer = GraphFeatureTokenizer(
-            node_feat_dim, edge_feat_dim, hidden_dim, method, d_p, d_e,
+            input_feat_dim, hidden_dim, method, d_p, d_e,
             use_graph_token
         )
         encoder_layer = nn.TransformerEncoderLayer(
