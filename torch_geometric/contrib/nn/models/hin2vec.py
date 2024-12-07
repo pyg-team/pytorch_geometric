@@ -44,7 +44,7 @@ class HIN2Vec(torch.nn.Module):
             'sigmoid' for sigmoid function. (default: 'step')
         num_nodes_dict (Dict[str, int], optional): Dictionary holding the
             number of nodes for each node type. (default: :obj:`None`)
-        allow_circle (bool, optional): If set to :obj:`True`, allows circle in
+        allow_cycle (bool, optional): If set to :obj:`True`, allows cycle in
             the metapath, ie. start node equal to end node.
             (default: :obj:`False`)
         same_neg_node_type (bool, optional): If set to :obj:`True`, the
@@ -63,18 +63,19 @@ class HIN2Vec(torch.nn.Module):
         num_negative_samples: int = 1,
         reg: str = 'step',
         num_nodes_dict: Optional[Dict[NodeType, int]] = None,
-        allow_circle: bool = False,
+        allow_cycle: bool = False,
         same_neg_node_type: bool = False,
         sparse: bool = False,
     ):
         super().__init__()
 
         if metapath_length < 1:
-            raise ValueError("The metapath_length must be positive integer.")
+            raise ValueError(
+                "The `metapath_length` must be a positive integer.")
 
         if walk_length <= metapath_length:
-            raise ValueError(
-                "The 'walk_length' is not longer than the 'metapath_length.'")
+            raise ValueError("The `walk_length` should be longer than the "
+                             "`metapath_length`.")
 
         if reg == 'sigmoid':
             self.reg = Sigmoid()
@@ -95,7 +96,7 @@ class HIN2Vec(torch.nn.Module):
         self.walk_length = walk_length
         self.walks_per_node = walks_per_node
         self.num_negative_samples = num_negative_samples
-        self.allow_circle = allow_circle
+        self.allow_cycle = allow_cycle
         self.same_neg_node_type = same_neg_node_type
         self.sparse = sparse
         self.EPS = 1e-15
@@ -204,8 +205,8 @@ class HIN2Vec(torch.nn.Module):
                 pos.append(
                     torch.stack((start_nodes, end_nodes, metapath_id), dim=-1))
         pos_sample = torch.cat(pos, dim=0)
-        if not self.allow_circle:
-            pos_sample = self._remove_circle(pos_sample)
+        if not self.allow_cycle:
+            pos_sample = self._remove_cycle(pos_sample)
 
         # Corrupt the tail to generate negative sample
         neg_sample = pos_sample.repeat(self.num_negative_samples, 1)
@@ -219,13 +220,13 @@ class HIN2Vec(torch.nn.Module):
         else:
             neg_sample[:, 1] = torch.randint(0, self.node_count - 1,
                                              (neg_sample.size(0), ))
-        if not self.allow_circle:
-            neg_sample = self._remove_circle(neg_sample)
+        if not self.allow_cycle:
+            neg_sample = self._remove_cycle(neg_sample)
 
         return pos_sample, neg_sample
 
-    def _remove_circle(self, sample: Tensor) -> Tensor:
-        r"""Remove the circle whereby start_node is equal to end_node in sample
+    def _remove_cycle(self, sample: Tensor) -> Tensor:
+        r"""Remove the cycle whereby start_node is equal to end_node in sample
         with row (start_node end_node metapath_id).
         """
         mask = sample[:, 0] != sample[:, 1]
@@ -300,7 +301,7 @@ class HIN2Vec(torch.nn.Module):
         return node_seq, edge_id_seq
 
     def _extract_distinct_metapath(self, rw: Tensor) -> Dict[int, Tensor]:
-        r"""Extract distinct metapath within self.metapath_length hops from
+        r"""Extract distinct metapath within `self.metapath_length` hops from
         each random walk. Each metapath is a sequence of edge types.
         """
         distinct_path_dict = {}
@@ -349,6 +350,7 @@ class HIN2Vec(torch.nn.Module):
 
 
 class _BinaryStepFunction(Function):
+    r"""Implement differentiable binary step function."""
     @staticmethod
     def forward(input: Tensor) -> Tensor:
         return (input > 0).float()
@@ -360,6 +362,9 @@ class _BinaryStepFunction(Function):
 
     @staticmethod
     def backward(ctx: Any, grad_output: Tensor) -> Tensor:
+        r"""Implement derivative by smoothening out gradient of input value
+        between -6 and 6 inclusive to be the sigmoid gradient.
+        """
         input, = ctx.saved_tensors
         dx = input.clone()
         mask = (-6 <= dx) & (dx <= 6)
