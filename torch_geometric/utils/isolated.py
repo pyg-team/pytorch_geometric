@@ -55,11 +55,15 @@ def num_isolated_nodes(
 def contains_isolated_nodes(
     edge_index: Tensor,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-) -> bool:
-    r"""Returns :obj:`True` if the graph given by :attr:`edge_index` contains
-    isolated nodes. Please specify :obj:`num_nodes` as a tuple of two integers
-    if the graph is bipartite. For normal graph, self loops are automatically
-    removed before checking for isolated nodes.
+) -> Union[bool, Tuple[bool, bool]]:
+    r"""For normal graph, returns :obj:`True` if the graph given by
+    :attr:`edge_index` contains isolated nodes and self loops are
+    automatically removed before checking for isolated nodes.
+    For bipartite graph, please specify :obj:`num_nodes` as a tuple
+    of two integers and returns a tuple of two booleans where the first
+    boolean indicates whether the source nodes contain isolated nodes
+    and the second boolean indicates whether the destination nodes
+    contain isolated nodes.
 
     Args:
         edge_index (LongTensor): The edge indices.
@@ -68,7 +72,7 @@ def contains_isolated_nodes(
             provide a tuple of two integers `(num_src_nodes, num_dst_nodes)`.
             (default: :obj:`None`)
 
-    :rtype: bool
+    :rtype: bool or tuple
 
     Examples:
         >>> edge_index = torch.tensor([[0, 1, 0],
@@ -82,20 +86,24 @@ def contains_isolated_nodes(
         >>> bi_edge_index = torch.tensor([[0, 0],
         ...                               [1, 1]])
         >>> contains_isolated_nodes(bi_edge_index, num_nodes=(2, 2))
-        False
+        (False, False)
+        >>> contains_isolated_nodes(bi_edge_index, num_nodes=(2, 3))
+        (False, True)
         >>> contains_isolated_nodes(bi_edge_index, num_nodes=(3, 3))
-        True
+        (True, True)
     """
     if not isinstance(num_nodes, tuple):
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
         edge_index, _ = remove_self_loops(edge_index)
+        return torch.unique(edge_index.view(-1)).numel() < num_nodes
     else:
         num_src_nodes, num_dst_nodes = num_nodes
         num_nodes = num_src_nodes + num_dst_nodes
-        # Clone the edge_index to avoid in-place modification
-        edge_index = edge_index.clone()
-        edge_index[1, :] += num_src_nodes
-    return torch.unique(edge_index.view(-1)).numel() < num_nodes
+        num_src_isolated = num_src_nodes - torch.unique(
+            edge_index[0, :]).numel()
+        num_dst_isolated = num_dst_nodes - torch.unique(
+            edge_index[1, :]).numel()
+        return (num_src_isolated > 0, num_dst_isolated > 0)
 
 
 def remove_isolated_nodes(

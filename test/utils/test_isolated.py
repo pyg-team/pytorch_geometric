@@ -51,15 +51,18 @@ def test_contains_isolated_nodes():
 
 def test_bipartite_contains_isolated_nodes():
     edge_index = torch.tensor([[0, 1], [0, 1]])
-    assert not contains_isolated_nodes(edge_index, num_nodes=(2, 2))
-    assert contains_isolated_nodes(edge_index, num_nodes=(2, 3))
-    assert contains_isolated_nodes(edge_index, num_nodes=(3, 3))
+    assert contains_isolated_nodes(edge_index,
+                                   num_nodes=(2, 2)) == (False, False)
+    assert contains_isolated_nodes(edge_index,
+                                   num_nodes=(2, 3)) == (False, True)
+    assert contains_isolated_nodes(edge_index,
+                                   num_nodes=(3, 3)) == (True, True)
 
     if is_full_test():
         jit = torch.jit.script(contains_isolated_nodes)
-        assert not jit(edge_index, num_nodes=(2, 2))
-        assert jit(edge_index, num_nodes=(2, 3))
-        assert jit(edge_index, num_nodes=(3, 3))
+        assert jit(edge_index, num_nodes=(2, 2)) == (False, False)
+        assert jit(edge_index, num_nodes=(2, 3)) == (False, True)
+        assert jit(edge_index, num_nodes=(3, 3)) == (True, True)
 
 
 def test_remove_isolated_nodes():
