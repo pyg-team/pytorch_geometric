@@ -101,5 +101,5 @@ class LabelUsage(torch.nn.Module):
 
         # return tuples if specified
         if self.return_tuple:
-            return output, train_labels_idx, train_pred_idx
-        return output
+            return pred, train_labels_idx, train_pred_idx
+        return pred
