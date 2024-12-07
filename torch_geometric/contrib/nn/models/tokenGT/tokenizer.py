@@ -102,7 +102,7 @@ class GraphFeatureTokenizer(nn.Module):
         device = x.device
 
         if self.method == 'orf':
-            P = torch.empty((self.d_p, self.d_p), device=device).normal_(mean=0, std=1)
+            P = torch.empty((max(self.d_p, num_nodes), self.d_p), device=device).normal_(mean=0, std=1)
             # Orthonormalize
             P, _ = torch.linalg.qr(P)  
             P = P[:num_nodes, :]
