@@ -159,7 +159,7 @@ class GATConv(MessagePassing):
         self.residual = residual
         self.interactive_attn = interactive_attn
 
-        # In case tuple in_channels, we apply separate transformations
+        # In case of tuple in_channels, we apply separate transformations
         # 'lin_src' and 'lin_dst' to source and target nodes:
         self.lin = self.lin_src = self.lin_dst = None
         if isinstance(in_channels, int):
