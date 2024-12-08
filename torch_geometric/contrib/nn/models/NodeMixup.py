@@ -1,25 +1,20 @@
-from collections import defaultdict
-from functools import partial
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
-
-import numpy as np
+from typing import Optional
 import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Module, ModuleList
-from tqdm import tqdm
-
 from torch_geometric.nn import GCNConv, MessagePassing
 from torch_geometric.contrib.nn.conv import MixupConv
 
-class NodeMixup(torch.nn.Module):
-    r"""The Mixup model for Node Classification from the 
-    `Mixup for Node and Graph Classification
-    <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper
 
-    .. note::
-        For examples of using the Mixup for Node Classification, see
-        `examples/contrib/node_mixup.py
+class NodeMixup(torch.nn.Module):
+    """
+    The Mixup model for Node Classification from the
+    `Mixup for Node and Graph Classification
+    <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper.
+
+    For examples of using the Mixup for Node Classification, see
+    `examples/contrib/node_mixup.py`.
 
     Args:
         num_layers (int): Number of message passing layers.
@@ -33,11 +28,12 @@ class NodeMixup(torch.nn.Module):
             (e.g., GCNConv, GATConv). Defaults to GCNConv.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
     """
+
     def __init__(
-        self, 
+        self,
         num_layers: int,
-        in_channels: int, 
-        hidden_channels: int, 
+        in_channels: int,
+        hidden_channels: int,
         out_channels: Optional[int] = None,
         conv_layer: Optional[Module] = GCNConv,
         dropout: float = 0.0,
@@ -48,52 +44,56 @@ class NodeMixup(torch.nn.Module):
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
-
         self.dropout = dropout
 
         if out_channels is not None:
             self.out_channels = out_channels
         else:
             self.out_channels = hidden_channels
-        
+
         self.convs = ModuleList()
         self.convs.append(
-            self.init_conv(in_channels, hidden_channels, conv_layer, **kwargs))
-        
+            self.init_conv(in_channels, hidden_channels, conv_layer, **kwargs)
+        )
+
         for _ in range(num_layers - 1):
             self.convs.append(
-                self.init_conv(hidden_channels, hidden_channels, conv_layer, **kwargs))
-        
+                self.init_conv(hidden_channels, hidden_channels, conv_layer, **kwargs)
+            )
+
         self.lin = torch.nn.Linear(hidden_channels, self.out_channels)
-        
-        
-    def init_conv(self, in_channels: int, out_channels: int, conv_layer: Optional[Module] = GCNConv,
-                  **kwargs) -> MessagePassing:
+
+    def init_conv(
+        self,
+        in_channels: int,
+        out_channels: int,
+        conv_layer: Optional[Module] = GCNConv,
+        **kwargs,
+    ) -> MessagePassing:
         return MixupConv(in_channels, out_channels, conv_layer, **kwargs)
 
     def reset_parameters(self):
-        r"""Resets all learnable parameters of the module."""
+        """Resets all learnable parameters of the module."""
         for conv in self.convs:
             conv.reset_parameters()
-        for norm in self.norms:
-            if hasattr(norm, 'reset_parameters'):
-                norm.reset_parameters()
         self.lin.reset_parameters()
 
     def forward(
-        self, 
-        x: Tensor, 
+        self,
+        x: Tensor,
         edge_index: Tensor,
         edge_index_b: Tensor,
         lam: float,
-        id_new_value_old: Tensor):
-
+        id_new_value_old: Tensor,
+    ) -> Tensor:
         """
         Forward pass for NodeMixup.
 
         Args:
-            x1 (Tensor): Node feature matrix of the first input graph with shape :obj:`[num_nodes, in_channels]`.
-            edge_index (Tensor): Graph connectivity in COO format with shape :obj:`[2, num_edges]`.
+            x (Tensor): Node feature matrix of the first input graph with
+                shape :obj:`[num_nodes, in_channels]`.
+            edge_index (Tensor): Graph connectivity in COO format with shape
+                :obj:`[2, num_edges]`.
             edge_index_b (Tensor): Graph connectivity in COO format for shuffled graph.
             lam (float): Lambda for the mixup.
             id_new_value_old (Tensor): Mapping of node IDs after shuffle.
@@ -101,10 +101,10 @@ class NodeMixup(torch.nn.Module):
         Returns:
             Tensor: Node feature matrix of shape :obj:`[num_nodes, out_channels]`.
         """
-        
         x0 = x
         x0_b = x0[id_new_value_old]
         x_mix = x0 * lam + x0_b * (1 - lam)
+
         for conv in self.convs[:-1]:
             x = conv(x0, edge_index, x_mix)
             x_b = conv(x0_b, edge_index_b, x_mix)
