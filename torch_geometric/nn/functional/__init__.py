@@ -14,14 +14,14 @@ from .loge import (
 )
 
 __all__ = classes = [
-    "bro",
-    "gini",
-    "loge",
-    "loge_with_logits",
-    "binary_loge",
-    "binary_loge_with_logits",
-    "LogELoss",
-    "LogEWithLogitsLoss",
-    "BinaryLogELoss",
-    "BinaryLogEWithLogitsLoss",
+    'bro',
+    'gini',
+    'loge',
+    'loge_with_logits',
+    'binary_loge',
+    'binary_loge_with_logits',
+    'LogELoss',
+    'LogEWithLogitsLoss',
+    'BinaryLogELoss',
+    'BinaryLogEWithLogitsLoss',
 ]

@@ -7,7 +7,6 @@ from torch.optim import Adam
 
 from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
-from torch_geometric.nn.functional import loge
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -74,10 +73,10 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         for epoch in range(1, epochs + 1):
             if run == runs - 1 and epoch == epochs:
                 with timeit():
-                    train(model, optimizer, data, loss_fn)
+                    train(model, optimizer, data)
             else:
-                train(model, optimizer, data, loss_fn)
-            eval_info = evaluate(model, data, loss_fn)
+                train(model, optimizer, data)
+            eval_info = evaluate(model, data)
             eval_info['epoch'] = epoch
 
             if logger is not None:
