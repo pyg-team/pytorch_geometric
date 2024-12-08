@@ -1,3 +1,6 @@
+"""This is an example of using mixup for node
+classification task.
+"""
 import os.path as osp
 import copy
 import numpy as np
