@@ -9,14 +9,16 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import DataLoader, Data, Batch
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn import GCNConv, GATConv, GINConv, SAGEConv
 
 from torch_geometric.contrib.nn import GraphMixup
 
 def parse_args():
     parser = argparse.ArgumentParser(description='GraphMixup Training Example')
-    parser.add_argument('--dataset', type=str, default='PROTEINS',
-                        help='Dataset name (default: PROTEINS)')
+    parser.add_argument('--dataset', type=str, default='PROTEINS',choices=['PROTEINS','DD'],
+                        help='Dataset name for graph classification (default: PROTEINS)')
+    parser.add_argument('--gnn', type=str, default='GCN',choices=['GCN', 'GAT', 'GraphSAGE'],
+                        help='GNN backbone to use (default: GCN)')
     parser.add_argument('--num_layers', type=int, default=3,
                         help='Number of layers (default: 3)')
     parser.add_argument('--hidden_channels', type=int, default=64,
@@ -35,6 +37,16 @@ def parse_args():
                         choices=['cuda', 'cpu'], help='Device (default: cuda if available)')
     args = parser.parse_args()
     return args
+
+def get_gnn_layer(gnn_type: str):
+    if gnn_type == 'GCN':
+        return GCNConv
+    elif gnn_type == 'GAT':
+        return GATConv
+    elif gnn_type == 'GraphSAGE':
+        return SAGEConv
+    else:
+        raise ValueError(f"Unsupported GNN type: {gnn_type}")
 
 def shuffle_batch(data_list, seed=None):
     if seed is not None:
@@ -70,12 +82,13 @@ def main():
 
     device = torch.device(args.device)
 
+    gnn_layer = get_gnn_layer(args.gnn)
     model = GraphMixup(
         num_layers=args.num_layers,
         in_channels=dataset.num_node_features,
         hidden_channels=args.hidden_channels,
         out_channels=dataset.num_classes,
-        conv_layer=GCNConv,
+        conv_layer=gnn_layer,
         dropout=args.dropout
     ).to(device)
 
