@@ -4,7 +4,6 @@ import torch
 import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
-from tqdm import tqdm
 
 from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
@@ -43,12 +42,12 @@ def random_planetoid_splits(data, num_classes):
 
 
 def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-              profiling, use_compile, loss_fn, permute_masks=None, logger=None):
+              profiling, use_compile, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
     if use_compile:
         model = torch.compile(model)
 
-    for run in tqdm(list(range(runs))):
+    for run in range(runs):
         data = dataset[0]
         if permute_masks is not None:
             data = permute_masks(data, dataset.num_classes)
@@ -152,30 +151,28 @@ def run_inference(dataset, model, epochs, profiling, bf16, use_compile,
 
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-        inference, profiling, bf16, use_compile, loss, permute_masks=None,
+        inference, profiling, bf16, use_compile, permute_masks=None,
         logger=None):
     if not inference:
         run_train(dataset, model, runs, epochs, lr, weight_decay,
-                  early_stopping, profiling, use_compile, loss, permute_masks,
+                  early_stopping, profiling, use_compile, permute_masks,
                   logger)
     else:
         run_inference(dataset, model, epochs, profiling, bf16, use_compile,
                       permute_masks, logger)
 
 
-def train(model, optimizer, data, loss_fn):
-    loss_fn = loge if loss_fn == 'loge' else F.nll_loss
+def train(model, optimizer, data):
     model.train()
     optimizer.zero_grad()
     out = model(data)
-    loss = loss_fn(out[data.train_mask], data.y[data.train_mask])
+    loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
 
 
 @torch.no_grad()
-def evaluate(model, data, loss_fn):
-    loss_fn = loge if loss_fn == 'loge' else F.nll_loss
+def evaluate(model, data):
     model.eval()
 
     out = model(data)
@@ -183,7 +180,7 @@ def evaluate(model, data, loss_fn):
     outs = {}
     for key in ['train', 'val', 'test']:
         mask = data[f'{key}_mask']
-        loss = float(loss_fn(out[mask], data.y[mask]))
+        loss = float(F.nll_loss(out[mask], data.y[mask]))
         pred = out[mask].argmax(1)
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
 

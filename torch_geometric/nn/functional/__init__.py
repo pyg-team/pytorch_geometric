@@ -8,6 +8,7 @@ from .loge import (
     binary_loge,
     binary_loge_with_logits,
     LogELoss,
+    LogEWithLogitsLoss,
     BinaryLogELoss,
     BinaryLogEWithLogitsLoss,
 )
@@ -20,6 +21,7 @@ __all__ = classes = [
     "binary_loge",
     "binary_loge_with_logits",
     "LogELoss",
+    "LogEWithLogitsLoss",
     "BinaryLogELoss",
     "BinaryLogEWithLogitsLoss",
 ]
