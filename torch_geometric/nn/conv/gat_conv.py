@@ -334,7 +334,6 @@ class GATConv(MessagePassing):
                 # same shape and that they their transformations are shared:
                 x_src = self.lin(x_src).view(-1, H, C)
                 if x_dst is not None and self.interactive_attn:
-                    assert self.lin_dst is not None
                     x_dst = self.lin(x_dst).view(-1, H, C)
             else:
                 assert self.lin_src is not None
