@@ -44,7 +44,7 @@ class TokenGT(nn.Module):
         activation (str): The activation function used in the sub-encoder
             layers.
         **transformer_kwargs: (optional): Additional arguments passed to
-            :class:`TransformerEncoderLayer` object.
+            :class:`torch.nn.TransformerEncoderLayer` object.
     """
     def __init__(
         self,
@@ -122,13 +122,15 @@ class TokenGT(nn.Module):
             edge_index (torch.Tensor): The edge indices.
             edge_attr (torch.Tensor, optional): The edge features. If provided,
                 needs to have number of channels equal to dim_edge.
-            ptr (torch.Tensor): The pointed vector that provides a cumulative
-                sum of each graph's node count. Note: when providing a single
-                graph with (say) 5 nodes as input, set equal to
+            ptr (torch.Tensor): The pointer vector that provides a cumulative
+                sum of each graph's node count. The number of entries is one
+                more than the number of input graphs. Note: when providing a
+                single graph with (say) 5 nodes as input, set equal to
                 torch.tensor([0, 5]).
             batch (torch.Tensor): The batch vector that relates each node to a
-                specific graph. Note: when providing a single graph with (say)
-                5 nodes as input, set equal to torch.tensor([0, 0, 0, 0, 0]).
+                specific graph. The number of entries is equal to the number of
+                rows in x. Note: when providing a single graph with (say) 5
+                nodes as input, set equal to torch.tensor([0, 0, 0, 0, 0]).
             node_ids (torch.Tensor): Orthonormal node identifiers (needs to
                 have number of channels equal to d_p).
         """
@@ -165,6 +167,9 @@ class TokenGT(nn.Module):
         batch: Tensor,
         node_ids: Tensor,
     ) -> Tuple[Tensor, Tensor, Tensor]:
+        r"""Adds node and type identifiers, and batches data due to different
+        graphs. Returns batched tokenized embeddings, together with masks.
+        """
         if self._is_laplacian_node_ids is True and self.training is True:
             # flip eigenvector signs and apply dropout
             unbatched_node_ids = list(unbatch(node_ids, batch))
@@ -199,7 +204,11 @@ class TokenGT(nn.Module):
         return batched_emb, src_key_padding_mask, node_mask
 
     def _get_node_token_emb(self, x: Tensor, node_ids: Tensor) -> Tensor:
-        # node token embedding: x_prj + node_ids_prj + type_ids
+        r"""Applies linear projection to node features, and adds projected node
+        identifiers and type identifiers.
+
+        node token embedding = x_prj + node_ids_prj + type_ids
+        """
         x_prj = self._node_features_enc(x)
         node_ids_prj = self._node_id_enc(torch.concat((node_ids, node_ids), 1))
         total_nodes = x.shape[0]
@@ -214,7 +223,11 @@ class TokenGT(nn.Module):
         edge_index: Tensor,
         node_ids: Tensor,
     ) -> Tensor:
-        # edge token embedding: edge_attr_prj + node_ids_prj + type_ids
+        r"""Applies linear projection to edge features (if present), and adds
+        projected node identifiers and type identifiers.
+
+        edge token embedding = edge_attr_prj + node_ids_prj + type_ids
+        """
         if edge_attr is not None:
             edge_attr_prj = self._edge_features_enc(edge_attr)
         else:
@@ -238,7 +251,11 @@ class TokenGT(nn.Module):
         ptr: Tensor,
         edge_index: Tensor,
         n_tokens: Tensor,
-    ):
+    ) -> Tensor:
+        r"""Combines node and edge embeddings of each input graph, and pads the
+        time dimension to equal that of the input graph with the most nodes +
+        edges.
+        """
         max_tokens = n_tokens.max().item()
         batch_size = n_tokens.shape[0]
         batched_emb = []
@@ -250,10 +267,14 @@ class TokenGT(nn.Module):
             pad = (0, 0, 0, max_tokens - n_tokens[i])
             padded_emb = F.pad(unpadded_emb, pad, value=0.0).unsqueeze(0)
             batched_emb.append(padded_emb)
-        return torch.concat(batched_emb, 0)
+        return torch.concat(batched_emb, 0)  # [b, t, c]
 
     @torch.no_grad()
     def _get_src_key_padding_mask(self, n_tokens: Tensor) -> Tensor:
+        r"""Computes the src_key_padding_mask tensor which identifies the
+        padded values of each batch entry. Passed to the `forward` method of
+        :class:`torch.nn.TransformerEncoderLayer`.
+        """
         n_batches = len(n_tokens)
         token_index = torch.arange(
             n_tokens.max().item(),
@@ -265,6 +286,10 @@ class TokenGT(nn.Module):
 
     @torch.no_grad()
     def _get_node_mask(self, n_tokens: Tensor, n_nodes: Tensor) -> Tensor:
+        r"""Computes the node mask that gets applied to batches of padded node
+        and edge embeddings to a 2d tensor of node embeddings which matches the
+        input node features.
+        """
         n_batches = len(n_tokens)
         token_index = torch.arange(
             n_tokens.max().item(),
@@ -276,6 +301,9 @@ class TokenGT(nn.Module):
 
     @torch.no_grad()
     def _get_n_edges(self, edge_index: Tensor, ptr: Tensor) -> Tensor:
+        r"""Computes tensor of integers where entries count the number of edges
+        belonging to each input graph.
+        """
         n_edges = torch.tensor(
             [((edge_index[0] >= ptr[i]) & (edge_index[0] < ptr[i + 1])).sum()
              for i in range(ptr.shape[0] - 1)], device=self._device)
@@ -293,7 +321,7 @@ class TokenGT(nn.Module):
         self.apply(lambda m: self._init_params(m, self._num_encoder_layers))
 
     @staticmethod
-    def _init_params(module, layers) -> None:
+    def _init_params(module: nn.Module, layers: int) -> None:
         # modified from https://github.com/jw9730/tokengt/blob/main/
         # large-scale-regression/tokengt/modules/tokenizer.py
         if isinstance(module, nn.Linear):
