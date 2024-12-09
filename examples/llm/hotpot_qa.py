@@ -22,7 +22,8 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 if __name__ == '__main__':
     seed_everything(50)
     parser = argparse.ArgumentParser()
-    parser.add_argument('--NV_NIM_MODEL', type=str, default="nvidia/llama-3.1-nemotron-70b-instruct")
+    parser.add_argument('--NV_NIM_MODEL', type=str,
+                        default="nvidia/llama-3.1-nemotron-70b-instruct")
     parser.add_argument('--NV_NIM_KEY', type=str, default="")
     parser.add_argument('--local_lm', action="store_true")
     parser.add_argument('--percent_data', type=float, default=1.0)
