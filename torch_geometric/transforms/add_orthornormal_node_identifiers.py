@@ -13,7 +13,7 @@ from torch_geometric.utils import get_laplacian, to_dense_adj
 class AddOrthonormalNodeIdentifiers(BaseTransform):
     r"""Adds orthonormal node identifiers to a given input graph as described
     in the `"Pure Transformers are Powerful Graph Learners"
-    <https://arxiv.org/pdf/2207.02505>` paper.
+    <https://arxiv.org/pdf/2207.02505>`_ paper.
     (functional name: :obj:`add_orthonormal_node_identifiers`). When
     use_laplacian is true, use as `pre_transform` to avoid unnecessary
     re-calculating of eigenvectors. Otherwise, use as `transform`.
