@@ -114,8 +114,7 @@ class GATv2Conv(MessagePassing):
         residual (bool, optional): If set to :obj:`True`, the layer will add
             a learnable skip-connection. (default: :obj:`False`)
         interactive_attn (bool, optional): If set to :obj:`False`, fixes
-            :math:`\mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i = 0`.
-            (default :obj:`True`)
+            :math:`\mathbf{\Theta}_{t}\mathbf{x}_i = 0`. (default :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
