@@ -2,7 +2,7 @@ import json
 import os
 import os.path as osp
 from glob import glob
-from typing import Callable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 import numpy as np
 import torch
@@ -133,7 +133,7 @@ class Teeth3DS(InMemoryDataset):
             extract_zip(path, self.raw_dir)  # Extract each downloaded part
             os.unlink(path)
 
-    def process_file(self, file_path) -> Optional[Data]:
+    def process_file(self, file_path: str) -> Optional[Data]:
         """Processes the input file path to load mesh data, annotations,
         and prepare the input features for a graph-based deep learning model.
 
@@ -145,7 +145,9 @@ class Teeth3DS(InMemoryDataset):
         """
         # Load mesh
         mesh = trimesh.load_mesh(file_path)
-
+        if isinstance(mesh, list):
+            # Handle the case where a list of Geometry objects is returned
+            mesh = mesh[0]  # Choose the first mesh
         # Perform sampling on mesh vertices
         if len(mesh.vertices) < self.n_sample:
             sampled_indices = np.random.choice(len(mesh.vertices),
@@ -173,13 +175,20 @@ class Teeth3DS(InMemoryDataset):
                 np.asarray(seg_annotations['instances'])[sampled_indices],
                 dtype=torch.float)
         else:
-            y = None
-            instances = None
+            y = torch.empty(0, 3)
+            instances = torch.empty(0, 3)
         # Load landmarks annotations
         landmarks_annotation_path = file_path.replace('.obj', '__kpt.json')
         # Parse keypoint annotations into structured tensors
-        keypoints_dict = {
+        keypoints_dict: Dict[str, List] = {
             key: []
+            for key in [
+                'Mesial', 'Distal', 'Cusp', 'InnerPoint', 'OuterPoint',
+                'FacialPoint'
+            ]
+        }
+        keypoint_tensors: Dict[str, torch.Tensor] = {
+            key: torch.empty(0, 3)
             for key in [
                 'Mesial', 'Distal', 'Cusp', 'InnerPoint', 'OuterPoint',
                 'FacialPoint'
@@ -197,8 +206,6 @@ class Teeth3DS(InMemoryDataset):
                                 dtype=torch.float).reshape(-1, 3)
                 for k, v in keypoints_dict.items()
             }
-        else:
-            keypoint_tensors = {k: None for k, v in keypoints_dict.items()}
         # Create the PyTorch Geometric Data object
         data = Data(pos=pos, x=x, y=y, instances=instances,
                     jaw=file_path.split('.obj')[0].split('_')[1],
@@ -228,7 +235,7 @@ class Teeth3DS(InMemoryDataset):
     def len(self) -> int:
         return len(self.processed_file_names)
 
-    def get(self, idx) -> Data:
+    def get(self, idx: int) -> Data:
         file = self.processed_file_names[idx]
         data = torch.load(osp.join(self.processed_dir, file))
         return data
@@ -244,7 +251,3 @@ if __name__ == '__main__':
     dataset_test = Teeth3DS(root="./Teeth3DS", split="Teeth3DS",
                             is_train=False)
     print(dataset_test)
-    from torch_geometric.data import DataLoader
-    loader = DataLoader(dataset_test, batch_size=16, shuffle=True)
-    sampled_data = next(iter(loader))
-    print(sampled_data)
