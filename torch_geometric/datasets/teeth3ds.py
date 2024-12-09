@@ -150,11 +150,11 @@ class Teeth3DS(InMemoryDataset):
             mesh = mesh[0]  # Choose the first mesh
         # Perform sampling on mesh vertices
         if hasattr(mesh, "vertices"):
-            vertices = mesh.vertices  # type: ignore
+            vertices = mesh.vertices
         else:
             raise AttributeError("Mesh object has no attribute 'vertices'")
         if hasattr(mesh, "vertex_normals"):
-            vertex_normals = mesh.vertex_normals  # type: ignore
+            vertex_normals = mesh.vertex_normals
         else:
             raise AttributeError(
                 "Mesh object has no attribute 'vertex_normals'")
