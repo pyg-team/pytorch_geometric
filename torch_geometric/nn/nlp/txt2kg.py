@@ -9,7 +9,6 @@ import torch.multiprocessing as mp
 CLIENT_INITD = False
 
 CLIENT = None
-NIM_MODEL = None
 GLOBAL_NIM_KEY = ""
 SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else.”"
 
@@ -19,14 +18,15 @@ class TXT2KG():
     nvidia/llama-3.1-nemotron-70b-instruct is on par or better than GPT4o
     in benchmarks. We need a high quality model to ensure high quality KG.
     Otherwise garbage in garbage out.
-    Use local_lm flag for debugging. You still need to be able to inference
-    a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'. Smaller LLMs
-    did not work at all in testing.
+    Use local_lm flag for local debugging/dev. You still need to be able to
+    inference a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'.
+    Smaller LLMs did not work at all in testing.
     Note this 14B model requires a considerable amount of VRAM.
     """
     def __init__(
         self,
-        NVIDIA_API_KEY: Optional[str] = '',
+        NVIDIA_NIM_MODEL: Optional[str] = "nvidia/llama-3.1-nemotron-70b-instruct",
+        NVIDIA_API_KEY: Optional[str] = "",
         local_LM: bool = False,
         chunk_size: int = 512,
     ) -> None:
@@ -36,6 +36,7 @@ class TXT2KG():
         else:
             assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
             self.NVIDIA_API_KEY = NVIDIA_API_KEY
+            self.NIM_MODEL = NVIDIA_NIM_MODEL
 
         self.chunk_size = 512
         # useful for approximating recall of subgraph retrieval algos
@@ -104,7 +105,7 @@ class TXT2KG():
         self.doc_id_counter += 1
 
 
-def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='') -> str:
+def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='', NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct") -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
@@ -112,8 +113,6 @@ def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='') -> str:
         global CLIENT
         CLIENT = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
                         api_key=GLOBAL_NIM_KEY)
-        global NIM_MODEL
-        NIM_MODEL = "nvidia/llama-3.1-nemotron-70b-instruct"
         CLIENT_INITD = True
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
@@ -165,9 +164,9 @@ def llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
-def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY):
+def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY, NIM_MODEL):
     out = llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
-                                GLOBAL_NIM_KEY=NIM_KEY)
+                                GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL)
     torch.save(out, "/tmp/outs_for_proc_" + str(rank))
 
 
