@@ -34,6 +34,9 @@ class AddOrthonormalNodeIdentifiers(BaseTransform):
         self._use_laplacian = use_laplacian
 
     def forward(self, data: Data) -> Data:
+        assert data.num_nodes is not None
+        assert data.edge_index is not None
+
         n = data.num_nodes
         if self._use_laplacian is True:
             node_ids = self._get_lap_eigenvectors(data.edge_index, n)
