@@ -57,7 +57,7 @@ class GATv2Conv(MessagePassing):
         \mathbf{\Theta}_{t} \mathbf{x}_i + \mathbf{\Theta}_{s} \mathbf{x}_k
         \right)\right)}.
 
-    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
+    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{j,i}`,
     the attention coefficients :math:`\alpha_{i,j}` are computed as
 
     .. math::
@@ -66,13 +66,13 @@ class GATv2Conv(MessagePassing):
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
         \mathbf{\Theta}_{t} \mathbf{x}_i
         + \mathbf{\Theta}_{s} \mathbf{x}_j
-        + \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
+        + \mathbf{\Theta}_{e} \mathbf{e}_{j,i}
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
         \mathbf{\Theta}_{t} \mathbf{x}_i
         + \mathbf{\Theta}_{s} \mathbf{x}_k
-        + \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]
+        + \mathbf{\Theta}_{e} \mathbf{e}_{k,i}]
         \right)\right)}.
 
     Args:
@@ -113,6 +113,9 @@ class GATv2Conv(MessagePassing):
             (default: :obj:`False`)
         residual (bool, optional): If set to :obj:`True`, the layer will add
             a learnable skip-connection. (default: :obj:`False`)
+        interactive_attn (bool, optional): If set to :obj:`False`, fixes
+            :math:`\mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i = 0`.
+            (default :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 

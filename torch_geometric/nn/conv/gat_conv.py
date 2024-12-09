@@ -55,7 +55,7 @@ class GATConv(MessagePassing):
         + \mathbf{a}^{\top}_{s}\mathbf{\Theta}_{s}\mathbf{x}_k
         \right)\right)}.
 
-    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
+    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{j,i}`,
     the attention coefficients :math:`\alpha_{i,j}` are computed as
 
     .. math::
@@ -64,13 +64,13 @@ class GATConv(MessagePassing):
         \exp\left(\mathrm{LeakyReLU}\left(
         \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i
         + \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_j
-        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
+        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{j,i}
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathrm{LeakyReLU}\left(
         \mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i
         + \mathbf{a}^{\top}_{s} \mathbf{\Theta}_{s}\mathbf{x}_k
-        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,k}
+        + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{k,i}
         \right)\right)}.
 
     If an integer is passed for :obj:`in_channels`, :math:`\mathbf{\Theta}_{s}
@@ -110,6 +110,9 @@ class GATConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         residual (bool, optional): If set to :obj:`True`, the layer will add
             a learnable skip-connection. (default: :obj:`False`)
+        interactive_attn (bool, optional): If set to :obj:`False`, fixes
+            :math:`\mathbf{a}^{\top}_{t} \mathbf{\Theta}_{t}\mathbf{x}_i = 0`.
+            (default :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
