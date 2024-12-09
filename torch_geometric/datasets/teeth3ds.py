@@ -149,19 +149,28 @@ class Teeth3DS(InMemoryDataset):
             # Handle the case where a list of Geometry objects is returned
             mesh = mesh[0]  # Choose the first mesh
         # Perform sampling on mesh vertices
-        if len(mesh.vertices) < self.n_sample:
-            sampled_indices = np.random.choice(len(mesh.vertices),
-                                               self.n_sample, replace=True)
+        if hasattr(mesh, "vertices"):
+            vertices = mesh.vertices  # type: ignore
+        else:
+            raise AttributeError("Mesh object has no attribute 'vertices'")
+        if hasattr(mesh, "vertex_normals"):
+            vertex_normals = mesh.vertex_normals  # type: ignore
+        else:
+            raise AttributeError(
+                "Mesh object has no attribute 'vertex_normals'")
+
+        if len(vertices) < self.n_sample:
+            sampled_indices = np.random.choice(len(vertices), self.n_sample,
+                                               replace=True)
         else:
             sampled_indices = bucket_fps_kdline_sampling(
-                mesh.vertices, self.n_sample, h=5, start_idx=0)
+                vertices, self.n_sample, h=5, start_idx=0)
         assert len(sampled_indices) == self.n_sample, (
             f"Sampled points mismatch: Expected {self.n_sample},"
             f" but got {len(sampled_indices)} for {file_path}")
         # Extract features and annotations for the sampled points
-        pos = torch.tensor(mesh.vertices[sampled_indices], dtype=torch.float)
-        x = torch.tensor(mesh.vertex_normals[sampled_indices],
-                         dtype=torch.float)
+        pos = torch.tensor(vertices[sampled_indices], dtype=torch.float)
+        x = torch.tensor(vertex_normals[sampled_indices], dtype=torch.float)
 
         # Load segmentation annotations
         seg_annotation_path = file_path.replace('.obj', '.json')
