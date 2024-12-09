@@ -13,8 +13,9 @@ class NodeMixup(torch.nn.Module):
     `Mixup for Node and Graph Classification
     <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper.
 
-    For examples of using the Mixup for Node Classification, see
-    `examples/contrib/node_mixup.py`.
+    .. note::
+        For examples of using the Mixup for Node Classification, see
+        `examples/contrib/node_mixup.py`.
 
     Args:
         num_layers (int): Number of message passing layers.

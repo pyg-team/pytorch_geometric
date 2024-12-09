@@ -13,8 +13,9 @@ class GraphMixup(torch.nn.Module):
     `Mixup for Node and Graph Classification
     <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper.
 
-    For examples of using Mixup for Graph Classification, see
-    `examples/contrib/graph_mixup.py`.
+    .. note::
+        For examples of using Mixup for Graph Classification, see
+        `examples/contrib/graph_mixup.py`.
 
     This model applies mixup at the graph-level embedding space. Given two
     batches of graphs, the embeddings of both batches are combined based on

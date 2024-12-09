@@ -6,7 +6,7 @@ from typing import Optional
 
 
 class MixupConv(MessagePassing):
-    """MixupConv is a flexible graph convolution layer that supports mixup
+    r"""MixupConv is a flexible graph convolution layer that supports mixup
     logic between two sets of node features (`x1` and `x2`). It allows users
     to utilize different types of graph convolutions (e.g., GCNConv, GATConv)
     while maintaining the mixup logic, where messages from `x1` are passed to
