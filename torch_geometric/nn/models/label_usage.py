@@ -35,6 +35,7 @@ class LabelUsage(torch.nn.Module):
         split_ratio: float = 0.5,
         num_recycling_iterations: int = 0,
         return_tuple: bool = False,
+        training: bool = True
     ):
 
         super().__init__()
@@ -43,6 +44,7 @@ class LabelUsage(torch.nn.Module):
         self.split_ratio = split_ratio
         self.num_recycling_iterations = num_recycling_iterations
         self.return_tuple = return_tuple
+        self.training = training
 
     def forward(
         self,
@@ -50,8 +52,6 @@ class LabelUsage(torch.nn.Module):
         edge_index: Adj,
         y: Tensor,
         mask: Tensor,
-        val_idx: Tensor,
-        test_idx: Tensor,
     ):
         r"""Forward pass using label usage algorithm.
 
@@ -59,50 +59,62 @@ class LabelUsage(torch.nn.Module):
             feat (torch.Tensor): Node feature tensor of dimension (N,F)
                 where N is the number of nodes and
                 F is the number of features per node
-            edge_index (torch.Tensor or SparseTensor): The edge indices with
-                dimension (N,N) for a dense adjacency matrix or (2,E) for a
-                sparse adjacency representation where E is the number of edges
+            edge_index (torch.Tensor or SparseTensor): The edge connectivity
+                to be passed to base_model
             y (torch.Tensor): Node ground-truth labels tensor of dimension
                 of (N,) for 1D tensor or (N,1) for 2D tensor
-            mask (torch.Tensor): Global indices of all nodes in training
-                set or mini-batch with dimension (N_train,) where N_train
-                is the number of nodes in training set or mini-batch
-            val_idx (torch.Tensor): Node indices in validation set with
-                dimension (N_val,) where N_val is the number of nodes
-                in validation set
-            test_idx (torch.Tensor): Node indices in test set with dimension
-                (N_test,) where N_test is the number of nodes in test set
+            mask (torch.Tensor): A mask or index tensor denoting which nodes
+                are used during training
         """
-        assert feat.dim() == 2, "feat must be 2D but got shape {feat.shape}"
-
-        # random split mask based on split ratio
-        split_mask = torch.rand(mask.shape) < self.split_ratio
-        train_labels_idx = mask[split_mask]  # D_L: nodes with labels
-        train_pred_idx = mask[~split_mask]  # D_U: nodes to predict labels
-
+        assert feat.dim() == 2, f"feat must be 2D but got shape {feat.shape}"
         assert y.dim() == 1 or (y.dim() == 2 and y.size(1) == 1),\
-            "Expected y to be either (N,) or (N, 1), but got shape {y.shape}"
-        # add labels to features for train_labels_idx nodes
-        # zero value nodes in train_pred_idx
+            f"Expected y to be either (N,) or (N, 1), but got shape {y.shape}"
+
+        # set unlabeled mask for unlabeled indices
+        unlabeled_mask = torch.ones(feat.size(0), dtype=torch.bool).to(feat.device)
+
+        # add labels to features for train_labels nodes if in training
+        # else fill true labels for all nodes in mask
+        # zero value nodes in train_pred
         onehot = torch.zeros([feat.shape[0], self.num_classes]).to(feat.device)
-        # create a one-hot encoding according to tensor dim
-        if y.dim() == 2:
-            onehot[train_labels_idx, y[train_labels_idx, 0]] = 1
+        if self.training:
+            # random split mask based on split ratio
+            if mask.dtype == torch.bool:
+                split_mask = torch.rand(mask.sum()) < self.split_ratio
+                train_labels = mask.nonzero(as_tuple=False).view(-1)[split_mask] # convert to index tensor
+                train_pred = mask.nonzero(as_tuple=False).view(-1)[~split_mask] 
+            else:
+                split_mask = torch.rand(mask.shape) < self.split_ratio
+                train_labels = mask[split_mask] # D_L: nodes with labels
+                train_pred = mask[~split_mask] # D_U: nodes to predict labels
+
+            unlabeled_mask[train_labels] = False
+
+            # create a one-hot encoding according to tensor dim
+            if y.dim() == 2:
+                onehot[train_labels, y[train_labels, 0]] = 1
+            else:
+                onehot[train_labels, y[train_labels]] = 1
         else:
-            onehot[train_labels_idx, y[train_labels_idx]] = 1
+            unlabeled_mask[mask] = False
+
+            # create a one-hot encoding according to tensor dim
+            if y.dim() == 2:
+                onehot[mask, y[mask, 0]] = 1
+            else:
+                onehot[mask, y[mask]] = 1
+                
         feat = torch.cat([feat, onehot], dim=-1)
 
-        # set predictions for all unlabeled indices
-        unlabeled_idx = torch.cat([train_pred_idx, val_idx, test_idx])
         # label reuse procedure
         pred = self.base_model(feat, edge_index)
-        for _ in range(max(1, self.num_recycling_iterations + 1)):
+        for _ in range(self.num_recycling_iterations):
             pred = pred.detach()
-            feat[unlabeled_idx,
-                 -self.num_classes:] = F.softmax(pred[unlabeled_idx], dim=-1)
+            feat[unlabeled_mask,
+                -self.num_classes:] = F.softmax(pred[unlabeled_mask], dim=-1)
             pred = self.base_model(feat, edge_index)
 
         # return tuples if specified
-        if self.return_tuple:
-            return pred, train_labels_idx, train_pred_idx
+        if self.return_tuple and self.training:
+            return pred, train_labels, train_pred
         return pred
