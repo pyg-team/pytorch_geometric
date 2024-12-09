@@ -110,9 +110,12 @@ if __name__ == '__main__':
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
-        print("Q=", q)
-        print("A=", QA_pair[1])
-        print("retrieved_triples =", retrieved_triples)
+        ##########
+        # for debug
+        # print("Q=", q)
+        # print("A=", QA_pair[1])
+        # print("retrieved_triples =", retrieved_triples)
+        ####
         num_relevant_out_of_retrieved = float(
             sum([
                 int(bool(retrieved_triple in golden_triples))

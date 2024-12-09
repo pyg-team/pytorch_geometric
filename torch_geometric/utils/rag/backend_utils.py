@@ -116,7 +116,7 @@ class RemoteGraphBackendLoader:
 
     def load(self, pid: Optional[int] = None) -> RemoteGraphBackend:
         if self.datatype == RemoteDataType.DATA:
-            data_obj = torch.load(self.path)
+            data_obj = torch.load(self.path, weights_only=False)
             graph_store = self.graph_store_type.from_data(
                 edge_id=data_obj['edge_id'], edge_index=data_obj.edge_index,
                 num_nodes=data_obj.num_nodes)
