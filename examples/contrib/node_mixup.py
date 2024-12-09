@@ -209,14 +209,15 @@ def main():
             best_test_acc = test_acc
         if epoch % 10 == 0 or epoch == 1:
             print(
-                f"Epoch: {epoch:03d}, Loss: {loss:.4f}, \
-                Train Acc: {train_acc:.4f}"
+                f"Epoch: {epoch:03d}, Loss: {loss:.4f}, "
+                f"Train Acc: {train_acc:.4f}"
                 f"Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}"
             )
 
     print(
-        f"Best Val Acc: {best_val_acc:.4f}, Corresponding Test Acc: \
-            {best_test_acc:.4f}")
+        f"Best Val Acc: {best_val_acc:.4f}, Corresponding Test Acc: "
+        f"{best_test_acc:.4f}"
+    )
 
 
 if __name__ == '__main__':
