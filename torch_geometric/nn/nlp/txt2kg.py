@@ -25,7 +25,8 @@ class TXT2KG():
     """
     def __init__(
         self,
-        NVIDIA_NIM_MODEL: Optional[str] = "nvidia/llama-3.1-nemotron-70b-instruct",
+        NVIDIA_NIM_MODEL: Optional[
+            str] = "nvidia/llama-3.1-nemotron-70b-instruct",
         NVIDIA_API_KEY: Optional[str] = "",
         local_LM: bool = False,
         chunk_size: int = 512,
@@ -105,7 +106,9 @@ class TXT2KG():
         self.doc_id_counter += 1
 
 
-def chunk_to_triples_str_cloud(txt: str, GLOBAL_NIM_KEY='', NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct") -> str:
+def chunk_to_triples_str_cloud(
+        txt: str, GLOBAL_NIM_KEY='',
+        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct") -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
@@ -164,7 +167,8 @@ def llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
-def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY, NIM_MODEL):
+def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
+                     NIM_MODEL):
     out = llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
                                 GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL)
     torch.save(out, "/tmp/outs_for_proc_" + str(rank))
