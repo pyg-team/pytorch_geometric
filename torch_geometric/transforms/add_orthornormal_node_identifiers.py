@@ -16,6 +16,9 @@ class AddOrthonormalNodeIdentifiers(BaseTransform):
     <https://arxiv.org/pdf/2207.02505>` paper.
     (functional name: :obj:`add_orthonormal_node_identifiers`).
 
+    Note: when use_laplacian is :object:`True`, use as `pre_transform` to
+        avoid re-calculating eigenvectors.
+
     Args:
         d_p (int): Dimension of node identifiers. If using Laplacian
             identifiers and d_p is smaller than the number of nodes in the
