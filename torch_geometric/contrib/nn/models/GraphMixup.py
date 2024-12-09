@@ -1,15 +1,15 @@
+from typing import Callable
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Module, ModuleList, Linear
-from torch_geometric.nn import GCNConv, global_mean_pool
+from torch.nn import Linear, Module, ModuleList
 
-from typing import Callable
+from torch_geometric.nn import GCNConv, global_mean_pool
 
 
 class GraphMixup(torch.nn.Module):
-    r"""
-    The Mixup model for Graph Classification from the
+    r"""The Mixup model for Graph Classification from the
     `Mixup for Node and Graph Classification
     <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper.
 
@@ -32,18 +32,10 @@ class GraphMixup(torch.nn.Module):
         readout (Callable): Readout function to aggregate node embeddings
             into a graph-level embedding. Defaults to global_mean_pool.
     """
-
-    def __init__(
-        self,
-        num_layers: int,
-        in_channels: int,
-        hidden_channels: int,
-        out_channels: int,
-        conv_layer: Module = GCNConv,
-        dropout: float = 0.5,
-        readout: Callable = global_mean_pool,
-        **kwargs
-    ):
+    def __init__(self, num_layers: int, in_channels: int, hidden_channels: int,
+                 out_channels: int, conv_layer: Module = GCNConv,
+                 dropout: float = 0.5, readout: Callable = global_mean_pool,
+                 **kwargs):
         super().__init__()
         self.num_layers = num_layers
         self.in_channels = in_channels
@@ -55,26 +47,15 @@ class GraphMixup(torch.nn.Module):
         self.convs = ModuleList()
         self.convs.append(conv_layer(in_channels, hidden_channels, **kwargs))
         for _ in range(num_layers - 1):
-            self.convs.append(conv_layer(
-                hidden_channels,
-                hidden_channels,
-                **kwargs)
-            )
+            self.convs.append(
+                conv_layer(hidden_channels, hidden_channels, **kwargs))
 
         self.lin = Linear(hidden_channels, out_channels)
 
-    def forward(
-        self,
-        x: Tensor,
-        edge_index: Tensor,
-        batch: Tensor,
-        x_b: Tensor,
-        edge_index_b: Tensor,
-        batch_b: Tensor,
-        lam: float
-    ) -> Tensor:
-        """
-        Forward pass for the GraphMixup model.
+    def forward(self, x: Tensor, edge_index: Tensor, batch: Tensor,
+                x_b: Tensor, edge_index_b: Tensor, batch_b: Tensor,
+                lam: float) -> Tensor:
+        """Forward pass for the GraphMixup model.
 
         This method takes two batches of graph data (x, edge_index, batch)
         and (x_b, edge_index_b, batch_b) along with a mixup coefficient `lam`.

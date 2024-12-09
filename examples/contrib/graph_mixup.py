@@ -1,16 +1,17 @@
-"""
-This is an example of using mixup for graph classification task.
+"""This is an example of using mixup for graph classification task.
 """
 
-import os.path as osp
 import argparse
+import os.path as osp
+
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import TUDataset
-from torch_geometric.data import DataLoader, Batch
-from torch_geometric.nn import GCNConv, GATConv, SAGEConv
+
 from torch_geometric.contrib.nn import GraphMixup
+from torch_geometric.data import Batch, DataLoader
+from torch_geometric.datasets import TUDataset
+from torch_geometric.nn import GATConv, GCNConv, SAGEConv
 
 
 def parse_args():
@@ -66,12 +67,8 @@ def parse_args():
         default=2.0,
         help='Alpha parameter for Beta distribution in mixup (default: 2.0)',
     )
-    parser.add_argument(
-        '--seed',
-        type=int,
-        default=42,
-        help='Random seed (default: 42)'
-    )
+    parser.add_argument('--seed', type=int, default=42,
+                        help='Random seed (default: 42)')
     parser.add_argument(
         '--device',
         type=str,
@@ -112,9 +109,8 @@ def main():
     np.random.seed(args.seed)
 
     # Load dataset
-    path = osp.join(
-        osp.dirname(osp.realpath(__file__)), '..', 'data', args.dataset
-    )
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                    args.dataset)
     dataset = TUDataset(path, name=args.dataset).shuffle()
 
     # Split dataset into train/val/test
@@ -212,15 +208,11 @@ def main():
             best_test_acc = test_acc
 
         if epoch % 10 == 0 or epoch == 1:
-            print(
-                f"Epoch: {epoch:03d}, Loss: {loss:.4f}, "
-                f"Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}"
-            )
+            print(f"Epoch: {epoch:03d}, Loss: {loss:.4f}, "
+                  f"Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}")
 
-    print(
-        f"Best Val Acc: {best_val_acc:.4f}, "
-        f"Corresponding Test Acc: {best_test_acc:.4f}"
-    )
+    print(f"Best Val Acc: {best_val_acc:.4f}, "
+          f"Corresponding Test Acc: {best_test_acc:.4f}")
 
 
 if __name__ == "__main__":

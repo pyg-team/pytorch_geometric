@@ -1,15 +1,16 @@
 from typing import Optional
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Module, ModuleList
-from torch_geometric.nn import GCNConv, MessagePassing
+
 from torch_geometric.contrib.nn.conv import MixupConv
+from torch_geometric.nn import GCNConv, MessagePassing
 
 
 class NodeMixup(torch.nn.Module):
-    """
-    The Mixup model for Node Classification from the
+    """The Mixup model for Node Classification from the
     `Mixup for Node and Graph Classification
     <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper.
 
@@ -29,7 +30,6 @@ class NodeMixup(torch.nn.Module):
             to use (e.g., GCNConv, GATConv). Defaults to GCNConv.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
     """
-
     def __init__(
         self,
         num_layers: int,
@@ -54,15 +54,12 @@ class NodeMixup(torch.nn.Module):
 
         self.convs = ModuleList()
         self.convs.append(
-            self.init_conv(in_channels, hidden_channels, conv_layer, **kwargs)
-        )
+            self.init_conv(in_channels, hidden_channels, conv_layer, **kwargs))
 
         for _ in range(num_layers - 1):
             self.convs.append(
-                self.init_conv(
-                    hidden_channels, hidden_channels,
-                    conv_layer, **kwargs)
-            )
+                self.init_conv(hidden_channels, hidden_channels, conv_layer,
+                               **kwargs))
 
         self.lin = torch.nn.Linear(hidden_channels, self.out_channels)
 
@@ -89,8 +86,7 @@ class NodeMixup(torch.nn.Module):
         lam: float,
         id_new_value_old: Tensor,
     ) -> Tensor:
-        """
-        Forward pass for NodeMixup.
+        """Forward pass for NodeMixup.
 
         Args:
             x (Tensor): Node feature matrix of the first input graph with

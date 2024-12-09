@@ -1,8 +1,9 @@
+from typing import Optional
+
 import torch
 from torch.nn import Module
-from torch_geometric.nn import GCNConv
-from torch_geometric.nn import MessagePassing
-from typing import Optional
+
+from torch_geometric.nn import GCNConv, MessagePassing
 
 
 class MixupConv(MessagePassing):

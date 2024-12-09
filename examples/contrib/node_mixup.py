@@ -1,17 +1,18 @@
-"""
-This is an example of using mixup for node classification task.
+"""This is an example of using mixup for node classification task.
 """
 
-import os.path as osp
+import argparse
 import copy
+import os.path as osp
+
 import numpy as np
 import torch
 import torch.nn.functional as F
+
+from torch_geometric.contrib.nn import NodeMixup
+from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
 from torch_geometric.transforms import NormalizeFeatures
-from torch_geometric.data import Data
-from torch_geometric.contrib.nn import NodeMixup
-import argparse
 
 
 def parse_args():
@@ -28,28 +29,16 @@ def parse_args():
     )
 
     # Training hyperparameters
-    parser.add_argument(
-        '--num_layers',
-        type=int,
-        default=3,
-        help='Number of layers (default: 3)')
-    parser.add_argument(
-        '--hidden_channels',
-        type=int,
-        default=256,
-        help='Number of hidden channels (default: 256)')
-    parser.add_argument(
-        '--dropout',
-        type=float,
-        default=0.4,
-        help='Dropout rate (default: 0.4)')
+    parser.add_argument('--num_layers', type=int, default=3,
+                        help='Number of layers (default: 3)')
+    parser.add_argument('--hidden_channels', type=int, default=256,
+                        help='Number of hidden channels (default: 256)')
+    parser.add_argument('--dropout', type=float, default=0.4,
+                        help='Dropout rate (default: 0.4)')
     parser.add_argument('--lr', type=float, default=0.001,
                         help='Learning rate (default: 0.001)')
-    parser.add_argument(
-        '--epochs',
-        type=int,
-        default=300,
-        help='Number of training epochs (default: 300)')
+    parser.add_argument('--epochs', type=int, default=300,
+                        help='Number of training epochs (default: 300)')
 
     # Mixup parameters
     parser.add_argument(
@@ -60,23 +49,14 @@ def parse_args():
     )
 
     # Split ratios
-    parser.add_argument(
-        '--train_ratio',
-        type=float,
-        default=0.6,
-        help='Ratio of training data (default: 0.6)')
-    parser.add_argument(
-        '--val_ratio',
-        type=float,
-        default=0.2,
-        help='Ratio of validation data (default: 0.2)')
+    parser.add_argument('--train_ratio', type=float, default=0.6,
+                        help='Ratio of training data (default: 0.6)')
+    parser.add_argument('--val_ratio', type=float, default=0.2,
+                        help='Ratio of validation data (default: 0.2)')
 
     # Miscellaneous
-    parser.add_argument(
-        '--seed',
-        type=int,
-        default=42,
-        help='Random seed for reproducibility (default: 42)')
+    parser.add_argument('--seed', type=int, default=42,
+                        help='Random seed for reproducibility (default: 42)')
     parser.add_argument(
         '--device',
         type=str,
@@ -119,12 +99,8 @@ def main():
 
     # Load dataset
     dataset_name = args.dataset
-    path = osp.join(
-        osp.dirname(
-            osp.realpath(__file__)),
-        '..',
-        'data',
-        dataset_name)
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                    dataset_name)
     dataset = Planetoid(path, dataset_name, transform=NormalizeFeatures())
     data = dataset[0]
 
@@ -161,18 +137,11 @@ def main():
         data_b = data_b.to(device)
 
         optimizer.zero_grad()
-        out = model(
-            data.x,
-            data.edge_index,
-            data_b.edge_index,
-            lam,
-            id_new_value_old)
-        loss = (
-            F.nll_loss(out[data.train_id],
-                       data.y[data.train_id]) * lam
-            + F.nll_loss(out[data.train_id],
-                         data_b.y[data.train_id]) * (1 - lam)
-        )
+        out = model(data.x, data.edge_index, data_b.edge_index, lam,
+                    id_new_value_old)
+        loss = (F.nll_loss(out[data.train_id], data.y[data.train_id]) * lam +
+                F.nll_loss(out[data.train_id], data_b.y[data.train_id]) *
+                (1 - lam))
 
         loss.backward()
         optimizer.step()
@@ -183,13 +152,8 @@ def main():
     def test(data):
         """Testing function."""
         model.eval()
-        out = model(
-            data.x,
-            data.edge_index,
-            data.edge_index,
-            1,
-            np.arange(
-                data.num_nodes))
+        out = model(data.x, data.edge_index, data.edge_index, 1,
+                    np.arange(data.num_nodes))
         pred = out.argmax(dim=-1)
         correct = pred.eq(data.y)
         accs = []
@@ -208,16 +172,12 @@ def main():
             best_val_acc = val_acc
             best_test_acc = test_acc
         if epoch % 10 == 0 or epoch == 1:
-            print(
-                f"Epoch: {epoch:03d}, Loss: {loss:.4f}, "
-                f"Train Acc: {train_acc:.4f}"
-                f"Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}"
-            )
+            print(f"Epoch: {epoch:03d}, Loss: {loss:.4f}, "
+                  f"Train Acc: {train_acc:.4f}"
+                  f"Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}")
 
-    print(
-        f"Best Val Acc: {best_val_acc:.4f}, Corresponding Test Acc: "
-        f"{best_test_acc:.4f}"
-    )
+    print(f"Best Val Acc: {best_val_acc:.4f}, Corresponding Test Acc: "
+          f"{best_test_acc:.4f}")
 
 
 if __name__ == '__main__':
