@@ -19,6 +19,43 @@ from torch_geometric.data import (
 
 
 class Teeth3DS(InMemoryDataset):
+    r"""Teeth3DS+, An Extended Benchmark for Intra-oral 3D Scans Analysis."""
+    """
+    is the first comprehensive public benchmark designed to advance the
+    field of intra-oral 3D scan analysis.
+    Developed as part of the 3DTeethSeg 2022 and 3DTeethLand 2024 MICCAI
+    challenges, Teeth3DS+ aims to drive research in teeth identification,
+    segmentation, labeling, 3D modeling, and dental landmark identification.
+    The dataset includes at least 1,800 intra-oral scans
+    (containing 23,999 annotated teeth) collected from 900 patients,
+    covering both upper and lower jaws separately.
+    <https://crns-smartvision.github.io/teeth3ds/>
+
+    Args:
+        root (str): Root directory where the dataset is stored
+                    or will be downloaded.
+        split (str): Dataset split name, e.g., "Teeth3DS".
+                     or ["3DTeethSeg22_challenge", "3DTeethLand_challenge"].
+        is_train (bool, optional): If True, use the training set;
+                                   otherwise, use the test set.
+        n_sample (int, optional): Number of points to sample from each mesh.
+                                  Default is 30000.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+    """
+
     urls = {
         "data_part_1.zip":
         'https://osf.io/download/qhprs/',
@@ -33,7 +70,7 @@ class Teeth3DS(InMemoryDataset):
         "data_part_6.zip":
         'https://osf.io/download/23hgq/',
         "data_part_7.zip":
-        'https://osf.io/download/en4rx/',
+        'https://osf.io/download/u83ad/',
         "train_test_split":
         "https://files.de-1.osf.io/v1/"
         "resources/xctdy/providers/osfstorage/?zip="
@@ -49,8 +86,8 @@ class Teeth3DS(InMemoryDataset):
         root: str,
         split: str = "Teeth3DS",
         # [3DTeethSeg22_challenge, 3DTeethLand_challenge]
-        is_train=True,
-        n_sample=30000,
+        is_train: bool = True,
+        n_sample: int = 30000,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
@@ -96,7 +133,7 @@ class Teeth3DS(InMemoryDataset):
             extract_zip(path, self.raw_dir)  # Extract each downloaded part
             os.unlink(path)
 
-    def process_file(self, file_path):
+    def process_file(self, file_path) -> Optional[Data]:
         """Processes the input file path to load mesh data, annotations,
         and prepare the input features for a graph-based deep learning model.
 
@@ -116,7 +153,9 @@ class Teeth3DS(InMemoryDataset):
         else:
             sampled_indices = bucket_fps_kdline_sampling(
                 mesh.vertices, self.n_sample, h=5, start_idx=0)
-
+        assert len(sampled_indices) == self.n_sample, (
+            f"Sampled points mismatch: Expected {self.n_sample},"
+            f" but got {len(sampled_indices)} for {file_path}")
         # Extract features and annotations for the sampled points
         pos = torch.tensor(mesh.vertices[sampled_indices], dtype=torch.float)
         x = torch.tensor(mesh.vertex_normals[sampled_indices],
@@ -162,7 +201,7 @@ class Teeth3DS(InMemoryDataset):
             keypoint_tensors = {k: None for k, v in keypoints_dict.items()}
         # Create the PyTorch Geometric Data object
         data = Data(pos=pos, x=x, y=y, instances=instances,
-                    jaw=seg_annotations["jaw"],
+                    jaw=file_path.split('.obj')[0].split('_')[1],
                     mesial=keypoint_tensors['Mesial'],
                     distal=keypoint_tensors['Distal'],
                     cusp=keypoint_tensors['Cusp'],
@@ -182,15 +221,14 @@ class Teeth3DS(InMemoryDataset):
         for file in tqdm(self.processed_file_names):
             file_name = file.split('.')[0]
             file_path = glob(self.raw_dir + '/**/*/*' + file_name + '.obj')
-            # TODO handle with missing obj file
             if len(file_path) == 1:
                 data = self.process_file(file_path[0])
                 torch.save(data, osp.join(self.processed_dir, file))
 
-    def len(self):
+    def len(self) -> int:
         return len(self.processed_file_names)
 
-    def get(self, idx):
+    def get(self, idx) -> Data:
         file = self.processed_file_names[idx]
         data = torch.load(osp.join(self.processed_dir, file))
         return data
@@ -201,9 +239,9 @@ class Teeth3DS(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_train = Teeth3DS(root="./Teeth3DS", split="3DTeethLand_challenge")
+    dataset_train = Teeth3DS(root="./Teeth3DS", split="Teeth3DS")
     print(dataset_train)
-    dataset_test = Teeth3DS(root="./Teeth3DS", split="3DTeethLand_challenge",
+    dataset_test = Teeth3DS(root="./Teeth3DS", split="Teeth3DS",
                             is_train=False)
     print(dataset_test)
     from torch_geometric.data import DataLoader
