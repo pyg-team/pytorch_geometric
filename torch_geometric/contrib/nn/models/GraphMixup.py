@@ -2,22 +2,23 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Module, ModuleList, Linear
-from torch_geometric.nn import GCNConv, global_mean_pool, MessagePassing
+from torch_geometric.nn import GCNConv, global_mean_pool
 
-from typing import Optional, Union, Callable
+from typing import Callable
+
 
 class GraphMixup(torch.nn.Module):
-    r"""The Mixup model for Graph Classification from the 
+    r"""
+    The Mixup model for Graph Classification from the
     `Mixup for Node and Graph Classification
-    <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper
+    <https://dl.acm.org/doi/pdf/10.1145/3442381.3449796>`_ paper.
 
-    .. note::
-        For examples of using the Mixup for Graph Classification, see
-        `examples/contrib/graph_mixup.py
+    For examples of using Mixup for Graph Classification, see
+    `examples/contrib/graph_mixup.py`.
 
     This model applies mixup at the graph-level embedding space. Given two
-    batches of graphs, the embeddings of both batches are combined based on 
-    a mixup coefficient lambda. The final mixed embedding is then passed 
+    batches of graphs, the embeddings of both batches are combined based on
+    a mixup coefficient lambda. The final mixed embedding is then passed
     through a linear layer (or MLP) followed by a softmax output layer.
 
     Args:
@@ -30,6 +31,7 @@ class GraphMixup(torch.nn.Module):
         readout (Callable): Readout function to aggregate node embeddings
             into a graph-level embedding. Defaults to global_mean_pool.
     """
+
     def __init__(
         self,
         num_layers: int,
@@ -52,7 +54,11 @@ class GraphMixup(torch.nn.Module):
         self.convs = ModuleList()
         self.convs.append(conv_layer(in_channels, hidden_channels, **kwargs))
         for _ in range(num_layers - 1):
-            self.convs.append(conv_layer(hidden_channels, hidden_channels, **kwargs))
+            self.convs.append(conv_layer(
+                hidden_channels,
+                hidden_channels,
+                **kwargs)
+            )
 
         self.lin = Linear(hidden_channels, out_channels)
 

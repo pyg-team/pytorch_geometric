@@ -24,8 +24,8 @@ class NodeMixup(torch.nn.Module):
         out_channels (int, optional): If not set to :obj:`None`, will apply a
             final linear transformation to convert hidden node embeddings to
             output size :obj:`out_channels`. (default: :obj:`None`)
-        conv_layer (torch.nn.Module, optional): The PyG convolutional layer to use
-            (e.g., GCNConv, GATConv). Defaults to GCNConv.
+        conv_layer (torch.nn.Module, optional): The PyG convolutional layer
+            to use (e.g., GCNConv, GATConv). Defaults to GCNConv.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
     """
 
@@ -58,7 +58,9 @@ class NodeMixup(torch.nn.Module):
 
         for _ in range(num_layers - 1):
             self.convs.append(
-                self.init_conv(hidden_channels, hidden_channels, conv_layer, **kwargs)
+                self.init_conv(
+                    hidden_channels, hidden_channels,
+                    conv_layer, **kwargs)
             )
 
         self.lin = torch.nn.Linear(hidden_channels, self.out_channels)
@@ -94,12 +96,14 @@ class NodeMixup(torch.nn.Module):
                 shape :obj:`[num_nodes, in_channels]`.
             edge_index (Tensor): Graph connectivity in COO format with shape
                 :obj:`[2, num_edges]`.
-            edge_index_b (Tensor): Graph connectivity in COO format for shuffled graph.
+            edge_index_b (Tensor): Graph connectivity in COO format for
+                shuffled graph.
             lam (float): Lambda for the mixup.
             id_new_value_old (Tensor): Mapping of node IDs after shuffle.
 
         Returns:
-            Tensor: Node feature matrix of shape :obj:`[num_nodes, out_channels]`.
+            Tensor: Node feature matrix of shape: obj:`[num_nodes,
+                out_channels]`.
         """
         x0 = x
         x0_b = x0[id_new_value_old]
