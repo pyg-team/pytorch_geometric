@@ -6,6 +6,7 @@ import os.path as osp
 import numpy as np
 
 import torch
+from torch.utils.data import random_split
 
 from torch_geometric.data import Data, InMemoryDataset
 
@@ -52,17 +53,21 @@ class MedShapeNet(InMemoryDataset):
         self,
         root: str,
         size: int = 100,
-        train: bool = True,
+        split: str = 'train',
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
     ) -> None:
         self.size = size
-        self.train = train
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        path = self.processed_paths[0] if train else self.processed_paths[1]
+        if split == 'train':
+            path = self.processed_paths[0]
+        elif split == 'val':
+            path = self.processed_paths[1]
+        else:
+            path = self.processed_paths[2]
         self.load(path)
 
 
@@ -75,7 +80,7 @@ class MedShapeNet(InMemoryDataset):
 
   @property
   def processed_file_names(self) -> List[str]:
-      return ['training.pt','test.pt']
+      return ['train.pt','val','test.pt']
 
   @property
   def raw_paths(self):
@@ -84,32 +89,52 @@ class MedShapeNet(InMemoryDataset):
     files = self.raw_file_names
     return [osp.join(self.raw_dir, f) for f in files] or osp.join(self.raw_dir, files)
 
-  def download(self):
+  def process(self) -> None:
     pool = urllib3.HTTPConnectionPool("medshapenet.ddns.net", maxsize=50)
 
     list_of_datasets = msn_instance.datasets(False)
     list_of_datasets = list(filter(lambda x: x not in ['medshapenetcore/ASOCA','medshapenetcore/AVT','medshapenetcore/AutoImplantCraniotomy','medshapenetcore/FaceVR'], list_of_datasets))
+    
+    train_size = int(0.7 * self.size)  # 70% for training
+    val_size = int(0.15 * self.size)  # 15% for validation
+    test_size = self.size - train_size - val_size  # Remainder for testing
 
+    train_list, val_list, test_list = [], [], []
     for dataset in list_of_datasets:
       self.newpath = self.root + '/' + dataset.split("/")[1]
       if not os.path.exists(self.newpath):
         os.makedirs(self.newpath)
       stl_files = msn_instance.dataset_files(dataset, '.stl')
-      stl_files = stl_files[:self.size] if self.train else stl_files[-self.size:]
+      stl_files = stl_files[:self.size]
+      
+      train_data, val_data, test_data = random_split(stl_files, [train_size, val_size, test_size])
+      train_list.extend(train_data)
+      val_list.extend(val_data)
+      test_list.extend(test_data)
+
       for stl_file in stl_files:
         msn_instance.download_stl_as_numpy(bucket_name = dataset, stl_file = stl_file, output_dir = self.newpath, print_output=False)
 
-  def process(self) -> None:
-    self.save(self.process_set('train'), self.processed_paths[0])
-    self.save(self.process_set('test'), self.processed_paths[1])
+    class_mapping = {
+        '3DTeethSeg': 0,
+        'CoronaryArteries': 1,
+        'FLARE': 2,
+        'KITS': 3,
+        'PULMONARY': 4,
+        'SurgicalInstruments': 5,
+        'ThoracicAorta_Saitta': 6,
+        'ToothFairy': 7
+    }
 
-  def process_set(self, set_name: str) -> List[Data]:
-    categories = glob.glob(osp.join(self.root, '', '*'))
-    categories = list(filter(lambda x: x not in [(self.root + 'raw')], categories))
-    data_list = []
-    for target, category in enumerate(categories):
-      files = glob.glob(osp.join(self.root, category, '*.npz'))
-      for file in files:
+    for dataset, path in zip([train_list, val_list, test_list],
+                             self.processed_paths):
+      data_list = []
+      for item in dataset:
+        class_name = item.split("/")[0]
+        item = item.split("stl")[0]
+        target = class_mapping[class_name]
+        file = osp.join(self.root, item + 'npz')
+
         data = np.load(file)
         pre_data_list = Data(
             pos = torch.tensor(data["vertices"], dtype=torch.float),
@@ -118,12 +143,12 @@ class MedShapeNet(InMemoryDataset):
         pre_data_list.y = torch.tensor([target], dtype=torch.long)
         data_list.append(pre_data_list)
 
-    if self.pre_filter is not None:
-        data_list = [d for d in data_list if self.pre_filter(d)]
+      if self.pre_filter is not None:
+          data_list = [d for d in data_list if self.pre_filter(d)]
 
-    if self.pre_transform is not None:
-        data_list = [self.pre_transform(d) for d in data_list]
+      if self.pre_transform is not None:
+          data_list = [self.pre_transform(d) for d in data_list]
 
-    return data_list
+      self.save(data_list,path)
 
 

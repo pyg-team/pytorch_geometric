@@ -16,7 +16,7 @@ parser.add_argument(
     '--dataset',
     type=str,
     default='modelnet10',
-    choices=['modelnet10', 'modelnet40','medshape'],
+    choices=['modelnet10', 'modelnet40','medshapenet'],
     help='Dataset name.',
 )
 parser.add_argument(
@@ -46,15 +46,11 @@ if args.dataset == 'modelnet40':
   train_dataset = ModelNet(root, '40', True, transform, pre_transform)
   print('Loading test data')
   test_dataset = ModelNet(root, '40', False, transform, pre_transform)
-elif args.dataset == 'medshape':
+elif args.dataset == 'medshapenet':
   print('Loading training data')
-  train_dataset = MedShapeNet(root= root, size= 40, train= True, 
-                              pre_transform= pre_transform, 
-                              transform= transform, force_reload=False)
+  train_dataset = MedShapeNet(root=root, size=50, split="train", pre_transform=pre_transform, transform=transform, force_reload=False)
   print('Loading test data')
-  test_dataset = MedShapeNet(oot= root, size= 10, train= False, 
-                              pre_transform= pre_transform, 
-                              transform= transform, force_reload=False)
+  test_dataset = MedShapeNet(root=root, size=50, split="test", pre_transform=pre_transform, transform=transform, force_reload=False)
 else:
   print('Loading training data')
   train_dataset = ModelNet(root, '10', True, transform, pre_transform)
