@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch.nn import Linear
 
 import torch_geometric.transforms as T
-from torch_geometric.datasets import ModelNet, MedShapeNet
+from torch_geometric.datasets import MedShapeNet, ModelNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, DynamicEdgeConv, global_max_pool
 
@@ -16,7 +16,7 @@ parser.add_argument(
     '--dataset',
     type=str,
     default='modelnet10',
-    choices=['modelnet10', 'modelnet40','medshapenet'],
+    choices=['modelnet10', 'modelnet40', 'medshapenet'],
     help='Dataset name.',
 )
 parser.add_argument(
@@ -42,20 +42,24 @@ pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
 
 print('The Dataset is: ', args.dataset)
 if args.dataset == 'modelnet40':
-  print('Loading training data')
-  train_dataset = ModelNet(root, '40', True, transform, pre_transform)
-  print('Loading test data')
-  test_dataset = ModelNet(root, '40', False, transform, pre_transform)
+    print('Loading training data')
+    train_dataset = ModelNet(root, '40', True, transform, pre_transform)
+    print('Loading test data')
+    test_dataset = ModelNet(root, '40', False, transform, pre_transform)
 elif args.dataset == 'medshapenet':
-  print('Loading training data')
-  train_dataset = MedShapeNet(root=root, size=50, split="train", pre_transform=pre_transform, transform=transform, force_reload=False)
-  print('Loading test data')
-  test_dataset = MedShapeNet(root=root, size=50, split="test", pre_transform=pre_transform, transform=transform, force_reload=False)
+    print('Loading training data')
+    train_dataset = MedShapeNet(root=root, size=50, split="train",
+                                pre_transform=pre_transform,
+                                transform=transform, force_reload=False)
+    print('Loading test data')
+    test_dataset = MedShapeNet(root=root, size=50, split="test",
+                               pre_transform=pre_transform,
+                               transform=transform, force_reload=False)
 else:
-  print('Loading training data')
-  train_dataset = ModelNet(root, '10', True, transform, pre_transform)
-  print('Loading test data')
-  test_dataset = ModelNet(root, '10', False, transform, pre_transform)
+    print('Loading training data')
+    train_dataset = ModelNet(root, '10', True, transform, pre_transform)
+    print('Loading test data')
+    test_dataset = ModelNet(root, '10', False, transform, pre_transform)
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
                           num_workers=num_workers)
@@ -63,6 +67,8 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
                          num_workers=num_workers)
 
 print('Running model')
+
+
 class Net(torch.nn.Module):
     def __init__(self, out_channels, k=20, aggr='max'):
         super().__init__()
@@ -114,6 +120,7 @@ def test(loader):
             pred = model(data).max(dim=1)[1]
         correct += pred.eq(data.y).sum().item()
     return correct / len(loader.dataset)
+
 
 for epoch in range(1, num_epochs):
     loss = train()
