@@ -263,3 +263,14 @@ def test_gat_norm_csc_error():
     with pytest.raises(NotImplementedError,
                        match="Sparse CSC matrices are not yet supported"):
         gat_norm(adj1, edge_weight)
+
+
+def test_gat_conv_bipartite_error():
+    x1 = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
+
+    with pytest.raises(NotImplementedError,
+                       match="not supported for bipartite message passing"):
+        conv = GATConv(8, 32, heads=2, normalize=True)
+        _ = conv(x1, adj1.t())

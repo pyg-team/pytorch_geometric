@@ -331,6 +331,14 @@ class GATv2Conv(MessagePassing):
                         "'edge_index' in a 'SparseTensor' form")
 
         if self.normalize:
+            if isinstance(edge_index,
+                          SparseTensor) or is_torch_sparse_tensor(edge_index):
+                if edge_index.size(0) != edge_index.size(1):
+                    raise NotImplementedError(
+                        "The usage of 'normalize' is not supported "
+                        "for bipartite message passing.")
+
+        if self.normalize:
             if isinstance(edge_index, Tensor):
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
@@ -342,8 +350,14 @@ class GATv2Conv(MessagePassing):
                                   edge_attr=edge_attr)
 
         if self.normalize:
+            num_nodes = None
+            if isinstance(edge_index, Tensor):
+                num_nodes = x_l.size(0)
+                if x_r is not None:
+                    num_nodes = min(num_nodes, x_r.size(0))
             edge_index, alpha = gat_norm(edge_index,
                                          alpha,
+                                         num_nodes=num_nodes,
                                          flow=self.flow,
                                          dtype=alpha.dtype)  # yapf: disable
 

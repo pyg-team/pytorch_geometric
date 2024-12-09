@@ -67,6 +67,8 @@ def gat_norm(  # noqa: F811
 ):
     fill_value = 1.0
 
+    assert flow in ['source_to_target', 'target_to_source']
+
     if isinstance(edge_index, SparseTensor):
         assert edge_index.size(0) == edge_index.size(1)
 
@@ -126,7 +128,6 @@ def gat_norm(  # noqa: F811
 
         return to_torch_csr_tensor(edge_index), att_mat
 
-    assert flow in ['source_to_target', 'target_to_source']
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     adj_t = torch.ones((edge_index.size(1), ), dtype=dtype,
@@ -501,6 +502,14 @@ class GATConv(MessagePassing):
                         "'edge_index' in a 'SparseTensor' form")
 
         if self.normalize:
+            if isinstance(edge_index,
+                          SparseTensor) or is_torch_sparse_tensor(edge_index):
+                if edge_index.size(0) != edge_index.size(1):
+                    raise NotImplementedError(
+                        "The usage of 'normalize' is not supported "
+                        "for bipartite message passing.")
+
+        if self.normalize:
             if isinstance(edge_index, Tensor):
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
@@ -512,8 +521,16 @@ class GATConv(MessagePassing):
                                   size=size)
 
         if self.normalize:
+            num_nodes = None
+            if isinstance(edge_index, Tensor):
+                num_nodes = x_src.size(0)
+                if x_dst is not None:
+                    num_nodes = min(num_nodes, x_dst.size(0))
+                num_nodes = min(size) if size is not None else num_nodes
+
             edge_index, alpha = gat_norm(edge_index,
                                          alpha,
+                                         num_nodes=num_nodes,
                                          flow=self.flow,
                                          dtype=alpha.dtype)  # yapf: disable
 
