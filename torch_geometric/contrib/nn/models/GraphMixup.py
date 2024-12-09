@@ -73,6 +73,37 @@ class GraphMixup(torch.nn.Module):
         batch_b: Tensor,
         lam: float
     ) -> Tensor:
+        """
+        Forward pass for the GraphMixup model.
+
+        This method takes two batches of graph data (x, edge_index, batch)
+        and (x_b, edge_index_b, batch_b) along with a mixup coefficient `lam`.
+        It computes the graph-level embeddings for both batches using
+        multiple GNN layers, mixes the embeddings using `lam`,
+        and finally predicts the class probabilities using a linear
+        layer followed by log-softmax.
+
+        Args:
+            x (Tensor): Node feature matrix for the first batch of graphs
+                with shape [num_nodes, in_channels].
+            edge_index (Tensor): Edge index for the first batch of graphs
+                with shape [2, num_edges], defining the graph connectivity.
+            batch (Tensor): Batch vector that assigns each node to a graph
+                in the first batch. Shape: [num_nodes].
+            x_b (Tensor): Node feature matrix for the second (shuffled)
+                batch of graphs with shape [num_nodes, in_channels].
+            edge_index_b (Tensor): Edge index for the second batch of graphs
+                with shape [2, num_edges], defining the graph connectivity.
+            batch_b (Tensor): Batch vector that assigns each node to a graph
+                in the second batch. Shape: [num_nodes].
+            lam (float): Mixup coefficient (lambda) from the Beta distribution,
+                used to interpolate between the two graph embeddings.
+
+        Returns:
+            Tensor: The prediction logits for each graph in the batch.
+                Shape: [num_graphs, out_channels], where out_channels
+                is the number of classes.
+        """
         # Compute embeddings for the first batch
         h = x
         for conv in self.convs:
