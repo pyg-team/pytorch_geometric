@@ -113,6 +113,25 @@ class TokenGT(nn.Module):
         batch: Tensor,
         node_ids: Tensor,
     ) -> Tuple[Tensor, Optional[Tensor]]:
+        r"""Forward pass that returns embeddings for each input node and
+        (optionally) a graph-level embedding for each graph in the input.
+
+        Args:
+            x (torch.Tensor): The input node features. Needs to have number of
+                channels equal to dim_node.
+            edge_index (torch.Tensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features. If provided,
+                needs to have number of channels equal to dim_edge.
+            ptr (torch.Tensor): The pointed vector that provides a cumulative
+                sum of each graph's node count. Note: when providing a single
+                graph with (say) 5 nodes as input, set equal to
+                torch.tensor([0, 5]).
+            batch (torch.Tensor): The batch vector that relates each node to a
+                specific graph. Note: when providing a single graph with (say)
+                5 nodes as input, set equal to torch.tensor([0, 0, 0, 0, 0]).
+            node_ids (torch.Tensor): Orthonormal node identifiers (needs to
+                have number of channels equal to d_p).
+        """
         batched_emb, src_key_padding_mask, node_mask = (
             self._get_tokenwise_batched_emb(x, edge_index, edge_attr, ptr,
                                             batch, node_ids))
@@ -263,6 +282,7 @@ class TokenGT(nn.Module):
         return n_edges
 
     def reset_params(self) -> None:
+        r"""Resets all learnable parameters of the module."""
         for layer in self._encoder.layers:
             for module in layer.modules():
                 if isinstance(module, nn.Linear):

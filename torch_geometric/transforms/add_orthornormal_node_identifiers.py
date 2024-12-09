@@ -14,10 +14,9 @@ class AddOrthonormalNodeIdentifiers(BaseTransform):
     r"""Adds orthonormal node identifiers to a given input graph as described
     in the `"Pure Transformers are Powerful Graph Learners"
     <https://arxiv.org/pdf/2207.02505>` paper.
-    (functional name: :obj:`add_orthonormal_node_identifiers`).
-
-    Note: when use_laplacian is :object:`True`, use as `pre_transform` to
-        avoid re-calculating eigenvectors.
+    (functional name: :obj:`add_orthonormal_node_identifiers`). When
+    use_laplacian is true, use as `pre_transform` to avoid unnecessary
+    re-calculating of eigenvectors. Otherwise, use as `transform`.
 
     Args:
         d_p (int): Dimension of node identifiers. If using Laplacian
