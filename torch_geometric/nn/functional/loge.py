@@ -27,7 +27,7 @@ def loge(
     weight: OptTensor = None,
     reduction: str = "mean",
 ) -> Tensor:
-    r"""Compute the Log-:math:`\epsilon` loss between input log-probabilities
+    r"""Computes the Log-:math:`\epsilon` loss between input log-probabilities
     and target.
 
     See :class:`~torch_geometric.nn.functional.LogELoss` for details.
@@ -47,7 +47,7 @@ def loge_with_logits(
     weight: OptTensor = None,
     reduction: str = "mean",
 ) -> Tensor:
-    r"""Compute the Log-:math:`\epsilon` loss between input logits and target.
+    r"""Computes the Log-:math:`\epsilon` loss between input logits and target.
 
     See :class:`~torch_geometric.nn.functional.LogEWithLogitsLoss` for details.
     """
@@ -66,7 +66,7 @@ def binary_loge(
     weight: OptTensor = None,
     reduction: str = "mean",
 ) -> Tensor:
-    r"""Compute the Log-:math:`\epsilon` loss between input probabilities and
+    r"""Computes the Log-:math:`\epsilon` loss between input probabilities and
     binary target.
 
     See :class:`~torch_geometric.nn.functional.BinaryLogELoss` for details.
@@ -84,7 +84,7 @@ def binary_loge_with_logits(
     weight: OptTensor = None,
     reduction: str = "mean",
 ) -> Tensor:
-    r"""Compute the Log-:math:`\epsilon` loss between input logits and binary
+    r"""Computes the Log-:math:`\epsilon` loss between input logits and binary
     target.
 
     See :class:`~torch_geometric.nn.functional.BinaryLogEWithLogitsLoss` for
@@ -112,7 +112,9 @@ class _LogELossBase(torch.nn.Module):
 class LogELoss(_LogELossBase):
     r"""The the :math:`\log\epsilon` loss from `"Bag of Tricks for Node
     Classification with Graph Neural Networks"
-    <https://arxiv.org/abs/2103.13355>`_, which computes, before reduction:
+    <https://arxiv.org/abs/2103.13355>`_.
+
+    Computes, before reduction:
 
     .. math::
         \log\left(\epsilon + \mathrm{CrossEntropy}(x, y)\right)
@@ -153,7 +155,9 @@ class LogELoss(_LogELossBase):
 class LogEWithLogitsLoss(_LogELossBase):
     r"""The the :math:`\log\epsilon` loss from `"Bag of Tricks for Node
     Classification with Graph Neural Networks"
-    <https://arxiv.org/abs/2103.13355>`_, which computes, before reduction:
+    <https://arxiv.org/abs/2103.13355>`_.
+
+    Computes, before reduction:
 
     .. math::
         \log\left(\epsilon + \mathrm{CrossEntropy}(x, y)\right)
@@ -194,7 +198,9 @@ class LogEWithLogitsLoss(_LogELossBase):
 class BinaryLogELoss(_LogELossBase):
     r"""The the :math:`\log\epsilon` loss from `"Bag of Tricks for Node
     Classification with Graph Neural Networks"
-    <https://arxiv.org/abs/2103.13355>`_, which computes, before reduction:
+    <https://arxiv.org/abs/2103.13355>`_.
+
+    Computes, before reduction:
 
     .. math::
         \log\left(\epsilon + \mathrm{CrossEntropy}(x, y)\right) -
@@ -235,7 +241,9 @@ class BinaryLogELoss(_LogELossBase):
 class BinaryLogEWithLogitsLoss(_LogELossBase):
     r"""The the :math:`\log\epsilon` loss from `"Bag of Tricks for Node
     Classification with Graph Neural Networks"
-    <https://arxiv.org/abs/2103.13355>`_, which computes, before reduction:
+    <https://arxiv.org/abs/2103.13355>`_.
+
+    Computes, before reduction:
 
     .. math::
         \log\left(\epsilon + \mathrm{CrossEntropy}(x, y)\right)
