@@ -502,12 +502,10 @@ class GATConv(MessagePassing):
                         "'edge_index' in a 'SparseTensor' form")
 
         if self.normalize:
-            if isinstance(edge_index,
-                          SparseTensor) or is_torch_sparse_tensor(edge_index):
-                if edge_index.size(0) != edge_index.size(1):
-                    raise NotImplementedError(
-                        "The usage of 'normalize' is not supported "
-                        "for bipartite message passing.")
+            if not isinstance(self.in_channels, int):
+                raise NotImplementedError(
+                    "The usage of 'normalize' is not supported "
+                    "for bipartite message passing.")
 
             if isinstance(edge_index, Tensor):
                 edge_index, edge_attr = remove_self_loops(
@@ -520,7 +518,7 @@ class GATConv(MessagePassing):
                                   size=size)
 
         if self.normalize:
-            num_nodes = None
+            num_nodes: Optional[int] = None
             if isinstance(edge_index, Tensor):
                 num_nodes = x_src.size(0)
                 if x_dst is not None:
