@@ -1,0 +1,81 @@
+CS 224W Final Project
+
+Motivation & explanation of research method (10 points)
+(basically copied from proposal)
+
+We seek to implement the G-Mixup method detailed in the paper G-Mixup: Graph Data Augmentation for Graph Classification by Xiaotian Han, Zhimeng Jiang, Ninghao Liu, Xia Hu in 2022 [1].
+
+G-Mixup is a graph data augmentation technique that is based on Mixup [2], a data augmentation technique used in traditional machine learning (specifically in image classification). Mixup functions by taking random sample pairs from the dataset and linearly interpolates them to create a new sample. When applied to a sufficiently large dataset, Mixup can generate large amounts of new synthetic data for training and has empirically been shown to improve generalization and robustness of models. Expanding the ideas of Mixup to graphs is a valuable contribution because previous methods of data augmentation on graphs have mostly focused on augmenting individual graphs instead of combining multiple inputs. Unfortunately, Mixup cannot (directly) be used on graphs, as it requires the original data to be regular, aligned grids. As the paper discusses, graphs are, irregular, not well-aligned, and have divergent topology. G-Mixup attempts to address these issues by (1) converting/approximating input graphs as graphons, (2) mixing/interpolating over graphons, and (3) using the mixed graphons to generate new synthetic graphs.
+
+1. Estimate a graphon for each class of graphs
+A graphon is ”a continuous, bounded, and symmetric function W : [0, 1]2 → [0, 1] which may be thought of as the weight matrix of a graph with infinite number of nodes.” While a true graphon is an unknown continuous with no closed-form expression, it can be estimated via step functions to produce a matrix W . For each class of graphs, an estimated graphon is produced.
+2. Mix up the graphons of different graph classes
+Since the graphon approximation is simply a matrix, it allows the usage of interpolation between the graphons of different classes like in Mixup. Thus, the graphons of different classes can be mixed to create new synthetic graphons.
+3. Generate synthetic graphs based on the mixed graphons
+Since graphons are representations of graphs and can be thought of as graph generators, the mixed graphons are then used to generate new synthetic graphs. The paper describes the process through which the mixed graphons are used to generate new synthetic graphs.
+
+When used on large datasets, GNNs frequently suffer from overfitting and difficulty to generalize. G-Mixup provides a data augmentation method to generate new synthetic training data graphs, which can help to tackle this problem. It is also important to note that G-Mixup generates completely new, synthetic graphs rather than just modifying existing input graphs like many other graph data augmentation techniques. It has the potential to greatly improve the generalizability of GNNs.
+
+
+
+
+Explanation of implementation (10 points)
+
+We implement G-Mixup via the class "GMixupDataset," a wrapper class that takes in a PyG Dataset and applies the G-Mixup data augmentation technique to it. Via an override of the __getattr__ method, the GMixupDataset class can behave like and be used the same way as a PyG Dataset.
+
+On initialization, GMixupDataset takes in:
+* base_dataset: the PyG Dataset to be augmented
+* log: (optional, default True): whether to print any console output while processing the dataset
+* align_graphs: (optional, default True): whether to align the graphs by node degree before generating graphons. This is generally recommended to ensure graphon invariance to node ordering, but can be turned off for speed if it is known that the input graphs are already aligned.
+* threshold: (optional, default 2.02): the threshold to use for singular value thresholding when generating graphons. This is a hyperparameter that typically ranges from 2 to 3, and can be tuned for better performance.
+* generate_graphons: (optional, default True): if True, graphons for every class of graphs in the dataset will be generated and stored in the GMixupDataset object during initialization. If false, graphons will not be generated until a synthetic graph involving that class is requested, or a manual call to generate_graphons() is made. This can be useful if it is known that only a subset of the graphons will be used.
+
+During initialization, GMixupDataset does the following (assuming generate_graphons is True):
+1. Store all the graphs sorted by class in the list self.graphs_by_class
+2. For each class of graphs, generate a graphon approximation using the method described in the paper "Matrix estimation by Universal Singular Value Thresholding" by Chatterjee (2015).
+    a. For each graph in the class, compute the adjacency matrix A
+    b. If align_graphs is True, sort the nodes of A by degree
+    c. Normalize A to be in the range [-1, 1]
+    d. Compute the singular value decomposition of A
+    e. Threshold the singular values using the following formula as described in the paper:
+        (attach screenshot)
+    f. Compute the graphon approximation W using the formula W = UΣ'V^T, where Σ' is the thresholded singular value matrix
+    g. Clip W to be in range [-1, 1], renormalize it to be in range [0, 1], then interpolate the matrix to the maximum size of graphs in the dataset. This is to ensure that each graphon has the same dimensions and can be mixed with other graphons.*
+    h. Average the graphons of all graphs in the same class to get the final graphon approximation for that class, and store it in self.graphons.
+* Note that the paper "GMixup: Graph Data Augmentation for Graph Classification" by Han et al. (2022) expresses a preference to use the average node count of the dataset as the size of the graphon approximation matrices, as opposed to the maximum node count of the dataset as we have done. We found that using the maximum node count yielded better and more consistent results in our experiments.
+
+A user can request a synthetic graph from the GMixupDataset object by calling generate_graphs, which takes in the following arguments:
+* size: (optional, default 1) the number of synthetic graphs to generate
+* idx_1: the index of the first class of graphs to mix
+* idx_2: the index of the second class of graphs to mix
+* mixing_param: (optional, default 0.5) the mixing parameter to use when interpolating the graphons of the two classes. This parameter can be varied between 0 and 1 to generate graphs that are more similar to the first class (when closer to 0) or more similar to the second class (when closer to 1).
+* K (optional, default 10): the number of nodes to sample for the output synthetic graph.
+* method (optional, default 'random'): the method to use for sampling nodes from the graphon. Can be 'random' to sample nodes uniformly at random, or 'uniform' to guarantee a uniform distribution of nodes across the graph.
+
+When a synthetic graph is requested, GMixupDataset does the following:
+1. Get the graphons of the two classes specified by idx_1 and idx_2
+2. Interpolate the graphons using the mixing parameter to get a new, mixed_graphon = mixing_param * graphon_1 + (1 - mixing_param) * graphon_2
+3. Sample a K node graph from the mixed_graphon:
+    a. Generate K "u_values" in the interval [0, 1], either uniformly at random if method is 'random', or uniformly spaced if method is 'uniform'. Multiply these values by the size of the graphon matrix to get the corresponding index into the graphon matrix. We refer to these as 
+    "u_values_indicies".
+    b. For any pair of nodes i, j, mixed_graphon[ u_values_index_i, u_values_index_j ] is the probability that an edge exists between nodes i and j. Sample a Bernoulli random variable with this probability to determine if an edge exists between nodes i and j for all pairs of nodes. This gives us the adjacency matrix of the synthetic graph.
+    c. Generate the synthetic graph using the adjacency matrix.
+4. Repeat the above process size times to generate size synthetic graphs.
+
+
+For example, to use the GMixupDataset class to augment the GNNBenchmarkDataset dataset, one would initialize it as follows:
+```python
+gnn_benchmark = GNNBenchmarkDataset(root='tmp/gnn_benchmark', name='CSL')
+gmixup_gnn_benchmark = GMixupDataset(gnn_benchmark, log=True, align_graphs=True, threshold=2.02, generate_graphons=True)
+```
+
+To generate a 40-node synthetic graph between the first and second classes of graphs in the dataset, one would call:
+```python
+synthetic_graph = gmixup_gnn_benchmark.generate_graphs(idx_1=0, idx_2=1, mixing_param=0.5, K=40, method='random', size=1)
+
+
+
+
+
+TODO
+Code snippets (5 points)
