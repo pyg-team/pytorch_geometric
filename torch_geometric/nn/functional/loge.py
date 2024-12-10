@@ -122,15 +122,15 @@ class LogELoss(_LogELossBase):
     Uses similar syntax and semantics as :class:`~torch.nn.NLLLoss`.
     In particular, it is useful when training a classification problem with
     more than two classes, and the input is expected to contain probabilities.
-    However this criterion is less sensitive to outliers, with a maximal 
+    However this criterion is less sensitive to outliers, with a maximal
     gradient magnitude at decision boundaries, while still providing
     non-negligable signal for all misclassified examples.
 
     Args:
         epsilon (float): The constant :math:`\epsilon`, which adjusts the shape
             of the loss surface.  (default: :obj:`1-math.log(2)`)
-        weight (Tensor, optional): aa manual rescaling weight given to each 
-            class. If given, it has to be a Tensor of size C. (default: 
+        weight (Tensor, optional): aa manual rescaling weight given to each
+            class. If given, it has to be a Tensor of size C. (default:
             :obj:`None`)
         reduction (str, optional): Specifies the reduction to apply to the
             output: :obj:`'none' | 'mean' | 'sum'`. :obj:`'none'`: no reduction
@@ -147,7 +147,8 @@ class LogELoss(_LogELossBase):
             weight=self.weight,
             reduction=self.reduction,
         )
-    
+
+
 class LogEWithLogitsLoss(_LogELossBase):
     r"""The the :math:`\log\epsilon` loss from `"Bag of Tricks for Node
     Classification with Graph Neural Networks"
@@ -169,8 +170,8 @@ class LogEWithLogitsLoss(_LogELossBase):
     Args:
         epsilon (float): The constant :math:`\epsilon`, which adjusts the shape
             of the loss surface.  (default: :obj:`1-math.log(2)`)
-        weight (Tensor, optional): aa manual rescaling weight given to each 
-            class. If given, it has to be a Tensor of size C. (default: 
+        weight (Tensor, optional): aa manual rescaling weight given to each
+            class. If given, it has to be a Tensor of size C. (default:
             :obj:`None`)
         reduction (str, optional): Specifies the reduction to apply to the
             output: :obj:`'none' | 'mean' | 'sum'`. :obj:`'none'`: no reduction
