@@ -33,6 +33,9 @@ class LabelUsage(torch.nn.Module):
         return_tuple (bool): If true, returns (pred, train_label,
             train_pred) during training otherwise returns 
             prediction output (default :obj:'False')
+        training (bool): If true, sets forward method to training mode and
+            utilizes split ratio else runs evaluation and uses all training
+            node labels as features (default :obj:'True')
     """
     def __init__(
         self,
