@@ -33,9 +33,6 @@ class LabelUsage(torch.nn.Module):
         return_tuple (bool): If true, returns (pred, train_label,
             train_pred) during training otherwise returns 
             prediction output (default :obj:'False')
-        training (bool): If true, sets forward method to training mode and
-            utilizes split ratio else runs evaluation and uses all training
-            node labels as features (default :obj:'True')
     """
     def __init__(
         self,
@@ -44,7 +41,6 @@ class LabelUsage(torch.nn.Module):
         split_ratio: float = 0.5,
         num_recycling_iterations: int = 0,
         return_tuple: bool = False,
-        training: bool = True
     ):
 
         super().__init__()
@@ -53,7 +49,6 @@ class LabelUsage(torch.nn.Module):
         self.split_ratio = split_ratio
         self.num_recycling_iterations = num_recycling_iterations
         self.return_tuple = return_tuple
-        self.training = training
 
     def forward(
         self,
