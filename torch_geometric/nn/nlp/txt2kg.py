@@ -13,10 +13,13 @@ SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples 
 
 
 class TXT2KG():
-    """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
-    nvidia/llama-3.1-nemotron-70b-instruct is on par or better than GPT4o
+    """
+    Uses NVIDIA NIMs + Prompt engineering to extract KG from text.
+    `nvidia/llama-3.1-nemotron-70b-instruct` is on par or better than GPT4o
     in benchmarks. We need a high quality model to ensure high quality KG.
-    Otherwise garbage in garbage out.
+    Otherwise we have garbage in garbage out for the rest of the 
+    GNN+LLM RAG pipeline.
+
     Use local_lm flag for local debugging/dev. You still need to be able to
     inference a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'.
     Smaller LLMs did not work at all in testing.
