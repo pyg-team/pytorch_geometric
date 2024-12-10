@@ -85,7 +85,8 @@ class LargeGraphIndexer:
         by id. Not meant to be used directly.
 
         Args:
-            nodes (Iterable[Hashable]): Node ids in the graph.
+            nodes (Iterable[str]): Node ids in the graph. Can be used with any 
+                hashable datatype.
             edges (KnowledgeGraphLike): Edge ids in the graph.
             node_attr (Optional[Dict[str, List[Any]]], optional): Mapping node
                 attribute name and list of their values in order of unique node
@@ -201,7 +202,7 @@ class LargeGraphIndexer:
         index.
 
         Args:
-            graphs (Iterable[&quot;LargeGraphIndexer&quot;]): Indices to be
+            graphs (Iterable[LargeGraphIndexer]): Indices to be
                 combined.
 
         Returns:
@@ -221,7 +222,8 @@ class LargeGraphIndexer:
                 Defaults to NODE_PID.
 
         Returns:
-            List[Hashable]: List of unique values for the specified feature.
+            List[str]: List of unique values for the specified feature. Can be
+                used with any hashable datatype.
         """
         try:
             if feature_name in self._mapped_node_features:
@@ -280,8 +282,9 @@ class LargeGraphIndexer:
         Args:
             feature_name (str, optional): Name of feature to fetch. Defaults
                 to NODE_PID.
-            pids (Optional[Iterable[Hashable]], optional): Node ids to fetch
-                for. Defaults to None, which fetches all nodes.
+            pids (Optional[Iterable[str]], optional): Node ids to fetch
+                for. Can be used with any hashable datatype. Defaults to None,
+                which fetches all nodes.
 
         Returns:
             List[Any]: Node features corresponding to the specified ids.
@@ -346,7 +349,8 @@ class LargeGraphIndexer:
                 Defaults to EDGE_PID.
 
         Returns:
-            List[Hashable]: List of unique values for the specified feature.
+            List[str]: List of unique values for the specified feature. Can be 
+                used with any hashable datatype.
         """
         try:
             if feature_name in self._mapped_edge_features:
@@ -404,8 +408,9 @@ class LargeGraphIndexer:
         Args:
             feature_name (str, optional): Name of feature to fetch.
                 Defaults to EDGE_PID.
-            pids (Optional[Iterable[Hashable]], optional): Edge ids to fetch
-                for. Defaults to None, which fetches all edges.
+            pids (Optional[Iterable[str]], optional): Edge ids to fetch
+                for. Can be used with any hashable datatype. Defaults to 
+                None, which fetches all edges.
 
         Returns:
             List[Any]: Node features corresponding to the specified ids.
