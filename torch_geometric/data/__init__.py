@@ -17,6 +17,7 @@ from .makedirs import makedirs
 from .download import download_url, download_google_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 from .large_graph_indexer import LargeGraphIndexer, TripletLike, get_features_for_triplets, get_features_for_triplets_groups
+from .stzinbgraph_data import STZINBGraph
 
 from torch_geometric.lazy_loader import LazyLoader
 
