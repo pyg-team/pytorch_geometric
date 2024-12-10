@@ -10,6 +10,12 @@ class LabelUsage(torch.nn.Module):
     as introduced in `"Bag of Tricks for Node Classification"
     <https://arxiv.org/abs/2103.13355>`_ paper.
 
+    Label usage splits training nodes into labeled and unlabeled subsets. The
+    labeled subset incorporates labels as features while the unlabeled subset
+    labels are zeroed and used for prediction. During inference, previously
+    predicted soft labels for unlabeled nodes are recycled as inputs for the
+    model, refining predictions iteratively. 
+
     .. note::
 
         When using the :class:`LabelUsage`, adjust the model's input dimension
@@ -24,9 +30,9 @@ class LabelUsage(torch.nn.Module):
         num_recycling_iterations (int): Number of iterations for the
             label reuse procedure to cycle predicted soft labels
             (default: :obj:'0')
-        return_tuple (bool): If true, returns (output, train_label_idx,
-            train_pred_idx) otherwise returns prediction output
-            (default :obj:'False')
+        return_tuple (bool): If true, returns (pred, train_label,
+            train_pred) during training otherwise returns 
+            prediction output (default :obj:'False')
     """
     def __init__(
         self,
@@ -57,8 +63,8 @@ class LabelUsage(torch.nn.Module):
 
         Args:
             feat (torch.Tensor): Node feature tensor of dimension (N,F)
-                where N is the number of nodes and
-                F is the number of features per node
+                where N is the number of nodes and F is the number 
+                of features per node
             edge_index (torch.Tensor or SparseTensor): The edge connectivity
                 to be passed to base_model
             y (torch.Tensor): Node ground-truth labels tensor of dimension
@@ -71,7 +77,8 @@ class LabelUsage(torch.nn.Module):
             f"Expected y to be either (N,) or (N, 1), but got shape {y.shape}"
 
         # set unlabeled mask for unlabeled indices
-        unlabeled_mask = torch.ones(feat.size(0), dtype=torch.bool).to(feat.device)
+        unlabeled_mask = torch.ones(feat.size(0), 
+            dtype=torch.bool).to(feat.device)
 
         # add labels to features for train_labels nodes if in training
         # else fill true labels for all nodes in mask
@@ -80,13 +87,10 @@ class LabelUsage(torch.nn.Module):
         if self.training:
             # random split mask based on split ratio
             if mask.dtype == torch.bool:
-                split_mask = torch.rand(mask.sum()) < self.split_ratio
-                train_labels = mask.nonzero(as_tuple=False).view(-1)[split_mask] # convert to index tensor
-                train_pred = mask.nonzero(as_tuple=False).view(-1)[~split_mask] 
-            else:
-                split_mask = torch.rand(mask.shape) < self.split_ratio
-                train_labels = mask[split_mask] # D_L: nodes with labels
-                train_pred = mask[~split_mask] # D_U: nodes to predict labels
+                mask = mask.nonzero(as_tuple=False).view(-1)
+            split_mask = torch.rand(mask.shape) < self.split_ratio
+            train_labels = mask[split_mask] # D_L: nodes with labels
+            train_pred = mask[~split_mask] # D_U: nodes to predict labels
 
             unlabeled_mask[train_labels] = False
 
@@ -106,8 +110,9 @@ class LabelUsage(torch.nn.Module):
                 
         feat = torch.cat([feat, onehot], dim=-1)
 
-        # label reuse procedure
         pred = self.base_model(feat, edge_index)
+
+        # label reuse procedure
         for _ in range(self.num_recycling_iterations):
             pred = pred.detach()
             feat[unlabeled_mask,
