@@ -1,17 +1,12 @@
 from typing import Callable, List, Optional
-import urllib3
 import glob
 import os
 import os.path as osp
 import numpy as np
 
 import torch
-from torch.utils.data import random_split
 
 from torch_geometric.data import Data, InMemoryDataset
-
-from MedShapeNet import MedShapeNet as msn
-msn_instance = msn()
 
 class MedShapeNet(InMemoryDataset):
   r"""The MedShapeNet datasets from the `"MedShapeNet -- A Large-Scale Dataset
@@ -90,11 +85,17 @@ class MedShapeNet(InMemoryDataset):
     return [osp.join(self.raw_dir, f) for f in files] or osp.join(self.raw_dir, files)
 
   def process(self) -> None:
+    from MedShapeNet import MedShapeNet as msn
+    from torch.utils.data import random_split
+    import urllib3
+    
+    msn_instance = msn()
+
     pool = urllib3.HTTPConnectionPool("medshapenet.ddns.net", maxsize=50)
 
     list_of_datasets = msn_instance.datasets(False)
     list_of_datasets = list(filter(lambda x: x not in ['medshapenetcore/ASOCA','medshapenetcore/AVT','medshapenetcore/AutoImplantCraniotomy','medshapenetcore/FaceVR'], list_of_datasets))
-    
+
     train_size = int(0.7 * self.size)  # 70% for training
     val_size = int(0.15 * self.size)  # 15% for validation
     test_size = self.size - train_size - val_size  # Remainder for testing
@@ -106,7 +107,7 @@ class MedShapeNet(InMemoryDataset):
         os.makedirs(self.newpath)
       stl_files = msn_instance.dataset_files(dataset, '.stl')
       stl_files = stl_files[:self.size]
-      
+
       train_data, val_data, test_data = random_split(stl_files, [train_size, val_size, test_size])
       train_list.extend(train_data)
       val_list.extend(val_data)
