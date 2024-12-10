@@ -14,49 +14,28 @@ class MixupConv(MessagePassing):
     update `x2`.
 
     **Mixup Logic**:
-    - The MixupConv layer computes messages from one set of node features
-      (`x1`) and applies them to update the second set of node features (`x2`),
-      thus maintaining the mixup between the two feature sets.
+    The MixupConv layer computes messages from one set of node features
+    (`x1`) and applies them to update the second set of node features (`x2`),
+    thus maintaining the mixup between the two feature sets.
 
     **Supported Convolution Types**:
-    - GCNConv
-    - GATConv
-    - Other PyG convolution types can be passed during initialization.
+    GCNConv
+    GATConv
+    Other PyG convolution types can be passed during initialization.
 
     Args:
         in_channels (int): Size of each input sample (number of input node
-            features).
+        features).
         out_channels (int): Size of each output sample (number of output node
-            features).
+        features).
         conv_layer (torch.nn.Module, optional): The PyG convolutional layer
-            to use (e.g., GCNConv, GATConv). Defaults to GCNConv.
+        to use (e.g., GCNConv, GATConv). Defaults to GCNConv.
         aggr (str, optional): The aggregation scheme to use ("add", "mean",
-            "max"). (default: :obj:`"mean"`)
+        "max"). (default: :obj:`"mean"`)
         bias (bool, optional): If set to `False`, the layer will not learn an
-            additive bias. (default: :obj:`True`)
+        additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments passed to the convolution
-            layer.
-
-    Shapes:
-        - **Input:**
-            - `x1`: Node feature matrix of shape :obj:`[num_nodes,
-              in_channels]`
-            - `edge_index`: Graph connectivity in COO format with shape
-              :obj:`[2, num_edges]`
-            - `x2`: Node feature matrix of shape :obj:`[num_nodes,
-              in_channels]`
-        - **Output:**
-            - Node feature matrix of shape :obj:`[num_nodes, out_channels]`
-
-    Example:
-        >>> from torch_geometric.nn import GCNConv, MixupConv
-        >>> conv = MixupConv(GCNConv, in_channels=16, out_channels=32)
-        >>> x1 = torch.randn((100, 16))  # Input node features 1
-        >>> edge_index = torch.randint(0, 100, (2, 300))  # Edge index for the
-        >>> x2 = torch.randn((100, 16))  # Input node features 2
-        >>> out = conv(x1, edge_index, x2)
-        >>> print(out.shape)
-        torch.Size([100, 32])
+        layer.
     """
     def __init__(self, in_channels: int, out_channels: int,
                  conv_layer: Optional[Module] = GCNConv, aggr='mean',
@@ -80,11 +59,11 @@ class MixupConv(MessagePassing):
 
         Args:
             x1 (Tensor): Node feature matrix of the first input graph with
-                shape :obj:`[num_nodes, in_channels]`.
+            shape :obj:`[num_nodes, in_channels]`.
             edge_index (Tensor): Graph connectivity in COO format with shape
-                :obj:`[2, num_edges]`.
+            :obj:`[2, num_edges]`.
             x2 (Tensor): Node feature matrix of the second input graph with
-                shape :obj:`[num_nodes, in_channels]`.
+            shape :obj:`[num_nodes, in_channels]`.
 
         Returns:
             Tensor: Node feature matrix of shape :obj:`[num_nodes,
