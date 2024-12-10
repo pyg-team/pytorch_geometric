@@ -182,8 +182,9 @@ def get_num_procs():
 
 
 def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
-    """Function to chunk text into sentence-based segments.
-    Co-authored with Claude AI
+    """
+    Function to chunk text into sentence-based segments.
+    Co-authored with Claude AI.
     """
     # If the input text is empty or None, return an empty list
     if not text:
