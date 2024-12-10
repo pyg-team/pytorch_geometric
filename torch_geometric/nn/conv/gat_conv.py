@@ -509,7 +509,6 @@ class GATConv(MessagePassing):
                         "The usage of 'normalize' is not supported "
                         "for bipartite message passing.")
 
-        if self.normalize:
             if isinstance(edge_index, Tensor):
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
