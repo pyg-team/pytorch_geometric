@@ -70,7 +70,7 @@ if WITH_PT24:
 
 
 class LargeGraphIndexer:
-    """For a dataset that consists of mulitiple subgraphs that are assumed to
+    """For a dataset that consists of multiple subgraphs that are assumed to
     be part of a much larger graph, collate the values into a large graph store
     to save resources.
     """

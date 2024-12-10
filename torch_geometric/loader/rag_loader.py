@@ -52,6 +52,7 @@ class RAGGraphStore(Protocol):
 
 
 class RAGQueryLoader:
+    """Loader meant for making RAG queries from a remote backend."""
     def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
                  local_filter: Optional[Callable[[Data, Any], Data]] = None,
                  seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
