@@ -151,7 +151,7 @@ class PMPNNDataset(InMemoryDataset):
             }
 
             if len(asmb_candidates) < 1:
-                chain = torch.load("{}_{}.pt".format(PREFIX, chid))
+                chain = torch.load(f"{PREFIX}_{chid}.pt")
                 L = len(chain['seq'])
                 item_graph = Data(
                     seq=chain['seq'],
@@ -169,7 +169,7 @@ class PMPNNDataset(InMemoryDataset):
 
             # load relevant chains
             chains = {
-                c: torch.load("{}_{}.pt".format(PREFIX, c))
+                c: torch.load(f"{PREFIX}_{c}.pt")
                 for i in idx
                 for c in asmb_chains[i] if c in meta['chains']
             }
