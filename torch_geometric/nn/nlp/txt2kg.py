@@ -96,8 +96,8 @@ class TXT2KG():
             mp.spawn(
                 multiproc_helper,
                 args=(in_chunks_per_proc, parse_n_check_triples,
-                      chunk_to_triples_str_cloud, self.NVIDIA_API_KEY, self.NIM_MODEL),
-                nprocs=num_procs)
+                      chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                      self.NIM_MODEL), nprocs=num_procs)
             self.relevant_triples[key] = []
             for rank in range(num_procs):
                 self.relevant_triples[key] += torch.load(
