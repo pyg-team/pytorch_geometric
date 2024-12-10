@@ -1,4 +1,3 @@
-import math
 import os
 import time
 from typing import List, Optional, Tuple
@@ -181,32 +180,31 @@ def get_num_procs():
         num_proc = os.cpu_count() / (2)
     return int(num_proc)
 
-    
+
 def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
-    """
-    Function to chunk text into sentence-based segments.
+    """Function to chunk text into sentence-based segments.
     Co-authored with Claude AI
     """
     # If the input text is empty or None, return an empty list
     if not text:
         return []
-    
+
     # List of punctuation marks that typically end sentences
     sentence_endings = '.!?'
-    
+
     # List to store the resulting chunks
     chunks = []
-    
+
     # Continue processing the entire text
     while text:
         # If the remaining text is shorter than chunk_size, add it and break
         if len(text) <= chunk_size:
             chunks.append(text.strip())
             break
-        
+
         # Start with the maximum possible chunk
         chunk = text[:chunk_size]
-        
+
         # Try to find the last sentence ending within the chunk
         best_split = chunk_size
         for ending in sentence_endings:
@@ -214,8 +212,11 @@ def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
             last_ending = chunk.rfind(ending)
             if last_ending != -1:
                 # Ensure we include the punctuation and any following space
-                best_split = min(best_split, last_ending + 1 + (1 if last_ending + 1 < len(chunk) and chunk[last_ending + 1].isspace() else 0))
-        
+                best_split = min(
+                    best_split, last_ending + 1 +
+                    (1 if last_ending + 1 < len(chunk)
+                     and chunk[last_ending + 1].isspace() else 0))
+
         # Adjust to ensure we don't break words
         # If the next character is a letter, find the last space
         if best_split < len(text) and text[best_split].isalpha():
@@ -223,11 +224,11 @@ def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
             space_split = text[:best_split].rfind(' ')
             if space_split != -1:
                 best_split = space_split
-        
+
         # Append the chunk, ensuring it's stripped
         chunks.append(text[:best_split].strip())
-        
+
         # Remove the processed part from the text
         text = text[best_split:].lstrip()
-    
+
     return chunks
