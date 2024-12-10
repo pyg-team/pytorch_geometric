@@ -1,5 +1,6 @@
 import copy
 import os
+from math import ceil
 
 import torch
 import torch.distributed as dist
@@ -86,7 +87,7 @@ def run(world_size: int, rank: int, local_rank: int):
 
     # Split training indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
+    train_idx = train_idx.split(ceil(train_idx.size(0) / world_size))[rank]
 
     kwargs = dict(batch_size=1024, num_workers=4, persistent_workers=True)
     train_loader = NeighborLoader(

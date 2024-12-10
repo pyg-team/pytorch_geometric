@@ -383,7 +383,7 @@ class Dataset(torch.utils.data.Dataset):
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
         The returned instance can then be used with :pyg:`PyG's` built-in
-        :class:`DataPipes` for baching graphs as follows:
+        :class:`DataPipes` for batching graphs as follows:
 
         .. code-block:: python
 
