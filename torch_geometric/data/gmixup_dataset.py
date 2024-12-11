@@ -228,100 +228,38 @@ class GMixupDataset:
         K: Union[int, np.integer, IndexType] = 10,
         method: str = "random",
         size: Union[int, np.integer, IndexType] = 1,
-    ) -> Batch:
-        r"""Generates synthetic graph(s) using G-Mixup.
-
-        We allow indexing with a tensor, numpy array, Python slicing, or a
-        single integer index. Similarly, we allow mixing_param, K, and size to
-        be either a singular value or a numpy array or tensor of values. If any
-        of these are a tensor, they must be of the same length as size.
-
+    ) -> List[Data]:
+        r"""Takes in a batch of graph label pairs and a mixing parameter λ, and returns the new synthetic graph(s) generated using G-Mixup
+        
         Args:
-            idx_1 (int, array, tensor): Index of the first class of graphs
-            idx_2 (int, array, tensor): Index of the second graph of graphs
-            mixing_param (float, array, tensor): The mixing parameter λ to use
-                when interpolating the graphons of the two classes.
-                Varied between 0 and 1 to generate graphs that are more similar
-                to the first class (λ = 0) or the second class (λ = 1).
-                (default: :obj:`0.5`)
-            K (int, array, tensor): The number of nodes to sample for the
-                ouput synthetic graph(s)
-            method (str): The method to use for sampling nodes from the
-                graphon. Can be 'random' to sample nodes uniformly at random,
-                or 'uniform' to guarantee a uniform distribution of nodes
-                across the graph. (default: :obj:`'random'`)
-            size (int, array, tensor): number of synthetic graphs to generate
-                (default: :obj:`1`)
+            idx_1 (int): Index of the first graph in the pair
+            idx_2 (int): Index of the second graph in the pair
+            mixing_param (float): The mixing parameter λ
+            K (int): The number of nodes in the output synthetic graph(s)
+            method (str): The method to use for generating the synthetic graph(s). Options are 'random' and 'uniform'. (default: :obj:`'random'`)
+            size (int): The number of synthetic graphs to generate. (default: :obj:`1`)
 
         Returns:
-            Batch: 'size' synthetic graphs generated using G-Mixup.
+            graphs (List[Data]): a list of the generated graphs
         """
-        assert method in ["random", "uniform"], \
-            "Graph generation method must be 'random' or 'uniform'"
-        expected_indextype_length = size \
-            if isinstance(size, Union[int, np.integer]) \
-            else len(size.flatten().tolist())
-        if isinstance(idx_1, IndexType):
-            idx_1 = idx_1.flatten().tolist()
-            assert len(idx_1) == expected_indextype_length, \
-                "idx_1 must be an integer or a tensor of length 'size'"
-        if isinstance(idx_2, IndexType):
-            idx_2 = idx_2.flatten().tolist()
-            assert len(idx_2) == expected_indextype_length, \
-                "idx_2 must be an integer or a tensor of length 'size'"
-        if isinstance(mixing_param, IndexType):
-            mixing_param = mixing_param.flatten().tolist()
-            assert len(mixing_param) == expected_indextype_length, \
-                "mixing_param must be a float or a tensor of length 'size'"
-        if isinstance(K, IndexType):
-            K = K.flatten().tolist()
-            assert len(K) == expected_indextype_length, \
-                "K must be an integer or a tensor of length 'size'"
-
-        graphs = []
-        if isinstance(size, IndexType):
-            for i, size_i in enumerate(size.flatten().tolist()):
-                idx_1_i = idx_1[i] if isinstance(idx_1, IndexType) else idx_1
-                idx_2_i = idx_2[i] if isinstance(idx_2, IndexType) else idx_2
-                mixing_param_i = mixing_param[i] if isinstance(
-                    mixing_param, IndexType) else mixing_param
-                K_i = K[i] if isinstance(K, IndexType) else K
-
-                graphs.append(
-                    self.generate_graphs(idx_1_i, idx_2_i, mixing_param_i, K_i,
-                                         method, size_i))
-        else:
+        if not self.graphons_generated[idx_1]:
             if self.log:
-                print(
-                    f"Generating {size} synthetic graph(s) for indices {idx_1}"
-                    f" and {idx_2} with mixing parameter {mixing_param} and "
-                    f"{K} nodes...")
-
-            for i in range(size):
-                idx_1_i = idx_1[i] if isinstance(idx_1, IndexType) else idx_1
-                idx_2_i = idx_2[i] if isinstance(idx_2, IndexType) else idx_2
-                mixing_param_i = mixing_param[i] if isinstance(
-                    mixing_param, IndexType) else mixing_param
-                K_i = K[i] if isinstance(K, IndexType) else K
-
-                if not self.graphons_generated[idx_1_i]:
-                    if self.log:
-                        print(
-                            f"Graphon for class {idx_1_i} not yet generated, "
-                            "generating...")
-                    self.generate_graphon(idx_1_i)
-                if not self.graphons_generated[idx_2_i]:
-                    if self.log:
-                        print(
-                            f"Graphon for class {idx_2_i} not yet generated, "
-                            "generating...")
-                    self.generate_graphon(idx_2_i)
-
-                graph = self.generate_graph(idx_1_i, idx_2_i, mixing_param_i,
-                                            K_i, method)
-                graphs.append(graph)
-
-        return Batch.from_data_list(graphs)
+                print(f"Graphon for class {idx_1} not yet generated, generating...")
+            self.generate_graphon(idx_1)
+        if not self.graphons_generated[idx_2]:
+            if self.log:
+                print(f"Graphon for class {idx_2} not yet generated, generating...")
+            self.generate_graphon(idx_2)
+        
+        if self.log:
+            print(f"Generating {size} synthetic graph(s) for indices {idx_1} and {idx_2} with mixing parameter {mixing_param} and {K} nodes...")
+        
+        graphs = []
+        for i in range(size):
+            graph = self.generate_graph(idx_1, idx_2, mixing_param, K, method)
+            graphs.append(graph)
+        
+        return graphs
 
     def generate_graph(
         self,
