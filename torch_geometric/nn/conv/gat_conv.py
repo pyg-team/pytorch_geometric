@@ -102,7 +102,8 @@ def gat_norm(  # noqa: F811
                                    repeat_deg_tilde_inv.view(1, -1, num_heads))
         # should never be None, only for typing purpose
         alpha = att_mat.storage.value()
-        return adj_t, alpha if alpha is not None else edge_weight
+        return att_mat.set_value(
+            None), alpha if alpha is not None else edge_weight
 
     if is_torch_sparse_tensor(edge_index):
         assert edge_index.size(0) == edge_index.size(1)

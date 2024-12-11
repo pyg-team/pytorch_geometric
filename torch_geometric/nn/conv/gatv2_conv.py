@@ -337,7 +337,7 @@ class GATv2Conv(MessagePassing):
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
             elif isinstance(edge_index, SparseTensor):
-                edge_index = torch_sparse.fill_diag(edge_index, 0.0)
+                edge_index = torch_sparse.remove_diag(edge_index)
 
         # edge_updater_type: (x: PairTensor, edge_attr: OptTensor)
         alpha = self.edge_updater(edge_index, x=(x_l, x_r),
