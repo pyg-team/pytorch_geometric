@@ -29,52 +29,20 @@ from .pmlp import PMLP
 from .neural_fingerprint import NeuralFingerprint
 from .visnet import ViSNet
 from .g_retriever import GRetriever
+from .pprgo import PPRGo, pprgo_prune_features
 
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
                                                       captum_output_to_dicts)
 
 __all__ = classes = [
-    'MLP',
-    'GCN',
-    'GraphSAGE',
-    'GIN',
-    'GAT',
-    'PNA',
-    'EdgeCNN',
-    'JumpingKnowledge',
-    'HeteroJumpingKnowledge',
-    'MetaLayer',
-    'Node2Vec',
-    'DeepGraphInfomax',
-    'InnerProductDecoder',
-    'GAE',
-    'VGAE',
-    'ARGA',
-    'ARGVA',
-    'SignedGCN',
-    'RENet',
-    'GraphUNet',
-    'SchNet',
-    'DimeNet',
-    'DimeNetPlusPlus',
-    'to_captum_model',
-    'to_captum_input',
-    'captum_output_to_dicts',
-    'MetaPath2Vec',
-    'DeepGCNLayer',
-    'TGNMemory',
-    'LabelPropagation',
-    'CorrectAndSmooth',
-    'AttentiveFP',
-    'RECT_L',
-    'LINKX',
-    'LightGCN',
-    'MaskLabel',
-    'GroupAddRev',
-    'GNNFF',
-    'PMLP',
-    'NeuralFingerprint',
-    'ViSNet',
-    'GRetriever',
+    'MLP', 'GCN', 'GraphSAGE', 'GIN', 'GAT', 'PNA', 'EdgeCNN',
+    'JumpingKnowledge', 'HeteroJumpingKnowledge', 'MetaLayer', 'Node2Vec',
+    'DeepGraphInfomax', 'InnerProductDecoder', 'GAE', 'VGAE', 'ARGA', 'ARGVA',
+    'SignedGCN', 'RENet', 'GraphUNet', 'SchNet', 'DimeNet', 'DimeNetPlusPlus',
+    'to_captum_model', 'to_captum_input', 'captum_output_to_dicts',
+    'MetaPath2Vec', 'DeepGCNLayer', 'TGNMemory', 'LabelPropagation',
+    'CorrectAndSmooth', 'AttentiveFP', 'RECT_L', 'LINKX', 'LightGCN',
+    'MaskLabel', 'GroupAddRev', 'GNNFF', 'PMLP', 'NeuralFingerprint', 'ViSNet',
+    'GRetriever', 'PPRGo', 'pprgo_prune_features'
 ]
