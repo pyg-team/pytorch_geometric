@@ -351,5 +351,5 @@ def group_cat(
     """
     assert len(tensors) == len(indices)
     index, perm = torch.cat(indices).sort(stable=True)
-    out = torch.cat(tensors, dim=0)[perm]
+    out = torch.cat(tensors, dim=dim).index_select(dim, perm)
     return (out, index) if return_index else out
