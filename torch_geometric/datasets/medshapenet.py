@@ -82,8 +82,10 @@ class MedShapeNet(InMemoryDataset):
   def raw_paths(self) -> List[str]:
     r"""The absolute filepaths that must be present in order to skip
     downloading."""
-    files = self.raw_file_names
-    return [osp.join(self.raw_dir, f) for f in files] or osp.join(self.raw_dir, files)
+    if isinstance(self.raw_file_names, list):
+        return [osp.join(self.raw_dir, f) for f in self.raw_file_names]
+    else:
+        return [osp.join(self.raw_dir, self.raw_file_names)]
 
   def process(self) -> None:
     from MedShapeNet import MedShapeNet as msn
@@ -105,9 +107,7 @@ class MedShapeNet(InMemoryDataset):
     val_size = int(0.15 * self.size)  # 15% for validation
     test_size = self.size - train_size - val_size  # Remainder for testing
 
-    train_list = []
-    val_list = []
-    test_list = []
+    train_list, val_list, test_list = [], [], []
     for dataset in list_of_datasets:
       self.newpath = self.root + '/' + dataset.split("/")[1]
       if not os.path.exists(self.newpath):
