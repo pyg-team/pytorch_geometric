@@ -105,9 +105,9 @@ class MedShapeNet(InMemoryDataset):
     val_size = int(0.15 * self.size)  # 15% for validation
     test_size = self.size - train_size - val_size  # Remainder for testing
 
-    train_list: List[str] = []
-    val_list: List[str] = []
-    test_list: List[str] = []
+    train_list = []
+    val_list = []
+    test_list = []
     for dataset in list_of_datasets:
       self.newpath = self.root + '/' + dataset.split("/")[1]
       if not os.path.exists(self.newpath):
@@ -118,9 +118,10 @@ class MedShapeNet(InMemoryDataset):
       train_data, val_data, test_data = random_split(stl_files, [train_size, 
                                                                  val_size, 
                                                                  test_size])
-      train_list.extend(train_data)
-      val_list.extend(val_data)
-      test_list.extend(test_data)
+
+      train_list.extend([stl_files[idx] for idx in train_data.indices])
+      val_list.extend([stl_files[idx] for idx in val_data.indices])
+      test_list.extend([stl_files[idx] for idx in test_data.indices])
 
       for stl_file in stl_files:
         msn_instance.download_stl_as_numpy(bucket_name = dataset, 
