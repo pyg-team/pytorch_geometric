@@ -153,9 +153,6 @@ class GATv2Conv(MessagePassing):
     ):
         super().__init__(node_dim=0, **kwargs)
 
-        if normalize:
-            add_self_loops = False
-
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
@@ -311,7 +308,7 @@ class GATv2Conv(MessagePassing):
         assert x_l is not None
         assert x_r is not None
 
-        if self.add_self_loops:
+        if self.add_self_loops and not self.normalize:
             if isinstance(edge_index, Tensor):
                 num_nodes = x_l.size(0)
                 if x_r is not None:
