@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch_geometric.data import Batch
 from torch_geometric.nn import global_add_pool
 
-from torch_geometric.nn.models.tokenizer import GraphFeatureTokenizer
+from tokenizer import GraphFeatureTokenizer
 
 class TokenGT(nn.Module):
     r"""
