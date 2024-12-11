@@ -29,9 +29,10 @@ def test_label_usage():
     mask_bool = torch.zeros(num_nodes, dtype=torch.bool)
     mask_bool[mask] = True
 
-    label_usage_bool = LabelUsage(base_model=base_model, num_classes=num_classes,
-                             split_ratio=0.6, num_recycling_iterations=10,
-                             return_tuple=True)
+    label_usage_bool = LabelUsage(base_model=base_model,
+                                  num_classes=num_classes, split_ratio=0.6,
+                                  num_recycling_iterations=10,
+                                  return_tuple=True)
 
     output, train_labels_idx, train_pred_idx = label_usage(
         feat=x, edge_index=edge_index, y=y, mask=mask_bool)
