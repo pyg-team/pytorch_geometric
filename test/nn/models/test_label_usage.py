@@ -33,7 +33,7 @@ def test_label_usage():
                              split_ratio=0.6, num_recycling_iterations=10,
                              return_tuple=True)
 
-    output, train_labels_idx, train_pred_idx = label_usage(
+    output, train_labels_idx, train_pred_idx = label_usage_bool(
         feat=x, edge_index=edge_index, y=y, mask=mask_bool)
 
     # Check output shapes

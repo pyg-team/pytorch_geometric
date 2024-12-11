@@ -71,7 +71,7 @@ class LabelUsage(torch.nn.Module):
                 are used during training
         """
         assert feat.dim() == 2, f"feat must be 2D but got shape {feat.shape}"
-        assert y.dim() == 1 or (y.dim() == 2 and y.size(1) == 1),\
+        assert y.dim() == 1 or (y.dim() == 2 and y.size(1) == 1), \
             f"Expected y to be either (N,) or (N, 1), but got shape {y.shape}"
 
         # set unlabeled mask for unlabeled indices
