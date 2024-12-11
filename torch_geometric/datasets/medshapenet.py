@@ -79,7 +79,7 @@ class MedShapeNet(InMemoryDataset):
       return ['train.pt','val','test.pt']
 
   @property
-  def raw_paths(self):
+  def raw_paths(self) -> List[str]:
     r"""The absolute filepaths that must be present in order to skip
     downloading."""
     files = self.raw_file_names
