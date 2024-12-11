@@ -94,41 +94,57 @@ class GraphFeatureTokenizer(nn.Module):
         return tokens, attention_masks
 
     def generate_node_identifiers(self, data: Batch) -> torch.Tensor:
-        """Generate node identifiers using the specified method."""
+        """Generate node identifiers using the specified method. See section 2 and appendix A.3.1 of the paper for details."""
         x = data.x
         batch = data.batch
         edge_index = data.edge_index
-        num_nodes = x.size(0)
         device = x.device
 
-        if self.method == 'orf':
-            P = torch.empty((max(self.d_p, num_nodes), self.d_p), device=device).normal_(mean=0, std=1)
-            # Orthonormalize
-            P, _ = torch.linalg.qr(P)  
-            P = P[:num_nodes, :]
-        elif self.method == 'laplacian':
-            P_list = []
-            for i in range(data.num_graphs):
-                node_mask = (batch == i)
-                n_nodes = node_mask.sum().item()
-                sub_edge_index, _ = subgraph(node_mask, edge_index, relabel_nodes=True)
-                P_i = self.compute_laplacian_eigenvectors(sub_edge_index, n_nodes)
-                P_list.append(P_i)
-            P = torch.cat(P_list, dim=0) 
-        else:
-            raise ValueError("Invalid method for node identifiers. Choose 'orf' or 'laplacian'.")
+        P_list = []
 
+        for i in range(data.num_graphs):
+            node_mask = (batch == i)
+            num_nodes = node_mask.sum().item()
+
+            if self.method == 'orf':
+                G = torch.empty((num_nodes, num_nodes), device=device).normal_(mean=0, std=1)
+                # Orthonormalize
+                P, _ = torch.linalg.qr(G)
+                if num_nodes < self.d_p:
+                    # Zero-pad the channels to the desired dimension
+                    P = F.pad(P, (0, self.d_p - num_nodes), mode='constant', value=0)
+                elif num_nodes > self.d_p:
+                    # Randomly select d_p channels
+                    perm = torch.randperm(num_nodes, device=device)
+                    P = P[:, perm[:self.d_p]]
+                P_list.append(P)
+            
+            elif self.method == 'laplacian':
+                sub_edge_index, _ = subgraph(node_mask, edge_index, relabel_nodes=True)
+                P = self.compute_laplacian_eigenvectors(sub_edge_index, num_nodes)
+                if num_nodes < self.d_p:
+                    # Zero-pad the channels to the desired dimension
+                    P = F.pad(P, (0, self.d_p - num_nodes), mode='constant', value=0)
+                elif num_nodes > self.d_p:
+                    # Use the d_p eigenvectors with the smallest eigenvalues
+                    P = P[:, :self.d_p]
+                P_list.append(P)
+                
+            else:
+                raise ValueError("Invalid method for node identifiers. Choose 'orf' or 'laplacian'.")
+        
+        P = torch.cat(P_list, dim=0) 
+        assert P.size() == (x.size(0), self.d_p), f"Error while generating node identifiers: P has shape {P.size()}, expected {(x.size(0), self.d_p)}."
         return P
 
     def compute_laplacian_eigenvectors(self, edge_index, num_nodes: int) -> torch.Tensor:
-        """Compute Laplacian eigenvectors for node identifiers."""
+        """Compute Laplacian eigenvectors for node identifiers. Returns a matrix with the eigenvectors as columns, ordered by increasing eigenvalue."""
         device = edge_index.device
         adj = torch.zeros((num_nodes, num_nodes), device=device)
         adj[edge_index[0], edge_index[1]] = 1.0
         degree = adj.sum(dim=1)
         laplacian = torch.diag(degree) - adj
         eigvals, eigvecs = torch.linalg.eigh(laplacian)
-        eigvecs = eigvecs[:, 1:self.d_p+1]
         return eigvecs
 
     def prepare_tokens(self, data: Batch, X_v_proj: torch.Tensor, X_e_proj: torch.Tensor,
