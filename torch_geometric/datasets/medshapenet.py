@@ -88,19 +88,25 @@ class MedShapeNet(InMemoryDataset):
     from MedShapeNet import MedShapeNet as msn
     from torch.utils.data import random_split
     import urllib3
-    
+
     msn_instance = msn()
 
-    pool = urllib3.HTTPConnectionPool("medshapenet.ddns.net", maxsize=50)
+    urllib3.HTTPConnectionPool("medshapenet.ddns.net", maxsize=50)
 
     list_of_datasets = msn_instance.datasets(False)
-    list_of_datasets = list(filter(lambda x: x not in ['medshapenetcore/ASOCA','medshapenetcore/AVT','medshapenetcore/AutoImplantCraniotomy','medshapenetcore/FaceVR'], list_of_datasets))
-
+    list_of_datasets = list(filter(lambda x: x not in ['medshapenetcore/ASOCA',
+                                                       'medshapenetcore/AVT',
+                                                       'medshapenetcore/AutoImplantCraniotomy',
+                                                       'medshapenetcore/FaceVR'], 
+                                   list_of_datasets))
+    
     train_size = int(0.7 * self.size)  # 70% for training
     val_size = int(0.15 * self.size)  # 15% for validation
     test_size = self.size - train_size - val_size  # Remainder for testing
 
-    train_list, val_list, test_list = [], [], []
+    train_list: List[str] = []
+    val_list: List[str] = []
+    test_list: List[str] = []
     for dataset in list_of_datasets:
       self.newpath = self.root + '/' + dataset.split("/")[1]
       if not os.path.exists(self.newpath):
@@ -108,13 +114,19 @@ class MedShapeNet(InMemoryDataset):
       stl_files = msn_instance.dataset_files(dataset, '.stl')
       stl_files = stl_files[:self.size]
 
-      train_data, val_data, test_data = random_split(stl_files, [train_size, val_size, test_size])
-      train_list.extend(train_data)
-      val_list.extend(val_data)
-      test_list.extend(test_data)
+      train_data, val_data, test_data = random_split(stl_files, [train_size, 
+                                                                 val_size, 
+                                                                 test_size])
+      train_list.extend(list(train_data))
+      val_list.extend(list(val_data))
+      test_list.extend(list(test_data))
 
       for stl_file in stl_files:
-        msn_instance.download_stl_as_numpy(bucket_name = dataset, stl_file = stl_file, output_dir = self.newpath, print_output=False)
+        msn_instance.download_stl_as_numpy(bucket_name = dataset, 
+                                           stl_file = stl_file, 
+                                           output_dir = self.newpath, 
+                                           print_output=False)
+        
 
     class_mapping = {
         '3DTeethSeg': 0,
