@@ -51,7 +51,7 @@ class LLM(torch.nn.Module):
 
     model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"` or
         :obj:`"gemma"`.
-    num_params (int): An integer representing how many parameters the
+    num_params (float): An integer representing how many parameters the
         HuggingFace model has, in billions. This is used to automatically
         allocate the correct number of GPUs needed, given the available GPU
         memory of your GPUs.
@@ -61,7 +61,7 @@ class LLM(torch.nn.Module):
     def __init__(
         self,
         model_name: str,
-        num_params: int,
+        num_params: float,
         dtype=torch.bfloat16,
     ) -> None:
         super().__init__()
@@ -313,6 +313,7 @@ class LLM(torch.nn.Module):
                 bos_token_id=bos_token,
                 max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
+                pad_token_id=self.tokenizer.eos_token_id,
                 use_cache=True,
             )
 
