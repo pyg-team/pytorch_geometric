@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.datasets import KarateClub
-from torch_geometric.nn.models.pprgo import PPRGo, prune_features
+from torch_geometric.nn.models.pprgo import PPRGo, pprgo_prune_features
 
 
 @pytest.mark.parametrize('n_layers', [1, 4])
@@ -22,7 +22,7 @@ def test_pprgo_forward(n_layers, dropout):
         torch.randint(0, num_nodes, [num_edges])
     ], dim=0)
 
-    # Mimic the behavior of prune_features manually
+    # Mimic the behavior of pprgo_prune_features manually
     # i.e., we expect node_embeds to be |V| x d
     node_embeds = torch.rand((num_nodes, num_features))
     node_embeds = node_embeds[edge_index[1], :]
@@ -38,7 +38,7 @@ def test_pprgo_karate():
     data = KarateClub()[0]
     num_nodes = data.num_nodes
 
-    data = prune_features(data)
+    data = pprgo_prune_features(data)
     data.edge_weight = torch.ones((data.edge_index.shape[1], ))
 
     assert data.x.shape[0] == data.edge_index.shape[1]
@@ -56,7 +56,7 @@ def test_pprgo_inference(n_power_iters, frac_predict, batch_size):
     data = KarateClub()[0]
     num_nodes = data.num_nodes
 
-    data = prune_features(data)
+    data = pprgo_prune_features(data)
     data.edge_weight = torch.rand(data.edge_index.shape[1])
 
     num_classes = 16
