@@ -7,12 +7,12 @@ import torch
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import TXT2KG, SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
+    preprocess_triplet,
 )
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
