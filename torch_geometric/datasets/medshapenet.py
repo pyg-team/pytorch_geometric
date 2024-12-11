@@ -9,8 +9,8 @@ import torch
 from torch_geometric.data import Data, InMemoryDataset
 
 class MedShapeNet(InMemoryDataset):
-  r"""The MedShapeNet datasets from the `"MedShapeNet -- A Large-Scale Dataset
-    of 3D Medical Shapes for Computer Vision"
+  r"""The MedShapeNet datasets from the `"MedShapeNet -- A Large-Scale 
+    Dataset of 3D Medical Shapes for Computer Vision"
     <https://arxiv.org/abs/2308.16139>`_ paper,
     containing 8 different type of structures (classes).
 
@@ -26,7 +26,8 @@ class MedShapeNet(InMemoryDataset):
 
     Args:
         root (str): Root directory where the dataset should be saved.
-        size (int): Number of invividual 3D structures to download per type (classes).
+        size (int): Number of invividual 3D structures to download per 
+            type (classes).
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
@@ -117,9 +118,9 @@ class MedShapeNet(InMemoryDataset):
       train_data, val_data, test_data = random_split(stl_files, [train_size, 
                                                                  val_size, 
                                                                  test_size])
-      train_list.extend(list(train_data))
-      val_list.extend(list(val_data))
-      test_list.extend(list(test_data))
+      train_list.extend(train_data)
+      val_list.extend(val_data)
+      test_list.extend(test_data)
 
       for stl_file in stl_files:
         msn_instance.download_stl_as_numpy(bucket_name = dataset, 
