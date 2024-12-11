@@ -1,4 +1,3 @@
-import math
 import os
 import time
 from typing import List, Optional, Tuple
@@ -14,10 +13,12 @@ SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples 
 
 
 class TXT2KG():
-    """Uses NVIDIA NIMs + Prompt engineering to extract KG from text
-    nvidia/llama-3.1-nemotron-70b-instruct is on par or better than GPT4o
+    """Uses NVIDIA NIMs + Prompt engineering to extract KG from text.
+    `nvidia/llama-3.1-nemotron-70b-instruct` is on par or better than GPT4o
     in benchmarks. We need a high quality model to ensure high quality KG.
-    Otherwise garbage in garbage out.
+    Otherwise we have garbage in garbage out for the rest of the
+    GNN+LLM RAG pipeline.
+
     Use local_lm flag for local debugging/dev. You still need to be able to
     inference a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'.
     Smaller LLMs did not work at all in testing.
@@ -70,10 +71,7 @@ class TXT2KG():
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
-        chunks = [
-            txt[i * self.chunk_size:min((i + 1) * self.chunk_size, len(txt))]
-            for i in range(math.ceil(len(txt) / self.chunk_size))
-        ]
+        chunks = chunk_text(txt, chunk_size=self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
@@ -183,3 +181,56 @@ def get_num_procs():
     if num_proc is None:
         num_proc = os.cpu_count() / (2)
     return int(num_proc)
+
+
+def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
+    """Function to chunk text into sentence-based segments.
+    Co-authored with Claude AI.
+    """
+    # If the input text is empty or None, return an empty list
+    if not text:
+        return []
+
+    # List of punctuation marks that typically end sentences
+    sentence_endings = '.!?'
+
+    # List to store the resulting chunks
+    chunks = []
+
+    # Continue processing the entire text
+    while text:
+        # If the remaining text is shorter than chunk_size, add it and break
+        if len(text) <= chunk_size:
+            chunks.append(text.strip())
+            break
+
+        # Start with the maximum possible chunk
+        chunk = text[:chunk_size]
+
+        # Try to find the last sentence ending within the chunk
+        best_split = chunk_size
+        for ending in sentence_endings:
+            # Find the last occurrence of the ending punctuation
+            last_ending = chunk.rfind(ending)
+            if last_ending != -1:
+                # Ensure we include the punctuation and any following space
+                best_split = min(
+                    best_split, last_ending + 1 +
+                    (1 if last_ending + 1 < len(chunk)
+                     and chunk[last_ending + 1].isspace() else 0))
+
+        # Adjust to ensure we don't break words
+        # If the next character is a letter, find the last space
+        if best_split < len(text) and text[best_split].isalpha():
+            # Find the last space before the current split point
+            space_split = text[:best_split].rfind(' ')
+            if space_split != -1:
+                best_split = space_split
+
+        # Append the chunk, ensuring it's stripped
+        chunks.append(text[:best_split].strip())
+
+        # Remove the processed part from the text
+        text = text[best_split:].lstrip()
+
+    return chunks
