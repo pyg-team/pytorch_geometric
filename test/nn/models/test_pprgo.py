@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.datasets import KarateClub
 from torch_geometric.nn.models.pprgo import PPRGo, pprgo_prune_features
+from torch_geometric.testing import withPackage
 
 
 @pytest.mark.parametrize('n_layers', [1, 4])
@@ -52,6 +53,7 @@ def test_pprgo_karate():
 @pytest.mark.parametrize('n_power_iters', [1, 3])
 @pytest.mark.parametrize('frac_predict', [1.0, 0.5])
 @pytest.mark.parametrize('batch_size', [1, 9999])
+@withPackage('torch_sparse')
 def test_pprgo_inference(n_power_iters, frac_predict, batch_size):
     data = KarateClub()[0]
     num_nodes = data.num_nodes
