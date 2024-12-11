@@ -49,6 +49,8 @@ A user can request a synthetic graph from the GMixupDataset object by calling ge
 * K (optional, default 10): the number of nodes to sample for the output synthetic graph.
 * method (optional, default 'random'): the method to use for sampling nodes from the graphon. Can be 'random' to sample nodes uniformly at random, or 'uniform' to guarantee a uniform distribution of nodes across the graphon.
 
+We additionally support the above arguments to be passed in as tensors, arrays, or slices, in which case the generate_graphs method will generate a batch of synthetic graphs with the corresponding parameters. This allows users to easily generate large numbers of synthetic graphs at once for their training data or other purposes, and allows for easy integration with other PyTorch Geometric classes (e.g. DataLoader).
+
 When a synthetic graph is requested, GMixupDataset does the following:
 1. Get the graphons of the two classes specified by idx_1 and idx_2
 2. Interpolate the graphons using the mixing parameter to get a new, mixed_graphon = mixing_param * graphon_1 + (1 - mixing_param) * graphon_2
