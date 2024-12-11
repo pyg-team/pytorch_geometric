@@ -63,8 +63,8 @@ graph_store[dict(
 )] = data.edge_index
 
 feature_store = cugraph_pyg.data.TensorDictFeatureStore()
-feature_store['node', 'x'] = data.x
-feature_store['node', 'y'] = data.y
+feature_store['node', 'x', None] = data.x
+feature_store['node', 'y', None] = data.y
 
 data = (feature_store, graph_store)
 
