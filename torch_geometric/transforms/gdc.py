@@ -306,11 +306,9 @@ class GDC(BaseTransform):
                 deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
             edge_index, edge_weight = get_ppr(
-                edge_index,
-                alpha=kwargs['alpha'],
-                eps=kwargs['eps'],
+                edge_index, alpha=kwargs['alpha'], eps=kwargs['eps'],
                 num_nodes=num_nodes,
-            )
+                topk=self.sparsification_kwargs.get('topk'))
 
             if normalization == 'col':
                 edge_index, edge_weight = sort_edge_index(
@@ -456,8 +454,8 @@ class GDC(BaseTransform):
             edge_index = edge_index[:, remaining_edge_idx]
             edge_weight = edge_weight[remaining_edge_idx]
         elif method == 'topk':
-            raise NotImplementedError(
-                'Sparse topk sparsification not implemented')
+            # Handled directly in ppr computation
+            pass
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
 
