@@ -112,7 +112,7 @@ if __name__ == '__main__':
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
 
-        if args.verbose
+        if args.verbose:
             print("Q=", q)
             print("A=", QA_pair[1])
             print("retrieved_triples =", retrieved_triples)
