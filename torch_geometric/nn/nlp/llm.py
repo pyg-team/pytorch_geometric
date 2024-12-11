@@ -321,6 +321,7 @@ class LLM(torch.nn.Module):
                 bos_token_id=bos_token,
                 max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
+                pad_token_id=self.tokenizer.eos_token_id,
                 use_cache=True,
             )
 
