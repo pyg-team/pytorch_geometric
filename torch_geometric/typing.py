@@ -335,7 +335,7 @@ class EdgeTypeStr(str):
             raise ValueError(f"Encountered invalid edge type '{args}'")
 
         out = str.__new__(cls, arg)
-        out.edge_type = edge_type
+        out.edge_type = edge_type  # type: ignore
         return out
 
     def to_tuple(self) -> EdgeType:
