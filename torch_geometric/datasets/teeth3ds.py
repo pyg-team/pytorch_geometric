@@ -6,8 +6,6 @@ from typing import Callable, Dict, List, Optional
 
 import numpy as np
 import torch
-import trimesh
-from fpsample import bucket_fps_kdline_sampling
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -141,6 +139,9 @@ class Teeth3DS(InMemoryDataset):
         Returns:
             Data: A PyTorch Geometric Data object containing processed data.
         """
+        import trimesh
+        from fpsample import bucket_fps_kdline_sampling
+
         # Load mesh
         mesh = trimesh.load_mesh(file_path)
         if isinstance(mesh, list):
