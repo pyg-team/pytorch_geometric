@@ -281,7 +281,8 @@ def test_remove_diag_sparse_tensor():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     edge_index2 = torch.tensor([[1, 2, 3], [0, 1, 1]])
 
-    adj1 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-    adj2 = SparseTensor.from_edge_index(edge_index2, sparse_sizes=(4, 4))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj1 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        adj2 = SparseTensor.from_edge_index(edge_index2, sparse_sizes=(4, 4))
 
-    assert torch_sparse.remove_diag(adj1.t()) == adj2.t()
+        assert torch_sparse.remove_diag(adj1.t()) == adj2.t()
