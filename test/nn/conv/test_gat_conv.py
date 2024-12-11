@@ -8,7 +8,7 @@ import torch_geometric.typing
 from torch_geometric.nn import GATConv
 from torch_geometric.nn.conv.gat_conv import gat_norm
 from torch_geometric.testing import is_full_test, withDevice
-from torch_geometric.typing import Adj, Size, SparseTensor
+from torch_geometric.typing import Adj, Size, SparseTensor, torch_sparse
 from torch_geometric.utils import to_torch_csc_tensor, to_torch_csr_tensor
 
 
@@ -274,3 +274,14 @@ def test_gat_conv_bipartite_error():
                        match="not supported for bipartite message passing"):
         conv = GATConv((8, 16), 32, heads=2, normalize=True)
         conv((x1, x2), edge_index)
+
+
+def test_remove_diag_sparse_tensor():
+    # Used in GAT Normalization
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_index2 = torch.tensor([[1, 2, 3], [0, 1, 1]])
+
+    adj1 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+    adj2 = SparseTensor.from_edge_index(edge_index2, sparse_sizes=(4, 4))
+
+    assert torch_sparse.remove_diag(adj1.t()) == adj2.t()
