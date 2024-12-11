@@ -307,42 +307,43 @@ class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string.
     """
-    edge_tuple: Optional[tuple] = None
+    edge_type: tuple[str, str, str]
 
     def __new__(cls, *args: Any) -> 'EdgeTypeStr':
-        edge_tuple = tuple()
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
             args = tuple(args[0])
 
         if len(args) == 1 and isinstance(args[0], str):
             arg = args[0]  # An edge type string was passed.
-            edge_tuple = tuple(arg.split(EDGE_TYPE_STR_SPLIT))
+            edge_type = tuple(arg.split(EDGE_TYPE_STR_SPLIT))
+            if len(edge_type) != 3:
+                raise ValueError(f"Cannot convert the edge type '{arg}' to a "
+                                 f"tuple since it holds invalid characters")
 
         elif len(args) == 2 and all(isinstance(arg, str) for arg in args):
             # A `(src, dst)` edge type was passed - add `DEFAULT_REL`:
-            edge_tuple = (args[0], DEFAULT_REL, args[1])
-            arg = EDGE_TYPE_STR_SPLIT.join(edge_tuple)
+            edge_type = (args[0], DEFAULT_REL, args[1])
+            arg = EDGE_TYPE_STR_SPLIT.join(edge_type)
 
         elif len(args) == 3 and all(isinstance(arg, str) for arg in args):
             # A `(src, rel, dst)` edge type was passed:
-            edge_tuple = tuple(args)
+            edge_type = tuple(args)
             arg = EDGE_TYPE_STR_SPLIT.join(args)
 
         else:
             raise ValueError(f"Encountered invalid edge type '{args}'")
 
         out = str.__new__(cls, arg)
-        out.edge_tuple = edge_tuple
+        out.edge_type = edge_type
         return out
 
     def to_tuple(self) -> EdgeType:
         r"""Returns the original edge type."""
-        assert isinstance(self.edge_tuple, tuple)
-        if len(self.edge_tuple) != 3:
+        if len(self.edge_type) != 3:
             raise ValueError(f"Cannot convert the edge type '{self}' to a "
                              f"tuple since it holds invalid characters")
-        return self.edge_tuple
+        return self.edge_type
 
 
 # There exist some short-cuts to query edge-types (given that the full triplet
