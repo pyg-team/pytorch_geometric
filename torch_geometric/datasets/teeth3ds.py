@@ -20,10 +20,10 @@ class Teeth3DS(InMemoryDataset):
     r"""Teeth3DS+, `"An Extended Benchmark for Intra-oral 3D Scans Analysis"
     <https://crns-smartvision.github.io/teeth3ds/>`_ paper is the first 
     comprehensive public benchmark designed to advance the field of intra-oral
-    3D scan analysis developed as part of the 3DTeethSeg 2022 and 3DTeethLand 
+    3D scan analysis developed as part of the 3DTeethSeg 2022 and 3DTeethLand
     2024 MICCAI challenges, aiming to drive research in teeth identification,
     segmentation, labeling, 3D modeling, and dental landmark identification.
-    The dataset includes at least 1,800 intra-oral scans (containing 23,999 
+    The dataset includes at least 1,800 intra-oral scans (containing 23,999
     annotated teeth) collected from 900 patients, covering both upper and lower
     jaws separately.
 
