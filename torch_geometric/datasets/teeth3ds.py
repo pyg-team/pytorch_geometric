@@ -18,7 +18,7 @@ from torch_geometric.data import (
 
 class Teeth3DS(InMemoryDataset):
     r"""Teeth3DS+, `"An Extended Benchmark for Intra-oral 3D Scans Analysis"
-    <https://crns-smartvision.github.io/teeth3ds/>`_paper is the first 
+    <https://crns-smartvision.github.io/teeth3ds/>`_ paper is the first 
     comprehensive public benchmark designed to advance the field of intra-oral
     3D scan analysis developed as part of the 3DTeethSeg 2022 and 3DTeethLand 
     2024 MICCAI challenges, aiming to drive research in teeth identification,
