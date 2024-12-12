@@ -1,7 +1,6 @@
 import copy
 from typing import List, Tuple, Union
 
-import networkx as nx
 import numpy as np
 import torch
 import torch.utils.data
@@ -144,6 +143,8 @@ class GMixupDataset:
         return aligned_adjs, normalized_node_degrees, max_num, min_num
 
     def __generate_graphon(self, class_idx: int) -> np.ndarray:
+        import networkx as nx
+
         if self.graphons_generated[class_idx]:
             if self.log:
                 print(f"Graphon for class {class_idx} already "
@@ -278,6 +279,8 @@ class GMixupDataset:
         K: int = 10,
         method: str = "random",
     ) -> Data:
+        import networkx as nx
+
         graphon1 = self.graphons[idx_1]
         graphon2 = self.graphons[idx_2]
         mixed_graphon = mixing_param * graphon1 + (1 - mixing_param) * graphon2
