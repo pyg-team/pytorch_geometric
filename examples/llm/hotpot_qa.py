@@ -7,12 +7,12 @@ import torch
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.datasets.web_qsp_dataset import preprocess_triplet
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import TXT2KG, SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
+    preprocess_triplet,
 )
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--percent_data', type=float, default=1.0)
     parser.add_argument('--chunk_size', type=int, default=512)
     parser.add_argument('--checkpointing', action="store_true")
+    parser.add_argument('--verbose', action="store_true")
     args = parser.parse_args()
     assert args.percent_data <= 100 and args.percent_data > 0
     if args.local_lm:
@@ -120,12 +121,12 @@ if __name__ == '__main__':
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
-        ##########
-        # for debug
-        # print("Q=", q)
-        # print("A=", QA_pair[1])
-        # print("retrieved_triples =", retrieved_triples)
-        ####
+
+        if args.verbose:
+            print("Q=", q)
+            print("A=", QA_pair[1])
+            print("retrieved_triples =", retrieved_triples)
+
         num_relevant_out_of_retrieved = float(
             sum([
                 int(bool(retrieved_triple in golden_triples))
