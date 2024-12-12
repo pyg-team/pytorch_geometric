@@ -60,7 +60,7 @@ class TransR(KGEModel):
 
         torch.nn.init.xavier_uniform_(self.node_emb.weight)
         torch.nn.init.xavier_uniform_(self.rel_emb.weight)
-        torch.nn.init.xavier_uniform_(self.rel_proj.weight)
+        torch.nn.init.xavier_uniform_(self.rel_proj)
 
         F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
                    out=self.rel_emb.weight.data)
