@@ -1,294 +1,213 @@
-import numpy as np
 import logging
-import torch_geometric
-from torch_geometric import Data, Dataset, InMemoryDataset
+import numpy as np
 
-from src.pyg_graphons import Graphon
+import torch
+from torch_geometric.data import Data, InMemoryDataset
 from collections import defaultdict
+
+from pyg_graphons import Graphon
 
 
 class MixupDataset(InMemoryDataset):
-    
-    def __init__(self, dataset : Dataset, specs : list[(int, int, float, int)] = None, estimation_method : str = 'usvt', **args):
+    def __init__(
+        self,
+        dataset: InMemoryDataset,
+        specs: list[tuple[int, int, float, int, int, int, int]] = None,
+        estimation_method: str = 'usvt',
+        **args
+    ):
         """
-        dataset (torch_geometric.Dataset)
-        specs (list[(int, int, float, int)]) - list of tuples(label_class_i, label_class_j, mixup_fraction, num_samples_to_generate)
-        estimation_method (string): `usvt', `sas', `sba', `mc', `lg'
-        args (optional): additional args used in estimation method
+        Initialize the MixupDataset.
 
+        Args:
+            dataset (torch_geometric.InMemoryDataset): The base dataset to perform mixup on.
+            specs (list[tuple]): List of tuples specifying mixup parameters. Each tuple contains:
+                - label_class_i (int): Class label for the first graphon.
+                - label_class_j (int): Class label for the second graphon.
+                - mixup_fraction (float): Mixing fraction between the two graphons.
+                - output_dim (int): Output dimensionality for graphon representation.
+                - align_max_size (int): Maximum size for alignment.
+                - nodes_param (float): Number of nodes in each graph is drawn from Geom(nodes_param)
+                - num_samples_to_generate (int): Number of samples to generate for the mixup.
+            estimation_method (str): Method for graphon estimation (e.g., 'usvt', 'sas', 'sba', etc.).
+            args (dict): Additional arguments for the estimation method.
         """
-
         self.dataset = dataset
-        self.specs = specs 
+        self.specs = specs
+        self._indices = dataset._indices
         self.estimation_method = estimation_method
-        
-        if self.specs:
-            self.process()
-        
-        # Reuse already created graphons
         self._graphons = defaultdict(Graphon)
-        self._K = 15 # TODO: update this to be dynamic
+        self.new_graphs = []
+        
+        if self.specs is not None:
+            self.process()
 
         # Represent the data for __getitem__
         self.graphs = dataset
 
-
-
-    def _mixup(self, class_i : Graphon, class_j : Graphon, mixup_fraction : int) -> Graphon: 
-        mixed_graphon = class_i * mixup_fraction + class_j + (1 - mixup_fraction)
-        return mixed_graphon
-         
-
-
     def process(self) -> None:
-        n = len(self.specs) 
+        """
+        Process the dataset to perform mixup and generate new graph samples based on the specs.
+        """
+        class_graphs = self._split_class_graphs(self.dataset)
 
-        for class_i, class_j, mixup_fraction, num_samples in self.specs: 
-            logging.info(f"Mixing up graphons for {class_i}, {class_j}")
+        for class_i, class_j, mixup_fraction, output_dim, align_max_size, nodes_param, num_samples in self.specs:
+            # Generate or retrieve graphons for the classes
+            class_i_graphon = self._graphons.get(class_i) or Graphon(
+                graphs=class_graphs[class_i][1],
+                padding=True,
+                r=output_dim,
+                label=class_i,
+                align_max_size=align_max_size,
+            )
+            self._graphons[class_i] = class_i_graphon
 
-            # Generate graphon for class_i 
-            if class_i in self._graphons:
-                class_i_graphon = self._graphons[class_i]
-            else:
-                # TODO: get all the graphs from self.data that are of class_i
-                # Pass this in as a parameter for the graphon constructor 
+            class_j_graphon = self._graphons.get(class_j) or Graphon(
+                graphs=class_graphs[class_j][1],
+                padding=True,
+                r=output_dim,
+                label=class_j,
+                align_max_size=align_max_size,
+            )
+            self._graphons[class_j] = class_j_graphon
 
-                class_i_graphon = Graphon()
-                self._graphons[class_i] = class_i_graphon
+            # Perform mixup
+            logging.info("Creating new mixed graphon for clases: {class_i}, {class_j}")
+            mixup_graphon, mixup_label = self._mixup(class_i_graphon, class_j_graphon, mixup_fraction)
+            self._graphons[mixup_label] = mixup_graphon
 
-
-            # Generate graphon for class_j 
-            if class_j in self._graphons:
-                class_j_graphon = self._graphons[class_j]
-            else:
-                # TODO: get all the graphs from self.data that are of class_i
-                # Pass this in as a parameter for the graphon constructor 
-
-                class_j_graphon = Graphon()
-                self._graphons[class_j] = class_j_graphon
-
-
-            # Call mixup function with mixup_fraction
-            mixup_graphon = self._mixup(class_i_graphon, class_j_graphon, mixup_fraction)
-
-
-            # Generate num_samples samples and add to self.dataset
+            # Generate samples and add to new_graphs
             for _ in range(num_samples):
-                new_sample = mixup_graphon.generate(self._K)
-                self.graphs.append(new_sample)
 
+                new_sample, _ = mixup_graphon.generate(np.random.geometric(nodes_param))
 
-    def __getitem__(self, idx):
-        if idx < 0:
-            if -idx > len(self):
-                raise ValueError(
-                    "absolute value of index should not exceed dataset length"
-                )
-            idx = len(self) + idx
+                edge_indices = np.array(np.nonzero(new_sample), dtype=np.int64)
+                edge_index = torch.tensor(edge_indices, dtype=torch.long)
+
+                data = Data(edge_index=edge_index, y=torch.LongTensor([mixup_label]))
+                data.num_nodes = new_sample.size[0]
+                self.new_graphs.append(data)
+
+    def _split_class_graphs(self, dataset: InMemoryDataset) -> list:
+        """
+        Split the dataset into graphs grouped by their class labels.
+
+        Args:
+            dataset (InMemoryDataset): The input dataset.
+
+        Returns:
+            list: A list of tuples where each tuple contains a class label and corresponding graphs.
+        """
+
+        y_list = [tuple(data.y.tolist()) for data in dataset]
+        class_graphs = []
+
+        for class_label in set(y_list):
+            c_graph_list = [dataset[i] for i in range(len(y_list)) if y_list[i] == class_label]
+            class_graphs.append((np.array(class_label), c_graph_list))
+
+        return class_graphs
+
+    def _mixup(self, class_i: Graphon, class_j: Graphon, mixup_fraction: float) -> tuple[Graphon, float]:
+        """
+        Perform mixup between two graphons.
+
+        Args:
+            class_i (Graphon): The first graphon.
+            class_j (Graphon): The second graphon.
+            mixup_fraction (float): Mixing fraction between the two graphons.
+
+        Returns:
+            tuple: A new mixed graphon and its label.
+        """
+
+        mixed_label = mixup_fraction * class_i._label + (1 - mixup_fraction) * class_j._label
+        mixed_matrix = class_i._graphon * mixup_fraction + class_j._graphon * (1 - mixup_fraction)
         
+        mixed_graphon = Graphon(
+            graphs=[],
+            padding=True,
+            r=class_i.r,
+            align_max_size=class_i.align_max_size,
+            label=mixed_label,
+            graphon=mixed_matrix,
+        )
+        return mixed_graphon, mixed_label
+
+
+
+    def len(self) -> int:
+        """
+        Get the length of the dataset, including new generated graphs.
+
+        Returns:
+            int: Total number of graphs in the dataset.
+        """
+
+        return len(self.dataset) + len(self.new_graphs)
+
+    def __getitem__(self, idx: int) -> Data:
+        """
+        Retrieve a graph from the dataset by index.
+
+        Args:
+            idx (int): Index of the graph to retrieve. Negative indices are supported.
+
+        Returns:
+            Data: The graph at the specified index.
+        """
+
+        if idx < 0:
+            idx = len(self) + idx
+            if idx < 0:
+                raise ValueError("Index out of range.")
 
         if idx < len(self.dataset):
             return self.dataset[idx]
-        
         else:
             return self.new_graphs[idx - len(self.dataset)]
 
-# Initial skeleton of estimation taken from https://github.com/eomeragic1/g-mixup-reproducibility/tree/main
-# TODO: Fix and customize some implementation details and clean up, annotate, document for PR
-# In the paper they said that they used LG as the step function approximator, check with authors !!
-def universal_svd(aligned_graphs: List[Tensor], threshold: float = 2.02, sum_graph: Tensor = None) -> np.ndarray:
-    """
-    Estimate a graphon by universal singular value thresholding.
-    Reference:
-    Chatterjee, Sourav.
-    "Matrix estimation by universal singular value thresholding."
-    The Annals of Statistics 43.1 (2015): 177-214.
-    :param aligned_graphs: a list of (N, N) adjacency matrices
-    :param threshold: the threshold for singular values
-    :return: graphon: the estimated (r, r) graphon model
-    """
 
-    if sum_graph is None:
-        aligned_graphs = graph_numpy2tensor(aligned_graphs)
-        num_graphs = aligned_graphs.size(0)
+import copy 
+from typing import List, Tuple 
 
-        if num_graphs > 1:
-            sum_graph = torch.mean(aligned_graphs, dim=0)
-        else:
-            sum_graph = aligned_graphs[0, :, :]  # (N, N)
+import torch 
+import numpy as np
 
-    num_nodes = sum_graph.size(0)
-    print('Doing SVD of matrix of size: ', num_nodes)
-    u, s, v = torch.svd(sum_graph)
-    print('Finished SVD!')
-    singular_threshold = threshold * (num_nodes ** 0.5)
-    binary_s = torch.lt(s, singular_threshold)
-    s[binary_s] = 0
-    graphon = u @ torch.diag(s) @ torch.t(v)
-    graphon[graphon > 1] = 1
-    graphon[graphon < 0] = 0
-    graphon = graphon.numpy()
-    return graphon
+from torch_geometric.data import Data
+from torch_geometric.utils import to_dense_adj, dense_to_sparse
 
 
-def largest_gap(aligned_graphs: List[Tensor], k: int, sum_graph: Tensor = None) -> np.ndarray:
-    """
-    Estimate a graphon by a stochastic block model based n empirical degrees
-    Reference:
-    Channarond, Antoine, Jean-Jacques Daudin, and Stéphane Robin.
-    "Classification and estimation in the Stochastic Blockmodel based on the empirical degrees."
-    Electronic Journal of Statistics 6 (2012): 2574-2601.
-    :param aligned_graphs: a list of (N, N) adjacency matrices
-    :param k: the number of blocks
-    :return: a (r, r) estimation of graphon
-    """
-    if sum_graph is None:
-        aligned_graphs = graph_numpy2tensor(aligned_graphs)
-        num_graphs = aligned_graphs.size(0)
-
-        if num_graphs > 1:
-            sum_graph = torch.mean(aligned_graphs, dim=0)
-        else:
-            sum_graph = aligned_graphs[0, :, :]  # (N, N)
-
-    num_nodes = sum_graph.size(0)
-
-    # sort node degrees
-    degree = torch.sum(sum_graph, dim=1)
-    sorted_degree = degree / (num_nodes - 1)
-    idx = torch.arange(0, num_nodes)
-
-    # find num_blocks-1 largest gap of the node degrees
-    diff_degree = sorted_degree[1:] - sorted_degree[:-1]
-    _, index = torch.topk(diff_degree, k=k - 1)
-    sorted_index, _ = torch.sort(index + 1, descending=False)
-    blocks = {}
-    for b in range(k):
-        if b == 0:
-            blocks[b] = idx[0:sorted_index[b]]
-        elif b == k - 1:
-            blocks[b] = idx[sorted_index[b - 1]:num_nodes]
-        else:
-            blocks[b] = idx[sorted_index[b - 1]:sorted_index[b]]
-
-    # derive the graphon by stochastic block model
-    probability = torch.zeros(k, k)
-    graphon = torch.zeros(num_nodes, num_nodes)
-    for i in range(k):
-        for j in range(k):
-            rows = blocks[i]
-            cols = blocks[j]
-            tmp = sum_graph[rows, :]
-            tmp = tmp[:, cols]
-            probability[i, j] = torch.sum(tmp) / (rows.size(0) * cols.size(0))
-            for r in range(rows.size(0)):
-                for c in range(cols.size(0)):
-                    graphon[rows[r], cols[c]] = probability[i, j]
-    graphon = graphon.numpy()
-    return graphon
-
-def align_graphs(graphs: List[Data],
-                 padding: bool = False, N: int = None) -> Tuple[List[Tensor], List[Tensor], int, int, Tensor]:
-    """
-    Align multiple graphs by sorting their nodes by descending node degrees
-    What this function does is it orders each graph adjacency matrix so that the degrees are sorted starting from
-    highest to lowest
-
-    :param graphs: a list of binary adjacency matrices
-    :param padding: whether padding graphs to the same size or not
-    :param N: whether to cut the graphs at size N (keeping highest-degree nodes)
-    :return:
-        aligned_graphs: a list of aligned adjacency matrices
-        normalized_node_degrees: a list of sorted normalized node degrees (as node distributions)
-    """
-    num_nodes = [graphs[i].num_nodes for i in range(len(graphs))]
-    max_num = max(num_nodes)
-    min_num = min(num_nodes)
-
-    if N:
-        sum_graph = np.zeros((N, N))
-    else:
-        sum_graph = np.zeros((max_num, max_num))
-    aligned_graphs = []
-    normalized_node_degrees = []
-    for i in range(len(graphs)):
-        num_i = graphs[i].num_nodes
-        adj = to_dense_adj(graphs[i].edge_index)[0].numpy()
-
-        node_degree = 0.5 * np.sum(adj, axis=0) + 0.5 * np.sum(adj, axis=1)
-        node_degree /= np.sum(node_degree)
-        idx = np.argsort(node_degree)  # ascending
-        idx = idx[::-1]  # descending
-
-        sorted_node_degree = node_degree[idx]
-        sorted_node_degree = sorted_node_degree.reshape(-1, 1)
-
-        sorted_graph = copy.deepcopy(adj)
-        sorted_graph = sorted_graph[idx, :]
-        sorted_graph = sorted_graph[:, idx]
-
-        max_num = max(max_num, N)
-
-        if padding:
-            # normalized_node_degree = np.ones((max_num, 1)) / max_num
-            normalized_node_degree = np.zeros((max_num, 1))
-            normalized_node_degree[:num_i, :] = sorted_node_degree
-
-            aligned_graph = np.zeros((max_num, max_num))
-            aligned_graph[:num_i, :num_i] = sorted_graph
-
-            if N:
-                normalized_node_degrees.append(normalized_node_degree[:N, :])
-                sum_graph += aligned_graph[:N, :N]
-                aligned_graphs.append(dense_to_sparse(torch.from_numpy(aligned_graph[:N, :N]))[0])
-            else:
-                normalized_node_degrees.append(normalized_node_degree)
-                sum_graph += aligned_graph
-                aligned_graphs.append(dense_to_sparse(torch.from_numpy(aligned_graph))[0])
-        else:
-            if N:
-                normalized_node_degrees.append(sorted_node_degree[:N, :])
-                sum_graph += sorted_graph[:N, :N]
-                aligned_graphs.append(dense_to_sparse(torch.from_numpy(sorted_graph[:N, :N]))[0])
-            else:
-                normalized_node_degrees.append(sorted_node_degree)
-                sum_graph += sorted_graph
-                aligned_graphs.append(dense_to_sparse(torch.from_numpy(sorted_graph))[0])
-
-    return aligned_graphs, normalized_node_degrees, max_num, min_num, torch.from_numpy(sum_graph/len(graphs))
+# Methods for graphon estimation were adapted from the following repository:
+# https://github.com/eomeragic1/g-mixup-reproducibility.git
 
 
 class Graphon:
-    r"""The Graphon objects as defined in `G-Mixup 
-    <https://arxiv.org/pdf/2202.07179>`_ paper.
+    r"""The Graphon object as defined in `G-Mixup` <https://arxiv.org/pdf/2202.07179>`_ paper.
 
-    Graphons are defined as functions W : [0, 1]² → [0, 1] representing the 
-    probability of an edge between two labeled vertices: W(i, j) = P [(i, j) ∈ E]. 
-    
-    The Graphon class should thus store this distribution in some way. It does so
-    using a matrix of probabilities: an r x r matrix, where element (i, j) 
-    represents the Bernoulli probability that the edge (i, j) occurs in a 
-    representative graph with r nodes. On initialization, the class computes and 
-    stores this distribution.
+    Graphons are functions W : [0, 1]² → [0, 1] representing the 
+    probability of an edge between two labeled vertices: W(i, j) = P[(i, j) ∈ E].
+    This class estimates the graphon using input adjacency matrices.
 
     Args:
-        graphs (list[np.ndarray]): Adjacency matrices of the graphs to estimate.
-        padding (bool): used while aligning the graphs to the same size
-        r (int): representing dimensionality of output (r x r)
-        align_max_size (int): hyperparameter # TODO
-        label (int): class of the data
-        estimation_method (string): `usvt' (default), `sas', `sba', `mc', `lg'
-        graphon (np.ndarray): sometimes, initialize directly from graphon matrix,
-        **args: additional args used in estimation method
+        graphs (list[np.ndarray]): List of adjacency matrices for estimation.
+        padding (bool): Whether to align and pad graphs to the same size.
+        r (int): Dimensionality of the output graphon (r x r matrix).
+        align_max_size (int): Maximum number of graphs used for alignment.
+        label (np.ndarray): Class labels for the graphs.
+        estimation_method (str): Method for estimation ('lg' or 'usvt').
+        graphon (np.ndarray, optional): Precomputed graphon matrix.
+        **args: Additional arguments for estimation methods.
     """
+
     def __init__(
         self, 
-        graphs : list[np.ndarray], 
-        padding : bool, 
-        r : int, 
-        align_max_size : int,
-        label : np.ndarray,
-        estimation_method : str = "usvt", 
+        graphs: List[np.ndarray], 
+        padding: bool, 
+        r: int, 
+        align_max_size: int,
+        label: np.ndarray,
+        estimation_method: str = "lg", 
         graphon: np.ndarray = None,
         **args):
 
@@ -299,40 +218,215 @@ class Graphon:
         self._label = label
         self.align_max_size = align_max_size
         self._graphon = graphon
-            
-        if (not graphon) and estimation_method in ['usvt']:
-            self.estimate()
-    
-    def estimate(self):
-        """Estimates the distribution
         
+        if graphon is None:
+            self._estimate()
+
+
+
+    def generate(self, K: int) -> np.ndarray:
+        """
+        Generate a new random graph based on the estimated graphon.
+
         Args:
-            ...
-        ...
-        """
-        align_graphs_list, normalized_node_degrees, max_num, min_num, sum_graph = align_graphs(
-                self.graphs[:self.align_max_size], padding=self.padding, N=self.r)
-        graphon = largest_gap(align_graphs_list, k=self.r, sum_graph=sum_graph)
-        np.fill_diagonal(graphon, 0)
-        self._graphon = graphon 
+            K (int): Number of nodes in the generated graph.
 
+        Returns:
+            np.ndarray: Adjacency matrix of the generated graph.
+        """
 
-    def generate(self, K): 
-        """
-        K (int): number of nodes in the new random graph
-        Returns: newly generated graph (np.ndarray adjacency matrix) with K nodes
-        """
         nodes = np.random.uniform(size=(K,))
         rounded_nodes = (nodes * self.r).astype(np.uint8)
         prob_vals = self._graphon[rounded_nodes[:, None], rounded_nodes]
         sampled_edges = (np.random.uniform(size=(K, K)) <= prob_vals)
-        return sampled_edges 
+        return sampled_edges, rounded_nodes
+
+    def get_graphon(self) -> np.ndarray:
+        """
+        Retrieve the estimated graphon matrix.
+
+        Returns:
+            np.ndarray: The graphon matrix.
+        """
+
+        return self._graphon
+
+    def _estimate(self):
+        """
+        Estimate the graphon matrix based on the chosen method ('lg' or 'usvt').
+        """
+
+        align_graphs_list, normalized_node_degrees, max_num, min_num, sum_graph = self._align_graphs(
+                self.graphs[:self.align_max_size], padding=self.padding, N=self.r)
+        
+        if self.estimation_method == 'lg':
+            graphon = self._largest_gap(align_graphs_list, k=self.r, sum_graph=sum_graph)
+        elif self.estimation_method == 'usvt':
+            graphon = self._universal_svd(align_graphs_list, sum_graph=sum_graph)
+        else: 
+            raise NotImplementedError(f"Invalid estimation_method: {self.estimation_method}")
+
+        np.fill_diagonal(graphon, 0)
+        self._graphon = graphon
+
+    def _graph_numpy2tensor(self, graphs: List[np.ndarray]) -> torch.Tensor:
+        """
+        Convert a list of adjacency matrices from numpy to PyTorch tensor.
+
+        Args:
+            graphs (List[np.ndarray]): List of adjacency matrices.
+
+        Returns:
+            torch.Tensor: Tensor containing all adjacency matrices.
+        """
+
+        graph_tensor = np.array(graphs)
+        return torch.from_numpy(graph_tensor).float()
 
 
-    def mixup(self, graphon_matrix, label, la=0.5):
-        self._label = la * self._label + (1 - la) * label 
-        self._graphon = la * self._graphon + (1 - la) * graphon_matrix
-         
 
-    def get_graphon(self):
-        return self._graphon 
+    def _universal_svd(self, aligned_graphs: List[torch.Tensor], threshold: float = 2.02, sum_graph: torch.Tensor = None) -> np.ndarray:
+        """
+        Estimate the graphon using Universal Singular Value Thresholding (USVT).
+
+        Args:
+            aligned_graphs (List[torch.Tensor]): List of aligned adjacency matrices.
+            threshold (float): Threshold for singular values.
+            sum_graph (torch.Tensor, optional): Precomputed mean graph.
+
+        Returns:
+            np.ndarray: Estimated graphon matrix.
+        """
+
+        if sum_graph is None:
+            aligned_graphs = self._graph_numpy2tensor(aligned_graphs)
+            num_graphs = aligned_graphs.size(0)
+
+            if num_graphs > 1:
+                sum_graph = torch.mean(aligned_graphs, dim=0)
+            else:
+                sum_graph = aligned_graphs[0, :, :]
+
+        num_nodes = sum_graph.size(0)
+        u, s, v = torch.svd(sum_graph)
+        singular_threshold = threshold * (num_nodes ** 0.5)
+        s[s < singular_threshold] = 0
+        graphon = u @ torch.diag(s) @ v.T
+        graphon.clamp_(0, 1)
+        return graphon.numpy()
+
+
+
+    def _largest_gap(self, aligned_graphs: List[torch.Tensor], k: int, sum_graph: torch.Tensor = None) -> np.ndarray:
+        """
+        Estimate the graphon using the largest gap method.
+
+        Args:
+            aligned_graphs (List[torch.Tensor]): List of aligned adjacency matrices.
+            k (int): Number of blocks.
+            sum_graph (torch.Tensor, optional): Precomputed mean graph.
+
+        Returns:
+            np.ndarray: Estimated graphon matrix.
+        """
+
+        if sum_graph is None:
+            aligned_graphs = self._graph_numpy2tensor(aligned_graphs)
+
+            if num_graphs > 1:
+                sum_graph = torch.mean(aligned_graphs, dim=0)
+            else:
+                sum_graph = aligned_graphs[0, :, :]
+
+        num_nodes = sum_graph.size(0)
+        degree = torch.sum(sum_graph, dim=1)
+        sorted_degree = degree / (num_nodes - 1)
+        idx = torch.arange(0, num_nodes)
+
+        diff_degree = sorted_degree[1:] - sorted_degree[:-1]
+        _, index = torch.topk(diff_degree, k=k - 1)
+        sorted_index, _ = torch.sort(index + 1)
+
+        blocks = {}
+        for b in range(k):
+            if b == 0:
+                blocks[b] = idx[:sorted_index[b]]
+            elif b == k - 1:
+                blocks[b] = idx[sorted_index[b - 1]:]
+            else:
+                blocks[b] = idx[sorted_index[b - 1]:sorted_index[b]]
+
+        probability = torch.zeros(k, k)
+        graphon = torch.zeros(num_nodes, num_nodes)
+        for i in range(k):
+            for j in range(k):
+                rows, cols = blocks[i], blocks[j]
+                subgraph = sum_graph[rows][:, cols]
+                probability[i, j] = subgraph.mean()
+                graphon[rows[:, None], cols] = probability[i, j]
+        return graphon.numpy()
+
+
+
+    def _align_graphs(self, graphs: List[Data], padding: bool = False, N: int = None) -> Tuple[List[torch.Tensor], List[torch.Tensor], int, int, torch.Tensor]:
+        """
+        Align multiple graphs by sorting their nodes by descending node degrees.
+
+        This function sorts each graph's adjacency matrix by node degrees (from highest to lowest).
+        Optionally, it can pad graphs to the same size or truncate them to a specified size (N).
+
+        :param graphs: List of binary adjacency matrices represented as PyG Data objects.
+        :param padding: Whether to pad graphs to the same size.
+        :param N: If specified, truncates the graphs to size N (keeping the highest-degree nodes).
+        :return:
+            - aligned_graphs: List of aligned adjacency matrices as sparse tensors.
+            - normalized_node_degrees: List of sorted, normalized node degree distributions.
+            - max_num: Maximum number of nodes across all graphs.
+            - min_num: Minimum number of nodes across all graphs.
+            - avg_sum_graph: Average of the summed aligned adjacency matrices as a dense tensor.
+        """
+
+        num_nodes = [graph.num_nodes for graph in graphs]
+        max_num = max(num_nodes)
+        min_num = min(num_nodes)
+
+        target_size = N if N else max_num
+        sum_graph = np.zeros((target_size, target_size))
+
+        aligned_graphs = []
+        normalized_node_degrees = []
+
+        for graph in graphs:
+            num_i = graph.num_nodes
+            adj = to_dense_adj(graph.edge_index)[0].numpy()
+
+            # Calculate and normalize node degrees
+            node_degree = (np.sum(adj, axis=0) + np.sum(adj, axis=1)) / 2
+            node_degree /= np.sum(node_degree)
+
+            # Sort nodes by degree (descending)
+            idx = np.argsort(node_degree)[::-1]
+            sorted_node_degree = node_degree[idx].reshape(-1, 1)
+            sorted_graph = adj[idx][:, idx]
+
+            # Apply padding or truncation
+            if padding:
+                normalized_node_degree = np.zeros((max_num, 1))
+                normalized_node_degree[:num_i, :] = sorted_node_degree
+
+                aligned_graph = np.zeros((max_num, max_num))
+                aligned_graph[:num_i, :num_i] = sorted_graph
+            else:
+                normalized_node_degree = sorted_node_degree
+                aligned_graph = sorted_graph
+
+            truncated_degrees = normalized_node_degree[:target_size, :]
+            truncated_graph = aligned_graph[:target_size, :target_size]
+
+            # Append results
+            normalized_node_degrees.append(truncated_degrees)
+            sum_graph += truncated_graph
+            aligned_graphs.append(dense_to_sparse(torch.from_numpy(truncated_graph))[0])
+
+        avg_sum_graph = torch.from_numpy(sum_graph / len(graphs))
+        return aligned_graphs, normalized_node_degrees, max_num, min_num, avg_sum_graph
