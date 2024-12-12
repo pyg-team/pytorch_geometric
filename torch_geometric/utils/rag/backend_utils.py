@@ -43,6 +43,14 @@ RemoteGraphBackend = Tuple[FeatureStore, GraphStore]
 # TODO: Make everything compatible with Hetero graphs aswell
 
 
+# (TODO) once Zacks webqsp PR is merged
+# https://github.com/pyg-team/pytorch_geometric/pull/9806
+# update WebQSP in this branch to use preprocess_triplet from here
+def preprocess_triplet(triplet: TripletLike) -> TripletLike:
+    h, r, t = triplet
+    return str(h).lower(), str(r), str(t).lower()
+
+
 # Adapted from LocalGraphStore
 @runtime_checkable
 class ConvertableGraphStore(Protocol):
