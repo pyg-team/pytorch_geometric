@@ -7,7 +7,8 @@ from torch_geometric.nn.kge import KGEModel
 
 class TransR(KGEModel):
     r"""The TransR model from the `"Learning Entity and Relation Embeddings for
-    Knowledge Graph Completion" <https://cdn.aaai.org/ojs/9491/9491-13-13019-1-2-20201228.pdf> paper.
+    Knowledge Graph Completion" 
+    <https://cdn.aaai.org/ojs/9491/9491-13-13019-1-2-20201228.pdf>`_ paper.
 
     :class:`TransR` models relations by first projecting entities from entity space 
     to relation space using relation-specific matrices, and then performing 
@@ -33,8 +34,7 @@ class TransR(KGEModel):
     Args:
         num_nodes (int): The number of nodes/entities in the graph.
         num_relations (int): The number of relations in the graph.
-        entity_dim (int): The entity embedding dimension.
-        relation_dim (int): The relation embedding dimension.
+        hidden_channels (int): The hidden embedding size.
         margin (float, optional): The margin of the ranking loss.
             (default: :obj:`1.0`)
         p_norm (float, optional): The order of norm used for embeddings and distance.
