@@ -138,6 +138,7 @@ def test_to_networkx_undirected():
     assert nx.to_numpy_array(G).tolist() == [[3, 2], [2, 0]]
 
 
+@withPackage('networkx')
 def test_to_networkx_undirected_options():
     import networkx as nx
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 0]])
