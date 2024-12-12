@@ -1,9 +1,11 @@
 import json
-import torch
-from torch_geometric.data import Data
-from torch_geometric.utils import to_undirected, coalesce, random_walk
-import networkx as nx
 from collections import deque
+
+import networkx as nx
+import torch
+
+from torch_geometric.data import Data
+from torch_geometric.utils import coalesce, to_undirected
 
 # Load entity names
 with open('entities_names.json') as f:
@@ -11,9 +13,9 @@ with open('entities_names.json') as f:
 names_entities = {v: k for k, v in entities_names.items()}
 
 
-def build_pyg_graph(graph_data: list, entities: list = None, encrypt: bool = False) -> Data:
-    """
-    Construct a PyG Data object from a list of (head, relation, tail) triplets.
+def build_pyg_graph(graph_data: list, entities: list = None,
+                    encrypt: bool = False) -> Data:
+    """Construct a PyG Data object from a list of (head, relation, tail) triplets.
     Uses PyG functionalities such as to_undirected and coalesce to format the graph.
     """
     edges = []
@@ -25,7 +27,7 @@ def build_pyg_graph(graph_data: list, entities: list = None, encrypt: bool = Fal
                 t = names_entities[t]
         edges.append((h, r.strip(), t))
 
-    #build node list and mapping 
+    #build node list and mapping
     node_set = set()
     for h, r, t in edges:
         node_set.add(h)
@@ -35,17 +37,19 @@ def build_pyg_graph(graph_data: list, entities: list = None, encrypt: bool = Fal
 
     edge_index_list = []
     rel_list = []
-    
-    for h, r, t in edges: #store edges in a dict form to handle after coalescing
+
+    for h, r, t in edges:  #store edges in a dict form to handle after coalescing
         edge_index_list.append([node_to_idx[h], node_to_idx[t]])
         rel_list.append(r)
 
-    edge_index = torch.tensor(edge_index_list, dtype=torch.long).t().contiguous()
+    edge_index = torch.tensor(edge_index_list,
+                              dtype=torch.long).t().contiguous()
 
-    edge_index = to_undirected(edge_index) #coalesce step: remove duplicates, sort edes 
+    edge_index = to_undirected(
+        edge_index)  #coalesce step: remove duplicates, sort edes
     edge_index, _ = coalesce(edge_index, None, len(node_list), len(node_list))
 
-    # After coalescing, we have to remap relations to edges. We'll build a small lookup for (u,v) -> relation. 
+    # After coalescing, we have to remap relations to edges. We'll build a small lookup for (u,v) -> relation.
     # Since the graph is undirected, we store both (u,v) and (v,u).
     rel_map = {}
     for (h, r, t) in edges:
@@ -70,8 +74,7 @@ def build_pyg_graph(graph_data: list, entities: list = None, encrypt: bool = Fal
 
 
 def pyg_data_to_networkx(data: Data) -> nx.Graph:
-    """
-    Converts a PyG Data object to a NetworkX Graph for easier BFS, shortest paths, etc.
+    """Converts a PyG Data object to a NetworkX Graph for easier BFS, shortest paths, etc.
     """
     G = nx.Graph()
     G.add_nodes_from(data.node_list)
@@ -85,10 +88,10 @@ def pyg_data_to_networkx(data: Data) -> nx.Graph:
     return G
 
 
-def bfs_with_rule(data: Data, start_node, target_rule: list, max_p: int = 10) -> list:
-    """
-    Perform breadth-first search (BFS) to find paths in the graph that match a given
-    sequence of relations (target_rule). Uses the PyG Data object to store graph structure. 
+def bfs_with_rule(data: Data, start_node, target_rule: list,
+                  max_p: int = 10) -> list:
+    """Perform breadth-first search (BFS) to find paths in the graph that match a given
+    sequence of relations (target_rule). Uses the PyG Data object to store graph structure.
     utilizes NetworkX bfS and relation matching logic.
 
     """
@@ -122,8 +125,7 @@ def bfs_with_rule(data: Data, start_node, target_rule: list, max_p: int = 10) ->
 
 
 def get_truth_paths(q_entities: list, a_entities: list, data: Data) -> list:
-    """
-    Retrieves all shortest paths between sets of question entities (q_entities) and answer entities (a_entities).
+    """Retrieves all shortest paths between sets of question entities (q_entities) and answer entities (a_entities).
     Uses the PyG data representation; the actual shortest path computation is done via NetworkX.
     Relations and nodes are mapped back from indices stored in the PyG Data object.
     """
@@ -140,7 +142,7 @@ def get_truth_paths(q_entities: list, a_entities: list, data: Data) -> list:
                 for path in nx.all_shortest_paths(G, q, a):
                     path_with_rels = []
                     for i in range(len(path) - 1):
-                        u, v = path[i], path[i+1]
+                        u, v = path[i], path[i + 1]
                         rel = G[u][v]['relation']
                         path_with_rels.append((u, rel, v))
                     paths.append(path_with_rels)
@@ -150,11 +152,10 @@ def get_truth_paths(q_entities: list, a_entities: list, data: Data) -> list:
 
     return paths
 
+
 def verbalize_paths(paths):
     verbalized = []
     for path in paths:
-        verbalized.append(
-            " → ".join(f"{edge[0]} → {edge[1]} → {edge[2]}" for edge in path)
-        )
+        verbalized.append(" → ".join(f"{edge[0]} → {edge[1]} → {edge[2]}"
+                                     for edge in path))
     return "\n".join(verbalized)
-
