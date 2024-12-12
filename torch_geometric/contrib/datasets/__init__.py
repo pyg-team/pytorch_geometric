@@ -1,1 +1,5 @@
-__all__ = classes = []
+from .MixupDataset import MixupDataset
+
+__all__ = classes = [
+    'MixupDataset',
+]
