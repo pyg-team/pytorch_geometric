@@ -12,4 +12,5 @@ __all__ = classes = [
     'ComplEx',
     'DistMult',
     'RotatE',
+    'TransR',
 ]
