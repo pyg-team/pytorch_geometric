@@ -107,11 +107,11 @@ class GMixupDataset:
                     )
                 continue
             else:
-                self.generate_graphon(i)
+                self.__generate_graphon(i)
 
         return None
 
-    def align_graphs_by_degree(
+    def __align_graphs_by_degree(
         self, graph_adjs: List[np.ndarray]
     ) -> Tuple[List[np.ndarray], List[np.ndarray], int, int]:
         num_nodes = [graph_adj.shape[0] for graph_adj in graph_adjs]
@@ -143,7 +143,7 @@ class GMixupDataset:
             aligned_adjs.append(aligned_adj)
         return aligned_adjs, normalized_node_degrees, max_num, min_num
 
-    def generate_graphon(self, class_idx: int) -> np.ndarray:
+    def __generate_graphon(self, class_idx: int) -> np.ndarray:
         if self.graphons_generated[class_idx]:
             if self.log:
                 print(f"Graphon for class {class_idx} already "
@@ -163,7 +163,7 @@ class GMixupDataset:
 
         if self.align_graphs:
             aligned_graphs, normalized_node_degrees, max_num, min_num = (
-                self.align_graphs_by_degree(class_adj_mats))
+                self.__align_graphs_by_degree(class_adj_mats))
             class_adj_mats = aligned_graphs
 
         graph_tensor_np = np.array(class_adj_mats)
@@ -250,12 +250,12 @@ class GMixupDataset:
             if self.log:
                 print(f"Graphon for class {idx_1} not yet generated, "
                       "generating...")
-            self.generate_graphon(idx_1)
+            self.__generate_graphon(idx_1)
         if not self.graphons_generated[idx_2]:
             if self.log:
                 print(f"Graphon for class {idx_2} not yet generated, "
                       "generating...")
-            self.generate_graphon(idx_2)
+            self.__generate_graphon(idx_2)
 
         if self.log:
             print(f"Generating {size} synthetic graph(s) for indices {idx_1} "
@@ -264,12 +264,13 @@ class GMixupDataset:
 
         graphs = []
         for i in range(size):
-            graph = self.generate_graph(idx_1, idx_2, mixing_param, K, method)
+            graph = self.__generate_graph(idx_1, idx_2, mixing_param, K,
+                                          method)
             graphs.append(graph)
 
         return graphs
 
-    def generate_graph(
+    def __generate_graph(
         self,
         idx_1: int,
         idx_2: int,
