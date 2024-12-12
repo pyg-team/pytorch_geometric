@@ -17,7 +17,7 @@ def test_transr():
     for h, r, t in loader:
         # Test forward pass
         out = model(h, r, t)
-        assert out.size() == (5,)
+        assert out.size() == (5, )
 
         # Test loss computation
         loss = model.loss(h, r, t)
@@ -34,10 +34,7 @@ def test_transr():
         head = model.node_emb(h)
         head_proj = model._project(head, r)
         assert head_proj.size() == (5, model.hidden_channels)
-        
+
     # Test embeddings normalization
-    assert torch.allclose(
-        model.rel_emb.weight.norm(p=model.p_norm, dim=-1),
-        torch.ones(model.num_relations),
-        atol=1e-5
-    )
+    assert torch.allclose(model.rel_emb.weight.norm(p=model.p_norm, dim=-1),
+                          torch.ones(model.num_relations), atol=1e-5)

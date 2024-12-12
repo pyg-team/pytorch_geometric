@@ -1,7 +1,9 @@
 import math
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+
 from torch_geometric.nn.kge import KGEModel
 
 
@@ -9,8 +11,8 @@ class TransR(KGEModel):
     r"""The TransR model from the `"Learning Entity and Relation Embeddings for
     Knowledge Graph Completion" <https://cdn.aaai.org/ojs/9491/9491-13-13019-1-2-20201228.pdf> paper.
 
-    :class:`TransR` models relations by first projecting entities from entity space 
-    to relation space using relation-specific matrices, and then performing 
+    :class:`TransR` models relations by first projecting entities from entity space
+    to relation space using relation-specific matrices, and then performing
     translation in the relation space:
 
     .. math::
@@ -38,11 +40,10 @@ class TransR(KGEModel):
         margin (float, optional): The margin of the ranking loss.
             (default: :obj:`1.0`)
         p_norm (float, optional): The order of norm used for embeddings and distance.
-            (default: :obj:`1.0`) 
+            (default: :obj:`1.0`)
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -59,13 +60,12 @@ class TransR(KGEModel):
 
         # Create relation-specific projection matrices
         self.rel_proj = torch.nn.Parameter(
-            torch.Tensor(num_relations, hidden_channels, hidden_channels)
-        )
+            torch.Tensor(num_relations, hidden_channels, hidden_channels))
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        bound = 6. / math.sqrt(self.hidden_channels)
+        6. / math.sqrt(self.hidden_channels)
 
         torch.nn.init.xavier_uniform_(self.node_emb.weight)
         torch.nn.init.xavier_uniform_(self.rel_emb.weight)
