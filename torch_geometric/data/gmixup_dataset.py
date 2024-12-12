@@ -8,7 +8,7 @@ import torch.utils.data
 from torch import diag, from_numpy, lt
 from tqdm import tqdm
 
-from torch_geometric.data import Batch, Data
+from torch_geometric.data import Data
 from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.utils import from_networkx, to_networkx
 
@@ -97,7 +97,7 @@ class GMixupDataset:
         """
         if self.log:
             print("Generating graphons for "
-                  f"{self.base_dataset.num_classes}classes...\n")
+                  f"{self.base_dataset.num_classes} classes...\n")
 
         for i in range(self.base_dataset.num_classes):
             if self.graphons_generated[i]:
@@ -229,36 +229,44 @@ class GMixupDataset:
         method: str = "random",
         size: Union[int, np.integer, IndexType] = 1,
     ) -> List[Data]:
-        r"""Takes in a batch of graph label pairs and a mixing parameter λ, and returns the new synthetic graph(s) generated using G-Mixup
-        
+        r"""Takes in a batch of graph label pairs and a mixing parameter λ, and
+        returns the new synthetic graph(s) generated using G-Mixup.
+
         Args:
             idx_1 (int): Index of the first graph in the pair
             idx_2 (int): Index of the second graph in the pair
             mixing_param (float): The mixing parameter λ
             K (int): The number of nodes in the output synthetic graph(s)
-            method (str): The method to use for generating the synthetic graph(s). Options are 'random' and 'uniform'. (default: :obj:`'random'`)
-            size (int): The number of synthetic graphs to generate. (default: :obj:`1`)
+            method (str): The method to use for generating the synthetic
+            graph(s). Options are 'random' and 'uniform'.
+            (default: :obj:`'random'`)
+            size (int): The number of synthetic graphs to generate.
+            (default: :obj:`1`)
 
         Returns:
             graphs (List[Data]): a list of the generated graphs
         """
         if not self.graphons_generated[idx_1]:
             if self.log:
-                print(f"Graphon for class {idx_1} not yet generated, generating...")
+                print(f"Graphon for class {idx_1} not yet generated, "
+                      "generating...")
             self.generate_graphon(idx_1)
         if not self.graphons_generated[idx_2]:
             if self.log:
-                print(f"Graphon for class {idx_2} not yet generated, generating...")
+                print(f"Graphon for class {idx_2} not yet generated, "
+                      "generating...")
             self.generate_graphon(idx_2)
-        
+
         if self.log:
-            print(f"Generating {size} synthetic graph(s) for indices {idx_1} and {idx_2} with mixing parameter {mixing_param} and {K} nodes...")
-        
+            print(f"Generating {size} synthetic graph(s) for indices {idx_1} "
+                  f"and {idx_2} with mixing parameter {mixing_param} "
+                  f"and {K} nodes...")
+
         graphs = []
         for i in range(size):
             graph = self.generate_graph(idx_1, idx_2, mixing_param, K, method)
             graphs.append(graph)
-        
+
         return graphs
 
     def generate_graph(
