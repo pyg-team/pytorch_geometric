@@ -77,9 +77,7 @@ class TransR(KGEModel):
                     out=self.rel_emb.weight.data)
 
     def _project(self, entities: Tensor, rel_type: Tensor) -> Tensor:
-        """
-        Project entities to relation space using relation-specific matrices.
-        """
+        """Project entities to relation space."""
         proj_matrices = self.rel_proj[rel_type]
         entities = entities.unsqueeze(1)
         projected = torch.bmm(entities, proj_matrices)
