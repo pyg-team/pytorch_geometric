@@ -4,23 +4,31 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch_geometric.nn.kge import KGEModel
 
+
 class TransR(KGEModel):
     r"""The TransR model from the `"Learning Entity and Relation Embeddings for
     Knowledge Graph Completion" <https://cdn.aaai.org/ojs/9491/9491-13-13019-1-2-20201228.pdf> paper.
-    
+
     :class:`TransR` models relations by first projecting entities from entity space 
     to relation space using relation-specific matrices, and then performing 
     translation in the relation space:
 
     .. math::
-        \mathbf{h}_r = \mathbf{h}M_r
-        \mathbf{t}_r = \mathbf{t}M_r
-        \mathbf{h}_r + \mathbf{r} \approx \mathbf{t}_r
+        \mathbf{h}_r &= \mathbf{h}M_r \\
+        \mathbf{t}_r &= \mathbf{t}M_r \\
+        \mathbf{h}_r + \mathbf{r} &\approx \mathbf{t}_r
 
     resulting in the scoring function:
 
     .. math::
         d(h, r, t) = - {\| \mathbf{h}M_r + \mathbf{r} - \mathbf{t}M_r \|}_p
+
+    .. note::
+
+        For an example of using the :class:`TransR` model, see
+        `examples/kge_fb15k_237.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        kge_fb15k_237.py>`_.
 
     Args:
         num_nodes (int): The number of nodes/entities in the graph.
@@ -34,6 +42,7 @@ class TransR(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         num_nodes: int,
@@ -63,11 +72,11 @@ class TransR(KGEModel):
         torch.nn.init.xavier_uniform_(self.rel_proj)
 
         F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
-                   out=self.rel_emb.weight.data)
+                    out=self.rel_emb.weight.data)
 
     def _project(self, entities: Tensor, rel_type: Tensor) -> Tensor:
         """Project entities to relation space using relation-specific matrices."""
-        proj_matrices = self.rel_proj[rel_type] 
+        proj_matrices = self.rel_proj[rel_type]
         entities = entities.unsqueeze(1)
         projected = torch.bmm(entities, proj_matrices)
         return projected.squeeze(1)
@@ -78,7 +87,7 @@ class TransR(KGEModel):
         rel_type: Tensor,
         tail_index: Tensor,
     ) -> Tensor:
-        
+        """Compute TransR scores for the given triplets."""
         head = self.node_emb(head_index)
         rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
