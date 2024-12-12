@@ -10,9 +10,9 @@ class TransR(KGEModel):
     Knowledge Graph Completion" 
     <https://cdn.aaai.org/ojs/9491/9491-13-13019-1-2-20201228.pdf>`_ paper.
 
-    :class:`TransR` models relations by first projecting entities from entity space 
-    to relation space using relation-specific matrices, and then performing 
-    translation in the relation space:
+    :class:`TransR` models relations by first projecting entities from entity
+    space to relation space using relation-specific matrices, and then 
+    performing translation in the relation space:
 
     .. math::
         \mathbf{h}_r &= \mathbf{h}M_r \\
@@ -37,7 +37,8 @@ class TransR(KGEModel):
         hidden_channels (int): The hidden embedding size.
         margin (float, optional): The margin of the ranking loss.
             (default: :obj:`1.0`)
-        p_norm (float, optional): The order of norm used for embeddings and distance.
+        p_norm (float, optional): The order of norm used for embeddings 
+        and distance.
             (default: :obj:`1.0`) 
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
@@ -75,7 +76,9 @@ class TransR(KGEModel):
                     out=self.rel_emb.weight.data)
 
     def _project(self, entities: Tensor, rel_type: Tensor) -> Tensor:
-        """Project entities to relation space using relation-specific matrices."""
+        """
+        Project entities to relation space using relation-specific matrices.
+        """
         proj_matrices = self.rel_proj[rel_type]
         entities = entities.unsqueeze(1)
         projected = torch.bmm(entities, proj_matrices)
