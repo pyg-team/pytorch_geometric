@@ -16,6 +16,9 @@ from pyg_mixup_transform import MixupDataset
 logging.basicConfig(level=logging.INFO)
 warnings.filterwarnings("ignore", module="torch_geometric")
 
+"""
+Testing adapted from https://github.com/eomeragic1/g-mixup-reproducibility to be compatible with our implementation.
+"""
 
 def prepare_dataset_onehot_y(dataset):
     y_set = set()
