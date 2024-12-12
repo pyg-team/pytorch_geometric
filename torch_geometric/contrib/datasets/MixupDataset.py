@@ -16,8 +16,20 @@ class MixupDataset(InMemoryDataset):
         estimation_method: str = 'usvt',
         **args
     ):
-        """
-        Initialize the MixupDataset.
+        r"""The Mixup Dataset method from the `G-Mixup: Graph Data Augmentation for Graph Classification.
+        <https://proceedings.mlr.press/v162/han22c.html>`_ paper.
+    
+        G-Mixup estimates Graphons (as defined in the paper) for every class in a dataset. It then linearly interpolates in the graphon space, and samples new points from intrpolated graphons to achieve Mixup-like linear interpolation despite an inherently non-linear data type (graphs). 
+        
+        Concretely, this works in four steps:
+        
+        1. Graphon Estimation: estimate W_k such that G_k ∼ W_k is similar to examples from class k. i.e. we assume all graphs from class k were sampled from the same distribution and try to estimate this distribution using various mathematical techniques.
+        
+        2. Graphon Mixup: Construct new classes W_α = λW_i + (1 − λ)W_j. i.e. do mixup on the estimated distributions from last step to get new distributions that would model some new (and made-up) classes.
+        
+        3. Graph Generation: New training samples {G_α1 , G_α2 , …}, {G_β1 , G_β2 , …}, … ∼ W_α, W_β , … i.e. sampled data points (graphs) from the made-up distributions.
+        
+        4. Label Mixup: Construct new labels yα = λyi + (1 − λ)yj i.e. find the labels for each graphon. What is the new class we made up a distribution for?
 
         Args:
             dataset (torch_geometric.InMemoryDataset): The base dataset to perform mixup on.
@@ -90,13 +102,13 @@ class MixupDataset(InMemoryDataset):
 
     def _split_class_graphs(self, dataset: InMemoryDataset) -> list:
         """
-        Split the dataset into graphs grouped by their class labels.
+        Split the dataset into graphs grouped by their class labels. 
+        Returns a list of tuples where each tuple contains a class label and corresponding graphs.
 
         Args:
             dataset (InMemoryDataset): The input dataset.
 
-        Returns:
-            list: A list of tuples where each tuple contains a class label and corresponding graphs.
+        :rtype: :class:`list`
         """
 
         y_list = [tuple(data.y.tolist()) for data in dataset]
@@ -111,14 +123,14 @@ class MixupDataset(InMemoryDataset):
     def _mixup(self, class_i: Graphon, class_j: Graphon, mixup_fraction: float) -> tuple[Graphon, float]:
         """
         Perform mixup between two graphons.
+        Returns a new mixed graphon and its label.
 
         Args:
             class_i (Graphon): The first graphon.
             class_j (Graphon): The second graphon.
             mixup_fraction (float): Mixing fraction between the two graphons.
 
-        Returns:
-            tuple: A new mixed graphon and its label.
+        :rtype: (:class:`Graphon`, :class:`float`)
         """
 
         mixed_label = mixup_fraction * class_i._label + (1 - mixup_fraction) * class_j._label
@@ -140,8 +152,9 @@ class MixupDataset(InMemoryDataset):
         """
         Get the length of the dataset, including new generated graphs.
 
-        Returns:
-            int: Total number of graphs in the dataset.
+        Returns the total number of graphs in the dataset.
+
+        :rtpe: :class:`int`
         """
 
         return len(self.dataset) + len(self.new_graphs)
@@ -149,12 +162,12 @@ class MixupDataset(InMemoryDataset):
     def __getitem__(self, idx: int) -> Data:
         """
         Retrieve a graph from the dataset by index.
+        Returns the graph at the specified index.
 
         Args:
             idx (int): Index of the graph to retrieve. Negative indices are supported.
 
-        Returns:
-            Data: The graph at the specified index.
+        :rtype: :class:`torch_geometric.data.Data`
         """
 
         if idx < 0:
