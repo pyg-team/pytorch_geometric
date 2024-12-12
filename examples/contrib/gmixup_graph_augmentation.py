@@ -36,15 +36,6 @@ class GCN(nn.Module):
         return torch.argmax(x, dim=1)
 
 
-class DatasetFromList(InMemoryDataset):
-    def __init__(self, listOfDataObjects):
-        super().__init__()
-        self.data, self.slices = self.collate(listOfDataObjects)
-    
-    def __getitem__(self, idx):
-        return self.get(idx)
-        
-
 def create_node_features(dataset: Dataset):
     num_classes = dataset.num_classes
     dataset = list(dataset)
@@ -60,22 +51,15 @@ def create_node_features(dataset: Dataset):
     max_degree = max(d.max().item() for d in all_degrees)
     # If sparse enough, use one-hot
     if max_degree < 2000:
-        for graph, graph_degrees in zip(dataset, all_degrees):
-            graph.x = F.one_hot(graph_degrees, num_classes=max_degree+1).float()
+        for graph, degrees in zip(dataset, all_degrees):
+            graph.x = F.one_hot(degrees, num_classes=max_degree+1).float()
     # Else use degree z-score
     else:
         std, mean = torch.std_mean(torch.cat(all_degrees).float())
         std, mean = std.item(), mean.item()
-        for graph, graph_degrees in zip(dataset, all_degrees):
-            graph.x = ((graph_degrees - mean) / std).view(-1, 1)
-    dataset = DatasetFromList(dataset)
+        for graph, degrees in zip(dataset, all_degrees):
+            graph.x = ((degrees - mean) / std).view(-1, 1)
     return dataset
-
-
-# TODO: Move?
-def mixup_cross_entropy_loss(input, target, size_average=True):   
-    loss = -torch.sum(input * target)
-    return loss / input.size(0) if size_average else loss
 
 
 if __name__ == '__main__':
@@ -91,17 +75,19 @@ if __name__ == '__main__':
     # GMixup
     parser.add_argument('--vanilla', dest='use_mixup', action='store_false')
     parser.add_argument('--aug-ratio', type=float, default=0.5)
-    parser.add_argument('--interpolation-lambda', type=float, default=0.1)
+    parser.add_argument('--interpolation-range',
+                        nargs=2, type=float, default=(0.1,0.2))
     args = parser.parse_args()
 
     torch.manual_seed(args.seed)
 
     ds = TUDataset(args.dataset_path, args.dataset)
-    ds = create_node_features(ds)
     ds.print_summary()
+    ds = create_node_features(ds)
     ntrain = int(0.8 * len(ds))
-    train = ds.index_select(slice(0, ntrain))
-    test = ds.index_select(slice(ntrain, len(ds)))
+    shuffled_indices = torch.randperm(len(ds))
+    train = [ds[i] for i in shuffled_indices[:ntrain]]
+    test = [ds[i] for i in shuffled_indices[ntrain:]]
     print(f'Train: {len(train)} graphs | Test: {len(test)} graphs')
 
 
@@ -109,9 +95,8 @@ if __name__ == '__main__':
         
         gmixup = GMixup(train)
         synthetic = gmixup.generate(
-            aug_ratio=0.5,
-            num_samples=5,
-            interpolation_lambda=args.interpolation_lambda,
+            num_samples=int(len(train) * args.aug_ratio),
+            interpolation_range=args.interpolation_range,
         )
         print(f'Generated {len(synthetic)} synthetic graphs')
         dataloader = DataLoader(
@@ -119,9 +104,6 @@ if __name__ == '__main__':
             batch_size=args.batch_size,
             shuffle=True
         )
-        def loss_fn(preds, target):
-            preds = F.log_softmax(preds, dim=1)
-            return mixup_cross_entropy_loss(preds, target)
 
     else:
         dataloader = DataLoader(
@@ -129,11 +111,9 @@ if __name__ == '__main__':
             batch_size=args.batch_size,
             shuffle=True
         )
-        loss_fn = F.cross_entropy
 
-    model = GCN(ds.num_features, ds.num_classes)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = model.to(device).train()
+    model = GCN(ds.num_features, ds.num_classes).to(device).train()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     scheduler = torch.optim.lr_scheduler.StepLR(
         optimizer, step_size=100, gamma=0.5)
@@ -145,7 +125,7 @@ if __name__ == '__main__':
             batch = batch.to(device)
             out = model.forward(batch.x, batch.edge_index, batch.batch)
             # Compute loss
-            loss = loss_fn(out, batch.y)
+            loss = F.cross_entropy(out, batch.y)
             total_loss += len(batch) * loss.item()
             total_samples += len(batch)
             # Backward pass and optimization step
