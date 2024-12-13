@@ -11,7 +11,6 @@ import torch.optim as optim
 from tqdm import tqdm
 tqdm.monitor_iterval = 0
 
-#from dataset_load_paths import load_data
 from dataset_load import load_data
 from rearev import ReaRev
 from evaluate import Evaluator
