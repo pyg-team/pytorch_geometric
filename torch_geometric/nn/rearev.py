@@ -6,7 +6,6 @@ from torch_geometric.nn import GlobalAttention
 from torch_geometric.utils.reason import Fusion, QueryReform, TypeLayer
 
 
-
 class ReaRev(torch.nn.Module):
     """Recurrent Attention and Reasoning model (ReaRev) for iterative reasoning
     over knowledge graphs using graph neural networks (GNNs) and
@@ -49,7 +48,8 @@ class ReaRev(torch.nn.Module):
 
     def layers(self, args):
         """Define layers for embedding transformations
-        and attention encoders."""
+        and attention encoders.
+        """
         self.word_dim
         self.kg_dim
         entity_dim = self.entity_dim
