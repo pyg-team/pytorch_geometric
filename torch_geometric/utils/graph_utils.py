@@ -4,8 +4,9 @@ from typing import List, Optional, Tuple, Union
 
 import networkx as nx
 import torch
+
 from torch_geometric.data import Data
-from torch_geometric.utils import coalesce, to_undirected
+from torch_geometric.utils import coalesce
 
 # Load entity names
 with open('entities_names.json') as f:
@@ -42,11 +43,13 @@ def build_pyg_graph(graph_data: List[Tuple[str, str, str]],
         edge_index_list.append([node_to_idx[h], node_to_idx[t]])
         rel_list.append(r)
 
-    edge_index = torch.tensor(edge_index_list, dtype=torch.long).t().contiguous()
+    edge_index = torch.tensor(edge_index_list,
+                              dtype=torch.long).t().contiguous()
 
     # Coalesce step: remove duplicates, sort edges
     edge_weights = torch.ones(edge_index.size(1), dtype=torch.float32)
-    edge_index, edge_weights = coalesce(edge_index, edge_weights, num_nodes=len(node_list))
+    edge_index, edge_weights = coalesce(edge_index, edge_weights,
+                                        num_nodes=len(node_list))
 
     # Remap relations to edges
     rel_map = {}
@@ -60,7 +63,8 @@ def build_pyg_graph(graph_data: List[Tuple[str, str, str]],
         for i in range(edge_index.size(1))
     ]
 
-    data = Data(num_nodes=len(node_list), edge_index=edge_index, edge_weights=edge_weights)
+    data = Data(num_nodes=len(node_list), edge_index=edge_index,
+                edge_weights=edge_weights)
     data.node_list = node_list  # Reference to original names
     data.node_to_idx = node_to_idx
     data.relations = final_rels  # List of relations, parallel to edge_index
@@ -85,7 +89,8 @@ def pyg_data_to_networkx(data: Data) -> nx.Graph:
     return G
 
 
-def bfs_with_rule(data: Data, start_node: Union[str, int], target_rule: List[str],
+def bfs_with_rule(data: Data, start_node: Union[str,
+                                                int], target_rule: List[str],
                   max_p: int = 10) -> List[List[Tuple[str, str, str]]]:
     """Perform BFS to find paths matching a sequence of relations (target_rule)."""
     G = pyg_data_to_networkx(data)
@@ -96,7 +101,8 @@ def bfs_with_rule(data: Data, start_node: Union[str, int], target_rule: List[str
         start_node = data.node_list[start_node]
 
     result_paths = []
-    queue: deque[Tuple[str, List[Tuple[str, str, str]]]] = deque([(start_node, [])])
+    queue: deque[Tuple[str, List[Tuple[str, str,
+                                       str]]]] = deque([(start_node, [])])
 
     while queue:
         current_node, current_path = queue.popleft()
@@ -131,8 +137,8 @@ def get_truth_paths(q_entities: List[str], a_entities: List[str],
             try:
                 for path in nx.all_shortest_paths(G, q, a):
                     path_with_rels = [
-                        (path[i], G[path[i]][path[i + 1]]['relation'], path[i + 1])
-                        for i in range(len(path) - 1)
+                        (path[i], G[path[i]][path[i + 1]]['relation'],
+                         path[i + 1]) for i in range(len(path) - 1)
                     ]
                     paths.append(path_with_rels)
             except nx.NetworkXNoPath:
