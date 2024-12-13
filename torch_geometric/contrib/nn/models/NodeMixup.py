@@ -99,8 +99,8 @@ class NodeMixup(torch.nn.Module):
             id_new_value_old (Tensor): Mapping of node IDs after shuffle.
 
         Returns:
-            Tensor: Node feature matrix of shape: obj:`[num_nodes,
-                out_channels]`.
+            Tensor: Node feature matrix of shape:
+                obj:`[num_nodes,out_channels]`.
         """
         x0 = x
         x0_b = x0[id_new_value_old]
