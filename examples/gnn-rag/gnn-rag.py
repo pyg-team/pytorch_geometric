@@ -1,6 +1,7 @@
 import argparse
 import os
 import time
+
 from torch_geometric.nn.models import Trainer_KBQA
 from torch_geometric.utils import create_logger
 
@@ -25,17 +26,19 @@ def main():
     if not os.path.exists(args.checkpoint_dir):
         os.mkdir(args.checkpoint_dir)
     logger = create_logger(args)
-    trainer = Trainer_KBQA(args=vars(args), model_name=args.model_name, logger=logger)
+    trainer = Trainer_KBQA(args=vars(args), model_name=args.model_name,
+                           logger=logger)
     if not args.is_eval:
         trainer.train(0, args.num_epoch - 1)
     else:
         assert args.load_experiment is not None
         if args.load_experiment is not None:
             ckpt_path = os.path.join(args.checkpoint_dir, args.load_experiment)
-            print("Loading pre trained model from {}".format(ckpt_path))
+            print(f"Loading pre trained model from {ckpt_path}")
         else:
             ckpt_path = None
         trainer.evaluate_single(ckpt_path)
+
 
 if __name__ == '__main__':
     main()
