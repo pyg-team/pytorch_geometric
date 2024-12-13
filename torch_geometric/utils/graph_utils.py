@@ -17,7 +17,8 @@ names_entities = {v: k for k, v in entities_names.items()}
 def build_pyg_graph(graph_data: List[Tuple[str, str, str]],
                     entities: Optional[List[str]] = None,
                     encrypt: bool = False) -> Data:
-    """Construct a PyG Data object from a list of (head, relation, tail) triplets.
+    """Construct a PyG Data object from a list of (head, relation, 
+    tail) triplets.
     """
     edges = []
     for h, r, t in graph_data:
@@ -90,7 +91,8 @@ def pyg_data_to_networkx(data: Data) -> nx.Graph:
 def bfs_with_rule(data: Data, start_node: Union[str,
                                                 int], target_rule: List[str],
                   max_p: int = 10) -> List[List[Tuple[str, str, str]]]:
-    """Perform BFS to find paths matching a sequence of relations (target_rule).
+    """Perform BFS to find paths matching a sequence of relations 
+    (target_rule).
     """
     G = pyg_data_to_networkx(data)
 
@@ -123,7 +125,8 @@ def bfs_with_rule(data: Data, start_node: Union[str,
 
 def get_truth_paths(q_entities: List[str], a_entities: List[str],
                     data: Data) -> List[List[Tuple[str, str, str]]]:
-    """Retrieves all shortest paths between question entities and answer entities.
+    """Retrieves all shortest paths between question entities 
+    and answer entities.
     """
     G = pyg_data_to_networkx(data)
     paths = []
