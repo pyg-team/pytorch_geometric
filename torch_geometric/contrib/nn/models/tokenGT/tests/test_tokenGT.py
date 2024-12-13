@@ -1,25 +1,19 @@
-import sys
-import os
-
-local_file_dir = os.path.abspath("../")
-if local_file_dir not in sys.path:
-    sys.path.insert(0, local_file_dir)
-
 import unittest
 import torch
 from torch_geometric.data import Data, Batch
 from tokenGT import TokenGT
 import numpy as np
 
-'''
-Generates a random batch of graphs to test TokenGT on.
-In each graph, edges are generated randomly between nodes.
-Arguments:
-    - input_feat_dim: dimension of the node and edge features
-    - num_nodes: list where element i denotes number of nodes in graph i
-    - num_edges: list where element i denotes number of edges in graph i
-'''
 def create_batch(num_nodes, num_edges, input_feat_dim=16):
+    '''
+    Generates a random batch of graphs to test TokenGT on.
+    In each graph, edges are generated randomly between nodes.
+    Arguments:
+        - input_feat_dim: dimension of the node and edge features
+        - num_nodes: list where element i denotes number of nodes in graph i
+        - num_edges: list where element i denotes number of edges in graph i
+    '''
+
     all_data = []
     for n_nodes, n_edges in zip(num_nodes, num_edges):
         x = torch.randn(n_nodes, input_feat_dim)
@@ -51,7 +45,8 @@ def run_token_gt(batch, input_feat_dim=16, hidden_dim=32,
 
 class TestTokenGTWrapper(unittest.TestCase):
     
-    def test_token_gt_orf(self): # Test TokenGT with ORF node identifiers
+    def test_token_gt_orf(self): 
+        # Test TokenGT with ORF node identifiers
         for i in range(16):
             input_feat_dim, num_classes = i, 10
             batch = create_batch(num_nodes=[5], num_edges=[4], input_feat_dim=input_feat_dim)
@@ -59,10 +54,11 @@ class TestTokenGTWrapper(unittest.TestCase):
                 batch, input_feat_dim=input_feat_dim, 
                 num_classes=num_classes, method="orf"
             )
-            self.assertEqual(logits.size(), (1, num_classes)) # Should have shape [batch_size, num_classes]
+            self.assertEqual(logits.size(), (1, num_classes)) 
             self.assertTrue(torch.isfinite(logits).all())
 
-    def test_token_gt_laplacian(self): # Test TokenGT with Laplacian node identifiers
+    def test_token_gt_laplacian(self): 
+        # Test TokenGT with Laplacian node identifiers
         for i in range(16):
             input_feat_dim, num_classes = i, 10
             batch = create_batch(num_nodes=[5], num_edges=[4], input_feat_dim=input_feat_dim)
@@ -73,7 +69,8 @@ class TestTokenGTWrapper(unittest.TestCase):
             self.assertEqual(logits.size(), (1, num_classes)) 
             self.assertTrue(torch.isfinite(logits).all())
 
-    def test_token_gt_batches(self): # Test TokenGT on batches of multiple graphs
+    def test_token_gt_batches(self): 
+        # Test TokenGT on batches of multiple graphs
         for method in ["orf", "laplacian"]:
             input_feat_dim, num_classes, num_graphs = 16, 10, 8
             num_nodes = np.random.choice(range(1, 20), size=num_graphs)
