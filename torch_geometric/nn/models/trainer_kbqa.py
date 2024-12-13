@@ -98,16 +98,6 @@ class TrainerKBQA:
             # Evaluation
             if (epoch + 1) % eval_every == 0:
                 eval_metrics = self.evaluate(self.valid_data)
-                eval_f1, eval_h1, eval_em = eval_metrics["f1"], eval_metrics[
-                    "h1"], eval_metrics["em"]
-
-                if epoch > self.warmup_epoch:
-                    if eval_h1 > getattr(self, "best_h1", 0):
-                        self.best_h1 = eval_h1
-                        self.save_checkpoint(f"best-h1-epoch-{epoch}")
-                    if eval_f1 > getattr(self, "best_f1", 0):
-                        self.best_f1 = eval_f1
-                        self.save_checkpoint(f"best-f1-epoch-{epoch}")
 
     def _train_epoch(self):
         """Train the model for one epoch.
