@@ -100,9 +100,6 @@ class TrainerKBQA:
                 eval_metrics = self.evaluate(self.valid_data)
                 eval_f1, eval_h1, eval_em = eval_metrics["f1"], eval_metrics[
                     "h1"], eval_metrics["em"]
-                self.logger.info(
-                    f"Validation - F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM: {eval_em:.4f}"
-                )
 
                 if epoch > self.warmup_epoch:
                     if eval_h1 > getattr(self, "best_h1", 0):
