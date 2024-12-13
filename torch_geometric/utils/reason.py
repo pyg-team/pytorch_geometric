@@ -128,7 +128,7 @@ class QueryReform(nn.Module):
         """Refine query node embeddings w attn and fusion."""
         q_node_lin = self.q_ent_attn(q_node).unsqueeze(1)
         q_ent_score = (q_node_lin * ent_emb).sum(dim=2, keepdim=True)
-        masked_scores = q_ent_score - (1 - ent_mask.unsqueeze(2)) * 1e8
+        q_ent_score - (1 - ent_mask.unsqueeze(2)) * 1e8
         seed_info_expanded = seed_info.unsqueeze(1)
         seed_retrieve = torch.bmm(seed_info_expanded, ent_emb).squeeze(1)
         fused_output = self.fusion(q_node, seed_retrieve)
