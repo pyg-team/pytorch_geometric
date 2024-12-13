@@ -86,7 +86,7 @@ class TrainerKBQA:
         """
         eval_every = self.args["eval_every"]
         for epoch in range(start_epoch, end_epoch + 1):
-            start_time = time.time()
+            time.time()
 
             loss, h1_list, f1_list = self._train_epoch()
             if self.decay_rate > 0:
