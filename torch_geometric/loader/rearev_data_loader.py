@@ -23,7 +23,8 @@ class BasicDataLoader:
     def _initialize(self, config, word2id, relation2id, entity2id):
         print("Initializing")
         self.config = config
-        self.word2id, self.relation2id, self.entity2id = word2id, relation2id, entity2id
+        self.word2id = word2id
+        self.relation2id, self.entity2id = relation2id, entity2id
         self.id2entity = {v: k for k, v in entity2id.items()}
         self.num_relations = len(relation2id)
         if config.get('use_inverse_relation', False):
