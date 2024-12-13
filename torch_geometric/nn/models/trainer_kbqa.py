@@ -93,10 +93,6 @@ class TrainerKBQA:
                 self.scheduler.step()
 
             avg_h1, avg_f1 = np.mean(h1_list), np.mean(f1_list)
-            self.logger.info(
-                f"Epoch {epoch + 1}, Loss: {loss:.4f},
-                Time: {time.time() - start_time:.2f}s"
-            )
             self.logger.info(f"Training H1: {avg_h1:.4f}, F1: {avg_f1:.4f}")
 
             # Evaluation
@@ -178,6 +174,5 @@ class TrainerKBQA:
         checkpoint_path = os.path.join(self.args["checkpoint_dir"],
                                        f"{name}.ckpt")
         checkpoint = torch.load(checkpoint_path)
-        self.model.load_state_dict(checkpoint["model_state_dict"],
-                                   strict=False)
+        self.model.load_state_dict(checkpoint["model_state_dict"], strict=False)
         self.logger.info(f"Checkpoint loaded: {checkpoint_path}")
