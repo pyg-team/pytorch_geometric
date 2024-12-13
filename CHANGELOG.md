@@ -6,10 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## \[2.8.0\] - 2024-MM-DD
 
 ## \[2.7.0\] - 2024-12-13
-- Created a GNN-RAG functionality for a pyg function which uses graph neural networks to enhance LLM performance for question-answering. 
+
+- Created a GNN-RAG functionality for a pyg function which uses graph neural networks to enhance LLM performance for question-answering.
 - Added `rearev_data_loader` to take in and process data for ReaRev
 - Added `rearev_data_loader_test` as a unit test for `rearev_data_loader`
-- Added `rearev.py` and `trainer_kbqa.py` to train our model's knowledge graphs. 
+- Added `rearev.py` and `trainer_kbqa.py` to train our model's knowledge graphs.
 - Added `graph_utils.py` and `reason.py`
 
 ### Added

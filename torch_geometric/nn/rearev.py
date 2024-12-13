@@ -1,18 +1,14 @@
 import torch
-import numpy as np
-from torch.autograd import Variable
-import torch.nn.functional as F
 import torch.nn as nn
-from torch_geometric.nn import GlobalAttention
+from torch.autograd import Variable
 
-from conv import reason
-from torch_geometric.utils.reason import TypeLayer, Fusion, QueryReform
+from torch_geometric.nn import GlobalAttention
+from torch_geometric.utils.reason import Fusion, QueryReform, TypeLayer
 
 
 class ReaRev(torch.nn.Module):
-    """
-    Recurrent Attention and Reasoning model (ReaRev) for iterative reasoning 
-    over knowledge graphs using graph neural networks (GNNs) and 
+    """Recurrent Attention and Reasoning model (ReaRev) for iterative reasoning
+    over knowledge graphs using graph neural networks (GNNs) and
     query-driven instructional guidance.
 
     Args:
@@ -22,7 +18,7 @@ class ReaRev(torch.nn.Module):
         num_word (int): Vocabulary size or maximum word index for queries.
     """
     def __init__(self, args, num_entity, num_relation, num_word):
-        super(ReaRev, self).__init__()
+        super().__init__()
         self.norm_rel = args['norm_rel']
         self._init_model_params(args)
         self._define_layers(args)
@@ -52,18 +48,16 @@ class ReaRev(torch.nn.Module):
 
     def layers(self, args):
         """Define layers for embedding transformations and attention encoders."""
-        word_dim = self.word_dim
-        kg_dim = self.kg_dim
+        self.word_dim
+        self.kg_dim
         entity_dim = self.entity_dim
 
         self.linear_dropout = args['linear_dropout']
 
-        self.entity_linear = nn.Linear(
-            in_features=self.ent_dim, out_features=entity_dim
-        )
-        self.relation_linear = nn.Linear(
-            in_features=self.rel_dim, out_features=entity_dim
-        )
+        self.entity_linear = nn.Linear(in_features=self.ent_dim,
+                                       out_features=entity_dim)
+        self.relation_linear = nn.Linear(in_features=self.rel_dim,
+                                         out_features=entity_dim)
 
         self.linear_drop = nn.Dropout(p=self.linear_dropout)
 
@@ -83,18 +77,15 @@ class ReaRev(torch.nn.Module):
         self.mse_loss = torch.nn.MSELoss()
 
     def private_module_def(self, args, num_entity, num_relation):
-        """
-        Defines private modules: LMs, GNN layers, etc.
+        """Defines private modules: LMs, GNN layers, etc.
         Initializes modules needed by the reasoning pipeline.
         """
         # Define ReasonGNNLayer if not already imported
-        self.reasoning = ReasonGNNLayer(
-            args, num_entity, num_relation, self.entity_dim, self.alg
-        )
+        self.reasoning = ReasonGNNLayer(args, num_entity, num_relation,
+                                        self.entity_dim, self.alg)
 
     def get_ent_init(self, local_entity, kb_adj_mat, rel_features):
-        """
-        Computes the initial entity embeddings.
+        """Computes the initial entity embeddings.
         """
         if self.encode_type:
             local_entity_emb = self.type_layer(
@@ -108,8 +99,8 @@ class ReaRev(torch.nn.Module):
         return local_entity_emb
 
     def get_rel_feature(self):
-        """
-        Gets relation features from embeddings or encoded texts.
+        """Gets relation features from embeddings or encoded texts.
+
         Returns:
             tuple: rel_features, rel_features_inv.
         """
@@ -120,23 +111,23 @@ class ReaRev(torch.nn.Module):
             rel_features_inv = self.relation_linear(rel_features_inv)
         else:
             rel_features = self.instruction.question_emb(self.rel_features)
-            rel_features_inv = self.instruction.question_emb(self.rel_features_inv)
+            rel_features_inv = self.instruction.question_emb(
+                self.rel_features_inv)
 
             rel_features = self.self_att_r(rel_features)
             rel_features_inv = self.self_att_r(rel_features_inv)
 
         return rel_features, rel_features_inv
 
-    def init_reason(self, curr_dist, local_entity, kb_adj_mat, q_input, query_entities):
-        """
-        Initializes reasoning procedure by preparing instructions, entity 
+    def init_reason(self, curr_dist, local_entity, kb_adj_mat, q_input,
+                    query_entities):
+        """Initializes reasoning procedure by preparing instructions, entity
         embeddings, and GNN layers.
         """
         self.instruction_list, self.attn_list = self.instruction(q_input)
         rel_features, rel_features_inv = self.get_rel_feature()
-        self.local_entity_emb = self.get_ent_init(
-            local_entity, kb_adj_mat, rel_features
-        )
+        self.local_entity_emb = self.get_ent_init(local_entity, kb_adj_mat,
+                                                  rel_features)
         self.init_entity_emb = self.local_entity_emb
 
         self.curr_dist = curr_dist
@@ -154,23 +145,21 @@ class ReaRev(torch.nn.Module):
         )
 
     def calc_loss_label(self, curr_dist, teacher_dist, label_valid):
+        """Computes the label loss based on current predictions vs. teacher distribution.
         """
-        Computes the label loss based on current predictions vs. teacher distribution.
-        """
-        tp_loss = self.get_loss(
-            pred_dist=curr_dist, answer_dist=teacher_dist, reduction='none'
-        )
+        tp_loss = self.get_loss(pred_dist=curr_dist, answer_dist=teacher_dist,
+                                reduction='none')
         tp_loss = tp_loss * label_valid
         cur_loss = torch.sum(tp_loss) / curr_dist.size(0)
         return cur_loss
 
     def forward(self, batch, training=False):
-        """
-        Standard forward pass: perform reasoning steps and produce predictions and loss.
+        """Standard forward pass: perform reasoning steps and produce predictions and loss.
         """
         local_entity, query_entities, kb_adj_mat, query_text, seed_dist, _, answer_dist = batch
         local_entity = torch.from_numpy(local_entity).long().to(self.device)
-        query_entities = torch.from_numpy(query_entities).float().to(self.device)
+        query_entities = torch.from_numpy(query_entities).float().to(
+            self.device)
         answer_dist = torch.from_numpy(answer_dist).float().to(self.device)
         seed_dist = torch.from_numpy(seed_dist).float().to(self.device)
         current_dist = Variable(seed_dist, requires_grad=True)
@@ -188,8 +177,7 @@ class ReaRev(torch.nn.Module):
         self.instruction.init_reason(q_input)
         for i in range(self.num_ins):
             relational_ins, _ = self.instruction.get_instruction(
-                self.instruction.relational_ins, step=i
-            )
+                self.instruction.relational_ins, step=i)
             self.instruction.instructions.append(relational_ins.unsqueeze(1))
             self.instruction.relational_ins = relational_ins
         self.dist_history.append(self.curr_dist)
@@ -199,8 +187,7 @@ class ReaRev(torch.nn.Module):
             self.curr_dist = current_dist
             for j in range(self.num_gnn):
                 self.curr_dist, global_rep = self.reasoning(
-                    self.curr_dist, relation_ins, step=j
-                )
+                    self.curr_dist, relation_ins, step=j)
             self.dist_history.append(self.curr_dist)
 
             qs = []
@@ -218,9 +205,9 @@ class ReaRev(torch.nn.Module):
         pred_dist = self.dist_history[-1]
         answer_number = torch.sum(answer_dist, dim=1, keepdim=True)
         case_valid = (answer_number > 0).float()
-        loss = self.calc_loss_label(
-            curr_dist=pred_dist, teacher_dist=answer_dist, label_valid=case_valid
-        )
+        loss = self.calc_loss_label(curr_dist=pred_dist,
+                                    teacher_dist=answer_dist,
+                                    label_valid=case_valid)
 
         pred = torch.max(pred_dist, dim=1)[1]
         tp_list = None
