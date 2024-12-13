@@ -142,9 +142,9 @@ def load_partitioned_data(rank, edge_path, feature_path, label_path, meta_path,
         split_idx[split] = fs.torch_load(path)
 
     path = osp.join(feature_path, f'rank={rank}_x.pt')
-    feature_store['node', 'x'] = fs.torch_load(path)
+    feature_store['node', 'x', None] = fs.torch_load(path)
     path = osp.join(feature_path, f'rank={rank}_y.pt')
-    feature_store['node', 'y'] = fs.torch_load(path)
+    feature_store['node', 'y', None] = fs.torch_load(path)
 
     eix = fs.torch_load(osp.join(edge_path, f'rank={rank}.pt'))
     graph_store[dict(
