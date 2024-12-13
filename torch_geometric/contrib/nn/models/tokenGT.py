@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from torch_geometric.data import Batch
 from torch_geometric.nn import global_add_pool
 from torch_geometric.utils import subgraph
@@ -31,10 +32,9 @@ class GraphFeatureTokenizer(torch.nn.Module):
         use_graph_token (bool): Whether to prepend a [graph] token to the
             sequence
     """
-    def __init__(self, input_feat_dim: int,
-                 hidden_dim: int, method: str, d_p: int, d_e: int,
-                 use_graph_token: bool = True):
-        super(GraphFeatureTokenizer, self).__init__()
+    def __init__(self, input_feat_dim: int, hidden_dim: int, method: str,
+                 d_p: int, d_e: int, use_graph_token: bool = True):
+        super().__init__()
         self.hidden_dim = hidden_dim
         self.d_p = d_p
         self.d_e = d_e
@@ -59,7 +59,8 @@ class GraphFeatureTokenizer(torch.nn.Module):
 
     def reset_parameters(self):
         """Initialize all learnable parameters using Xavier uniform
-        initialization."""
+        initialization.
+        """
         nn.init.xavier_uniform_(self.E_V)
         nn.init.xavier_uniform_(self.E_E)
         nn.init.xavier_uniform_(self.w_in.weight)
@@ -68,8 +69,7 @@ class GraphFeatureTokenizer(torch.nn.Module):
             nn.init.xavier_uniform_(self.graph_token)
 
     def forward(self, data: Batch) -> (torch.Tensor, torch.Tensor):
-        """
-        Transform a batch of graphs into sequences of tokens.
+        """Transform a batch of graphs into sequences of tokens.
 
         Args:
             data (Batch): PyG batch containing multiple graphs
@@ -102,15 +102,13 @@ class GraphFeatureTokenizer(torch.nn.Module):
         X_e_proj = self.w_in(X_e)
 
         # Arrange tokens into sequences and create attention masks
-        tokens, attention_masks = self.prepare_tokens(
-            data, X_v_proj, X_e_proj, batch, edge_index
-        )
+        tokens, attention_masks = self.prepare_tokens(data, X_v_proj, X_e_proj,
+                                                      batch, edge_index)
 
         return tokens, attention_masks
 
     def generate_node_identifiers(self, data: Batch) -> torch.Tensor:
-        """
-        Generate structural node identifiers using either orthogonal random
+        """Generate structural node identifiers using either orthogonal random
         features (ORF) or Laplacian eigenvectors.
 
         Args:
@@ -145,12 +143,11 @@ class GraphFeatureTokenizer(torch.nn.Module):
                 P_list.append(P)
 
             elif self.method == 'laplacian':
-                sub_edge_index, _ = subgraph(node_mask,
-                                             edge_index,
+                sub_edge_index, _ = subgraph(node_mask, edge_index,
                                              relabel_nodes=True)
                 # Compute Laplacian eigenvectors
-                P = self.compute_laplacian_eigenvectors(sub_edge_index,
-                                                        num_nodes)
+                P = self.compute_laplacian_eigenvectors(
+                    sub_edge_index, num_nodes)
 
                 # Handle dimension mismatch
                 if num_nodes < self.d_p:
@@ -168,12 +165,12 @@ class GraphFeatureTokenizer(torch.nn.Module):
         assert P.size() == (x.size(0), self.d_p), f"Error while generating \
             node identifiers: P has shape {P.size()}, \
             expected {(x.size(0), self.d_p)}."
+
         return P
 
     def compute_laplacian_eigenvectors(self, edge_index, num_nodes: int)\
             -> torch.Tensor:
-        """
-        Compute the eigenvectors of the graph Laplacian matrix.
+        """Compute the eigenvectors of the graph Laplacian matrix.
 
         Args:
             edge_index (torch.Tensor): Edge connectivity
@@ -190,8 +187,7 @@ class GraphFeatureTokenizer(torch.nn.Module):
     def prepare_tokens(self, data: Batch, X_v_proj: torch.Tensor,
                        X_e_proj: torch.Tensor, batch: torch.Tensor,
                        edge_index: torch.Tensor):
-        """
-        Arrange node and edge tokens into sequences and create attention masks.
+        """Arrange node and edge tokens into sequences and create attention masks.
 
         The sequence structure is: [graph_token (optional) | node_tokens |
         edge_tokens]
@@ -274,23 +270,21 @@ class TokenGT(nn.Module):
         use_graph_token (bool): Whether to include the [graph] token.
         dropout (float): Dropout rate.
     """
-    def __init__(self, input_feat_dim: int,
-                 hidden_dim: int, num_layers: int, num_heads: int,
-                 num_classes: int, method: str, d_p: int, d_e: int,
-                 use_graph_token: bool = True, dropout: float = 0.1):
-        super(TokenGT, self).__init__()
+    def __init__(self, input_feat_dim: int, hidden_dim: int, num_layers: int,
+                 num_heads: int, num_classes: int, method: str, d_p: int,
+                 d_e: int, use_graph_token: bool = True, dropout: float = 0.1):
+        super().__init__()
 
         # Graph tokenizer: converts graph structure into sequence of tokens
-        self.tokenizer = GraphFeatureTokenizer(
-            input_feat_dim, hidden_dim, method, d_p, d_e,
-            use_graph_token
-        )
+        self.tokenizer = GraphFeatureTokenizer(input_feat_dim, hidden_dim,
+                                               method, d_p, d_e,
+                                               use_graph_token)
 
         # Standard transformer encoder layer with multi-head attention
-        encoder_layer = nn.TransformerEncoderLayer(
-            d_model=hidden_dim, nhead=num_heads, dropout=dropout,
-            batch_first=True
-        )
+        encoder_layer = nn.TransformerEncoderLayer(d_model=hidden_dim,
+                                                   nhead=num_heads,
+                                                   dropout=dropout,
+                                                   batch_first=True)
 
         # Stack multiple encoder layers
         self.encoder = nn.TransformerEncoder(encoder_layer,
@@ -300,13 +294,11 @@ class TokenGT(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, data: Batch) -> torch.Tensor:
-        """
-        Process a batch of graphs through the TokenGT model.
+        """Process a batch of graphs through the TokenGT model.
 
         Args:
             data (Batch): PyG batch object containing graphs
         """
-
         # Convert graphs into token sequences and attention masks
         tokens, attention_masks = self.tokenizer(data)
         output = self.encoder(tokens, src_key_padding_mask=~attention_masks)
