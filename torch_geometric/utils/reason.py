@@ -1,5 +1,4 @@
 from typing import List, Tuple
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -34,11 +33,11 @@ class TypeLayer(nn.Module):
         (batch_heads, batch_rels, batch_tails, batch_ids, fact_ids,
          weight_list, weight_rel_list) = edge_list
 
-        fact2head, fact2tail, batch_rels, batch_ids,
-        val_one = self._prepare_sparse_indices(batch_heads, batch_rels,
-                                               batch_tails, batch_ids,
-                                               fact_ids, weight_rel_list,
-                                               weight_list)
+        (fact2head, fact2tail, batch_rels, batch_ids,
+         val_one) = self._prepare_sparse_indices(batch_heads, batch_rels,
+                                                 batch_tails, batch_ids,
+                                                 fact_ids, weight_rel_list,
+                                                 weight_list)
         fact_val = self._compute_fact_val(rel_features, batch_rels)
         f2e_emb = self._aggregate_facts(fact2head, fact2tail, val_one,
                                         fact_val, local_entity, len(fact_ids))
@@ -46,10 +45,9 @@ class TypeLayer(nn.Module):
 
     def _build_sparse_tensor(
             self, indices: torch.Tensor, values: torch.Tensor,
-            size: Tuple[int, int]) -> torch.sparse.FloatTensor:
-        """Creates a sparse tensor for efficient graph computation.
-        """
-        return torch.sparse.FloatTensor(indices, values, size).to(self.device)
+            size: Tuple[int, int]) -> torch.Tensor:
+        """Creates a sparse tensor for efficient graph computation."""
+        return torch.sparse_coo_tensor(indices, values, size).to(self.device)  # Fixed attribute
 
     def _prepare_sparse_indices(
         self, batch_heads: torch.Tensor, batch_rels: torch.Tensor,
@@ -58,22 +56,20 @@ class TypeLayer(nn.Module):
         weight_list: List[float]
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor,
                torch.Tensor]:
-        """Prepares indices and values for sparse tensor creation.
-        """
-        fact2head = torch.LongTensor([batch_heads, fact_ids]).to(self.device)
-        fact2tail = torch.LongTensor([batch_tails, fact_ids]).to(self.device)
-        batch_rels = torch.LongTensor(batch_rels).to(self.device)
-        batch_ids = torch.LongTensor(batch_ids).to(self.device)
+        """Prepares indices and values for sparse tensor creation."""
+        fact2head = torch.stack([batch_heads, fact_ids]).to(self.device)
+        fact2tail = torch.stack([batch_tails, fact_ids]).to(self.device)
+        batch_rels = batch_rels.to(self.device)
+        batch_ids = batch_ids.to(self.device)
         if self.norm_rel:
             val_one = torch.FloatTensor(weight_rel_list).to(self.device)
         else:
-            val_one = torch.ones_like(batch_ids).float().to(self.device)
+            val_one = torch.ones_like(batch_ids, dtype=torch.float).to(self.device)
         return fact2head, fact2tail, batch_rels, batch_ids, val_one
 
     def _compute_fact_val(self, rel_features: torch.Tensor,
                           batch_rels: torch.Tensor) -> torch.Tensor:
-        """Computes fact embeddings from relation features.
-        """
+        """Computes fact embeddings from relation features."""
         fact_rel = torch.index_select(rel_features, dim=0, index=batch_rels)
         fact_val = self.kb_self_linear(fact_rel)
         return fact_val
@@ -82,10 +78,9 @@ class TypeLayer(nn.Module):
                          fact2tail: torch.Tensor, val_one: torch.Tensor,
                          fact_val: torch.Tensor, local_entity: torch.Tensor,
                          num_fact: int) -> torch.Tensor:
-        """Aggregates fact embeddings into entity embeddings.
-        """
+        """Aggregates fact embeddings into entity embeddings."""
         batch_size, max_local_entity = local_entity.size()
-        hidden_size = self.in_features
+        hidden_size = self.out_features  # Should match the output size
 
         fact2tail_mat = self._build_sparse_tensor(
             fact2tail, val_one, (batch_size * max_local_entity, num_fact))
@@ -102,16 +97,14 @@ class TypeLayer(nn.Module):
 
 
 class Fusion(nn.Module):
-    """Combines two input vectors with gating mechanisms.
-    """
+    """Combines two input vectors with gating mechanisms."""
     def __init__(self, d_hid: int):
         super().__init__()
         self.r = nn.Linear(d_hid * 3, d_hid, bias=False)
         self.g = nn.Linear(d_hid * 3, d_hid, bias=False)
 
     def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        """Compute fused output from two input tensors.
-        """
+        """Compute fused output from two input tensors."""
         concat_input = torch.cat([x, y, x - y], dim=-1)
         r_ = self.r(concat_input)
         g_ = torch.sigmoid(self.g(concat_input))
@@ -130,13 +123,12 @@ class QueryReform(nn.Module):
     def forward(self, q_node: torch.Tensor, ent_emb: torch.Tensor,
                 seed_info: torch.Tensor,
                 ent_mask: torch.Tensor) -> torch.Tensor:
-        """Refine query node embeddings with attention and fusion mechanisms.
-        """
+        """Refine query node embeddings with attention and fusion mechanisms."""
         q_node_lin = self.q_ent_attn(q_node).unsqueeze(1)
         q_ent_score = (q_node_lin * ent_emb).sum(dim=2, keepdim=True)
         masked_scores = q_ent_score - (1 - ent_mask.unsqueeze(2)) * 1e8
         q_ent_attn = F.softmax(masked_scores, dim=1)
-        (q_ent_attn * ent_emb).sum(1)
+        entity_context = (q_ent_attn * ent_emb).sum(1)  # Fixed missing assignment
         seed_info_expanded = seed_info.unsqueeze(1)
         seed_retrieve = torch.bmm(seed_info_expanded, ent_emb).squeeze(1)
         fused_output = self.fusion(q_node, seed_retrieve)
