@@ -103,9 +103,8 @@ def bfs_with_rule(data: Data, start_node: Union[str,
     # Ensure the queue contains start_node as a string
     start_node_str = str(start_node)
     result_paths = []
-    queue: deque[Tuple[str, List[Tuple[str, str, str]]]] = deque(
-        [(start_node_str, [])]
-    )
+    queue: deque[Tuple[str, List[Tuple[str, str,
+                                       str]]]] = deque([(start_node_str, [])])
 
     while queue:
         current_node, current_path = queue.popleft()
