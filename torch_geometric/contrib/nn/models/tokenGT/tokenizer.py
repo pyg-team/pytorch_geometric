@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.data import Batch, Data
 from torch_geometric.utils import subgraph
-from torch_scatter import scatter
 
 class GraphFeatureTokenizer(nn.Module):
     """
