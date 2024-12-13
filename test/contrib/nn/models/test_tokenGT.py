@@ -7,14 +7,6 @@ from torch_geometric.data import Batch, Data
 
 
 def create_batch(num_nodes, num_edges, input_feat_dim=16):
-    """Generates a random batch of graphs to test TokenGT on.
-    In each graph, edges are generated randomly between nodes.
-
-    Args:
-        - input_feat_dim: dimension of the node and edge features
-        - num_nodes: list where element i denotes number of nodes in graph i
-        - num_edges: list where element i denotes number of edges in graph i
-    """
     all_data = []
     for n_nodes, n_edges in zip(num_nodes, num_edges):
         x = torch.randn(n_nodes, input_feat_dim)
