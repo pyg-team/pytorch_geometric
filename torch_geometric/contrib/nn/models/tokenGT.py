@@ -253,8 +253,8 @@ class GraphFeatureTokenizer(torch.nn.Module):
 
 
 class TokenGT(nn.Module):
-    r"""Tokenized Graph Transformer (TokenGT) model from the `Pure Transformers are
-    Powerful Graph Learners <https://arxiv.org/abs/2207.02505>`_ paper.
+    r"""Tokenized Graph Transformer (TokenGT) model from the `Pure Transformers
+    are Powerful Graph Learners <https://arxiv.org/abs/2207.02505>`_ paper.
 
     Args:
         node_feat_dim (int): Dimension of node features.

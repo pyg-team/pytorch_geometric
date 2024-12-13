@@ -10,7 +10,7 @@ def create_batch(num_nodes, num_edges, input_feat_dim=16):
     """Generates a random batch of graphs to test TokenGT on.
     In each graph, edges are generated randomly between nodes.
 
-    Arguments:
+    Args:
         - input_feat_dim: dimension of the node and edge features
         - num_nodes: list where element i denotes number of nodes in graph i
         - num_edges: list where element i denotes number of edges in graph i
