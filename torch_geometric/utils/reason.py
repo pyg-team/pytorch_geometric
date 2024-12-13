@@ -1,4 +1,5 @@
 from typing import List, Tuple
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -43,11 +44,11 @@ class TypeLayer(nn.Module):
                                         fact_val, local_entity, len(fact_ids))
         return f2e_emb
 
-    def _build_sparse_tensor(
-            self, indices: torch.Tensor, values: torch.Tensor,
-            size: Tuple[int, int]) -> torch.Tensor:
+    def _build_sparse_tensor(self, indices: torch.Tensor, values: torch.Tensor,
+                             size: Tuple[int, int]) -> torch.Tensor:
         """Creates a sparse tensor for efficient graph computation."""
-        return torch.sparse_coo_tensor(indices, values, size).to(self.device)  # Fixed attribute
+        return torch.sparse_coo_tensor(indices, values,
+                                       size).to(self.device)  # Fixed attribute
 
     def _prepare_sparse_indices(
         self, batch_heads: torch.Tensor, batch_rels: torch.Tensor,
@@ -64,7 +65,8 @@ class TypeLayer(nn.Module):
         if self.norm_rel:
             val_one = torch.FloatTensor(weight_rel_list).to(self.device)
         else:
-            val_one = torch.ones_like(batch_ids, dtype=torch.float).to(self.device)
+            val_one = torch.ones_like(batch_ids,
+                                      dtype=torch.float).to(self.device)
         return fact2head, fact2tail, batch_rels, batch_ids, val_one
 
     def _compute_fact_val(self, rel_features: torch.Tensor,
@@ -128,7 +130,8 @@ class QueryReform(nn.Module):
         q_ent_score = (q_node_lin * ent_emb).sum(dim=2, keepdim=True)
         masked_scores = q_ent_score - (1 - ent_mask.unsqueeze(2)) * 1e8
         q_ent_attn = F.softmax(masked_scores, dim=1)
-        entity_context = (q_ent_attn * ent_emb).sum(1)  # Fixed missing assignment
+        entity_context = (q_ent_attn * ent_emb).sum(
+            1)  # Fixed missing assignment
         seed_info_expanded = seed_info.unsqueeze(1)
         seed_retrieve = torch.bmm(seed_info_expanded, ent_emb).squeeze(1)
         fused_output = self.fusion(q_node, seed_retrieve)
