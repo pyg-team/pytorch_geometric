@@ -48,7 +48,7 @@ optimizer_map = {
     'complex': optim.Adagrad(model.parameters(), lr=0.001, weight_decay=1e-6),
     'distmult': optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-6),
     'rotate': optim.Adam(model.parameters(), lr=1e-3),
-    'transr': optim.Adam(model.parameters(), lr=0.01),
+    'transr': optim.Adam(model.parameters(), lr=0.001),
 }
 optimizer = optimizer_map[args.model]
 

@@ -59,25 +59,22 @@ class TransR(KGEModel):
         self.p_norm = p_norm
         self.margin = margin
 
-        # Create relation-specific projection matrices
-        self.rel_proj = torch.nn.Parameter(
-            torch.Tensor(num_relations, hidden_channels, hidden_channels))
+        # Create relation-specific projection matrices (flattened)
+        self.rel_proj = torch.nn.Embedding(num_relations, 
+                                           hidden_channels*hidden_channels,
+                                           sparse=sparse)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        6. / math.sqrt(self.hidden_channels)
-
         torch.nn.init.xavier_uniform_(self.node_emb.weight)
         torch.nn.init.xavier_uniform_(self.rel_emb.weight)
-        torch.nn.init.xavier_uniform_(self.rel_proj)
-
-        F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
-                    out=self.rel_emb.weight.data)
+        torch.nn.init.xavier_uniform_(self.rel_proj.weight)
 
     def _project(self, entities: Tensor, rel_type: Tensor) -> Tensor:
         """Project entities to relation space."""
-        proj_matrices = self.rel_proj[rel_type]
+        proj_matrices = self.rel_proj(rel_type).view(-1, self.hidden_channels,
+                                                     self.hidden_channels)
         entities = entities.unsqueeze(1)
         projected = torch.bmm(entities, proj_matrices)
         return projected.squeeze(1)
@@ -97,6 +94,7 @@ class TransR(KGEModel):
         tail_proj = self._project(tail, rel_type)
 
         head_proj = F.normalize(head_proj, p=self.p_norm, dim=-1)
+        rel = F.normalize(rel, p=self.p_norm, dim=-1)
         tail_proj = F.normalize(tail_proj, p=self.p_norm, dim=-1)
 
         # Calculate *negative* TransR norm:
