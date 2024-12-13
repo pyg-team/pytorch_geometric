@@ -1,4 +1,5 @@
-"""This is an example of using mixup for node classification task.
+"""This is an example of using mixup for
+node classification task.
 """
 
 import argparse

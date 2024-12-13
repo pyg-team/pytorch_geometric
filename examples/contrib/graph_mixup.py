@@ -1,4 +1,5 @@
-"""This is an example of using mixup for graph classification task.
+"""This is an example of using mixup for
+graph classification task.
 """
 
 import argparse
