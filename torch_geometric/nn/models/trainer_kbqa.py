@@ -1,29 +1,26 @@
-
-from utils import create_logger
+import math
+import os
 import time
+
 import numpy as np
-import os, math
-
 import torch
-from torch.optim.lr_scheduler import ExponentialLR
 import torch.optim as optim
-
+from torch.optim.lr_scheduler import ExponentialLR
 from tqdm import tqdm
+
 tqdm.monitor_iterval = 0
 
 from dataset_load import load_data
-from rearev import ReaRev
 from evaluate import Evaluator
+from rearev import ReaRev
 
-class Trainer_KBQA(object):
-    """
-    Trainer class for Knowledge-Based Question Answering (KBQA).
+
+class Trainer_KBQA:
+    """Trainer class for Knowledge-Based Question Answering (KBQA).
     This class handles data loading, model training, evaluation, and checkpoint management.
     """
-
     def __init__(self, args, model_name, logger=None):
-        """
-        Initializes the Trainer_KBQA class with given arguments, model, and logger.
+        """Initializes the Trainer_KBQA class with given arguments, model, and logger.
 
         Args:
             args (dict): Dictionary of training configurations and hyperparameters.
@@ -48,14 +45,17 @@ class Trainer_KBQA(object):
         self.decay_rate = args.get('decay_rate', 0.98)
 
         if model_name == 'ReaRev':
-            self.model = ReaRev(self.args, len(self.entity2id), self.num_kb_relation, self.num_word)
+            self.model = ReaRev(self.args, len(self.entity2id),
+                                self.num_kb_relation, self.num_word)
 
         if args['relation_word_emb']:
             self.model.encode_rel_texts(self.rel_texts, self.rel_texts_inv)
 
         self.model.to(self.device)
-        self.evaluator = Evaluator(args=args, model=self.model, entity2id=self.entity2id,
-                                    relation2id=self.relation2id, device=self.device)
+        self.evaluator = Evaluator(args=args, model=self.model,
+                                   entity2id=self.entity2id,
+                                   relation2id=self.relation2id,
+                                   device=self.device)
         self.load_pretrain()
         self.optim_def()
 
@@ -63,17 +63,19 @@ class Trainer_KBQA(object):
         self.num_entity = len(self.entity2id)
         self.num_word = len(self.word2id)
 
-        print("Entity: {}, Relation: {}, Word: {}".format(self.num_entity, self.num_relation, self.num_word))
+        print(
+            f"Entity: {self.num_entity}, Relation: {self.num_relation}, Word: {self.num_word}"
+        )
 
         for k, v in args.items():
             if k.endswith('dim'):
                 setattr(self, k, v)
             if k.endswith('emb_file') or k.endswith('kge_file'):
-                setattr(self, k, None if v is None else args['data_folder'] + v)
+                setattr(self, k,
+                        None if v is None else args['data_folder'] + v)
 
     def optim_def(self):
-        """
-        Defines the optimizer and learning rate scheduler for the model.
+        """Defines the optimizer and learning rate scheduler for the model.
         """
         trainable = filter(lambda p: p.requires_grad, self.model.parameters())
         self.optim_model = optim.Adam(trainable, lr=self.learning_rate)
@@ -81,8 +83,7 @@ class Trainer_KBQA(object):
             self.scheduler = ExponentialLR(self.optim_model, self.decay_rate)
 
     def load_data(self, args, tokenize):
-        """
-        Loads the dataset and initializes related attributes.
+        """Loads the dataset and initializes related attributes.
 
         Args:
             args (dict): Training arguments and configurations.
@@ -102,18 +103,17 @@ class Trainer_KBQA(object):
         self.rel_texts_inv = dataset["rel_texts_inv"]
 
     def load_pretrain(self):
-        """
-        Loads pre-trained weights for the model if specified in arguments.
+        """Loads pre-trained weights for the model if specified in arguments.
         """
         args = self.args
         if args['load_experiment'] is not None:
-            ckpt_path = os.path.join(args['checkpoint_dir'], args['load_experiment'])
+            ckpt_path = os.path.join(args['checkpoint_dir'],
+                                     args['load_experiment'])
             print("Load ckpt from", ckpt_path)
             self.load_ckpt(ckpt_path)
 
     def evaluate(self, data, test_batch_size=20, write_info=False):
-        """
-        Evaluates the model on the given dataset.
+        """Evaluates the model on the given dataset.
 
         Args:
             data (Dataset): Dataset to evaluate on.
@@ -126,8 +126,7 @@ class Trainer_KBQA(object):
         return self.evaluator.evaluate(data, test_batch_size, write_info)
 
     def train(self, start_epoch, end_epoch):
-        """
-        Trains the model for a given range of epochs.
+        """Trains the model for a given range of epochs.
 
         Args:
             start_epoch (int): Starting epoch number.
@@ -142,72 +141,97 @@ class Trainer_KBQA(object):
             if self.decay_rate > 0:
                 self.scheduler.step()
 
-            self.logger.info("Epoch: {}, loss : {:.4f}, time: {}".format(epoch + 1, loss, time.time() - st))
-            self.logger.info("Training h1 : {:.4f}, f1 : {:.4f}".format(np.mean(h1_list_all), np.mean(f1_list_all)))
+            self.logger.info(
+                f"Epoch: {epoch + 1}, loss : {loss:.4f}, time: {time.time() - st}"
+            )
+            self.logger.info(
+                f"Training h1 : {np.mean(h1_list_all):.4f}, f1 : {np.mean(f1_list_all):.4f}"
+            )
 
             if (epoch + 1) % eval_every == 0:
-                eval_f1, eval_h1, eval_em = self.evaluate(self.valid_data, self.test_batch_size)
-                self.logger.info("EVAL F1: {:.4f}, H1: {:.4f}, EM {:.4f}".format(eval_f1, eval_h1, eval_em))
-                do_test = False
+                eval_f1, eval_h1, eval_em = self.evaluate(
+                    self.valid_data, self.test_batch_size)
+                self.logger.info(
+                    f"EVAL F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}"
+                )
 
                 if epoch > self.warmup_epoch:
                     if eval_h1 > self.best_h1:
                         self.best_h1 = eval_h1
                         self.save_ckpt("h1")
-                        self.logger.info("BEST EVAL H1: {:.4f}".format(eval_h1))
-                        do_test = True
+                        self.logger.info(f"BEST EVAL H1: {eval_h1:.4f}")
                     if eval_f1 > self.best_f1:
                         self.best_f1 = eval_f1
                         self.save_ckpt("f1")
-                        self.logger.info("BEST EVAL F1: {:.4f}".format(eval_f1))
-                        do_test = True
+                        self.logger.info(f"BEST EVAL F1: {eval_f1:.4f}")
 
-                eval_f1, eval_h1, eval_em = self.evaluate(self.test_data, self.test_batch_size)
-                self.logger.info("TEST F1: {:.4f}, H1: {:.4f}, EM {:.4f}".format(eval_f1, eval_h1, eval_em))
+                eval_f1, eval_h1, eval_em = self.evaluate(
+                    self.test_data, self.test_batch_size)
+                self.logger.info(
+                    f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}"
+                )
         self.save_ckpt("final")
         self.logger.info('Train Done! Evaluate on testset with saved model')
         print("End Training------------------")
         self.evaluate_best()
 
     def evaluate_best(self):
+        """Evaluates the best saved models (H1, F1, and final).
         """
-        Evaluates the best saved models (H1, F1, and final).
-        """
-        filename = os.path.join(self.args['checkpoint_dir'], "{}-h1.ckpt".format(self.args['experiment_name']))
+        filename = os.path.join(
+            self.args['checkpoint_dir'],
+            "{}-h1.ckpt".format(self.args['experiment_name']))
         self.load_ckpt(filename)
-        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data, self.test_batch_size, write_info=False)
+        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data,
+                                                  self.test_batch_size,
+                                                  write_info=False)
         self.logger.info("Best h1 evaluation")
-        self.logger.info("TEST F1: {:.4f}, H1: {:.4f}, EM {:.4f}".format(eval_f1, eval_h1, eval_em))
+        self.logger.info(
+            f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}")
 
-        filename = os.path.join(self.args['checkpoint_dir'], "{}-f1.ckpt".format(self.args['experiment_name']))
+        filename = os.path.join(
+            self.args['checkpoint_dir'],
+            "{}-f1.ckpt".format(self.args['experiment_name']))
         self.load_ckpt(filename)
-        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data, self.test_batch_size,  write_info=False)
+        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data,
+                                                  self.test_batch_size,
+                                                  write_info=False)
         self.logger.info("Best f1 evaluation")
-        self.logger.info("TEST F1: {:.4f}, H1: {:.4f}, EM {:.4f}".format(eval_f1, eval_h1, eval_em))
+        self.logger.info(
+            f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}")
 
-        filename = os.path.join(self.args['checkpoint_dir'], "{}-final.ckpt".format(self.args['experiment_name']))
+        filename = os.path.join(
+            self.args['checkpoint_dir'],
+            "{}-final.ckpt".format(self.args['experiment_name']))
         self.load_ckpt(filename)
-        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data, self.test_batch_size, write_info=False)
+        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data,
+                                                  self.test_batch_size,
+                                                  write_info=False)
         self.logger.info("Final evaluation")
-        self.logger.info("TEST F1: {:.4f}, H1: {:.4f}, EM {:.4f}".format(eval_f1, eval_h1, eval_em))
+        self.logger.info(
+            f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}")
 
     def evaluate_single(self, filename):
-        """
-        Evaluates the model using a single checkpoint.
+        """Evaluates the model using a single checkpoint.
 
         Args:
             filename (str): Path to the checkpoint file.
         """
         if filename is not None:
             self.load_ckpt(filename)
-        eval_f1, eval_hits, eval_ems = self.evaluate(self.valid_data, self.test_batch_size, write_info=False)
-        self.logger.info("EVAL F1: {:.4f}, H1: {:.4f}, EM {:.4f}".format(eval_f1, eval_hits, eval_ems))
-        test_f1, test_hits, test_ems = self.evaluate(self.test_data, self.test_batch_size, write_info=True)
-        self.logger.info("TEST F1: {:.4f}, H1: {:.4f}, EM {:.4f}".format(test_f1, test_hits, test_ems))
+        eval_f1, eval_hits, eval_ems = self.evaluate(self.valid_data,
+                                                     self.test_batch_size,
+                                                     write_info=False)
+        self.logger.info(
+            f"EVAL F1: {eval_f1:.4f}, H1: {eval_hits:.4f}, EM {eval_ems:.4f}")
+        test_f1, test_hits, test_ems = self.evaluate(self.test_data,
+                                                     self.test_batch_size,
+                                                     write_info=True)
+        self.logger.info(
+            f"TEST F1: {test_f1:.4f}, H1: {test_hits:.4f}, EM {test_ems:.4f}")
 
     def train_epoch(self):
-        """
-        Trains the model for one epoch.
+        """Trains the model for one epoch.
 
         Returns:
             tuple: Average loss, extras (placeholders), and lists of H1 and F1 scores.
@@ -217,9 +241,12 @@ class Trainer_KBQA(object):
         losses = []
         h1_list_all = []
         f1_list_all = []
-        num_epoch = math.ceil(self.train_data.num_data / self.args['batch_size'])
+        num_epoch = math.ceil(self.train_data.num_data /
+                              self.args['batch_size'])
         for iteration in tqdm(range(num_epoch)):
-            batch = self.train_data.get_batch(iteration, self.args['batch_size'], self.args['fact_drop'])
+            batch = self.train_data.get_batch(iteration,
+                                              self.args['batch_size'],
+                                              self.args['fact_drop'])
 
             self.optim_model.zero_grad()
             loss, _, _, tp_list = self.model(batch, training=True)
@@ -227,31 +254,30 @@ class Trainer_KBQA(object):
             h1_list_all.extend(h1_list)
             f1_list_all.extend(f1_list)
             loss.backward()
-            torch.nn.utils.clip_grad_norm_([param for name, param in self.model.named_parameters()],
-                                           self.args['gradient_clip'])
+            torch.nn.utils.clip_grad_norm_(
+                [param for name, param in self.model.named_parameters()],
+                self.args['gradient_clip'])
             self.optim_model.step()
             losses.append(loss.item())
         extras = [0, 0]
         return np.mean(losses), extras, h1_list_all, f1_list_all
 
     def save_ckpt(self, reason="h1"):
-        """
-        Saves a checkpoint of the model.
+        """Saves a checkpoint of the model.
 
         Args:
             reason (str, optional): Reason for saving the checkpoint (e.g., "h1", "f1"). Defaults to "h1".
         """
         model = self.model
-        checkpoint = {
-            'model_state_dict': model.state_dict()
-        }
-        model_name = os.path.join(self.args['checkpoint_dir'], "{}-{}.ckpt".format(self.args['experiment_name'], reason))
+        checkpoint = {'model_state_dict': model.state_dict()}
+        model_name = os.path.join(
+            self.args['checkpoint_dir'],
+            "{}-{}.ckpt".format(self.args['experiment_name'], reason))
         torch.save(checkpoint, model_name)
-        print("Best %s, save model as %s" % (reason, model_name))
+        print("Best {}, save model as {}".format(reason, model_name))
 
     def load_ckpt(self, filename):
-        """
-        Loads a model checkpoint.
+        """Loads a model checkpoint.
 
         Args:
             filename (str): Path to the checkpoint file.
@@ -259,5 +285,3 @@ class Trainer_KBQA(object):
         checkpoint = torch.load(filename)
         model_state_dict = checkpoint["model_state_dict"]
         self.model.load_state_dict(model_state_dict, strict=False)
-
-

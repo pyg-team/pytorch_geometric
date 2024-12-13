@@ -1,12 +1,8 @@
 import argparse
-
-from torch_geometric.utils import create_logger
-import torch
-import numpy as np
 import os
 import time
 from torch_geometric.nn.models import Trainer_KBQA
-from parsing import add_parse_args
+from torch_geometric.utils import create_logger
 
 parser = argparse.ArgumentParser()
 add_parse_args(parser)
