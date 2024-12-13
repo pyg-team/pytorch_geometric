@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-
 from torch_geometric.nn import GlobalAttention
 from torch_geometric.utils.reason import Fusion, QueryReform, TypeLayer
 
@@ -79,8 +78,7 @@ class ReaRev(torch.nn.Module):
         self.mse_loss = torch.nn.MSELoss()
 
     def get_ent_init(self, local_entity, kb_adj_mat, rel_features):
-        """Computes the initial entity embeddings.
-        """
+        """Computes the initial entity embeddings."""
         if self.encode_type:
             local_entity_emb = self.type_layer(
                 local_entity=local_entity,
@@ -152,8 +150,9 @@ class ReaRev(torch.nn.Module):
         """Standard forward pass: perform reasoning steps and
         produce predictions and loss.
         """
-        local_entity, query_entities, kb_adj_mat, query_text,
-        seed_dist, _, answer_dist = batch
+        (local_entity, query_entities, kb_adj_mat, query_text,
+         seed_dist, _, answer_dist) = batch  # Fixed unpacking
+
         local_entity = torch.from_numpy(local_entity).long().to(self.device)
         query_entities = torch.from_numpy(query_entities).float().to(
             self.device)
