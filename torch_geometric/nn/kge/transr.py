@@ -1,5 +1,3 @@
-import math
-
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -60,8 +58,8 @@ class TransR(KGEModel):
         self.margin = margin
 
         # Create relation-specific projection matrices (flattened)
-        self.rel_proj = torch.nn.Embedding(num_relations, 
-                                           hidden_channels*hidden_channels,
+        self.rel_proj = torch.nn.Embedding(num_relations,
+                                           hidden_channels * hidden_channels,
                                            sparse=sparse)
 
         self.reset_parameters()
