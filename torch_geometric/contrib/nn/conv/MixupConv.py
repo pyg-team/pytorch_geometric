@@ -59,16 +59,15 @@ class MixupConv(MessagePassing):
 
         Args:
             x1 (Tensor): Node feature matrix of the first input graph with
-                shape :obj:`[num_nodes, in_channels]`.
+                shape [num_nodes, in_channels].
             edge_index (Tensor): Graph connectivity in COO format with shape
-                obj:`[2, num_edges]`.
+                [2, num_edges].
             x2 (Tensor): Node feature matrix of the second input graph with
-                shape :obj:`[num_nodes, in_channels]`.
+                shape [num_nodes, in_channels].
 
         Returns:
-            Tensor: Node feature matrix of shape :obj:`[num_nodes,
-                out_channels]`,where the messages from `x1` are used
-                to update `x2`.
+            Tensor: Node feature matrix of shape [num_nodes, out_channels],
+                where the messages from `x1` are used to update `x2`.
         """
         h1 = self.conv_layer(x1, edge_index)
         return h1 + self.lin(x2)
