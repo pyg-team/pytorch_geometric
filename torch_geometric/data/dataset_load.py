@@ -1,194 +1,160 @@
 import json
-
 import torch
-from transformers import AutoTokenizer
+from torch import Tensor
+from torch_geometric.data import Data
+from torch_geometric.utils import to_undirected, coalesce
+import networkx as nx
+from typing import List, Tuple, Optional, Union
+from collections import deque
 
-from torch_geometric.data import Data, DataLoader
-
-
-class BasicDataLoader:
-    def __init__(self, config, word2id, relation2id, entity2id, tokenize,
-                 data_type="train"):
-        self.batch_size = config['batch_size']
-        print("Init called!")
-        self.tokenize = tokenize
-        self._initialize(config, word2id, relation2id, entity2id)
-        print("Loading file")
-        self._load_file(config, data_type)
-        print("Preparing data")
-        self._prepare_data()
-        self.build_rel_words(self.tokenize)
-
-    def _initialize(self, config, word2id, relation2id, entity2id):
-        print("Initializing")
-        self.config = config
-        self.word2id, self.relation2id, self.entity2id = word2id, relation2id, entity2id
-        self.id2entity = {v: k for k, v in entity2id.items()}
-        self.num_relations = len(relation2id)
-        if config.get('use_inverse_relation', False):
-            self.num_relations *= 2
-        if config.get('use_self_loop', False):
-            self.num_relations += 1
-
-    def _load_file(self, config, data_type):
-        self.data = []
-        file_path = f"{config['data_folder']}{data_type}.json"
-        print(f"Loading data from {file_path}...")
-        with open(file_path) as f:
-            lines = len(f.readlines())
-        with open(file_path) as f:
-            print("Number of lines: ", lines)
-            iter = 0
-            for line in f:
-                line = json.loads(line)
-                if (iter % 1000 == 0):
-                    print(f"Line {iter} out of {lines}")
-                if 'entities' in line:
-                    self.data.append(line)
-                iter += 1
-        print(f"Loaded {len(self.data)} samples.")
-
-    def _prepare_data(self):
-        self.graphs = [self._create_graph(sample) for sample in self.data]
-        self.data_loader = DataLoader(self.graphs, batch_size=self.batch_size,
-                                      shuffle=True)
-
-    def _create_graph(self, sample):
-        entity_map = {
-            ent: idx
-            for idx, ent in enumerate(sample.get('entities', []))
-        }
-        x = torch.zeros(len(entity_map), self.num_relations)
-        edges, edge_attrs = [], []
-
-        for head, rel, tail in sample['subgraph']['tuples']:
-            if head in entity_map and tail in entity_map:
-                h = entity_map[head]
-                t = entity_map[tail]
-                r = self.relation2id.get(rel, len(self.relation2id))
-                edges.append([h, t])
-                edge_attrs.append(r)
-
-        edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
-        edge_attr = torch.tensor(edge_attrs, dtype=torch.long)
-
-        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
-
-    def reset_batches(self):
-        self.data_loader = DataLoader(self.graphs, batch_size=self.batch_size,
-                                      shuffle=True)
-
-    def build_rel_words(self, tokenize):
-        """Tokenizes relation surface forms.
-        """
-        max_rel_words = 0
-        rel_words = []
-        if 'metaqa' in self.data_file:
-            for rel in self.relation2id:
-                words = rel.split('_')
-                max_rel_words = max(len(words), max_rel_words)
-                rel_words.append(words)
-            #print(rel_words)
-        else:
-            for rel in self.relation2id:
-                rel = rel.strip()
-                fields = rel.split('.')
-                try:
-                    words = fields[-2].split('_') + fields[-1].split('_')
-                    max_rel_words = max(len(words), max_rel_words)
-                    rel_words.append(words)
-                    #print(rel, words)
-                except:
-                    words = ['UNK']
-                    rel_words.append(words)
-                #words = fields[-2].split('_') + fields[-1].split('_')
-
-        self.max_rel_words = max_rel_words
-        if tokenize == 'lstm':
-            self.rel_texts = np.full(
-                (self.num_kb_relation + 1, self.max_rel_words),
-                len(self.word2id), dtype=int)
-            self.rel_texts_inv = np.full(
-                (self.num_kb_relation + 1, self.max_rel_words),
-                len(self.word2id), dtype=int)
-            for rel_id, tokens in enumerate(rel_words):
-                for j, word in enumerate(tokens):
-                    if j < self.max_rel_words:
-                        if word in self.word2id:
-                            self.rel_texts[rel_id, j] = self.word2id[word]
-                            self.rel_texts_inv[rel_id, j] = self.word2id[word]
-                        else:
-                            self.rel_texts[rel_id, j] = len(self.word2id)
-                            self.rel_texts_inv[rel_id, j] = len(self.word2id)
-        else:
-            if tokenize == 'bert':
-                tokenizer_name = 'bert-base-uncased'
-            elif tokenize == 'roberta':
-                tokenizer_name = 'roberta-base'
-            elif tokenize == 'sbert':
-                tokenizer_name = 'sentence-transformers/all-MiniLM-L6-v2'
-            elif tokenize == 'sbert2':
-                tokenizer_name = 'sentence-transformers/all-mpnet-base-v2'
-            elif tokenize == 'simcse':
-                tokenizer_name = 'princeton-nlp/sup-simcse-bert-base-uncased'
-            elif tokenize == 't5':
-                tokenizer_name = 't5-small'
-            elif tokenize == 'relbert':
-                tokenizer_name = 'pretrained_lms/sr-simbert/'
-
-            tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
-            pad_val = tokenizer.convert_tokens_to_ids(tokenizer.pad_token)
-            self.rel_texts = np.full(
-                (self.num_kb_relation + 1, self.max_rel_words), pad_val,
-                dtype=int)
-            self.rel_texts_inv = np.full(
-                (self.num_kb_relation + 1, self.max_rel_words), pad_val,
-                dtype=int)
-
-            for rel_id, words in enumerate(rel_words):
-
-                tokens =  tokenizer.encode_plus(text=' '.join(words), max_length=self.max_rel_words, \
-                    pad_to_max_length=True, return_attention_mask = False, truncation=True)
-                tokens_inv =  tokenizer.encode_plus(text=' '.join(words[::-1]), max_length=self.max_rel_words, \
-                    pad_to_max_length=True, return_attention_mask = False, truncation=True)
-                self.rel_texts[rel_id] = np.array(tokens['input_ids'])
-                self.rel_texts_inv[rel_id] = np.array(tokens_inv['input_ids'])
+# Load entity names
+with open('entities_names.json') as f:
+    entities_names = json.load(f)
+names_entities = {v: k for k, v in entities_names.items()}
 
 
-class SingleDataLoader(BasicDataLoader):
-    def get_batch(self):
-        return next(iter(self.data_loader))
+def build_pyg_graph(graph_data: List[Tuple[str, str, str]], 
+                    entities: Optional[List[str]] = None, 
+                    encrypt: bool = False) -> Data:
+    """
+    Construct a PyG Data object from a list of (head, relation, tail) triplets.
+    """
+    edges = []
+    for h, r, t in graph_data:
+        if encrypt:
+            if entities is not None and h in names_entities and \
+               names_entities[h] in entities:
+                h = names_entities[h]
+            if entities is not None and t in names_entities and \
+               names_entities[t] in entities:
+                t = names_entities[t]
+        edges.append((h, r.strip(), t))
+
+    # Build node list and mapping
+    node_set = {node for edge in edges for node in (edge[0], edge[2])}
+    node_list = sorted(node_set)
+    node_to_idx = {node: i for i, node in enumerate(node_list)}
+
+    edge_index_list = []
+    rel_list = []
+
+    for h, r, t in edges:
+        edge_index_list.append([node_to_idx[h], node_to_idx[t]])
+        rel_list.append(r)
+
+    edge_index = torch.tensor(edge_index_list, dtype=torch.long).t().contiguous()
+
+    # Coalesce step: remove duplicates, sort edges
+    edge_index = to_undirected(edge_index)
+    edge_weights = torch.ones(edge_index.size(1), dtype=torch.float32)
+    edge_index, edge_weights = coalesce(edge_index, edge_weights, 
+                                        len(node_list), len(node_list))
+
+    # Remap relations to edges
+    rel_map = {}
+    for h, r, t in edges:
+        u, v = node_to_idx[h], node_to_idx[t]
+        rel_map[(u, v)] = r
+        rel_map[(v, u)] = r
+
+    final_rels = [
+        rel_map[(edge_index[0, i].item(), edge_index[1, i].item())]
+        for i in range(edge_index.size(1))
+    ]
+
+    data = Data(
+        num_nodes=len(node_list),
+        edge_index=edge_index,
+        edge_weights=edge_weights
+    )
+    data.node_list = node_list  # Reference to original names
+    data.node_to_idx = node_to_idx
+    data.relations = final_rels  # List of relations, parallel to edge_index
+
+    return data
 
 
-def load_dict(file_path):
-    with open(file_path, encoding='utf-8') as f:
-        return {line.strip(): idx for idx, line in enumerate(f)}
+def pyg_data_to_networkx(data: Data) -> nx.Graph:
+    """
+    Converts a PyG Data object to a NetworkX Graph.
+    """
+    G = nx.Graph()
+    G.add_nodes_from(data.node_list)
+
+    for i in range(data.edge_index.size(1)):
+        u = data.node_list[data.edge_index[0, i].item()]
+        v = data.node_list[data.edge_index[1, i].item()]
+        rel = data.relations[i]
+        G.add_edge(u, v, relation=rel)
+
+    return G
 
 
-def load_data(config, tokenize):
-    print("Load data called...")
-    entity2id = load_dict(f"{config['data_folder']}{config['entity2id']}")
-    word2id = load_dict(f"{config['data_folder']}{config['word2id']}")
-    relation2id = load_dict(f"{config['data_folder']}{config['relation2id']}")
+def bfs_with_rule(data: Data, start_node: Union[str, int], 
+                  target_rule: List[str], max_p: int = 10) -> List[List[Tuple[str, str, str]]]:
+    """
+    Perform BFS to find paths matching a sequence of relations (target_rule).
+    """
+    G = pyg_data_to_networkx(data)
 
-    print("Dictionaries loaded!")
+    if isinstance(start_node, str) and start_node not in data.node_to_idx:
+        return []
+    if isinstance(start_node, int):
+        start_node = data.node_list[start_node]
 
-    loaders = {
-        data_type:
-        SingleDataLoader(config, word2id, relation2id, entity2id, tokenize,
-                         data_type)
-        for data_type in ['train', 'dev', 'test']
-    }
+    result_paths = []
+    queue: deque[Tuple[str, List[Tuple[str, str, str]]]] = deque([(start_node, [])])
 
-    return {
-        **loaders, "entity2id": entity2id,
-        "relation2id": relation2id,
-        "word2id": word2id,
-        "num_word": AutoTokenizer.from_pretrained(tokenize)
-    }
+    while queue:
+        current_node, current_path = queue.popleft()
+
+        if len(current_path) == len(target_rule):
+            result_paths.append(current_path)
+            continue
+
+        if current_node in G:
+            expected_rel = target_rule[len(current_path)]
+            for neighbor in G.neighbors(current_node):
+                rel = G[current_node][neighbor]['relation']
+                if rel == expected_rel:
+                    new_path = current_path + [(current_node, rel, neighbor)]
+                    queue.append((neighbor, new_path))
+
+    return result_paths
 
 
-if __name__ == "__main__":
-    print("data loading! Main function")
-    # Replace `args` with your configuration dictionary
-    dataset = load_data(args, tokenize=lambda x: x)
+def get_truth_paths(q_entities: List[str], a_entities: List[str], 
+                    data: Data) -> List[List[Tuple[str, str, str]]]:
+    """
+    Retrieves all shortest paths between question entities and answer entities.
+    """
+    G = pyg_data_to_networkx(data)
+    paths = []
+
+    for q in q_entities:
+        if q not in G:
+            continue
+        for a in a_entities:
+            if a not in G:
+                continue
+            try:
+                for path in nx.all_shortest_paths(G, q, a):
+                    path_with_rels = [
+                        (path[i], G[path[i]][path[i + 1]]['relation'], path[i + 1])
+                        for i in range(len(path) - 1)
+                    ]
+                    paths.append(path_with_rels)
+            except nx.NetworkXNoPath:
+                pass  # If no path exists, continue
+
+    return paths
+
+
+def verbalize_paths(paths: List[List[Tuple[str, str, str]]]) -> str:
+    """
+    Converts paths into a readable format.
+    """
+    return "\n".join(
+        " → ".join(f"{edge[0]} → {edge[1]} → {edge[2]}" for edge in path)
+        for path in paths
+    )

@@ -1,287 +1,176 @@
-import math
 import os
 import time
-
+import math
 import numpy as np
 import torch
-import torch.optim as optim
+from torch.optim import Adam
 from torch.optim.lr_scheduler import ExponentialLR
+from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
-
-tqdm.monitor_iterval = 0
-
 from dataset_load import load_data
-from evaluate import Evaluator
 from rearev import ReaRev
+from evaluate import Evaluator
 
 
-class Trainer_KBQA:
-    """Trainer class for Knowledge-Based Question Answering (KBQA).
-    This class handles data loading, model training, evaluation, and checkpoint management.
+class TrainerKBQA:
     """
+    Trainer for Knowledge-Based Question Answering (KBQA) using PyTorch and PyG.
+
+    Handles data loading, model training, evaluation, and checkpoint management.
+    """
+
     def __init__(self, args, model_name, logger=None):
-        """Initializes the Trainer_KBQA class with given arguments, model, and logger.
+        """
+        Initialize Trainer with configuration, model, and logger.
 
         Args:
-            args (dict): Dictionary of training configurations and hyperparameters.
-            model_name (str): Name of the model to be used.
-            logger (logging.Logger, optional): Logger for logging training and evaluation information. Defaults to None.
+            args (dict): Training configurations and hyperparameters.
+            model_name (str): Name of the model to use.
+            logger (logging.Logger, optional): Logger for training logs.
         """
         self.args = args
         self.logger = logger
-        self.best_dev_performance = 0.0
-        self.best_h1 = 0.0
-        self.best_f1 = 0.0
-        self.best_h1b = 0.0
-        self.best_f1b = 0.0
-        self.eps = args['eps']
-        self.warmup_epoch = args['warmup_epoch']
-        self.learning_rate = self.args['lr']
-        self.test_batch_size = args['test_batch_size']
-        self.device = torch.device('cuda' if args['use_cuda'] else 'cpu')
-        self.reset_time = 0
-        self.load_data(args, args['lm'])
+        self.device = torch.device("cuda" if args["use_cuda"] else "cpu")
 
-        self.decay_rate = args.get('decay_rate', 0.98)
+        # Hyperparameters and training settings
+        self.learning_rate = args["lr"]
+        self.decay_rate = args.get("decay_rate", 0.98)
+        self.test_batch_size = args["test_batch_size"]
+        self.warmup_epoch = args["warmup_epoch"]
 
-        if model_name == 'ReaRev':
-            self.model = ReaRev(self.args, len(self.entity2id),
-                                self.num_kb_relation, self.num_word)
+        # Data loading
+        self.dataset = load_data(args, args["lm"])
+        self.train_data = self.dataset["train"]
+        self.valid_data = self.dataset["valid"]
+        self.test_data = self.dataset["test"]
+        self.entity2id = self.dataset["entity2id"]
+        self.relation2id = self.dataset["relation2id"]
+        self.word2id = self.dataset["word2id"]
+        self.rel_texts = self.dataset.get("rel_texts")
+        self.rel_texts_inv = self.dataset.get("rel_texts_inv")
+        self.num_entity = len(self.entity2id)
+        self.num_relation = len(self.relation2id)
+        self.num_word = len(self.word2id)
 
-        if args['relation_word_emb']:
+        # Model initialization
+        if model_name == "ReaRev":
+            self.model = ReaRev(
+                args,
+                num_entity=self.num_entity,
+                num_relation=self.num_relation,
+                num_word=self.num_word,
+            )
+        if args.get("relation_word_emb"):
             self.model.encode_rel_texts(self.rel_texts, self.rel_texts_inv)
 
         self.model.to(self.device)
-        self.evaluator = Evaluator(args=args, model=self.model,
-                                   entity2id=self.entity2id,
-                                   relation2id=self.relation2id,
-                                   device=self.device)
-        self.load_pretrain()
-        self.optim_def()
-
-        self.num_relation = self.num_kb_relation
-        self.num_entity = len(self.entity2id)
-        self.num_word = len(self.word2id)
-
-        print(
-            f"Entity: {self.num_entity}, Relation: {self.num_relation}, Word: {self.num_word}"
+        self.optimizer = Adam(self.model.parameters(), lr=self.learning_rate)
+        self.scheduler = ExponentialLR(self.optimizer, gamma=self.decay_rate)
+        self.evaluator = Evaluator(
+            args=args,
+            model=self.model,
+            entity2id=self.entity2id,
+            relation2id=self.relation2id,
+            device=self.device,
         )
 
-        for k, v in args.items():
-            if k.endswith('dim'):
-                setattr(self, k, v)
-            if k.endswith('emb_file') or k.endswith('kge_file'):
-                setattr(self, k,
-                        None if v is None else args['data_folder'] + v)
-
-    def optim_def(self):
-        """Defines the optimizer and learning rate scheduler for the model.
-        """
-        trainable = filter(lambda p: p.requires_grad, self.model.parameters())
-        self.optim_model = optim.Adam(trainable, lr=self.learning_rate)
-        if self.decay_rate > 0:
-            self.scheduler = ExponentialLR(self.optim_model, self.decay_rate)
-
-    def load_data(self, args, tokenize):
-        """Loads the dataset and initializes related attributes.
-
-        Args:
-            args (dict): Training arguments and configurations.
-            tokenize (callable): Tokenizer function for processing text.
-        """
-        dataset = load_data(args, tokenize)
-        self.train_data = dataset["train"]
-        self.valid_data = dataset["valid"]
-        self.test_data = dataset["test"]
-        self.entity2id = dataset["entity2id"]
-        self.relation2id = dataset["relation2id"]
-        self.word2id = dataset["word2id"]
-        self.num_word = dataset["num_word"]
-        self.num_kb_relation = self.test_data.num_kb_relation
-        self.num_entity = len(self.entity2id)
-        self.rel_texts = dataset["rel_texts"]
-        self.rel_texts_inv = dataset["rel_texts_inv"]
-
-    def load_pretrain(self):
-        """Loads pre-trained weights for the model if specified in arguments.
-        """
-        args = self.args
-        if args['load_experiment'] is not None:
-            ckpt_path = os.path.join(args['checkpoint_dir'],
-                                     args['load_experiment'])
-            print("Load ckpt from", ckpt_path)
-            self.load_ckpt(ckpt_path)
-
-    def evaluate(self, data, test_batch_size=20, write_info=False):
-        """Evaluates the model on the given dataset.
-
-        Args:
-            data (Dataset): Dataset to evaluate on.
-            test_batch_size (int, optional): Batch size for evaluation. Defaults to 20.
-            write_info (bool, optional): Whether to write detailed evaluation info. Defaults to False.
-
-        Returns:
-            dict: Evaluation metrics including F1, H1, and EM.
-        """
-        return self.evaluator.evaluate(data, test_batch_size, write_info)
+        # Load pretrained weights if specified
+        if args.get("load_experiment"):
+            self.load_checkpoint(args["load_experiment"])
 
     def train(self, start_epoch, end_epoch):
-        """Trains the model for a given range of epochs.
+        """
+        Train the model over a range of epochs.
 
         Args:
-            start_epoch (int): Starting epoch number.
-            end_epoch (int): Ending epoch number.
+            start_epoch (int): Starting epoch.
+            end_epoch (int): Ending epoch.
         """
-        eval_every = self.args['eval_every']
-        print("Start Training------------------")
+        eval_every = self.args["eval_every"]
         for epoch in range(start_epoch, end_epoch + 1):
-            st = time.time()
-            loss, extras, h1_list_all, f1_list_all = self.train_epoch()
+            start_time = time.time()
 
+            loss, h1_list, f1_list = self._train_epoch()
             if self.decay_rate > 0:
                 self.scheduler.step()
 
-            self.logger.info(
-                f"Epoch: {epoch + 1}, loss : {loss:.4f}, time: {time.time() - st}"
-            )
-            self.logger.info(
-                f"Training h1 : {np.mean(h1_list_all):.4f}, f1 : {np.mean(f1_list_all):.4f}"
-            )
+            avg_h1, avg_f1 = np.mean(h1_list), np.mean(f1_list)
+            self.logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}, Time: {time.time() - start_time:.2f}s")
+            self.logger.info(f"Training H1: {avg_h1:.4f}, F1: {avg_f1:.4f}")
 
+            # Evaluation
             if (epoch + 1) % eval_every == 0:
-                eval_f1, eval_h1, eval_em = self.evaluate(
-                    self.valid_data, self.test_batch_size)
-                self.logger.info(
-                    f"EVAL F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}"
-                )
+                eval_metrics = self.evaluate(self.valid_data)
+                eval_f1, eval_h1, eval_em = eval_metrics["f1"], eval_metrics["h1"], eval_metrics["em"]
+                self.logger.info(f"Validation - F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM: {eval_em:.4f}")
 
                 if epoch > self.warmup_epoch:
-                    if eval_h1 > self.best_h1:
+                    if eval_h1 > getattr(self, "best_h1", 0):
                         self.best_h1 = eval_h1
-                        self.save_ckpt("h1")
-                        self.logger.info(f"BEST EVAL H1: {eval_h1:.4f}")
-                    if eval_f1 > self.best_f1:
+                        self.save_checkpoint(f"best-h1-epoch-{epoch}")
+                    if eval_f1 > getattr(self, "best_f1", 0):
                         self.best_f1 = eval_f1
-                        self.save_ckpt("f1")
-                        self.logger.info(f"BEST EVAL F1: {eval_f1:.4f}")
+                        self.save_checkpoint(f"best-f1-epoch-{epoch}")
 
-                eval_f1, eval_h1, eval_em = self.evaluate(
-                    self.test_data, self.test_batch_size)
-                self.logger.info(
-                    f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}"
-                )
-        self.save_ckpt("final")
-        self.logger.info('Train Done! Evaluate on testset with saved model')
-        print("End Training------------------")
-        self.evaluate_best()
-
-    def evaluate_best(self):
-        """Evaluates the best saved models (H1, F1, and final).
+    def _train_epoch(self):
         """
-        filename = os.path.join(
-            self.args['checkpoint_dir'],
-            "{}-h1.ckpt".format(self.args['experiment_name']))
-        self.load_ckpt(filename)
-        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data,
-                                                  self.test_batch_size,
-                                                  write_info=False)
-        self.logger.info("Best h1 evaluation")
-        self.logger.info(
-            f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}")
-
-        filename = os.path.join(
-            self.args['checkpoint_dir'],
-            "{}-f1.ckpt".format(self.args['experiment_name']))
-        self.load_ckpt(filename)
-        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data,
-                                                  self.test_batch_size,
-                                                  write_info=False)
-        self.logger.info("Best f1 evaluation")
-        self.logger.info(
-            f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}")
-
-        filename = os.path.join(
-            self.args['checkpoint_dir'],
-            "{}-final.ckpt".format(self.args['experiment_name']))
-        self.load_ckpt(filename)
-        eval_f1, eval_h1, eval_em = self.evaluate(self.test_data,
-                                                  self.test_batch_size,
-                                                  write_info=False)
-        self.logger.info("Final evaluation")
-        self.logger.info(
-            f"TEST F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM {eval_em:.4f}")
-
-    def evaluate_single(self, filename):
-        """Evaluates the model using a single checkpoint.
-
-        Args:
-            filename (str): Path to the checkpoint file.
-        """
-        if filename is not None:
-            self.load_ckpt(filename)
-        eval_f1, eval_hits, eval_ems = self.evaluate(self.valid_data,
-                                                     self.test_batch_size,
-                                                     write_info=False)
-        self.logger.info(
-            f"EVAL F1: {eval_f1:.4f}, H1: {eval_hits:.4f}, EM {eval_ems:.4f}")
-        test_f1, test_hits, test_ems = self.evaluate(self.test_data,
-                                                     self.test_batch_size,
-                                                     write_info=True)
-        self.logger.info(
-            f"TEST F1: {test_f1:.4f}, H1: {test_hits:.4f}, EM {test_ems:.4f}")
-
-    def train_epoch(self):
-        """Trains the model for one epoch.
+        Train the model for one epoch.
 
         Returns:
-            tuple: Average loss, extras (placeholders), and lists of H1 and F1 scores.
+            tuple: Average loss, H1 scores, and F1 scores.
         """
         self.model.train()
-        self.train_data.reset_batches(is_sequential=False)
-        losses = []
-        h1_list_all = []
-        f1_list_all = []
-        num_epoch = math.ceil(self.train_data.num_data /
-                              self.args['batch_size'])
-        for iteration in tqdm(range(num_epoch)):
-            batch = self.train_data.get_batch(iteration,
-                                              self.args['batch_size'],
-                                              self.args['fact_drop'])
+        losses, h1_list, f1_list = [], [], []
+        data_loader = self.train_data.data_loader(batch_size=self.args["batch_size"], shuffle=True)
 
-            self.optim_model.zero_grad()
+        for batch in tqdm(data_loader, desc="Training"):
+            self.optimizer.zero_grad()
             loss, _, _, tp_list = self.model(batch, training=True)
-            h1_list, f1_list = tp_list
-            h1_list_all.extend(h1_list)
-            f1_list_all.extend(f1_list)
+            h1_scores, f1_scores = tp_list
+
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(
-                [param for name, param in self.model.named_parameters()],
-                self.args['gradient_clip'])
-            self.optim_model.step()
+            clip_grad_norm_(self.model.parameters(), self.args["gradient_clip"])
+            self.optimizer.step()
+
             losses.append(loss.item())
-        extras = [0, 0]
-        return np.mean(losses), extras, h1_list_all, f1_list_all
+            h1_list.extend(h1_scores)
+            f1_list.extend(f1_scores)
 
-    def save_ckpt(self, reason="h1"):
-        """Saves a checkpoint of the model.
+        return np.mean(losses), h1_list, f1_list
+
+    def evaluate(self, data):
+        """
+        Evaluate the model on a dataset.
 
         Args:
-            reason (str, optional): Reason for saving the checkpoint (e.g., "h1", "f1"). Defaults to "h1".
-        """
-        model = self.model
-        checkpoint = {'model_state_dict': model.state_dict()}
-        model_name = os.path.join(
-            self.args['checkpoint_dir'],
-            "{}-{}.ckpt".format(self.args['experiment_name'], reason))
-        torch.save(checkpoint, model_name)
-        print(f"Best {reason}, save model as {model_name}")
+            data (Dataset): Dataset to evaluate.
 
-    def load_ckpt(self, filename):
-        """Loads a model checkpoint.
+        Returns:
+            dict: Evaluation metrics (F1, H1, EM).
+        """
+        self.model.eval()
+        with torch.no_grad():
+            return self.evaluator.evaluate(data, batch_size=self.test_batch_size)
+
+    def save_checkpoint(self, name):
+        """
+        Save model checkpoint.
 
         Args:
-            filename (str): Path to the checkpoint file.
+            name (str): Name of the checkpoint.
         """
-        checkpoint = torch.load(filename)
-        model_state_dict = checkpoint["model_state_dict"]
-        self.model.load_state_dict(model_state_dict, strict=False)
+        checkpoint_path = os.path.join(self.args["checkpoint_dir"], f"{name}.ckpt")
+        torch.save({"model_state_dict": self.model.state_dict()}, checkpoint_path)
+        self.logger.info(f"Checkpoint saved: {checkpoint_path}")
+
+    def load_checkpoint(self, name):
+        """
+        Load model checkpoint.
+
+        Args:
+            name (str): Name of the checkpoint to load.
+        """
+        checkpoint_path = os.path.join(self.args["checkpoint_dir"], f"{name}.ckpt")
+        checkpoint = torch.load(checkpoint_path)
+        self.model.load_state_dict(checkpoint["model_state_dict"], strict=False)
+        self.logger.info(f"Checkpoint loaded: {checkpoint_path}")
