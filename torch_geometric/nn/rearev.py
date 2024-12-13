@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+
 from torch_geometric.nn import GlobalAttention
 from torch_geometric.utils.reason import Fusion, QueryReform, TypeLayer
 
@@ -150,8 +151,8 @@ class ReaRev(torch.nn.Module):
         """Standard forward pass: perform reasoning steps and
         produce predictions and loss.
         """
-        (local_entity, query_entities, kb_adj_mat, query_text,
-         seed_dist, _, answer_dist) = batch  # Fixed unpacking
+        (local_entity, query_entities, kb_adj_mat, query_text, seed_dist, _,
+         answer_dist) = batch  # Fixed unpacking
 
         local_entity = torch.from_numpy(local_entity).long().to(self.device)
         query_entities = torch.from_numpy(query_entities).float().to(
