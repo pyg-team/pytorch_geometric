@@ -274,7 +274,7 @@ class Trainer_KBQA:
             self.args['checkpoint_dir'],
             "{}-{}.ckpt".format(self.args['experiment_name'], reason))
         torch.save(checkpoint, model_name)
-        print("Best {}, save model as {}".format(reason, model_name))
+        print(f"Best {reason}, save model as {model_name}")
 
     def load_ckpt(self, filename):
         """Loads a model checkpoint.

@@ -1,11 +1,14 @@
-import torch
-from torch_geometric.data import Data, DataLoader
-from transformers import AutoTokenizer
 import json
-import os
+
+import torch
+from transformers import AutoTokenizer
+
+from torch_geometric.data import Data, DataLoader
+
 
 class BasicDataLoader:
-    def __init__(self, config, word2id, relation2id, entity2id, tokenize, data_type="train"):
+    def __init__(self, config, word2id, relation2id, entity2id, tokenize,
+                 data_type="train"):
         self.batch_size = config['batch_size']
         print("Init called!")
         self.tokenize = tokenize
@@ -31,9 +34,9 @@ class BasicDataLoader:
         self.data = []
         file_path = f"{config['data_folder']}{data_type}.json"
         print(f"Loading data from {file_path}...")
-        with open(file_path, 'r') as f:
+        with open(file_path) as f:
             lines = len(f.readlines())
-        with open(file_path, 'r') as f:
+        with open(file_path) as f:
             print("Number of lines: ", lines)
             iter = 0
             for line in f:
@@ -47,10 +50,14 @@ class BasicDataLoader:
 
     def _prepare_data(self):
         self.graphs = [self._create_graph(sample) for sample in self.data]
-        self.data_loader = DataLoader(self.graphs, batch_size=self.batch_size, shuffle=True)
+        self.data_loader = DataLoader(self.graphs, batch_size=self.batch_size,
+                                      shuffle=True)
 
     def _create_graph(self, sample):
-        entity_map = {ent: idx for idx, ent in enumerate(sample.get('entities', []))}
+        entity_map = {
+            ent: idx
+            for idx, ent in enumerate(sample.get('entities', []))
+        }
         x = torch.zeros(len(entity_map), self.num_relations)
         edges, edge_attrs = [], []
 
@@ -68,13 +75,12 @@ class BasicDataLoader:
         return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
 
     def reset_batches(self):
-        self.data_loader = DataLoader(self.graphs, batch_size=self.batch_size, shuffle=True)
+        self.data_loader = DataLoader(self.graphs, batch_size=self.batch_size,
+                                      shuffle=True)
 
     def build_rel_words(self, tokenize):
-        """ 
-        Tokenizes relation surface forms.
+        """Tokenizes relation surface forms.
         """
-
         max_rel_words = 0
         rel_words = []
         if 'metaqa' in self.data_file:
@@ -95,22 +101,25 @@ class BasicDataLoader:
                 except:
                     words = ['UNK']
                     rel_words.append(words)
-                    pass
                 #words = fields[-2].split('_') + fields[-1].split('_')
-            
+
         self.max_rel_words = max_rel_words
         if tokenize == 'lstm':
-            self.rel_texts = np.full((self.num_kb_relation + 1, self.max_rel_words), len(self.word2id), dtype=int)
-            self.rel_texts_inv = np.full((self.num_kb_relation + 1, self.max_rel_words), len(self.word2id), dtype=int)
-            for rel_id,tokens in enumerate(rel_words):
+            self.rel_texts = np.full(
+                (self.num_kb_relation + 1, self.max_rel_words),
+                len(self.word2id), dtype=int)
+            self.rel_texts_inv = np.full(
+                (self.num_kb_relation + 1, self.max_rel_words),
+                len(self.word2id), dtype=int)
+            for rel_id, tokens in enumerate(rel_words):
                 for j, word in enumerate(tokens):
                     if j < self.max_rel_words:
-                            if word in self.word2id:
-                                self.rel_texts[rel_id, j] = self.word2id[word]
-                                self.rel_texts_inv[rel_id, j] = self.word2id[word]
-                            else:
-                                self.rel_texts[rel_id, j] = len(self.word2id)
-                                self.rel_texts_inv[rel_id, j] = len(self.word2id)
+                        if word in self.word2id:
+                            self.rel_texts[rel_id, j] = self.word2id[word]
+                            self.rel_texts_inv[rel_id, j] = self.word2id[word]
+                        else:
+                            self.rel_texts[rel_id, j] = len(self.word2id)
+                            self.rel_texts_inv[rel_id, j] = len(self.word2id)
         else:
             if tokenize == 'bert':
                 tokenizer_name = 'bert-base-uncased'
@@ -124,15 +133,19 @@ class BasicDataLoader:
                 tokenizer_name = 'princeton-nlp/sup-simcse-bert-base-uncased'
             elif tokenize == 't5':
                 tokenizer_name = 't5-small'
-            elif tokenize  == 'relbert':
+            elif tokenize == 'relbert':
                 tokenizer_name = 'pretrained_lms/sr-simbert/'
-            
+
             tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
             pad_val = tokenizer.convert_tokens_to_ids(tokenizer.pad_token)
-            self.rel_texts = np.full((self.num_kb_relation + 1, self.max_rel_words), pad_val, dtype=int)
-            self.rel_texts_inv = np.full((self.num_kb_relation + 1, self.max_rel_words), pad_val, dtype=int)
-            
-            for rel_id,words in enumerate(rel_words):
+            self.rel_texts = np.full(
+                (self.num_kb_relation + 1, self.max_rel_words), pad_val,
+                dtype=int)
+            self.rel_texts_inv = np.full(
+                (self.num_kb_relation + 1, self.max_rel_words), pad_val,
+                dtype=int)
+
+            for rel_id, words in enumerate(rel_words):
 
                 tokens =  tokenizer.encode_plus(text=' '.join(words), max_length=self.max_rel_words, \
                     pad_to_max_length=True, return_attention_mask = False, truncation=True)
@@ -142,14 +155,15 @@ class BasicDataLoader:
                 self.rel_texts_inv[rel_id] = np.array(tokens_inv['input_ids'])
 
 
-
 class SingleDataLoader(BasicDataLoader):
     def get_batch(self):
         return next(iter(self.data_loader))
 
+
 def load_dict(file_path):
     with open(file_path, encoding='utf-8') as f:
         return {line.strip(): idx for idx, line in enumerate(f)}
+
 
 def load_data(config, tokenize):
     print("Load data called...")
@@ -160,18 +174,19 @@ def load_data(config, tokenize):
     print("Dictionaries loaded!")
 
     loaders = {
-        data_type: SingleDataLoader(config, word2id, relation2id, entity2id, tokenize, data_type)
+        data_type:
+        SingleDataLoader(config, word2id, relation2id, entity2id, tokenize,
+                         data_type)
         for data_type in ['train', 'dev', 'test']
     }
 
     return {
-        **loaders,
-        "entity2id": entity2id,
+        **loaders, "entity2id": entity2id,
         "relation2id": relation2id,
         "word2id": word2id,
         "num_word": AutoTokenizer.from_pretrained(tokenize)
-
     }
+
 
 if __name__ == "__main__":
     print("data loading! Main function")
