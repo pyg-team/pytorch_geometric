@@ -56,7 +56,7 @@ class LLM(torch.nn.Module):
         allocate the correct number of GPUs needed, given the available GPU
         memory of your GPUs.
     dtype (torch.dtype, optional): The data type to use for the LLM.
-        (default :obj: `torch.bloat16`)
+        (default :obj: `torch.bfloat16`)
     """
     def __init__(
         self,
