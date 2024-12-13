@@ -187,7 +187,8 @@ class GraphFeatureTokenizer(torch.nn.Module):
     def prepare_tokens(self, data: Batch, X_v_proj: torch.Tensor,
                        X_e_proj: torch.Tensor, batch: torch.Tensor,
                        edge_index: torch.Tensor):
-        """Arrange node and edge tokens into sequences and create attention masks.
+        """Arrange node and edge tokens into sequences and create attention
+        masks.
 
         The sequence structure is: [graph_token (optional) | node_tokens |
         edge_tokens]
