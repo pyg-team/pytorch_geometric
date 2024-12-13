@@ -97,7 +97,7 @@ class TrainerKBQA:
 
             # Evaluation
             if (epoch + 1) % eval_every == 0:
-                eval_metrics = self.evaluate(self.valid_data)
+                self.evaluate(self.valid_data)
 
     def _train_epoch(self):
         """Train the model for one epoch.
