@@ -77,7 +77,10 @@ def gat_norm(  # noqa: F811
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
 
-        deg = torch_sparse.sum(adj_t, dim=1)
+        # idx = col if flow == 'source_to_target' else row
+        dim = 1 if flow == 'source_to_target' else 0
+        deg = torch_sparse.sum(adj_t, dim=dim)
+
         att_mat = adj_t.set_value(edge_weight)
         # repeat_interleave for any dtype tensor
         num_heads = edge_weight.shape[1] if edge_weight.dim() > 1 else 1
@@ -487,6 +490,8 @@ class GATConv(MessagePassing):
         alpha_dst = None if x_dst is None else (x_dst * self.att_dst).sum(-1)
         alpha = (alpha_src, alpha_dst)
 
+        # Skipping add_self_loops when normalize
+        # as we are performing it on gat_norm function
         if self.add_self_loops and not self.normalize:
             if isinstance(edge_index, Tensor):
                 # We only want to add self-loops for nodes that appear both as
