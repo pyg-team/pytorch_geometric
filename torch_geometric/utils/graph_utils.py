@@ -59,7 +59,7 @@ def build_pyg_graph(graph_data: List[Tuple[str, str, str]],
         rel_map[(int(v), int(u))] = r
 
     final_rels = [
-        rel_map[(edge_index[0, i].item(), edge_index[1, i].item())]
+        rel_map[(int(edge_index[0, i].item()), int(edge_index[1, i].item()))]
         for i in range(edge_index.size(1))
     ]
 
@@ -103,8 +103,9 @@ def bfs_with_rule(data: Data, start_node: Union[str,
     # Ensure the queue contains start_node as a string
     start_node_str = str(start_node)
     result_paths = []
-    queue: deque[Tuple[str, List[Tuple[str, str,
-                                       str]]]] = deque([(start_node_str, [])])
+    queue: deque[Tuple[str, List[Tuple[str, str, str]]]] = deque(
+        [(start_node_str, [])]
+    )
 
     while queue:
         current_node, current_path = queue.popleft()
