@@ -155,6 +155,16 @@ class HIN2Vec(torch.nn.Module):
                 batch: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
         r"""Returns the embeddings for the nodes in :obj:`batch` of type
         :obj:`node_type` and metapath embeddings.
+
+        Args:
+            node_type (str): The type of nodes for embedding output.
+            batch (optional): The batch of nodes for embedding output.
+                (default: :obj:`None`)
+
+        Returns:
+            node_embedding, path_embedding (Tuple[Tensor, Tensor]): The tuples
+                of the embedding vectors for the nodes of :obj:`node_type` and
+                the metapath embedding vectors.
         """
         start, end = self.node_start[node_type], self.node_end[node_type]
         node_emb = self.node_embedding.weight[start:end]
@@ -162,7 +172,7 @@ class HIN2Vec(torch.nn.Module):
             node_emb = node_emb[batch]
         return (node_emb, self.path_embedding.weight)
 
-    def loader(self, **kwargs):
+    def loader(self, **kwargs) -> DataLoader:
         r"""Returns the data loader that creates both positive and negative
         random walks on the heterogeneous graph.
 
@@ -171,15 +181,19 @@ class HIN2Vec(torch.nn.Module):
                 :class:`torch.utils.data.DataLoader`, such as
                 :obj:`batch_size`, :obj:`shuffle`, :obj:`drop_last` or
                 :obj:`num_workers`.
+
+        Returns:
+            DataLoader: Provides an iterable over the
+                :obj:`[positive_samples, negative_samples]` datasets.
         """
         return DataLoader(range(self.node_count * self.walks_per_node),
                           collate_fn=self._sample, **kwargs)
 
     def _sample(self, batch: Union[List[int],
                                    Tensor]) -> Tuple[Tensor, Tensor]:
-        r"""Generate positive and negative samples within self.metapath_length
-        from the random walk with each row of sample of form
-        (start_node end_node metapath_id).
+        r"""Generate positive and negative samples within
+        `self.metapath_length` from the random walk with each row of sample of
+        form :obj:`(start_node, end_node, metapath_id)`.
         """
         if not isinstance(batch, Tensor):
             batch = torch.tensor(batch, dtype=torch.long)
@@ -233,7 +247,20 @@ class HIN2Vec(torch.nn.Module):
         return sample[mask, :]
 
     def loss(self, pos: Tensor, neg: Tensor) -> Tensor:
-        r"""Computes the loss given positive and negative data."""
+        r"""Computes the loss given positive and negative data.
+
+        Args:
+            pos (Tensor): The positive samples of shape
+                :obj:`[num_pos_samples, 3]` with each row of form
+                :obj:`[start_node, end_node, metapath_id]`.
+            neg (Tensor): The negative samples of shape
+                :obj:`[num_neg_samples, 3]` with each row of form
+                :obj:`[start_node, end_node, metapath_id]`.
+
+        Returns:
+            loss (Tensor): The cross entropy loss of positive and negative
+                samples.
+        """
         # Positive loss
         h_start = self.node_embedding(pos[:, 0])
         h_end = self.node_embedding(pos[:, 1])
@@ -334,6 +361,30 @@ class HIN2Vec(torch.nn.Module):
     ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task.
+
+        Args:
+            train_z (Tensor): The train data of shape
+                :obj:`[num_train_samples, embedding_dimension]`.
+            train_y (Tensor): The labels of the train data of shape
+                :obj:`[num_train_samples,]`.
+            test_z (Tensor): The test data of shape
+                :obj:`[num_test_samples, embedding_dimension]`.
+            test_y (Tensor): The labels of the test data of shape
+                :obj:`[num_test_samples,]`.
+            solver (str, optional): The algorithm to use in optimization of
+                logistic regression. Options are 'lbfgs', 'liblinear',
+                'newton-cg', 'newton-cholesky', 'sag', 'saga'.
+                (default: 'lbfgs')
+            *args (optional): Positional arguments of
+                :class:`sklearn.linear_model.LogisticRegression`
+            **kwargs (optional): Keyword arguments of
+                :class:`sklearn.linear_model.LogisticRegression`, such as
+                :obj:`max_iter`, :obj:`class_weight`, :obj:`penalty` or
+                :obj:`fit_intercept`.
+
+        Returns:
+            accuracy (float): The mean accuracy of logistic regression on the
+                given test data and labels.
         """
         from sklearn.linear_model import LogisticRegression
 
