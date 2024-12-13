@@ -20,12 +20,47 @@ if args.experiment_name == None:
         timestamp,
     )
 
+def run_query():
+    question = input("Please ask the model a question.")
+    query = "Please create a knowledge query for the following question, which leads with one or more relation queries from the question to the answer. " + question
+
+    response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": query},
+            ],
+            temperature=0.7,
+            max_tokens=200,
+        )
+
+    response = response["choices"][0]["message"]["content"].strip()
+
+    answers = ""
+    #answers = Iterate knowledge graph
+
+    query = "You want to know: " + question + ". Give a simple answer to the question based on the information provided: " + answers + ". Do not provide any explanation. Only your factual response to the prompt."
+
+    final_response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": query},
+            ],
+            temperature=0.7,
+            max_tokens=200,
+        )
+
+    final_response = final_response["choices"][0]["message"]["content"].strip()
+
+    return final_response
+
 
 def main():
     if not os.path.exists(args.checkpoint_dir):
         os.mkdir(args.checkpoint_dir)
     logger = create_logger(args)
-    trainer = Trainer_KBQA(args=vars(args), model_name=args.model_name, logger=logger)
+    trainer = Trainer_KBQA(args=vars(args), model_name='ReaRev', logger=logger)
     if not args.is_eval:
         trainer.train(0, args.num_epoch - 1)
     else:
@@ -39,3 +74,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+import openai
+openai.api_key = "OMITTED"
