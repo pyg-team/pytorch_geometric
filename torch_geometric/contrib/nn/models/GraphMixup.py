@@ -30,7 +30,7 @@ class GraphMixup(torch.nn.Module):
         conv_layer (Module): A PyG convolution layer class (e.g. GCNConv).
         dropout (float): Dropout probability.
         readout (Callable): Readout function to aggregate node embeddings
-            into a graph-level embedding. Defaults to global_mean_pool.
+        into a graph-level embedding. Defaults to global_mean_pool.
     """
     def __init__(self, num_layers: int, in_channels: int, hidden_channels: int,
                  out_channels: int, conv_layer: Module = GCNConv,

@@ -25,17 +25,17 @@ class MixupConv(MessagePassing):
 
     Args:
         in_channels (int): Size of each input sample (number of input node
-        features).
+            features).
         out_channels (int): Size of each output sample (number of output node
-        features).
+            features).
         conv_layer (torch.nn.Module, optional): The PyG convolutional layer
-        to use (e.g., GCNConv, GATConv). Defaults to GCNConv.
+            to use (e.g., GCNConv, GATConv). Defaults to GCNConv.
         aggr (str, optional): The aggregation scheme to use ("add", "mean",
-        "max"). (default: :obj:`"mean"`)
+            "max"). (default: :obj:`"mean"`)
         bias (bool, optional): If set to `False`, the layer will not learn an
-        additive bias. (default: :obj:`True`)
+            additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments passed to the convolution
-        layer.
+            layer.
     """
     def __init__(self, in_channels: int, out_channels: int,
                  conv_layer: Optional[Module] = GCNConv, aggr='mean',
@@ -59,16 +59,16 @@ class MixupConv(MessagePassing):
 
         Args:
             x1 (Tensor): Node feature matrix of the first input graph with
-            shape :obj:`[num_nodes, in_channels]`.
+                shape :obj:`[num_nodes, in_channels]`.
             edge_index (Tensor): Graph connectivity in COO format with shape
-            :obj:`[2, num_edges]`.
+                obj:`[2, num_edges]`.
             x2 (Tensor): Node feature matrix of the second input graph with
-            shape :obj:`[num_nodes, in_channels]`.
+                shape :obj:`[num_nodes, in_channels]`.
 
         Returns:
             Tensor: Node feature matrix of shape :obj:`[num_nodes,
-            out_channels]`,
-            where the messages from `x1` are used to update `x2`.
+                out_channels]`,where the messages from `x1` are used
+                to update `x2`.
         """
         h1 = self.conv_layer(x1, edge_index)
         return h1 + self.lin(x2)
