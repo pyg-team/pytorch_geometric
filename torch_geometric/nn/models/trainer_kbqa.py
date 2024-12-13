@@ -171,5 +171,6 @@ class TrainerKBQA:
         checkpoint_path = os.path.join(self.args["checkpoint_dir"],
                                        f"{name}.ckpt")
         checkpoint = torch.load(checkpoint_path)
-        self.model.load_state_dict(checkpoint["model_state_dict"], strict=False)
+        self.model.load_state_dict(checkpoint["model_state_dict"],
+                                   strict=False)
         self.logger.info(f"Checkpoint loaded: {checkpoint_path}")

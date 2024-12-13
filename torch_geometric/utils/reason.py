@@ -34,10 +34,11 @@ class TypeLayer(nn.Module):
         (batch_heads, batch_rels, batch_tails, batch_ids, fact_ids,
          weight_list, weight_rel_list) = edge_list
 
-        fact2head, fact2tail, batch_rels, batch_ids, 
-        val_one = self._prepare_sparse_indices(
-            batch_heads, batch_rels, batch_tails, batch_ids, fact_ids,
-            weight_rel_list, weight_list)
+        fact2head, fact2tail, batch_rels, batch_ids,
+        val_one = self._prepare_sparse_indices(batch_heads, batch_rels,
+                                               batch_tails, batch_ids,
+                                               fact_ids, weight_rel_list,
+                                               weight_list)
         fact_val = self._compute_fact_val(rel_features, batch_rels)
         f2e_emb = self._aggregate_facts(fact2head, fact2tail, val_one,
                                         fact_val, local_entity, len(fact_ids))
