@@ -1,7 +1,7 @@
 import unittest
 import torch
 from torch_geometric.data import Data, Batch
-from tokenGT import TokenGT
+from torch_geometric.contrib.nn.models.tokenGT import TokenGT
 import numpy as np
 
 def create_batch(num_nodes, num_edges, input_feat_dim=16):
