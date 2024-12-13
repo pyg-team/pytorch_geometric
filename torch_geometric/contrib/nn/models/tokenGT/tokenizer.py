@@ -213,10 +213,10 @@ class GraphFeatureTokenizer(nn.Module):
         num_edges = X_e_proj.size(0)
         num_graphs = data.num_graphs
 
-        # Count nodes and edges per graph
-        node_num = scatter(torch.ones(num_nodes, device=device), batch, dim=0, reduce='sum')
+        # Use torch.bincount to count nodes and edges per graph
+        node_num = torch.bincount(batch, minlength=num_graphs)
         edge_batch = batch[edge_index[0]]
-        edge_num = scatter(torch.ones(num_edges, device=device), edge_batch, dim=0, reduce='sum')
+        edge_num = torch.bincount(edge_batch, minlength=num_graphs)
 
         # Determine maximum sequence length
         max_node_num = int(node_num.max().item())
