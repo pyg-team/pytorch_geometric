@@ -4,7 +4,6 @@ from typing import List, Optional, Tuple, Union
 
 import networkx as nx
 import torch
-
 from torch_geometric.data import Data
 from torch_geometric.utils import coalesce, to_undirected
 
@@ -43,14 +42,11 @@ def build_pyg_graph(graph_data: List[Tuple[str, str, str]],
         edge_index_list.append([node_to_idx[h], node_to_idx[t]])
         rel_list.append(r)
 
-    edge_index = torch.tensor(edge_index_list,
-                              dtype=torch.long).t().contiguous()
+    edge_index = torch.tensor(edge_index_list, dtype=torch.long).t().contiguous()
 
     # Coalesce step: remove duplicates, sort edges
-    edge_index = to_undirected(edge_index)
     edge_weights = torch.ones(edge_index.size(1), dtype=torch.float32)
-    edge_index, edge_weights = coalesce(edge_index, edge_weights,
-                                        len(node_list), len(node_list))
+    edge_index, edge_weights = coalesce(edge_index, edge_weights, num_nodes=len(node_list))
 
     # Remap relations to edges
     rel_map = {}
@@ -64,8 +60,7 @@ def build_pyg_graph(graph_data: List[Tuple[str, str, str]],
         for i in range(edge_index.size(1))
     ]
 
-    data = Data(num_nodes=len(node_list), edge_index=edge_index,
-                edge_weights=edge_weights)
+    data = Data(num_nodes=len(node_list), edge_index=edge_index, edge_weights=edge_weights)
     data.node_list = node_list  # Reference to original names
     data.node_to_idx = node_to_idx
     data.relations = final_rels  # List of relations, parallel to edge_index
@@ -74,26 +69,25 @@ def build_pyg_graph(graph_data: List[Tuple[str, str, str]],
 
 
 def pyg_data_to_networkx(data: Data) -> nx.Graph:
-    """Converts a PyG Data object to a NetworkX Graph.
-    """
+    """Converts a PyG Data object to a NetworkX Graph."""
     G = nx.Graph()
+    if data.node_list is None:
+        raise ValueError("Data object does not contain node_list attribute.")
     G.add_nodes_from(data.node_list)
 
-    for i in range(data.edge_index.size(1)):
-        u = data.node_list[data.edge_index[0, i].item()]
-        v = data.node_list[data.edge_index[1, i].item()]
-        rel = data.relations[i]
-        G.add_edge(u, v, relation=rel)
+    if data.edge_index is not None:
+        for i in range(data.edge_index.size(1)):
+            u = data.node_list[data.edge_index[0, i].item()]
+            v = data.node_list[data.edge_index[1, i].item()]
+            rel = data.relations[i]
+            G.add_edge(u, v, relation=rel)
 
     return G
 
 
-def bfs_with_rule(data: Data, start_node: Union[str,
-                                                int], target_rule: List[str],
+def bfs_with_rule(data: Data, start_node: Union[str, int], target_rule: List[str],
                   max_p: int = 10) -> List[List[Tuple[str, str, str]]]:
-    """Perform BFS to find paths matching a sequence of relations
-    (target_rule).
-    """
+    """Perform BFS to find paths matching a sequence of relations (target_rule)."""
     G = pyg_data_to_networkx(data)
 
     if isinstance(start_node, str) and start_node not in data.node_to_idx:
@@ -102,8 +96,7 @@ def bfs_with_rule(data: Data, start_node: Union[str,
         start_node = data.node_list[start_node]
 
     result_paths = []
-    queue: deque[Tuple[str, List[Tuple[str, str,
-                                       str]]]] = deque([(start_node, [])])
+    queue: deque[Tuple[str, List[Tuple[str, str, str]]]] = deque([(start_node, [])])
 
     while queue:
         current_node, current_path = queue.popleft()
@@ -125,9 +118,7 @@ def bfs_with_rule(data: Data, start_node: Union[str,
 
 def get_truth_paths(q_entities: List[str], a_entities: List[str],
                     data: Data) -> List[List[Tuple[str, str, str]]]:
-    """Retrieves all shortest paths between question entities
-    and answer entities.
-    """
+    """Retrieves all shortest paths between question entities and answer entities."""
     G = pyg_data_to_networkx(data)
     paths = []
 
@@ -140,8 +131,8 @@ def get_truth_paths(q_entities: List[str], a_entities: List[str],
             try:
                 for path in nx.all_shortest_paths(G, q, a):
                     path_with_rels = [
-                        (path[i], G[path[i]][path[i + 1]]['relation'],
-                         path[i + 1]) for i in range(len(path) - 1)
+                        (path[i], G[path[i]][path[i + 1]]['relation'], path[i + 1])
+                        for i in range(len(path) - 1)
                     ]
                     paths.append(path_with_rels)
             except nx.NetworkXNoPath:
@@ -151,7 +142,6 @@ def get_truth_paths(q_entities: List[str], a_entities: List[str],
 
 
 def verbalize_paths(paths: List[List[Tuple[str, str, str]]]) -> str:
-    """Converts paths into a readable format.
-    """
+    """Converts paths into a readable format."""
     return "\n".join(" → ".join(f"{edge[0]} → {edge[1]} → {edge[2]}"
                                 for edge in path) for path in paths)
