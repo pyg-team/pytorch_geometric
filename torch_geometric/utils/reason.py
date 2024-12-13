@@ -6,9 +6,11 @@ import torch.nn.functional as F
 
 
 class TypeLayer(nn.Module):
-    """TypeLayer performs entity embedding transformation based on relation features and graph structure.
+    """TypeLayer performs entity embedding transformation based on 
+    relation features and graph structure.
 
-    It computes fact embeddings from relation features and aggregates them to create enhanced entity embeddings.
+    It computes fact embeddings from relation features and aggregates 
+    them to create enhanced entity embeddings.
     Used in ReaRev to encode entities with graph-based context.
     """
     def __init__(self, in_features: int, out_features: int, linear_drop: float,
@@ -26,12 +28,14 @@ class TypeLayer(nn.Module):
                                  torch.Tensor, torch.Tensor, List[float],
                                  List[float]],
                 rel_features: torch.Tensor) -> torch.Tensor:
-        """Compute enhanced entity embeddings using relation features and edge connections.
+        """Compute enhanced entity embeddings using relation features and 
+        edge connections.
         """
         (batch_heads, batch_rels, batch_tails, batch_ids, fact_ids,
          weight_list, weight_rel_list) = edge_list
 
-        fact2head, fact2tail, batch_rels, batch_ids, val_one = self._prepare_sparse_indices(
+        fact2head, fact2tail, batch_rels, batch_ids, 
+                    val_one = self._prepare_sparse_indices(
             batch_heads, batch_rels, batch_tails, batch_ids, fact_ids,
             weight_rel_list, weight_list)
         fact_val = self._compute_fact_val(rel_features, batch_rels)
@@ -114,7 +118,8 @@ class Fusion(nn.Module):
 
 
 class QueryReform(nn.Module):
-    """QueryReform refines query node embeddings using context from entity embeddings and seed information.
+    """QueryReform refines query node embeddings using 
+    context from entity embeddings and seed information.
     """
     def __init__(self, h_dim: int):
         super().__init__()
