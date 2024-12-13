@@ -1,27 +1,24 @@
 import os
 import time
-import math
+
 import numpy as np
 import torch
+from dataset_load import load_data
+from evaluate import Evaluator
+from rearev import ReaRev
+from torch.nn.utils import clip_grad_norm_
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ExponentialLR
-from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
-from dataset_load import load_data
-from rearev import ReaRev
-from evaluate import Evaluator
 
 
 class TrainerKBQA:
-    """
-    Trainer for Knowledge-Based Question Answering (KBQA) using PyTorch and PyG.
+    """Trainer for Knowledge-Based Question Answering (KBQA) using PyTorch and PyG.
 
     Handles data loading, model training, evaluation, and checkpoint management.
     """
-
     def __init__(self, args, model_name, logger=None):
-        """
-        Initialize Trainer with configuration, model, and logger.
+        """Initialize Trainer with configuration, model, and logger.
 
         Args:
             args (dict): Training configurations and hyperparameters.
@@ -79,8 +76,7 @@ class TrainerKBQA:
             self.load_checkpoint(args["load_experiment"])
 
     def train(self, start_epoch, end_epoch):
-        """
-        Train the model over a range of epochs.
+        """Train the model over a range of epochs.
 
         Args:
             start_epoch (int): Starting epoch.
@@ -95,14 +91,19 @@ class TrainerKBQA:
                 self.scheduler.step()
 
             avg_h1, avg_f1 = np.mean(h1_list), np.mean(f1_list)
-            self.logger.info(f"Epoch {epoch + 1}, Loss: {loss:.4f}, Time: {time.time() - start_time:.2f}s")
+            self.logger.info(
+                f"Epoch {epoch + 1}, Loss: {loss:.4f}, Time: {time.time() - start_time:.2f}s"
+            )
             self.logger.info(f"Training H1: {avg_h1:.4f}, F1: {avg_f1:.4f}")
 
             # Evaluation
             if (epoch + 1) % eval_every == 0:
                 eval_metrics = self.evaluate(self.valid_data)
-                eval_f1, eval_h1, eval_em = eval_metrics["f1"], eval_metrics["h1"], eval_metrics["em"]
-                self.logger.info(f"Validation - F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM: {eval_em:.4f}")
+                eval_f1, eval_h1, eval_em = eval_metrics["f1"], eval_metrics[
+                    "h1"], eval_metrics["em"]
+                self.logger.info(
+                    f"Validation - F1: {eval_f1:.4f}, H1: {eval_h1:.4f}, EM: {eval_em:.4f}"
+                )
 
                 if epoch > self.warmup_epoch:
                     if eval_h1 > getattr(self, "best_h1", 0):
@@ -113,15 +114,15 @@ class TrainerKBQA:
                         self.save_checkpoint(f"best-f1-epoch-{epoch}")
 
     def _train_epoch(self):
-        """
-        Train the model for one epoch.
+        """Train the model for one epoch.
 
         Returns:
             tuple: Average loss, H1 scores, and F1 scores.
         """
         self.model.train()
         losses, h1_list, f1_list = [], [], []
-        data_loader = self.train_data.data_loader(batch_size=self.args["batch_size"], shuffle=True)
+        data_loader = self.train_data.data_loader(
+            batch_size=self.args["batch_size"], shuffle=True)
 
         for batch in tqdm(data_loader, desc="Training"):
             self.optimizer.zero_grad()
@@ -129,7 +130,8 @@ class TrainerKBQA:
             h1_scores, f1_scores = tp_list
 
             loss.backward()
-            clip_grad_norm_(self.model.parameters(), self.args["gradient_clip"])
+            clip_grad_norm_(self.model.parameters(),
+                            self.args["gradient_clip"])
             self.optimizer.step()
 
             losses.append(loss.item())
@@ -139,8 +141,7 @@ class TrainerKBQA:
         return np.mean(losses), h1_list, f1_list
 
     def evaluate(self, data):
-        """
-        Evaluate the model on a dataset.
+        """Evaluate the model on a dataset.
 
         Args:
             data (Dataset): Dataset to evaluate.
@@ -150,27 +151,30 @@ class TrainerKBQA:
         """
         self.model.eval()
         with torch.no_grad():
-            return self.evaluator.evaluate(data, batch_size=self.test_batch_size)
+            return self.evaluator.evaluate(data,
+                                           batch_size=self.test_batch_size)
 
     def save_checkpoint(self, name):
-        """
-        Save model checkpoint.
+        """Save model checkpoint.
 
         Args:
             name (str): Name of the checkpoint.
         """
-        checkpoint_path = os.path.join(self.args["checkpoint_dir"], f"{name}.ckpt")
-        torch.save({"model_state_dict": self.model.state_dict()}, checkpoint_path)
+        checkpoint_path = os.path.join(self.args["checkpoint_dir"],
+                                       f"{name}.ckpt")
+        torch.save({"model_state_dict": self.model.state_dict()},
+                   checkpoint_path)
         self.logger.info(f"Checkpoint saved: {checkpoint_path}")
 
     def load_checkpoint(self, name):
-        """
-        Load model checkpoint.
+        """Load model checkpoint.
 
         Args:
             name (str): Name of the checkpoint to load.
         """
-        checkpoint_path = os.path.join(self.args["checkpoint_dir"], f"{name}.ckpt")
+        checkpoint_path = os.path.join(self.args["checkpoint_dir"],
+                                       f"{name}.ckpt")
         checkpoint = torch.load(checkpoint_path)
-        self.model.load_state_dict(checkpoint["model_state_dict"], strict=False)
+        self.model.load_state_dict(checkpoint["model_state_dict"],
+                                   strict=False)
         self.logger.info(f"Checkpoint loaded: {checkpoint_path}")
