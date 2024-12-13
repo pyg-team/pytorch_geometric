@@ -5,7 +5,6 @@ from torch.autograd import Variable
 from torch_geometric.nn import GlobalAttention
 from torch_geometric.utils.reason import Fusion, QueryReform, TypeLayer
 
-from reason import
 
 
 class ReaRev(torch.nn.Module):
