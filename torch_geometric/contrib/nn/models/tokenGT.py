@@ -15,12 +15,11 @@ class GraphFeatureTokenizer(torch.nn.Module):
     (nodes, edges, and their features) into a sequence of tokens that can be
     processed by a transformer architecture.
 
-    The tokenization process involves:
-    1. Generating unique node identifiers using either random orthogonal
-        features or Laplacian eigenvectors
-    2. Combining node/edge features with positional and type embeddings
-    3. Projecting the combined features to the transformer's hidden dimension
-    4. Organizing tokens into a sequence with optional [graph] token
+    The tokenization process involves generating unique node identifiers using
+    either random orthogonal features or Laplacian eigenvectors, combining
+    node/edge features with positional and type embeddings, projecting the
+    combined features to the transformer's hidden dimension, and organizing
+    tokens into a sequence with optional [graph] token.
 
     Args:
         input_feat_dim (int): Input dimension of node/edge features
@@ -72,20 +71,8 @@ class GraphFeatureTokenizer(torch.nn.Module):
         """
         Transform a batch of graphs into sequences of tokens.
 
-        Process:
-        1. Extract graph components (nodes, edges, batch info)
-        2. Generate node identifiers
-        3. Combine features with positional and type embeddings
-        4. Project to transformer dimension
-        5. Arrange into sequences with attention masks
-
         Args:
             data (Batch): PyG batch containing multiple graphs
-
-        Returns:
-            tokens (torch.Tensor): Token embeddings [batch_size, seq_len,
-                hidden_dim]
-            attention_masks (torch.Tensor): Binary masks [batch_size, seq_len]
         """
         x = data.x
         edge_index = data.edge_index
@@ -128,9 +115,6 @@ class GraphFeatureTokenizer(torch.nn.Module):
 
         Args:
             data (Batch): PyG batch containing multiple graphs
-
-        Returns:
-            torch.Tensor: Node identifiers matrix [num_nodes, d_p]
         """
         x = data.x
         batch = data.batch
@@ -194,9 +178,6 @@ class GraphFeatureTokenizer(torch.nn.Module):
         Args:
             edge_index (torch.Tensor): Edge connectivity
             num_nodes (int): Number of nodes in the graph
-
-        Returns:
-            torch.Tensor: Matrix of eigenvectors sorted by eigenvalue
         """
         device = edge_index.device
         adj = torch.zeros((num_nodes, num_nodes), device=device)
@@ -212,8 +193,8 @@ class GraphFeatureTokenizer(torch.nn.Module):
         """
         Arrange node and edge tokens into sequences and create attention masks.
 
-        The sequence structure is:
-            [graph_token (optional) | node_tokens | edge_tokens]
+        The sequence structure is: [graph_token (optional) | node_tokens |
+        edge_tokens]
 
         Args:
             data (Batch): PyG batch
@@ -221,12 +202,6 @@ class GraphFeatureTokenizer(torch.nn.Module):
             X_e_proj (torch.Tensor): Projected edge features
             batch (torch.Tensor): Batch assignments for nodes
             edge_index (torch.Tensor): Edge connectivity
-
-        Returns:
-            tokens (torch.Tensor): Token sequences [batch_size, seq_len,
-                hidden_dim]
-            attention_masks (torch.Tensor): Attention masks [batch_size,
-                seq_len]
         """
         device = X_v_proj.device
         num_graphs = data.num_graphs
@@ -282,8 +257,8 @@ class GraphFeatureTokenizer(torch.nn.Module):
 
 class TokenGT(nn.Module):
     r"""
-    Tokenized Graph Transformer (TokenGT) model from the "Pure Transformers are
-    Powerful Graph Learners" https://arxiv.org/abs/2207.02505 paper.
+    Tokenized Graph Transformer (TokenGT) model from the `Pure Transformers are
+    Powerful Graph Learners <https://arxiv.org/abs/2207.02505>`_ paper.
 
     Args:
         node_feat_dim (int): Dimension of node features.
@@ -328,19 +303,8 @@ class TokenGT(nn.Module):
         """
         Process a batch of graphs through the TokenGT model.
 
-        Workflow:
-        1. Convert graphs into token sequences using tokenizer
-        2. Process tokens through transformer encoder
-        3. Extract graph-level embeddings (either from [graph] token or via
-            pooling)
-        4. Apply dropout and classification layer
-
         Args:
             data (Batch): PyG batch object containing graphs
-
-        Returns:
-            logits (torch.Tensor): Classification logits [batch_size,
-                num_classes]
         """
 
         # Convert graphs into token sequences and attention masks
