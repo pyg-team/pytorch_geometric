@@ -13,10 +13,10 @@ from tqdm import tqdm
 
 
 class TrainerKBQA:
-    """Trainer for Knowledge-Based Question Answering 
+    """Trainer for Knowledge-Based Question Answering
     (KBQA) using PyTorch and PyG.
 
-    Handles data loading, model training, evaluation, 
+    Handles data loading, model training, evaluation,
     and checkpoint management.
     """
     def __init__(self, args, model_name, logger=None):
@@ -94,7 +94,7 @@ class TrainerKBQA:
 
             avg_h1, avg_f1 = np.mean(h1_list), np.mean(f1_list)
             self.logger.info(
-                f"Epoch {epoch + 1}, Loss: {loss:.4f}, 
+                f"Epoch {epoch + 1}, Loss: {loss:.4f},
                 Time: {time.time() - start_time:.2f}s"
             )
             self.logger.info(f"Training H1: {avg_h1:.4f}, F1: {avg_f1:.4f}")
