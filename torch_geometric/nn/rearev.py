@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-
+from reason import 
 from torch_geometric.nn import GlobalAttention
 from torch_geometric.utils.reason import Fusion, QueryReform, TypeLayer
 
@@ -47,7 +47,8 @@ class ReaRev(torch.nn.Module):
         self.layers(args)
 
     def layers(self, args):
-        """Define layers for embedding transformations and attention encoders."""
+        """Define layers for embedding transformations 
+        and attention encoders."""
         self.word_dim
         self.kg_dim
         entity_dim = self.entity_dim
@@ -75,14 +76,6 @@ class ReaRev(torch.nn.Module):
         self.kld_loss = nn.KLDivLoss(reduction='none')
         self.bce_loss_logits = nn.BCEWithLogitsLoss(reduction='none')
         self.mse_loss = torch.nn.MSELoss()
-
-    def private_module_def(self, args, num_entity, num_relation):
-        """Defines private modules: LMs, GNN layers, etc.
-        Initializes modules needed by the reasoning pipeline.
-        """
-        # Define ReasonGNNLayer if not already imported
-        self.reasoning = ReasonGNNLayer(args, num_entity, num_relation,
-                                        self.entity_dim, self.alg)
 
     def get_ent_init(self, local_entity, kb_adj_mat, rel_features):
         """Computes the initial entity embeddings.
@@ -145,7 +138,8 @@ class ReaRev(torch.nn.Module):
         )
 
     def calc_loss_label(self, curr_dist, teacher_dist, label_valid):
-        """Computes the label loss based on current predictions vs. teacher distribution.
+        """Computes the label loss based on current predictions vs. 
+        teacher distribution.
         """
         tp_loss = self.get_loss(pred_dist=curr_dist, answer_dist=teacher_dist,
                                 reduction='none')
@@ -154,9 +148,11 @@ class ReaRev(torch.nn.Module):
         return cur_loss
 
     def forward(self, batch, training=False):
-        """Standard forward pass: perform reasoning steps and produce predictions and loss.
+        """Standard forward pass: perform reasoning steps and 
+        produce predictions and loss.
         """
-        local_entity, query_entities, kb_adj_mat, query_text, seed_dist, _, answer_dist = batch
+        local_entity, query_entities, kb_adj_mat, query_text, 
+        seed_dist, _, answer_dist = batch
         local_entity = torch.from_numpy(local_entity).long().to(self.device)
         query_entities = torch.from_numpy(query_entities).float().to(
             self.device)
