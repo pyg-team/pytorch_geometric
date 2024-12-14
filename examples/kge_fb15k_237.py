@@ -1,22 +1,25 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.optim as optim
 
 from torch_geometric.datasets import FB15k_237
-from torch_geometric.nn import ComplEx, DistMult, RotatE, TransE
+from torch_geometric.nn import ComplEx, DistMult, RotatE, TransD, TransE
 
 model_map = {
     'transe': TransE,
     'complex': ComplEx,
     'distmult': DistMult,
     'rotate': RotatE,
+    'transd': TransD,
 }
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', choices=model_map.keys(), type=str.lower,
                     required=True)
+parser.add_argument('--bern', action='store_true')
 args = parser.parse_args()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -26,11 +29,18 @@ train_data = FB15k_237(path, split='train')[0].to(device)
 val_data = FB15k_237(path, split='val')[0].to(device)
 test_data = FB15k_237(path, split='test')[0].to(device)
 
-model_arg_map = {'rotate': {'margin': 9.0}}
+model_arg_map = {model: {'hidden_channels': 50} for model in model_map.keys()}
+model_arg_map['rotate']['margin'] = 9.0
+model_arg_map['transd'] = {
+    'hidden_channels_node': 50,
+    'hidden_channels_rel': 50,
+    'bern': args.bern,
+}
+
+model_arg_map.update()
 model = model_map[args.model](
     num_nodes=train_data.num_nodes,
     num_relations=train_data.num_edge_types,
-    hidden_channels=50,
     **model_arg_map.get(args.model, {}),
 ).to(device)
 
@@ -44,6 +54,7 @@ loader = model.loader(
 
 optimizer_map = {
     'transe': optim.Adam(model.parameters(), lr=0.01),
+    'transd': optim.Adam(model.parameters(), lr=0.01),
     'complex': optim.Adagrad(model.parameters(), lr=0.001, weight_decay=1e-6),
     'distmult': optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-6),
     'rotate': optim.Adam(model.parameters(), lr=1e-3),
@@ -76,11 +87,13 @@ def test(data):
     )
 
 
+start = time.time()
 for epoch in range(1, 501):
     loss = train()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
     if epoch % 25 == 0:
         rank, mrr, hits = test(val_data)
+        print(f"Time: {(time.time() - start) / epoch}")
         print(f'Epoch: {epoch:03d}, Val Mean Rank: {rank:.2f}, '
               f'Val MRR: {mrr:.4f}, Val Hits@10: {hits:.4f}')
 
