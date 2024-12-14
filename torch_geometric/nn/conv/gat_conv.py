@@ -156,21 +156,19 @@ class GATConv(MessagePassing):
         self.fill_value = fill_value
         self.residual = residual
 
-        # In case we are operating in bipartite graphs, we apply separate
-        # transformations 'lin_src' and 'lin_dst' to source and target nodes:
-        self.lin = self.lin_src = self.lin_dst = None
+        # Initialize the linear transformation and learnable paramters for
+        # attention coefficients. The `dst` does not need its own linear
+        # transformation (except for residual), because it is only used for
+        # attention calculation.
         if isinstance(in_channels, int):
             self.lin = Linear(in_channels, heads * out_channels, bias=False,
                               weight_initializer='glorot')
+            self.att_dst = Parameter(torch.empty(1, heads, in_channels))
         else:
-            self.lin_src = Linear(in_channels[0], heads * out_channels, False,
-                                  weight_initializer='glorot')
-            self.lin_dst = Linear(in_channels[1], heads * out_channels, False,
-                                  weight_initializer='glorot')
-
-        # The learnable parameters to compute attention coefficients:
+            self.lin = Linear(in_channels[0], heads * out_channels, bias=False,
+                              weight_initializer='glorot')
+            self.att_dst = Parameter(torch.empty(1, heads, in_channels[1]))
         self.att_src = Parameter(torch.empty(1, heads, out_channels))
-        self.att_dst = Parameter(torch.empty(1, heads, out_channels))
 
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
@@ -203,12 +201,7 @@ class GATConv(MessagePassing):
 
     def reset_parameters(self):
         super().reset_parameters()
-        if self.lin is not None:
-            self.lin.reset_parameters()
-        if self.lin_src is not None:
-            self.lin_src.reset_parameters()
-        if self.lin_dst is not None:
-            self.lin_dst.reset_parameters()
+        self.lin.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
         if self.res is not None:
@@ -298,14 +291,8 @@ class GATConv(MessagePassing):
             if self.res is not None:
                 res = self.res(x)
 
-            if self.lin is not None:
-                x_src = x_dst = self.lin(x).view(-1, H, C)
-            else:
-                # If the module is initialized as bipartite, transform source
-                # and destination node features separately:
-                assert self.lin_src is not None and self.lin_dst is not None
-                x_src = self.lin_src(x).view(-1, H, C)
-                x_dst = self.lin_dst(x).view(-1, H, C)
+            x_src = self.lin(x).view(-1, H, C)
+            x_dst = x.unsqueeze(1)
 
         else:  # Tuple of source and target node features:
             x_src, x_dst = x
@@ -314,19 +301,9 @@ class GATConv(MessagePassing):
             if x_dst is not None and self.res is not None:
                 res = self.res(x_dst)
 
-            if self.lin is not None:
-                # If the module is initialized as non-bipartite, we expect that
-                # source and destination node features have the same shape and
-                # that they their transformations are shared:
-                x_src = self.lin(x_src).view(-1, H, C)
-                if x_dst is not None:
-                    x_dst = self.lin(x_dst).view(-1, H, C)
-            else:
-                assert self.lin_src is not None and self.lin_dst is not None
-
-                x_src = self.lin_src(x_src).view(-1, H, C)
-                if x_dst is not None:
-                    x_dst = self.lin_dst(x_dst).view(-1, H, C)
+            x_src = self.lin(x_src).view(-1, H, C)
+            if x_dst is not None:
+                x_dst = x_dst.unsqueeze(1)
 
         x = (x_src, x_dst)
 
