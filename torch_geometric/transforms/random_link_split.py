@@ -236,7 +236,7 @@ class RandomLinkSplit(BaseTransform):
                 size = size[0]
             neg_edge_index = negative_sampling(edge_index, size,
                                                num_neg_samples=num_neg,
-                                               method='sparse')
+                                               method='auto')
 
             # Adjust ratio if not enough negative edges exist
             if neg_edge_index.size(1) < num_neg:
