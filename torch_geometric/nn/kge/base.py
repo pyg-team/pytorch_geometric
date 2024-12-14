@@ -6,6 +6,24 @@ from torch.nn import Embedding
 from tqdm import tqdm
 
 from torch_geometric.nn.kge.loader import KGTripletLoader
+from torch_geometric.utils import scatter
+
+
+def _avg_count_per_r(x_idx, r_idx):
+    num_x = x_idx.max() + 1
+    # print(r_idx * num_x)
+    rx_idx = r_idx * num_x + x_idx
+    # print(rx_idx)
+    unique_rx, rx_counts = torch.unique(rx_idx, return_counts=True)
+    r_idx = unique_rx // num_x
+    return scatter(rx_counts, r_idx, reduce='mean')
+
+
+# @dataclass
+# class BernoulliInit():
+#     head_idx: Tensor
+#     tail_idx: Tensor
+#     rel_idx: Tensor
 
 
 class KGEModel(torch.nn.Module):
@@ -24,12 +42,21 @@ class KGEModel(torch.nn.Module):
         num_relations: int,
         hidden_channels: int,
         sparse: bool = False,
+        bern: bool = False,
+        # bern: BernoulliInit = False,
     ):
         super().__init__()
 
         self.num_nodes = num_nodes
         self.num_relations = num_relations
         self.hidden_channels = hidden_channels
+        self.bern = bern
+        # if bern:
+        #     # Compute Bernoulli courruption parameters, assuming no
+        #     # duplicates.
+        #     hpt = _avg_count_per_r(bern.tail_idx, bern.rel_idx)
+        #     tph = _avg_count_per_r(bern.head_idx, bern.rel_idx)
+        #     self.berns = tph / (tph + hpt)
 
         self.node_emb = Embedding(num_nodes, hidden_channels, sparse=sparse)
         self.rel_emb = Embedding(num_relations, hidden_channels, sparse=sparse)
@@ -150,16 +177,30 @@ class KGEModel(torch.nn.Module):
             rel_type (torch.Tensor): The relation type.
             tail_index (torch.Tensor): The tail indices.
         """
-        # Random sample either `head_index` or `tail_index` (but not both):
-        num_negatives = head_index.numel() // 2
         rnd_index = torch.randint(self.num_nodes, head_index.size(),
                                   device=head_index.device)
-
         head_index = head_index.clone()
-        head_index[:num_negatives] = rnd_index[:num_negatives]
         tail_index = tail_index.clone()
-        tail_index[num_negatives:] = rnd_index[num_negatives:]
 
+        if not self.bern:
+            print("Using no bern")
+            # Random sample either `head_index` or `tail_index` (but not both):
+            num_negatives = head_index.numel() // 2
+
+            head_index[:num_negatives] = rnd_index[:num_negatives]
+            tail_index[num_negatives:] = rnd_index[num_negatives:]
+
+            return head_index, rel_type, tail_index
+
+        # Bernoulli: decide whether to corrupt the head or tail proportional to
+        # the number of heads per tail and tails per head for each relation.
+        hpt = _avg_count_per_r(tail_index, rel_type)
+        tph = _avg_count_per_r(head_index, rel_type)
+        berns = tph / (tph + hpt)
+        head_mask = berns[rel_type].bernoulli().type(torch.bool)
+        tail_mask = ~head_mask
+        head_index[head_mask] = rnd_index[head_mask]
+        tail_index[tail_mask] = rnd_index[tail_mask]
         return head_index, rel_type, tail_index
 
     def __repr__(self) -> str:
