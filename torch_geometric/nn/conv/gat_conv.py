@@ -73,17 +73,14 @@ class GATConv(MessagePassing):
         + \mathbf{a}^{\top}_{e} \mathbf{\Theta}_{e} \mathbf{e}_{i,k}
         \right)\right)}.
 
-    If an integer is passed for :obj:`in_channels`, :math:`\mathbf{\Theta}_{s} =
+    If the graph is not bipartite, :math:`\mathbf{\Theta}_{s} =
     \mathbf{\Theta}_{t}`.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
-            A tuple dictates the dimensionality of distinct 
-            :math:`\mathbf{\Theta}` to be used for source and target features,
-            for example, in case of a bipartite graph.  A value of :obj:`None|0`
-            for the source dimensionality fixes 
-            :math:`\mathbf{\Theta}_s=\mathbf{0}`.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities in case of a bipartite graph.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -159,10 +156,10 @@ class GATConv(MessagePassing):
         self.fill_value = fill_value
         self.residual = residual
 
-        # In case of e.g. bipartite graphs, we apply separate transformations 
-        # 'lin_src' and 'lin_dst' to source and target nodes:
+        # In case we are operating in bipartite graphs, we apply separate
+        # transformations 'lin_src' and 'lin_dst' to source and target nodes:
         self.lin = self.lin_src = self.lin_dst = None
-        if isinstance(in_channels, int) or not in_channels[0]:
+        if isinstance(in_channels, int):
             self.lin = Linear(in_channels, heads * out_channels, bias=False,
                               weight_initializer='glorot')
         else:
@@ -172,10 +169,8 @@ class GATConv(MessagePassing):
                                   weight_initializer='glorot')
 
         # The learnable parameters to compute attention coefficients:
+        self.att_src = Parameter(torch.empty(1, heads, out_channels))
         self.att_dst = Parameter(torch.empty(1, heads, out_channels))
-        self.att_src = None
-        if isinstance(in_channels, int) or in_channels[0]:
-            self.att_src = Parameter(torch.empty(1, heads, out_channels))
 
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
@@ -290,6 +285,7 @@ class GATConv(MessagePassing):
         # `torch.jit._overload` decorator, as we can only change the output
         # arguments conditioned on type (`None` or `bool`), not based on its
         # actual value.
+
         H, C = self.heads, self.out_channels
 
         res: Optional[Tensor] = None
@@ -305,9 +301,8 @@ class GATConv(MessagePassing):
             if self.lin is not None:
                 x_src = x_dst = self.lin(x).view(-1, H, C)
             else:
-                # If the module is initialized with a tuple of positive 
-                # in_channels, transform source and destination node features
-                # separately:
+                # If the module is initialized as bipartite, transform source
+                # and destination node features separately:
                 assert self.lin_src is not None and self.lin_dst is not None
                 x_src = self.lin_src(x).view(-1, H, C)
                 x_dst = self.lin_dst(x).view(-1, H, C)
@@ -320,9 +315,9 @@ class GATConv(MessagePassing):
                 res = self.res(x_dst)
 
             if self.lin is not None:
-                # If the module is initialized with integer in_channels, we
-                # expect that source and destination node features have the same
-                # shape and that they their transformations are shared:
+                # If the module is initialized as non-bipartite, we expect that
+                # source and destination node features have the same shape and
+                # that they their transformations are shared:
                 x_src = self.lin(x_src).view(-1, H, C)
                 if x_dst is not None:
                     x_dst = self.lin(x_dst).view(-1, H, C)
