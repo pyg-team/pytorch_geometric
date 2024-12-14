@@ -40,7 +40,9 @@ class TransD(KGEModel):
     proportional to the average number of heads per tail and tails per head for
     the relation, as described in the `"Knowledge Graph Embedding by
     Translating on Hyperplanes" <https://cdn.aaai.org/ojs/8870/
-    8870-13-12398-1-2-20201228.pdf>`_ paper.
+    8870-13-12398-1-2-20201228.pdf>`_ paper. You must call the :obj:`loader()`
+    function with your training set to initialize the Bernoulli parameters if
+    you want to use this argument.
 
     .. note::
 

@@ -10,20 +10,14 @@ from torch_geometric.utils import scatter
 
 
 def _avg_count_per_r(x_idx, r_idx):
+    # Map the tuple (x_idx, r_idx) to unique indices in a new combined index.
     num_x = x_idx.max() + 1
-    # print(r_idx * num_x)
     rx_idx = r_idx * num_x + x_idx
-    # print(rx_idx)
+    # Get counts of each unique (x_idx, r_idx) pair.
     unique_rx, rx_counts = torch.unique(rx_idx, return_counts=True)
+    # Average those counts grouped by r_idx.
     r_idx = unique_rx // num_x
     return scatter(rx_counts, r_idx, reduce='mean')
-
-
-# @dataclass
-# class BernoulliInit():
-#     head_idx: Tensor
-#     tail_idx: Tensor
-#     rel_idx: Tensor
 
 
 class KGEModel(torch.nn.Module):
@@ -51,12 +45,7 @@ class KGEModel(torch.nn.Module):
         self.num_relations = num_relations
         self.hidden_channels = hidden_channels
         self.bern = bern
-        # if bern:
-        #     # Compute Bernoulli courruption parameters, assuming no
-        #     # duplicates.
-        #     hpt = _avg_count_per_r(bern.tail_idx, bern.rel_idx)
-        #     tph = _avg_count_per_r(bern.head_idx, bern.rel_idx)
-        #     self.berns = tph / (tph + hpt)
+        self.tph_berns = None  # Initialized when loader() gets called.
 
         self.node_emb = Embedding(num_nodes, hidden_channels, sparse=sparse)
         self.rel_emb = Embedding(num_relations, hidden_channels, sparse=sparse)
@@ -114,6 +103,13 @@ class KGEModel(torch.nn.Module):
                 :obj:`batch_size`, :obj:`shuffle`, :obj:`drop_last`
                 or :obj:`num_workers`.
         """
+        if self.bern:
+            # Compute Bernoulli courruption parameters, assuming no duplicates,
+            # thus e.g. each occurence of a tail index represents a head to
+            # count for that tail.
+            hpt = _avg_count_per_r(tail_index, rel_type)
+            tph = _avg_count_per_r(head_index, rel_type)
+            self.tph_berns = tph / (tph + hpt)
         return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
 
     @torch.no_grad()
@@ -183,7 +179,6 @@ class KGEModel(torch.nn.Module):
         tail_index = tail_index.clone()
 
         if not self.bern:
-            print("Using no bern")
             # Random sample either `head_index` or `tail_index` (but not both):
             num_negatives = head_index.numel() // 2
 
@@ -194,10 +189,12 @@ class KGEModel(torch.nn.Module):
 
         # Bernoulli: decide whether to corrupt the head or tail proportional to
         # the number of heads per tail and tails per head for each relation.
-        hpt = _avg_count_per_r(tail_index, rel_type)
-        tph = _avg_count_per_r(head_index, rel_type)
-        berns = tph / (tph + hpt)
-        head_mask = berns[rel_type].bernoulli().type(torch.bool)
+        # I.e. if there are more tails per head than heads per tail, we should
+        # corrupt the head more often to get fewer false negatives.
+        assert self.tph_berns is not None, (
+            "KGEModel.loader() must be called with your training set use the"
+            " `bern` parameter.")
+        head_mask = self.tph_berns[rel_type].bernoulli().type(torch.bool)
         tail_mask = ~head_mask
         head_index[head_mask] = rnd_index[head_mask]
         tail_index[tail_mask] = rnd_index[tail_mask]
