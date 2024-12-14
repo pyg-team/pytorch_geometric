@@ -6,7 +6,7 @@ from torch_geometric.nn import TransD
 
 @pytest.mark.parametrize('channels_node_rel', [(16, 32), {32, 16}])
 @pytest.mark.parametrize('bern', [False, True])
-def test_transe(channels_node_rel, bern):
+def test_transd(channels_node_rel, bern):
     channels_node, channels_rel = channels_node_rel
     model = TransD(num_nodes=10, num_relations=5,
                    hidden_channels_node=channels_node,
