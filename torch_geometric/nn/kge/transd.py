@@ -117,7 +117,7 @@ class TransD(KGEModel):
 
         # Efficiently "multiply" non-square Identity with node.
         if self.hidden_channels_node >= self.hidden_channels_rel:
-            id_node = node[:, self.hidden_channels_rel:]
+            id_node = node[:, :self.hidden_channels_rel]
         else:
             id_node = torch.zeros(node.size(0), self.hidden_channels_rel,
                                   device=node.device)
