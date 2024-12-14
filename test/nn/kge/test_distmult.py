@@ -1,10 +1,13 @@
+import pytest
 import torch
 
 from torch_geometric.nn import DistMult
 
 
-def test_distmult():
-    model = DistMult(num_nodes=10, num_relations=5, hidden_channels=32)
+@pytest.mark.parametrize('bern', [False, True])
+def test_distmult(bern):
+    model = DistMult(num_nodes=10, num_relations=5, hidden_channels=32,
+                     bern=bern)
     assert str(model) == 'DistMult(10, num_relations=5, hidden_channels=32)'
 
     head_index = torch.tensor([0, 2, 4, 6, 8])

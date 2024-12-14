@@ -10,6 +10,9 @@ from torch_geometric.utils import scatter
 
 
 def _avg_count_per_r(x_idx, r_idx):
+    # Assume no duplicate triples, so e.g. each occurence of a tail index
+    # represents a different head to count for that tail.
+
     # Map the tuple (x_idx, r_idx) to unique indices in a new combined index.
     num_x = x_idx.max() + 1
     rx_idx = r_idx * num_x + x_idx
@@ -182,8 +185,6 @@ class KGEModel(torch.nn.Module):
         # the number of heads per tail and tails per head for each relation.
         # I.e. if there are more tails per head than heads per tail, we should
         # corrupt the head more often to get fewer false negatives.
-        # Assume no duplicate triples, so each occurence of a tail index
-        # represents a different head to count for that tail.
         hpt = _avg_count_per_r(tail_index, rel_type)
         tph = _avg_count_per_r(head_index, rel_type)
         berns = tph / (tph + hpt)

@@ -1,13 +1,19 @@
+import pytest
 import torch
 
 from torch_geometric.nn import TransD
 
 
-def test_transe():
-    model = TransD(num_nodes=10, num_relations=5, hidden_channels_node=16,
-                   hidden_channels_rel=32)
+@pytest.mark.parametrize('channels_node_rel', [(16, 32), {32, 16}])
+@pytest.mark.parametrize('bern', [False, True])
+def test_transe(channels_node_rel, bern):
+    channels_node, channels_rel = channels_node_rel
+    model = TransD(num_nodes=10, num_relations=5,
+                   hidden_channels_node=channels_node,
+                   hidden_channels_rel=channels_rel, bern=bern)
     assert str(model) == ('TransD(10, num_relations=5,'
-                          ' hidden_channels_node=16, hidden_channels_rel=32)')
+                          f' hidden_channels_node={channels_node},'
+                          f' hidden_channels_rel={channels_rel})')
 
     head_index = torch.tensor([0, 2, 4, 6, 8])
     rel_type = torch.tensor([0, 1, 2, 3, 4])
