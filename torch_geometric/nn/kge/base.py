@@ -37,7 +37,6 @@ class KGEModel(torch.nn.Module):
         hidden_channels: int,
         sparse: bool = False,
         bern: bool = False,
-        # bern: BernoulliInit = False,
     ):
         super().__init__()
 
@@ -45,7 +44,6 @@ class KGEModel(torch.nn.Module):
         self.num_relations = num_relations
         self.hidden_channels = hidden_channels
         self.bern = bern
-        self.tph_berns = None  # Initialized when loader() gets called.
 
         self.node_emb = Embedding(num_nodes, hidden_channels, sparse=sparse)
         self.rel_emb = Embedding(num_relations, hidden_channels, sparse=sparse)
@@ -103,13 +101,6 @@ class KGEModel(torch.nn.Module):
                 :obj:`batch_size`, :obj:`shuffle`, :obj:`drop_last`
                 or :obj:`num_workers`.
         """
-        if self.bern:
-            # Compute Bernoulli courruption parameters, assuming no duplicates,
-            # thus e.g. each occurence of a tail index represents a head to
-            # count for that tail.
-            hpt = _avg_count_per_r(tail_index, rel_type)
-            tph = _avg_count_per_r(head_index, rel_type)
-            self.tph_berns = tph / (tph + hpt)
         return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
 
     @torch.no_grad()
@@ -191,10 +182,12 @@ class KGEModel(torch.nn.Module):
         # the number of heads per tail and tails per head for each relation.
         # I.e. if there are more tails per head than heads per tail, we should
         # corrupt the head more often to get fewer false negatives.
-        assert self.tph_berns is not None, (
-            "KGEModel.loader() must be called with your training set use the"
-            " `bern` parameter.")
-        head_mask = self.tph_berns[rel_type].bernoulli().type(torch.bool)
+        # Assume no duplicate triples, so each occurence of a tail index
+        # represents a different head to count for that tail.
+        hpt = _avg_count_per_r(tail_index, rel_type)
+        tph = _avg_count_per_r(head_index, rel_type)
+        berns = tph / (tph + hpt)
+        head_mask = berns[rel_type].bernoulli().type(torch.bool)
         tail_mask = ~head_mask
         head_index[head_mask] = rnd_index[head_mask]
         tail_index[tail_mask] = rnd_index[tail_mask]
