@@ -30,6 +30,14 @@ class TransE(KGEModel):
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         kge_fb15k_237.py>`_.
 
+    This score is optimized with the :obj:`margin_ranking_loss` by creating
+    corrupted triplets. By default either the head or the tail of is corrupted
+    uniformly at random. When :obj:`bern=True`, the head or tail is chosen
+    proportional to the average number of heads per tail and tails per head for
+    the relation, as described in the `"Knowledge Graph Embedding by
+    Translating on Hyperplanes" <https://cdn.aaai.org/ojs/8870/
+    8870-13-12398-1-2-20201228.pdf>`_ paper.
+
     Args:
         num_nodes (int): The number of nodes/entities in the graph.
         num_relations (int): The number of relations in the graph.
@@ -40,6 +48,9 @@ class TransE(KGEModel):
             (default: :obj:`1.0`)
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
+        bern (bool, optional): If true, corrupt triplets using the Bernoulli
+            strategy.  Otherwise, corrupt the head or tail uniformly.
+            (default: :obj:`True`)
     """
     def __init__(
         self,
@@ -49,8 +60,10 @@ class TransE(KGEModel):
         margin: float = 1.0,
         p_norm: float = 1.0,
         sparse: bool = False,
+        bern: bool = False,
     ):
-        super().__init__(num_nodes, num_relations, hidden_channels, sparse)
+        super().__init__(num_nodes, num_relations, hidden_channels, sparse,
+                         bern)
 
         self.p_norm = p_norm
         self.margin = margin

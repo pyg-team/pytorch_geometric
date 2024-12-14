@@ -113,17 +113,17 @@ class TransD(KGEModel):
 
         # (node^T node_p) rel_p, using efficient batch inner product.
         # TODO inner = (node * node_p).sum(dim=-1, keepdim=True)
-        nt_np_rp = (node.unsqueeze(1) @ node_p.unsqueeze(2)).squeeze(2) * rel_p
+        npt_n_rp = (node_p.unsqueeze(1) @ node.unsqueeze(2)).squeeze(2) * rel_p
 
-        # Efficiently "multiply" node with non-square Identity.
-        if self.hidden_channels_node > self.hidden_channels_rel:
-            id_node = node[:, self.hidden_channels_rel]
+        # Efficiently "multiply" non-square Identity with node.
+        if self.hidden_channels_node >= self.hidden_channels_rel:
+            id_node = node[:, self.hidden_channels_rel:]
         else:
             id_node = torch.zeros(node.size(0), self.hidden_channels_rel,
                                   device=node.device)
             id_node[:, :self.hidden_channels_node] = node
 
-        return nt_np_rp + id_node
+        return npt_n_rp + id_node
 
     def forward(
         self,
