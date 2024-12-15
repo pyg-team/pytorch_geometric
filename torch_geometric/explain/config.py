@@ -132,10 +132,10 @@ class ModelConfig(CastMixin):
                 - :obj:`"edge"`: An edge-level prediction model.
 
                 - :obj:`"graph"`: A graph-level prediction model.
-                
-        prediction_threshold (float): The number used as a threshold 
+
+        prediction_threshold (float): The number used as a threshold
             to obtain the target from the explained model.
-            Defaults to 0.5 for :obj:`"binary_classification"` and 
+            Defaults to 0.5 for :obj:`"binary_classification"` and
             0.0 for :obj:`"multiclass_classification"`.
 
         return_type (ModelReturnType or str, optional): The return type of the
@@ -152,21 +152,19 @@ class ModelConfig(CastMixin):
     return_type: ModelReturnType
     prediction_threshold: float
 
-    def __init__(
-        self,
-        mode: Union[ModelMode, str],
-        task_level: Union[ModelTaskLevel, str],
-        return_type: Optional[Union[ModelReturnType, str]] = None,
-        prediction_threshold: Optional[float] = None
-    ):
+    def __init__(self, mode: Union[ModelMode,
+                                   str], task_level: Union[ModelTaskLevel,
+                                                           str],
+                 return_type: Optional[Union[ModelReturnType, str]] = None,
+                 prediction_threshold: Optional[float] = None):
         self.mode = ModelMode(mode)
         self.task_level = ModelTaskLevel(task_level)
 
         if return_type is None and self.mode == ModelMode.regression:
             return_type = ModelReturnType.raw
-        
+
         self.return_type = ModelReturnType(return_type)
-        
+
         if prediction_threshold is None and return_type == ModelReturnType.probs:
             prediction_threshold = 0.5
         elif prediction_threshold is None and return_type == ModelReturnType.raw:
@@ -175,7 +173,7 @@ class ModelConfig(CastMixin):
             prediction_threshold = -1.0
         else:
             prediction_threshold = 0.5
-        
+
         self.prediction_threshold = prediction_threshold
         if (self.mode == ModelMode.regression
                 and self.return_type != ModelReturnType.raw):

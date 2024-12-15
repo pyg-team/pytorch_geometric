@@ -20,7 +20,6 @@ from torch_geometric.explain.config import (
     MaskType,
     ModelConfig,
     ModelMode,
-    ModelReturnType,
     ThresholdConfig,
 )
 from torch_geometric.typing import EdgeType, NodeType
@@ -260,7 +259,8 @@ class Explainer:
         predicted class label.
         """
         if self.model_config.mode == ModelMode.binary_classification:
-            return (prediction > self.model_config.prediction_threshold).long().view(-1)
+            return (prediction
+                    > self.model_config.prediction_threshold).long().view(-1)
 
         if self.model_config.mode == ModelMode.multiclass_classification:
             return prediction.argmax(dim=-1)

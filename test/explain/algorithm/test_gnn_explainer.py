@@ -75,7 +75,7 @@ edge_index = torch.tensor([
 edge_attr = torch.randn(edge_index.size(1), 5)
 batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
-prediction_threshold=[None, -1, 0.2, 0.5, 1.0, 5]
+prediction_threshold = [None, -1, 0.2, 0.5, 1.0, 5]
 
 
 @pytest.mark.parametrize('Conv', [GCNConv, TransformerConv])
