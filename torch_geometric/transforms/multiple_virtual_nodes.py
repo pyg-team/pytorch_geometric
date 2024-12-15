@@ -1,6 +1,7 @@
 import copy
-import numpy as np
 
+import numpy as np
+import pymetis
 import torch
 from torch import Tensor
 
@@ -8,7 +9,6 @@ from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
-import pymetis
 
 @functional_transform('multiple_virtual_nodes')
 class MultipleVirtualNodes(BaseTransform):
@@ -32,11 +32,7 @@ class MultipleVirtualNodes(BaseTransform):
 
     modified from VirtualNode class
     """
-    def __init__(
-        self,
-        n_to_add: int,
-        clustering: bool
-    ) -> None:
+    def __init__(self, n_to_add: int, clustering: bool) -> None:
         self.n = n_to_add
         self.clustering = clustering
 
@@ -58,18 +54,27 @@ class MultipleVirtualNodes(BaseTransform):
             assignments = np.array_split(permute, self.n)
         else:
             # Run METIS, as suggested in the paper. each node is assigned to 1 partition
-            adjacency_list = [np.array([], dtype=int) for _ in range(num_nodes)]
+            adjacency_list = [
+                np.array([], dtype=int) for _ in range(num_nodes)
+            ]
             for node1, node2 in zip(row, col):
-                adjacency_list[node1.item()] = np.append(adjacency_list[node1.item()], node2.item())
+                adjacency_list[node1.item()] = np.append(
+                    adjacency_list[node1.item()], node2.item())
             # membership is a list like [1, 1, 1, 0, 1, 0,...] for self.n = 2
-            n_cuts, membership = pymetis.part_graph(self.n, adjacency=adjacency_list)
+            n_cuts, membership = pymetis.part_graph(self.n,
+                                                    adjacency=adjacency_list)
             membership = np.array(membership)
-            assignments = [np.where(membership == v_node)[0] for v_node in range(self.n)]
+            assignments = [
+                np.where(membership == v_node)[0] for v_node in range(self.n)
+            ]
 
         arange = torch.from_numpy(np.concatenate(assignments))
         # accounts for uneven splitting
-        full = torch.cat([torch.full((len(assignments[i]),), num_nodes + i, device=row.device) for i in range(self.n)],
-                         dim=-1)
+        full = torch.cat([
+            torch.full(
+                (len(assignments[i]), ), num_nodes + i, device=row.device)
+            for i in range(self.n)
+        ], dim=-1)
 
         # Update edge index
         row = torch.cat([row, arange, full], dim=0)

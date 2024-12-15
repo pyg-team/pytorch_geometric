@@ -1,15 +1,17 @@
+import copy
+
 import torch
 
 from torch_geometric.data import Data
 from torch_geometric.transforms import MultipleVirtualNodes
 
-import copy 
-
 # modified the tests in test_virtual_node.py
+
 
 def test_multiple_virtual_nodes():
     print("Test 1: Random assignments")
-    assert str(MultipleVirtualNodes(n_to_add=3, clustering=False)) == 'MultipleVirtualNodes()'
+    assert str(MultipleVirtualNodes(
+        n_to_add=3, clustering=False)) == 'MultipleVirtualNodes()'
 
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[2, 0, 2], [3, 1, 0]])
@@ -30,7 +32,9 @@ def test_multiple_virtual_nodes():
     assert data.x[4:].abs().sum() == 0
 
     first_3_col = [row[:3] for row in data.edge_index.tolist()]
-    assert first_3_col == [[2, 0, 2], [3, 1, 0]] # check that the original edges are unchanged
+    assert first_3_col == [[2, 0, 2],
+                           [3, 1,
+                            0]]  # check that the original edges are unchanged
     assert data.edge_index.size() == (2, 11)
 
     virtual_nodes = {4, 5, 6}
@@ -78,7 +82,9 @@ def test_multiple_virtual_nodes():
     assert data.x[4:].abs().sum() == 0
 
     first_3_col = [row[:3] for row in data.edge_index.tolist()]
-    assert first_3_col == [[2, 0, 2], [3, 1, 0]] # check that the original edges are unchanged
+    assert first_3_col == [[2, 0, 2],
+                           [3, 1,
+                            0]]  # check that the original edges are unchanged
     assert data.edge_index.size() == (2, 11)
     validate_edge_index(data.edge_index.tolist())
 
