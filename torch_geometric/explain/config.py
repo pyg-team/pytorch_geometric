@@ -165,13 +165,13 @@ class ModelConfig(CastMixin):
 
         self.return_type = ModelReturnType(return_type)
 
-        if (prediction_threshold is None 
-            and return_type == ModelReturnType.probs):
+        if (prediction_threshold is None
+                and return_type == ModelReturnType.probs):
             prediction_threshold = 0.5
-        elif (prediction_threshold is None 
+        elif (prediction_threshold is None
               and return_type == ModelReturnType.raw):
             prediction_threshold = 0.0
-        elif (prediction_threshold is None 
+        elif (prediction_threshold is None
               and return_type == ModelReturnType.log_probs):
             prediction_threshold = -1.0
         else:
