@@ -13,7 +13,7 @@ class TransH(KGEModel):
 
     :class:`TransH` models relations as translation from head to tail
     entities , where for each relation type, there is a hyperplane that the
-    embeddings are projected onto. The scoring function is defined as:
+    head/tail entites are projected onto. Such that:
 
     .. math::
         \mathbf{h}_r = \mathbf{h} - \mathbf{w}_r^T\mathbf{h}\mathbf{w}_r,
