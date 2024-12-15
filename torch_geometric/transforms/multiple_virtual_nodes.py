@@ -1,13 +1,13 @@
 import copy
-import numpy as np
 
+import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data import ClusterData, Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.data import ClusterData, ClusterLoader 
+
 
 @functional_transform('multiple_virtual_nodes')
 class MultipleVirtualNodes(BaseTransform):
@@ -29,18 +29,14 @@ class MultipleVirtualNodes(BaseTransform):
     n_to_add: number of virtual nodes (int). default = 1
     clustering: whether the clustering algorithm is used to assign virtual nodes (bool). default = False, means that assignment is random.
     recursive: only used if clustering is set to True.If set to :obj:`True`, will use multilevel recursive bisection instead of multilevel k-way partitioning. default = False
-    
+
     modified from VirtualNode class
     """
-    def __init__(
-        self,
-        n_to_add: int,
-        clustering: bool=False, 
-        recursive: bool=False 
-    ) -> None:
+    def __init__(self, n_to_add: int, clustering: bool = False,
+                 recursive: bool = False) -> None:
         self.n = n_to_add
         self.clustering = clustering
-        self.recursive = recursive 
+        self.recursive = recursive
 
     def forward(self, data: Data) -> Data:
         assert data.edge_index is not None
@@ -60,7 +56,8 @@ class MultipleVirtualNodes(BaseTransform):
             assignments = np.array_split(permute, self.n)
         else:
             # run clustering algorithm to assign virtual node i to nodes in cluster i
-            clustered_data = ClusterData(data, self.n, recursive=self.recursive)
+            clustered_data = ClusterData(data, self.n,
+                                         recursive=self.recursive)
             partition = clustered_data.partition
             assignments = []
             for i in range(self.n):
@@ -69,15 +66,20 @@ class MultipleVirtualNodes(BaseTransform):
                 end = int(partition.partptr[i + 1])
                 cluster_nodes = partition.node_perm[start:end]
                 if len(cluster_nodes) == 0:
-                    print(f"Cluster {i + 1} is empty after running the METIS algorithm with recursion set to {self.recursive}. Decreasing number of virtual nodes added to {self.n - 1}.")
-                    self.n -= 1 # decrease the number of virtual nodes to add 
-                    continue 
+                    print(
+                        f"Cluster {i + 1} is empty after running the METIS algorithm with recursion set to {self.recursive}. Decreasing number of virtual nodes added to {self.n - 1}."
+                    )
+                    self.n -= 1  # decrease the number of virtual nodes to add
+                    continue
                 assignments.append(np.array(cluster_nodes))
 
         arange = torch.from_numpy(np.concatenate(assignments))
         # accounts for uneven splitting
-        full = torch.cat([torch.full((len(assignments[i]),), num_nodes + i, device=row.device) for i in range(self.n)],
-                         dim=-1)
+        full = torch.cat([
+            torch.full(
+                (len(assignments[i]), ), num_nodes + i, device=row.device)
+            for i in range(self.n)
+        ], dim=-1)
 
         # Update edge index
         row = torch.cat([row, arange, full], dim=0)

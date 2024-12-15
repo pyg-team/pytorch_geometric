@@ -1,16 +1,17 @@
+import copy
 
 import torch
 
 from torch_geometric.data import Data
 from torch_geometric.transforms import MultipleVirtualNodes
 
-import copy 
-
 # modified the tests in test_virtual_node.py
+
 
 def test_multiple_virtual_nodes():
     print("Test 1: Random assignments")
-    assert str(MultipleVirtualNodes(n_to_add=3, clustering=False)) == 'MultipleVirtualNodes()'
+    assert str(MultipleVirtualNodes(
+        n_to_add=3, clustering=False)) == 'MultipleVirtualNodes()'
 
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[2, 0, 2], [3, 1, 0]])
@@ -31,11 +32,11 @@ def test_multiple_virtual_nodes():
     assert data.x[4:].abs().sum() == 0
 
     first_3_col = [row[:3] for row in data.edge_index.tolist()]
-    assert first_3_col == [[2, 0, 2], [3, 1, 0]] # check that the original edges are unchanged
+    assert first_3_col == [[2, 0, 2],
+                           [3, 1,
+                            0]]  # check that the original edges are unchanged
     num_total_edges = 11
     assert data.edge_index.size() == (2, num_total_edges)
-
-    virtual_nodes = {4, 5, 6}
 
     def validate_edge_index(edge_index, n_original_nodes, n_added_nodes):
         source_nodes = edge_index[0][n_original_nodes - 1:num_total_edges]
@@ -43,7 +44,9 @@ def test_multiple_virtual_nodes():
         source_counts = {i: 0 for i in range(n_original_nodes + n_added_nodes)}
         target_counts = {i: 0 for i in range(n_original_nodes + n_added_nodes)}
         original_node_indices = [i for i in range(n_original_nodes)]
-        virtual_node_indices = [n_original_nodes + i for i in range(n_added_nodes)]
+        virtual_node_indices = [
+            n_original_nodes + i for i in range(n_added_nodes)
+        ]
 
         for i in range(len(source_nodes)):
             source_counts[source_nodes[i]] += 1
@@ -57,19 +60,19 @@ def test_multiple_virtual_nodes():
 
         total_virtual_source_count = 0
         total_virtual_target_count = 0
-        # check virtual nodes' edges have been added in the correct way 
-        for i in range(n_added_nodes): 
-            assert source_counts[n_original_nodes + i] > 0 
+        # check virtual nodes' edges have been added in the correct way
+        for i in range(n_added_nodes):
+            assert source_counts[n_original_nodes + i] > 0
             assert source_counts[n_original_nodes + i] < 3
             assert target_counts[n_original_nodes + i] > 0
             assert target_counts[n_original_nodes + i] < 3
             total_virtual_source_count += source_counts[n_original_nodes + i]
             total_virtual_target_count += target_counts[n_original_nodes + i]
-        # check original nodes 
-        for j in range(n_original_nodes): 
+        # check original nodes
+        for j in range(n_original_nodes):
             assert source_counts[j] == 1
             assert target_counts[j] == 1
-        
+
         assert total_virtual_source_count == n_original_nodes
         assert total_virtual_target_count == n_original_nodes
 
@@ -89,7 +92,7 @@ def test_multiple_virtual_nodes():
 
     print("Test 1 passed\nTest 2: Clustering Assignments")
 
-    # Test 2: clustering assignments 
+    # Test 2: clustering assignments
     data = MultipleVirtualNodes(n_to_add=2, clustering=True)(original_data)
 
     assert len(data) == 6
@@ -98,7 +101,9 @@ def test_multiple_virtual_nodes():
     assert data.x[4:].abs().sum() == 0
 
     first_3_col = [row[:3] for row in data.edge_index.tolist()]
-    assert first_3_col == [[2, 0, 2], [3, 1, 0]] # check that the original edges are unchanged
+    assert first_3_col == [[2, 0, 2],
+                           [3, 1,
+                            0]]  # check that the original edges are unchanged
     assert data.edge_index.size() == (2, num_total_edges)
     validate_edge_index(data.edge_index.tolist(), 4, 2)
 
@@ -114,9 +119,11 @@ def test_multiple_virtual_nodes():
 
     assert data.edge_type.tolist() == [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
 
-    print("Test 2 passed\nTest 3: Clustering Assignments with an empty cluster. Should add 2 virtual nodes instead of the specified 3")
+    print(
+        "Test 2 passed\nTest 3: Clustering Assignments with an empty cluster. Should add 2 virtual nodes instead of the specified 3"
+    )
 
-    # Test 2: clustering assignments 
+    # Test 2: clustering assignments
     data = MultipleVirtualNodes(n_to_add=3, clustering=True)(original_data)
 
     assert len(data) == 6
@@ -125,7 +132,9 @@ def test_multiple_virtual_nodes():
     assert data.x[4:].abs().sum() == 0
 
     first_3_col = [row[:3] for row in data.edge_index.tolist()]
-    assert first_3_col == [[2, 0, 2], [3, 1, 0]] # check that the original edges are unchanged
+    assert first_3_col == [[2, 0, 2],
+                           [3, 1,
+                            0]]  # check that the original edges are unchanged
     assert data.edge_index.size() == (2, num_total_edges)
     validate_edge_index(data.edge_index.tolist(), 4, 2)
 
