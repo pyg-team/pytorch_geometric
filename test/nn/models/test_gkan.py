@@ -1,4 +1,5 @@
 import torch
+
 from torch_geometric.nn.models.gkan import GKANModel
 
 
@@ -26,8 +27,7 @@ def test_gkan() -> None:
         num_layers=num_layers,
         num=num,  # Spline grid intervals
         k=k,  # Spline polynomial order
-        architecture=architecture
-    )
+        architecture=architecture)
 
     # Check model string representation
     assert str(model).startswith('GKANModel')

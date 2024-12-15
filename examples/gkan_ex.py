@@ -1,6 +1,8 @@
 import os.path as osp
+
 import torch
 from torch.nn import CrossEntropyLoss
+
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn.models.gkan import GKANModel
 
@@ -54,7 +56,8 @@ def test():
     model.eval()
     out = model(data.x, data.edge_index)
     pred = out.argmax(dim=1)
-    acc = (pred[data.test_mask] == data.y[data.test_mask]).sum().item() / data.test_mask.sum().item()
+    acc = (pred[data.test_mask] == data.y[data.test_mask]
+           ).sum().item() / data.test_mask.sum().item()
     return acc
 
 
