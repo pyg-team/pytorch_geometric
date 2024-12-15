@@ -13,26 +13,35 @@ class TransD(KGEModel):
     Mapping Matrix" <https://aclanthology.org/P15-1067.pdf>`_ paper.
 
     :class:`TransD` models relations as a translation from head to tail
-    entities, after a mapping matrix has been applied, such that
+    entities, after a learned mapping matrix has been applied, such that
 
     .. math::
-        \mathbf{h}_\perp + \mathbf{r} \approx \mathbf{t}_perp,
+        \mathbf{h}_\perp + \mathbf{r} \approx \mathbf{t}_\perp,
 
     where
-    .. math::
-        \mathbf{h}_\perp = \mathbf{M}_{rh} h
-        \mathbf{t}_\perp = \mathbf{M}_{th} t
-        \mathbf{M}_{rh} = r_p h_p^\top + \mathbf{I}^{m \times n}
-        \mathbf{M}_{rt} = r_p t_p^\top + \mathbf{I}^{m \times n}
 
-    and :math:`h,  t, h_p, t_p \in \mathcal{R}^n` and
-    :math:`r, r_p \in \mathcal{R}^m` are all learned embeddings.
+    .. math::
+        \mathbf{h}_\perp = \mathbf{M}_{rh} \mathbf{h}
+
+    .. math::
+        \mathbf{t}_\perp = \mathbf{M}_{th} \mathbf{t}
+
+    .. math::
+        \mathbf{M}_{rh} = r_\text{proj} h_\text{proj}^\top +
+        \mathbf{I}^{m \times n}
+
+    .. math::
+        \mathbf{M}_{rt} = r_\text{proj} t_\text{proj}^\top +
+        \mathbf{I}^{m \times n}
+
+    and :math:`h,  t, h_\text{proj}, t_\text{proj} \in \mathcal{R}^n`,
+    :math:`r, r_\text{proj} \in \mathcal{R}^m` are all learned embeddings.
 
     Similar to :obj:`TransE`, this results in the the scoring function:
 
     .. math::
         d(h_\perp, r, t_\perp) =
-            - {\| \mathbf{h}_\perp + \mathbf{r} - \mathbf{t}_\perp \|}_p
+        - {\| \mathbf{h}_\perp + \mathbf{r} - \mathbf{t}_\perp \|}_p
 
     This score is optimized with the :obj:`margin_ranking_loss` by creating
     corrupted triplets. By default either the head or the tail of is corrupted
