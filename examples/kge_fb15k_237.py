@@ -37,7 +37,6 @@ model_arg_map['transd'] = {
     'bern': args.bern,
 }
 
-model_arg_map.update()
 model = model_map[args.model](
     num_nodes=train_data.num_nodes,
     num_relations=train_data.num_edge_types,

@@ -91,11 +91,11 @@ class TransD(KGEModel):
         torch.nn.init.uniform_(self.node_emb.weight, -bound, bound)
         bound = 6. / math.sqrt(self.hidden_channels_rel)
         torch.nn.init.uniform_(self.rel_emb.weight, -bound, bound)
-        # Achieve M_{rel node} initialized as Identity.
+        # Achieve M_{rel node} initialized as Identity as in paper.
         torch.nn.init.zeros_(self.node_proj_emb.weight)
         torch.nn.init.zeros_(self.rel_proj_emb.weight)
 
-    def _enforce_norm(self, emb):
+    def _clamp_norm(self, emb):
         # Enforce norms in emb are <= 1.
 
         norm = emb.norm(p=self.p_norm, dim=-1, keepdim=True)
@@ -111,9 +111,9 @@ class TransD(KGEModel):
         # As:
         #   (node_p^T node) rel_p + I node
 
-        # (node^T node_p) rel_p, using efficient batch inner product.
-        # TODO inner = (node * node_p).sum(dim=-1, keepdim=True)
-        npt_n_rp = (node_p.unsqueeze(1) @ node.unsqueeze(2)).squeeze(2) * rel_p
+        # (node^T node_p) rel_p. This inner product impl seems to be a bit
+        # faster than BMM on Colab's T4s.
+        npt_n_rp = (node * node_p).sum(dim=-1, keepdim=True) * rel_p
 
         # Efficiently "multiply" non-square Identity with node.
         if self.hidden_channels_node >= self.hidden_channels_rel:
@@ -142,11 +142,11 @@ class TransD(KGEModel):
 
         # Unlike TransE, which enforces head and tail norms == 1, TransD
         # enforces head, head_proj, tail, tail_proj, and rel norms <= 1.
-        head = self._enforce_norm(head)
-        head_proj = self._enforce_norm(head_proj)
-        rel = self._enforce_norm(rel)
-        tail = self._enforce_norm(tail)
-        tail_proj = self._enforce_norm(tail_proj)
+        head = self._clamp_norm(head)
+        head_proj = self._clamp_norm(head_proj)
+        rel = self._clamp_norm(rel)
+        tail = self._clamp_norm(tail)
+        tail_proj = self._clamp_norm(tail_proj)
 
         # Compute the projected vectors, notated with \perp.
         head_perp = self._compute_perp(head_proj, head, rel_proj)
