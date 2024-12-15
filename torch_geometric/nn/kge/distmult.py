@@ -17,6 +17,14 @@ class DistMult(KGEModel):
     .. math::
         d(h, r, t) = < \mathbf{e}_h,  \mathbf{e}_r, \mathbf{e}_t >
 
+    This score is optimized with the :obj:`margin_ranking_loss` by creating
+    corrupted triplets. By default either the head or the tail of is corrupted
+    uniformly at random. When :obj:`bern=True`, the head or tail is chosen
+    proportional to the average number of heads per tail and tails per head for
+    the relation, as described in the `"Knowledge Graph Embedding by
+    Translating on Hyperplanes" <https://cdn.aaai.org/ojs/8870/
+    8870-13-12398-1-2-20201228.pdf>`_ paper.
+
     .. note::
 
         For an example of using the :class:`DistMult` model, see
@@ -40,8 +48,10 @@ class DistMult(KGEModel):
         hidden_channels: int,
         margin: float = 1.0,
         sparse: bool = False,
+        bern: bool = False,
     ):
-        super().__init__(num_nodes, num_relations, hidden_channels, sparse)
+        super().__init__(num_nodes, num_relations, hidden_channels, sparse,
+                         bern)
 
         self.margin = margin
 

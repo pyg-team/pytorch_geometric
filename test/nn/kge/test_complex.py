@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.nn import ComplEx
@@ -37,8 +38,10 @@ def test_complex_scoring():
     assert score.tolist() == [58., 8.]
 
 
-def test_complex():
-    model = ComplEx(num_nodes=10, num_relations=5, hidden_channels=32)
+@pytest.mark.parametrize('bern', [False, True])
+def test_complex(bern):
+    model = ComplEx(num_nodes=10, num_relations=5, hidden_channels=32,
+                    bern=bern)
     assert str(model) == 'ComplEx(10, num_relations=5, hidden_channels=32)'
 
     head_index = torch.tensor([0, 2, 4, 6, 8])
