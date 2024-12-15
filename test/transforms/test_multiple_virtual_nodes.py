@@ -74,6 +74,9 @@ def test_multiple_virtual_nodes():
     assert torch.allclose(data.x[:4], x)
     assert data.x[4:].abs().sum() == 0
 
+    first_3_col = [row[:3] for row in data.edge_index.tolist()]
+    assert first_3_col == edge_index # check that the original edges are unchanged
+    assert data.edge_index.size() == (2, 11)
     validate_edge_index(data.edge_index.tolist())
 
     assert data.edge_weight.size() == (11, )
