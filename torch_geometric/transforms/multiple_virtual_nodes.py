@@ -63,6 +63,7 @@ class MultipleVirtualNodes(BaseTransform):
                 adjacency_list[node1.item()] = np.append(adjacency_list[node1.item()], node2.item())
             # membership is a list like [1, 1, 1, 0, 1, 0,...] for self.n = 2
             n_cuts, membership = pymetis.part_graph(self.n, adjacency=adjacency_list)
+            membership = np.array(membership)
             assignments = [np.where(membership == v_node)[0] for v_node in range(self.n)]
 
         arange = torch.from_numpy(np.concatenate(assignments))

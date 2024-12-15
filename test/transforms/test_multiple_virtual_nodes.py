@@ -3,11 +3,13 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.transforms import MultipleVirtualNodes
 
+import copy 
+
 # modified the tests in test_virtual_node.py
 
 def test_multiple_virtual_nodes():
     print("Test 1: Random assignments")
-    assert str(MultipleVirtualNodes()) == 'MultipleVirtualNodes()'
+    assert str(MultipleVirtualNodes(n_to_add=3, clustering=False)) == 'MultipleVirtualNodes()'
 
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[2, 0, 2], [3, 1, 0]])
@@ -17,6 +19,7 @@ def test_multiple_virtual_nodes():
     data = Data(x=x, edge_index=edge_index, edge_weight=edge_weight,
                 edge_attr=edge_attr, num_nodes=x.size(0))
 
+    original_data = copy.deepcopy(data)
     # random assignments and uneven split
     data = MultipleVirtualNodes(n_to_add=3, clustering=False)(data)
 
@@ -27,7 +30,7 @@ def test_multiple_virtual_nodes():
     assert data.x[4:].abs().sum() == 0
 
     first_3_col = [row[:3] for row in data.edge_index.tolist()]
-    assert first_3_col == edge_index # check that the original edges are unchanged
+    assert first_3_col == [[2, 0, 2], [3, 1, 0]] # check that the original edges are unchanged
     assert data.edge_index.size() == (2, 11)
 
     virtual_nodes = {4, 5, 6}
@@ -65,17 +68,17 @@ def test_multiple_virtual_nodes():
 
     print("Test 1 passed\nTest 2: Clustering Assignments")
 
-    # clustering assignments and uneven split
-    data = MultipleVirtualNodes(n_to_add=3, clustering=True)(data)
+    # Test 2: clustering assignments and uneven split
+    data = MultipleVirtualNodes(n_to_add=3, clustering=True)(original_data)
 
     assert len(data) == 6
-
+    print(data.x)
     assert data.x.size() == (7, 16)
     assert torch.allclose(data.x[:4], x)
     assert data.x[4:].abs().sum() == 0
 
     first_3_col = [row[:3] for row in data.edge_index.tolist()]
-    assert first_3_col == edge_index # check that the original edges are unchanged
+    assert first_3_col == [[2, 0, 2], [3, 1, 0]] # check that the original edges are unchanged
     assert data.edge_index.size() == (2, 11)
     validate_edge_index(data.edge_index.tolist())
 
@@ -90,3 +93,8 @@ def test_multiple_virtual_nodes():
     assert data.num_nodes == 7
 
     assert data.edge_type.tolist() == [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
+
+
+if __name__ == '__main__':
+    test_multiple_virtual_nodes()
+    print("All tests passed successfully!")
