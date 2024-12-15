@@ -1,7 +1,14 @@
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Conv2d, Dropout, BatchNorm2d, BatchNorm1d, Dropout2d, Parameter
+from torch.nn import (
+    BatchNorm1d,
+    BatchNorm2d,
+    Conv2d,
+    Dropout,
+    Dropout2d,
+    Parameter,
+)
 
 from torch_geometric.nn.kge import KGEModel
 
@@ -127,7 +134,7 @@ class ConvE(KGEModel):
         # For training, only use scores for the target tail entities
         if self.training:
             x = torch.gather(x, 1, tail_index.unsqueeze(-1)).squeeze(-1)
-        
+
         return x
 
     def loss(
@@ -144,4 +151,4 @@ class ConvE(KGEModel):
         neg_target = torch.zeros_like(neg_score)
         target = torch.cat([pos_target, neg_target], dim=0)
 
-        return F.binary_cross_entropy_with_logits(scores, target) 
+        return F.binary_cross_entropy_with_logits(scores, target)

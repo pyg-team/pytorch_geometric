@@ -35,4 +35,4 @@ def test_conve():
         mean_rank, mrr, hits = model.test(h, r, t, batch_size=5, log=False)
         assert 0 <= mean_rank <= 10
         assert 0 < mrr <= 1
-        assert hits == 1.0 
+        assert hits == 1.0
