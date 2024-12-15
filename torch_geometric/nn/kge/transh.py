@@ -63,10 +63,9 @@ class TransH(KGEModel):
         torch.nn.init.xavier_uniform_(self.rel_normals.weight)
 
     def project(self, emb: Tensor, normal: Tensor) -> Tensor:
-        '''
-        Project entity embeddings onto the hyperplane defined by the
+        """Project entity embeddings onto the hyperplane defined by the
         relation type.
-        '''
+        """
         norm = F.normalize(normal, p=2, dim=-1)
         return emb - (emb * norm).sum(dim=-1, keepdim=True) * norm
 
