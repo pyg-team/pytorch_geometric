@@ -4,6 +4,9 @@ from typing import List, Optional, Tuple
 
 import torch
 import torch.multiprocessing as mp
+import spacy
+import coreferee
+import re
 
 CLIENT_INITD = False
 
@@ -46,6 +49,9 @@ class TXT2KG():
         self.relevant_triples = {}
         self.total_chars_parsed = 0
         self.time_to_parse = 0.0
+        # initializing for 'en' right now. We can add multi-lingual capabilities in future.
+        self.nlp = spacy.load("en_core_web_lg")
+        self.nlp.add_pipe('coreferee')
 
     def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
@@ -71,6 +77,7 @@ class TXT2KG():
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
+        resolved_txt = corefernce_resolution(txt, pipeline=self.nlp)
         chunks = chunk_text(txt, chunk_size=self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
@@ -234,3 +241,43 @@ def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
         text = text[best_split:].lstrip()
 
     return chunks
+
+def corefernce_resolution(text: str, nlp_language_pipeline: spacy.language.Language) -> str:
+    """Performs coreference resolution on input text using spaCy's coreferee.
+    
+    Resolves pronouns and other references to their full entity mentions to improve
+    knowledge graph extraction. Also cleans up text formatting post resolution.
+
+    Args:
+        text (str): Input text to perform coreference resolution on
+        nlp_language_pipeline (spacy.language.Language): Initialized spaCy pipeline with coreferee
+
+    Returns:
+        str: Text with coreferences resolved and formatting cleaned up
+    """
+    # Process the text with the NLP pipeline
+    doc = nlp_language_pipeline(text)
+    
+    # Resolve coreferences
+    resolved_text = ""
+    for token in doc:
+        repres = doc._.coref_chains.resolve(token)
+        if repres:
+            resolved_text += " " + " and ".join([t.text for t in repres])
+        else:
+            resolved_text += " " + token.text
+           
+    
+    # Replace multiple newlines with a period
+    resolved_text = re.sub(r'\n+', '.', resolved_text)
+    
+    # Remove references like [1], [2], etc.
+    resolved_text = re.sub(r'\[\d+\]', ' ', resolved_text)
+
+    # Remove spaces before commas and periods
+    #text = re.sub(r'\s+([,.])', r'\1', text)
+
+    # Remove spaces before all punctuation characters
+    resolved_text = re.sub(r'\s+([^\w\s])', r'\1', resolved_text)
+
+    return resolved_text
