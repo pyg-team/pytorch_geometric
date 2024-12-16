@@ -1,12 +1,11 @@
 import os
+import re
 import time
 from typing import List, Optional, Tuple
 
+import spacy
 import torch
 import torch.multiprocessing as mp
-import spacy
-import coreferee
-import re
 
 CLIENT_INITD = False
 
@@ -242,9 +241,11 @@ def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
 
     return chunks
 
-def corefernce_resolution(text: str, nlp_language_pipeline: spacy.language.Language) -> str:
+
+def corefernce_resolution(
+        text: str, nlp_language_pipeline: spacy.language.Language) -> str:
     """Performs coreference resolution on input text using spaCy's coreferee.
-    
+
     Resolves pronouns and other references to their full entity mentions to improve
     knowledge graph extraction. Also cleans up text formatting post resolution.
 
@@ -257,7 +258,7 @@ def corefernce_resolution(text: str, nlp_language_pipeline: spacy.language.Langu
     """
     # Process the text with the NLP pipeline
     doc = nlp_language_pipeline(text)
-    
+
     # Resolve coreferences
     resolved_text = ""
     for token in doc:
@@ -266,11 +267,10 @@ def corefernce_resolution(text: str, nlp_language_pipeline: spacy.language.Langu
             resolved_text += " " + " and ".join([t.text for t in repres])
         else:
             resolved_text += " " + token.text
-           
-    
+
     # Replace multiple newlines with a period
     resolved_text = re.sub(r'\n+', '.', resolved_text)
-    
+
     # Remove references like [1], [2], etc.
     resolved_text = re.sub(r'\[\d+\]', ' ', resolved_text)
 
