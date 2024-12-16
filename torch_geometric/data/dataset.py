@@ -235,7 +235,8 @@ class Dataset(torch.utils.data.Dataset):
 
     def _process(self):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
-        if osp.exists(f) and torch.load(f) != _repr(self.pre_transform):
+        if osp.exists(f) and torch.load(f, weights_only=False) != _repr(
+                self.pre_transform):
             warnings.warn(
                 "The `pre_transform` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
@@ -243,7 +244,8 @@ class Dataset(torch.utils.data.Dataset):
                 "`force_reload=True` explicitly to reload the dataset.")
 
         f = osp.join(self.processed_dir, 'pre_filter.pt')
-        if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
+        if osp.exists(f) and torch.load(f, weights_only=False) != _repr(
+                self.pre_filter):
             warnings.warn(
                 "The `pre_filter` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
@@ -381,7 +383,7 @@ class Dataset(torch.utils.data.Dataset):
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
         The returned instance can then be used with :pyg:`PyG's` built-in
-        :class:`DataPipes` for baching graphs as follows:
+        :class:`DataPipes` for batching graphs as follows:
 
         .. code-block:: python
 

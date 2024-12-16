@@ -44,6 +44,7 @@ from pylibwholegraph.torch.initialize import init as wm_init
 from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric
+from torch_geometric.io import fs
 
 # Allow computation on objects that are larger than GPU memory
 # https://docs.rapids.ai/api/cudf/stable/developer_guide/library_design/#spilling-to-host-memory
@@ -138,14 +139,14 @@ def load_partitioned_data(rank, edge_path, feature_path, label_path, meta_path,
     split_idx = {}
     for split in ['train', 'test', 'valid']:
         path = osp.join(label_path, f'rank={rank}', f'{split}.pt')
-        split_idx[split] = torch.load(path)
+        split_idx[split] = fs.torch_load(path)
 
     path = osp.join(feature_path, f'rank={rank}_x.pt')
-    feature_store['node', 'x'] = torch.load(path)
+    feature_store['node', 'x', None] = fs.torch_load(path)
     path = osp.join(feature_path, f'rank={rank}_y.pt')
-    feature_store['node', 'y'] = torch.load(path)
+    feature_store['node', 'y', None] = fs.torch_load(path)
 
-    eix = torch.load(osp.join(edge_path, f'rank={rank}.pt'))
+    eix = fs.torch_load(osp.join(edge_path, f'rank={rank}.pt'))
     graph_store[dict(
         edge_type=('node', 'rel', 'node'),
         layout='coo',

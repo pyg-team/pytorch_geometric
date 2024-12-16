@@ -4,13 +4,13 @@ build-backend="flit_core.buildapi"
 
 [project]
 name="torch-geometric"
-version="2.6.0"
+version="2.7.0"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
 description="Graph Neural Network Library for PyTorch"
 readme="README.md"
-requires-python=">=3.8"
+requires-python=">=3.9"
 keywords=[
     "deep-learning",
     "pytorch",
@@ -22,7 +22,6 @@ classifiers=[
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -143,7 +142,7 @@ skip = [".gitignore", "__init__.py"]
 src = ["torch_geometric"]
 line-length = 80
 indent-width = 4
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = [

@@ -61,7 +61,6 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .lrgb import LRGBDataset
-from .neurograph import NeuroGraphDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -76,6 +75,11 @@ from .jodie import JODIEDataset
 from .wikidata import Wikidata5M
 from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
+from .neurograph import NeuroGraphDataset
+from .web_qsp_dataset import WebQSPDataset
+from .git_mol_dataset import GitMolDataset
+from .molecule_gpt_dataset import MoleculeGPTDataset
+from .tag_dataset import TAGDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -188,6 +192,10 @@ homo_datasets = [
     'MyketDataset',
     'BrcaTcga',
     'NeuroGraphDataset',
+    'WebQSPDataset',
+    'GitMolDataset',
+    'MoleculeGPTDataset',
+    'TAGDataset',
 ]
 
 hetero_datasets = [
