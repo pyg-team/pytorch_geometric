@@ -5,9 +5,11 @@ from typing import List, Optional, Tuple
 
 try:
     import spacy
+    from space.language import Language
     WITH_SPACY = True
 except:
     WITH_SPACY = False
+    Language = None
 import torch
 import torch.multiprocessing as mp
 
@@ -250,7 +252,7 @@ def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
 
 
 def corefernce_resolution(
-        text: str, nlp_language_pipeline: spacy.language.Language) -> str:
+        text: str, nlp_language_pipeline: Language) -> str:
     """Performs coreference resolution on input text using spaCy's coreferee.
 
     Resolves pronouns and other references to their full entity mentions to improve
