@@ -196,12 +196,21 @@ class LinkLoader(
 
     def __call__(
         self,
-        index: Union[Tensor, List[int]],
+        input_edges: Union[Tensor, List[int]],
+        input_time: OptTensor = None,
     ) -> Union[Data, HeteroData]:
-        r"""Samples a subgraph from a batch of input edges."""
-        out = self.collate_fn(index)
-        if not self.filter_per_worker:
-            out = self.filter_fn(out)
+        r"""Samples a subgraph from a batch of raw input edges."""
+        if isinstance(input_edges, list):
+            input_edges = torch.LongTensor(input_edges)
+        input_data = EdgeSamplerInput(
+            input_id=torch.arange(input_edges.shape[1]),
+            row=input_edges[0],
+            col=input_edges[1],
+            time=input_time,
+            input_type=self.input_data.input_type,
+        )
+        out = self.link_sampler.sample_from_edges(input_data)
+        out = self.filter_fn(out)
         return out
 
     def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
