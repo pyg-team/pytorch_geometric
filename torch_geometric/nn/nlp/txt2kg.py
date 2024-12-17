@@ -251,8 +251,7 @@ def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
     return chunks
 
 
-def corefernce_resolution(
-        text: str, nlp_language_pipeline: Language) -> str:
+def corefernce_resolution(text: str, nlp_language_pipeline: Language) -> str:
     """Performs coreference resolution on input text using spaCy's coreferee.
 
     Resolves pronouns and other references to their full entity mentions to improve
