@@ -345,7 +345,7 @@ class EdgeTypeStr(str):
                              f"tuple since it holds invalid characters")
         return self.edge_type
 
-    def __reduce__(self) -> str | tuple[Any, ...]:
+    def __reduce__(self) -> tuple[Any, Any]:
         return (self.__class__, (self.edge_type, ))
 
 
