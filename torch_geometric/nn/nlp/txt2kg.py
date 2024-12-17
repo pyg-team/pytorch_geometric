@@ -2,8 +2,11 @@ import os
 import re
 import time
 from typing import List, Optional, Tuple
-
-import spacy
+try:
+    import spacy
+    WITH_SPACY = True
+except:
+    WITH_SPACY = False
 import torch
 import torch.multiprocessing as mp
 
@@ -49,8 +52,11 @@ class TXT2KG():
         self.total_chars_parsed = 0
         self.time_to_parse = 0.0
         # initializing for 'en' right now. We can add multi-lingual capabilities in future.
-        self.nlp = spacy.load("en_core_web_lg")
-        self.nlp.add_pipe('coreferee')
+        if WITH_SPACY:
+            self.nlp = spacy.load("en_core_web_lg")
+            self.nlp.add_pipe('coreferee')
+        else:
+            raise Exception("`pip install spacy` to use TXT2KG")
 
     def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
