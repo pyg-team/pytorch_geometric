@@ -21,6 +21,7 @@ def _get_ppr(  # pragma: no cover
     alpha: float,
     eps: float,
     target: Optional[np.ndarray] = None,
+    topk: Optional[int] = None,
 ) -> Tuple[List[List[int]], List[List[float]]]:
 
     num_nodes = len(rowptr) - 1 if target is None else len(target)
@@ -65,8 +66,15 @@ def _get_ppr(  # pragma: no cover
                     if vnode not in q:
                         q.append(vnode)
 
-        js[inode_uint] = list(p.keys())
-        vals[inode_uint] = list(p.values())
+        p_keys = np.array(list(p.keys()))
+        p_vals = np.array(list(p.values()))
+        if topk is not None and len(p_keys) > topk:
+            topk_ind = np.argsort(p_vals)[-topk:]
+            p_keys = p_keys[topk_ind]
+            p_vals = p_vals[topk_ind]
+
+        js[inode_uint] = [k for k in p_keys]
+        vals[inode_uint] = [v for v in p_vals]
 
     return js, vals
 
@@ -74,13 +82,9 @@ def _get_ppr(  # pragma: no cover
 _get_ppr_numba: Optional[Callable] = None
 
 
-def get_ppr(
-    edge_index: Tensor,
-    alpha: float = 0.2,
-    eps: float = 1e-5,
-    target: Optional[Tensor] = None,
-    num_nodes: Optional[int] = None,
-) -> Tuple[Tensor, Tensor]:
+def get_ppr(edge_index: Tensor, alpha: float = 0.2, eps: float = 1e-5,
+            target: Optional[Tensor] = None, num_nodes: Optional[int] = None,
+            topk: Optional[int] = None) -> Tuple[Tensor, Tensor]:
     r"""Calculates the personalized PageRank (PPR) vector for all or a subset
     of nodes using a variant of the `Andersen algorithm
     <https://mathweb.ucsd.edu/~fan/wp/localpartition.pdf>`_.
@@ -95,6 +99,8 @@ def get_ppr(
             If not given, calculates PPR vectors for all nodes.
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes. (default: :obj:`None`)
+        topk (int, optional): If not None, store the :obj:`k` largest entries
+            per PPR vector. (default: :obj:`None`)
 
     :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`)
     """
@@ -112,11 +118,8 @@ def get_ppr(
 
     cols, weights = _get_ppr_numba(
         rowptr.cpu().numpy(),
-        col.cpu().numpy(),
-        alpha,
-        eps,
-        None if target is None else target.cpu().numpy(),
-    )
+        col.cpu().numpy(), alpha, eps,
+        None if target is None else target.cpu().numpy(), topk)
 
     device = edge_index.device
     col = torch.tensor(list(chain.from_iterable(cols)), device=device)
