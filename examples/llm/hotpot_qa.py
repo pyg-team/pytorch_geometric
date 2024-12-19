@@ -28,6 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('--local_lm', action="store_true")
     parser.add_argument('--percent_data', type=float, default=1.0)
     parser.add_argument('--chunk_size', type=int, default=512)
+    parser.add_argument('--checkpointing', action="store_true")
     args = parser.parse_args()
     assert args.percent_data <= 100 and args.percent_data > 0
     if args.local_lm:
@@ -44,6 +45,9 @@ if __name__ == '__main__':
     if os.path.exists("hotpot_kg.pt"):
         print("Re-using existing KG...")
         relevant_triples = torch.load("hotpot_kg.pt")
+    elif os.path.exists("checkpoint_kg.pt"):
+        print("Re-using existing checkpoint...")
+        relevant_triples = torch.load("checkpoint_kg.pt")
     else:
         # Use training set for simplicity since our retrieval method is nonparametric
         raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
@@ -67,7 +71,13 @@ if __name__ == '__main__':
                 txt=context_doc,
                 QA_pair=QA_pair,
             )
+            if args.checkpointing:
+                kg_maker.save_kg("checkpoint_kg.pt")
         kg_maker.save_kg("hotpot_kg.pt")
+        if args.checkpointing:
+            # delete checkpoint
+            os.remove("checkpoint_kg.pt")
+
         relevant_triples = kg_maker.relevant_triples
         if args.local_lm:
             print("Total number of context characters parsed by LLM",
