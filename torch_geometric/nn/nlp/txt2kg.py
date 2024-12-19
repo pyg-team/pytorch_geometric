@@ -36,7 +36,7 @@ class TXT2KG():
         if self.local_LM:
             self.initd_LM = False
         else:
-            assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_small_lm flag to True"
+            assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_lm flag to True"
             self.NVIDIA_API_KEY = NVIDIA_API_KEY
             self.NIM_MODEL = NVIDIA_NIM_MODEL
 
