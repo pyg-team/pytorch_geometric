@@ -280,6 +280,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 - **[DistMult](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.DistMult.html)** from Yang *et al.*: [Embedding Entities and Relations for Learning and Inference in Knowledge Bases](https://arxiv.org/abs/1412.6575) (ICLR 2015) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)\]
 - **[RotatE](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.RotatE.html)** from Sun *et al.*: [RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space](https://arxiv.org/abs/1902.10197) (ICLR 2019) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)\]
 - **[TransF](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.TransF.html)** from Ji *et al.*: [Knowledge Graph Embedding by Flexible Translation](https://cdn.aaai.org/ocs/12887/12887-57589-1-PB.pdf) (ACL 2015) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)\]
+
 </details>
 
 **GNN operators and utilities:**
