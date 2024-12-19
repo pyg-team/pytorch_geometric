@@ -345,6 +345,9 @@ class EdgeTypeStr(str):
                              f"tuple since it holds invalid characters")
         return self.edge_type
 
+    def __reduce__(self) -> tuple[Any, Any]:
+        return (self.__class__, (self.edge_type, ))
+
 
 # There exist some short-cuts to query edge-types (given that the full triplet
 # can be uniquely reconstructed, e.g.:
