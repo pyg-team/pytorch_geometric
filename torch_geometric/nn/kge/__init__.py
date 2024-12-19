@@ -8,10 +8,5 @@ from .rotate import RotatE
 from .transf import TransF
 
 __all__ = classes = [
-    'KGEModel',
-    'TransE',
-    'ComplEx',
-    'DistMult',
-    'RotatE',
-    'TransF'
+    'KGEModel', 'TransE', 'ComplEx', 'DistMult', 'RotatE', 'TransF'
 ]

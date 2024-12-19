@@ -6,6 +6,7 @@ from torch import Tensor
 
 from torch_geometric.nn.kge import KGEModel
 
+
 class TransF(KGEModel):
     r"""The TransF model from the "Knowledge Graph Embedding by
     Flexible Translation" cccccbchdufkjvlkejkfhftultfgcigvrdugvpaper.
