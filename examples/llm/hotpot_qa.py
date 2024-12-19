@@ -81,6 +81,7 @@ if __name__ == '__main__':
             if args.checkpointing:
                 count += 1
                 if count == five_percent:
+                    print("checkpointing...")
                     count = 0
                     kg_maker.save_kg("checkpoint_kg.pt")
         kg_maker.save_kg("hotpot_kg.pt")
