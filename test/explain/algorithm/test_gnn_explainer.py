@@ -75,6 +75,7 @@ edge_index = torch.tensor([
 edge_attr = torch.randn(edge_index.size(1), 5)
 batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
+prediction_threshold = [None, -1, 0.2, 0.5, 1.0, 5]
 
 
 @pytest.mark.parametrize('Conv', [GCNConv, TransformerConv])
@@ -87,6 +88,7 @@ edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
     ModelReturnType.raw,
 ])
 @pytest.mark.parametrize('index', indices)
+@pytest.mark.parametrize('prediction_threshold', prediction_threshold)
 def test_gnn_explainer_binary_classification(
     Conv,
     edge_mask_type,
@@ -95,12 +97,14 @@ def test_gnn_explainer_binary_classification(
     task_level,
     return_type,
     index,
+    prediction_threshold,
     check_explanation,
 ):
     model_config = ModelConfig(
         mode='binary_classification',
         task_level=task_level,
         return_type=return_type,
+        prediction_threshold=prediction_threshold,
     )
 
     model = GNN(Conv, model_config)
@@ -149,6 +153,7 @@ def test_gnn_explainer_binary_classification(
     ModelReturnType.raw,
 ])
 @pytest.mark.parametrize('index', indices)
+@pytest.mark.parametrize('prediction_threshold', prediction_threshold)
 def test_gnn_explainer_multiclass_classification(
     Conv,
     edge_mask_type,
@@ -157,12 +162,14 @@ def test_gnn_explainer_multiclass_classification(
     task_level,
     return_type,
     index,
+    prediction_threshold,
     check_explanation,
 ):
     model_config = ModelConfig(
         mode='multiclass_classification',
         task_level=task_level,
         return_type=return_type,
+        prediction_threshold=prediction_threshold,
     )
 
     model = GNN(Conv, model_config)
@@ -202,6 +209,7 @@ def test_gnn_explainer_multiclass_classification(
 @pytest.mark.parametrize('explanation_type', explanation_types)
 @pytest.mark.parametrize('task_level', task_levels)
 @pytest.mark.parametrize('index', indices)
+@pytest.mark.parametrize('prediction_threshold', prediction_threshold)
 def test_gnn_explainer_regression(
     Conv,
     edge_mask_type,
@@ -209,11 +217,13 @@ def test_gnn_explainer_regression(
     explanation_type,
     task_level,
     index,
+    prediction_threshold,
     check_explanation,
 ):
     model_config = ModelConfig(
         mode='regression',
         task_level=task_level,
+        prediction_threshold=prediction_threshold,
     )
 
     model = GNN(Conv, model_config)
