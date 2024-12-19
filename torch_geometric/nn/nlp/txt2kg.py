@@ -22,7 +22,7 @@ class TXT2KG():
     Use local_lm flag for local debugging/dev. You still need to be able to
     inference a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'.
     Smaller LLMs did not work at all in testing.
-    Note this 14B model requires a considerable amount of VRAM.
+    Note this 14B model requires a considerable amount of GPU memory.
     """
     def __init__(
         self,
