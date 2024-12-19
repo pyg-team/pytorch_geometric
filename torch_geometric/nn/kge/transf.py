@@ -7,11 +7,12 @@ from torch import Tensor
 from torch_geometric.nn.kge import KGEModel
 
 class TransF(KGEModel):
-    r"""The TransF model from the "Knowledge Graph Embedding by Flexible Translation"
-    paper.
+    r"""The TransF model from the "Knowledge Graph Embedding by
+    Flexible Translation" cccccbchdufkjvlkejkfhftultfgcigvrdugvpaper.
 
     :class:`TransF` introduces a flexible translation mechanism by dynamically
-    scaling the relation vector based on head and tail entity embeddings, resulting in:
+    scaling the relation vector based on head and tail entity embeddings,
+    resulting in:
 
     .. math::
         \mathbf{e}_h + f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r)
@@ -30,7 +31,9 @@ class TransF(KGEModel):
     .. math::
         d(h, r, t) = - \| \mathbf{e}_h +
     .. math::
-        f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r) \cdot \mathbf{e}_r - \mathbf{e}_t \|_p
+        f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r) \cdot
+    .. math::
+        \mathbf{e}_r - \mathbf{e}_t \|_p
 
     .. note::
         For an example of using the :class:`TransF` model, see
