@@ -1,16 +1,16 @@
 import argparse
 import os.path as osp
 import time
-from typing import Tuple
 
 import psutil
 import torch
 import torch.nn.functional as F
-from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
+from ogb.nodeproppred import PygNodePropPredDataset
 from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
 
 parser = argparse.ArgumentParser(
@@ -29,39 +29,21 @@ parser.add_argument(
     help='Root directory of dataset.',
 )
 parser.add_argument(
-    "--dataset_subdir",
-    type=str,
-    default="ogb-papers100M",
-    help="directory of dataset.",
-)
-parser.add_argument(
     '--use_gat',
     action='store_true',
     help='Whether or not to use GAT model',
 )
-parser.add_argument(
-    '--verbose',
-    action='store_true',
-    help='Whether or not to generate statistical report',
-)
-parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument('-e', '--epochs', type=int, default=50,
-                    help='number of training epochs.')
-parser.add_argument('--num_layers', type=int, default=3,
-                    help='number of layers.')
+parser.add_argument('-e', '--epochs', type=int, default=50)
+parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=2,
                     help='number of heads for GAT model.')
-parser.add_argument('-b', '--batch_size', type=int, default=1024,
-                    help='batch size.')
-parser.add_argument('--num_workers', type=int, default=12,
-                    help='number of workers.')
+parser.add_argument('-b', '--batch_size', type=int, default=1024)
+parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
                     help='number of neighbors in each layer')
-parser.add_argument('--hidden_channels', type=int, default=256,
-                    help='number of hidden channels.')
+parser.add_argument('--hidden_channels', type=int, default=256)
 parser.add_argument('--lr', type=float, default=0.003)
-parser.add_argument('--wd', type=float, default=0.0,
-                    help='weight decay for the optimizer')
+parser.add_argument('--wd', type=float, default=0.0)
 parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument(
     '--use_directed_graph',
@@ -69,36 +51,32 @@ parser.add_argument(
     help='Whether or not to use directed graph',
 )
 args = parser.parse_args()
-if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
-                                      (1024**3)) < 390:
-    print("Warning: may not have enough RAM to use this many GPUs.")
-    print("Consider upgrading RAM if an error occurs.")
-    print("Estimated RAM Needed: ~390GB.")
-verbose = args.verbose
-if verbose:
-    wall_clock_start = time.perf_counter()
-    if args.use_gat:
-        print(f"Training {args.dataset} with GAT model.")
-    else:
-        print(f"Training {args.dataset} with GraphSage model.")
 
-if not torch.cuda.is_available():
-    args.device = "cpu"
-device = torch.device(args.device)
+wall_clock_start = time.perf_counter()
 
+if (args.dataset == 'ogbn-papers100M'
+        and (psutil.virtual_memory().total / (1024**3)) < 390):
+    print('Warning: may not have enough RAM to run this example.')
+    print('Consider upgrading RAM if an error occurs.')
+    print('Estimated RAM Needed: ~390GB.')
+
+if args.use_gat:
+    print(f'Training {args.dataset} with GAT model.')
+else:
+    print(f'Training {args.dataset} with GraphSage model.')
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = args.epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
 num_hidden_channels = args.hidden_channels
 batch_size = args.batch_size
-
-root = osp.join(args.dataset_dir, args.dataset_subdir)
+root = osp.join(args.dataset_dir, args.dataset)
 print('The root is: ', root)
 dataset = PygNodePropPredDataset(name=args.dataset, root=root)
 split_idx = dataset.get_idx_split()
-evaluator = Evaluator(name=args.dataset)
-
 data = dataset[0]
+
 if not args.use_directed_graph:
     data.edge_index = to_undirected(data.edge_index, reduce='mean')
 
@@ -133,7 +111,7 @@ test_loader = NeighborLoader(
 )
 
 
-def train(epoch: int) -> Tuple[Tensor, float]:
+def train(epoch: int) -> tuple[Tensor, float]:
     model.train()
 
     pbar = tqdm(total=split_idx['train'].size(0))
@@ -159,13 +137,11 @@ def train(epoch: int) -> Tuple[Tensor, float]:
 
 
 @torch.no_grad()
-def test(loader: NeighborLoader, val_steps=None) -> float:
+def test(loader: NeighborLoader) -> float:
     model.eval()
 
     total_correct = total_examples = 0
-    for i, batch in enumerate(loader):
-        if val_steps is not None and i >= val_steps:
-            break
+    for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
         out = model(batch.x, batch.edge_index)[:batch_size]
@@ -179,7 +155,6 @@ def test(loader: NeighborLoader, val_steps=None) -> float:
 
 
 if args.use_gat:
-    from torch_geometric.nn.models import GAT
     model = GAT(
         in_channels=dataset.num_features,
         hidden_channels=num_hidden_channels,
@@ -189,7 +164,6 @@ if args.use_gat:
         heads=args.num_heads,
     )
 else:
-    from torch_geometric.nn.models import GraphSAGE
     model = GraphSAGE(
         in_channels=dataset.num_features,
         hidden_channels=num_hidden_channels,
@@ -199,63 +173,53 @@ else:
     )
 
 model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
-                             weight_decay=args.wd)
+model.reset_parameters()
+optimizer = torch.optim.Adam(
+    model.parameters(),
+    lr=args.lr,
+    weight_decay=args.wd,
+)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',patience=5)
 
-if verbose:
-    prep_time = round(time.perf_counter() - wall_clock_start, 2)
-    print("Total time before training begins (prep_time)=", prep_time,
-          "seconds")
-    print("Training...")
+print(f'Total time before training begins took '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
+print('Training...')
 
-test_accs = []
-val_accs = []
 times = []
 train_times = []
 inference_times = []
-best_val = best_test = 0.
-start = time.time()
-
-model.reset_parameters()
-
+best_val = 0.
 for epoch in range(1, num_epochs + 1):
-    train_start = time.time()
+    train_start = time.perf_counter()
     loss, _ = train(epoch)
-    train_end = time.time()
-    train_times.append(train_end - train_start)
+    train_times.append(time.perf_counter() - train_start)
 
-    inference_start = time.time()
+    inference_start = time.perf_counter()
     val_acc = test(val_loader)
-    test_acc = test(test_loader)
+    inference_times.append(time.perf_counter() - inference_start)
 
-    inference_times.append(time.time() - inference_start)
-    test_accs.append(test_acc)
-    val_accs.append(val_acc)
-    print(
-        f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train Time: {train_end - train_start:.4f}s'
-    )
-    print(f'Val: {val_acc * 100.0:.2f}%,', f'Test: {test_acc * 100.0:.2f}%')
+    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, ',
+          f'Train Time: {train_times[-1]:.4f}s')
+    print(f'Val: {val_acc * 100.0:.2f}%,')
 
     if val_acc > best_val:
         best_val = val_acc
-        best_test = test_acc
-    times.append(time.time() - train_start)
+    times.append(time.perf_counter() - train_start)
     for param_group in optimizer.param_groups:
         print('lr:')
         print(param_group['lr'])
     scheduler.step(val_acc)
 
-test_acc = torch.tensor(test_accs)
-val_acc = torch.tensor(val_accs)
-print('============================')
-print("Average Epoch Time on training: {:.4f}".format(
-    torch.tensor(train_times).mean()))
-print("Average Epoch Time on inference: {:.4f}".format(
-    torch.tensor(inference_times).mean()))
-print(f"Average Epoch Time: {torch.tensor(times).mean():.4f}")
-print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
-print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
-print(f'Final Validation: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
-print(f"Best validation accuracy: {best_val:.4f}")
-print(f"Best testing accuracy: {best_test:.4f}")
+print(f'Average Epoch Time on training: '
+      f'{torch.tensor(train_times).mean():.4f}s')
+print(f'Average Epoch Time on inference: '
+      f'{torch.tensor(inference_times).mean():.4f}s')
+print(f'Average Epoch Time: {torch.tensor(times).mean():.4f}s')
+print(f'Median Epoch Time: {torch.tensor(times).median():.4f}s')
+print(f'Best Validation Accuracy: {100.0 * best_val:.2f}%')
+
+print('Testing...')
+test_final_acc = test(test_loader)
+print(f'Test Accuracy: {100.0 * test_final_acc:.2f}%')
+print(f'Total Program Runtime: '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
