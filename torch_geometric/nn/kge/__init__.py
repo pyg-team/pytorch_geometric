@@ -5,11 +5,8 @@ from .transe import TransE
 from .complex import ComplEx
 from .distmult import DistMult
 from .rotate import RotatE
+from .transf import TransF
 
 __all__ = classes = [
-    'KGEModel',
-    'TransE',
-    'ComplEx',
-    'DistMult',
-    'RotatE',
+    'KGEModel', 'TransE', 'ComplEx', 'DistMult', 'RotatE', 'TransF'
 ]
