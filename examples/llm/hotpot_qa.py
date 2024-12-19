@@ -59,6 +59,9 @@ if __name__ == '__main__':
         data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
                                                        args.percent_data /
                                                        100.0)]
+        if args.checkpointing:
+            five_percent = num_data_pts / 20
+            count = 0
         for idx in tqdm(data_idxs, desc="Building KG"):
             data_point = raw_dataset[int(idx)]
             q = data_point["question"]
@@ -74,8 +77,10 @@ if __name__ == '__main__':
                 QA_pair=QA_pair,
             )
             if args.checkpointing:
-                # can run this every iteration, very fast
-                kg_maker.save_kg("checkpoint_kg.pt")
+                count += 1
+                if count == five_percent:
+                    count = 0
+                    kg_maker.save_kg("checkpoint_kg.pt")
         kg_maker.save_kg("hotpot_kg.pt")
         if args.checkpointing:
             # delete checkpoint
