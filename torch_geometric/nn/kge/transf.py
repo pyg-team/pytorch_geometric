@@ -14,17 +14,23 @@ class TransF(KGEModel):
     scaling the relation vector based on head and tail entity embeddings, resulting in:
 
     .. math::
-        \mathbf{e}_h + f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r) \cdot \mathbf{e}_r \approx \mathbf{e}_t
+        \mathbf{e}_h + f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r)
+    .. math::
+        \cdot \mathbf{e}_r \approx \mathbf{e}_t
 
     where :math:`f` is a dynamic scaling function:
 
     .. math::
-        f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r) = \sigma((\mathbf{e}_h \odot \mathbf{e}_t) \cdot \mathbf{e}_r)
+        f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r) =
+    .. math::
+        \sigma((\mathbf{e}_h \odot \mathbf{e}_t) \cdot \mathbf{e}_r)
 
     This results in the scoring function:
 
     .. math::
-        d(h, r, t) = - \| \mathbf{e}_h + f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r) \cdot \mathbf{e}_r - \mathbf{e}_t \|_p
+        d(h, r, t) = - \| \mathbf{e}_h +
+    .. math::
+        f(\mathbf{e}_h, \mathbf{e}_t, \mathbf{e}_r) \cdot \mathbf{e}_r - \mathbf{e}_t \|_p
 
     .. note::
         For an example of using the :class:`TransF` model, see
