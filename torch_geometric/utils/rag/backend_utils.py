@@ -243,8 +243,7 @@ def create_remote_backend_from_triplets(
 def make_pcst_filter(triples: List[Tuple[str, str, str]],
                      model: SentenceTransformer):
     if DataFrame is None:
-        print("PCST requires `pip install pandas`")
-        quit()
+        raise Exception("PCST requires `pip install pandas`")
     all_nodes = []
     for triple in triples:
         all_nodes += [triple[0]] + [triple[2]]
