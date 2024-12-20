@@ -27,10 +27,15 @@ def compile(
     This function has the same signature as :meth:`torch.compile` (see
     `here <https://pytorch.org/docs/stable/generated/torch.compile.html>`__).
 
+    Args:
+        model: The model to compile.
+        *args: Additional arguments of :meth:`torch.compile`.
+        **kwargs: Additional keyword arguments of :meth:`torch.compile`.
+
     .. note::
         :meth:`torch_geometric.compile` is deprecated in favor of
         :meth:`torch.compile`.
     """
     warnings.warn("'torch_geometric.compile' is deprecated in favor of "
                   "'torch.compile'")
-    return torch.compile(model, *args, **kwargs)
+    return torch.compile(model, *args, **kwargs)  # type: ignore

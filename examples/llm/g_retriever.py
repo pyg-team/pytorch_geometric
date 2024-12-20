@@ -6,8 +6,12 @@ stand-alone LLM baseline.
 
 Requirements:
 `pip install datasets transformers pcst_fast sentencepiece accelerate`
+
+Example repo for integration with Neo4j Graph DB:
+https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
 """
 import argparse
+import gc
 import math
 import os.path as osp
 import re
@@ -41,8 +45,8 @@ def compute_metrics(eval_output):
 
             label = label.split('|')
             matches = set(pred).intersection(set(label))
-            precision = len(matches) / len(set(label))
-            recall = len(matches) / len(set(pred))
+            precision = len(matches) / len(set(pred))
+            recall = len(matches) / len(set(label))
             if recall + precision == 0:
                 f1 = 0
             else:
@@ -142,6 +146,9 @@ def train(
     test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
+    # To clean up after Data Preproc
+    gc.collect()
+    torch.cuda.empty_cache()
     gnn = GAT(
         in_channels=1024,
         hidden_channels=hidden_channels,
@@ -159,7 +166,10 @@ def train(
         llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
         model = GRetriever(llm=llm, gnn=gnn)
 
-    model_save_name = 'gnn_llm' if num_gnn_layers is not None else 'llm'
+    model_save_name = 'gnn_llm' if num_gnn_layers != 0 else 'llm'
+    if model_save_name == 'llm':
+        model = llm
+
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
