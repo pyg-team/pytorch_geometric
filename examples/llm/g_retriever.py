@@ -16,6 +16,7 @@ import math
 import os.path as osp
 import re
 import time
+from torch_geometric import seed_everything
 
 import pandas as pd
 import torch
@@ -241,6 +242,8 @@ def train(
     train_dataset = WebQSPDataset(path, split='train')
     val_dataset = WebQSPDataset(path, split='val')
     test_dataset = WebQSPDataset(path, split='test')
+
+    seed_everything(42)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size,
                               drop_last=True, pin_memory=True, shuffle=True)
