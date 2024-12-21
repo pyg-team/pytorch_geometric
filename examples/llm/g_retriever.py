@@ -16,7 +16,6 @@ import math
 import os.path as osp
 import re
 import time
-from torch_geometric import seed_everything
 
 import pandas as pd
 import torch
@@ -24,6 +23,7 @@ from torch import Tensor
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
+from torch_geometric import seed_everything
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GAT, GRetriever
