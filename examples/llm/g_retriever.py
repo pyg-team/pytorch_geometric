@@ -43,8 +43,7 @@ def compute_metrics(eval_output):
     df = pd.concat([pd.DataFrame(d) for d in eval_output])
 
     # Initialize lists to store metrics
-    all_hit = [
-    ]  # List of boolean values indicating whether prediction matches label
+    all_hit = []  # Boolean values indicating whether prediction matches label
     all_precision = []  # List of precision values
     all_recall = []  # List of recall values
     all_f1 = []  # List of F1 values
