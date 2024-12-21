@@ -147,17 +147,16 @@ def get_loss(model, batch, model_save_name: str) -> Tensor:
     if model_save_name == 'llm':
         # For LLM models, compute the loss using the question, label, and desc inputs
         return model(batch.question, batch.label, batch.desc)
-    else: # (GNN+LLM)
+    else:  # (GNN+LLM)
         return model(
             batch.question,
             batch.x,  # node features
             batch.edge_index,  # edge indices
             batch.batch,  # batch indices
             batch.edge_attr,  # edge attributes
-            batch.label, # answers (labels)
+            batch.label,  # answers (labels)
             batch.desc  # description
         )
-
 
 
 def inference_step(model, batch, model_save_name):
