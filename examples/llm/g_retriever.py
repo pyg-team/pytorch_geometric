@@ -179,6 +179,7 @@ def train(
 
     # Define the learning rate schedule
     def adjust_learning_rate(param_group, LR, epoch):
+        # Decay the learning rate with half-cycle cosine after warmup
         min_lr = 5e-6
         warmup_epochs = 1
         if epoch < warmup_epochs:
