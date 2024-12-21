@@ -1,3 +1,12 @@
+"""This example implements the G-Retriever model
+(https://arxiv.org/abs/2402.07630) using PyG.
+G-Retriever significantly reduces hallucinations by 54% compared to the
+stand-alone LLM baseline.
+Requirements:
+`pip install datasets transformers pcst_fast sentencepiece accelerate`
+Example repo for integration with Neo4j Graph DB:
+https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
+"""
 # Import necessary libraries and modules
 import argparse
 import gc
