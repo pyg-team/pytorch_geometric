@@ -196,7 +196,7 @@ def test_train(destroy_process_group, tmp_path, capfd):
     cfg.params = params_count(model)
     logger = LoggerCallback()
     trainer = L.Trainer(max_epochs=1, max_steps=4, callbacks=logger,
-                         log_every_n_steps=1)
+                        log_every_n_steps=1)
     train_loader, val_loader = loaders[0], loaders[1]
     trainer.fit(model, train_loader, val_loader)
 

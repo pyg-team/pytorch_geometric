@@ -74,10 +74,9 @@ if __name__ == '__main__':
     model = Model(dataset.num_node_features, dataset.num_classes)
 
     strategy = SingleDeviceStrategy('cuda:0')
-    checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1,
-                                              mode='max')
+    checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1, mode='max')
     trainer = Trainer(strategy=strategy, devices=1, max_epochs=20,
-                         callbacks=[checkpoint])
+                      callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)
     trainer.test(ckpt_path='best', datamodule=datamodule)

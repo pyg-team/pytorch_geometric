@@ -108,7 +108,7 @@ def test_lightning_dataset(get_dataset, strategy_type):
     model = LinearGraphModule(dataset.num_features, 64, dataset.num_classes)
 
     trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=1,
-                         log_every_n_steps=1)
+                        log_every_n_steps=1)
     with pytest.warns(UserWarning, match="'shuffle=True' option is ignored"):
         datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
                                       pred_dataset, batch_size=5,
@@ -131,7 +131,7 @@ def test_lightning_dataset(get_dataset, strategy_type):
     # Test with `val_dataset=None` and `test_dataset=None`:
     if strategy_type is None:
         trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=1,
-                             log_every_n_steps=1)
+                            log_every_n_steps=1)
 
         datamodule = LightningDataset(train_dataset, batch_size=5)
         assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
@@ -228,7 +228,7 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
         kwargs_repr += 'num_neighbors=[5], '
 
     trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=5,
-                         log_every_n_steps=1)
+                        log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
 
@@ -314,7 +314,7 @@ def test_lightning_hetero_node_data(preserve_context, get_dataset):
     strategy = DDPStrategy(accelerator='gpu')
 
     trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=5,
-                         log_every_n_steps=1)
+                        log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader='neighbor', num_neighbors=[5],
                                    batch_size=32, num_workers=3)
     assert isinstance(datamodule.graph_sampler, NeighborSampler)

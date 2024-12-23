@@ -74,10 +74,9 @@ if __name__ == '__main__':
 
     devices = torch.cuda.device_count()
     strategy = DDPStrategy(accelerator='gpu')
-    checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1,
-                                              mode='max')
+    checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1, mode='max')
     trainer = Trainer(strategy=strategy, devices=devices, max_epochs=50,
-                         log_every_n_steps=5, callbacks=[checkpoint])
+                      log_every_n_steps=5, callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)
     trainer.test(ckpt_path='best', datamodule=datamodule)
