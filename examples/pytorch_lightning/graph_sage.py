@@ -1,8 +1,10 @@
 import os.path as osp
 
-import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
+from lightning import LightningModule, Trainer
+from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.strategies import SingleDeviceStrategy
 from torch.nn import BatchNorm1d
 from torchmetrics import Accuracy
 
@@ -11,7 +13,7 @@ from torch_geometric.datasets import Reddit
 from torch_geometric.nn import GraphSAGE
 
 
-class Model(pl.LightningModule):
+class Model(LightningModule):
     def __init__(self, in_channels: int, out_channels: int,
                  hidden_channels: int = 256, num_layers: int = 2,
                  dropout: float = 0.5):
@@ -71,10 +73,10 @@ if __name__ == '__main__':
 
     model = Model(dataset.num_node_features, dataset.num_classes)
 
-    strategy = pl.strategies.SingleDeviceStrategy('cuda:0')
-    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1,
+    strategy = SingleDeviceStrategy('cuda:0')
+    checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1,
                                               mode='max')
-    trainer = pl.Trainer(strategy=strategy, devices=1, max_epochs=20,
+    trainer = Trainer(strategy=strategy, devices=1, max_epochs=20,
                          callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)

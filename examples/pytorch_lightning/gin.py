@@ -1,8 +1,10 @@
 import os.path as osp
 
-import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
+from lightning import LightningModule, Trainer
+from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.strategies import DDPStrategy
 from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
@@ -11,7 +13,7 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import GIN, MLP, global_add_pool
 
 
-class Model(pl.LightningModule):
+class Model(LightningModule):
     def __init__(self, in_channels: int, out_channels: int,
                  hidden_channels: int = 64, num_layers: int = 3,
                  dropout: float = 0.5):
@@ -71,10 +73,10 @@ if __name__ == '__main__':
     model = Model(dataset.num_node_features, dataset.num_classes)
 
     devices = torch.cuda.device_count()
-    strategy = pl.strategies.DDPStrategy(accelerator='gpu')
-    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1,
+    strategy = DDPStrategy(accelerator='gpu')
+    checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1,
                                               mode='max')
-    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=50,
+    trainer = Trainer(strategy=strategy, devices=devices, max_epochs=50,
                          log_every_n_steps=5, callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)

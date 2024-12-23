@@ -8,13 +8,13 @@ from torch_geometric.data.lightning.datamodule import LightningDataModule
 from torch_geometric.graphgym import create_loader
 from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.imports import pl
+from torch_geometric.graphgym.imports import L
 from torch_geometric.graphgym.logger import LoggerCallback
 from torch_geometric.graphgym.model_builder import GraphGymModule
 
 
 class GraphGymDataModule(LightningDataModule):
-    r"""A :class:`pytorch_lightning.LightningDataModule` for handling data
+    r"""A :class:`lightning.LightningDataModule` for handling data
     loading routines in GraphGym.
 
     This class provides data loaders for training, validation, and testing, and
@@ -58,11 +58,11 @@ def train(
     if logger:
         callbacks.append(LoggerCallback())
     if cfg.train.enable_ckpt:
-        ckpt_cbk = pl.callbacks.ModelCheckpoint(dirpath=get_ckpt_dir())
+        ckpt_cbk = L.pytorch.callbacks.ModelCheckpoint(dirpath=get_ckpt_dir())
         callbacks.append(ckpt_cbk)
 
     trainer_config = trainer_config or {}
-    trainer = pl.Trainer(
+    trainer = L.Trainer(
         **trainer_config,
         enable_checkpointing=cfg.train.enable_ckpt,
         callbacks=callbacks,

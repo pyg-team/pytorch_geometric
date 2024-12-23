@@ -11,21 +11,21 @@ from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 
 try:
-    from pytorch_lightning import LightningDataModule as PLLightningDataModule
-    no_pytorch_lightning = False
+    from lightning import LightningDataModule as PLLightningDataModule
+    no_lightning = False
 except ImportError:
     PLLightningDataModule = object  # type: ignore
-    no_pytorch_lightning = True
+    no_lightning = True
 
 
 class LightningDataModule(PLLightningDataModule):
     def __init__(self, has_val: bool, has_test: bool, **kwargs: Any) -> None:
         super().__init__()
 
-        if no_pytorch_lightning:
+        if no_lightning:
             raise ModuleNotFoundError(
-                "No module named 'pytorch_lightning' found on this machine. "
-                "Run 'pip install pytorch_lightning' to install the library.")
+                "No module named 'lightning' found on this machine. "
+                "Run 'pip install lightning' to install the library.")
 
         if not has_val:
             self.val_dataloader = None  # type: ignore
@@ -204,27 +204,27 @@ class LightningData(LightningDataModule):
 
 class LightningDataset(LightningDataModule):
     r"""Converts a set of :class:`~torch_geometric.data.Dataset` objects into a
-    :class:`pytorch_lightning.LightningDataModule` variant. It can then be
+    :class:`lightning.LightningDataModule` variant. It can then be
     automatically used as a :obj:`datamodule` for multi-GPU graph-level
     training via :lightning:`null`
-    `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
+    `PyTorch Lightning <https://lightning.ai/pytorch-lightning>`__.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.DataLoader`.
 
     .. note::
 
         Currently only the
-        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPStrategy` training
-        strategies of :lightning:`null` `PyTorch Lightning
-        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
-        speed.html>`__ are supported in order to correctly share data across
-        all devices/processes:
+        :class:`lightning.pytorch.strategies.SingleDeviceStrategy` and
+        :class:`lightning.pytorch.strategies.DDPStrategy` training
+        strategies of :lightning:`null` `Lightning
+        <https://lightning.ai/docs/pytorch/stable/accelerators/gpu_expert.html
+        #what-is-a-strategy>`__ are supported in order to correctly share data
+        across all devices/processes:
 
         .. code-block:: python
 
-            import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+            import lightning as L
+            trainer = L.Trainer(strategy="ddp", accelerator="gpu",
                                  devices=4)
             trainer.fit(model, datamodule)
 
@@ -315,27 +315,27 @@ class LightningDataset(LightningDataModule):
 class LightningNodeData(LightningData):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
-    :class:`pytorch_lightning.LightningDataModule` variant. It can then be
+    :class:`lightning.LightningDataModule` variant. It can then be
     automatically used as a :obj:`datamodule` for multi-GPU node-level
     training via :lightning:`null`
-    `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
+    `PyTorch Lightning <https://lightning.ai/pytorch-lightning>`__.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.NeighborLoader`.
 
     .. note::
 
         Currently only the
-        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPStrategy` training
+        :class:`lightning.pytorch.strategies.SingleDeviceStrategy` and
+        :class:`lightning.pytorch.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
-        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
-        speed.html>`__ are supported in order to correctly share data across
-        all devices/processes:
+        <https://lightning.ai/docs/pytorch/stable/accelerators/gpu_expert.html
+        #what-is-a-strategy>`__ are supported in order to correctly share data
+        across all devices/processes:
 
         .. code-block:: python
 
-            import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+            import lightning as L
+            trainer = L.Trainer(strategy="ddp_spawn", accelerator="gpu",
                                  devices=4)
             trainer.fit(model, datamodule)
 
@@ -508,27 +508,27 @@ class LightningNodeData(LightningData):
 class LightningLinkData(LightningData):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
-    :class:`pytorch_lightning.LightningDataModule` variant. It can then be
+    :class:`lightning.LightningDataModule` variant. It can then be
     automatically used as a :obj:`datamodule` for multi-GPU link-level
     training via :lightning:`null`
-    `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
+    `PyTorch Lightning <https://lightning.ai/pytorch-lightning>`__.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.LinkNeighborLoader`.
 
     .. note::
 
         Currently only the
-        :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPStrategy` training
+        :class:`lightning.pytorch.strategies.SingleDeviceStrategy` and
+        :class:`lightning.pytorch.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
-        <https://pytorch-lightning.readthedocs.io/en/latest/guides/
-        speed.html>`__ are supported in order to correctly share data across
-        all devices/processes:
+        <https://lightning.ai/docs/pytorch/stable/accelerators/gpu_expert.html
+        #what-is-a-strategy>`__ are supported in order to correctly share data
+        across all devices/processes:
 
         .. code-block:: python
 
-            import pytorch_lightning as pl
-            trainer = pl.Trainer(strategy="ddp_spawn", accelerator="gpu",
+            import lightning as L
+            trainer = L.Trainer(strategy="ddp_spawn", accelerator="gpu",
                                  devices=4)
             trainer.fit(model, datamodule)
 

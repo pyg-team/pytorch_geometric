@@ -42,7 +42,7 @@ def trivial_metric(true, pred, task_type):
 
 
 @onlyOnline
-@withPackage('yacs', 'pytorch_lightning')
+@withPackage('yacs', 'lightning')
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
@@ -110,9 +110,9 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
 
 
 @onlyOnline
-@withPackage('yacs', 'pytorch_lightning')
+@withPackage('yacs', 'lightning')
 def test_graphgym_module(tmp_path):
-    import pytorch_lightning as pl
+    import lightning as L
 
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmp_path, 'out_dir')
@@ -131,7 +131,7 @@ def test_graphgym_module(tmp_path):
     assert len(loaders) == 3
 
     model = create_model()
-    assert isinstance(model, pl.LightningModule)
+    assert isinstance(model, L.LightningModule)
 
     optimizer, scheduler = model.configure_optimizers()
     assert isinstance(optimizer[0], torch.optim.Adam)
@@ -172,11 +172,11 @@ def destroy_process_group():
 
 @onlyOnline
 @onlyLinux
-@withPackage('yacs', 'pytorch_lightning')
+@withPackage('yacs', 'lightning')
 def test_train(destroy_process_group, tmp_path, capfd):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
 
-    import pytorch_lightning as pl
+    import lightning as L
 
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmp_path, 'out_dir')
@@ -195,7 +195,7 @@ def test_train(destroy_process_group, tmp_path, capfd):
     model = create_model()
     cfg.params = params_count(model)
     logger = LoggerCallback()
-    trainer = pl.Trainer(max_epochs=1, max_steps=4, callbacks=logger,
+    trainer = L.Trainer(max_epochs=1, max_steps=4, callbacks=logger,
                          log_every_n_steps=1)
     train_loader, val_loader = loaders[0], loaders[1]
     trainer.fit(model, train_loader, val_loader)

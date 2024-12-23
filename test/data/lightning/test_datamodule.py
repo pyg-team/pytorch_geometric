@@ -26,7 +26,7 @@ from torch_geometric.testing import (
 )
 
 try:
-    from pytorch_lightning import LightningModule
+    from lightning import LightningModule
 except ImportError:
     LightningModule = torch.nn.Module
 
@@ -78,11 +78,12 @@ class LinearGraphModule(LightningModule):
 @onlyCUDA
 @onlyOnline
 @onlyFullTest
-@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
+@withPackage('lightning>=2.0.0', 'torchmetrics>=0.11.0')
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_dataset(get_dataset, strategy_type):
-    import pytorch_lightning as pl
-    from pytorch_lightning.utilities import rank_zero_only
+    import lightning as L
+    from lightning.fabric.utilities import rank_zero_only
+    from lightning.pytorch.strategies import DDPStrategy, SingleDeviceStrategy
 
     @contextmanager
     def expect_rank_zero_user_warning(match: str):
@@ -100,13 +101,13 @@ def test_lightning_dataset(get_dataset, strategy_type):
 
     devices = 1 if strategy_type is None else torch.cuda.device_count()
     if strategy_type == 'ddp':
-        strategy = pl.strategies.DDPStrategy(accelerator='gpu')
+        strategy = DDPStrategy(accelerator='gpu')
     else:
-        strategy = pl.strategies.SingleDeviceStrategy(device='cuda:0')
+        strategy = SingleDeviceStrategy(device='cuda:0')
 
     model = LinearGraphModule(dataset.num_features, 64, dataset.num_classes)
 
-    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=1,
+    trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=1,
                          log_every_n_steps=1)
     with pytest.warns(UserWarning, match="'shuffle=True' option is ignored"):
         datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
@@ -129,7 +130,7 @@ def test_lightning_dataset(get_dataset, strategy_type):
 
     # Test with `val_dataset=None` and `test_dataset=None`:
     if strategy_type is None:
-        trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=1,
+        trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=1,
                              log_every_n_steps=1)
 
         datamodule = LightningDataset(train_dataset, batch_size=5)
@@ -191,11 +192,12 @@ class LinearNodeModule(LightningModule):
 @onlyOnline
 @onlyFullTest
 @onlyNeighborSampler
-@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0', 'scipy')
+@withPackage('lightning>=2.0.0', 'torchmetrics>=0.11.0', 'scipy')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_node_data(get_dataset, strategy_type, loader):
-    import pytorch_lightning as pl
+    import lightning as L
+    from lightning.pytorch.strategies import DDPStrategy, SingleDeviceStrategy
 
     dataset = get_dataset(name='Cora')
     data = dataset[0]
@@ -210,9 +212,9 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
         devices = torch.cuda.device_count()
 
     if strategy_type == 'ddp':
-        strategy = pl.strategies.DDPStrategy(accelerator='gpu')
+        strategy = DDPStrategy(accelerator='gpu')
     else:
-        strategy = pl.strategies.SingleDeviceStrategy(device='cuda:0')
+        strategy = SingleDeviceStrategy(device='cuda:0')
 
     if loader == 'full':  # Set reasonable defaults for full-batch training:
         batch_size = 1
@@ -225,7 +227,7 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
         kwargs['num_neighbors'] = [5]
         kwargs_repr += 'num_neighbors=[5], '
 
-    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=5,
+    trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=5,
                          log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
@@ -298,9 +300,10 @@ def preserve_context():
 @onlyCUDA
 @onlyFullTest
 @onlyNeighborSampler
-@withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
+@withPackage('lightning>=2.0.0', 'torchmetrics>=0.11.0')
 def test_lightning_hetero_node_data(preserve_context, get_dataset):
-    import pytorch_lightning as pl
+    import lightning as L
+    from lightning.pytorch.strategies import DDPStrategy
 
     data = get_dataset(name='hetero')[0]
 
@@ -308,9 +311,9 @@ def test_lightning_hetero_node_data(preserve_context, get_dataset):
                                    int(data['paper'].y.max()) + 1)
 
     devices = torch.cuda.device_count()
-    strategy = pl.strategies.DDPStrategy(accelerator='gpu')
+    strategy = DDPStrategy(accelerator='gpu')
 
-    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=5,
+    trainer = L.Trainer(strategy=strategy, devices=devices, max_epochs=5,
                          log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader='neighbor', num_neighbors=[5],
                                    batch_size=32, num_workers=3)
@@ -323,7 +326,7 @@ def test_lightning_hetero_node_data(preserve_context, get_dataset):
     assert trainer.test_loop._data_source.is_defined()
 
 
-@withPackage('pytorch_lightning')
+@withPackage('lightning')
 def test_lightning_data_custom_sampler():
     class DummySampler(BaseSampler):
         def sample_from_edges(self, *args, **kwargs):
@@ -347,7 +350,7 @@ def test_lightning_data_custom_sampler():
 @onlyCUDA
 @onlyFullTest
 @onlyNeighborSampler
-@withPackage('pytorch_lightning')
+@withPackage('lightning')
 def test_lightning_hetero_link_data():
     torch.manual_seed(12345)
 
@@ -407,7 +410,7 @@ def test_lightning_hetero_link_data():
 
 
 @onlyNeighborSampler
-@withPackage('pytorch_lightning')
+@withPackage('lightning')
 def test_lightning_hetero_link_data_custom_store():
     torch.manual_seed(12345)
 
@@ -445,7 +448,7 @@ def test_lightning_hetero_link_data_custom_store():
 
 @onlyOnline
 @onlyNeighborSampler
-@withPackage('pytorch_lightning', 'scipy')
+@withPackage('lightning', 'scipy')
 def test_eval_loader_kwargs(get_dataset):
     data = get_dataset(name='Cora')[0]
 

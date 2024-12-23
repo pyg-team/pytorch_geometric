@@ -43,7 +43,7 @@ dependencies=[
 [project.optional-dependencies]
 graphgym=[
     "protobuf<4.21",
-    "pytorch-lightning<2.3.0",
+    "lightning<2.3.0",
     "yacs",
 ]
 modelhub=[
@@ -187,7 +187,7 @@ filterwarnings = [
     # Filter `captum` warnings:
     "ignore:Setting backward hooks on ReLU activations:UserWarning",
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
-    # Filter `pytorch_lightning` warnings:
+    # Filter `lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
 ]
 
