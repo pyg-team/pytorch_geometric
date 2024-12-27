@@ -62,7 +62,7 @@ if __name__ == '__main__':
                                                        args.percent_data /
                                                        100.0)]
         if args.checkpointing:
-            five_percent = len(data_idxs) / 20
+            five_percent = int(len(data_idxs) / 20)
             count = 0
         for idx in tqdm(data_idxs, desc="Building KG"):
             data_point = raw_dataset[int(idx)]
