@@ -1,7 +1,6 @@
 import os
 import os.path as osp
 from math import ceil
-from tqdm import tqdm
 
 import torch
 import torch.distributed as dist
@@ -9,6 +8,7 @@ import torch.multiprocessing as mp
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parallel import DistributedDataParallel
+from tqdm import tqdm
 
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborLoader
@@ -106,9 +106,9 @@ def run(rank: int, world_size: int, dataset: Reddit) -> None:
     for epoch in range(1, 21):
         model.train()
         for batch in tqdm(
-            train_loader,
-            desc=f'Epoch {epoch:02d}',
-            disable=rank != 0,
+                train_loader,
+                desc=f'Epoch {epoch:02d}',
+                disable=rank != 0,
         ):
             out = model(batch.x, batch.edge_index.to(rank))[:batch.batch_size]
             loss = F.cross_entropy(out, batch.y[:batch.batch_size])
