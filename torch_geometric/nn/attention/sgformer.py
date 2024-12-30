@@ -67,7 +67,7 @@ class SGFormerAttention(torch.nn.Module):
 
         return attn_output.mean(dim=1)
 
-    def _reset_parameters(self):
+    def reset_parameters(self):
         self.q.reset_parameters()
         self.k.reset_parameters()
         self.v.reset_parameters()
