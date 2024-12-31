@@ -111,17 +111,6 @@ def create_pyg_subgraph(WG_SampleOutput) -> Tuple:
     return node, row, col, edge, batch, num_sampled_nodes, num_sampled_edges
 
 
-def sample_nodes_wmb_fn(wg_sampler, seeds, fanouts):
-    # WG_SampleOutput (target_gids, edge_indice, csr_row_ptr, csr_col_ind):
-    # target_gids [1D tensors]: unique sampled global node ids for each layer
-    # edge_indice [rank-2 tensors]: edge list [src, des] for each layer, in local node id (start from 0 for each layer) to confirm
-    # csr_row_ptr [1D tensors]: csr row ptrs for each subgraph in each layer (starting from  0 for each subgraph)
-    # csr_col_ind [1D tensors]: csr col indx for each subgraph in each layer
-    WG_SampleOutput = wg_sampler.multilayer_sample_without_replacement(
-        seeds, fanouts, None)
-    return create_pyg_subgraph(WG_SampleOutput)
-
-
 def create_wg_dist_tensor(
         shape: list,
         dtype: torch.dtype,
