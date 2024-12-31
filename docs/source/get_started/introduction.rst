@@ -176,7 +176,7 @@ We can even use slices, long or bool tensors to split the dataset.
     test_dataset = dataset[540:]
     >>> ENZYMES(60)
 
-If you are unsure whether the dataset is already shuffled before you split, you can randomly permutate it by running:
+If you are unsure whether the dataset is already shuffled before you split, you can randomly permute it by running:
 
 .. code-block:: python
 
