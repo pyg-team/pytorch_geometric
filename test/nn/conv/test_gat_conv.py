@@ -6,9 +6,10 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.nn import GATConv
+from torch_geometric.nn.conv.gat_conv import gat_norm
 from torch_geometric.testing import is_full_test, withDevice
-from torch_geometric.typing import Adj, Size, SparseTensor
-from torch_geometric.utils import to_torch_csc_tensor
+from torch_geometric.typing import Adj, Size, SparseTensor, torch_sparse
+from torch_geometric.utils import to_torch_csc_tensor, to_torch_csr_tensor
 
 
 @pytest.mark.parametrize('residual', [False, True])
@@ -155,6 +156,45 @@ def test_gat_conv(residual):
             assert torch.allclose(jit((x1, x2), adj2.t()), out1, atol=1e-6)
             assert torch.allclose(jit((x1, None), adj2.t()), out2, atol=1e-6)
 
+    # Test GAT normalization:
+    x1 = torch.randn(4, 8)
+    x2 = torch.randn(2, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+
+    conv = GATConv(8, 32, heads=2, residual=residual, normalize=True)
+    assert str(conv) == 'GATConv(8, 32, heads=2)'
+    out = conv(x1, edge_index)
+    assert out.size() == (4, 64)
+    assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out)
+    assert torch.allclose(conv(x1, adj1.t()), out)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
+
+    if is_full_test():
+
+        class MyModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.conv = conv
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Adj,
+                size: Size = None,
+            ) -> Tensor:
+                return self.conv(x, edge_index, size=size)
+
+        jit = torch.jit.script(MyModule())
+        assert torch.allclose(jit(x1, edge_index), out)
+        assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
+
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
+
 
 def test_gat_conv_with_edge_attr():
     x = torch.randn(4, 8)
@@ -201,3 +241,48 @@ def test_gat_conv_empty_edge_index(device):
     conv = GATConv(8, 32, heads=2).to(device)
     out = conv(x, edge_index)
     assert out.size() == (0, 64)
+
+
+def test_gat_conv_csc_error():
+    x1 = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    adj1 = to_torch_csr_tensor(edge_index, size=(4, 4))
+
+    with pytest.raises(ValueError, match="Unexpected sparse tensor layout"):
+        conv = GATConv(8, 32, heads=2, normalize=True)
+        assert str(conv) == 'GATConv(8, 32, heads=2)'
+        _ = conv(x1, adj1.t())
+
+
+def test_gat_norm_csc_error():
+    edge_index = torch.tensor([[1, 2, 3], [0, 1, 1]])
+    edge_weight = torch.tensor([[1.0000, 1.0000], [1.2341, 0.9614],
+                                [0.7659, 1.0386]])
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+
+    with pytest.raises(NotImplementedError,
+                       match="Sparse CSC matrices are not yet supported"):
+        gat_norm(adj1, edge_weight)
+
+
+def test_gat_conv_bipartite_error():
+    x1 = torch.randn(4, 8)
+    x2 = torch.randn(2, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+    with pytest.raises(NotImplementedError,
+                       match="not supported for bipartite message passing"):
+        conv = GATConv((8, 16), 32, heads=2, normalize=True)
+        conv((x1, x2), edge_index)
+
+
+def test_remove_diag_sparse_tensor():
+    # Used in GAT Normalization
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_index2 = torch.tensor([[1, 2, 3], [0, 1, 1]])
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj1 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        adj2 = SparseTensor.from_edge_index(edge_index2, sparse_sizes=(4, 4))
+
+        assert torch_sparse.remove_diag(adj1.t()) == adj2.t()

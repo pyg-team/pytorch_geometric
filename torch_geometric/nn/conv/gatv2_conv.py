@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gat_conv import gat_norm
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
@@ -112,6 +113,9 @@ class GATv2Conv(MessagePassing):
             (default: :obj:`False`)
         residual (bool, optional): If set to :obj:`True`, the layer will add
             a learnable skip-connection. (default: :obj:`False`)
+        normalize (bool, optional): If set to :obj:`True`, will add
+            self-loops to the input graph and compute symmetric normalization
+            coefficients on-the-fly. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -144,6 +148,7 @@ class GATv2Conv(MessagePassing):
         bias: bool = True,
         share_weights: bool = False,
         residual: bool = False,
+        normalize: bool = False,
         **kwargs,
     ):
         super().__init__(node_dim=0, **kwargs)
@@ -159,6 +164,7 @@ class GATv2Conv(MessagePassing):
         self.fill_value = fill_value
         self.residual = residual
         self.share_weights = share_weights
+        self.normalize = normalize
 
         if isinstance(in_channels, int):
             self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
@@ -302,7 +308,7 @@ class GATv2Conv(MessagePassing):
         assert x_l is not None
         assert x_r is not None
 
-        if self.add_self_loops:
+        if self.add_self_loops and not self.normalize:
             if isinstance(edge_index, Tensor):
                 num_nodes = x_l.size(0)
                 if x_r is not None:
@@ -321,9 +327,33 @@ class GATv2Conv(MessagePassing):
                         "simultaneously is currently not yet supported for "
                         "'edge_index' in a 'SparseTensor' form")
 
+        if self.normalize:
+            if not isinstance(self.in_channels, int):
+                raise NotImplementedError(
+                    "The usage of 'normalize' is not supported "
+                    "for bipartite message passing.")
+
+            if isinstance(edge_index, Tensor):
+                edge_index, edge_attr = remove_self_loops(
+                    edge_index, edge_attr)
+            elif isinstance(edge_index, SparseTensor):
+                edge_index = torch_sparse.remove_diag(edge_index)
+
         # edge_updater_type: (x: PairTensor, edge_attr: OptTensor)
         alpha = self.edge_updater(edge_index, x=(x_l, x_r),
                                   edge_attr=edge_attr)
+
+        if self.normalize:
+            num_nodes = None
+            if isinstance(edge_index, Tensor):
+                num_nodes = x_l.size(0)
+                if x_r is not None:
+                    num_nodes = min(num_nodes, x_r.size(0))
+            edge_index, alpha = gat_norm(edge_index,
+                                         alpha,
+                                         num_nodes=num_nodes,
+                                         flow=self.flow,
+                                         dtype=alpha.dtype)  # yapf: disable
 
         # propagate_type: (x: PairTensor, alpha: Tensor)
         out = self.propagate(edge_index, x=(x_l, x_r), alpha=alpha)
