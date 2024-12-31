@@ -3,9 +3,9 @@ import torch.nn.functional as F
 
 
 class PolynormerAttention(torch.nn.Module):
-    r"""The linear scaled attention mechanism from the
-    `"Rethinking Attention with Performers"
-    <https://arxiv.org/abs/2009.14794>`_ paper.
+    r"""The polynomial-expressive attention mechanism from the
+    `"Polynormer: Polynomial-Expressive Graph Transformer in Linear Time"
+    <https://arxiv.org/abs/2403.01232>`_ paper.
 
     Args:
         channels (int): Size of each input sample.
@@ -23,8 +23,15 @@ class PolynormerAttention(torch.nn.Module):
             attention output. (default: :obj:`0.0`)
 
     """
-    def __init__(self, hidden_channels, heads, num_layers, beta, dropout,
-                 qk_shared=True):
+    def __init__(
+        self,
+        hidden_channels,
+        heads,
+        num_layers,
+        beta,
+        dropout,
+        qk_shared=True,
+    ):
         super().__init__()
 
         self.hidden_channels = hidden_channels
@@ -40,37 +47,16 @@ class PolynormerAttention(torch.nn.Module):
         self.k_lins = torch.nn.ModuleList()
         self.v_lins = torch.nn.ModuleList()
         self.lns = torch.nn.ModuleList()
-        for i in range(num_layers):
-            self.h_lins.append(
-                torch.nn.Linear(heads * hidden_channels,
-                                heads * hidden_channels))
+        inner_channels = heads * hidden_channels
+        for _ in range(num_layers):
+            self.h_lins.append(torch.nn.Linear(inner_channels, inner_channels))
             if not self.qk_shared:
                 self.q_lins.append(
-                    torch.nn.Linear(heads * hidden_channels,
-                                    heads * hidden_channels))
-            self.k_lins.append(
-                torch.nn.Linear(heads * hidden_channels,
-                                heads * hidden_channels))
-            self.v_lins.append(
-                torch.nn.Linear(heads * hidden_channels,
-                                heads * hidden_channels))
-            self.lns.append(torch.nn.LayerNorm(heads * hidden_channels))
-        self.lin_out = torch.nn.Linear(heads * hidden_channels,
-                                       heads * hidden_channels)
-
-    def reset_parameters(self):
-        for h_lin in self.h_lins:
-            h_lin.reset_parameters()
-        if not self.qk_shared:
-            for q_lin in self.q_lins:
-                q_lin.reset_parameters()
-        for k_lin in self.k_lins:
-            k_lin.reset_parameters()
-        for v_lin in self.v_lins:
-            v_lin.reset_parameters()
-        for ln in self.lns:
-            ln.reset_parameters()
-        self.lin_out.reset_parameters()
+                    torch.nn.Linear(inner_channels, inner_channels))
+            self.k_lins.append(torch.nn.Linear(inner_channels, inner_channels))
+            self.v_lins.append(torch.nn.Linear(inner_channels, inner_channels))
+            self.lns.append(torch.nn.LayerNorm(inner_channels))
+        self.lin_out = torch.nn.Linear(inner_channels, inner_channels)
 
     def forward(self, x):
         seq_len, _ = x.size()
@@ -97,13 +83,26 @@ class PolynormerAttention(torch.nn.Module):
             den = torch.einsum('ndh, dh -> nh', q, k_sum).unsqueeze(1)
 
             # linear global attention based on kernel trick
-            beta = self.beta
             x = (num / den).reshape(seq_len, -1)
-            x = self.lns[i](x) * (h + beta)
+            x = self.lns[i](x) * (h + self.beta)
             x = F.relu(self.lin_out(x))
             x = F.dropout(x, p=self.dropout, training=self.training)
 
         return x
+
+    def reset_parameters(self):
+        for h_lin in self.h_lins:
+            h_lin.reset_parameters()
+        if not self.qk_shared:
+            for q_lin in self.q_lins:
+                q_lin.reset_parameters()
+        for k_lin in self.k_lins:
+            k_lin.reset_parameters()
+        for v_lin in self.v_lins:
+            v_lin.reset_parameters()
+        for ln in self.lns:
+            ln.reset_parameters()
+        self.lin_out.reset_parameters()
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('

@@ -51,59 +51,55 @@ class Net(torch.nn.Module):
             self.post_bns = torch.nn.ModuleList()
 
         # first layer
-        self.h_lins.append(
-            torch.nn.Linear(in_channels, heads * hidden_channels))
+        inner_channels = heads * hidden_channels
+        self.h_lins.append(torch.nn.Linear(in_channels, inner_channels))
         if local_attn:
             self.local_convs.append(
                 GATConv(in_channels, hidden_channels, heads=heads, concat=True,
                         add_self_loops=False, bias=False))
         else:
             self.local_convs.append(
-                GCNConv(in_channels, heads * hidden_channels, cached=False,
+                GCNConv(in_channels, inner_channels, cached=False,
                         normalize=True))
 
-        self.lins.append(torch.nn.Linear(in_channels, heads * hidden_channels))
-        self.lns.append(torch.nn.LayerNorm(heads * hidden_channels))
+        self.lins.append(torch.nn.Linear(in_channels, inner_channels))
+        self.lns.append(torch.nn.LayerNorm(inner_channels))
         if self.pre_ln:
             self.pre_lns.append(torch.nn.LayerNorm(in_channels))
         if self.post_bn:
-            self.post_bns.append(torch.nn.BatchNorm1d(heads * hidden_channels))
+            self.post_bns.append(torch.nn.BatchNorm1d(inner_channels))
 
         # following layers
         for _ in range(local_layers - 1):
-            self.h_lins.append(
-                torch.nn.Linear(heads * hidden_channels,
-                                heads * hidden_channels))
+            self.h_lins.append(torch.nn.Linear(inner_channels, inner_channels))
             if local_attn:
                 self.local_convs.append(
-                    GATConv(hidden_channels * heads, hidden_channels,
-                            heads=heads, concat=True, add_self_loops=False,
-                            bias=False))
+                    GATConv(inner_channels, hidden_channels, heads=heads,
+                            concat=True, add_self_loops=False, bias=False))
             else:
                 self.local_convs.append(
-                    GCNConv(heads * hidden_channels, heads * hidden_channels,
-                            cached=False, normalize=True))
+                    GCNConv(inner_channels, inner_channels, cached=False,
+                            normalize=True))
 
-            self.lins.append(
-                torch.nn.Linear(heads * hidden_channels,
-                                heads * hidden_channels))
-            self.lns.append(torch.nn.LayerNorm(heads * hidden_channels))
+            self.lins.append(torch.nn.Linear(inner_channels, inner_channels))
+            self.lns.append(torch.nn.LayerNorm(inner_channels))
             if self.pre_ln:
                 self.pre_lns.append(torch.nn.LayerNorm(heads *
                                                        hidden_channels))
             if self.post_bn:
-                self.post_bns.append(
-                    torch.nn.BatchNorm1d(heads * hidden_channels))
+                self.post_bns.append(torch.nn.BatchNorm1d(inner_channels))
 
-        self.lin_in = torch.nn.Linear(in_channels, heads * hidden_channels)
-        self.ln = torch.nn.LayerNorm(heads * hidden_channels)
-        self.global_attn = PolynormerAttention(hidden_channels, heads,
-                                               global_layers, beta,
-                                               global_dropout)
-        self.pred_local = torch.nn.Linear(heads * hidden_channels,
-                                          out_channels)
-        self.pred_global = torch.nn.Linear(heads * hidden_channels,
-                                           out_channels)
+        self.lin_in = torch.nn.Linear(in_channels, inner_channels)
+        self.ln = torch.nn.LayerNorm(inner_channels)
+        self.global_attn = PolynormerAttention(
+            hidden_channels,
+            heads,
+            global_layers,
+            beta,
+            global_dropout,
+        )
+        self.pred_local = torch.nn.Linear(inner_channels, out_channels)
+        self.pred_global = torch.nn.Linear(inner_channels, out_channels)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -247,7 +243,7 @@ def main(args):
 
 
 if __name__ == '__main__':
-    # base = 72.47%, exp = 73.44%
+    # acc = 73.44%, 73.39%
     parser = argparse.ArgumentParser(description='Polynormer Example')
     # dataset and evaluation
     parser.add_argument('--dataset', type=str, default='ogbn-arxiv')
