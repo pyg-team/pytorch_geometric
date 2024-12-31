@@ -91,13 +91,15 @@ class Net(torch.nn.Module):
 
         self.lin_in = torch.nn.Linear(in_channels, inner_channels)
         self.ln = torch.nn.LayerNorm(inner_channels)
-        self.global_attn = PolynormerAttention(
-            hidden_channels,
-            heads,
-            global_layers,
-            beta,
-            global_dropout,
-        )
+        self.global_attn = torch.nn.Sequential(*[
+            PolynormerAttention(
+                hidden_channels,
+                heads,
+                hidden_channels,
+                beta,
+                global_dropout,
+            ) for _ in range(global_layers)
+        ])
         self.pred_local = torch.nn.Linear(inner_channels, out_channels)
         self.pred_global = torch.nn.Linear(inner_channels, out_channels)
         self.reset_parameters()
@@ -119,7 +121,6 @@ class Net(torch.nn.Module):
                 p_bn.reset_parameters()
         self.lin_in.reset_parameters()
         self.ln.reset_parameters()
-        self.global_attn.reset_parameters()
         self.pred_local.reset_parameters()
         self.pred_global.reset_parameters()
 
