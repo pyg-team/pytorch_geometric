@@ -87,5 +87,4 @@ class PolynormerAttention(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('
                 f'heads={self.heads}, '
-                f'head_channels={self.head_channels} '
-                f'kernel={self.kernel})')
+                f'head_channels={self.head_channels})')
