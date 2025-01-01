@@ -16,6 +16,7 @@ from .yelp import Yelp
 from .amazon_products import AmazonProducts
 from .qm7 import QM7b
 from .qm9 import QM9
+from .qm40 import QM40
 from .md17 import MD17
 from .zinc import ZINC
 from .aqsol import AQSOL
