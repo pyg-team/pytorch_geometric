@@ -170,6 +170,116 @@ class Batch(metaclass=DynamicInheritance):
 
         return [self.get_example(i) for i in index]
 
+    def filter(self, idx: torch.Tensor) -> Self:
+        """
+        Efficiently filters the object using a boolean mask or index, directly modifying
+        batch attributes instead of rebuilding the batch.
+
+        This method is ~10x faster than calling Batch.from_data_list(batch[mask]).
+
+        The provided indices (:obj:`idx`) can be a slicing object (e.g., :obj:`[2:5]`),
+        a list, tuple, or a :obj:`torch.Tensor`/:obj:`np.ndarray` of type long or bool,
+        or any sequence of integers (excluding strings).
+
+        This implementation currently focuses on HeteroData, but handling HomogeneousData
+        needs to be addressed. Additionally, the default filtering from __get_item__ still
+        uses the index_select method, which could be replaced with this approach for
+        improved efficiency, avoiding conversion to list objects.
+        """
+
+        mask: torch.Tensor
+        if isinstance(idx, slice):
+            mask = torch.zeros(len(self), dtype=torch.bool)
+            mask[idx] = True
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.long:
+            mask = torch.zeros(len(self), dtype=torch.bool)
+            mask[idx.flatten()] = True
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
+            mask = idx.flatten()
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
+            mask = torch.zeros(len(self), dtype=torch.bool)
+            mask[idx.flatten()] = True
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
+            mask = torch.tensor(idx.flatten())
+
+        elif isinstance(idx, Sequence) and not isinstance(idx, str):
+            mask = torch.zeros(len(self), dtype=torch.bool)
+            mask[idx] = True
+
+        else:
+            raise IndexError(
+                f"Only slices (':'), list, tuples, torch.tensor and "
+                f"np.ndarray of dtype long or bool are valid indices (got "
+                f"'{type(idx).__name__}')")
+
+        # Create new empty batch that will be filled later
+        batch = Batch(_base_cls=self[0].__class__).stores_as(self)
+        batch._slice_dict = {}
+        batch._inc_dict = {}
+
+        # Update the number of graphs based on the mask
+        batch._num_graphs = mask.sum().item()
+
+        # Mask application works the same way for all attribute levels (graph, nodes, edges)
+        for old_store, new_store in zip(self.stores, batch.stores):
+            # We get slices dictionary from key. If key is None then we are dealing with graph level attributes.
+            key = old_store._key
+            slices = self._slice_dict[key] if key else {attr: self._slice_dict[attr] for attr in old_store}
+
+            if key:
+                batch._slice_dict[key] = {}
+                batch._inc_dict[key] = {}
+
+            # All slice and store are updated one by one in following loop
+            for attr, slc in slices.items():
+                slice_diff = slc.diff()
+
+                # Reshape mask to align it with attribute shape
+                attr_mask = mask[torch.repeat_interleave(slice_diff)]
+
+                # Apply mask to attribute
+                new_store[attr] = old_store[attr][:, attr_mask] if attr == 'edge_index' else old_store[attr][attr_mask]
+
+                # Compute masked version of slice tensor
+                sizes_masked = slice_diff[mask]
+                slice_masked = torch.cat((torch.zeros(1, dtype=torch.int), sizes_masked.cumsum(0)))
+
+                # By default, new inc tensor is zero tensor, unless it is overwritten later
+                new_inc = torch.zeros(batch._num_graphs, dtype=torch.int)
+
+                # x attribute provides num_node info to update 'ptr' and 'batch' tensors
+                if attr == 'x':
+                    batch[key].ptr = slice_masked
+                    batch[key].batch = torch.repeat_interleave(sizes_masked)
+
+                if attr == 'edge_index':
+                    # Then we reindex edge_index to remove gaps left by removed nodes
+                    # We assume x node attributes to be changed before edge attributes
+                    # so that mapping_idx_dict is already available.
+                    old_inc = self._inc_dict[key][attr].squeeze(-1).T
+                    old_inc_diff = old_inc.diff(prepend=torch.zeros((2, 1), dtype=torch.int))[:, mask]
+                    old_inc_diff[:, 0] = 0
+                    new_inc = old_inc_diff.cumsum(1)
+                    shift_inc = new_inc - old_inc[:, mask]
+
+                    edge_index_batch = torch.repeat_interleave(sizes_masked)
+                    batch[key].edge_index += shift_inc[:, edge_index_batch]
+
+                    new_inc = new_inc.T.unsqueeze(-1)
+
+                # Update _slice_dict and _inc_dict based on what has been computed before
+                if key:  # Node or edge level attribute
+                    batch._slice_dict[key][attr] = slice_masked
+                    batch._inc_dict[key][attr] = new_inc
+                else:  # Graph level attribute
+                    batch._slice_dict[attr] = slice_masked
+                    batch._inc_dict[attr] = new_inc
+        return batch
+
     def __getitem__(self, idx: Union[int, np.integer, str, IndexType]) -> Any:
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
