@@ -63,12 +63,13 @@ class LineDiGraph(BaseTransform):
             if self.node_to_edge_features == "inner":
                 new_edge_attr = node_features[edge_mid]
             elif self.node_to_edge_features == "outer":
-                new_edge_attr = torch.cat([node_features[edge_src],
-                                           node_features[edge_dst]], dim=-1)
+                new_edge_attr = torch.cat(
+                    [node_features[edge_src], node_features[edge_dst]], dim=-1)
             else:  # self.node_to_edge_features == "all"
-                new_edge_attr = torch.cat([node_features[edge_src],
-                                           node_features[edge_mid],
-                                           node_features[edge_dst]], dim=-1)
+                new_edge_attr = torch.cat([
+                    node_features[edge_src], node_features[edge_mid],
+                    node_features[edge_dst]
+                ], dim=-1)
 
         data.edge_index = new_edge_index
         data.x = edge_attr
