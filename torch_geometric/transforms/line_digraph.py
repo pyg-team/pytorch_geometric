@@ -49,8 +49,6 @@ class LineDiGraph(BaseTransform):
         mask = row.unsqueeze(0) == col.unsqueeze(1)  # (num_edges, num_edges)
         new_edge_index = torch.nonzero(mask).T
 
-        new_num_edges = new_edge_index.size(1)
-
         # Obtain new edge attributes
         if data.x is None or self.node_to_edge_features == 'none':
             new_edge_attr = None
@@ -74,6 +72,5 @@ class LineDiGraph(BaseTransform):
         data.edge_index = new_edge_index
         data.x = edge_attr
         data.num_nodes = new_num_nodes
-        data.num_edges = new_num_edges
         data.edge_attr = new_edge_attr
         return data
