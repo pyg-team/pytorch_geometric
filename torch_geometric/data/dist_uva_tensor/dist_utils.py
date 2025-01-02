@@ -39,7 +39,7 @@ def create_process_group_per_node():
     if not dist.is_initialized():
         # Assume it's a standalone run with single-gpu
         _standalone_pytorch_launcher(rank=0, world_size=1)
-        nprocs_per_node = 1
+        nprocs_per_node = dist.get_world_size()
     else:
         nprocs_per_node = int(os.environ.get('LOCAL_WORLD_SIZE',
                             os.environ.get('SLURM_NTASKS_PER_NODE')))

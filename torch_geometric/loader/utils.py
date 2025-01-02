@@ -414,6 +414,13 @@ def infer_filter_per_worker(data: Any) -> bool:
     out = True
     if isinstance(data, (Data, HeteroData)) and data.is_cuda:
         out = False
+
+    if isinstance(data, (Data, HeteroData)):
+        for store in data.stores:
+            for _, value in store.items():
+                if isinstance(value, DistTensor):
+                    out = False
+                    break
     logging.debug(f"Inferred 'filter_per_worker={out}' option for feature "
                   f"fetching routines of the data loader")
     return out

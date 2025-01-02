@@ -12,6 +12,7 @@ from tqdm import tqdm
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
+import torch_geometric.transforms as T
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter, )
@@ -50,6 +51,11 @@ parser.add_argument(
     action='store_true',
     help='Whether or not to use directed graph',
 )
+parser.add_argument(
+    '--enable-wholegraph',
+    action='store_true',
+    help='Whether or not to use WholeGraph to accelerate dataloading',
+)
 args = parser.parse_args()
 
 wall_clock_start = time.perf_counter()
@@ -80,7 +86,8 @@ data = dataset[0]
 if not args.use_directed_graph:
     data.edge_index = to_undirected(data.edge_index, reduce='mean')
 
-data.to(device, 'x', 'y')
+if args.enable_wholegraph:
+    data = T.ToWholeGraphFeatures()(data)
 
 train_loader = NeighborLoader(
     data,
@@ -120,7 +127,8 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
+        batch = batch.to(device)
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze().to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
