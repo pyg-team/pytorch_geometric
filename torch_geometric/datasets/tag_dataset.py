@@ -158,6 +158,8 @@ class TAGDataset(InMemoryDataset):
         self.token_on_disk = token_on_disk
         self.tokenize_batch_size = tokenize_batch_size
         self._token = self.tokenize_graph(self.tokenize_batch_size)
+        self._llm_explanation_token = self.tokenize_graph(
+            self.tokenize_batch_size, text_type='llm_explanation')
         self.__num_classes__ = dataset.num_classes
 
     @property
@@ -184,6 +186,12 @@ class TAGDataset(InMemoryDataset):
         if self._token is None:  # lazy load
             self._token = self.tokenize_graph()
         return self._token
+
+    @property
+    def llm_explanation_token(self) -> Dict[str, Tensor]:
+        if self._llm_explanation_token is None:  # lazy load
+            self._llm_explanation_token = self.tokenize_graph()
+        return self._llm_explanation_token
 
     # load is_gold after init
     @property
@@ -318,22 +326,31 @@ class TAGDataset(InMemoryDataset):
             text_df.to_csv(osp.join(node_text_path), compression='gzip',
                            index=False)
 
-    def tokenize_graph(self, batch_size: int = 256) -> Dict[str, Tensor]:
+    def tokenize_graph(self, batch_size: int = 256,
+                       text_type: str = 'raw_text') -> Dict[str, Tensor]:
         r"""Tokenizing the text associate with each node, running in cpu.
 
         Args:
             batch_size (Optional[int]): batch size of list of text for
                 generating emebdding
+            text_type (Optional[str]): type of text
         Returns:
             Dict[str, torch.Tensor]: tokenized graph
         """
+        assert text_type in ['raw_text', 'llm_explanation']
+        if text_type == 'raw_text':
+            _text = self.text
+        elif text_type == 'llm_explanation':
+            _text = self.llm_explanation
+
         data_len = 0
-        if self.text is not None:
-            data_len = len(self.text)
+        if _text is not None:
+            data_len = len(_text)
         else:
             raise ValueError("The TAGDataset need text for tokenization")
         token_keys = ['input_ids', 'token_type_ids', 'attention_mask']
-        path = os.path.join(self.processed_dir, 'token', self.tokenizer_name)
+        path = os.path.join(self.processed_dir, 'token', text_type,
+                            self.tokenizer_name)
         # Check if the .pt files already exist
         token_files_exist = any(
             os.path.exists(os.path.join(path, f'{k}.pt')) for k in token_keys)
@@ -350,12 +367,12 @@ class TAGDataset(InMemoryDataset):
         all_encoded_token = {k: [] for k in token_keys}
         pbar = tqdm(total=data_len)
 
-        pbar.set_description('Tokenizing Text Attributed Graph')
+        pbar.set_description(f'Tokenizing Text Attributed Graph {text_type}')
         for i in range(0, data_len, batch_size):
             end_index = min(data_len, i + batch_size)
-            token = self.tokenizer(self.text[i:end_index],
-                                   padding='max_length', truncation=True,
-                                   max_length=512, return_tensors="pt")
+            token = self.tokenizer(_text[i:end_index], padding='max_length',
+                                   truncation=True, max_length=512,
+                                   return_tensors="pt")
             for k in token.keys():
                 all_encoded_token[k].append(token[k])
             pbar.update(end_index - i)
@@ -383,10 +400,16 @@ class TAGDataset(InMemoryDataset):
 
         Args:
             tag_dataset (TAGDataset): the parent dataset
+            text_type (str): type of text
         """
-        def __init__(self, tag_dataset: 'TAGDataset') -> None:
+        def __init__(self, tag_dataset: 'TAGDataset',
+                     text_type: str = 'raw_text') -> None:
+            assert text_type in ['raw_text', 'llm_explanation']
             self.tag_dataset = tag_dataset
-            self.token = tag_dataset.token
+            if text_type == 'raw_text':
+                self.token = tag_dataset.token
+            elif text_type == 'llm_explanation':
+                self.token = tag_dataset.llm_explanation_token
             assert tag_dataset._data is not None
             self._data = tag_dataset._data
 
@@ -438,8 +461,8 @@ class TAGDataset(InMemoryDataset):
         def __repr__(self) -> str:
             return f'{self.__class__.__name__}()'
 
-    def to_text_dataset(self) -> TextDataset:
+    def to_text_dataset(self, text_type: str = 'raw_text') -> TextDataset:
         r"""Factory Build text dataset from Text Attributed Graph Dataset
         each data point is node's associated text token.
         """
-        return TAGDataset.TextDataset(self)
+        return TAGDataset.TextDataset(self, text_type)
