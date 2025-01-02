@@ -17,6 +17,7 @@ from torch_geometric.data import (
     remote_backend_utils,
 )
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
+from torch_geometric.data.dist_uva_tensor import DistTensor
 from torch_geometric.typing import (
     EdgeType,
     FeatureTensorType,
@@ -77,6 +78,9 @@ def index_select(
 
     elif isinstance(value, np.ndarray):
         return torch.from_numpy(np.take(value, index, axis=dim))
+
+    if isinstance(value, DistTensor):
+        return value[index]
 
     raise ValueError(f"Encountered invalid feature tensor type "
                      f"(got '{type(value)}')")

@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "pytorch_geometric",
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"cmake.sourceDirectory": "/home/liuc/Documents/codes/chang-l/pytorch_geometric/examples/cpp"
+	}
+}
