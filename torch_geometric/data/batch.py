@@ -171,8 +171,7 @@ class Batch(metaclass=DynamicInheritance):
         return [self.get_example(i) for i in index]
 
     def filter(self, idx: torch.Tensor) -> Self:
-        """
-        Efficiently filters the object using a boolean mask or index, directly modifying
+        """Efficiently filters the object using a boolean mask or index, directly modifying
         batch attributes instead of rebuilding the batch.
 
         This method is ~10x faster than calling Batch.from_data_list(batch[mask]).
@@ -186,7 +185,6 @@ class Batch(metaclass=DynamicInheritance):
         uses the index_select method, which could be replaced with this approach for
         improved efficiency, avoiding conversion to list objects.
         """
-
         mask: torch.Tensor
         if isinstance(idx, slice):
             mask = torch.zeros(len(self), dtype=torch.bool)
@@ -228,7 +226,10 @@ class Batch(metaclass=DynamicInheritance):
         for old_store, new_store in zip(self.stores, batch.stores):
             # We get slices dictionary from key. If key is None then we are dealing with graph level attributes.
             key = old_store._key
-            slices = self._slice_dict[key] if key else {attr: self._slice_dict[attr] for attr in old_store}
+            slices = self._slice_dict[key] if key else {
+                attr: self._slice_dict[attr]
+                for attr in old_store
+            }
 
             if key:
                 batch._slice_dict[key] = {}
@@ -242,11 +243,14 @@ class Batch(metaclass=DynamicInheritance):
                 attr_mask = mask[torch.repeat_interleave(slice_diff)]
 
                 # Apply mask to attribute
-                new_store[attr] = old_store[attr][:, attr_mask] if attr == 'edge_index' else old_store[attr][attr_mask]
+                new_store[attr] = old_store[
+                    attr][:, attr_mask] if attr == 'edge_index' else old_store[
+                        attr][attr_mask]
 
                 # Compute masked version of slice tensor
                 sizes_masked = slice_diff[mask]
-                slice_masked = torch.cat((torch.zeros(1, dtype=torch.int), sizes_masked.cumsum(0)))
+                slice_masked = torch.cat(
+                    (torch.zeros(1, dtype=torch.int), sizes_masked.cumsum(0)))
 
                 # By default, new inc tensor is zero tensor, unless it is overwritten later
                 new_inc = torch.zeros(batch._num_graphs, dtype=torch.int)
@@ -261,7 +265,8 @@ class Batch(metaclass=DynamicInheritance):
                     # We assume x node attributes to be changed before edge attributes
                     # so that mapping_idx_dict is already available.
                     old_inc = self._inc_dict[key][attr].squeeze(-1).T
-                    old_inc_diff = old_inc.diff(prepend=torch.zeros((2, 1), dtype=torch.int))[:, mask]
+                    old_inc_diff = old_inc.diff(
+                        prepend=torch.zeros((2, 1), dtype=torch.int))[:, mask]
                     old_inc_diff[:, 0] = 0
                     new_inc = old_inc_diff.cumsum(1)
                     shift_inc = new_inc - old_inc[:, mask]
