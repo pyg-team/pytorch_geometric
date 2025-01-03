@@ -21,7 +21,6 @@ def init_wholegraph():
 
     wgth.init(dist.get_rank(), dist.get_world_size(), local_rank,
               local_size=local_size, wm_log_level="info")
-    torch.set_num_threads(1)
     torch.cuda.set_device(local_rank)
     if local_rank == 0:
         machine_name = socket.gethostname()
