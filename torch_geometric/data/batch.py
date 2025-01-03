@@ -222,6 +222,10 @@ class Batch(metaclass=DynamicInheritance):
         # Update the number of graphs based on the mask
         batch._num_graphs = mask.sum().item()
 
+        # Return empty batch when mask filters all elements
+        if batch._num_graphs == 0:
+            return batch
+
         # Mask application works the same way for all attribute levels (graph, nodes, edges)
         for old_store, new_store in zip(self.stores, batch.stores):
             # We get slices dictionary from key. If key is None then we are dealing with graph level attributes.
