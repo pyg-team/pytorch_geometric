@@ -41,8 +41,14 @@ def create_process_group_per_node():
         _standalone_pytorch_launcher(rank=0, world_size=1)
         nprocs_per_node = dist.get_world_size()
     else:
-        nprocs_per_node = int(os.environ.get('LOCAL_WORLD_SIZE',
-                            os.environ.get('SLURM_NTASKS_PER_NODE')))
+        if 'LOCAL_WORLD_SIZE' in os.environ:
+            nprocs_per_node = int(os.environ['LOCAL_WORLD_SIZE'])
+        elif 'SLURM_NTASKS_PER_NODE' in os.environ:
+            nprocs_per_node = int(os.environ['SLURM_NTASKS_PER_NODE'])
+        else:
+            # Not launched by SLURM or torch.distributed.launch,
+            # assume it's a standalone run with single-machine
+            nprocs_per_node = dist.get_world_size()
 
     world_size = dist.get_world_size()
     rank = dist.get_rank() if dist.is_initialized() else 0
