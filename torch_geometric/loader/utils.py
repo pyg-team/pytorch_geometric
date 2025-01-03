@@ -16,6 +16,7 @@ from torch_geometric.data import (
     TensorAttr,
     remote_backend_utils,
 )
+from torch_geometric.data.dist_uva_tensor import DistTensor
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     EdgeType,
@@ -77,6 +78,9 @@ def index_select(
 
     elif isinstance(value, np.ndarray):
         return torch.from_numpy(np.take(value, index, axis=dim))
+
+    if isinstance(value, DistTensor):
+        return value[index]
 
     raise ValueError(f"Encountered invalid feature tensor type "
                      f"(got '{type(value)}')")
@@ -410,6 +414,13 @@ def infer_filter_per_worker(data: Any) -> bool:
     out = True
     if isinstance(data, (Data, HeteroData)) and data.is_cuda:
         out = False
+
+    if isinstance(data, (Data, HeteroData)):
+        for store in data.stores:
+            for _, value in store.items():
+                if isinstance(value, DistTensor):
+                    out = False
+                    break
     logging.debug(f"Inferred 'filter_per_worker={out}' option for feature "
                   f"fetching routines of the data loader")
     return out

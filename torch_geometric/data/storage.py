@@ -41,6 +41,8 @@ from torch_geometric.utils import (
     sort_edge_index,
 )
 
+from .dist_uva_tensor import DistTensor
+
 N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id', 'tf'}
 E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type', 'e_id'}
 
@@ -480,6 +482,8 @@ class NodeStorage(BaseStorage):
             return 1 if x.dim() == 1 else x.size(-1)
         if isinstance(x, TensorFrame):
             return x.num_cols
+        if isinstance(x, DistTensor):
+            return x.shape[0]
 
         tf: Optional[Any] = self.get('tf')
         if isinstance(tf, TensorFrame):
@@ -504,6 +508,11 @@ class NodeStorage(BaseStorage):
 
         if (isinstance(value, (list, tuple, TensorFrame))
                 and len(value) == self.num_nodes):
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
+        if (isinstance(value, (list, tuple, DistTensor))
+                and value.shape[0] == self.num_nodes):
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
@@ -795,6 +804,11 @@ class GlobalStorage(NodeStorage, EdgeStorage):
 
         if (isinstance(value, (list, tuple, TensorFrame))
                 and len(value) == self.num_nodes):
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
+        if (isinstance(value, (list, tuple, DistTensor))
+                and value.shape[0] == self.num_nodes):
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
