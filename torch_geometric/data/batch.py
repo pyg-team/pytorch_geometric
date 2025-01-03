@@ -246,7 +246,10 @@ class Batch(metaclass=DynamicInheritance):
                 if attr == 'edge_index':
                     new_store[attr] = old_store[attr][:, attr_mask]
                 elif isinstance(old_store[attr], list):
-                    new_store[attr] = [item for item, m in zip(old_store[attr], attr_mask) if m]
+                    new_store[attr] = [
+                        item for item, m in zip(old_store[attr], attr_mask)
+                        if m
+                    ]
                 else:
                     new_store[attr] = old_store[attr][attr_mask]
 
@@ -269,7 +272,8 @@ class Batch(metaclass=DynamicInheritance):
                     # so that mapping_idx_dict is already available.
                     old_inc = self._inc_dict[key][attr].squeeze(-1).T
                     new_inc = old_inc.diff()[:, mask[:-1]].cumsum(1)
-                    new_inc = torch.cat((torch.zeros((2, 1), dtype=torch.int), new_inc), dim=1)
+                    new_inc = torch.cat((torch.zeros(
+                        (2, 1), dtype=torch.int), new_inc), dim=1)
 
                     shift = new_inc - old_inc[:, mask]
 
