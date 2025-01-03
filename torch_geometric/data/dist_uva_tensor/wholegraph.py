@@ -1,5 +1,5 @@
-from typing import List, Union
 import socket
+from typing import List, Union
 
 import pylibwholegraph.torch as wgth
 import torch
@@ -124,14 +124,10 @@ def create_wg_dist_tensor(
         else:
             cache_memory_type = "continuous"
             cache_policy = wgth.create_builtin_cache_policy(
-                "local_device",
-                embedding_wholememory_type,
-                embedding_wholememory_location,
-                "readonly",
-                cache_ratio,
+                "local_device", embedding_wholememory_type,
+                embedding_wholememory_location, "readonly", cache_ratio,
                 cache_memory_type=cache_memory_type,
-                cache_memory_location='cuda'
-            )
+                cache_memory_location='cuda')
         wm_embedding = wgth.create_embedding(
             global_comm,
             embedding_wholememory_type,
@@ -207,14 +203,10 @@ def create_wg_dist_tensor_from_files(
         else:
             cache_memory_type = "continuous"
             cache_policy = wgth.create_builtin_cache_policy(
-                "local_device",
-                embedding_wholememory_type,
-                embedding_wholememory_location,
-                "readonly",
-                cache_ratio,
+                "local_device", embedding_wholememory_type,
+                embedding_wholememory_location, "readonly", cache_ratio,
                 cache_memory_type=cache_memory_type,
-                cache_memory_location='cuda'
-            )
+                cache_memory_location='cuda')
         wm_embedding = wgth.create_embedding_from_filelist(
             global_comm,
             embedding_wholememory_type,

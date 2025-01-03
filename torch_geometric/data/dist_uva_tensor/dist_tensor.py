@@ -6,6 +6,7 @@ import pylibwholegraph
 import torch
 import torch.distributed as dist
 
+from .dist_utils import get_local_size, init_process_group_per_node
 from .wholegraph import (
     _wm_global,
     copy_host_global_tensor_to_local,
@@ -14,7 +15,7 @@ from .wholegraph import (
     finalize_wholegraph,
     nvlink_network,
 )
-from .dist_utils import init_process_group_per_node, get_local_size
+
 
 class DistTensor:
     _instance_count = 0
@@ -61,7 +62,6 @@ class DistTensor:
             backend = 'vmm'
         else:
             backend = 'vmm' if nvlink_network() else 'nccl'
-
 
         if src is None:
             # Create an empty WholeGraph tensor

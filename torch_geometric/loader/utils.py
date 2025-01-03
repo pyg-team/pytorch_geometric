@@ -16,8 +16,8 @@ from torch_geometric.data import (
     TensorAttr,
     remote_backend_utils,
 )
-from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.data.dist_uva_tensor import DistTensor
+from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     EdgeType,
     FeatureTensorType,

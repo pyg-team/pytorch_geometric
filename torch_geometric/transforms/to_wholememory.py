@@ -1,17 +1,15 @@
+import warnings
 from typing import List, Union
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
+from torch_geometric.data.dist_uva_tensor import DistEmbedding, DistTensor
 from torch_geometric.transforms import BaseTransform
 
-from torch_geometric.data.dist_uva_tensor import DistTensor, DistEmbedding
-
-import warnings
 
 @functional_transform('transform_features_to_wholememory')
 class ToWholeGraphFeatures(BaseTransform):
-    r"""
-    A transform that moves graph features into wholememory managed distributed uva or cuda tensors.
+    r"""A transform that moves graph features into wholememory managed distributed uva or cuda tensors.
 
     .. note::
 
@@ -28,7 +26,8 @@ class ToWholeGraphFeatures(BaseTransform):
             `0` means no caching, and it must be strictly less than `1`.
             (default: :obj:`0.5`)
     """
-    def __init__(self, attrs: List[str] = ["x"], device: str ="cpu", cache_ratio: float =0.5):
+    def __init__(self, attrs: List[str] = ["x"], device: str = "cpu",
+                 cache_ratio: float = 0.5):
         self.attrs = attrs
         self.device = device
         self.cache_ratio = cache_ratio
@@ -46,12 +45,11 @@ class ToWholeGraphFeatures(BaseTransform):
                 if not isinstance(value, DistTensor) and value.numel() > 0:
                     if value.dim() == 1:
                         # No need to unsqueeze if WholeGraph fix this https://github.com/rapidsai/wholegraph/pull/229
-                        dist_tensor = DistTensor(value.unsqueeze(1), device=self.device)
+                        dist_tensor = DistTensor(value.unsqueeze(1),
+                                                 device=self.device)
                     else:
                         dist_tensor = DistEmbedding(
-                            value,
-                            device=self.device,
-                            cache_ratio=self.cache_ratio
-                        )
+                            value, device=self.device,
+                            cache_ratio=self.cache_ratio)
                     store[key] = dist_tensor
         return data

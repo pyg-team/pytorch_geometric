@@ -7,6 +7,7 @@ _LOCAL_PROCESS_GROUP = None
 _LOCAL_ROOT_GLOBAL_RANK = None
 nprocs_per_node = 1
 
+
 def _standalone_pytorch_launcher(rank, world_size):
     if 'MASTER_ADDR' not in os.environ:
         os.environ['MASTER_ADDR'] = 'localhost'
@@ -17,7 +18,6 @@ def _standalone_pytorch_launcher(rank, world_size):
     if 'RANK' in os.environ:
         rank = int(os.environ['RANK'])
     dist.init_process_group("nccl", rank=rank, world_size=world_size)
-
 
 
 def init_process_group_per_node():

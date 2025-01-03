@@ -9,10 +9,10 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch import Tensor
 from tqdm import tqdm
 
+import torch_geometric.transforms as T
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
-import torch_geometric.transforms as T
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter, )
