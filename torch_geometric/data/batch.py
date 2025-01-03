@@ -243,9 +243,12 @@ class Batch(metaclass=DynamicInheritance):
                 attr_mask = mask[torch.repeat_interleave(slice_diff)]
 
                 # Apply mask to attribute
-                new_store[attr] = old_store[
-                    attr][:, attr_mask] if attr == 'edge_index' else old_store[
-                        attr][attr_mask]
+                if attr == 'edge_index':
+                    new_store[attr] = old_store[attr][:, attr_mask]
+                elif isinstance(old_store[attr], list):
+                    new_store[attr] = [item for item, m in zip(old_store[attr], attr_mask) if m]
+                else:
+                    new_store[attr] = old_store[attr][attr_mask]
 
                 # Compute masked version of slice tensor
                 sizes_masked = slice_diff[mask]
