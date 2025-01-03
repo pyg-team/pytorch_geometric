@@ -126,7 +126,7 @@ if __name__ == '__main__':
     but this is not known.
     """
     precisions = []
-    for QA_pair in relevant_triplges.keys():
+    for QA_pair in relevant_triples.keys():
         golden_triples = relevant_triples[QA_pair]
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
