@@ -371,11 +371,9 @@ def main(args):
     if gnn_val_acc > lm_val_acc:
         em_phase = 'gnn'
         model.gnn = model.gnn.to(device, non_blocking=True)
-        test_loader = subgraph_loader
     else:
         em_phase = 'lm'
         model.lm = model.lm.to(device, non_blocking=True)
-        test_loader = text_test_loader
     test_preds = model.inference(em_phase, test_loader, verbose=verbose)
     train_acc, val_acc, test_acc = evaluate(test_preds,
                                             ['train', 'valid', 'test'])
