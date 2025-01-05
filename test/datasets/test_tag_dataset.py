@@ -6,7 +6,7 @@ from torch_geometric.testing import onlyFullTest, withPackage
 @withPackage('ogb')
 def test_tag_dataset() -> None:
     from ogb.nodeproppred import PygNodePropPredDataset
-    
+
     root = './data/ogb'
     hf_model = 'prajjwal1/bert-tiny'
     token_on_disk = True
