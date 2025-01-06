@@ -38,7 +38,6 @@ class TXT2KG():
         if self.local_LM:
             self.initd_LM = False
         else:
-            assert NVIDIA_API_KEY != '', "Please pass NVIDIA_API_KEY or set local_lm flag to True"
             self.NVIDIA_API_KEY = NVIDIA_API_KEY
             self.NIM_MODEL = NVIDIA_NIM_MODEL
 
@@ -73,6 +72,7 @@ class TXT2KG():
         txt: str,
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
+        assert self.NVIDIA_API_KEY != '', "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm flag to True"
         chunks = chunk_text(txt, chunk_size=self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
