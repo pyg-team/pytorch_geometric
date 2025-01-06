@@ -160,7 +160,7 @@ def parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
     return processed
 
 
-def llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
+def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     relevant_triples = []
     for chunk in chunks:
         relevant_triples += py_fn(llm_fn(chunk, **kwargs))
