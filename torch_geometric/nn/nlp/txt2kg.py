@@ -23,7 +23,7 @@ class TXT2KG():
     inference a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'.
     Smaller LLMs did not work at all in testing.
     Note this 14B model requires a considerable amount of GPU memory.
-    See examples/llm/hotpot_qa.py for example usage on converting 
+    See examples/llm/hotpot_qa.py for example usage on converting
     HotPotQA context documents into a knowledge graph.
     """
     def __init__(
