@@ -13,9 +13,11 @@ SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples 
 
 
 class TXT2KG():
-    """Uses NVIDIA NIMs + Prompt engineering to extract KG from text.
-    `nvidia/llama-3.1-nemotron-70b-instruct` is on par or better than GPT4o
-    in benchmarks. We need a high quality model to ensure high quality KG.
+    """A class to convert text data into a Knowledge Graph (KG) format.
+    Uses NVIDIA NIMs + Prompt engineering by default.
+    Default model `nvidia/llama-3.1-nemotron-70b-instruct`
+    is on par or better than GPT4o in benchmarks.
+    We need a high quality model to ensure high quality KG.
     Otherwise we have garbage in garbage out for the rest of the
     GNN+LLM RAG pipeline.
 
@@ -25,6 +27,16 @@ class TXT2KG():
     Note this 14B model requires a considerable amount of GPU memory.
     See examples/llm/hotpot_qa.py for example usage on converting
     HotPotQA context documents into a knowledge graph.
+
+    Args:
+        NVIDIA_NIM_MODEL : str, optional
+            The name of the NVIDIA NIM model to use (default: "nvidia/llama-3.1-nemotron-70b-instruct").
+        NVIDIA_API_KEY : str, optional
+            The API key for accessing NVIDIA's NIM models (default: "").
+        local_LM : bool, optional
+            A flag indicating whether a local Language Model (LM) should be used (default: False).
+        chunk_size : int, optional
+            The size of the chunks in which the text data is processed (default: 512).
     """
     def __init__(
         self,
@@ -35,20 +47,33 @@ class TXT2KG():
         chunk_size: int = 512,
     ) -> None:
         self.local_LM = local_LM
+        # Initialize the local LM flag and the NIM model info accordingly
         if self.local_LM:
+            # If using a local LM, set the initd_LM flag to False
             self.initd_LM = False
         else:
+            # If not using a local LM, store the provided NIM model info
             self.NVIDIA_API_KEY = NVIDIA_API_KEY
             self.NIM_MODEL = NVIDIA_NIM_MODEL
 
+        # Set the chunk size for processing text data
         self.chunk_size = 512
-        # useful for approximating recall of subgraph retrieval algos
+
+        # Initialize counters and storage for parsing results
         self.doc_id_counter = 0
         self.relevant_triples = {}
         self.total_chars_parsed = 0
         self.time_to_parse = 0.0
 
     def save_kg(self, path: str) -> None:
+        """Saves the relevant triples in the knowledge graph (KG) to a file.
+
+        Args:
+            path (str): The file path where the KG will be saved.
+
+        Returns:
+            None
+        """
         torch.save(self.relevant_triples, path)
 
     def _chunk_to_triples_str_local(self, txt: str) -> str:
@@ -70,26 +95,45 @@ class TXT2KG():
     def add_doc_2_KG(
         self,
         txt: str,
-        QA_pair: Optional[Tuple[str, str]],
+        QA_pair: Optional[Tuple[str, str]] = None,
     ) -> None:
+        """Add a document to the Knowledge Graph (KG) by extracting triples from the text.
+
+        Args:
+            txt (str): The text to extract triples from.
+            QA_pair (Tuple[str, str]], optional):
+                A QA pair to associate with the extracted triples.
+                Useful for downstream evaluation.
+
+        Returns:
+        - None
+        """
+        # Ensure NVIDIA_API_KEY is set before proceeding
         assert self.NVIDIA_API_KEY != '', "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm flag to True"
+
         if QA_pair:
-            # QA_pairs should be unique keys
+            # QA_pairs should be unique keys, so check if it already exists in the KG
             assert QA_pair not in self.relevant_triples.keys()
             key = QA_pair
         else:
+            # If no QA_pair, use the current doc_id_counter as the key
             key = self.doc_id_counter
+
+        # Handle empty text (context-less QA pairs)
         if txt == "":
-            # handle context less Q/A pairs
             self.relevant_triples[key] = []
         else:
+            # Chunk the text into smaller pieces for processing
             chunks = _chunk_text(txt, chunk_size=self.chunk_size)
+
             if self.local_LM:
-                # just for debug, no need to scale
+                # For debugging purposes...
+                # process chunks sequentially on the local LM
                 self.relevant_triples[key] = _llm_then_python_parse(
                     chunks, _parse_n_check_triples,
-                    self.chunk_to_triples_str_local)
+                    self._chunk_to_triples_str_local)
             else:
+                # Process chunks in parallel using multiple processes
                 num_procs = min(len(chunks), _get_num_procs())
                 meta_chunk_size = int(len(chunks) / num_procs)
                 in_chunks_per_proc = {
@@ -99,16 +143,22 @@ class TXT2KG():
                                                meta_chunk_size, len(chunks))]
                     for j in range(num_procs)
                 }
+
+                # Spawn multiple processes to process chunks in parallel
                 mp.spawn(
                     _multiproc_helper,
                     args=(in_chunks_per_proc, _parse_n_check_triples,
                           _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
                           self.NIM_MODEL), nprocs=num_procs)
+
+                # Collect the results from each process
                 self.relevant_triples[key] = []
                 for rank in range(num_procs):
                     self.relevant_triples[key] += torch.load(
                         "/tmp/outs_for_proc_" + str(rank))
                     os.remove("/tmp/outs_for_proc_" + str(rank))
+
+        # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
 
