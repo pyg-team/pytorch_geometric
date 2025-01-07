@@ -73,36 +73,40 @@ class TXT2KG():
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
         assert self.NVIDIA_API_KEY != '', "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm flag to True"
-        chunks = _chunk_text(txt, chunk_size=self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
             key = QA_pair
         else:
             key = self.doc_id_counter
-        if self.local_LM:
-            # just for debug, no need to scale
-            self.relevant_triples[key] = _llm_then_python_parse(
-                chunks, _parse_n_check_triples, self.chunk_to_triples_str_local)
-        else:
-            num_procs = min(len(chunks), _get_num_procs())
-            meta_chunk_size = int(len(chunks) / num_procs)
-            in_chunks_per_proc = {
-                j:
-                chunks[j * meta_chunk_size:min((j + 1) *
-                                               meta_chunk_size, len(chunks))]
-                for j in range(num_procs)
-            }
-            mp.spawn(
-                _multiproc_helper,
-                args=(in_chunks_per_proc, _parse_n_check_triples,
-                      _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                      self.NIM_MODEL), nprocs=num_procs)
+        if txt == "":
+            # handle context less Q/A pairs
             self.relevant_triples[key] = []
-            for rank in range(num_procs):
-                self.relevant_triples[key] += torch.load(
-                    "/tmp/outs_for_proc_" + str(rank))
-                os.remove("/tmp/outs_for_proc_" + str(rank))
+        else:
+            chunks = _chunk_text(txt, chunk_size=self.chunk_size)
+            if self.local_LM:
+                # just for debug, no need to scale
+                self.relevant_triples[key] = _llm_then_python_parse(
+                    chunks, _parse_n_check_triples, self.chunk_to_triples_str_local)
+            else:
+                num_procs = min(len(chunks), _get_num_procs())
+                meta_chunk_size = int(len(chunks) / num_procs)
+                in_chunks_per_proc = {
+                    j:
+                    chunks[j * meta_chunk_size:min((j + 1) *
+                                                meta_chunk_size, len(chunks))]
+                    for j in range(num_procs)
+                }
+                mp.spawn(
+                    _multiproc_helper,
+                    args=(in_chunks_per_proc, _parse_n_check_triples,
+                        _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                        self.NIM_MODEL), nprocs=num_procs)
+                self.relevant_triples[key] = []
+                for rank in range(num_procs):
+                    self.relevant_triples[key] += torch.load(
+                        "/tmp/outs_for_proc_" + str(rank))
+                    os.remove("/tmp/outs_for_proc_" + str(rank))
         self.doc_id_counter += 1
 
 
