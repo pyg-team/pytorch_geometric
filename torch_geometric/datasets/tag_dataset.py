@@ -190,7 +190,8 @@ class TAGDataset(InMemoryDataset):
     @property
     def llm_explanation_token(self) -> Dict[str, Tensor]:
         if self._llm_explanation_token is None:  # lazy load
-            self._llm_explanation_token = self.tokenize_graph()
+            self._llm_explanation_token = self.tokenize_graph(
+                text_type='llm_explanation')
         return self._llm_explanation_token
 
     # load is_gold after init
