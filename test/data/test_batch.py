@@ -636,5 +636,5 @@ def test_batch_filtering():
         'paper'].exist.shape
     assert batch_filtered[1]['author'].x.shape == batch[3]['author'].x.shape
 
-    # Verify the filtered batch supports round-trip conversion to and from a data list
+    # Check if result supports round-trip conversion to and from a data list
     assert Batch.from_data_list(batch_filtered.to_data_list())
