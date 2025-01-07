@@ -250,7 +250,9 @@ class Batch(metaclass=DynamicInheritance):
                 if attr == 'edge_index':
                     new_store[attr] = old_store[attr][:, attr_mask]
                 elif isinstance(old_store[attr], list):
-                    new_store[attr] = [x for x, m in zip(old_store[attr], attr_mask) if m]
+                    new_store[attr] = [
+                        x for x, m in zip(old_store[attr], attr_mask) if m
+                    ]
                 else:
                     new_store[attr] = old_store[attr][attr_mask]
 
@@ -281,7 +283,8 @@ class Batch(metaclass=DynamicInheritance):
                     new_inc = new_inc_tmp.roll(1, dims=1)
 
                     # Map each edge_index element to its batch position
-                    edge_index_batch_map = torch.repeat_interleave(sizes_masked)
+                    edge_index_batch_map = torch.repeat_interleave(
+                        sizes_masked)
                     # Remove old_inc and add new_inc to each edge_index element using shift tensor
                     shift = new_inc - old_inc[:, mask]
                     batch[key].edge_index += shift[:, edge_index_batch_map]
