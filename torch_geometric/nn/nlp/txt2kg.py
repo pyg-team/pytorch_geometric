@@ -83,7 +83,8 @@ class TXT2KG():
         if self.local_LM:
             # just for debug, no need to scale
             self.relevant_triples[key] = _llm_then_python_parse(
-                chunks, _parse_n_check_triples, self.chunk_to_triples_str_local)
+                chunks, _parse_n_check_triples,
+                self.chunk_to_triples_str_local)
         else:
             num_procs = min(len(chunks), _get_num_procs())
             meta_chunk_size = int(len(chunks) / num_procs)
@@ -168,7 +169,7 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
 
 
 def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
-                     NIM_MODEL):
+                      NIM_MODEL):
     out = _llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
                                  GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL)
     torch.save(out, "/tmp/outs_for_proc_" + str(rank))
