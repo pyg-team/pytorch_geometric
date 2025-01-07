@@ -29,6 +29,16 @@ class TXT2KG():
     Note this 14B model requires a considerable amount of GPU memory.
     See examples/llm/hotpot_qa.py for example usage on converting
     HotPotQA context documents into a knowledge graph.
+
+    Args:
+        NVIDIA_NIM_MODEL : str, optional
+            The name of the NVIDIA NIM model to use (default: "nvidia/llama-3.1-nemotron-70b-instruct").
+        NVIDIA_API_KEY : str, optional
+            The API key for accessing NVIDIA's NIM models (default: "").
+        local_LM : bool, optional
+            A flag indicating whether a local Language Model (LM) should be used (default: False).
+        chunk_size : int, optional
+            The size of the chunks in which the text data is processed (default: 512).
     """
 
     def __init__(
@@ -38,18 +48,6 @@ class TXT2KG():
         local_LM: bool = False,
         chunk_size: int = 512,
     ) -> None:
-        """
-        Parameters:
-        ----------
-        NVIDIA_NIM_MODEL : str, optional
-            The name of the NVIDIA NIM model to use (default: "nvidia/llama-3.1-nemotron-70b-instruct").
-        NVIDIA_API_KEY : str, optional
-            The API key for accessing NVIDIA's NIM models (default: "").
-        local_LM : bool, optional
-            A flag indicating whether a local Language Model (LM) should be used (default: False).
-        chunk_size : int, optional
-            The size of the chunks in which the text data is processed (default: 512).
-        """
         self.local_LM = local_LM
         # Initialize the local LM flag and the NIM model info accordingly
         if self.local_LM:
@@ -106,10 +104,10 @@ class TXT2KG():
         Add a document to the Knowledge Graph (KG) by extracting triples from the text.
 
         Args:
-        - txt (str): The text to extract triples from.
-        - QA_pair (Optional[Tuple[str, str]]):
-            A QA pair to associate with the extracted triples (optional).
-            Useful for downstream evaluation.
+            txt (str): The text to extract triples from.
+            QA_pair (Tuple[str, str]], optional):
+                A QA pair to associate with the extracted triples.
+                Useful for downstream evaluation.
 
         Returns:
         - None
