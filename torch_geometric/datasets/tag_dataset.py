@@ -48,7 +48,7 @@ class TAGDataset(InMemoryDataset):
             associate with node, which should be align with node list
         llm_prediction (Optional[List[str]]): list of llm prediction associate
             with node, the order of list should be align with node list
-        llm_prediction_topk (Optional[int]): Top K prediction from LLM used as
+        llm_prediction_topk (int): Top K prediction from LLM used as
             features for GNN training, default: 5
         split_idx (Optional[Dict[str, torch.Tensor]]): Optional dictionary,
             for saving split index, it is required that if your dataset doesn't
@@ -81,8 +81,8 @@ class TAGDataset(InMemoryDataset):
         tokenizer_name: str,
         text: Optional[List[str]] = None,
         llm_explanation: Optional[List[str]] = None,
-        llm_prediction: Optional[List[str]] = None,
-        llm_prediction_topk: Optional[int] = 5,
+        llm_prediction: Optional[Tensor] = None,
+        llm_prediction_topk: int = 5,
         split_idx: Optional[Dict[str, Tensor]] = None,
         tokenize_batch_size: int = 256,
         token_on_disk: bool = False,
