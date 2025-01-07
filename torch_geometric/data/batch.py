@@ -268,19 +268,25 @@ class Batch(metaclass=DynamicInheritance):
                     batch[key].batch = torch.repeat_interleave(sizes_masked)
 
                 if attr == 'edge_index':
-                    # Then we reindex edge_index to remove gaps left by removed nodes
-                    # We assume x node attributes to be changed before edge attributes
-                    # so that mapping_idx_dict is already available.
+                    # Reindex edge_index to remove gaps from removed nodes. This involves:
+                    # 1. Computing the difference (diff) to get edge index spans
+                    # 2. Applying the mask to filter the spans
+                    # 3. Using cumsum to reconstruct the _inc tensor
+                    # 4. Adjusting the result to start from zero and ignore last _inc values
                     old_inc = self._inc_dict[key][attr].squeeze(-1).T
-                    new_inc = old_inc.diff()[:, mask[:-1]].cumsum(1)
-                    new_inc = torch.cat((torch.zeros(
-                        (2, 1), dtype=torch.int), new_inc), dim=1)
+                    old_edge_index_spans = old_inc.diff(append=old_inc[:, -1:])
+                    new_edge_index_spans = old_edge_index_spans[:, mask]
+                    new_inc_tmp = new_edge_index_spans.cumsum(1)
+                    new_inc_tmp[:, -1] = 0
+                    new_inc = new_inc.roll(1, dims=1)
 
+                    # Map each edge_index element to its batch position
+                    edge_index_batch_map = torch.repeat_interleave(sizes_masked)
+                    # Remove old_inc and add new_inc to each edge_index element using shift tensor
                     shift = new_inc - old_inc[:, mask]
+                    batch[key].edge_index += shift[:, edge_index_batch_map]
 
-                    edge_index_batch = torch.repeat_interleave(sizes_masked)
-                    batch[key].edge_index += shift[:, edge_index_batch]
-
+                    # Reshape new_inc before saving in _inc_dict
                     new_inc = new_inc.T.unsqueeze(-1)
 
                 # Update _slice_dict and _inc_dict based on what has been computed before
