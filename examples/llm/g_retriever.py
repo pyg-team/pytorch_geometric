@@ -31,7 +31,7 @@ from torch_geometric.nn.nlp import LLM
 
 
 def compute_metrics(eval_output):
-    """Compute evaluation metrics (hit, precision, recall, F1) from prediction output.
+    """Compute evaluation metrics (hit, precision, recall, F1).
 
     Parameters:
     eval_output (list): List of dictionaries containing prediction output.
@@ -76,7 +76,7 @@ def compute_metrics(eval_output):
             all_f1.append(f1)
 
         except Exception as e:
-            # Handle exceptions by printing error message and skipping iteration
+            # Handle exceptions by printing error message and skipping
             print(f'Label: {label}')
             print(f'Pred: {pred}')
             print(f'Exception: {e}')
@@ -96,7 +96,7 @@ def compute_metrics(eval_output):
 
 
 def save_params_dict(model, save_path):
-    """Saves a model's parameters to a file while excluding non-trainable weights.
+    """Saves a model's parameters, excluding non-trainable weights.
 
     Args:
         model (torch.nn.Module): The model to save parameters from.
@@ -144,7 +144,7 @@ def get_loss(model, batch, model_save_name: str) -> Tensor:
     """
     # Check the type of model being used to determine the input arguments
     if model_save_name == 'llm':
-        # For LLM models, compute the loss using the question, label, and desc inputs
+        # For LLM models
         return model(batch.question, batch.label, batch.desc)
     else:  # (GNN+LLM)
         return model(
@@ -203,8 +203,10 @@ def train(
         batch_size (int): Training batch size.
         eval_batch_size (int): Evaluation batch size.
         lr (float): Initial learning rate.
-        checkpointing (bool, optional): Whether to checkpoint model. Defaults to False.
-        tiny_llama (bool, optional): Whether to use tiny LLaMA model. Defaults to False.
+        checkpointing (bool, optional): Whether to checkpoint model.
+            Defaults to False.
+        tiny_llama (bool, optional): Whether to use tiny LLaMA model.
+            Defaults to False.
 
     Returns:
         None
