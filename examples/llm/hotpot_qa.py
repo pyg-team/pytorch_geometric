@@ -124,7 +124,7 @@ if __name__ == '__main__':
     We will use precision as a proxy for recall. This is because for recall,
     we must know how many relevant triples exist for each question,
     but this is not known.
-    
+
     Note that the retrieval precision may be much lower than expected.
     likely due to a bug in retriever causing similar issue here:
     https://github.com/pyg-team/pytorch_geometric/pull/9806
