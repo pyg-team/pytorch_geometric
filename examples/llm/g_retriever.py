@@ -152,8 +152,8 @@ def get_loss(model, batch, model_save_name: str) -> Tensor:
             batch.x,  # node features
             batch.edge_index,  # edge indices
             batch.batch,  # batch indices
-            batch.edge_attr,  # edge attributes
             batch.label,  # answers (labels)
+            batch.edge_attr,  # edge attributes
             batch.desc  # description
         )
 
