@@ -245,7 +245,8 @@ class Batch(metaclass=DynamicInheritance):
 
                 # Reshape mask to align it with attribute shape.
                 # Since slice_diff often contains only ones, skip useless computation in such cases
-                attr_mask = mask[torch.repeat_interleave(slice_diff)] if torch.any(slice_diff != 1) else mask
+                attr_mask = mask[torch.repeat_interleave(
+                    slice_diff)] if torch.any(slice_diff != 1) else mask
 
                 # Apply mask to attribute
                 if attr == 'edge_index':
