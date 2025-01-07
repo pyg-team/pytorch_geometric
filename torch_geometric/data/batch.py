@@ -278,7 +278,7 @@ class Batch(metaclass=DynamicInheritance):
                     new_edge_index_spans = old_edge_index_spans[:, mask]
                     new_inc_tmp = new_edge_index_spans.cumsum(1)
                     new_inc_tmp[:, -1] = 0
-                    new_inc = new_inc.roll(1, dims=1)
+                    new_inc = new_inc_tmp.roll(1, dims=1)
 
                     # Map each edge_index element to its batch position
                     edge_index_batch_map = torch.repeat_interleave(sizes_masked)
