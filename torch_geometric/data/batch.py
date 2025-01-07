@@ -258,7 +258,8 @@ class Batch(metaclass=DynamicInheritance):
                     new_store[attr] = old_store[attr][:, attr_mask]
                 elif isinstance(old_store[attr], list):
                     new_store[attr] = [
-                        x for x, m in zip(old_store[attr], attr_mask) if m]
+                        x for x, m in zip(old_store[attr], attr_mask) if m
+                    ]
                 else:
                     new_store[attr] = old_store[attr][attr_mask]
 
