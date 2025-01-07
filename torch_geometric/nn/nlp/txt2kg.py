@@ -51,7 +51,7 @@ class TXT2KG():
     def save_kg(self, path: str) -> None:
         torch.save(self.relevant_triples, path)
 
-    def chunk_to_triples_str_local(self, txt: str) -> str:
+    def _chunk_to_triples_str_local(self, txt: str) -> str:
         # call LLM on text
         chunk_start_time = time.time()
         if not self.initd_LM:
@@ -73,7 +73,7 @@ class TXT2KG():
         QA_pair: Optional[Tuple[str, str]],
     ) -> None:
         assert self.NVIDIA_API_KEY != '', "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm flag to True"
-        chunks = chunk_text(txt, chunk_size=self.chunk_size)
+        chunks = _chunk_text(txt, chunk_size=self.chunk_size)
         if QA_pair:
             # QA_pairs should be unique keys
             assert QA_pair not in self.relevant_triples.keys()
@@ -83,9 +83,9 @@ class TXT2KG():
         if self.local_LM:
             # just for debug, no need to scale
             self.relevant_triples[key] = _llm_then_python_parse(
-                chunks, parse_n_check_triples, self.chunk_to_triples_str_local)
+                chunks, _parse_n_check_triples, self.chunk_to_triples_str_local)
         else:
-            num_procs = min(len(chunks), get_num_procs())
+            num_procs = min(len(chunks), _get_num_procs())
             meta_chunk_size = int(len(chunks) / num_procs)
             in_chunks_per_proc = {
                 j:
@@ -94,9 +94,9 @@ class TXT2KG():
                 for j in range(num_procs)
             }
             mp.spawn(
-                multiproc_helper,
-                args=(in_chunks_per_proc, parse_n_check_triples,
-                      chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                _multiproc_helper,
+                args=(in_chunks_per_proc, _parse_n_check_triples,
+                      _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
                       self.NIM_MODEL), nprocs=num_procs)
             self.relevant_triples[key] = []
             for rank in range(num_procs):
@@ -106,7 +106,7 @@ class TXT2KG():
         self.doc_id_counter += 1
 
 
-def chunk_to_triples_str_cloud(
+def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
         NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct") -> str:
     global CLIENT_INITD
@@ -129,7 +129,7 @@ def chunk_to_triples_str_cloud(
     return out_str
 
 
-def parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
+def _parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
     # use pythonic checks for triples
     processed = []
     split_by_newline = triples_str.split("\n")
@@ -167,14 +167,14 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
-def multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
+def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
                      NIM_MODEL):
     out = _llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
                                  GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL)
     torch.save(out, "/tmp/outs_for_proc_" + str(rank))
 
 
-def get_num_procs():
+def _get_num_procs():
     if hasattr(os, "sched_getaffinity"):
         try:
             num_proc = len(os.sched_getaffinity(0)) / (2)
@@ -185,7 +185,7 @@ def get_num_procs():
     return int(num_proc)
 
 
-def chunk_text(text: str, chunk_size: int = 512) -> list[str]:
+def _chunk_text(text: str, chunk_size: int = 512) -> list[str]:
     """Function to chunk text into sentence-based segments.
     Co-authored with Claude AI.
     """
