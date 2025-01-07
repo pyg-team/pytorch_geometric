@@ -130,7 +130,11 @@ if __name__ == '__main__':
     https://github.com/pyg-team/pytorch_geometric/pull/9806
     """
     precisions = []
-    for QA_pair in relevant_triples.keys():
+    if args.verbose:
+        loader = relevant_triples.keys()
+    else:
+        loader = tqdm(relevant_triples.keys())
+    for QA_pair in loader:
         golden_triples = relevant_triples[QA_pair]
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
