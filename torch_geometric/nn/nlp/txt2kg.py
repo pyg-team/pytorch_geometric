@@ -12,10 +12,8 @@ GLOBAL_NIM_KEY = ""
 SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph.”"
 
 
-    
 class TXT2KG():
-    """
-    A class to convert text data into a Knowledge Graph (KG) format.
+    """A class to convert text data into a Knowledge Graph (KG) format.
     Uses NVIDIA NIMs + Prompt engineering by default.
     Default model `nvidia/llama-3.1-nemotron-70b-instruct`
     is on par or better than GPT4o in benchmarks.
@@ -40,10 +38,10 @@ class TXT2KG():
         chunk_size : int, optional
             The size of the chunks in which the text data is processed (default: 512).
     """
-
     def __init__(
         self,
-        NVIDIA_NIM_MODEL: Optional[str] = "nvidia/llama-3.1-nemotron-70b-instruct",
+        NVIDIA_NIM_MODEL: Optional[
+            str] = "nvidia/llama-3.1-nemotron-70b-instruct",
         NVIDIA_API_KEY: Optional[str] = "",
         local_LM: bool = False,
         chunk_size: int = 512,
@@ -68,8 +66,7 @@ class TXT2KG():
         self.time_to_parse = 0.0
 
     def save_kg(self, path: str) -> None:
-        """
-        Saves the relevant triples in the knowledge graph (KG) to a file.
+        """Saves the relevant triples in the knowledge graph (KG) to a file.
 
         Args:
             path (str): The file path where the KG will be saved.
@@ -96,12 +93,11 @@ class TXT2KG():
         return out_str
 
     def add_doc_2_KG(
-            self,
-            txt: str,
-            QA_pair: Optional[Tuple[str, str]] = None,
-        ) -> None:
-        """
-        Add a document to the Knowledge Graph (KG) by extracting triples from the text.
+        self,
+        txt: str,
+        QA_pair: Optional[Tuple[str, str]] = None,
+    ) -> None:
+        """Add a document to the Knowledge Graph (KG) by extracting triples from the text.
 
         Args:
             txt (str): The text to extract triples from.
@@ -141,7 +137,10 @@ class TXT2KG():
                 num_procs = min(len(chunks), _get_num_procs())
                 meta_chunk_size = int(len(chunks) / num_procs)
                 in_chunks_per_proc = {
-                    j: chunks[j * meta_chunk_size:min((j + 1) * meta_chunk_size, len(chunks))]
+                    j:
+                    chunks[j *
+                           meta_chunk_size:min((j + 1) *
+                                               meta_chunk_size, len(chunks))]
                     for j in range(num_procs)
                 }
 
@@ -149,13 +148,14 @@ class TXT2KG():
                 mp.spawn(
                     _multiproc_helper,
                     args=(in_chunks_per_proc, _parse_n_check_triples,
-                        _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                        self.NIM_MODEL), nprocs=num_procs)
+                          _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                          self.NIM_MODEL), nprocs=num_procs)
 
                 # Collect the results from each process
                 self.relevant_triples[key] = []
                 for rank in range(num_procs):
-                    self.relevant_triples[key] += torch.load("/tmp/outs_for_proc_" + str(rank))
+                    self.relevant_triples[key] += torch.load(
+                        "/tmp/outs_for_proc_" + str(rank))
                     os.remove("/tmp/outs_for_proc_" + str(rank))
 
         # Increment the doc_id_counter for the next document
