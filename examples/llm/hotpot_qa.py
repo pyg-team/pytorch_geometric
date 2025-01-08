@@ -102,7 +102,6 @@ if __name__ == '__main__':
                             for triple_set in relevant_triples.values()))
 
     print("Size of KG (number of triples) =", len(triples))
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
         model_name='sentence-transformers/all-roberta-large-v1').to(device)
@@ -113,10 +112,16 @@ if __name__ == '__main__':
             "batch_size": min(len(triples), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=SentenceTransformerFeatureStore).load()
+    # k for KNN
+    knn_neighsample_bs = 4096
+    # number of neighbors for each seed node selected by KNN
+    fanout = 200
+    # number of hops for neighborsampling
+    num_hops = 2
     query_loader = RAGQueryLoader(
         data=(fs, gs), seed_nodes_kwargs={"k_nodes":
-                                          5}, seed_edges_kwargs={"k_edges": 5},
-        sampler_kwargs={"num_neighbors": [50] * 2},
+                                          knn_neighbsample_bs}, seed_edges_kwargs={"k_edges": knn_neighsample_bs},
+        sampler_kwargs={"num_neighbors": [fanout] * num_hops},
         local_filter=make_pcst_filter(triples, model))
     """
     approx precision = num_relevant_out_of_retrieved/num_retrieved_triples
