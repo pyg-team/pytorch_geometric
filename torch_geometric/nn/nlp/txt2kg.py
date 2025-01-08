@@ -114,9 +114,8 @@ class TXT2KG():
         # Ensure NVIDIA_API_KEY is set before proceeding
         assert self.NVIDIA_API_KEY != '', \
             "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm=True"
-
         if QA_pair:
-            # QA_pairs should be unique keys
+            # QA_pairs should be unique keys, so check if it already exists in the KG
             assert QA_pair not in self.relevant_triples.keys()
             key = QA_pair
         else:
