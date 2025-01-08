@@ -97,13 +97,12 @@ if __name__ == '__main__':
                 "Average number of context characters parsed by LLM per second=",
                 kg_maker.avg_chars_parsed_per_sec)
 
-    print("Size of KG (number of triples) =",
-          sum([len(rel_trips) for rel_trips in relevant_triples.values()]))
-
     triples = list(
         chain.from_iterable(triple_set
                             for triple_set in relevant_triples.values()))
-    # debug
+
+    print("Size of KG (number of triples) =", len(triples))
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(
         model_name='sentence-transformers/all-roberta-large-v1').to(device)
