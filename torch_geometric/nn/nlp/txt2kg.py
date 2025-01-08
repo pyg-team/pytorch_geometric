@@ -9,7 +9,7 @@ CLIENT_INITD = False
 
 CLIENT = None
 GLOBAL_NIM_KEY = ""
-SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph.”" #noqa
+SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph.”"  #noqa
 
 
 class TXT2KG():
@@ -92,7 +92,7 @@ class TXT2KG():
         # for debug
         self.total_chars_parsed += len(txt)
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
-        self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse #noqa
+        self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse  #noqa
         return out_str
 
     def add_doc_2_KG(
