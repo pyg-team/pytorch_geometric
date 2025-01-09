@@ -79,13 +79,12 @@ class Batch(metaclass=DynamicInheritance):
     Furthermore, :meth:`~Data.__cat_dim__` defines in which dimension graph
     tensors of the same attribute should be concatenated together.
     """
-
     @classmethod
     def from_data_list(
-            cls,
-            data_list: List[BaseData],
-            follow_batch: Optional[List[str]] = None,
-            exclude_keys: Optional[List[str]] = None,
+        cls,
+        data_list: List[BaseData],
+        follow_batch: Optional[List[str]] = None,
+        exclude_keys: Optional[List[str]] = None,
     ) -> Self:
         r"""Constructs a :class:`~torch_geometric.data.Batch` object from a
         list of :class:`~torch_geometric.data.Data` or
@@ -236,8 +235,9 @@ class Batch(metaclass=DynamicInheritance):
                 attrs = self._slice_dict[key].keys()
             else:  # Homogeneous:
                 attrs = set(old_store.keys())
-                attrs = [attr for attr in self._slice_dict.keys() if
-                         attr in attrs]
+                attrs = [
+                    attr for attr in self._slice_dict.keys() if attr in attrs
+                ]
 
             if key:
                 batch._slice_dict[key] = {}

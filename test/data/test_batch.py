@@ -376,8 +376,8 @@ def test_recursive_batch():
         [data1.edge_index[0], data2.edge_index[0] + 30], dim=1).tolist())
     assert (batch.edge_index[1].tolist() == torch.cat(
         [data1.edge_index[1], data2.edge_index[1] + 30], dim=1).tolist())
-    assert batch.batch.size() == (90,)
-    assert batch.ptr.size() == (3,)
+    assert batch.batch.size() == (90, )
+    assert batch.ptr.size() == (3, )
 
     out1 = batch[0]
     assert len(out1) == 3
@@ -451,10 +451,10 @@ def test_hetero_batch():
     assert torch.allclose(
         batch[e2].edge_attr,
         torch.cat([data1[e2].edge_attr, data2[e2].edge_attr], 0))
-    assert batch['p'].batch.size() == (150,)
-    assert batch['p'].ptr.size() == (3,)
-    assert batch['a'].batch.size() == (300,)
-    assert batch['a'].ptr.size() == (3,)
+    assert batch['p'].batch.size() == (150, )
+    assert batch['p'].ptr.size() == (3, )
+    assert batch['a'].batch.size() == (300, )
+    assert batch['a'].ptr.size() == (3, )
 
     out1 = batch[0]
     assert len(out1) == 3
@@ -616,12 +616,10 @@ def test_batch_filtering():
     for i in range(1, 5):
         data = Data(
             x=torch.randn(2 * i, 2),
-            edge_index=torch.stack((
-                torch.arange(2 * i).repeat(2),
-                torch.arange(2 * i).repeat_interleave(2))),
-            edge_attr=torch.randn(4 * i, 3)
-        )
-        data.info = [i]*i  # Add argument of variable size
+            edge_index=torch.stack((torch.arange(2 * i).repeat(2),
+                                    torch.arange(2 * i).repeat_interleave(2))),
+            edge_attr=torch.randn(4 * i, 3))
+        data.info = [i] * i  # Add argument of variable size
         data_list.append(data)
     batch = Batch.from_data_list(data_list)
     batch_filtered = batch.filter([1, 2])
