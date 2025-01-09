@@ -64,7 +64,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             self.sampler.num_neighbors = num_neighbors
 
     def sample_subgraph(
-        self, seed_nodes: InputNodes, seed_edges: InputEdges,
+        self, seed_nodes: InputNodes, seed_edges: Optional[InputEdges] = None,
         num_neighbors: Optional[NumNeighborsType] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         """Sample the graph starting from the given nodes and edges using the
@@ -72,7 +72,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
         Args:
             seed_nodes (InputNodes): Seed nodes to start sampling from.
-            seed_edges (InputEdges): Seed edges to start sampling from.
+            seed_edges (Optional[InputEdges], optional): Seed edges to start sampling from.
+                Defaults to None.
             num_neighbors (Optional[NumNeighborsType], optional): Parameters
                 to determine how many hops and number of neighbors per hop.
                 Defaults to None.
@@ -89,8 +90,9 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         # FIXME: Right now, only input nodes/edges as tensors are be supported
         if not isinstance(seed_nodes, Tensor):
             raise NotImplementedError
-        if not isinstance(seed_edges, Tensor):
-            raise NotImplementedError
+        if seed_edges:
+            if not isinstance(seed_edges, Tensor):
+                raise NotImplementedError
         seed_nodes.device
 
         # TODO: Call sample_from_edges for seed_edges
