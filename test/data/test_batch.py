@@ -376,8 +376,8 @@ def test_recursive_batch():
         [data1.edge_index[0], data2.edge_index[0] + 30], dim=1).tolist())
     assert (batch.edge_index[1].tolist() == torch.cat(
         [data1.edge_index[1], data2.edge_index[1] + 30], dim=1).tolist())
-    assert batch.batch.size() == (90, )
-    assert batch.ptr.size() == (3, )
+    assert batch.batch.size() == (90,)
+    assert batch.ptr.size() == (3,)
 
     out1 = batch[0]
     assert len(out1) == 3
@@ -451,10 +451,10 @@ def test_hetero_batch():
     assert torch.allclose(
         batch[e2].edge_attr,
         torch.cat([data1[e2].edge_attr, data2[e2].edge_attr], 0))
-    assert batch['p'].batch.size() == (150, )
-    assert batch['p'].ptr.size() == (3, )
-    assert batch['a'].batch.size() == (300, )
-    assert batch['a'].ptr.size() == (3, )
+    assert batch['p'].batch.size() == (150,)
+    assert batch['p'].ptr.size() == (3,)
+    assert batch['a'].batch.size() == (300,)
+    assert batch['a'].ptr.size() == (3,)
 
     out1 = batch[0]
     assert len(out1) == 3
@@ -611,6 +611,35 @@ def test_torch_nested_batch():
 
 
 def test_batch_filtering():
+    # Create initial HeteroData object and batch
+    data_list = []
+    for i in range(1, 5):
+        data = Data(
+            x=torch.randn(2 * i, 2),
+            edge_index=torch.stack((
+                torch.arange(2 * i).repeat(2),
+                torch.arange(2 * i).repeat_interleave(2))),
+            edge_attr=torch.randn(4 * i, 3)
+        )
+        data.info = [i]*i  # Add argument of variable size
+        data_list.append(data)
+    batch = Batch.from_data_list(data_list)
+    batch_filtered = batch.filter([1, 2])
+    assert isinstance(batch, Batch)
+    assert isinstance(batch_filtered, Batch)
+    assert len(batch) == 4
+    assert len(batch_filtered) == 2
+    assert batch_filtered[0].x.shape == batch[1].x.shape
+    assert batch_filtered[1].x.shape == batch[2].x.shape
+    assert len(batch_filtered.batch.unique()) == 2
+    assert len(batch_filtered.info) == 2
+    assert len(batch_filtered.info[0]) == 2
+    assert len(batch_filtered.info[1]) == 3
+    # Check if result supports round-trip conversion to and from a data list
+    assert Batch.from_data_list(batch_filtered.to_data_list())
+
+
+def test_herero_batch_filtering():
     # Create initial HeteroData object and batch
     data_list = []
     for i in range(1, 5):
