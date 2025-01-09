@@ -96,9 +96,10 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
         # TODO: Call sample_from_edges for seed_edges
         # Turning them into nodes for now.
-        seed_edges = self.edge_index.to(device).T[seed_edges.to(
-            device)].reshape(-1)
-        seed_nodes = torch.cat((seed_nodes, seed_edges), dim=0)
+        # commenting out since this makes it so that the selected src/dst nodes are not all in the seed nodes set
+        # seed_edges = self.edge_index.to(device).T[seed_edges.to(
+        #     device)].reshape(-1)
+        # seed_nodes = torch.cat((seed_nodes, seed_edges), dim=0)
 
         seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
