@@ -35,6 +35,7 @@ from torch_geometric.typing import (
 from torch_geometric.utils import (
     coalesce,
     contains_isolated_nodes,
+    is_sparse,
     is_torch_sparse_tensor,
     is_undirected,
     select,
@@ -806,6 +807,10 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if is_sparse(value) and isinstance(cat_dim, tuple):
+            cat_dim = cat_dim[0]
+
         num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_nodes:
@@ -852,6 +857,10 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if is_sparse(value) and isinstance(cat_dim, tuple):
+            cat_dim = cat_dim[0]
+
         num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_edges:
