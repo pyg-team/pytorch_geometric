@@ -1,6 +1,5 @@
 from typing import Optional, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import FeatureStore
@@ -92,7 +91,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             raise NotImplementedError
         if not isinstance(seed_edges, Tensor):
             raise NotImplementedError
-        device = seed_nodes.device
+        seed_nodes.device
 
         # TODO: Call sample_from_edges for seed_edges
         # Turning them into nodes for now.
