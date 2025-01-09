@@ -371,6 +371,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                     writer.write(mol)
                     valid_mol_count += 1
 
+                writer.close()
                 print(f"block id: {block_id}\nfound {valid_mol_count}\n\n")
                 sys.stdout.flush()
                 return
@@ -410,6 +411,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                 print(f"block id: {block_id} with 0 valid SDF file")
                 continue
 
+        writer.close()
         print(f"In total: {len(found_CID_set)} molecules")
 
         # Step 05. Convert to PyG data format
