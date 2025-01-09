@@ -93,11 +93,12 @@ class RAGQueryLoader:
         """
         seed_nodes = self.feature_store.retrieve_seed_nodes(
             query, **self.seed_nodes_kwargs)
-        seed_edges = self.feature_store.retrieve_seed_edges(
-            query, **self.seed_edges_kwargs)
+        # Graph Store does not Use These, save computation
+        # seed_edges = self.feature_store.retrieve_seed_edges(
+        #     query, **self.seed_edges_kwargs)
 
         subgraph_sample = self.graph_store.sample_subgraph(
-            seed_nodes, seed_edges, **self.sampler_kwargs)
+            seed_nodes, **self.sampler_kwargs)
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
