@@ -172,47 +172,22 @@ class Batch(metaclass=DynamicInheritance):
         return [self.get_example(i) for i in index]
 
     def filter(self, idx: torch.Tensor) -> Self:
-        """Efficiently filters the object using a boolean mask or index,
-        directly modifying batch attributes instead of rebuilding the batch.
-
-        This method can be ~10x faster than Batch.from_data_list(batch[mask]).
+        """Efficiently filters Batch object using a boolean mask or index,
+        directly modifying batch attributes instead of converting it to data
+        list, masking, and rebuilding it (which can be ~10x slower).
 
         The provided indices (:obj:`idx`) can be a list, a tuple, a slicing
         object (e.g., :obj:`[2:5]`), or a :obj:`torch.Tensor`/:obj:`np.ndarray`
         of type long or bool, or any sequence of integers (excluding strings).
-
-        For now, default filtering from __get_item__ still uses index_select
-        method, but it could be replaced with this approach to improved
-        efficiency and avoid conversion to list objects that may be unwanted.
         """
-        mask: torch.Tensor
-        if isinstance(idx, slice):
-            mask = torch.zeros(len(self), dtype=torch.bool)
+
+        mask = torch.zeros(len(self), dtype=torch.bool)
+        try:
             mask[idx] = True
-
-        elif isinstance(idx, Tensor) and idx.dtype == torch.long:
-            mask = torch.zeros(len(self), dtype=torch.bool)
-            mask[idx.flatten()] = True
-
-        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
-            mask = idx.flatten()
-
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
-            mask = torch.zeros(len(self), dtype=torch.bool)
-            mask[idx.flatten()] = True
-
-        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
-            mask = torch.tensor(idx.flatten())
-
-        elif isinstance(idx, Sequence) and not isinstance(idx, str):
-            mask = torch.zeros(len(self), dtype=torch.bool)
-            mask[idx] = True
-
-        else:
+        except IndexError as e:
             raise IndexError(
-                f"Only slices (':'), list, tuples, torch.tensor and "
-                f"np.ndarray of dtype long or bool are valid indices (got "
-                f"'{type(idx).__name__}')")
+                "Invalid index provided. Ensure the index is "
+                "compatible with PyTorch's indexing rules.") from e
 
         # Create new empty batch that will be filled later
         batch = Batch(_base_cls=self[0].__class__).stores_as(self)
@@ -338,7 +313,7 @@ class Batch(metaclass=DynamicInheritance):
             # Accessing attributes or node/edge types:
             return super().__getitem__(idx)  # type: ignore
         else:
-            return self.index_select(idx)
+            return self.filter(idx)
 
     def to_data_list(self) -> List[BaseData]:
         r"""Reconstructs the list of :class:`~torch_geometric.data.Data` or

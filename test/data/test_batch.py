@@ -624,7 +624,16 @@ def test_batch_filtering():
         data.info = [i]*i  # Add argument of variable size
         data_list.append(data)
     batch = Batch.from_data_list(data_list)
-    batch_filtered = batch.filter([1, 2])
+
+    # Check different filtering methods:
+    assert isinstance(batch[1:], Batch)
+    assert isinstance(batch[torch.tensor([0, 1])], Batch)
+    assert isinstance(batch[torch.tensor([True, False, True, False])], Batch)
+    assert isinstance(batch[np.array([0, 1])], Batch)
+    assert isinstance(batch[np.array([True, False, True, False])], Batch)
+    assert isinstance(batch[[1, 2]], Batch)
+
+    batch_filtered = batch[[False, True, True, False]]
     assert isinstance(batch, Batch)
     assert isinstance(batch_filtered, Batch)
     assert len(batch) == 4
@@ -655,7 +664,7 @@ def test_herero_batch_filtering():
         data['author', 'writes', 'paper'].edge_attr = torch.randn(6 * i, 3)
         data_list.append(data)
     batch = Batch.from_data_list(data_list)
-    batch_filtered = batch.filter([1, 3])
+    batch_filtered = batch[[1, 3]]
     assert isinstance(batch, Batch)
     assert isinstance(batch_filtered, Batch)
     assert len(batch) == 4
