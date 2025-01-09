@@ -112,7 +112,6 @@ if __name__ == '__main__':
             "batch_size": min(len(triples), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=SentenceTransformerFeatureStore).load()
-
     """
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
