@@ -98,8 +98,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         edge_attr = self.edge_attr[edge_id]
         # do not have access to original edge_index
         # must fill outside this function
-        return Data(x=x, edge_attr=edge_attr,
-                    node_idx=node_id, edge_idx=edge_id)
+        return Data(x=x, edge_attr=edge_attr, node_idx=node_id,
+                    edge_idx=edge_id)
 
 
 # TODO: Refactor because composition >> inheritance
