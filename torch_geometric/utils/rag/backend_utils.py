@@ -247,9 +247,9 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     all_nodes = []
     for triple in triples:
         if triple[0] in all_nodes:
-            all_nodes.append(all_nodes)
+            all_nodes.append(triple[0])
         if triple[2] in all_nodes:
-            all_nodes.append(all_nodes)
+            all_nodes.append(triple[2])
     full_textual_nodes = all_nodes
 
     def apply_retrieval_via_pcst(
