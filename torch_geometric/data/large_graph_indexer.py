@@ -537,7 +537,8 @@ class LargeGraphIndexer:
         """
         x = torch.Tensor(self.get_node_features(node_feature_name))
         node_id = torch.LongTensor(range(len(x)))
-        print("self.get_edge_features(EDGE_INDEX)[:10]=",self.get_edge_features(EDGE_INDEX)[:10])
+        print("self.get_edge_features(EDGE_INDEX)[:10]=",
+              self.get_edge_features(EDGE_INDEX)[:10])
         print("self.get_edge_features(EDGE_INDEX)[:10]=",
               self.get_edge_features(EDGE_INDEX)[10])
         edge_index = torch.t(
