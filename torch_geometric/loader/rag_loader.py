@@ -71,7 +71,9 @@ class RAGQueryLoader:
             seed_nodes_kwargs (Optional[Dict[str, Any]], optional): Paramaters
                 to pass into process for fetching seed nodes. Defaults to None.
             seed_edges_kwargs (Optional[Dict[str, Any]], optional): Parameters
-                to pass into process for fetching seed edges. Defaults to None.
+                to pass into process for fetching seed edges. 
+                Currently this class does not use seed_edges. (TODO)
+                Defaults to None.
             sampler_kwargs (Optional[Dict[str, Any]], optional): Parameters to
                 pass into process for sampling graph. Defaults to None.
             loader_kwargs (Optional[Dict[str, Any]], optional): Parameters to
