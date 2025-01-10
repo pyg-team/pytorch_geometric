@@ -296,8 +296,6 @@ class LargeGraphIndexer:
             values = self.node_attr[feature_name].values
         else:
             values = self.node_attr[feature_name]
-        print("values[:100]=", values[:100])
-        print("len(values)=", len(values))
         # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
             idxs = list(
@@ -305,8 +303,6 @@ class LargeGraphIndexer:
                                             index_only=True))
             return values[idxs]
         return_value = list(self.get_node_features_iter(feature_name, pids))
-        print("get_node_features return value=", return_value[:100])
-        print("len(values)=", len(return_value))
         return return_value
 
     def get_node_features_iter(
