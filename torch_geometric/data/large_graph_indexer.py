@@ -188,13 +188,17 @@ class LargeGraphIndexer:
         for h, r, t in tqdm(triplets, desc="Indexing Triples"):
 
             for node in (h, t):
-                if node not in nodes:
-                    nodes.append(node)
+                nodes.append(node)
+                # if node not in nodes:
+                #     nodes.append(node)
+            
 
             edge_idx = (h, r, t)
-            if edge_idx not in edges:
-                edges.append(edge_idx)
-
+            edges.append(edge_idx)
+            # if edge_idx not in edges:
+            #     edges.append(edge_idx)
+        nodes = list(dict.fromkeys(nodes))
+        edges = list(dict.fromkeys(edges))
         return cls(list(nodes), list(edges))
 
     @classmethod

@@ -247,8 +247,10 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     nodes = []
     for h, r, t in triples:
         for node in (h, t):
-            if node not in nodes:
-                nodes.append(node)
+            nodes.append(node)
+            # if node not in nodes:
+            #     nodes.append(node)
+    nodes = list(dict.fromkeys(nodes))
     full_textual_nodes = nodes
 
     def apply_retrieval_via_pcst(
