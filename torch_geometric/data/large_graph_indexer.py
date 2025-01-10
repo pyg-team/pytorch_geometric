@@ -196,8 +196,8 @@ class LargeGraphIndexer:
             edges.append(edge_idx)
             # if edge_idx not in edges:
             #     edges.append(edge_idx)
-        nodes = list(dict.fromkeys(nodes))
-        edges = list(dict.fromkeys(edges))
+        nodes = ordered_dict(nodes)
+        edges = ordered_dict(edges)
         return cls(list(nodes), list(edges))
 
     @classmethod
