@@ -217,6 +217,7 @@ def create_remote_backend_from_triplets(
                                               pre_transform=pre_transform)
 
     node_feats = node_model(indexer.get_node_features(), **node_method_kwargs)
+    print("node_feats in create_remote_backend=", node_feats)
     indexer.add_node_feature('x', node_feats)
 
     edge_feats = edge_model(
