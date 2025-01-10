@@ -120,7 +120,7 @@ if __name__ == '__main__':
     # k for KNN
     knn_neighsample_bs = 4096
     # number of neighbors for each seed node selected by KNN
-    fanout = 100
+    fanout = 200
     # number of hops for neighborsampling
     num_hops = 2
     query_loader = RAGQueryLoader(
