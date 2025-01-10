@@ -149,7 +149,8 @@ if __name__ == '__main__':
         golden_triples = relevant_triples[QA_pair]
         # Again, redundant since TXT2KG already provides lowercase
         # in case loading a KG that was made some other way without lowercase
-        golden_triples = [(i[0].lower(), i[1].lower(), i[2].lower()) for i in golden_triples]
+        golden_triples = [(i[0].lower(), i[1].lower(), i[2].lower())
+                          for i in golden_triples]
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
