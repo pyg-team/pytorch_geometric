@@ -184,7 +184,7 @@ class LargeGraphIndexer:
 
             triplets = list(apply_transform(triplets))
 
-        for h, r, t in tqdm(triplets, desc="Indexing Triples"):
+        for h, r, t in triplets:
 
             for node in (h, t):
                 nodes.append(node)
