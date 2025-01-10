@@ -305,7 +305,8 @@ class LargeGraphIndexer:
                                             index_only=True))
             return values[idxs]
         return_value = list(self.get_node_features_iter(feature_name, pids))
-        print("get_node_features return value=", return_value)
+        print("get_node_features return value=", return_value[:100])
+        print("len(values)=", len(return_value))
         return return_value
 
     def get_node_features_iter(
