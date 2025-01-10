@@ -297,7 +297,6 @@ class LargeGraphIndexer:
         else:
             values = self.node_attr[feature_name]
         print("pids=", pids)
-        print("len(pids)=", len(pids))
         print("values=", values)
         # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
