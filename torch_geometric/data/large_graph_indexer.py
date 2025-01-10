@@ -185,7 +185,7 @@ class LargeGraphIndexer:
 
             triplets = apply_transform(triplets)
 
-        for h, r, t in triplets:
+        for h, r, t in tqdm.tqdm(triplets, desc="Indexing Triples"):
 
             for node in (h, t):
                 if node not in nodes:
