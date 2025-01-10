@@ -542,7 +542,7 @@ class LargeGraphIndexer:
               self.get_edge_features(EDGE_INDEX)[10])
         edge_index = torch.t(
             torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
-        print("edge_index tensor of full graph=", edge_index)
+        print("edge_index tensor of full graph=", edge_index[:, :10])
 
         edge_attr = (self.get_edge_features(edge_feature_name)
                      if edge_feature_name is not None else None)
