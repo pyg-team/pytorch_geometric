@@ -127,7 +127,7 @@ class RemoteGraphBackendLoader:
             data_obj = torch.load(self.path, weights_only=False)
             graph_store = self.graph_store_type.from_data(
                 edge_id=data_obj['edge_id'], edge_index=data_obj.edge_index,
-                num_nodes=data_obj.num_nodes)
+                num_nodes=data_obj.num_nodes, is_sorted=True)
             feature_store = self.feature_store_type.from_data(
                 node_id=data_obj['node_id'], x=data_obj.x,
                 edge_id=data_obj['edge_id'], edge_attr=data_obj.edge_attr)
