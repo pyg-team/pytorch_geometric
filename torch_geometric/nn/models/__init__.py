@@ -17,6 +17,7 @@ from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
 from .label_prop import LabelPropagation
+from .label_usage import LabelUsage
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
@@ -67,6 +68,7 @@ __all__ = classes = [
     'DeepGCNLayer',
     'TGNMemory',
     'LabelPropagation',
+    'LabelUsage',
     'CorrectAndSmooth',
     'AttentiveFP',
     'RECT_L',
