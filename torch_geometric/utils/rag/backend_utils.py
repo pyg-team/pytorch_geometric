@@ -122,7 +122,8 @@ class RemoteGraphBackendLoader:
     graph_store_type: Type[ConvertableGraphStore]
     feature_store_type: Type[ConvertableFeatureStore]
 
-    def load(self, pid: Optional[int] = None, is_sorted=False) -> RemoteGraphBackend:
+    def load(self, pid: Optional[int] = None,
+             is_sorted=False) -> RemoteGraphBackend:
         if self.datatype == RemoteDataType.DATA:
             data_obj = torch.load(self.path, weights_only=False)
             graph_store = self.graph_store_type.from_data(
