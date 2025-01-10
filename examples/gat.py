@@ -17,6 +17,8 @@ parser.add_argument('--hidden_channels', type=int, default=8)
 parser.add_argument('--heads', type=int, default=8)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--epochs', type=int, default=200)
+parser.add_argument('--norm_adj', type=bool, default=False,
+                    help="GAT with symmetric normalized adjacency")
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
@@ -28,7 +30,8 @@ else:
     device = torch.device('cpu')
 
 init_wandb(name=f'GAT-{args.dataset}', heads=args.heads, epochs=args.epochs,
-           hidden_channels=args.hidden_channels, lr=args.lr, device=device)
+           hidden_channels=args.hidden_channels, lr=args.lr, device=device,
+           norm_adj=args.norm_adj)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
@@ -36,12 +39,14 @@ data = dataset[0].to(device)
 
 
 class GAT(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, heads):
+    def __init__(self, in_channels, hidden_channels, out_channels, heads,
+                 normalize):
         super().__init__()
-        self.conv1 = GATConv(in_channels, hidden_channels, heads, dropout=0.6)
+        self.conv1 = GATConv(in_channels, hidden_channels, heads, dropout=0.6,
+                             normalize=normalize)
         # On the Pubmed dataset, use `heads` output heads in `conv2`.
         self.conv2 = GATConv(hidden_channels * heads, out_channels, heads=1,
-                             concat=False, dropout=0.6)
+                             concat=False, dropout=0.6, normalize=normalize)
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
@@ -52,7 +57,7 @@ class GAT(torch.nn.Module):
 
 
 model = GAT(dataset.num_features, args.hidden_channels, dataset.num_classes,
-            args.heads).to(device)
+            args.heads, args.norm_adj).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 

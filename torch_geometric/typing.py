@@ -243,6 +243,10 @@ except Exception as e:
             raise ImportError("'fill_diag' requires 'torch-sparse'")
 
         @staticmethod
+        def remove_diag(src: SparseTensor, k: int = 0) -> SparseTensor:
+            raise ImportError("'remove_diag' requires 'torch-sparse'")
+
+        @staticmethod
         def masked_select_nnz(src: SparseTensor, mask: Tensor,
                               layout: Optional[str] = None) -> SparseTensor:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
