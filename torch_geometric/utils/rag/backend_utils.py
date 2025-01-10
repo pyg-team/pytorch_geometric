@@ -215,7 +215,7 @@ def create_remote_backend_from_triplets(
 
     indexer = LargeGraphIndexer.from_triplets(triplets,
                                               pre_transform=pre_transform)
-    print("indexer._nodes=", indexer._nodes)
+    print("indexer._nodes[:100]=", indexer._nodes[:100])
     node_feats = node_model(indexer.get_unique_node_features(),
                             **node_method_kwargs)
     indexer.add_node_feature('x', node_feats)
