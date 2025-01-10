@@ -191,7 +191,6 @@ class LargeGraphIndexer:
                 nodes.append(node)
                 # if node not in nodes:
                 #     nodes.append(node)
-            
 
             edge_idx = (h, r, t)
             edges.append(edge_idx)
