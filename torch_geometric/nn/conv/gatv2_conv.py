@@ -50,36 +50,37 @@ class GATv2Conv(MessagePassing):
         \alpha_{i,j} =
         \frac{
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_j
+        \mathbf{\Theta}_{t} \mathbf{x}_i + \mathbf{\Theta}_{s} \mathbf{x}_j
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_k
+        \mathbf{\Theta}_{t} \mathbf{x}_i + \mathbf{\Theta}_{s} \mathbf{x}_k
         \right)\right)}.
 
-    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
+    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{j,i}`,
     the attention coefficients :math:`\alpha_{i,j}` are computed as
 
     .. math::
         \alpha_{i,j} =
         \frac{
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i
-        + \mathbf{\Theta}_{t} \mathbf{x}_j
-        + \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
+        \mathbf{\Theta}_{t} \mathbf{x}_i
+        + \mathbf{\Theta}_{s} \mathbf{x}_j
+        + \mathbf{\Theta}_{e} \mathbf{e}_{j,i}
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i
-        + \mathbf{\Theta}_{t} \mathbf{x}_k
-        + \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]
+        \mathbf{\Theta}_{t} \mathbf{x}_i
+        + \mathbf{\Theta}_{s} \mathbf{x}_k
+        + \mathbf{\Theta}_{e} \mathbf{e}_{k,i}]
         \right)\right)}.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
             A tuple corresponds to the sizes of source and target
-            dimensionalities in case of a bipartite graph.
+            dimensionalities and distinct :math:`\mathbf{\Theta}`, for example,
+            in the case of a bipartite graph.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -112,6 +113,8 @@ class GATv2Conv(MessagePassing):
             (default: :obj:`False`)
         residual (bool, optional): If set to :obj:`True`, the layer will add
             a learnable skip-connection. (default: :obj:`False`)
+        interactive_attn (bool, optional): If set to :obj:`False`, fixes
+            :math:`\mathbf{\Theta}_{t}\mathbf{x}_i = 0`. (default :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -119,16 +122,16 @@ class GATv2Conv(MessagePassing):
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
-          if bipartite,
+          for distinct source and target features (e.g. bipartite),
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})` or
-          :math:`((|\mathcal{V}_t|, H * F_{out})` if bipartite.
+          :math:`(|\mathcal{V}_t|, H * F_{out})` if passed a tuple.
           If :obj:`return_attention_weights=True`, then
           :math:`((|\mathcal{V}|, H * F_{out}),
           ((2, |\mathcal{E}|), (|\mathcal{E}|, H)))`
           or :math:`((|\mathcal{V_t}|, H * F_{out}), ((2, |\mathcal{E}|),
-          (|\mathcal{E}|, H)))` if bipartite
+          (|\mathcal{E}|, H)))` if passed a tuple
     """
     def __init__(
         self,
@@ -144,6 +147,7 @@ class GATv2Conv(MessagePassing):
         bias: bool = True,
         share_weights: bool = False,
         residual: bool = False,
+        interactive_attn: bool = True,
         **kwargs,
     ):
         super().__init__(node_dim=0, **kwargs)
@@ -159,23 +163,26 @@ class GATv2Conv(MessagePassing):
         self.fill_value = fill_value
         self.residual = residual
         self.share_weights = share_weights
+        self.iteractive_attn = interactive_attn
 
         if isinstance(in_channels, int):
             self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
                                 weight_initializer='glorot')
-            if share_weights:
-                self.lin_r = self.lin_l
-            else:
-                self.lin_r = Linear(in_channels, heads * out_channels,
-                                    bias=bias, weight_initializer='glorot')
+            if interactive_attn:
+                if share_weights:
+                    self.lin_r = self.lin_l
+                else:
+                    self.lin_r = Linear(in_channels, heads * out_channels,
+                                        bias=bias, weight_initializer='glorot')
         else:
             self.lin_l = Linear(in_channels[0], heads * out_channels,
                                 bias=bias, weight_initializer='glorot')
-            if share_weights:
-                self.lin_r = self.lin_l
-            else:
-                self.lin_r = Linear(in_channels[1], heads * out_channels,
-                                    bias=bias, weight_initializer='glorot')
+            if interactive_attn:
+                if share_weights:
+                    self.lin_r = self.lin_l
+                else:
+                    self.lin_r = Linear(in_channels[1], heads * out_channels,
+                                        bias=bias, weight_initializer='glorot')
 
         self.att = Parameter(torch.empty(1, heads, out_channels))
 
@@ -209,7 +216,8 @@ class GATv2Conv(MessagePassing):
     def reset_parameters(self):
         super().reset_parameters()
         self.lin_l.reset_parameters()
-        self.lin_r.reset_parameters()
+        if self.iteractive_attn:
+            self.lin_r.reset_parameters()
         if self.lin_edge is not None:
             self.lin_edge.reset_parameters()
         if self.res is not None:
@@ -284,7 +292,7 @@ class GATv2Conv(MessagePassing):
                 res = self.res(x)
 
             x_l = self.lin_l(x).view(-1, H, C)
-            if self.share_weights:
+            if self.share_weights or not self.iteractive_attn:
                 x_r = x_l
             else:
                 x_r = self.lin_r(x).view(-1, H, C)
@@ -296,7 +304,7 @@ class GATv2Conv(MessagePassing):
                 res = self.res(x_r)
 
             x_l = self.lin_l(x_l).view(-1, H, C)
-            if x_r is not None:
+            if x_r is not None and self.iteractive_attn:
                 x_r = self.lin_r(x_r).view(-1, H, C)
 
         assert x_l is not None
@@ -355,7 +363,7 @@ class GATv2Conv(MessagePassing):
     def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
                     index: Tensor, ptr: OptTensor,
                     dim_size: Optional[int]) -> Tensor:
-        x = x_i + x_j
+        x = x_i + x_j if self.iteractive_attn else x_j
 
         if edge_attr is not None:
             if edge_attr.dim() == 1:

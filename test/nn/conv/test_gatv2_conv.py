@@ -12,13 +12,15 @@ from torch_geometric.utils import to_torch_csc_tensor
 
 
 @pytest.mark.parametrize('residual', [False, True])
-def test_gatv2_conv(residual):
+@pytest.mark.parametrize('interactive_attn', [False, True])
+def test_gatv2_conv(residual, interactive_attn):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
-    conv = GATv2Conv(8, 32, heads=2, residual=residual)
+    conv = GATv2Conv(8, 32, heads=2, residual=residual,
+                     interactive_attn=interactive_attn)
     assert str(conv) == 'GATv2Conv(8, 32, heads=2)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
