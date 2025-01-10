@@ -103,7 +103,6 @@ if __name__ == '__main__':
     # redundant since TXT2KG already provides lowercase
     # in case loading a KG that was made some other way without lowercase
     triples = [(i[0].lower(), i[1].lower(), i[2].lower()) for i in triples]
-                        
 
     print("Size of KG (number of triples) =", len(triples))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
