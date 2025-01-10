@@ -88,6 +88,7 @@ class LargeGraphIndexer:
         Args:
             nodes (Iterable[str]): Node ids in the graph.
             edges (KnowledgeGraphLike): Edge ids in the graph.
+                Example: [("cats", "eat", "dogs")]
             node_attr (Optional[Dict[str, List[Any]]], optional): Mapping node
                 attribute name and list of their values in order of unique node
                 ids. Defaults to None.
