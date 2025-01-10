@@ -246,6 +246,7 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     if DataFrame is None:
         raise Exception("PCST requires `pip install pandas`")
     nodes = []
+    triples = list(dict.fromkeys(triples))
     for h, r, t in triples:
         for node in (h, t):
             nodes.append(node)
