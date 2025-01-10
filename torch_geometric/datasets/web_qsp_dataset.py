@@ -145,7 +145,7 @@ def retrieval_via_pcst(
 
 def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     h, r, t = triplet
-    return str(h).lower(), str(r), str(t).lower()
+    return str(h).lower(), str(r).lower(), str(t).lower()
 
 
 class WebQSPDataset(InMemoryDataset):
