@@ -173,8 +173,8 @@ class LargeGraphIndexer:
             LargeGraphIndexer: Index of unique nodes and edges.
         """
         # NOTE: Right now assumes that all trips can be loaded into memory
-        nodes = set()
-        edges = set()
+        nodes = []
+        edges = []
 
         if pre_transform is not None:
 
@@ -188,10 +188,13 @@ class LargeGraphIndexer:
         for h, r, t in triplets:
 
             for node in (h, t):
+                if node not in nodes:
+                    nodes.append(nodes)
                 nodes.add(node)
 
             edge_idx = (h, r, t)
-            edges.add(edge_idx)
+            if edge_idx not in edges:
+                edges.append(edge_idx)
 
         return cls(list(nodes), list(edges))
 
