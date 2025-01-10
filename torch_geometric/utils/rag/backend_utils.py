@@ -231,7 +231,7 @@ def create_remote_backend_from_triplets(
 
     data = indexer.to_data(node_feature_name='x',
                            edge_feature_name='edge_attr')
-
+    print("n_parts=", n_parts)
     if n_parts == 1:
         torch.save(data, path)
         return RemoteGraphBackendLoader(path, RemoteDataType.DATA, graph_db,
