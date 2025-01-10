@@ -127,7 +127,7 @@ if __name__ == '__main__':
     # number of hops for neighborsampling
     num_hops = 2
     query_loader = RAGQueryLoader(
-        data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighbsample_bs},
+        data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
         seed_edges_kwargs={"k_edges": knn_neighsample_bs},
         sampler_kwargs={"num_neighbors": [fanout] * num_hops},
         local_filter=make_pcst_filter(triples, model))
