@@ -17,7 +17,7 @@ def retrieval_via_pcst(
     textual_nodes: Any,
     textual_edges: Any,
     topk: int = 3,
-    topk_e: int = 3,
+    topk_e: int = 5,
     cost_e: float = 0.5,
 ) -> Tuple[Data, str]:
     c = 0.01
@@ -232,9 +232,6 @@ class KGQABaseDataset(InMemoryDataset):
                         question_embs[i],
                         nodes,
                         edges,
-                        topk=3,
-                        topk_e=5,
-                        cost_e=0.5,
                     )
                 else:
                     desc = nodes.to_csv(index=False) + "\n" + edges.to_csv(
