@@ -103,7 +103,8 @@ class RAGQueryLoader:
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
-
+        # Feature store does not have access to edge_index, must fill here
+        data.edge_index = self.graph_store.edge_index[data.edge_idx]
         if self.local_filter:
             data = self.local_filter(data, query)
         return data
