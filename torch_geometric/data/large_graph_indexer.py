@@ -164,7 +164,7 @@ class LargeGraphIndexer:
 
         Args:
             triplets (KnowledgeGraphLike): Series of triplets representing
-                knowledge graph relations.
+                knowledge graph relations. Example: [("cats", "eat", dogs")].
             pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
                 Optional preprocessing function to apply to triplets.
                 Defaults to None.
@@ -183,7 +183,7 @@ class LargeGraphIndexer:
                 for trip in trips:
                     yield pre_transform(trip)
 
-            triplets = apply_transform(triplets)
+            triplets = list(apply_transform(triplets))
 
         for h, r, t in tqdm(triplets, desc="Indexing Triples"):
 
