@@ -199,6 +199,7 @@ class LargeGraphIndexer:
             #     edges.append(edge_idx)
         nodes = ordered_set(nodes)
         edges = ordered_set(edges)
+        print("edges[20:60] in from_triplets in indexer=", edges[20:60])
         return cls(list(nodes), list(edges))
 
     @classmethod
