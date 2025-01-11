@@ -53,6 +53,10 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._sampler_is_initialized = False
         return ret
 
+    @edge_index.setter
+    def edge_index(self, edge_index: EdgeTensorType):
+        self.edge_index = edge_index
+
     @property
     def num_neighbors(self):
         return self._num_neighbors
