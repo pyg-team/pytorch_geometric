@@ -1,7 +1,6 @@
 from typing import Optional, Union
 
 from torch import Tensor
-
 from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.sampler import (
@@ -56,8 +55,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     # HACKY
     @edge_index.setter
     def edge_index(self, edge_index: EdgeTensorType):
-        # correct since is_sorted
-        num_nodes = torch.max(edge_index) + 1
+        # correct since we make node list from triples
+        num_nodes = edge_index.max + 1
         attr = dict(
             edge_type=None,
             layout='coo',
