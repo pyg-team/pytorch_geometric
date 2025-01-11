@@ -53,10 +53,18 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._sampler_is_initialized = False
         return ret
 
+    # HACKY
     @edge_index.setter
     def edge_index(self, edge_index: EdgeTensorType):
-        # HACKY
-        self._edge_index = self.put_edge_index(edge_index)
+        # correct since is_sorted
+        num_nodes = torch.max(edge_index) + 1
+        attr = dict(
+            edge_type=None,
+            layout='coo',
+            size=(num_nodes, num_nodes),
+            is_sorted=True,
+        )
+        self.put_edge_index(edge_index)
 
     @property
     def num_neighbors(self):
