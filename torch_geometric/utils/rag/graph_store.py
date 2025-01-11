@@ -56,7 +56,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     @edge_index.setter
     def edge_index(self, edge_index: EdgeTensorType):
         # correct since we make node list from triples
-        num_nodes = edge_index.max + 1
+        num_nodes = edge_index.max() + 1
         attr = dict(
             edge_type=None,
             layout='coo',
