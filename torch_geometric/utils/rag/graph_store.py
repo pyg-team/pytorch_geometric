@@ -55,6 +55,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     @edge_index.setter
     def edge_index(self, edge_index: EdgeTensorType):
+        # HACKY
         self._edge_index = self.put_edge_index(edge_index)
 
     @property
