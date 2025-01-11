@@ -1,6 +1,7 @@
 from typing import Optional, Union
 
 from torch import Tensor
+
 from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.sampler import (
