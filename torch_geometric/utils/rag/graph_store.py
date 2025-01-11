@@ -64,7 +64,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             size=(num_nodes, num_nodes),
             is_sorted=True,
         )
-        self.put_edge_index(edge_index)
+        self.put_edge_index(edge_index, **attr)
 
     @property
     def num_neighbors(self):
