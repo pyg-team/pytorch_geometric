@@ -55,7 +55,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     @edge_index.setter
     def edge_index(self, edge_index: EdgeTensorType):
-        self.edge_index = edge_index
+        self._edge_index = edge_index
 
     @property
     def num_neighbors(self):
