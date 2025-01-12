@@ -151,6 +151,7 @@ class LargeGraphIndexer:
                     (self._nodes[h], self._nodes[t]))
             print("self.edge_index[20:60].dst_nodes in indexer init=",
                   self.edge_attr[EDGE_TAIL][20:60])
+            print("len(edges) in init of largegraphindexer=", len(self.edge_attr[EDGE_TAIL]))
         for i, tup in enumerate(edges):
             self._edges[tup] = i
 
