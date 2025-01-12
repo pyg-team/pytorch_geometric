@@ -160,6 +160,8 @@ class TAGDataset(InMemoryDataset):
         self._token = self.tokenize_graph(self.tokenize_batch_size)
         self._llm_explanation_token = self.tokenize_graph(
             self.tokenize_batch_size, text_type='llm_explanation')
+        self._all_token = self.tokenize_graph(self.tokenize_batch_size,
+                                              text_type='all')
         self.__num_classes__ = dataset.num_classes
 
     @property
@@ -193,6 +195,12 @@ class TAGDataset(InMemoryDataset):
             self._llm_explanation_token = self.tokenize_graph(
                 text_type='llm_explanation')
         return self._llm_explanation_token
+
+    @property
+    def all_token(self) -> Dict[str, Tensor]:
+        if self._all_token is None:  # lazy load
+            self._all_token = self.tokenize_graph(text_type='all')
+        return self._all_token
 
     # load is_gold after init
     @property
@@ -338,11 +346,16 @@ class TAGDataset(InMemoryDataset):
         Returns:
             Dict[str, torch.Tensor]: tokenized graph
         """
-        assert text_type in ['raw_text', 'llm_explanation']
+        assert text_type in ['raw_text', 'llm_explanation', 'all']
         if text_type == 'raw_text':
             _text = self.text
         elif text_type == 'llm_explanation':
             _text = self.llm_explanation
+        elif text_type == 'all':
+            _text = [
+                f'{raw_txt} Explanation: {exp_txt}'
+                for raw_txt, exp_txt in zip(self.text, self.llm_explanation)
+            ]
 
         data_len = 0
         if _text is not None:
@@ -405,12 +418,14 @@ class TAGDataset(InMemoryDataset):
         """
         def __init__(self, tag_dataset: 'TAGDataset',
                      text_type: str = 'raw_text') -> None:
-            assert text_type in ['raw_text', 'llm_explanation']
+            assert text_type in ['raw_text', 'llm_explanation', 'all']
             self.tag_dataset = tag_dataset
             if text_type == 'raw_text':
                 self.token = tag_dataset.token
             elif text_type == 'llm_explanation':
                 self.token = tag_dataset.llm_explanation_token
+            elif text_type == 'all':
+                self.token = tag_dataset.all_token
             assert tag_dataset._data is not None
             self._data = tag_dataset._data
 

@@ -397,7 +397,7 @@ if __name__ == '__main__':
     parser.add_argument("--dataset", type=str, default='products',
                         help='arxiv or products')
     parser.add_argument("--text_type", type=str, default='raw_text',
-                        help='raw_text or llm_explanation')
+                        help='raw_text, llm_explanation or all')
     parser.add_argument("--pl_ratio", type=float, default=0.5,
                         help="pseudo labels ratio")
     parser.add_argument('--hf_model', type=str, default='prajjwal1/bert-tiny',
