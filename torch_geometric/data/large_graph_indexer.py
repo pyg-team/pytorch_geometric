@@ -149,8 +149,8 @@ class LargeGraphIndexer:
                 self.edge_attr[EDGE_TAIL].append(t)
                 self.edge_attr[EDGE_INDEX].append(
                     (self._nodes[h], self._nodes[t]))
-            print("self.edge_index[20:60] in indexer init=",
-                  self.edge_attr[EDGE_INDEX][20:60])
+            print("self.edge_index[20:60].dst_nodes in indexer init=",
+                  self.edge_attr[EDGE_TAIL][20:60])
         for i, tup in enumerate(edges):
             self._edges[tup] = i
 
