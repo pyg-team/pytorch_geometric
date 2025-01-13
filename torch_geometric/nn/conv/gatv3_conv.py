@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import zeros
@@ -13,8 +14,7 @@ from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 
 class GATv3Conv(MessagePassing):
-    """
-    GATv3Conv implements a context-aware attention mechanism inspired by the
+    """GATv3Conv implements a context-aware attention mechanism inspired by the
     GATher framework [1], extending GATv2 with element-wise feature multiplication,
     optional weight sharing, and scaling.
 
@@ -40,7 +40,8 @@ class GATv3Conv(MessagePassing):
         share_weights: bool = False,
         **kwargs,
     ):
-        super().__init__(node_dim=0, aggr="sum", flow="source_to_target", **kwargs)
+        super().__init__(node_dim=0, aggr="sum", flow="source_to_target",
+                         **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -95,9 +96,8 @@ class GATv3Conv(MessagePassing):
                 )
 
         if edge_dim is not None:
-            self.lin_edge = Linear(
-                edge_dim, heads * out_channels, bias=False, weight_initializer="glorot"
-            )
+            self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
+                                   weight_initializer="glorot")
         else:
             self.lin_edge = None
 

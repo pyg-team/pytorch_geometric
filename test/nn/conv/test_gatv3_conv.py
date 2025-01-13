@@ -6,9 +6,8 @@ import torch_geometric.typing
 from torch_geometric.nn import GATv3Conv
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import Adj, SparseTensor
-from torch_geometric.utils import to_torch_csc_tensor, remove_self_loops
 from torch_geometric.utils import add_self_loops  # If needed
-from torch_geometric.utils import to_torch_coo_tensor
+from torch_geometric.utils import to_torch_csc_tensor
 
 
 @pytest.mark.parametrize("share_weights", [False, True])
@@ -82,8 +81,10 @@ def test_gatv3_conv(share_weights):
     assert torch.allclose(conv((x1, x2), adj_bip.t()), out_bip, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        s_adj_bip = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 2))
-        assert torch.allclose(conv((x1, x2), s_adj_bip.t()), out_bip, atol=1e-6)
+        s_adj_bip = SparseTensor.from_edge_index(edge_index,
+                                                 sparse_sizes=(4, 2))
+        assert torch.allclose(conv((x1, x2), s_adj_bip.t()), out_bip,
+                              atol=1e-6)
 
     if is_full_test():
 
