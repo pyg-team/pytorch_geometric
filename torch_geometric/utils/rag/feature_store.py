@@ -87,12 +87,12 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         # here if it supported edge features
         node_id = sample.node
         edge_id = sample.edge
+        edge_index = torch.stack((sample.row, sample.col), dim=0)
         x = self.x[node_id]
         edge_attr = self.edge_attr[edge_id]
-        # do not have access to original edge_index
-        # must fill outside this function
-        return Data(x=x, edge_attr=edge_attr, node_idx=node_id,
-                    edge_idx=edge_id)
+
+        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
+                    node_idx=node_id, edge_idx=edge_id)
 
 
 # TODO: Refactor because composition >> inheritance
