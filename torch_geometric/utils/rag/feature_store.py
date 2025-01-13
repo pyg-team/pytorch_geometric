@@ -85,14 +85,13 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         # NOTE: torch_geometric.loader.utils.filter_custom_store can be used
         # here if it supported edge features
-        #node_id = sample.node
+        sampled_node_ids = sample.node
         print("len(sample.node) in load_subgraph=", sample.node)
         edge_id = sample.edge
         edge_index = torch.stack((sample.row, sample.col), dim=0)
-        #x = self.x[node_id]
         edge_attr = self.edge_attr[edge_id]
         return Data(edge_index=edge_index, edge_attr=edge_attr,
-                    edge_idx=edge_id)
+                    edge_idx=edge_id), sampled_node_ids
         # return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
         #             node_idx=node_id, edge_idx=edge_id)
 
