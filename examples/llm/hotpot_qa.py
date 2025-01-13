@@ -100,9 +100,12 @@ if __name__ == '__main__':
     triples = list(
         chain.from_iterable(triple_set
                             for triple_set in relevant_triples.values()))
-    # redundant since TXT2KG already provides lowercase
+    # redundant since TXT2KG already provides lowercase.
     # in case loading a KG that was made some other way without lowercase
     triples = [(i[0].lower(), i[1].lower(), i[2].lower()) for i in triples]
+    # Again, redundant since TXT2KG ensures uniqueness.
+    # in case loading a KG that was made some other way
+    triples = list(dict.fromkeys(triples))
 
     print("Size of KG (number of triples) =", len(triples))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
