@@ -169,6 +169,7 @@ class LargeGraphIndexer:
         Args:
             triplets (KnowledgeGraphLike): Series of triplets representing
                 knowledge graph relations. Example: [("cats", "eat", dogs")].
+                Note: Please ensure triplets are unique.
             pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
                 Optional preprocessing function to apply to triplets.
                 Defaults to None.
