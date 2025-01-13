@@ -103,8 +103,7 @@ if __name__ == '__main__':
     # redundant since TXT2KG already provides lowercase.
     # in case loading a KG that was made some other way without lowercase
     triples = [(i[0].lower(), i[1].lower(), i[2].lower()) for i in triples]
-    # Again, redundant since TXT2KG ensures uniqueness.
-    # in case loading a KG that was made some other way
+    # Make sure no duplicate triples for KG indexing
     triples = list(dict.fromkeys(triples))
 
     print("Size of KG (number of triples) =", len(triples))
