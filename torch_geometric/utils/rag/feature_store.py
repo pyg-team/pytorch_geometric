@@ -97,7 +97,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         edge_index = torch.stack((sample.row, sample.col), dim=0)
         #x = self.x[node_id]
         edge_attr = self.edge_attr[edge_id]
-        return Data(edge_index=edge_index, edge_attr=edge_attr, edge_idx=edge_id)
+        return Data(edge_index=edge_index, edge_attr=edge_attr,
+                    edge_idx=edge_id)
         # return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
         #             node_idx=node_id, edge_idx=edge_id)
 
