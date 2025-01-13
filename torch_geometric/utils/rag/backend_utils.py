@@ -126,13 +126,17 @@ class RemoteGraphBackendLoader:
         if self.datatype == RemoteDataType.DATA:
             data_obj = torch.load(self.path, weights_only=False)
             # is_sorted=true since assume nodes come sorted from indexer
-            print("data_obj.edge_index_dst_nodes[:10]=", data_obj.edge_index[1,:10])
-            print("data_obj.edge_index_dst_nodes[-10:]=", data_obj.edge_index[1,-10:])
+            print("data_obj.edge_index_dst_nodes[:10]=",
+                  data_obj.edge_index[1, :10])
+            print("data_obj.edge_index_dst_nodes[-10:]=",
+                  data_obj.edge_index[1, -10:])
             graph_store = self.graph_store_type.from_data(
                 edge_id=data_obj['edge_id'], edge_index=data_obj.edge_index,
                 num_nodes=data_obj.num_nodes, is_sorted=True)
-            print("graph_store.dst_nodes[:10]=", graph_store.edge_index[1,:10])
-            print("graph_store.dst_nodes[-10:]=", graph_store.edge_index[1,-10:])
+            print("graph_store.dst_nodes[:10]=",
+                  graph_store.edge_index[1, :10])
+            print("graph_store.dst_nodes[-10:]=", graph_store.edge_index[1,
+                                                                         -10:])
             feature_store = self.feature_store_type.from_data(
                 node_id=data_obj['node_id'], x=data_obj.x,
                 edge_id=data_obj['edge_id'], edge_attr=data_obj.edge_attr)
