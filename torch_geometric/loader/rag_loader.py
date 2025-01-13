@@ -82,6 +82,7 @@ class RAGQueryLoader:
         fstore, gstore = data
         self.feature_store = fstore
         self.graph_store = gstore
+        self.graph_store.edge_index = self.graph_store.edge_index.contiguous()
         self.graph_store.register_feature_store(self.feature_store)
         self.local_filter = local_filter
         self.seed_nodes_kwargs = seed_nodes_kwargs or {}
