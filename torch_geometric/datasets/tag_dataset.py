@@ -352,6 +352,9 @@ class TAGDataset(InMemoryDataset):
         elif text_type == 'llm_explanation':
             _text = self.llm_explanation
         elif text_type == 'all':
+            if self.text is None or self.llm_explanation is None:
+                raise ValueError("The TAGDataset need text and llm explanation"
+                                 "for tokenizing all text")
             _text = [
                 f'{raw_txt} Explanation: {exp_txt}'
                 for raw_txt, exp_txt in zip(self.text, self.llm_explanation)
