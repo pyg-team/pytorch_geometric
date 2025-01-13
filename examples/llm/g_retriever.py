@@ -191,7 +191,7 @@ def train(
         batch_size,  # Training batch size
         eval_batch_size,  # Evaluation batch size
         lr,  # Initial learning rate
-        llm_model_name, # `transformers` model name
+        llm_model_name,  # `transformers` model name
         checkpointing=False,  # Whether to checkpoint model
         tiny_llama=False,  # Whether to use tiny LLaMA model
 ):
@@ -268,13 +268,10 @@ def train(
 
     # Create LLaMA model
     if tiny_llama:
-        llm = LLM(
-            model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
-        )
+        llm = LLM(model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1', )
     else:
         llm = LLM(model_name=llm_model_name)
-    model = GRetriever(llm=llm,
-                       gnn=gnn,
+    model = GRetriever(llm=llm, gnn=gnn,
                        mlp_out_channels=llm.word_embedding.embedding_dim)
 
     # Set model save name
@@ -391,8 +388,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval_batch_size', type=int, default=16)
     parser.add_argument('--checkpointing', action='store_true')
     parser.add_argument('--tiny_llama', action='store_true')
-    parser.add_argument('--llm_model_name',
-                        type=str,
+    parser.add_argument('--llm_model_name', type=str,
                         default="meta-llama/Meta-Llama-3.1-8B-Instruct")
     args = parser.parse_args()
 
