@@ -248,6 +248,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
                      model: SentenceTransformer):
     if DataFrame is None:
         raise Exception("PCST requires `pip install pandas`")
+    # Ensure unique triples set
+    triples = list(dict.fromkeys(triples))
     nodes = []
     triples = list(dict.fromkeys(triples))
     for h, r, t in triples:
