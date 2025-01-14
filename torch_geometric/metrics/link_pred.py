@@ -48,9 +48,11 @@ class LinkPredMetric(BaseMetric):
     def _prepare(
         pred_index_mat: Tensor,
         edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor]:
-        # Compute a boolean matrix indicating if the `k`-th prediction is part
-        # of the ground-truth, as well as the number of ground-truths for every
+        # Computes a matrix indicating the relevance of the `k`-th prediction.
+        # If `edge_label_weight` is not given, relevance will be denoted as
+        # binary. Additionally, returns the number of ground-truths for every
         # example. We do this by flattening both prediction and ground-truth
         # indices, and then determining overlaps via `torch.isin`.
         max_index = max(  # type: ignore
@@ -67,8 +69,8 @@ class LinkPredMetric(BaseMetric):
         flat_pred_index = (pred_index_mat + arange).view(-1)
         flat_y_index = max_index * edge_label_index[0] + edge_label_index[1]
 
-        pred_isin_mat = torch.isin(flat_pred_index, flat_y_index)
-        pred_isin_mat = pred_isin_mat.view(pred_index_mat.size())
+        pred_rel_mat = torch.isin(flat_pred_index, flat_y_index)
+        pred_rel_mat = pred_rel_mat.view(pred_index_mat.size())
 
         # Compute the number of ground-truths per example:
         y_count = scatter(
@@ -79,14 +81,14 @@ class LinkPredMetric(BaseMetric):
             reduce='sum',
         )
 
-        return pred_isin_mat, y_count
+        return pred_rel_mat, y_count
 
     def _update_from_prepared(
         self,
-        pred_isin_mat: Tensor,
+        pred_rel_mat: Tensor,
         y_count: Tensor,
     ) -> None:
-        metric = self._compute(pred_isin_mat[:, :self.k], y_count)
+        metric = self._compute(pred_rel_mat[:, :self.k], y_count)
         self.accum += metric.sum()
         self.total += (y_count > 0).sum()
 
@@ -112,15 +114,22 @@ class LinkPredMetric(BaseMetric):
                 :obj:`[2, num_ground_truth_indices]`.
             edge_label_weight (torch.Tensor, optional): The weight of the
                 ground-truth indices for every example in the mini-batch of
-                shape :obj:`[num_ground_truth_indices]`. Required for
-                weighted metrics and ignored otherwise. (default: :obj:`None`)
+                shape :obj:`[num_ground_truth_indices]`. If given, needs to be
+                a vector of positive values. Required for weighted metrics,
+                ignored otherwise. (default: :obj:`None`)
         """
         if self.weighted and edge_label_weight is None:
-            raise ValueError("'edge_label_weight' required for {self}")
+            raise ValueError(f"'edge_label_weight' is a required argument for "
+                             f"'{self.__class__.__name__}'")
+        if not self.weighted:
+            edge_label_weight = None
 
-        pred_isin_mat, y_count = self._prepare(pred_index_mat,
-                                               edge_label_index)
-        self._update_from_prepared(pred_isin_mat, y_count)
+        pred_rel_mat, y_count = self._prepare(
+            pred_index_mat,
+            edge_label_index,
+            edge_label_weight,
+        )
+        self._update_from_prepared(pred_rel_mat, y_count)
 
     def compute(self) -> Tensor:
         r"""Computes the final metric value."""
@@ -136,12 +145,12 @@ class LinkPredMetric(BaseMetric):
             self.accum.zero_()
             self.total.zero_()
 
-    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
+    def _compute(self, pred_rel_mat: Tensor, y_count: Tensor) -> Tensor:
         r"""Compute the specific metric.
         To be implemented separately for each metric class.
 
         Args:
-            pred_isin_mat (torch.Tensor): A boolean matrix whose :obj:`(i,k)`
+            pred_rel_mat (torch.Tensor): A boolean matrix whose :obj:`(i,k)`
                 element indicates if the :obj:`k`-th prediction for the
                 :obj:`i`-th example is correct or not.
             y_count (torch.Tensor): A vector indicating the number of
@@ -211,6 +220,13 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         """
         return max([metric.k for metric in self.values()])
 
+    @property
+    def weighted(self) -> bool:
+        r"""Returns :obj:`True` in case the collection holds at least one
+        weighted link prediction metric.
+        """
+        return any([metric.weighted for metric in self.values()])
+
     def update(  # type: ignore
         self,
         pred_index_mat: Tensor,
@@ -233,13 +249,29 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
                 :obj:`[2, num_ground_truth_indices]`.
             edge_label_weight (torch.Tensor, optional): The weight of the
                 ground-truth indices for every example in the mini-batch of
-                shape :obj:`[num_ground_truth_indices]`. Required for
-                weighted metrics and ignored otherwise. (default: :obj:`None`)
+                shape :obj:`[num_ground_truth_indices]`. If given, needs to be
+                a vector of positive values. Required for weighted metrics,
+                ignored otherwise. (default: :obj:`None`)
         """
-        pred_isin_mat, y_count = LinkPredMetric._prepare(
-            pred_index_mat, edge_label_index)
+        if self.weighted and edge_label_weight is None:
+            raise ValueError(f"'edge_label_weight' is a required argument for "
+                             f"'{self.__class__.__name__}'")
+        if not self.weighted:
+            edge_label_weight = None
+
+        pred_rel_mat, y_count = LinkPredMetric._prepare(
+            pred_index_mat, edge_label_index, edge_label_weight)
+
+        pred_isin_mat = pred_rel_mat
+        if (pred_isin_mat.dtype != torch.bool
+                and any([not metric.weighted for metric in self.values()])):
+            pred_isin_mat = pred_rel_mat != 0.0
+
         for metric in self.values():
-            metric._update_from_prepared(pred_isin_mat, y_count)
+            if metric.weighted:
+                metric._update_from_prepared(pred_rel_mat, y_count)
+            else:
+                metric._update_from_prepared(pred_isin_mat, y_count)
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
@@ -264,8 +296,8 @@ class LinkPredPrecision(LinkPredMetric):
     higher_is_better: bool = True
     weighted: bool = False
 
-    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        return pred_isin_mat.sum(dim=-1) / self.k
+    def _compute(self, pred_rel_mat: Tensor, y_count: Tensor) -> Tensor:
+        return pred_rel_mat.sum(dim=-1) / self.k
 
 
 class LinkPredRecall(LinkPredMetric):
@@ -277,8 +309,8 @@ class LinkPredRecall(LinkPredMetric):
     higher_is_better: bool = True
     weighted: bool = False
 
-    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        return pred_isin_mat.sum(dim=-1) / y_count.clamp(min=1e-7)
+    def _compute(self, pred_rel_mat: Tensor, y_count: Tensor) -> Tensor:
+        return pred_rel_mat.sum(dim=-1) / y_count.clamp(min=1e-7)
 
 
 class LinkPredF1(LinkPredMetric):
@@ -290,8 +322,8 @@ class LinkPredF1(LinkPredMetric):
     higher_is_better: bool = True
     weighted: bool = False
 
-    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        isin_count = pred_isin_mat.sum(dim=-1)
+    def _compute(self, pred_rel_mat: Tensor, y_count: Tensor) -> Tensor:
+        isin_count = pred_rel_mat.sum(dim=-1)
         precision = isin_count / self.k
         recall = isin_count = isin_count / y_count.clamp(min=1e-7)
         return 2 * precision * recall / (precision + recall).clamp(min=1e-7)
@@ -307,11 +339,11 @@ class LinkPredMAP(LinkPredMetric):
     higher_is_better: bool = True
     weighted: bool = False
 
-    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        device = pred_isin_mat.device
-        arange = torch.arange(1, pred_isin_mat.size(1) + 1, device=device)
-        cum_precision = pred_isin_mat.cumsum(dim=1) / arange
-        return ((cum_precision * pred_isin_mat).sum(dim=-1) /
+    def _compute(self, pred_rel_mat: Tensor, y_count: Tensor) -> Tensor:
+        device = pred_rel_mat.device
+        arange = torch.arange(1, pred_rel_mat.size(1) + 1, device=device)
+        cum_precision = pred_rel_mat.cumsum(dim=1) / arange
+        return ((cum_precision * pred_rel_mat).sum(dim=-1) /
                 y_count.clamp(min=1e-7, max=self.k))
 
 
@@ -321,12 +353,15 @@ class LinkPredNDCG(LinkPredMetric):
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
+        weighted (bool, optional): If set to :obj:`True`, assumes sorted lists
+            of ground-truth items according to a relevance score as given by
+            :obj:`edge_label_weight`. (default: :obj:`False`)
     """
     higher_is_better: bool = True
-    weighted: bool = False
 
-    def __init__(self, k: int):
+    def __init__(self, k: int, weighted: bool = False):
         super().__init__(k=k)
+        self.weighted = weighted
 
         dtype = torch.get_default_dtype()
         multiplier = 1.0 / torch.arange(2, k + 2, dtype=dtype).log2()
@@ -337,9 +372,9 @@ class LinkPredNDCG(LinkPredMetric):
         self.idcg: Tensor
         self.register_buffer('idcg', cumsum(multiplier))
 
-    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        multiplier = self.multiplier[:pred_isin_mat.size(1)].view(1, -1)
-        dcg = (pred_isin_mat * multiplier).sum(dim=-1)
+    def _compute(self, pred_rel_mat: Tensor, y_count: Tensor) -> Tensor:
+        multiplier = self.multiplier[:pred_rel_mat.size(1)].view(1, -1)
+        dcg = (pred_rel_mat * multiplier).sum(dim=-1)
         idcg = self.idcg[y_count.clamp(max=self.k)]
 
         out = dcg / idcg
@@ -357,7 +392,7 @@ class LinkPredMRR(LinkPredMetric):
     higher_is_better: bool = True
     weighted: bool = False
 
-    def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        device = pred_isin_mat.device
-        arange = torch.arange(1, pred_isin_mat.size(1) + 1, device=device)
-        return (pred_isin_mat / arange).max(dim=-1)[0]
+    def _compute(self, pred_rel_mat: Tensor, y_count: Tensor) -> Tensor:
+        device = pred_rel_mat.device
+        arange = torch.arange(1, pred_rel_mat.size(1) + 1, device=device)
+        return (pred_rel_mat / arange).max(dim=-1)[0]
