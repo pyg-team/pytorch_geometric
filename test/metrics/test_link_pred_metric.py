@@ -133,6 +133,14 @@ def test_ndcg():
         metric.update(pred_index_mat, edge_label_index)
 
     metric.update(pred_index_mat, edge_label_index, edge_label_weight)
+    result = metric.compute()
+
+    assert float(result) == pytest.approx(0.7854486)
+
+    # Test with `k > pred_index_mat.size(1)`:
+    metric.update(pred_index_mat[:, :1], edge_label_index, edge_label_weight)
+    metric.compute()
+    metric.reset()
 
 
 def test_mrr():
