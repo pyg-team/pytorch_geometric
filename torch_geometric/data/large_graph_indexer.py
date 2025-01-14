@@ -304,6 +304,7 @@ class LargeGraphIndexer:
             values = self.node_attr[feature_name]
         # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
+            print("inside if")
             idxs = list(
                 self.get_node_features_iter(feature_name, pids,
                                             index_only=True))
