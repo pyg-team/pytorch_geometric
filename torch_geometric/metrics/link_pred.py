@@ -59,8 +59,8 @@ class LinkPredMetric(BaseMetric):
         ) + 1
         arange = torch.arange(
             start=0,
-            end=max_index * pred_index_mat.size(0),
-            step=max_index,
+            end=max_index * pred_index_mat.size(0),  # type: ignore
+            step=max_index,  # type: ignore
             device=pred_index_mat.device,
         ).view(-1, 1)
         flat_pred_index = (pred_index_mat + arange).view(-1)
