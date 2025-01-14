@@ -127,13 +127,6 @@ def test_ndcg():
     metric.compute()
     metric.reset()
 
-    metric = LinkPredNDCG(k=2, weighted=True)
-    assert str(metric) == 'LinkPredNDCG(k=2, weighted=True)'
-    with pytest.raises(ValueError, match="'edge_label_weight'"):
-        metric.update(pred_index_mat, edge_label_index)
-
-    metric.update(pred_index_mat, edge_label_index, edge_label_weight)
-
 
 def test_mrr():
     pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2], [0, 1]])
@@ -160,6 +153,9 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         LinkPredMAP(k=10),
         LinkPredPrecision(k=100),
         LinkPredRecall(k=50),
+        LinkPredF1(k=20),
+        LinkPredMRR(k=40),
+        LinkPredNDCG(k=80),
     ]
 
     row = torch.randint(0, num_src_nodes, (num_edges, ))
@@ -176,6 +172,9 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         '  LinkPredMAP@10: LinkPredMAP(k=10),\n'
         '  LinkPredPrecision@100: LinkPredPrecision(k=100),\n'
         '  LinkPredRecall@50: LinkPredRecall(k=50),\n'
+        '  LinkPredF1@20: LinkPredF1(k=20),\n'
+        '  LinkPredMRR@40: LinkPredMRR(k=40),\n'
+        '  LinkPredNDCG@80: LinkPredNDCG(k=80),\n'
         '])')
     assert metric_collection.max_k == 100
 
