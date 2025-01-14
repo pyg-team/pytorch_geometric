@@ -358,6 +358,7 @@ class LinkPredNDCG(LinkPredMetric):
             :obj:`edge_label_weight`. (default: :obj:`False`)
     """
     higher_is_better: bool = True
+    weighted: bool = False
 
     def __init__(self, k: int, weighted: bool = False):
         super().__init__(k=k)
