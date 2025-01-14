@@ -1,8 +1,6 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
-import torch
-
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
@@ -105,7 +103,7 @@ class RAGQueryLoader:
             seed_nodes, **self.sampler_kwargs)
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
-                                                   **self.loader_kwargs)
+                                                **self.loader_kwargs)
         if self.local_filter:
             data = self.local_filter(data, query)
         return data
