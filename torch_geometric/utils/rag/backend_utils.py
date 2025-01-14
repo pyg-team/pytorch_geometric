@@ -126,17 +126,9 @@ class RemoteGraphBackendLoader:
         if self.datatype == RemoteDataType.DATA:
             data_obj = torch.load(self.path, weights_only=False)
             # is_sorted=true since assume nodes come sorted from indexer
-            print("data_obj.edge_index_dst_nodes[:10]=",
-                  data_obj.edge_index[1, :10])
-            print("data_obj.edge_index_dst_nodes[-10:]=",
-                  data_obj.edge_index[1, -10:])
             graph_store = self.graph_store_type.from_data(
                 edge_id=data_obj['edge_id'], edge_index=data_obj.edge_index,
                 num_nodes=data_obj.num_nodes, is_sorted=True)
-            print("graph_store.dst_nodes[:10]=",
-                  graph_store.edge_index[1, :10])
-            print("graph_store.dst_nodes[-10:]=", graph_store.edge_index[1,
-                                                                         -10:])
             feature_store = self.feature_store_type.from_data(
                 node_id=data_obj['node_id'], x=data_obj.x,
                 edge_id=data_obj['edge_id'], edge_attr=data_obj.edge_attr)
@@ -224,9 +216,6 @@ def create_remote_backend_from_triplets(
 
     indexer = LargeGraphIndexer.from_triplets(triplets,
                                               pre_transform=pre_transform)
-    print("indexer._nodes[:100]=",
-          [(indexer._nodes[key], key)
-           for key in list(indexer._nodes.keys())[:100]])
     node_feats = node_model(indexer.get_unique_node_features(),
                             **node_method_kwargs)
     indexer.add_node_feature('x', node_feats)
@@ -240,7 +229,6 @@ def create_remote_backend_from_triplets(
 
     data = indexer.to_data(node_feature_name='x',
                            edge_feature_name='edge_attr')
-    print("n_parts=", n_parts)
     if n_parts == 1:
         torch.save(data, path)
         return RemoteGraphBackendLoader(path, RemoteDataType.DATA, graph_db,

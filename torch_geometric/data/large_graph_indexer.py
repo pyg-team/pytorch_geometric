@@ -149,10 +149,6 @@ class LargeGraphIndexer:
                 self.edge_attr[EDGE_TAIL].append(t)
                 self.edge_attr[EDGE_INDEX].append(
                     (self._nodes[h], self._nodes[t]))
-            print("self.edge_index[20:60].dst_nodes in indexer init=",
-                  self.edge_attr[EDGE_TAIL][20:60])
-            print("len(edges) in init of largegraphindexer=",
-                  len(self.edge_attr[EDGE_TAIL]))
         for i, tup in enumerate(edges):
             self._edges[tup] = i
 
@@ -203,7 +199,6 @@ class LargeGraphIndexer:
             #     edges.append(edge_idx)
         nodes = ordered_set(nodes)
         edges = ordered_set(edges)
-        print("edges[20:60] in from_triplets in indexer=", edges[20:60])
         return cls(list(nodes), list(edges))
 
     @classmethod
@@ -304,17 +299,9 @@ class LargeGraphIndexer:
             values = self.node_attr[feature_name]
         # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
-            print("inside if")
             idxs = list(
                 self.get_node_features_iter(feature_name, pids,
                                             index_only=True))
-            print("(idxs==torch.arange(len(idxs)).all()=",
-                  (torch.tensor(idxs) == torch.arange(len(idxs))).all())
-            print("(idxs-torch.arange(len(idxs))[:100]=",
-                  (torch.tensor(idxs) - torch.arange(len(idxs)))[:100])
-            print("(idxs-torch.arange(len(idxs)).sum()=",
-                  (torch.tensor(idxs) - torch.arange(len(idxs))).sum())
-            print("values[idxs]=", values[idxs])
             return values[idxs]
         return_value = list(self.get_node_features_iter(feature_name, pids))
         return return_value
@@ -551,14 +538,8 @@ class LargeGraphIndexer:
         """
         x = torch.Tensor(self.get_node_features(node_feature_name))
         node_id = torch.LongTensor(range(len(x)))
-        print("self.get_edge_features(EDGE_INDEX)[:10]=",
-              self.get_edge_features(EDGE_INDEX)[:10])
-        print("self.get_edge_features(EDGE_INDEX)[-10:]=",
-              self.get_edge_features(EDGE_INDEX)[-10:])
         edge_index = torch.t(
             torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
-        print("edge_index tensor of full graph[:10]=", edge_index[:, :10])
-        print("edge_index tensor of full graph[-10:]=", edge_index[:, -10:])
 
         edge_attr = (self.get_edge_features(edge_feature_name)
                      if edge_feature_name is not None else None)

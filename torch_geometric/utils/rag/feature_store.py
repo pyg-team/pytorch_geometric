@@ -85,21 +85,9 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         # NOTE: torch_geometric.loader.utils.filter_custom_store can be used
         # here if it supported edge features
-        node_id = sample.node
-        print("sampled node id in load subgraph=", node_id)
-        print("sampled src ids in load subgraph=", sample.row)
-        print("num src ids not in node ids inside `load_subgraph`=",
-              sum([src_id not in node_id for src_id in sample.row]))
-        print("sampled dst ids in load subgraph=", sample.col)
-        print("num dst ids not in node ids inside `load_subgraph`=",
-              sum([dst_id not in node_id for dst_id in sample.col]))
         edge_id = sample.edge
-        #edge_index = torch.stack((sample.row, sample.col), dim=0)
         edge_attr = self.edge_attr[edge_id]
         return Data(edge_attr=edge_attr, edge_idx=edge_id)
-        #return Data(edge_index=edge_index, edge_attr=edge_attr, edge_idx=edge_id), sampled_node_ids
-        # return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-        #             node_idx=node_id, edge_idx=edge_id)
 
 
 # TODO: Refactor because composition >> inheritance
