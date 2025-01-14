@@ -172,6 +172,6 @@ if __name__ == '__main__':
                           len(retrieved_triples))
         recalls.append(num_relevant_out_of_retrieved/len(golden_triples))
     approx_precision = sum(precisions) / len(precisions)
-    approx_recall = sum(recalls) / (recalls)
+    approx_recall = sum(recalls) / len(recalls)
     print("approx_precision =", str(round(approx_precision * 100.0, 2)) + "%")
     print("approx_recall =", str(round(approx_recall * 100.0, 2)) + "%")
