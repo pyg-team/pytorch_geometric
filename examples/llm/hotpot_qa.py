@@ -133,16 +133,17 @@ if __name__ == '__main__':
         sampler_kwargs={"num_neighbors": [fanout] * num_hops},
         local_filter=make_pcst_filter(triples, model))
     """
-    approx precision = num_relevant_out_of_retrieved/num_retrieved_triples
-    We will use precision as a proxy for recall. This is because for recall,
-    we must know how many relevant triples exist for each question,
-    but this is not known.
+    approx precision = num_golden_out_of_retrieved/num_retrieved_triples
+    approx recall = num_golden_out_of_retrieved/num_golden_triples
+    These are rough approximations since we do not know exactly which
+    golden triples are actually relevant.
 
     Note that the retrieval precision may be much lower than expected.
     likely due to a bug in retriever causing similar issue here:
     https://github.com/pyg-team/pytorch_geometric/pull/9806
     """
     precisions = []
+    recalls = []
     if args.verbose:
         loader = relevant_triples.keys()
     else:
@@ -169,5 +170,8 @@ if __name__ == '__main__':
             ]))
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
+        recalls.append(num_relevant_out_of_retrieved/len(golden_triples))
     approx_precision = sum(precisions) / len(precisions)
+    approx_recall = sum(recalls) / (recalls)
     print("approx_precision =", str(round(approx_precision * 100.0, 2)) + "%")
+    print("approx_recall =", str(round(approx_recall * 100.0, 2)) + "%")
