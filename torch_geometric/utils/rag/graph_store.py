@@ -29,6 +29,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.sampler = NeighborSampler(data=(self.feature_store, self),
                                        num_neighbors=self._num_neighbors,
                                        subgraph_type='induced',
+                                       directed=False,
                                        **self.sample_kwargs)
         self._sampler_is_initialized = True
 
