@@ -152,6 +152,9 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         LinkPredMAP(k=10),
         LinkPredPrecision(k=100),
         LinkPredRecall(k=50),
+        LinkPredF1(k=20),
+        LinkPredMRR(k=40),
+        LinkPredNDCG(k=80),
     ]
 
     row = torch.randint(0, num_src_nodes, (num_edges, ))
@@ -168,6 +171,9 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         '  LinkPredMAP@10: LinkPredMAP(k=10),\n'
         '  LinkPredPrecision@100: LinkPredPrecision(k=100),\n'
         '  LinkPredRecall@50: LinkPredRecall(k=50),\n'
+        '  LinkPredF1@20: LinkPredF1(k=20),\n'
+        '  LinkPredMRR@40: LinkPredMRR(k=40),\n'
+        '  LinkPredNDCG@80: LinkPredNDCG(k=80),\n'
         '])')
     assert metric_collection.max_k == 100
 
