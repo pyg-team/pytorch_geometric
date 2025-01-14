@@ -309,7 +309,7 @@ class LargeGraphIndexer:
                 self.get_node_features_iter(feature_name, pids,
                                             index_only=True))
             print("(idxs==torch.arange(len(idxs)).all()=",
-                  (torch.tensor(idxs) == torch.arange(len(idxs)).all()))
+                  (torch.tensor(idxs) == torch.arange(len(idxs))).all())
             print("(idxs-torch.arange(len(idxs))[:100]=",
                   (torch.tensor(idxs) - torch.arange(len(idxs)))[:100])
             print("(idxs-torch.arange(len(idxs)).sum()=",
