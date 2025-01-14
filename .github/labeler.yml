@@ -4,7 +4,7 @@ installation:
 
 ci:
   - changed-files:
-      - any-glob-to-any-file: [".github/**/*", ".coveragerc", "codecov.yaml", ".pre-commit-config.yaml"]
+      - any-glob-to-any-file: [".github/**/*", "codecov.yaml", ".pre-commit-config.yaml"]
 
 documentation:
   - changed-files:
