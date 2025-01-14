@@ -88,11 +88,10 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         sampled_node_ids = sample.node
         print("len(sample.node) in load_subgraph=", len(sample.node))
         edge_id = sample.edge
-        #edge_index = torch.stack((sample.row, sample.col), dim=0)
+        edge_index = torch.stack((sample.row, sample.col), dim=0)
         edge_attr = self.edge_attr[edge_id]
-        return Data(edge_attr=edge_attr, edge_idx=edge_id), sampled_node_ids
-        # return Data(edge_index=edge_index, edge_attr=edge_attr,
-        #             edge_idx=edge_id), sampled_node_ids
+        return Data(edge_index=edge_index, edge_attr=edge_attr,
+                    edge_idx=edge_id), sampled_node_ids
         # return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
         #             node_idx=node_id, edge_idx=edge_id)
 
