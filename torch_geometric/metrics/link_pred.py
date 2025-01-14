@@ -164,7 +164,10 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         ])
 
         metrics.update(pred_index_mat, edge_label_index)
-        print(metrics.compute())
+        out = metrics.compute()
+        metrics.reset()
+
+        print(out)
         >>> {'LinkPredMAP@10': tensor(0.375),
         ...  'LinkPredPrecision@100': tensor(0.127),
         ...  'LinkPredRecall@50': tensor(0.483)}
