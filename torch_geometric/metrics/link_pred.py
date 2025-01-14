@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -142,6 +142,100 @@ class LinkPredMetric(BaseMetric):
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(k={self.k})'
+
+
+class LinkPredMetricCollection(torch.nn.ModuleDict):
+    r"""A collection of metrics to reduce and speed-up computation of link
+    prediction metrics.
+
+    .. code-block:: python
+
+        from torch_geometric.metrics import (
+            LinkPredMAP,
+            LinkPredMetricCollection,
+            LinkPredPrecision,
+            LinkPredRecall,
+        )
+
+        metrics = LinkPredMetricCollection([
+            LinkPredMAP(k=10),
+            LinkPredPrecision(k=100),
+            LinkPredRecall(k=50),
+        ])
+
+        metrics.update(pred_index_mat, edge_label_index)
+        print(metrics.compute())
+        >>> {'LinkPredMAP@10': tensor(0.375),
+        ...  'LinkPredPrecision@100': tensor(0.127),
+        ...  'LinkPredRecall@50': tensor(0.483)}
+
+    Args:
+        metrics: The link prediction metrics.
+    """
+    def __init__(
+        self,
+        metrics: Union[
+            List[LinkPredMetric],
+            Dict[str, LinkPredMetric],
+        ],
+    ) -> None:
+        super().__init__()
+
+        if isinstance(metrics, (list, tuple)):
+            metrics = {
+                f'{metric.__class__.__name__}@{metric.k}': metric
+                for metric in metrics
+            }
+        assert len(metrics) > 0
+        assert isinstance(metrics, dict)
+
+        for name, metric in metrics.items():
+            self[name] = metric
+
+    @property
+    def max_k(self) -> int:
+        r"""The maximum number of top-:math:`k` predictions to evaluate
+        against.
+        """
+        return max([metric.k for metric in self.values()])
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+    ) -> None:
+        r"""Updates the state variables based on the current mini-batch
+        prediction.
+
+        :meth:`update` can be repeated multiple times to accumulate the results
+        of successive predictions, *e.g.*, inside a mini-batch training or
+        evaluation loop.
+
+        Args:
+            pred_index_mat (torch.Tensor): The top-:math:`k` predictions of
+                every example in the mini-batch with shape
+                :obj:`[batch_size, k]`.
+            edge_label_index (torch.Tensor): The ground-truth indices for every
+                example in the mini-batch, given in COO format of shape
+                :obj:`[2, num_ground_truth_indices]`.
+        """
+        pred_isin_mat, y_count = LinkPredMetric._prepare(
+            pred_index_mat, edge_label_index)
+        for metric in self.values():
+            metric._update_from_prepared(pred_isin_mat, y_count)
+
+    def compute(self) -> Dict[str, Tensor]:
+        r"""Computes the final metric values."""
+        return {name: metric.compute() for name, metric in self.items()}
+
+    def reset(self) -> None:
+        r"""Reset metric state variables to their default value."""
+        for metric in self.values():
+            metric.reset()
+
+    def __repr__(self) -> str:
+        names = [f'  {name}: {metric},\n' for name, metric in self.items()]
+        return f'{self.__class__.__name__}([\n{"".join(names)}])'
 
 
 class LinkPredPrecision(LinkPredMetric):
