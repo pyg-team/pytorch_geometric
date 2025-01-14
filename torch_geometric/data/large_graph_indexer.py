@@ -310,6 +310,10 @@ class LargeGraphIndexer:
                                             index_only=True))
             print("(idxs==torch.arange(len(idxs)).all()=",
                   (idxs == torch.arange(len(idxs)).all()))
+            print("(idxs-torch.arange(len(idxs))[:100]=",
+                  (idxs - torch.arange(len(idxs)))[:100])
+            print("(idxs-torch.arange(len(idxs)).sum()=",
+                  (idxs - torch.arange(len(idxs))).sum())
             print("values[idxs]=", values[idxs])
             return values[idxs]
         return_value = list(self.get_node_features_iter(feature_name, pids))
