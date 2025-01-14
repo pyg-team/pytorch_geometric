@@ -308,6 +308,8 @@ class LargeGraphIndexer:
             idxs = list(
                 self.get_node_features_iter(feature_name, pids,
                                             index_only=True))
+            print("idxs=", idxs)
+            print("values[idxs]=", values[idxs])
             return values[idxs]
         return_value = list(self.get_node_features_iter(feature_name, pids))
         return return_value
