@@ -170,6 +170,8 @@ if __name__ == '__main__':
             ]))
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
+        precisions.append(num_relevant_out_of_retrieved /
+                            len(retrieved_triples))
         recalls.append(num_relevant_out_of_retrieved/len(golden_triples))
     approx_precision = sum(precisions) / len(precisions)
     approx_recall = sum(recalls) / len(recalls)
