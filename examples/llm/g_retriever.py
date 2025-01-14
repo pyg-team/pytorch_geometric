@@ -204,6 +204,7 @@ def train(
         batch_size (int): Training batch size.
         eval_batch_size (int): Evaluation batch size.
         lr (float): Initial learning rate.
+        llm_model_name (str): The name of the LLM to use.
         checkpointing (bool, optional): Whether to checkpoint model.
             Defaults to False.
         tiny_llama (bool, optional): Whether to use tiny LLaMA model.
