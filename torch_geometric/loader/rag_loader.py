@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
-
+import torch
 
 class RAGFeatureStore(Protocol):
     """Feature store template for remote GNN RAG backend."""
