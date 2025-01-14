@@ -28,7 +28,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             raise AttributeError("Feature store not registered yet.")
         self.sampler = NeighborSampler(data=(self.feature_store, self),
                                        num_neighbors=self._num_neighbors,
-                                       directed=False,
+                                       subgraph_type='induced',
                                        **self.sample_kwargs)
         self._sampler_is_initialized = True
 
