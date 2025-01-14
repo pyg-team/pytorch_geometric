@@ -113,6 +113,7 @@ def test_map():
 def test_ndcg():
     pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
     edge_label_index = torch.tensor([[0, 0, 2, 2], [0, 1, 2, 1]])
+    edge_label_weight = torch.tensor([1.0, 2.0, 3.0, 0.5])
 
     metric = LinkPredNDCG(k=2)
     assert str(metric) == 'LinkPredNDCG(k=2)'
@@ -125,6 +126,13 @@ def test_ndcg():
     metric.update(pred_index_mat[:, :1], edge_label_index)
     metric.compute()
     metric.reset()
+
+    metric = LinkPredNDCG(k=2, weighted=True)
+    assert str(metric) == 'LinkPredNDCG(k=2, weighted=True)'
+    with pytest.raises(ValueError, match="'edge_label_weight'"):
+        metric.update(pred_index_mat, edge_label_index)
+
+    metric.update(pred_index_mat, edge_label_index, edge_label_weight)
 
 
 def test_mrr():
