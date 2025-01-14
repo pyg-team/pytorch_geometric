@@ -48,8 +48,8 @@ class LinkPredMetric(BaseMetric):
         pred_index_mat: Tensor,
         edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
     ) -> Tuple[Tensor, Tensor]:
-        # Compute a boolean matrix indicating if the `k`-th prediction is part of
-        # the ground-truth, as well as the number of ground-truths for every
+        # Compute a boolean matrix indicating if the `k`-th prediction is part
+        # of the ground-truth, as well as the number of ground-truths for every
         # example. We do this by flattening both prediction and ground-truth
         # indices, and then determining overlaps via `torch.isin`.
         max_index = max(  # type: ignore

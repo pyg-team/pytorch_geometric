@@ -54,7 +54,7 @@ def test_precision(num_src_nodes, num_dst_nodes, num_edges, batch_size, k):
     expected = torch.tensor(values).mean()
     assert torch.allclose(out, expected)
 
-    # Test for smaller `k` than there exists destination nodes:
+    # Test with `k > pred_mat.size(1)`:
     metric.update(top_k_pred_mat[:, :k - 1], edge_label_index)
     metric.compute()
     metric.reset()
@@ -71,7 +71,7 @@ def test_recall():
 
     assert float(result) == pytest.approx(0.5 * (2 / 3 + 0.5))
 
-    # Test for smaller `k` than there exists destination nodes:
+    # Test with `k > pred_mat.size(1)`:
     metric.update(pred_mat[:, :1], edge_label_index)
     metric.compute()
     metric.reset()
@@ -87,7 +87,7 @@ def test_f1():
     result = metric.compute()
     assert float(result) == pytest.approx(0.6500)
 
-    # Test for smaller `k` than there exists destination nodes:
+    # Test with `k > pred_mat.size(1)`:
     metric.update(pred_mat[:, :1], edge_label_index)
     metric.compute()
     metric.reset()
@@ -103,7 +103,7 @@ def test_map():
     result = metric.compute()
     assert float(result) == pytest.approx(0.6250)
 
-    # Test for smaller `k` than there exists destination nodes:
+    # Test with `k > pred_mat.size(1)`:
     metric.update(pred_mat[:, :1], edge_label_index)
     metric.compute()
     metric.reset()
@@ -120,7 +120,7 @@ def test_ndcg():
 
     assert float(result) == pytest.approx(0.6934264)
 
-    # Test for smaller `k` than there exists destination nodes:
+    # Test with `k > pred_mat.size(1)`:
     metric.update(pred_mat[:, :1], edge_label_index)
     metric.compute()
     metric.reset()
@@ -137,7 +137,7 @@ def test_mrr():
 
     assert float(result) == pytest.approx((1 + 0.5 + 0) / 3)
 
-    # Test for smaller `k` than there exists destination nodes:
+    # Test with `k > pred_mat.size(1)`:
     metric.update(pred_mat[:, :1], edge_label_index)
     metric.compute()
     metric.reset()
