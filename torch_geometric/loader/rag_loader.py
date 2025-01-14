@@ -105,7 +105,7 @@ class RAGQueryLoader:
             seed_nodes, **self.sampler_kwargs)
 
         data, _ = self.feature_store.load_subgraph(sample=subgraph_sample,
-                                                **self.loader_kwargs)
+                                                   **self.loader_kwargs)
         data.node_idx = torch.tensor(
             list(
                 dict.fromkeys(
