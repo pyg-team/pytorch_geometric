@@ -176,6 +176,7 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         metric.update(pred_index_mat[:, :metric.k], edge_label_index)
         out = metric.compute()
         expected[f'{metric.__class__.__name__}@{metric.k}'] = out
+        metric.reset()
 
     metric_collection.update(pred_index_mat, edge_label_index)
     assert metric_collection.compute() == expected
