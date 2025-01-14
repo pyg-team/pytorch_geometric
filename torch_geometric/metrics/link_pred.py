@@ -43,6 +43,52 @@ class LinkPredMetric(BaseMetric):
             self.register_buffer('accum', torch.tensor(0.))
             self.register_buffer('total', torch.tensor(0))
 
+    @staticmethod
+    def _prepare(
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+    ) -> Tuple[Tensor, Tensor]:
+        # Compute a boolean matrix indicating if the `k`-th prediction is part
+        # of the ground-truth, as well as the number of ground-truths for every
+        # example. We do this by flattening both prediction and ground-truth
+        # indices, and then determining overlaps via `torch.isin`.
+        max_index = max(  # type: ignore
+            pred_index_mat.max() if pred_index_mat.numel() > 0 else 0,
+            edge_label_index[1].max()
+            if edge_label_index[1].numel() > 0 else 0,
+        ) + 1
+        arange = torch.arange(
+            start=0,
+            end=max_index * pred_index_mat.size(0),  # type: ignore
+            step=max_index,  # type: ignore
+            device=pred_index_mat.device,
+        ).view(-1, 1)
+        flat_pred_index = (pred_index_mat + arange).view(-1)
+        flat_y_index = max_index * edge_label_index[0] + edge_label_index[1]
+
+        pred_isin_mat = torch.isin(flat_pred_index, flat_y_index)
+        pred_isin_mat = pred_isin_mat.view(pred_index_mat.size())
+
+        # Compute the number of ground-truths per example:
+        y_count = scatter(
+            torch.ones_like(edge_label_index[0]),
+            edge_label_index[0],
+            dim=0,
+            dim_size=pred_index_mat.size(0),
+            reduce='sum',
+        )
+
+        return pred_isin_mat, y_count
+
+    def _update_from_prepared(
+        self,
+        pred_isin_mat: Tensor,
+        y_count: Tensor,
+    ) -> None:
+        metric = self._compute(pred_isin_mat[:, :self.k], y_count)
+        self.accum += metric.sum()
+        self.total += (y_count > 0).sum()
+
     def update(
         self,
         pred_index_mat: Tensor,
@@ -63,44 +109,9 @@ class LinkPredMetric(BaseMetric):
                 example in the mini-batch, given in COO format of shape
                 :obj:`[2, num_ground_truth_indices]`.
         """
-        if pred_index_mat.size(1) != self.k:
-            raise ValueError(f"Expected 'pred_index_mat' to hold {self.k} "
-                             f"many indices for every entry "
-                             f"(got {pred_index_mat.size(1)})")
-
-        # Compute a boolean matrix indicating if the k-th prediction is part of
-        # the ground-truth. We do this by flattening both prediction and
-        # target indices, and then determining overlaps via `torch.isin`.
-        max_index = max(  # type: ignore
-            pred_index_mat.max() if pred_index_mat.numel() > 0 else 0,
-            edge_label_index[1].max()
-            if edge_label_index[1].numel() > 0 else 0,
-        ) + 1
-        arange = torch.arange(
-            start=0,
-            end=max_index * pred_index_mat.size(0),  # type: ignore
-            step=max_index,  # type: ignore
-            device=pred_index_mat.device,
-        ).view(-1, 1)
-        flat_pred_index = (pred_index_mat + arange).view(-1)
-        flat_y_index = max_index * edge_label_index[0] + edge_label_index[1]
-
-        pred_isin_mat = torch.isin(flat_pred_index, flat_y_index)
-        pred_isin_mat = pred_isin_mat.view(pred_index_mat.size())
-
-        # Compute the number of targets per example:
-        y_count = scatter(
-            torch.ones_like(edge_label_index[0]),
-            edge_label_index[0],
-            dim=0,
-            dim_size=pred_index_mat.size(0),
-            reduce='sum',
-        )
-
-        metric = self._compute(pred_isin_mat, y_count)
-
-        self.accum += metric.sum()
-        self.total += (y_count > 0).sum()
+        pred_isin_mat, y_count = self._prepare(pred_index_mat,
+                                               edge_label_index)
+        self._update_from_prepared(pred_isin_mat, y_count)
 
     def compute(self) -> Tensor:
         r"""Computes the final metric value."""
@@ -182,8 +193,9 @@ class LinkPredMAP(LinkPredMetric):
     higher_is_better: bool = True
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        cum_precision = (torch.cumsum(pred_isin_mat, dim=1) /
-                         torch.arange(1, self.k + 1, device=y_count.device))
+        device = pred_isin_mat.device
+        arange = torch.arange(1, pred_isin_mat.size(1) + 1, device=device)
+        cum_precision = pred_isin_mat.cumsum(dim=1) / arange
         return ((cum_precision * pred_isin_mat).sum(dim=-1) /
                 y_count.clamp(min=1e-7, max=self.k))
 
@@ -210,7 +222,8 @@ class LinkPredNDCG(LinkPredMetric):
         self.register_buffer('idcg', cumsum(multiplier))
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        dcg = (pred_isin_mat * self.multiplier.view(1, -1)).sum(dim=-1)
+        multiplier = self.multiplier[:pred_isin_mat.size(1)].view(1, -1)
+        dcg = (pred_isin_mat * multiplier).sum(dim=-1)
         idcg = self.idcg[y_count.clamp(max=self.k)]
 
         out = dcg / idcg
@@ -228,8 +241,6 @@ class LinkPredMRR(LinkPredMetric):
     higher_is_better: bool = True
 
     def _compute(self, pred_isin_mat: Tensor, y_count: Tensor) -> Tensor:
-        rank = pred_isin_mat.type(torch.uint8).argmax(dim=-1)
-        is_correct = pred_isin_mat.gather(1, rank.view(-1, 1)).view(-1)
-        reciprocals = 1.0 / (rank + 1)
-        reciprocals[~is_correct] = 0.0
-        return reciprocals
+        device = pred_isin_mat.device
+        arange = torch.arange(1, pred_isin_mat.size(1) + 1, device=device)
+        return (pred_isin_mat / arange).max(dim=-1)[0]
