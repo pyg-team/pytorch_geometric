@@ -202,7 +202,7 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         """
         return max([metric.k for metric in self.values()])
 
-    def update(
+    def update(  # type: ignore
         self,
         pred_index_mat: Tensor,
         edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
