@@ -104,14 +104,14 @@ class RAGQueryLoader:
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
-        data.node_idx = torch.tensor(
-            list(
-                dict.fromkeys(
-                    list(
-                        self.graph_store.edge_index[:,
-                                                    data.edge_idx].t().reshape(
-                                                        -1)))))
+        data.node_idx = torch.tensor(list(dict.fromkeys(self.graph_store.edge_index[:, data.edge_idx].t().reshape(-1).tolist())))
+        data.num_nodes = len(data.node_idx)
         data.x = self.feature_store.x[data.node_idx]
+        list_edge_index = []
+        remap_dict = {int(data.node_idx[i]): i for i in range(len(data.node_idx))}
+        for src, dst in total_e_idx_t.tolist():
+            list_edge_index.append((remap_dict[int(src)], remap_dict[int(dst)]))
+        data.edge_index = torch.tensor(list_edge_index).t()
         if self.local_filter:
             data = self.local_filter(data, query)
         return data
