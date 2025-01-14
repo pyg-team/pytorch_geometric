@@ -113,7 +113,6 @@ def test_map():
 def test_ndcg():
     pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
     edge_label_index = torch.tensor([[0, 0, 2, 2], [0, 1, 2, 1]])
-    edge_label_weight = torch.tensor([1.0, 2.0, 3.0, 0.5])
 
     metric = LinkPredNDCG(k=2)
     assert str(metric) == 'LinkPredNDCG(k=2)'
