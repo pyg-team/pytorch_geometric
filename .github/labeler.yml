@@ -34,6 +34,10 @@ transform:
   - changed-files:
       - any-glob-to-any-file: "torch_geometric/transforms/**/*"
 
+metrics:
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/metrics/**/*"
+
 utils:
   - changed-files:
       - any-glob-to-any-file: "torch_geometric/utils/**/*"
