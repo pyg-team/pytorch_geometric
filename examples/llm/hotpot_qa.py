@@ -134,7 +134,6 @@ if __name__ == '__main__':
         local_filter=make_pcst_filter(triples, model))
     """
     approx precision = num_golden_out_of_retrieved/num_retrieved_triples
-    approx recall = num_golden_out_of_retrieved/num_golden_triples
     These are rough approximations since we do not know exactly which
     golden triples are actually relevant.
 
