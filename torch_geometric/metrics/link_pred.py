@@ -59,7 +59,10 @@ class LinkPredMetricData:
 
         pred_rel_mat = flat_label_index[pos] == flat_pred_index  # Find matches
         if edge_label_weight is not None:
-            pred_rel_mat = edge_label_weight[pos].where(pred_rel_mat, 0.0)
+            pred_rel_mat = edge_label_weight[pos].where(
+                pred_rel_mat,
+                pred_rel_mat.new_zeros(1),
+            )
         pred_rel_mat = pred_rel_mat.view(self.pred_index_mat.size())
 
         self._pred_rel_mat = pred_rel_mat
