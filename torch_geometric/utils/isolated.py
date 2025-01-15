@@ -30,8 +30,8 @@ def num_isolated_nodes(
         ...                            [1, 0, 0]])
         >>> num_isolated_nodes(edge_index)
         0
-        >>> bi_edge_index = torch.tensor([[0, 0],
-        ...                               [1, 1]])
+        >>> bi_edge_index = torch.tensor([[0, 1],
+        ...                               [1, 0]])
         >>> num_isolated_nodes(bi_edge_index, num_nodes=(2, 2))
         (0, 0)
         >>> num_isolated_nodes(bi_edge_index, num_nodes=(2, 3))
