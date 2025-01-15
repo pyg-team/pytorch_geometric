@@ -3,7 +3,6 @@ import os.path as osp
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_google_url
@@ -81,6 +80,8 @@ class Reddit2(InMemoryDataset):
         download_google_url(self.role_id, self.raw_dir, 'role.json')
 
     def process(self) -> None:
+        import scipy.sparse as sp
+
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()

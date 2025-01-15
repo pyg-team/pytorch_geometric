@@ -12,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import remove_self_loops
 
 
@@ -126,9 +127,9 @@ class GNNBenchmarkDataset(InMemoryDataset):
         if self.name == 'CSL' and split != 'train':
             split = 'train'
             logging.warning(
-                ("Dataset 'CSL' does not provide a standardized splitting. "
-                 "Instead, it is recommended to perform 5-fold cross "
-                 "validation with stratifed sampling"))
+                "Dataset 'CSL' does not provide a standardized splitting. "
+                "Instead, it is recommended to perform 5-fold cross "
+                "validation with stratifed sampling")
 
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
@@ -181,7 +182,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
             data_list = self.process_CSL()
             self.save(data_list, self.processed_paths[0])
         else:
-            inputs = torch.load(self.raw_paths[0])
+            inputs = fs.torch_load(self.raw_paths[0])
             for i in range(len(inputs)):
                 data_list = [Data(**data_dict) for data_dict in inputs[i]]
 
@@ -197,7 +198,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
         with open(self.raw_paths[0], 'rb') as f:
             adjs = pickle.load(f)
 
-        ys = torch.load(self.raw_paths[1]).tolist()
+        ys = fs.torch_load(self.raw_paths[1]).tolist()
 
         data_list = []
         for adj, y in zip(adjs, ys):

@@ -132,7 +132,7 @@ def _visualize_graph_via_networkx(
             xy=pos[src],
             xytext=pos[dst],
             arrowprops=dict(
-                arrowstyle="->",
+                arrowstyle="<-",
                 alpha=data['alpha'],
                 shrinkA=sqrt(node_size) / 2.0,
                 shrinkB=sqrt(node_size) / 2.0,
@@ -140,9 +140,8 @@ def _visualize_graph_via_networkx(
             ),
         )
 
-    nodes = nx.draw_networkx_nodes(g, pos, node_size=node_size,
-                                   node_color='white', margins=0.1)
-    nodes.set_edgecolor('black')
+    nx.draw_networkx_nodes(g, pos, node_size=node_size, node_color='white',
+                           margins=0.1, edgecolors='black')
     nx.draw_networkx_labels(g, pos, font_size=10)
 
     if path is not None:

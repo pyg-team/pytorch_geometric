@@ -46,18 +46,18 @@ class Net(torch.nn.Module):
         x, mask = to_dense_batch(x, batch)
         adj = to_dense_adj(edge_index, batch)
 
-        _, x, adj, sp1, o1, c1 = self.pool1(x, adj, mask)
+        _, x, adj, sp1, _, c1 = self.pool1(x, adj, mask)
 
         x = self.conv2(x, adj).relu()
 
-        _, x, adj, sp2, o2, c2 = self.pool2(x, adj)
+        _, x, adj, sp2, _, c2 = self.pool2(x, adj)
 
         x = self.conv3(x, adj)
 
         x = x.mean(dim=1)
         x = self.lin1(x).relu()
         x = self.lin2(x)
-        return F.log_softmax(x, dim=-1), sp1 + sp2 + o1 + o2 + c1 + c2
+        return F.log_softmax(x, dim=-1), sp1 + sp2 + c1 + c2
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

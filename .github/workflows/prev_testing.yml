@@ -6,6 +6,11 @@ on:  # yamllint disable-line rule:truthy
       - master
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ startsWith(github.ref, 'refs/pull/') || github.run_number }}  # yamllint disable-line
+  # Only cancel intermediate builds if on a PR:
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
 jobs:
 
   prev_pytest:
@@ -14,16 +19,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        torch-version: [1.13.0, 2.0.0, 2.1.0, 2.2.0]
+        torch-version: [1.13.0, 2.1.0, 2.4.0]
         include:
           - torch-version: 1.13.0
             torchvision-version: 0.14.0
-          - torch-version: 2.0.0
-            torchvision-version: 0.15.0
           - torch-version: 2.1.0
             torchvision-version: 0.16.0
-          - torch-version: 2.2.0
-            torchvision-version: 0.17.0
+          - torch-version: 2.4.0
+            torchvision-version: 0.19.0
 
     steps:
       - name: Checkout repository
@@ -56,7 +59,7 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .[full,test]
+          pip install -e .[test]
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'

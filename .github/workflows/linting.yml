@@ -6,6 +6,11 @@ on:  # yamllint disable-line rule:truthy
       - master
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ startsWith(github.ref, 'refs/pull/') || github.run_number }}  # yamllint disable-line
+  # Only cancel intermediate builds if on a PR:
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
 jobs:
 
   mypy:
@@ -20,7 +25,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v45
         with:
           files: |
             benchmark/**

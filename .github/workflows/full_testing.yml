@@ -12,11 +12,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      max-parallel: 10
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-14]
-        python-version: ['3.8', '3.10']
-        torch-version: [1.13.0, 2.0.0, 2.1.0, 2.2.0, 2.3.0, nightly]
+        python-version: ['3.9', '3.10']
+        torch-version: [1.13.0, 2.0.0, 2.1.0, 2.2.0, 2.3.0, 2.4.0, 2.5.0, nightly]
         include:
           - torch-version: 1.13.0
             torchvision-version: 0.14.0
@@ -28,11 +29,25 @@ jobs:
             torchvision-version: 0.17.0
           - torch-version: 2.3.0
             torchvision-version: 0.18.0
+          - torch-version: 2.4.0
+            torchvision-version: 0.19.0
+          - torch-version: 2.5.0
+            torchvision-version: 0.20.0
           - torch-version: nightly
             torchvision-version: nightly
         exclude:
           - os: macos-14
-            python-version: '3.8'
+            torch-version: 1.13.0
+          - os: macos-14
+            torch-version: 2.0.0
+          - os: macos-14
+            torch-version: 2.1.0
+          - os: macos-14
+            torch-version: 2.2.0
+          # TODO Some dependency version conflict lets pytest crash on Windows/3.10/2.4.0
+          - os: windows-latest
+            python-version: '3.10'
+            torch-version: 2.4.0
 
     steps:
       - name: Checkout repository

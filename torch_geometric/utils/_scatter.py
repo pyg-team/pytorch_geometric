@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import is_compiling, warnings
+from torch_geometric import is_compiling, is_in_onnx_export, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
 
@@ -88,18 +88,33 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
         # in case the input does not require gradients:
         if reduce in ['min', 'max', 'amin', 'amax']:
             if (not torch_geometric.typing.WITH_TORCH_SCATTER
-                    or is_compiling() or not src.is_cuda
+                    or is_compiling() or is_in_onnx_export() or not src.is_cuda
                     or not src.requires_grad):
 
-                if src.is_cuda and src.requires_grad and not is_compiling():
+                if (src.is_cuda and src.requires_grad and not is_compiling()
+                        and not is_in_onnx_export()):
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
                                   f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
-                return src.new_zeros(size).scatter_reduce_(
-                    dim, index, src, reduce=f'a{reduce[-3:]}',
-                    include_self=False)
+                if not is_in_onnx_export():
+                    return src.new_zeros(size).scatter_reduce_(
+                        dim, index, src, reduce=f'a{reduce[-3:]}',
+                        include_self=False)
+
+                fill = torch.full(  # type: ignore
+                    size=(1, ),
+                    fill_value=src.min() if 'max' in reduce else src.max(),
+                    dtype=src.dtype,
+                    device=src.device,
+                ).expand_as(src)
+                out = src.new_zeros(size).scatter_reduce_(
+                    dim, index, fill, reduce=f'a{reduce[-3:]}',
+                    include_self=True)
+                return out.scatter_reduce_(dim, index, src,
+                                           reduce=f'a{reduce[-3:]}',
+                                           include_self=True)
 
             return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                          reduce=reduce[-3:])
@@ -187,7 +202,8 @@ def scatter_argmax(
     dim_size: Optional[int] = None,
 ) -> Tensor:
 
-    if torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling():
+    if (torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling()
+            and not is_in_onnx_export()):
         out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
         return out[1]
 
@@ -200,9 +216,18 @@ def scatter_argmax(
         dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
     if torch_geometric.typing.WITH_PT112:
-        res = src.new_empty(dim_size)
-        res.scatter_reduce_(0, index, src.detach(), reduce='amax',
-                            include_self=False)
+        if not is_in_onnx_export():
+            res = src.new_empty(dim_size)
+            res.scatter_reduce_(0, index, src.detach(), reduce='amax',
+                                include_self=False)
+        else:
+            # `include_self=False` is currently not supported by ONNX:
+            res = src.new_full(
+                size=(dim_size, ),
+                fill_value=src.min(),  # type: ignore
+            )
+            res.scatter_reduce_(0, index, src.detach(), reduce="amax",
+                                include_self=True)
     elif torch_geometric.typing.WITH_PT111:
         res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
                                    output_size=dim_size)  # type: ignore
@@ -295,7 +320,7 @@ def group_cat(
     r"""Concatenates the given sequence of tensors :obj:`tensors` in the given
     dimension :obj:`dim`.
     Different from :meth:`torch.cat`, values along the concatenating dimension
-    are grouped according to the indicies defined in the :obj:`index` tensors.
+    are grouped according to the indices defined in the :obj:`index` tensors.
     All tensors must have the same shape (except in the concatenating
     dimension).
 
@@ -326,5 +351,5 @@ def group_cat(
     """
     assert len(tensors) == len(indices)
     index, perm = torch.cat(indices).sort(stable=True)
-    out = torch.cat(tensors, dim=0)[perm]
+    out = torch.cat(tensors, dim=dim).index_select(dim, perm)
     return (out, index) if return_index else out

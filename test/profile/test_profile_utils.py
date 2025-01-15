@@ -78,5 +78,5 @@ def test_get_gpu_memory_from_ipex():
 
 
 def test_bytes_function():
-    assert byte_to_megabyte((1024 * 1024)) == 1.00
+    assert byte_to_megabyte(1024 * 1024) == 1.00
     assert medibyte_to_megabyte(1 / 1.0485) == 1.00

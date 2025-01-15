@@ -13,6 +13,7 @@ from torch_geometric.data import (
     extract_tar,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, to_undirected
 
 
@@ -145,9 +146,9 @@ class GEDDataset(InMemoryDataset):
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
-        self.ged = torch.load(path)
+        self.ged = fs.torch_load(path)
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
-        self.norm_ged = torch.load(path)
+        self.norm_ged = fs.torch_load(path)
 
     @property
     def raw_file_names(self) -> List[str]:

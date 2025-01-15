@@ -204,7 +204,7 @@ class MessagePassing(torch.nn.Module):
     def _check_input(
         self,
         edge_index: Union[Tensor, SparseTensor],
-        size: Optional[Tuple[int, int]],
+        size: Optional[Tuple[Optional[int], Optional[int]]],
     ) -> List[Optional[int]]:
 
         if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
@@ -213,12 +213,12 @@ class MessagePassing(torch.nn.Module):
         if is_sparse(edge_index):
             if self.flow == 'target_to_source':
                 raise ValueError(
-                    ('Flow direction "target_to_source" is invalid for '
-                     'message propagation via `torch_sparse.SparseTensor` '
-                     'or `torch.sparse.Tensor`. If you really want to make '
-                     'use of a reverse message passing flow, pass in the '
-                     'transposed sparse tensor to the message passing module, '
-                     'e.g., `adj_t.t()`.'))
+                    'Flow direction "target_to_source" is invalid for '
+                    'message propagation via `torch_sparse.SparseTensor` '
+                    'or `torch.sparse.Tensor`. If you really want to make '
+                    'use of a reverse message passing flow, pass in the '
+                    'transposed sparse tensor to the message passing module, '
+                    'e.g., `adj_t.t()`.')
 
             if isinstance(edge_index, SparseTensor):
                 return [edge_index.size(1), edge_index.size(0)]
@@ -242,9 +242,9 @@ class MessagePassing(torch.nn.Module):
             return list(size) if size is not None else [None, None]
 
         raise ValueError(
-            ('`MessagePassing.propagate` only supports integer tensors of '
-             'shape `[2, num_messages]`, `torch_sparse.SparseTensor` or '
-             '`torch.sparse.Tensor` for argument `edge_index`.'))
+            '`MessagePassing.propagate` only supports integer tensors of '
+            'shape `[2, num_messages]`, `torch_sparse.SparseTensor` or '
+            '`torch.sparse.Tensor` for argument `edge_index`.')
 
     def _set_size(
         self,
@@ -257,8 +257,8 @@ class MessagePassing(torch.nn.Module):
             size[dim] = src.size(self.node_dim)
         elif the_size != src.size(self.node_dim):
             raise ValueError(
-                (f'Encountered tensor with size {src.size(self.node_dim)} in '
-                 f'dimension {self.node_dim}, but expected size {the_size}.'))
+                f'Encountered tensor with size {src.size(self.node_dim)} in '
+                f'dimension {self.node_dim}, but expected size {the_size}.')
 
     def _index_select(self, src: Tensor, index) -> Tensor:
         if torch.jit.is_scripting() or is_compiling():
@@ -328,9 +328,9 @@ class MessagePassing(torch.nn.Module):
                 return src.index_select(self.node_dim, row)
 
         raise ValueError(
-            ('`MessagePassing.propagate` only supports integer tensors of '
-             'shape `[2, num_messages]`, `torch_sparse.SparseTensor` '
-             'or `torch.sparse.Tensor` for argument `edge_index`.'))
+            '`MessagePassing.propagate` only supports integer tensors of '
+            'shape `[2, num_messages]`, `torch_sparse.SparseTensor` '
+            'or `torch.sparse.Tensor` for argument `edge_index`.')
 
     def _collect(
         self,
@@ -417,7 +417,6 @@ class MessagePassing(torch.nn.Module):
 
     def forward(self, *args: Any, **kwargs: Any) -> Any:
         r"""Runs the forward pass of the module."""
-        pass
 
     def propagate(
         self,

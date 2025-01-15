@@ -2,7 +2,7 @@ r"""Model package."""
 
 from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
-from .jumping_knowledge import JumpingKnowledge
+from .jumping_knowledge import JumpingKnowledge, HeteroJumpingKnowledge
 from .meta import MetaLayer
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -29,7 +29,10 @@ from .gnnff import GNNFF
 from .pmlp import PMLP
 from .neural_fingerprint import NeuralFingerprint
 from .visnet import ViSNet
-
+from .g_retriever import GRetriever
+from .git_mol import GITMol
+from .molecule_gpt import MoleculeGPT
+from .glem import GLEM
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
                                                       captum_output_to_dicts)
@@ -43,6 +46,7 @@ __all__ = classes = [
     'PNA',
     'EdgeCNN',
     'JumpingKnowledge',
+    'HeteroJumpingKnowledge',
     'MetaLayer',
     'Node2Vec',
     'DeepGraphInfomax',
@@ -77,4 +81,8 @@ __all__ = classes = [
     'PMLP',
     'NeuralFingerprint',
     'ViSNet',
+    'GRetriever',
+    'GITMol',
+    'MoleculeGPT',
+    'GLEM',
 ]

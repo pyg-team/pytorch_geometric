@@ -8,8 +8,12 @@ from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 @onlyFullTest
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
-def test_sentence_transformer(batch_size, device):
-    model = SentenceTransformer(model_name='prajjwal1/bert-tiny').to(device)
+@pytest.mark.parametrize('pooling_strategy', ['mean', 'last', 'cls'])
+def test_sentence_transformer(batch_size, pooling_strategy, device):
+    model = SentenceTransformer(
+        model_name='prajjwal1/bert-tiny',
+        pooling_strategy=pooling_strategy,
+    ).to(device)
     assert model.device == device
     assert str(model) == 'SentenceTransformer(model_name=prajjwal1/bert-tiny)'
 
@@ -19,9 +23,13 @@ def test_sentence_transformer(batch_size, device):
     ]
 
     out = model.encode(text, batch_size=batch_size)
+    assert out.device == device
+    assert out.size() == (2, 128)
+
+    out = model.encode(text, batch_size=batch_size, output_device='cpu')
     assert out.is_cpu
     assert out.size() == (2, 128)
 
-    out = model.encode(text, batch_size=batch_size, output_device=device)
+    out = model.encode([], batch_size=batch_size)
     assert out.device == device
-    assert out.size() == (2, 128)
+    assert out.size() == (0, 128)

@@ -109,7 +109,7 @@ More information about evaluating final model performance can be found in the co
 In addition to the easy application of existing GNNs, PyG makes it simple to implement custom Graph Neural Networks (see [here](https://pytorch-geometric.readthedocs.io/en/latest/tutorial/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829) from Wang *et al.*:
 
-$$x_i^{\\prime} ~ = ~ \\max\_{j \\in \\mathcal{N}(i)} ~ \\textrm{MLP}\_{\\theta} \\left( \[ ~ x_i, ~ x_j - x_i ~ \] \\right)$$
+$$x_i^{\\prime} ~ = ~ \\max\_{j \\in \\mathcal{N}(i)} ~ \\textrm{MLP}\_{\\theta} \\left( [ ~ x_i, ~ x_j - x_i ~ ] \\right)$$
 
 ```python
 import torch
@@ -176,7 +176,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 - **[EGConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.EGConv.html)** from Tailor *et al.*: [Adaptive Filters and Aggregator Fusion for Efficient Graph Convolutions](https://arxiv.org/abs/2104.01481) (GNNSys 2021) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/egc.py)\]
 - **[GATv2Conv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.GATv2Conv.html)** from Brody *et al.*: [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491) (ICLR 2022)
 - **[TransformerConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.TransformerConv.html)** from Shi *et al.*: [Masked Label Prediction: Unified Message Passing Model for Semi-Supervised Classification](https://arxiv.org/abs/2009.03509) (CoRR 2020) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/unimp_arxiv.py)\]
-- **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SAGEConv.html)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_sage_unsup.py), [**Example4**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_sage_unsup_ppi.py)\]
+- **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SAGEConv.html)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_train.py), [**Example3**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_sage_unsup.py), [**Example4**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_sage_unsup_ppi.py)\]
 - **[GraphConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.GraphConv.html)** from, *e.g.*, Morris *et al.*: [Weisfeiler and Leman Go Neural: Higher-order Graph Neural Networks](https://arxiv.org/abs/1810.02244) (AAAI 2019)
 - **[GatedGraphConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.GatedGraphConv.html)** from Li *et al.*: [Gated Graph Sequence Neural Networks](https://arxiv.org/abs/1511.05493) (ICLR 2016)
 - **[ResGatedGraphConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.ResGatedGraphConv.html)** from Bresson and Laurent: [Residual Gated Graph ConvNets](https://arxiv.org/abs/1711.07553) (CoRR 2017)
@@ -319,7 +319,7 @@ Such application is challenging since the entire graph, its associated features 
 Many state-of-the-art scalability approaches tackle this challenge by sampling neighborhoods for mini-batch training, graph clustering and partitioning, or by using simplified GNN models.
 These approaches have been implemented in PyG, and can benefit from the above GNN layers, operators and models.
 
-- **[NeighborLoader](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.NeighborLoader)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_gat.py), [**Example4**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)\]
+- **[NeighborLoader](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.NeighborLoader)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_train.py), [**Example3**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)\]
 - **[ClusterGCN](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.ClusterLoader)** from Chiang *et al.*: [Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph Convolutional Networks](https://arxiv.org/abs/1905.07953) (KDD 2019) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cluster_gcn_reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cluster_gcn_ppi.py)\]
 - **[GraphSAINT](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.GraphSAINTSampler)** from Zeng *et al.*: [GraphSAINT: Graph Sampling Based Inductive Learning Method](https://arxiv.org/abs/1907.04931) (ICLR 2020) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_saint.py)\]
 
@@ -334,7 +334,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
-PyG is available for Python 3.8 to Python 3.12.
+PyG is available for Python 3.9 to Python 3.12.
 
 ### Anaconda
 
@@ -371,39 +371,39 @@ We recommend to start with a minimal installation, and install additional depend
 
 For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
-#### PyTorch 2.3
+#### PyTorch 2.5
 
-To install the binaries for PyTorch 2.3.0, simply run
-
-```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.3.0+${CUDA}.html
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` depending on your PyTorch installation.
-
-|             | `cpu` | `cu118` | `cu121` |
-| ----------- | ----- | ------- | ------- |
-| **Linux**   | ✅     | ✅       | ✅       |
-| **Windows** | ✅     | ✅       | ✅       |
-| **macOS**   | ✅     |         |         |
-
-#### PyTorch 2.2
-
-To install the binaries for PyTorch 2.2.0, simply run
+To install the binaries for PyTorch 2.5.0, simply run
 
 ```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.2.0+${CUDA}.html
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.5.0+${CUDA}.html
 ```
 
-where `${CUDA}` should be replaced by either `cpu`, `cu118`, or `cu121` depending on your PyTorch installation.
+where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu121`, or `cu124` depending on your PyTorch installation.
 
-|             | `cpu` | `cu118` | `cu121` |
-| ----------- | ----- | ------- | ------- |
-| **Linux**   | ✅     | ✅       | ✅       |
-| **Windows** | ✅     | ✅       | ✅       |
-| **macOS**   | ✅     |         |         |
+|             | `cpu` | `cu118` | `cu121` | `cu124` |
+| ----------- | ----- | ------- | ------- | ------- |
+| **Linux**   | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |         |
 
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, and PyTorch 2.1.0/2.1.1/2.1.2 (following the same procedure).
+#### PyTorch 2.4
+
+To install the binaries for PyTorch 2.4.0, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.4.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu121`, or `cu124` depending on your PyTorch installation.
+
+|             | `cpu` | `cu118` | `cu121` | `cu124` |
+| ----------- | ----- | ------- | ------- | ------- |
+| **Linux**   | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |         |
+
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, PyTorch 2.1.0/2.1.1/2.1.2, PyTorch 2.2.0/2.2.1/2.2.2, and PyTorch 2.3.0/2.3.1 (following the same procedure).
 **For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 

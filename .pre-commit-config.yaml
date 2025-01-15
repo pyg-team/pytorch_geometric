@@ -5,7 +5,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: no-commit-to-branch
         name: No commits to master
@@ -33,8 +33,28 @@ repos:
         name: Lint yaml
         args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
+    hooks:
+      - id: pyupgrade
+        name: Upgrade Python syntax
+        args: [--py38-plus]
+
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        name: Remove unused imports and variables
+        args: [
+          --remove-all-unused-imports,
+          --remove-unused-variables,
+          --remove-duplicate-keys,
+          --ignore-init-module-imports,
+          --in-place,
+        ]
+
   - repo: https://github.com/google/yapf
-    rev: v0.40.2
+    rev: v0.43.0
     hooks:
       - id: yapf
         name: Format code
@@ -47,21 +67,21 @@ repos:
         name: Sort imports
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.0.0
+    rev: 7.1.1
     hooks:
       - id: flake8
         name: Check PEP8
         additional_dependencies: [Flake8-pyproject]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.5
+    rev: v0.8.6
     hooks:
       - id: ruff
         name: Ruff formatting
         args: [--fix, --exit-non-zero-on-fix]
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+    rev: 0.7.21
     hooks:
       - id: mdformat
         name: Format Markdown
@@ -69,3 +89,9 @@ repos:
           - mdformat-gfm
           - mdformat_frontmatter
           - mdformat_footnote
+
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+        name: Check Sphinx

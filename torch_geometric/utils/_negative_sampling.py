@@ -265,7 +265,7 @@ def structured_negative_sampling_feasible(
     :meth:`~torch_geometric.utils.structured_negative_sampling` is feasible
     on the graph given by :obj:`edge_index`.
     :meth:`~torch_geometric.utils.structured_negative_sampling` is infeasible
-    if atleast one node is connected to all other nodes.
+    if at least one node is connected to all other nodes.
 
     Args:
         edge_index (LongTensor): The edge indices.

@@ -330,7 +330,7 @@ def test_pickling(tmp_path):
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    batch = torch.load(path)
+    batch = torch.load(path, weights_only=False)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 

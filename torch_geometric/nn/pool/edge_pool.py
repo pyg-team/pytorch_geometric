@@ -58,7 +58,7 @@ class EdgePooling(torch.nn.Module):
         self,
         in_channels: int,
         edge_score_method: Optional[Callable] = None,
-        dropout: Optional[float] = 0.0,
+        dropout: float = 0.0,
         add_to_edge_score: float = 0.5,
     ):
         super().__init__()

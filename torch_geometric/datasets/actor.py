@@ -19,17 +19,15 @@ class Actor(InMemoryDataset):
     actor's Wikipedia.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        transform (callable, optional): A function/transform that takes in an
+        root: Root directory where the dataset should be saved.
+        transform: A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
-            transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
+        pre_transform: A function/transform that takes in an
+            :class:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before being saved to
+            disk.
+        force_reload: Whether to re-process the dataset.
 
     **STATS:**
 
@@ -76,7 +74,7 @@ class Actor(InMemoryDataset):
             download_url(f'{self.url}/splits/{f}', self.raw_dir)
 
     def process(self) -> None:
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             node_data = [x.split('\t') for x in f.read().split('\n')[1:-1]]
 
             rows, cols = [], []
@@ -93,7 +91,7 @@ class Actor(InMemoryDataset):
             for n_id, _, label in node_data:
                 y[int(n_id)] = int(label)
 
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             edge_data = f.read().split('\n')[1:-1]
             edge_indices = [[int(v) for v in r.split('\t')] for r in edge_data]
             edge_index = torch.tensor(edge_indices).t().contiguous()

@@ -147,7 +147,7 @@ class OGB_MAG(InMemoryDataset):
             for node_type in ['author', 'institution', 'field_of_study']:
                 data[node_type].num_nodes = num_nodes_df[node_type].tolist()[0]
         else:
-            emb_dict = torch.load(self.raw_paths[-1])
+            emb_dict = fs.torch_load(self.raw_paths[-1])
             for key, value in emb_dict.items():
                 if key != 'paper':
                     data[key].x = value
