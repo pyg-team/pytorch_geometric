@@ -409,7 +409,7 @@ class GPSE(torch.nn.Module):
     encodings to a higher dimension of 64, and then append them to the :obj:`x`
     attribute of the :class:`~torch_geometric.data.Data` objects to obtain a
     128-dimensional node feature representation.
-    :class:`~torch_geometric.nn.GPSENodeENcoder` handles both this mapping and
+    :class:`~torch_geometric.nn.GPSENodeEncoder` handles both this mapping and
     concatenation to :obj:`x`, the outputs of which can be used as input to a
     GNN:
 
@@ -627,7 +627,7 @@ class GPSENodeEncoder(torch.nn.Module):
     encodings to a higher dimension of 64, and then append them to the
     :obj:`x` attribute of the :class:`~torch_geometric.data.Data` objects to
     obtain a 128-dimensional node feature representation.
-    :class:`~torch_geometric.nn.GPSENodeENcoder` handles both this mapping and
+    :class:`~torch_geometric.nn.GPSENodeEncoder` handles both this mapping and
     concatenation to :obj:`x`, the outputs of which can be used as input to a
     GNN:
 
@@ -651,7 +651,7 @@ class GPSENodeEncoder(torch.nn.Module):
             required only if :obj:`expand_x` is set to :obj:`True`.
             (default: :obj:`None`)
         expand_x (bool, optional): Expand node features :obj:`x` from
-            :obj:`dim_in` to (:obj:`dim_emb` - :obj:`dim_pe`)
+            :obj:`dim_in` to (:obj:`dim_emb` - :obj:`dim_pe_out`)
         norm_type (str, optional): Type of normalization to apply.
             (default: :obj:`batchnorm`)
         model_type (str, optional): Type of encoder, either :obj:`mlp` or
