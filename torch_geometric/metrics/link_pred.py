@@ -4,7 +4,6 @@ from typing import Dict, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.index import index2ptr
 from torch_geometric.utils import cumsum, scatter
 
 try:
@@ -425,27 +424,29 @@ class LinkPredNDCG(LinkPredMetric):
             idcg = self.idcg[data.label_count.clamp(max=self.k)]
         else:
             assert data.edge_label_weight is not None
-            # Sort weights in buckets via two sorts:
-            weight, perm = data.edge_label_weight.sort(descending=True)
-            batch = data.edge_label_index[0][perm]
-            batch, perm = torch.sort(batch, stable=True)
-            weight = weight[perm]
+            # Sort weights within example-wise buckets via two sorts to get the
+            # local index order within buckets:
+            weight, batch = data.edge_label_weight, data.edge_label_index[0]
+            perm1 = weight.argsort(descending=True)
+            perm2 = batch[perm1].argsort(stable=True)
+            global_index = torch.empty_like(perm1)
+            global_index[perm1[perm2]] = torch.arange(
+                global_index.size(0), device=global_index.device)
+            local_index = global_index - cumsum(data.label_count)[batch]
 
-            # Shrink buckets that are larger than `k`:
-            arange = torch.arange(batch.size(0), device=batch.device)
-            ptr = index2ptr(batch, size=data.pred_index_mat.size(0))
-            batched_arange = arange - ptr[batch]
-            mask = batched_arange < self.k
-            batch = batch[mask]
-            batched_arange = batched_arange[mask]
-            weight = weight[mask]
+            # Get the discount per local index:
+            discount = torch.cat([
+                self.discount,
+                self.discount.new_full((1, ), fill_value=float('inf')),
+            ])
+            discount = discount[local_index.clamp(max=self.k + 1)]
 
-            # Compute ideal relevance matrix:
-            irel_mat = weight.new_zeros(data.pred_index_mat.size(0) * self.k)
-            irel_mat[batch * self.k + batched_arange] = weight
-            irel_mat = irel_mat.view(-1, self.k)
-
-            idcg = (irel_mat / self.discount.view(1, -1)).sum(dim=-1)
+            idcg = scatter(  # Apply discount and aggregate:
+                weight / discount,
+                batch,
+                dim_size=data.pred_index_mat.size(0),
+                reduce='sum',
+            )
 
         out = dcg / idcg
         out[out.isnan() | out.isinf()] = 0.0
