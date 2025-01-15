@@ -1,11 +1,13 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
+import torch
+
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
 
-import torch
+
 class RAGFeatureStore(Protocol):
     """Feature store template for remote GNN RAG backend."""
     @abstractmethod
@@ -105,13 +107,20 @@ class RAGQueryLoader:
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
         total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
-        data.node_idx = torch.tensor(list(dict.fromkeys(seed_nodes.tolist() + total_e_idx_t.reshape(-1).tolist())))
+        data.node_idx = torch.tensor(
+            list(
+                dict.fromkeys(seed_nodes.tolist() +
+                              total_e_idx_t.reshape(-1).tolist())))
         data.num_nodes = len(data.node_idx)
         data.x = self.feature_store.x[data.node_idx]
         list_edge_index = []
-        remap_dict = {int(data.node_idx[i]): i for i in range(len(data.node_idx))}
+        remap_dict = {
+            int(data.node_idx[i]): i
+            for i in range(len(data.node_idx))
+        }
         for src, dst in total_e_idx_t.tolist():
-            list_edge_index.append((remap_dict[int(src)], remap_dict[int(dst)]))
+            list_edge_index.append(
+                (remap_dict[int(src)], remap_dict[int(dst)]))
         data.edge_index = torch.tensor(list_edge_index).t()
         if self.local_filter:
             data = self.local_filter(data, query)
