@@ -276,7 +276,9 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         if isinstance(metrics, (list, tuple)):
             metrics = {
-                f'{metric.__class__.__name__}@{metric.k}': metric
+                (f'{"Weighted" if metric.weighted else ""}'
+                 f'{metric.__class__.__name__}@{metric.k}'):
+                metric
                 for metric in metrics
             }
         assert len(metrics) > 0
