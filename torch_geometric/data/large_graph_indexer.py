@@ -190,13 +190,9 @@ class LargeGraphIndexer:
 
             for node in (h, t):
                 nodes.append(node)
-                # if node not in nodes:
-                #     nodes.append(node)
 
             edge_idx = (h, r, t)
             edges.append(edge_idx)
-            # if edge_idx not in edges:
-            #     edges.append(edge_idx)
         nodes = ordered_set(nodes)
         edges = ordered_set(edges)
         return cls(list(nodes), list(edges))
