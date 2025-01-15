@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.index import index2ptr
 from torch_geometric.utils import cumsum, scatter
 
 try:
@@ -58,7 +59,10 @@ class LinkPredMetricData:
 
         pred_rel_mat = flat_label_index[pos] == flat_pred_index  # Find matches
         if edge_label_weight is not None:
-            pred_rel_mat = edge_label_weight[pos].where(pred_rel_mat, 0.0)
+            pred_rel_mat = edge_label_weight[pos].where(
+                pred_rel_mat,
+                pred_rel_mat.new_zeros(1),
+            )
         pred_rel_mat = pred_rel_mat.view(self.pred_index_mat.size())
 
         self._pred_rel_mat = pred_rel_mat
@@ -401,19 +405,47 @@ class LinkPredNDCG(LinkPredMetric):
         self.weighted = weighted
 
         dtype = torch.get_default_dtype()
-        multiplier = 1.0 / torch.arange(2, k + 2, dtype=dtype).log2()
+        discount = torch.arange(2, k + 2, dtype=dtype).log2()
 
-        self.multiplier: Tensor
-        self.register_buffer('multiplier', multiplier)
+        self.discount: Tensor
+        self.register_buffer('discount', discount)
 
-        self.idcg: Tensor
-        self.register_buffer('idcg', cumsum(multiplier))
+        if not weighted:
+            self.register_buffer('idcg', cumsum(1.0 / discount))
+        else:
+            self.idcg = None
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
-        multiplier = self.multiplier[:pred_rel_mat.size(1)].view(1, -1)
-        dcg = (pred_rel_mat * multiplier).sum(dim=-1)
-        idcg = self.idcg[data.label_count.clamp(max=self.k)]
+        discount = self.discount[:pred_rel_mat.size(1)].view(1, -1)
+        dcg = (pred_rel_mat / discount).sum(dim=-1)
+
+        if not self.weighted:
+            assert self.idcg is not None
+            idcg = self.idcg[data.label_count.clamp(max=self.k)]
+        else:
+            assert data.edge_label_weight is not None
+            # Sort weights in buckets via two sorts:
+            weight, perm = data.edge_label_weight.sort(descending=True)
+            batch = data.edge_label_index[0][perm]
+            batch, perm = torch.sort(batch, stable=True)
+            weight = weight[perm]
+
+            # Shrink buckets that are larger than `k`:
+            arange = torch.arange(batch.size(0), device=batch.device)
+            ptr = index2ptr(batch, size=data.pred_index_mat.size(0))
+            batched_arange = arange - ptr[batch]
+            mask = batched_arange < self.k
+            batch = batch[mask]
+            batched_arange = batched_arange[mask]
+            weight = weight[mask]
+
+            # Compute ideal relevance matrix:
+            irel_mat = weight.new_zeros(data.pred_index_mat.size(0) * self.k)
+            irel_mat[batch * self.k + batched_arange] = weight
+            irel_mat = irel_mat.view(-1, self.k)
+
+            idcg = (irel_mat / self.discount.view(1, -1)).sum(dim=-1)
 
         out = dcg / idcg
         out[out.isnan() | out.isinf()] = 0.0
