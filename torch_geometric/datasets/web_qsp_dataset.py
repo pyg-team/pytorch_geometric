@@ -116,6 +116,7 @@ def retrieval_via_pcst(
 
     return data, desc
 
+
 class KGQABaseDataset(InMemoryDataset):
     r"""Base class for the 2 KGQA datasets used in `"Reasoning on Graphs:
     Faithful and Interpretable Large Language Model Reasoning"
@@ -248,6 +249,7 @@ class KGQABaseDataset(InMemoryDataset):
 
             self.save(data_list, path)
 
+
 class WebQSPDataset(KGQABaseDataset):
     r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
     Labeling for Knowledge Base Question Answering"
@@ -263,15 +265,11 @@ class WebQSPDataset(KGQABaseDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
     """
-    def __init__(
-        self,
-        root: str,
-        split: str = "train",
-        force_reload: bool = False,
-        use_pcst: bool = True
-    ) -> None:
+    def __init__(self, root: str, split: str = "train",
+                 force_reload: bool = False, use_pcst: bool = True) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
         super().__init__(dataset_name, root, split, force_reload, use_pcst)
+
 
 class CWQDataset(KGQABaseDataset):
     r"""The ComplexWebQuestions (CWQ) dataset of the `"The Web as a
@@ -288,12 +286,7 @@ class CWQDataset(KGQABaseDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
     """
-    def __init__(
-        self,
-        root: str,
-        split: str = "train",
-        force_reload: bool = False,
-        use_pcst: bool = True
-    ) -> None:
+    def __init__(self, root: str, split: str = "train",
+                 force_reload: bool = False, use_pcst: bool = True) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
         super().__init__(dataset_name, root, split, force_reload, use_pcst)

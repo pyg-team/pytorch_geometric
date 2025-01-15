@@ -24,7 +24,7 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.datasets import WebQSPDataset, CWQDataset
+from torch_geometric.datasets import CWQDataset, WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
@@ -193,7 +193,7 @@ def train(
         lr,  # Initial learning rate
         llm_model_name,  # `transformers` model name
         checkpointing=False,  # Whether to checkpoint model
-        cwq=False, # Whether to train on the CWQ dataset
+        cwq=False,  # Whether to train on the CWQ dataset
         tiny_llama=False,  # Whether to use tiny LLaMA model
 ):
     """Train a GNN+LLM model on WebQSP or CWQ dataset.
