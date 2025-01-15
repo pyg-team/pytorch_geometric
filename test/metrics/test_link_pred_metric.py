@@ -64,16 +64,30 @@ def test_precision(num_src_nodes, num_dst_nodes, num_edges, batch_size, k):
 def test_recall():
     pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
     edge_label_index = torch.tensor([[0, 0, 0, 2, 2], [0, 1, 2, 2, 1]])
+    edge_label_weight = torch.tensor([4.0, 1.0, 2.0, 3.0, 0.5])
 
     metric = LinkPredRecall(k=2)
     assert str(metric) == 'LinkPredRecall(k=2)'
     metric.update(pred_index_mat, edge_label_index)
     result = metric.compute()
-
     assert float(result) == pytest.approx(0.5 * (2 / 3 + 0.5))
 
     # Test with `k > pred_index_mat.size(1)`:
     metric.update(pred_index_mat[:, :1], edge_label_index)
+    metric.compute()
+    metric.reset()
+
+    metric = LinkPredRecall(k=2, weighted=True)
+    assert str(metric) == 'LinkPredRecall(k=2, weighted=True)'
+    with pytest.raises(ValueError, match="'edge_label_weight'"):
+        metric.update(pred_index_mat, edge_label_index)
+
+    metric.update(pred_index_mat, edge_label_index, edge_label_weight)
+    result = metric.compute()
+    assert float(result) == pytest.approx(0.5 * (5.0 / 7.0 + 3.0 / 3.5))
+
+    # Test with `k > pred_index_mat.size(1)`:
+    metric.update(pred_index_mat[:, :1], edge_label_index, edge_label_weight)
     metric.compute()
     metric.reset()
 
@@ -112,17 +126,37 @@ def test_map():
 
 def test_ndcg():
     pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2]])
-    edge_label_index = torch.tensor([[0, 0, 2, 2], [0, 1, 2, 1]])
+    edge_label_index = torch.tensor([[0, 0, 0, 2, 2], [0, 1, 2, 2, 1]])
+    edge_label_weight = torch.tensor([1.0, 2.0, 0.1, 3.0, 0.5])
 
     metric = LinkPredNDCG(k=2)
     assert str(metric) == 'LinkPredNDCG(k=2)'
     metric.update(pred_index_mat, edge_label_index)
     result = metric.compute()
-
     assert float(result) == pytest.approx(0.6934264)
 
     # Test with `k > pred_index_mat.size(1)`:
     metric.update(pred_index_mat[:, :1], edge_label_index)
+    metric.compute()
+    metric.reset()
+
+    metric = LinkPredNDCG(k=2, weighted=True)
+    assert str(metric) == 'LinkPredNDCG(k=2, weighted=True)'
+    with pytest.raises(ValueError, match="'edge_label_weight'"):
+        metric.update(pred_index_mat, edge_label_index)
+
+    metric.update(pred_index_mat, edge_label_index, edge_label_weight)
+    result = metric.compute()
+    metric.reset()
+    assert float(result) == pytest.approx(0.7854486)
+
+    perm = torch.randperm(edge_label_weight.size(0))
+    metric.update(pred_index_mat, edge_label_index[:, perm],
+                  edge_label_weight[perm])
+    assert metric.compute() == result
+
+    # Test with `k > pred_index_mat.size(1)`:
+    metric.update(pred_index_mat[:, :1], edge_label_index, edge_label_weight)
     metric.compute()
     metric.reset()
 
@@ -152,6 +186,9 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         LinkPredMAP(k=10),
         LinkPredPrecision(k=100),
         LinkPredRecall(k=50),
+        LinkPredF1(k=20),
+        LinkPredMRR(k=40),
+        LinkPredNDCG(k=80),
     ]
 
     row = torch.randint(0, num_src_nodes, (num_edges, ))
@@ -168,6 +205,9 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         '  LinkPredMAP@10: LinkPredMAP(k=10),\n'
         '  LinkPredPrecision@100: LinkPredPrecision(k=100),\n'
         '  LinkPredRecall@50: LinkPredRecall(k=50),\n'
+        '  LinkPredF1@20: LinkPredF1(k=20),\n'
+        '  LinkPredMRR@40: LinkPredMRR(k=40),\n'
+        '  LinkPredNDCG@80: LinkPredNDCG(k=80),\n'
         '])')
     assert metric_collection.max_k == 100
 
