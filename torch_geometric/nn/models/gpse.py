@@ -282,10 +282,6 @@ class GNNInductiveHybridMultiHead(torch.nn.Module):
             (default: :obj:`add`)
         has_bn (bool, optional): Whether to apply batch normalization to layer
             outputs. (default: :obj:`True`)
-        bn_eps (float, optional): Epsilon for batch normalization.
-            (default: :obj:`1.0e-05`)
-        bn_mom (float, optional): Momentum for batch normalization.
-            (default: :obj:`0.1`)
         has_l2norm (bool, optional): Wheter to apply L2 normalization to the
             layer outputs. (default: :obj:`True`)
         dropout (float, optional): Dropout ratio at layer output.
@@ -453,10 +449,6 @@ class GPSE(torch.nn.Module):
             default to no skip connections. (default: :obj:`skipsum`)
         has_bn (bool, optional): Whether to apply batch normalization in the
             layer. (default: :obj:`True`)
-        bn_eps (float, optional): Epsilon for batch normalization.
-            (default: :obj:`1.0e-05`)
-        bn_mom (float, optional): Momentum for batch normalization.
-            (default: :obj:`0.1`)
         final_l2norm (bool, optional): Whether to apply L2 normalization to the
             outputs. (default: :obj:`True`)
         has_l2norm (bool, optional): Whether to apply L2 normalization after
@@ -514,8 +506,6 @@ class GPSE(torch.nn.Module):
         stage_type: str = 'skipsum',
         has_bn: bool = True,
         head_bn: bool = False,
-        bn_eps: float = 1.0e-05,
-        bn_mom: float = 0.1,
         final_l2norm: bool = True,
         has_l2norm: bool = True,
         dropout: float = 0.2,
@@ -573,8 +563,6 @@ class GPSE(torch.nn.Module):
             multi_head_dim_inner,
             graph_pooling,
             head_bn,
-            bn_eps,
-            bn_mom,
             has_l2norm,
             dropout,
             act,
