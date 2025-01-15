@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
+from ...utils import softmax, get_ppr
 from ...typing import OptTensor, Tuple
 from ...nn.conv import MessagePassing
 from ...nn.dense.linear import Linear
@@ -16,13 +17,16 @@ from .basic_gnn import GCN
 
 
 class LPFormer(nn.Module):
-    r"""The LPFormer model from the paper
+    r"""The LPFormer model from the
     `"LPFormer: An Adaptive Graph Transformer for Link Prediction"
-    <https://arxiv.org/abs/2310.11009>`_.
+    <https://arxiv.org/abs/2310.11009>`_ paper.
 
     .. note::
 
-        For an example of using LPFormer, see `examples/lpformer.py`.
+        For an example of using LPFormer, see
+        `examples/lpformer.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        lpformer.py>`_.
 
     Args:
         in_channels (int): Size of input dimension
@@ -38,8 +42,8 @@ class LPFormer(nn.Module):
         transformer_dropout (float, optional): Dropout used for Transformer
             (default: :obj:`0.1`)
         ppr_thresholds (list): PPR thresholds for different types of nodes.
-              Types include (in order) common neighbors ("cn"), 1-Hop (non-CN)
-              nodes ("1-hop") and all other nodes (">1-hop").
+            Types include (in order) common neighbors, 1-Hop nodes 
+            (that aren't CNs), and all other nodes.
             (default: :obj:`[0, 1e-4, 1e-2]`)
     """
     def __init__(
@@ -86,8 +90,8 @@ class LPFormer(nn.Module):
                 self.out_dim = node_dim = self.hid_dim
 
             self.att_layers.append(
-                LPAttLayer(self.hid_dim, self.out_dim, node_dim,
-                           num_heads, self.trans_drop))
+                LPAttLayer(self.hid_dim, self.out_dim, node_dim, num_heads,
+                           self.trans_drop))
 
         self.elementwise_lin = MLP(self.hid_dim, self.hid_dim, self.hid_dim)
 
@@ -185,7 +189,7 @@ class LPFormer(nn.Module):
             X_node (Tensor): Node representations
             adj_mask (Tensor): Mask of adjacency matrix used for computing the
                 different node types. Should be given as a `torch.sparse_coo_tensor`
-                Tensor. See see `examples/lpformer.py` for details.
+                Tensor. See `examples/lpformer.py` for details.
             ppr_matrix (Tensor): PPR matrix
         """
         k_i, k_j = X_node[batch[0]], X_node[batch[1]]
@@ -342,10 +346,10 @@ class LPFormer(nn.Module):
             self, batch: Tensor, pair_diff_adj: Tensor,
             ppr_matrix: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         r"""
-        Get the src and tgt ppr vals
-
-        Returns - link node belongs to, type of node (e.g., CN),
-            PPR relative to src, PPR relative to tgt
+        Get the src and tgt ppr vals.
+        
+        Returns the: link the node belongs to, type of node
+        (e.g., CN), PPR relative to src, PPR relative to tgt.
 
         Args:
             batch (Tensor): The batch vector.
@@ -472,7 +476,7 @@ class LPFormer(nn.Module):
             node_mask (Tensor): IDs of nodes
             src_ppr (Tensor): PPR relative to src node
             tgt_ppr (Tensor): PPR relative to tgt node
-            thresh (float): PPR threshold for nodes (`\eta`)
+            thresh (float): PPR threshold for nodes (`eta`)
         """
         weight = torch.ones(node_mask.size(1), device=node_mask.device)
 
@@ -510,15 +514,15 @@ class LPFormer(nn.Module):
                          ppr_matrix: Tensor) -> Tensor:
         r"""Get PPR scores for non-1hop nodes.
 
-        NOTE: Use original adj (one pass in forward() removes links in batch)
-        Done since removing them converts src/tgt nodes to >1-hop nodes.
-        Therefore removing CN and 1-hop will also remove the batch links.
-
         Args:
             batch (Tensor): Links in batch
             adj (Tensor): Adjacency matrix
             ppr_matrix (Tensor): Sparse PPR matrix
         """
+        # NOTE: Use original adj (one pass in forward() removes links in batch)
+        # Done since removing them converts src/tgt nodes to >1-hop nodes.
+        # Therefore removing CN and 1-hop will also remove the batch links.
+
         # During training we add back in the links in the batch
         # (we're removed from adjacency before being passed to model)
         # Done since otherwise they will be mistakenly seen as >1-Hop nodes
@@ -574,6 +578,25 @@ class LPFormer(nn.Module):
             ppr_condition], tgt_vals[ppr_condition]
 
         return src_ix, src_vals, tgt_vals
+
+    def calc_sparse_ppr(self, edge_index: Tensor, num_nodes: int,
+                        alpha: float = 0.15, eps: float = 5e-5) -> Tensor:
+        r"""
+        Calculate the PPR of the graph in sparse format
+
+        Args:
+            edge_index: The edge indices
+            num_nodes: Number of nodes
+            alpha (float, optional): The alpha value of the PageRank algorithm.
+            (default: :obj:`0.15`)
+            eps: The threshold for stopping the PPR calculation
+            (:obj:`edge_weight >= eps * out_degree`). (default: :obj:`5e-5`)
+        """
+        ei, ei_w = get_ppr(edge_index, alpha=alpha, eps=eps,
+                           num_nodes=num_nodes)
+        ppr_matrix = torch.sparse_coo_tensor(ei, ei_w, [num_nodes, num_nodes])
+
+        return ppr_matrix
 
 
 class LPAttLayer(MessagePassing):
@@ -685,14 +708,8 @@ class LPAttLayer(MessagePassing):
 
         return out
 
-    def message(
-            self,
-            x_i: Tensor,
-            x_j: Tensor,
-            ppr_rpes: Tensor,
-            index: Tensor,
-            ptr: Tensor,
-            size_i: Optional[int]) -> Tensor:
+    def message(self, x_i: Tensor, x_j: Tensor, ppr_rpes: Tensor,
+                index: Tensor, ptr: Tensor, size_i: Optional[int]) -> Tensor:
         H, C = self.heads, self.out_channels
 
         x_j = torch.cat((x_j, ppr_rpes), dim=-1)
@@ -717,15 +734,8 @@ class MLP(nn.Module):
     """
     L Layer MLP
     """
-    def __init__(
-        self,
-        in_channels: int,
-        hid_channels: int,
-        out_channels: int,
-        num_layers: int = 2,
-        drop: int = 0,
-        norm: str = "layer"
-    ):
+    def __init__(self, in_channels: int, hid_channels: int, out_channels: int,
+                 num_layers: int = 2, drop: int = 0, norm: str = "layer"):
         super().__init__()
         self.dropout = drop
 
