@@ -167,7 +167,7 @@ def train(
                 f'moleculegpt_epoch{best_epoch}_val_loss{best_val_loss:4f}_ckpt.pt'  # noqa: E501
             )
     torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_peak_memory_stats()
 
     print(f"Total Training Time: {time.time() - start_time:2f}s")
     # Test

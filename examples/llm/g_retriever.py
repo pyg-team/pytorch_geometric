@@ -191,6 +191,7 @@ def train(
         batch_size,  # Training batch size
         eval_batch_size,  # Evaluation batch size
         lr,  # Initial learning rate
+        llm_model_name,  # `transformers` model name
         checkpointing=False,  # Whether to checkpoint model
         tiny_llama=False,  # Whether to use tiny LLaMA model
 ):
@@ -203,6 +204,7 @@ def train(
         batch_size (int): Training batch size.
         eval_batch_size (int): Evaluation batch size.
         lr (float): Initial learning rate.
+        llm_model_name (str): The name of the LLM to use.
         checkpointing (bool, optional): Whether to checkpoint model.
             Defaults to False.
         tiny_llama (bool, optional): Whether to use tiny LLaMA model.
@@ -267,14 +269,11 @@ def train(
 
     # Create LLaMA model
     if tiny_llama:
-        llm = LLM(
-            model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
-            num_params=1,
-        )
-        model = GRetriever(llm=llm, gnn=gnn, mlp_out_channels=2048)
+        llm = LLM(model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1', )
     else:
-        llm = LLM(model_name='meta-llama/Llama-2-7b-chat-hf', num_params=7)
-        model = GRetriever(llm=llm, gnn=gnn)
+        llm = LLM(model_name=llm_model_name)
+    model = GRetriever(llm=llm, gnn=gnn,
+                       mlp_out_channels=llm.word_embedding.embedding_dim)
 
     # Set model save name
     model_save_name = 'gnn_llm' if num_gnn_layers != 0 else 'llm'
@@ -390,6 +389,8 @@ if __name__ == '__main__':
     parser.add_argument('--eval_batch_size', type=int, default=16)
     parser.add_argument('--checkpointing', action='store_true')
     parser.add_argument('--tiny_llama', action='store_true')
+    parser.add_argument('--llm_model_name', type=str,
+                        default="meta-llama/Meta-Llama-3.1-8B-Instruct")
     args = parser.parse_args()
 
     start_time = time.time()
@@ -400,6 +401,7 @@ if __name__ == '__main__':
         args.batch_size,
         args.eval_batch_size,
         args.lr,
+        args.llm_model_name,
         checkpointing=args.checkpointing,
         tiny_llama=args.tiny_llama,
     )
