@@ -142,7 +142,7 @@ class GeneralMultiLayer(torch.nn.Module):
                 act=None if i == num_layers - 1 and not final_act else act,
                 **kwargs,
             )
-            self.add_module('Layer_{}'.format(i), layer)
+            self.add_module(f'Layer_{i}', layer)
 
     def forward(self, batch):
         for layer in self.children():
