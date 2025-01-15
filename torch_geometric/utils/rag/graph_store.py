@@ -26,10 +26,9 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     def _init_sampler(self):
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
-        self.sampler = NeighborSampler(
-            data=(self.feature_store, self),
-            num_neighbors=self._num_neighbors,
-            **self.sample_kwargs)
+        self.sampler = NeighborSampler(data=(self.feature_store, self),
+                                       num_neighbors=self._num_neighbors,
+                                       **self.sample_kwargs)
         self._sampler_is_initialized = True
 
     def register_feature_store(self, feature_store: FeatureStore):
