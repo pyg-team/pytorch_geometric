@@ -4,7 +4,6 @@ from typing import Dict, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.index import index2ptr
 from torch_geometric.utils import cumsum, scatter
 
 try:
