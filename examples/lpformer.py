@@ -9,7 +9,9 @@ from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
 
 from ogb.linkproppred import PygLinkPropPredDataset, Evaluator
-from torch_geometric.nn.models import LPFormer, calc_ppr_matrix
+
+from torch_geometric.utils import get_ppr
+from torch_geometric.nn.models import LPFormer
 
 parser = ArgumentParser()
 parser.add_argument('--data_name', type=str, default='ogbl-ppa')
@@ -57,7 +59,9 @@ adj_prop = SparseTensor.from_edge_index(
     data.edge_index, edge_weight.squeeze(-1),
     [data.num_nodes, data.num_nodes]).to(device)
 
-ppr_matrix = calc_ppr_matrix(data.edge_index, eps=args.eps).to(device)
+# Convert PPR to sparse matrix
+ei, ei_w = get_ppr(data.edge_index, eps=args.eps, num_nodes=data.num_nodes)
+ppr_matrix = torch.sparse_coo_tensor(ei, ei_w, [data.num_nodes, data.num_nodes])
 
 evaluator_hit = Evaluator(name=args.data_name)
 

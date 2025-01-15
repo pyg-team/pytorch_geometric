@@ -8,7 +8,6 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
-from ...utils import softmax, get_ppr
 from ...typing import OptTensor, Tuple
 from ...nn.conv import MessagePassing
 from ...nn.dense.linear import Linear
@@ -712,31 +711,6 @@ class LPAttLayer(MessagePassing):
         self._alpha = alpha
 
         return x_j * alpha.unsqueeze(-1)
-
-
-def calc_ppr_matrix(edge_index: Tensor, alpha: float = 0.15,
-                    eps: float = 5e-5) -> Tensor:
-    """
-    For all calculated pairs, we arrange in a
-    NxN sparse weighted Adj matrix
-
-    Args:
-        edge_index (Tensor):  The edge indices.
-        alpha (float, optional): The alpha value of PageRank.
-            (default: :obj:`0.15`)
-        eps (float, optional): The threshold for stopping the PPR calculation
-            (:obj:`edge_weight >= eps * out_degree`). (default: :obj:`5e-5`)
-    """
-    print("Calculating PPR matrix. This may take a minute")
-
-    edge_index = edge_index.to("cpu")  # Sometimes it's too big to fit on GPU
-    num_nodes = torch.max(edge_index) + 1
-
-    ei, ei_w = get_ppr(edge_index, alpha=alpha, eps=eps, num_nodes=num_nodes)
-
-    sparse_adj = torch.sparse_coo_tensor(ei, ei_w, [num_nodes, num_nodes])
-
-    return sparse_adj
 
 
 class MLP(nn.Module):
