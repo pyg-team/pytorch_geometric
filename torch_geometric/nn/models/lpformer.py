@@ -143,7 +143,7 @@ class LPFormer(nn.Module):
         edge_index: Adj,
         ppr_matrix: Tensor,
     ) -> Tensor:
-        r"""Forward Pass of LPFormer
+        r"""Forward Pass of LPFormer.
 
         Returns raw logits for each link
 
@@ -184,7 +184,7 @@ class LPFormer(nn.Module):
 
     def propagate(self, x: Tensor, adj: Adj) -> Tensor:
         """
-        Propagate via GNN
+        Propagate via GNN.
 
         Args:
             x (Tensor): Node features
@@ -198,7 +198,7 @@ class LPFormer(nn.Module):
 
     def calc_pairwise(self, batch: Tensor, X_node: Tensor, adj_mask: Tensor,
                       ppr_matrix: Tensor) -> Tensor:
-        r"""Calculate the pairwise features for the node pairs
+        r"""Calculate the pairwise features for the node pairs.
 
         Args:
             batch (Tensor): The batch vector.
@@ -241,7 +241,7 @@ class LPFormer(nn.Module):
             self, cn_ppr: Tuple[Tensor, Tensor],
             onehop_ppr: Optional[Tuple[Tensor, Tensor]] = None,
             non1hop_ppr: Optional[Tuple[Tensor, Tensor]] = None) -> Tensor:
-        r"""Calculate the PPR-based relative positional encodings
+        r"""Calculate the PPR-based relative positional encodings.
 
         Due to thresholds, sometimes we don't have 1-hop or >1-hop nodes.
         In those cases, the value of onehop_ppr and/or non1hop_ppr should
@@ -281,8 +281,7 @@ class LPFormer(nn.Module):
     def compute_node_mask(
             self, batch: Tensor, adj: Tensor, ppr_matrix: Tensor
     ) -> Tuple[Tuple, Optional[Tuple], Optional[Tuple]]:
-        r"""
-        Get mask based on type of node
+        r"""Get mask based on type of node.
 
         When mask_type is not "cn", also return the ppr vals for both
         the source and target.
@@ -447,7 +446,7 @@ class LPFormer(nn.Module):
         non1hop_info: Optional[Tuple[Tensor, Tensor]],
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         """
-        Counts for CNs, 1-Hop, and >1-Hop that satisfy PPR threshold
+        Counts for CNs, 1-Hop, and >1-Hop that satisfy PPR threshold.
 
         Also include total # of neighbors
 
@@ -484,7 +483,7 @@ class LPFormer(nn.Module):
                            src_ppr: Tensor, tgt_ppr: Tensor,
                            thresh: float) -> Tensor:
         """
-        Get # of nodes `v` where `ppr(a, v) >= eta` & `ppr(b, v) >= eta`
+        Get # of nodes `v` where `ppr(a, v) >= eta` & `ppr(b, v) >= eta`.
 
         Args:
             batch (Tensor): The batch vector.
@@ -510,7 +509,7 @@ class LPFormer(nn.Module):
         batch: Tensor,
     ) -> Tensor:
         """
-        # of nodes for each sample in batch
+        # of nodes for each sample in batch.
 
         They node have already filtered by PPR beforehand
 
@@ -598,7 +597,7 @@ class LPFormer(nn.Module):
     def calc_sparse_ppr(self, edge_index: Tensor, num_nodes: int,
                         alpha: float = 0.15, eps: float = 5e-5) -> Tensor:
         r"""
-        Calculate the PPR of the graph in sparse format
+        Calculate the PPR of the graph in sparse format.
 
         Args:
             edge_index: The edge indices
@@ -748,7 +747,7 @@ class LPAttLayer(MessagePassing):
 
 class MLP(nn.Module):
     """
-    L Layer MLP
+    L Layer MLP.
     """
     def __init__(self, in_channels: int, hid_channels: int, out_channels: int,
                  num_layers: int = 2, drop: int = 0, norm: str = "layer"):

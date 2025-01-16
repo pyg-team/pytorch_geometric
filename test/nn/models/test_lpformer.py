@@ -1,11 +1,13 @@
 import torch
 
 import torch_geometric.typing
+from torch_geometric.testing import withPackage
 from torch_geometric.nn import LPFormer
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_undirected
 
 
+@withPackage('numba')  # For ppr calculation
 def test_lpformer():
     model = LPFormer(16, 32, num_gnn_layers=2, 
                      num_transformer_layers=1)
