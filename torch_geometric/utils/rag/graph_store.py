@@ -1,6 +1,5 @@
 from typing import Optional, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import FeatureStore
@@ -54,6 +53,19 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._sampler_is_initialized = False
         return ret
 
+    # HACKY
+    @edge_index.setter
+    def edge_index(self, edge_index: EdgeTensorType):
+        # correct since we make node list from triples
+        num_nodes = edge_index.max() + 1
+        attr = dict(
+            edge_type=None,
+            layout='coo',
+            size=(num_nodes, num_nodes),
+            is_sorted=True,
+        )
+        self.put_edge_index(edge_index, **attr)
+
     @property
     def num_neighbors(self):
         return self._num_neighbors
@@ -65,7 +77,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             self.sampler.num_neighbors = num_neighbors
 
     def sample_subgraph(
-        self, seed_nodes: InputNodes, seed_edges: InputEdges,
+        self, seed_nodes: InputNodes, seed_edges: Optional[InputEdges] = None,
         num_neighbors: Optional[NumNeighborsType] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         """Sample the graph starting from the given nodes and edges using the
@@ -73,7 +85,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
         Args:
             seed_nodes (InputNodes): Seed nodes to start sampling from.
-            seed_edges (InputEdges): Seed edges to start sampling from.
+            seed_edges (Optional[InputEdges], optional): Seed edges to start sampling from.
+                Defaults to None.
             num_neighbors (Optional[NumNeighborsType], optional): Parameters
                 to determine how many hops and number of neighbors per hop.
                 Defaults to None.
@@ -90,16 +103,12 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         # FIXME: Right now, only input nodes/edges as tensors are be supported
         if not isinstance(seed_nodes, Tensor):
             raise NotImplementedError
-        if not isinstance(seed_edges, Tensor):
-            raise NotImplementedError
-        device = seed_nodes.device
+        if seed_edges:
+            print("Note: seed edges currently unused")
+            # if not isinstance(seed_edges, Tensor):
+            #     raise NotImplementedError
 
         # TODO: Call sample_from_edges for seed_edges
-        # Turning them into nodes for now.
-        seed_edges = self.edge_index.to(device).T[seed_edges.to(
-            device)].reshape(-1)
-        seed_nodes = torch.cat((seed_nodes, seed_edges), dim=0)
-
         seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
         out = self.sampler.sample_from_nodes(node_sample_input)

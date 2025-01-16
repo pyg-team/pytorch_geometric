@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
+import torch
+
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
@@ -71,7 +73,9 @@ class RAGQueryLoader:
             seed_nodes_kwargs (Optional[Dict[str, Any]], optional): Paramaters
                 to pass into process for fetching seed nodes. Defaults to None.
             seed_edges_kwargs (Optional[Dict[str, Any]], optional): Parameters
-                to pass into process for fetching seed edges. Defaults to None.
+                to pass into process for fetching seed edges.
+                Currently this class does not use seed_edges. (TODO)
+                Defaults to None.
             sampler_kwargs (Optional[Dict[str, Any]], optional): Parameters to
                 pass into process for sampling graph. Defaults to None.
             loader_kwargs (Optional[Dict[str, Any]], optional): Parameters to
@@ -80,6 +84,7 @@ class RAGQueryLoader:
         fstore, gstore = data
         self.feature_store = fstore
         self.graph_store = gstore
+        self.graph_store.edge_index = self.graph_store.edge_index.contiguous()
         self.graph_store.register_feature_store(self.feature_store)
         self.local_filter = local_filter
         self.seed_nodes_kwargs = seed_nodes_kwargs or {}
@@ -93,15 +98,30 @@ class RAGQueryLoader:
         """
         seed_nodes = self.feature_store.retrieve_seed_nodes(
             query, **self.seed_nodes_kwargs)
-        seed_edges = self.feature_store.retrieve_seed_edges(
-            query, **self.seed_edges_kwargs)
-
+        # Graph Store does not Use These, save computation
+        # seed_edges = self.feature_store.retrieve_seed_edges(
+        #     query, **self.seed_edges_kwargs)
         subgraph_sample = self.graph_store.sample_subgraph(
-            seed_nodes, seed_edges, **self.sampler_kwargs)
+            seed_nodes, **self.sampler_kwargs)
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
-
+        total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
+        data.node_idx = torch.tensor(
+            list(
+                dict.fromkeys(seed_nodes.tolist() +
+                              total_e_idx_t.reshape(-1).tolist())))
+        data.num_nodes = len(data.node_idx)
+        data.x = self.feature_store.x[data.node_idx]
+        list_edge_index = []
+        remap_dict = {
+            int(data.node_idx[i]): i
+            for i in range(len(data.node_idx))
+        }
+        for src, dst in total_e_idx_t.tolist():
+            list_edge_index.append(
+                (remap_dict[int(src)], remap_dict[int(dst)]))
+        data.edge_index = torch.tensor(list_edge_index).t()
         if self.local_filter:
             data = self.local_filter(data, query)
         return data

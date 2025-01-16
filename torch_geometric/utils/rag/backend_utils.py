@@ -5,6 +5,7 @@ from typing import (
     Callable,
     Dict,
     Iterable,
+    List,
     Optional,
     Protocol,
     Tuple,
@@ -17,22 +18,37 @@ from torch import Tensor
 from torch.nn import Module
 
 from torch_geometric.data import (
+    Data,
     FeatureStore,
     GraphStore,
     LargeGraphIndexer,
     TripletLike,
 )
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
+from torch_geometric.datasets.web_qsp_dataset import retrieval_via_pcst
 from torch_geometric.distributed import (
     LocalFeatureStore,
     LocalGraphStore,
     Partitioner,
 )
+from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.typing import EdgeType, NodeType
 
+try:
+    from pandas import DataFrame
+except ImportError:
+    DataFrame = None
 RemoteGraphBackend = Tuple[FeatureStore, GraphStore]
 
 # TODO: Make everything compatible with Hetero graphs aswell
+
+
+# (TODO) once Zacks webqsp PR is merged
+# https://github.com/pyg-team/pytorch_geometric/pull/9806
+# update WebQSP in this branch to use preprocess_triplet from here
+def preprocess_triplet(triplet: TripletLike) -> TripletLike:
+    h, r, t = triplet
+    return str(h).lower(), str(r).lower(), str(t).lower()
 
 
 # Adapted from LocalGraphStore
@@ -108,10 +124,11 @@ class RemoteGraphBackendLoader:
 
     def load(self, pid: Optional[int] = None) -> RemoteGraphBackend:
         if self.datatype == RemoteDataType.DATA:
-            data_obj = torch.load(self.path)
+            data_obj = torch.load(self.path, weights_only=False)
+            # is_sorted=true since assume nodes come sorted from indexer
             graph_store = self.graph_store_type.from_data(
                 edge_id=data_obj['edge_id'], edge_index=data_obj.edge_index,
-                num_nodes=data_obj.num_nodes)
+                num_nodes=data_obj.num_nodes, is_sorted=True)
             feature_store = self.feature_store_type.from_data(
                 node_id=data_obj['node_id'], x=data_obj.x,
                 edge_id=data_obj['edge_id'], edge_attr=data_obj.edge_attr)
@@ -199,8 +216,8 @@ def create_remote_backend_from_triplets(
 
     indexer = LargeGraphIndexer.from_triplets(triplets,
                                               pre_transform=pre_transform)
-
-    node_feats = node_model(indexer.get_node_features(), **node_method_kwargs)
+    node_feats = node_model(indexer.get_unique_node_features(),
+                            **node_method_kwargs)
     indexer.add_node_feature('x', node_feats)
 
     edge_feats = edge_model(
@@ -212,7 +229,6 @@ def create_remote_backend_from_triplets(
 
     data = indexer.to_data(node_feature_name='x',
                            edge_feature_name='edge_attr')
-
     if n_parts == 1:
         torch.save(data, path)
         return RemoteGraphBackendLoader(path, RemoteDataType.DATA, graph_db,
@@ -222,3 +238,49 @@ def create_remote_backend_from_triplets(
         partitioner.generate_partition()
         return RemoteGraphBackendLoader(path, RemoteDataType.PARTITION,
                                         graph_db, feature_db)
+
+
+def make_pcst_filter(triples: List[Tuple[str, str, str]],
+                     model: SentenceTransformer):
+    if DataFrame is None:
+        raise Exception("PCST requires `pip install pandas`")
+    # Ensure unique triples set
+    triples = list(dict.fromkeys(triples))
+    nodes = []
+    triples = list(dict.fromkeys(triples))
+    for h, r, t in triples:
+        for node in (h, t):
+            nodes.append(node)
+            # if node not in nodes:
+            #     nodes.append(node)
+    nodes = list(dict.fromkeys(nodes))
+    full_textual_nodes = nodes
+
+    def apply_retrieval_via_pcst(
+        graph: Data,
+        query: str,
+        topk: int = 3,
+        topk_e: int = 5,
+        cost_e: float = 0.5,
+    ) -> Tuple[Data, str]:
+        # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
+        q_emb = model.encode([query]).to("cpu")
+        textual_nodes = [(int(i), full_textual_nodes[i])
+                         for i in graph["node_idx"]]
+        textual_nodes = DataFrame(textual_nodes,
+                                  columns=["node_id", "node_attr"])
+        textual_edges = [triples[i] for i in graph["edge_idx"]]
+        textual_edges = DataFrame(textual_edges,
+                                  columns=["src", "edge_attr", "dst"])
+        out_graph, desc = retrieval_via_pcst(graph.to(q_emb.device), q_emb,
+                                             textual_nodes, textual_edges,
+                                             topk, topk_e, cost_e)
+        out_graph["desc"] = desc
+        where_trips_start = desc.find("src,edge_attr,dst")
+        parsed_trips = []
+        for trip in desc[where_trips_start + 18:-1].split("\n"):
+            parsed_trips.append(tuple(trip.split(",")))
+        out_graph["triples"] = parsed_trips
+        return out_graph
+
+    return apply_retrieval_via_pcst
