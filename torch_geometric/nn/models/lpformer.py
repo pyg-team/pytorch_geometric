@@ -3,13 +3,12 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
-from torch_scatter import scatter
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch_geometric.typing import SparseTensor
 
-from ...utils import softmax, get_ppr
+from ...utils import softmax, get_ppr, scatter
 from ...typing import OptTensor, Tuple, Adj
 from ...nn.conv import MessagePassing
 from ...nn.dense.linear import Linear
