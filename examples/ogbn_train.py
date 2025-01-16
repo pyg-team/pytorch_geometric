@@ -179,7 +179,8 @@ optimizer = torch.optim.Adam(
     lr=args.lr,
     weight_decay=args.wd,
 )
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',patience=5)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',
+                                                       patience=5)
 
 print(f'Total time before training begins took '
       f'{time.perf_counter() - wall_clock_start:.4f}s')
