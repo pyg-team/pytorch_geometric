@@ -136,10 +136,6 @@ if __name__ == '__main__':
     approx precision = num_golden_out_of_retrieved/num_retrieved_triples
     These are rough approximations since we do not know exactly which
     golden triples are actually relevant.
-
-    Note that the retrieval precision may be much lower than expected.
-    likely due to a bug in retriever causing similar issue here:
-    https://github.com/pyg-team/pytorch_geometric/pull/9806
     """
     precisions = []
     if args.verbose:
@@ -168,7 +164,6 @@ if __name__ == '__main__':
             ]))
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
-        precisions.append(num_relevant_out_of_retrieved /
-                          len(retrieved_triples))
     approx_precision = sum(precisions) / len(precisions)
-    print("approx_precision =", str(round(approx_precision * 100.0, 2)) + "%")
+    print("approx_precision =", str(round(approx_precision * 100.0, 2)) + "% **")
+    print("**:rough approximations since we do not know exactly which 'golden' triples are actually relevant."
