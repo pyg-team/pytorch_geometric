@@ -166,4 +166,4 @@ if __name__ == '__main__':
                           len(retrieved_triples))
     approx_precision = sum(precisions) / len(precisions)
     print("approx_precision =", str(round(approx_precision * 100.0, 2)) + "% **")
-    print("**:rough approximations since we do not know exactly which 'golden' triples are actually relevant."
+    print("**:rough approximations since we do not know exactly which 'golden' triples are actually relevant.")
