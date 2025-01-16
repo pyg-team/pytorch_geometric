@@ -7,9 +7,10 @@ from torch_scatter import scatter
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
+from torch_geometric.typing import SparseTensor
 
 from ...utils import softmax, get_ppr
-from ...typing import OptTensor, Tuple
+from ...typing import OptTensor, Tuple, Adj
 from ...nn.conv import MessagePassing
 from ...nn.dense.linear import Linear
 from ...nn.inits import glorot, zeros
@@ -42,9 +43,11 @@ class LPFormer(nn.Module):
         transformer_dropout (float, optional): Dropout used for Transformer
             (default: :obj:`0.1`)
         ppr_thresholds (list): PPR thresholds for different types of nodes.
-            Types include (in order) common neighbors, 1-Hop nodes 
+            Types include (in order) common neighbors, 1-Hop nodes
             (that aren't CNs), and all other nodes.
             (default: :obj:`[0, 1e-4, 1e-2]`)
+        gcn_cache (bool, optional): Whether to cache edge indices
+            during message passing. (default: :obj:`False`)
     """
     def __init__(
         self,
@@ -56,7 +59,7 @@ class LPFormer(nn.Module):
         num_heads: int = 1,
         transformer_dropout: float = 0.1,
         ppr_thresholds: dict = [0, 1e-4, 1e-2],
-        gcn_cache=True,
+        gcn_cache=False,
     ):
         super().__init__()
 
@@ -83,7 +86,8 @@ class LPFormer(nn.Module):
         for il in range(num_transformer_layers):
             if il == 0:
                 node_dim = None
-                self.out_dim = self.hid_dim * 2 if num_transformer_layers > 1 else self.hid_dim
+                self.out_dim = self.hid_dim * 2 if num_transformer_layers > 1 \
+                    else self.hid_dim
             elif il == self.num_layers - 1:
                 node_dim = self.hid_dim
             else:
@@ -115,6 +119,11 @@ class LPFormer(nn.Module):
 
         self.score_func = MLP(self.hid_dim * 2, self.hid_dim * 2, 1, norm=None)
 
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_dim}, '
+                f'{self.hid_dim}, num_gnn_layers={self.gnn.num_layers}, '
+                f'num_transformer_layers={len(self.att_layers)})')
+
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         self.gnn.reset_parameters()
@@ -132,7 +141,7 @@ class LPFormer(nn.Module):
         self,
         batch: Tensor,
         x: Tensor,
-        adj: Tensor,
+        edge_index: Adj,
         ppr_matrix: Tensor,
     ) -> Tensor:
         r"""Forward Pass of LPFormer
@@ -143,18 +152,28 @@ class LPFormer(nn.Module):
             batch (Tensor): The batch vector.
                 Denotes which node pairs to predict.
             x (Tensor): Input node features
-            adj (SparseTensor): The edge indices.
+            edge_index (torch.Tensor, SparseTensor): The edge indices.
+                Either in COO or SparseTensor format
             ppr_matrix (Tensor): PPR matrix
         """
         batch = batch.to(x.device)
 
-        X_node = self.propagate(x, adj)
+        X_node = self.propagate(x, edge_index)
         x_i, x_j = X_node[batch[0]], X_node[batch[1]]
         elementwise_edge_feats = self.elementwise_lin(x_i * x_j)
 
-        # Need as native torch sparse for later computations
+        # Ensure in sparse format
+        # Need as native torch.sparse for later computations
         # (necessary operations are not supported by PyG SparseTensor)
-        adj_mask = adj.to_torch_sparse_coo_tensor().coalesce().bool().int()
+        if isinstance(edge_index, SparseTensor):
+            adj_mask = edge_index.to_torch_sparse_coo_tensor()
+            adj_mask = adj_mask.coalesce().bool().int()
+        elif not edge_index.is_sparse:
+            num_nodes = ppr_matrix.size(1)
+            vals = torch.ones(len(edge_index[0]), device=edge_index.device)
+            adj_mask = torch.sparse_coo_tensor(edge_index, vals,
+                                               [num_nodes, num_nodes])
+            adj_mask = adj_mask.coalesce().bool().int()
 
         pairwise_feats = self.calc_pairwise(batch, X_node, adj_mask,
                                             ppr_matrix)
@@ -162,16 +181,15 @@ class LPFormer(nn.Module):
                                    dim=-1)
 
         logits = self.score_func(combined_feats)
-
         return logits
 
-    def propagate(self, x: Tensor, adj: Tensor) -> Tensor:
+    def propagate(self, x: Tensor, adj: Adj) -> Tensor:
         """
         Propagate via GNN
 
         Args:
             x (Tensor): Node features
-            adj (SparseTensor): Adjacency matrix
+            adj (torch.Tensor, SparseTensor): Adjacency matrix
         """
         x = F.dropout(x, p=self.gnn_drop, training=self.training)
         X_node = self.gnn(x, adj)
@@ -188,8 +206,7 @@ class LPFormer(nn.Module):
                 Denotes which node pairs to predict.
             X_node (Tensor): Node representations
             adj_mask (Tensor): Mask of adjacency matrix used for computing the
-                different node types. Should be given as a `torch.sparse_coo_tensor`
-                Tensor. See `examples/lpformer.py` for details.
+                different node types.
             ppr_matrix (Tensor): PPR matrix
         """
         k_i, k_j = X_node[batch[0]], X_node[batch[1]]
@@ -207,15 +224,15 @@ class LPFormer(nn.Module):
         pes = self.get_pos_encodings(cn_info[1:], onehop_info[1:],
                                      non1hop_info[1:])
 
-        for l in range(len(self.att_layers)):
-            pairwise_feats = self.att_layers[l](all_mask, pairwise_feats,
-                                                X_node, pes)
+        for lay in range(len(self.att_layers)):
+            pairwise_feats = self.att_layers[lay](all_mask, pairwise_feats,
+                                                  X_node, pes)
 
-        num_cns, num_1hop, num_non1hop, num_neighbors = self.get_structure_cnts(
+        num_cns, num_1hop, num_non1hop, num_neigh = self.get_structure_cnts(
             batch, cn_info, onehop_info, non1hop_info)
 
         pairwise_feats = torch.cat(
-            (pairwise_feats, num_cns, num_1hop, num_non1hop, num_neighbors),
+            (pairwise_feats, num_cns, num_1hop, num_non1hop, num_neigh),
             dim=-1)
 
         pairwise_feats = self.pairwise_lin(pairwise_feats)
@@ -268,8 +285,8 @@ class LPFormer(nn.Module):
         r"""
         Get mask based on type of node
 
-        When mask_type != "cn", also return the ppr vals for both the
-        source and target
+        When mask_type is not "cn", also return the ppr vals for both
+        the source and target.
 
         Args:
             batch (Tensor): The batch vector.
@@ -307,7 +324,7 @@ class LPFormer(nn.Module):
 
         # >1-Hop mask is gotten separately
         if self.mask == "all":
-            non1hop_ix, non1hop_src_ppr, non1hop_tgt_ppr = self.get_non_1hop_ppr(
+            non1hop_ix, non1hop_sppr, non1hop_tppr = self.get_non_1hop_ppr(
                 batch, adj, ppr_matrix)
 
         # Dropout
@@ -315,8 +332,8 @@ class LPFormer(nn.Module):
             pair_ix, src_ppr, tgt_ppr, node_type = self.drop_pairwise(
                 pair_ix, src_ppr, tgt_ppr, node_type)
             if self.mask == "all":
-                non1hop_ix, non1hop_src_ppr, non1hop_tgt_ppr, _ = self.drop_pairwise(
-                    non1hop_ix, non1hop_src_ppr, non1hop_tgt_ppr)
+                non1hop_ix, non1hop_sppr, non1hop_tppr, _ = self.drop_pairwise(
+                    non1hop_ix, non1hop_sppr, non1hop_tppr)
 
         # Separate out CN and 1-Hop
         if self.mask != "cn":
@@ -339,15 +356,15 @@ class LPFormer(nn.Module):
             return (cn_ix, cn_src_ppr,
                     cn_tgt_ppr), (onehop_ix, onehop_src_ppr,
                                   onehop_tgt_ppr), (non1hop_ix,
-                                                    non1hop_src_ppr,
-                                                    non1hop_tgt_ppr)
+                                                    non1hop_sppr,
+                                                    non1hop_tppr)
 
     def get_ppr_vals(
             self, batch: Tensor, pair_diff_adj: Tensor,
             ppr_matrix: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         r"""
         Get the src and tgt ppr vals.
-        
+
         Returns the: link the node belongs to, type of node
         (e.g., CN), PPR relative to src, PPR relative to tgt.
 
@@ -588,11 +605,11 @@ class LPFormer(nn.Module):
             edge_index: The edge indices
             num_nodes: Number of nodes
             alpha (float, optional): The alpha value of the PageRank algorithm.
-            (default: :obj:`0.15`)
-            eps: The threshold for stopping the PPR calculation
-            (:obj:`edge_weight >= eps * out_degree`). (default: :obj:`5e-5`)
+                (default: :obj:`0.15`)
+            eps (float, optional): Threshold for stopping the PPR calculation
+                (default: :obj:`5e-5`)
         """
-        ei, ei_w = get_ppr(edge_index, alpha=alpha, eps=eps,
+        ei, ei_w = get_ppr(edge_index.cpu(), alpha=alpha, eps=eps,
                            num_nodes=num_nodes)
         ppr_matrix = torch.sparse_coo_tensor(ei, ei_w, [num_nodes, num_nodes])
 

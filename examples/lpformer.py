@@ -16,8 +16,9 @@ parser = ArgumentParser()
 parser.add_argument('--data_name', type=str, default='ogbl-ppa')
 parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--epochs', type=int, default=100)
-parser.add_argument('--runs', help="# runs to run over", type=int, default=10)
-parser.add_argument('--batch_size', type=int, default=32768)
+parser.add_argument('--runs', help="# random seeds to run over", 
+                    type=int, default=5)
+parser.add_argument('--batch_size', type=int, default=65536)
 parser.add_argument('--hidden_channels', type=int, default=64)
 parser.add_argument('--gnn_layers', type=int, default=3)
 parser.add_argument('--dropout', help="Applies to GNN and Transformer",
@@ -65,7 +66,7 @@ model = LPFormer(data.x.size(-1), args.hidden_channels,
                  ppr_thresholds=args.thresholds, gnn_dropout=args.dropout,
                  transformer_dropout=args.dropout).to(device)
 
-# Get PPR
+# Get PPR matrix in sparse format
 ppr_matrix = model.calc_sparse_ppr(data.edge_index, data.num_nodes,
                                    eps=args.eps)
 
@@ -119,7 +120,6 @@ def test():
     # NOTE: Eval for ogbl-citation2 is different
     # See `train.py` in https://github.com/HarryShomer/LPFormer/ for more
     # Also see there for how to eval under the HeaRT setting
-
     model.eval()
     all_preds = defaultdict(list)
 
