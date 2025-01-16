@@ -18,7 +18,7 @@ parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--epochs', type=int, default=100)
 parser.add_argument('--runs', help="# random seeds to run over", 
                     type=int, default=5)
-parser.add_argument('--batch_size', type=int, default=65536)
+parser.add_argument('--batch_size', type=int, default=32768)
 parser.add_argument('--hidden_channels', type=int, default=64)
 parser.add_argument('--gnn_layers', type=int, default=3)
 parser.add_argument('--dropout', help="Applies to GNN and Transformer",
