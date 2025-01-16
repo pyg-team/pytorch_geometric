@@ -369,8 +369,8 @@ class LPFormer(nn.Module):
         Args:
             batch (Tensor): The batch vector.
                 Denotes which node pairs to predict.
-            pair_adj (SparseTensor): Combination of rows in adjacency
-                for source and target nodes (e.g., X1 + X2)
+            pair_diff_adj (SparseTensor): Combination of rows in 
+                adjacency for src and tgt nodes (e.g., X1 + X2)
             ppr_matrix (Tensor): PPR matrix
         """
         # Additional terms for also choosing scores when ppr=0
@@ -746,9 +746,7 @@ class LPAttLayer(MessagePassing):
 
 
 class MLP(nn.Module):
-    """
-    L Layer MLP.
-    """
+    r"""L Layer MLP."""
     def __init__(self, in_channels: int, hid_channels: int, out_channels: int,
                  num_layers: int = 2, drop: int = 0, norm: str = "layer"):
         super().__init__()
