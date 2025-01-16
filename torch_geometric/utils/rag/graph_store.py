@@ -107,7 +107,6 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             print("Note: seed edges currently unused")
             # if not isinstance(seed_edges, Tensor):
             #     raise NotImplementedError
-        seed_nodes.device
 
         # TODO: Call sample_from_edges for seed_edges
         seed_nodes = seed_nodes.unique().contiguous()
