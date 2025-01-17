@@ -58,7 +58,10 @@ class LinkPredMetricData:
 
         pred_rel_mat = flat_label_index[pos] == flat_pred_index  # Find matches
         if edge_label_weight is not None:
-            pred_rel_mat = edge_label_weight[pos].where(pred_rel_mat, 0.0)
+            pred_rel_mat = edge_label_weight[pos].where(
+                pred_rel_mat,
+                pred_rel_mat.new_zeros(1),
+            )
         pred_rel_mat = pred_rel_mat.view(self.pred_index_mat.size())
 
         self._pred_rel_mat = pred_rel_mat
@@ -80,6 +83,51 @@ class LinkPredMetricData:
 
         self._label_count = label_count
         return label_count
+
+    @property
+    def label_weight_sum(self) -> Tensor:
+        r"""The sum of edge label weights for every example."""
+        if self.edge_label_weight is None:
+            return self.label_count
+
+        if hasattr(self, '_label_weight_sum'):
+            return self._label_weight_sum  # type: ignore
+
+        label_weight_sum = scatter(
+            self.edge_label_weight,
+            self.edge_label_index[0],
+            dim=0,
+            dim_size=self.pred_index_mat.size(0),
+            reduce='sum',
+        )
+
+        self._label_weight_sum = label_weight_sum
+        return label_weight_sum
+
+    @property
+    def edge_label_weight_pos(self) -> Optional[Tensor]:
+        r"""Returns the position of edge label weights in descending order
+        within example-wise buckets.
+        """
+        if self.edge_label_weight is None:
+            return None
+
+        if hasattr(self, '_edge_label_weight_pos'):
+            return self._edge_label_weight_pos  # type: ignore
+
+        # Get the permutation via two sorts: One globally on the weights,
+        # followed by a (stable) sort on the example indices.
+        perm1 = self.edge_label_weight.argsort(descending=True)
+        perm2 = self.edge_label_index[0][perm1].argsort(stable=True)
+        perm = perm1[perm2]
+        # Invert the permutation to get the final position:
+        pos = torch.empty_like(perm)
+        pos[perm] = torch.arange(perm.size(0), device=perm.device)
+        # Normalize position to zero within all buckets:
+        pos = pos - cumsum(self.label_count)[self.edge_label_index[0]]
+
+        self._edge_label_weight_pos = pos
+        return pos
 
 
 class LinkPredMetric(BaseMetric):
@@ -228,7 +276,9 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         if isinstance(metrics, (list, tuple)):
             metrics = {
-                f'{metric.__class__.__name__}@{metric.k}': metric
+                (f'{"Weighted" if metric.weighted else ""}'
+                 f'{metric.__class__.__name__}@{metric.k}'):
+                metric
                 for metric in metrics
             }
         assert len(metrics) > 0
@@ -298,6 +348,10 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         data.edge_label_weight = None
         if hasattr(data, '_pred_rel_mat'):
             data._pred_rel_mat = data._pred_rel_mat != 0.0
+        if hasattr(data, '_label_weight_sum'):
+            del data._label_weight_sum
+        if hasattr(data, '_edge_label_weight_pos'):
+            del data._edge_label_weight_pos
 
         for metric in self.values():
             if not metric.weighted:
@@ -340,11 +394,14 @@ class LinkPredRecall(LinkPredMetric):
         k (int): The number of top-:math:`k` predictions to evaluate against.
     """
     higher_is_better: bool = True
-    weighted: bool = False
+
+    def __init__(self, k: int, weighted: bool = False):
+        super().__init__(k=k)
+        self.weighted = weighted
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
-        return pred_rel_mat.sum(dim=-1) / data.label_count.clamp(min=1e-7)
+        return pred_rel_mat.sum(dim=-1) / data.label_weight_sum.clamp(min=1e-7)
 
 
 class LinkPredF1(LinkPredMetric):
@@ -394,26 +451,47 @@ class LinkPredNDCG(LinkPredMetric):
             :obj:`edge_label_weight`. (default: :obj:`False`)
     """
     higher_is_better: bool = True
-    weighted: bool = False
 
     def __init__(self, k: int, weighted: bool = False):
         super().__init__(k=k)
         self.weighted = weighted
 
         dtype = torch.get_default_dtype()
-        multiplier = 1.0 / torch.arange(2, k + 2, dtype=dtype).log2()
+        discount = torch.arange(2, k + 2, dtype=dtype).log2()
 
-        self.multiplier: Tensor
-        self.register_buffer('multiplier', multiplier)
+        self.discount: Tensor
+        self.register_buffer('discount', discount)
 
-        self.idcg: Tensor
-        self.register_buffer('idcg', cumsum(multiplier))
+        if not weighted:
+            self.register_buffer('idcg', cumsum(1.0 / discount))
+        else:
+            self.idcg = None
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
-        multiplier = self.multiplier[:pred_rel_mat.size(1)].view(1, -1)
-        dcg = (pred_rel_mat * multiplier).sum(dim=-1)
-        idcg = self.idcg[data.label_count.clamp(max=self.k)]
+        discount = self.discount[:pred_rel_mat.size(1)].view(1, -1)
+        dcg = (pred_rel_mat / discount).sum(dim=-1)
+
+        if not self.weighted:
+            assert self.idcg is not None
+            idcg = self.idcg[data.label_count.clamp(max=self.k)]
+        else:
+            assert data.edge_label_weight is not None
+            pos = data.edge_label_weight_pos
+            assert pos is not None
+
+            discount = torch.cat([
+                self.discount,
+                self.discount.new_full((1, ), fill_value=float('inf')),
+            ])
+            discount = discount[pos.clamp(max=self.k + 1)]
+
+            idcg = scatter(  # Apply discount and aggregate:
+                data.edge_label_weight / discount,
+                data.edge_label_index[0],
+                dim_size=data.pred_index_mat.size(0),
+                reduce='sum',
+            )
 
         out = dcg / idcg
         out[out.isnan() | out.isinf()] = 0.0
