@@ -33,7 +33,7 @@ parser.add_argument(
     action='store_true',
     help='Whether or not to use GAT model',
 )
-parser.add_argument('-e', '--epochs', type=int, default=10)
+parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=2,
                     help='number of heads for GAT model.')
@@ -179,6 +179,8 @@ optimizer = torch.optim.Adam(
     lr=args.lr,
     weight_decay=args.wd,
 )
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',
+                                                       patience=5)
 
 print(f'Total time before training begins took '
       f'{time.perf_counter() - wall_clock_start:.4f}s')
@@ -204,6 +206,10 @@ for epoch in range(1, num_epochs + 1):
     if val_acc > best_val:
         best_val = val_acc
     times.append(time.perf_counter() - train_start)
+    for param_group in optimizer.param_groups:
+        print('lr:')
+        print(param_group['lr'])
+    scheduler.step(val_acc)
 
 print(f'Average Epoch Time on training: '
       f'{torch.tensor(train_times).mean():.4f}s')
