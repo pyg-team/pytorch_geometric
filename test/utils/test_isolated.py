@@ -91,23 +91,30 @@ def test_remove_isolated_nodes():
 
 
 def test_remove_bipartite_isolated_nodes():
-    edge_index = torch.tensor([[0, 1], [1, 2]])
+    edge_index = torch.tensor([[0, 1, 1], [1, 2, 3]])
+    edge_attr = torch.ones((edge_index.size(1), 2))
 
-    out, _, (src_mask,
-             dst_mask) = remove_isolated_nodes(edge_index, num_nodes=(2, 3))
-    assert out.tolist() == [[0, 1], [0, 1]]
+    out, out_attr, (src_mask,
+                    dst_mask) = remove_isolated_nodes(edge_index, edge_attr,
+                                                      num_nodes=(2, 4))
+    assert out.tolist() == [[0, 1, 1], [0, 1, 2]]
     assert src_mask.tolist() == [1, 1]
-    assert dst_mask.tolist() == [0, 1, 1]
+    assert dst_mask.tolist() == [0, 1, 1, 1]
+    assert out_attr.tolist() == [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
 
     if is_full_test():
         jit = torch.jit.script(remove_isolated_nodes)
-        out, _, (src_mask, dst_mask) = jit(edge_index, num_nodes=(2, 3))
-        assert out.tolist() == [[0, 1], [0, 1]]
+        out, out_attr, (src_mask, dst_mask) = jit(edge_index, edge_attr,
+                                                  num_nodes=(2, 4))
+        assert out.tolist() == [[0, 1, 1], [0, 1, 2]]
         assert src_mask.tolist() == [1, 1]
-        assert dst_mask.tolist() == [0, 1, 1]
+        assert dst_mask.tolist() == [0, 1, 1, 1]
+        assert out_attr.tolist() == [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
 
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
-    out, _, mask = remove_isolated_nodes(edge_index, num_nodes=(3, 3))
+    out, out_attr, mask = remove_isolated_nodes(edge_index, edge_attr,
+                                                num_nodes=(3, 3))
     assert out.tolist() == [[0, 1, 0], [1, 0, 0]]
     assert mask[0].tolist() == [1, 1, 0]
     assert mask[1].tolist() == [1, 1, 0]
+    assert out_attr.tolist() == [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]

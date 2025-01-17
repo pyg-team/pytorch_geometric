@@ -12,12 +12,12 @@ def num_isolated_nodes(
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Union[int, Tuple[int, int]]:
     r"""Returns the number of isolated nodes in the graph given by
-    :attr:`edge_index`. Please specify :obj:`num_nodes` as a tuple of two
-    integers if the graph is bipartite. For normal graph, self loops are
+    :attr:`edge_index`. Specify :obj:`num_nodes` as a tuple if the
+    graph is bipartite. For non-bipartite graphs, self-loops are
     automatically removed before checking for isolated nodes.
 
     Args:
-        edge_index (LongTensor): The edge indices.
+        edge_index (Tensor): The edge indices.
         num_nodes (int or tuple, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. For bipartite graph,
             provide a tuple of two integers `(num_src_nodes, num_dst_nodes)`.
@@ -38,6 +38,13 @@ def num_isolated_nodes(
         (0, 1)
         >>> num_isolated_nodes(bi_edge_index, num_nodes=(3, 3))
         (1, 1)
+
+    .. note::
+
+        For non-bipartite graphs, isolated nodes are defined as nodes that
+        do not have any edges, taking into account both in and out edges.
+        For bipartite graphs, isolated nodes are defined as nodes that do not
+        have any out edges for source nodes and in edges for destination nodes.
     """
     if not isinstance(num_nodes, tuple):
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -56,7 +63,7 @@ def contains_isolated_nodes(
     edge_index: Tensor,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Union[bool, Tuple[bool, bool]]:
-    r"""For normal graph, returns :obj:`True` if the graph given by
+    r"""For non-bipartite graphs, returns :obj:`True` if the graph given by
     :attr:`edge_index` contains isolated nodes and self loops are
     automatically removed before checking for isolated nodes.
     For bipartite graph, please specify :obj:`num_nodes` as a tuple
@@ -66,7 +73,7 @@ def contains_isolated_nodes(
     contain isolated nodes.
 
     Args:
-        edge_index (LongTensor): The edge indices.
+        edge_index (Tensor): The edge indices.
         num_nodes (int or tuple, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. For bipartite graph,
             provide a tuple of two integers `(num_src_nodes, num_dst_nodes)`.
@@ -83,27 +90,28 @@ def contains_isolated_nodes(
         >>> contains_isolated_nodes(edge_index, num_nodes=3)
         True
 
-        >>> bi_edge_index = torch.tensor([[0, 0],
-        ...                               [1, 1]])
+        >>> bi_edge_index = torch.tensor([[0, 1],
+        ...                               [1, 0]])
         >>> contains_isolated_nodes(bi_edge_index, num_nodes=(2, 2))
         (False, False)
         >>> contains_isolated_nodes(bi_edge_index, num_nodes=(2, 3))
         (False, True)
         >>> contains_isolated_nodes(bi_edge_index, num_nodes=(3, 3))
         (True, True)
+
+    .. note::
+
+        For non-bipartite graphs, isolated nodes are defined as nodes that
+        do not have any edges, taking into account both in and out edges.
+        For bipartite graphs, isolated nodes are defined as nodes that do not
+        have any out edges for source nodes and in edges for destination nodes.
     """
-    if not isinstance(num_nodes, tuple):
-        num_nodes = maybe_num_nodes(edge_index, num_nodes)
-        edge_index, _ = remove_self_loops(edge_index)
-        return torch.unique(edge_index.view(-1)).numel() < num_nodes
+    isolated_nodes = num_isolated_nodes(edge_index, num_nodes)
+    if isinstance(isolated_nodes, int):
+        return isolated_nodes > 0
     else:
-        num_src_nodes, num_dst_nodes = num_nodes
-        num_nodes = num_src_nodes + num_dst_nodes
-        num_src_isolated = num_src_nodes - torch.unique(
-            edge_index[0, :]).numel()
-        num_dst_isolated = num_dst_nodes - torch.unique(
-            edge_index[1, :]).numel()
-        return (num_src_isolated > 0, num_dst_isolated > 0)
+        num_src_isolated_nodes, num_dst_isolated_nodes = isolated_nodes
+        return (num_src_isolated_nodes > 0, num_dst_isolated_nodes > 0)
 
 
 def remove_isolated_nodes(
@@ -120,7 +128,7 @@ def remove_isolated_nodes(
     if the graph is bipartite.
 
     Args:
-        edge_index (LongTensor): The edge indices.
+        edge_index (Tensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
         num_nodes (int or tuple, optional): The number of nodes, *i.e.*
@@ -150,6 +158,12 @@ def remove_isolated_nodes(
         tensor([True, True])
         >>> dst_mask # destination node mask (3 nodes)
         tensor([False, True, True])
+
+    .. note::
+
+        For bipartite graphs, removing isolated nodes will not change the
+        :obj:`edge_attr` tensor because the isolated nodes do not have any
+        edge attributes and they also do not have any self-loops.
     """
     if not isinstance(num_nodes, tuple):
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
