@@ -6,13 +6,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
+
 from torch_geometric.typing import SparseTensor
 
-from ...utils import softmax, get_ppr, scatter
-from ...typing import OptTensor, Tuple, Adj
 from ...nn.conv import MessagePassing
 from ...nn.dense.linear import Linear
 from ...nn.inits import glorot, zeros
+from ...typing import Adj, OptTensor, Tuple
+from ...utils import get_ppr, scatter, softmax
 from .basic_gnn import GCN
 
 
@@ -183,8 +184,7 @@ class LPFormer(nn.Module):
         return logits
 
     def propagate(self, x: Tensor, adj: Adj) -> Tensor:
-        """
-        Propagate via GNN.
+        """Propagate via GNN.
 
         Args:
             x (Tensor): Node features
@@ -353,15 +353,13 @@ class LPFormer(nn.Module):
         else:
             return (cn_ix, cn_src_ppr,
                     cn_tgt_ppr), (onehop_ix, onehop_src_ppr,
-                                  onehop_tgt_ppr), (non1hop_ix,
-                                                    non1hop_sppr,
+                                  onehop_tgt_ppr), (non1hop_ix, non1hop_sppr,
                                                     non1hop_tppr)
 
     def get_ppr_vals(
             self, batch: Tensor, pair_diff_adj: Tensor,
             ppr_matrix: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-        r"""
-        Get the src and tgt ppr vals.
+        r"""Get the src and tgt ppr vals.
 
         Returns the: link the node belongs to, type of node
         (e.g., CN), PPR relative to src, PPR relative to tgt.
@@ -369,7 +367,7 @@ class LPFormer(nn.Module):
         Args:
             batch (Tensor): The batch vector.
                 Denotes which node pairs to predict.
-            pair_diff_adj (SparseTensor): Combination of rows in 
+            pair_diff_adj (SparseTensor): Combination of rows in
                 adjacency for src and tgt nodes (e.g., X1 + X2)
             ppr_matrix (Tensor): PPR matrix
         """
@@ -445,8 +443,7 @@ class LPFormer(nn.Module):
         onehop_info: Tuple[Tensor, Tensor],
         non1hop_info: Optional[Tuple[Tensor, Tensor]],
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-        """
-        Counts for CNs, 1-Hop, and >1-Hop that satisfy PPR threshold.
+        """Counts for CNs, 1-Hop, and >1-Hop that satisfy PPR threshold.
 
         Also include total # of neighbors
 
@@ -482,8 +479,7 @@ class LPFormer(nn.Module):
     def get_num_ppr_thresh(self, batch: Tensor, node_mask: Tensor,
                            src_ppr: Tensor, tgt_ppr: Tensor,
                            thresh: float) -> Tensor:
-        """
-        Get # of nodes `v` where `ppr(a, v) >= eta` & `ppr(b, v) >= eta`.
+        """Get # of nodes `v` where `ppr(a, v) >= eta` & `ppr(b, v) >= eta`.
 
         Args:
             batch (Tensor): The batch vector.
@@ -508,8 +504,7 @@ class LPFormer(nn.Module):
         node_mask: Tensor,
         batch: Tensor,
     ) -> Tensor:
-        """
-        # of nodes for each sample in batch.
+        """# of nodes for each sample in batch.
 
         They node have already filtered by PPR beforehand
 
@@ -596,8 +591,7 @@ class LPFormer(nn.Module):
 
     def calc_sparse_ppr(self, edge_index: Tensor, num_nodes: int,
                         alpha: float = 0.15, eps: float = 5e-5) -> Tensor:
-        r"""
-        Calculate the PPR of the graph in sparse format.
+        r"""Calculate the PPR of the graph in sparse format.
 
         Args:
             edge_index: The edge indices
@@ -615,8 +609,7 @@ class LPFormer(nn.Module):
 
 
 class LPAttLayer(MessagePassing):
-    r"""
-    Attention Layer for pairwise interaction module.
+    r"""Attention Layer for pairwise interaction module.
 
     Args:
         in_channels (int): Size of input dimension
@@ -692,8 +685,7 @@ class LPAttLayer(MessagePassing):
         node_feats: Tensor,
         ppr_rpes: Tensor,
     ) -> Tensor:
-        """
-        Runs the forward pass of the module.
+        """Runs the forward pass of the module.
 
         Args:
             edge_index (Tensor): The edge indices.
