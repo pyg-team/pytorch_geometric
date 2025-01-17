@@ -17,7 +17,7 @@ def num_isolated_nodes(
     automatically removed before checking for isolated nodes.
 
     Args:
-        edge_index (Tensor): The edge indices.
+        edge_index (torch.Tensor): The edge indices.
         num_nodes (int or tuple, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. For bipartite graph,
             provide a tuple of two integers `(num_src_nodes, num_dst_nodes)`.
@@ -73,7 +73,7 @@ def contains_isolated_nodes(
     contain isolated nodes.
 
     Args:
-        edge_index (Tensor): The edge indices.
+        edge_index (torch.Tensor): The edge indices.
         num_nodes (int or tuple, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. For bipartite graph,
             provide a tuple of two integers `(num_src_nodes, num_dst_nodes)`.
@@ -128,8 +128,8 @@ def remove_isolated_nodes(
     if the graph is bipartite.
 
     Args:
-        edge_index (Tensor): The edge indices.
-        edge_attr (Tensor, optional): Edge weights or multi-dimensional
+        edge_index (torch.Tensor): The edge indices.
+        edge_attr (torch.Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
         num_nodes (int or tuple, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`.For bipartite graph,

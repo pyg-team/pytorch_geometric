@@ -98,8 +98,8 @@ def test_remove_bipartite_isolated_nodes():
                     dst_mask) = remove_isolated_nodes(edge_index, edge_attr,
                                                       num_nodes=(2, 4))
     assert out.tolist() == [[0, 1, 1], [0, 1, 2]]
-    assert src_mask.tolist() == [1, 1]
-    assert dst_mask.tolist() == [0, 1, 1, 1]
+    assert src_mask.tolist() == [True, True]
+    assert dst_mask.tolist() == [False, True, True, True]
     assert out_attr.tolist() == [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
 
     if is_full_test():
@@ -107,14 +107,14 @@ def test_remove_bipartite_isolated_nodes():
         out, out_attr, (src_mask, dst_mask) = jit(edge_index, edge_attr,
                                                   num_nodes=(2, 4))
         assert out.tolist() == [[0, 1, 1], [0, 1, 2]]
-        assert src_mask.tolist() == [1, 1]
-        assert dst_mask.tolist() == [0, 1, 1, 1]
+        assert src_mask.tolist() == [True, True]
+        assert dst_mask.tolist() == [False, True, True, True]
         assert out_attr.tolist() == [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
 
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
     out, out_attr, mask = remove_isolated_nodes(edge_index, edge_attr,
                                                 num_nodes=(3, 3))
     assert out.tolist() == [[0, 1, 0], [1, 0, 0]]
-    assert mask[0].tolist() == [1, 1, 0]
-    assert mask[1].tolist() == [1, 1, 0]
+    assert mask[0].tolist() == [True, True, False]
+    assert mask[1].tolist() == [True, True, False]
     assert out_attr.tolist() == [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
