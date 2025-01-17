@@ -64,11 +64,11 @@ evaluator_hit = Evaluator(name=args.data_name)
 model = LPFormer(data.x.size(-1), args.hidden_channels,
                  num_gnn_layers=args.gnn_layers,
                  ppr_thresholds=args.thresholds, gnn_dropout=args.dropout,
-                 transformer_dropout=args.dropout).to(device)
+                 transformer_dropout=args.dropout, gcn_cache=True).to(device)
 
 # Get PPR matrix in sparse format
 ppr_matrix = model.calc_sparse_ppr(data.edge_index, data.num_nodes,
-                                   eps=args.eps)
+                                   eps=args.eps).to(device)
 
 def train_epoch():
     model.train()
