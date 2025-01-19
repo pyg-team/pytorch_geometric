@@ -20,12 +20,14 @@ from perforatedai import pb_utils as PBU
 '''
 PAI README:
 
-Details about how to get started with Perfroated AI can be found at our home repository here:
+Details about how to get started with Perfroated AI can be found at our home
+repository here:
 https://github.com/PerforatedAI/PerforatedAI-API
 
 Run docker from torch_geometric directory
 
-   docker run --gpus all -i --shm-size=8g -v .:/pai -w /pai -t nvcr.io/nvidia/pyg:24.11-py3 /bin/bash
+   docker run --gpus all -i --shm-size=8g -v .:/pai -w /pai 
+   -t nvcr.io/nvidia/pyg:24.11-py3 /bin/bash
 
 Within Docker
 
@@ -35,7 +37,8 @@ Within Docker
     
 Run original with:
 
-    CUDA_VISIBLE_DEVICES=0 python ogbn_train.py --dataset ogbn-products --batch_size 128
+    CUDA_VISIBLE_DEVICES=0 python ogbn_train.py --dataset ogbn-products 
+    --batch_size 128
 
 Results:
 
@@ -43,7 +46,8 @@ Results:
     
 Run PAI with:
 
-    CUDA_VISIBLE_DEVICES=0 python ogbn_train_perforatedai.py --dataset ogbn-products --batch_size 128 --saveName ogbnPAI
+    CUDA_VISIBLE_DEVICES=0 python ogbn_train_perforatedai.py --dataset 
+    ogbn-products --batch_size 128 --saveName ogbnPAI
     
 Results:
 
@@ -52,24 +56,36 @@ Results:
 '''
 
 # Set Perforated Backpropagation settings for this training run
-
-# When to switch between Dendrite learning and neuron learning is determined by when the history of validation score or correlation scores shows those scores are no longer improving
+'''
+# When to switch between Dendrite learning and neuron learning is determined
+by when the history of validation score or correlation scores shows those
+scores are no longer improving
+'''
 PBG.switchMode = PBG.doingHistory
 # When calculating that just look at the current score, not a recent average
 PBG.historyLookback = 1
 # How many normal epochs to wait for before switching modes.
 PBG.nEpochsToSwitch = 25
 PBG.pEpochsToSwitch = 15  # Same as above for Dendrite epochs
-# The default shape of input tensors will be [batch size, number of neurons in the layer]
+'''
+The default shape of input tensors will be [batch size, number of neurons 
+in the layer]
+'''
 PBG.inputDimensions = [-1, 0]
-# This allows Dendrites to train as long as they keep improving rather than capping
-# Dendrite training cycles to only be as long as the first neuron training cycle.
+'''
+This allows Dendrites to train as long as they keep improving rather
+than capping Dendrite training cycles to only be as long as the first
+neuron training cycle.
+'''
 PBG.capAtN = False
 # Stop the run after 4 dendrites are created
 PBG.maxDendrites = 4
-# If a set of Dendrites does not improve the system try it 2 times before giving up
+# If a set of Dendrites does not improve try 2 times before giving up
 PBG.maxDendriteTries = 2
-# Make sure correlation scores improve from epoch to epoch by at least 25% and a raw value of 1e-4 to conclude that the correlation scores have gone up.
+'''
+Make sure correlation scores improve from epoch to epoch by at least 25% and
+a raw value of 1e-4 to conclude that the correlation scores have gone up.
+'''
 PBG.pbImprovementThreshold = 0.25
 PBG.pbImprovementThresholdRaw = 1e-4
 
@@ -106,12 +122,15 @@ parser.add_argument('--fan_out',
                     default=10,
                     help='number of neighbors in each layer')
 parser.add_argument('--hidden_channels', type=int, default=256)
-# This can be set to 0 to run this code without Perforated Backpropagation happening.
+# Set to 0 to run this code without Perforated Backpropagation happening.
 parser.add_argument('--doingPB', type=int, default=1, help='doing PB')
 parser.add_argument('--lr', type=float, default=0.003)
 parser.add_argument('--wd', type=float, default=0.0)
 parser.add_argument('--dropout', type=float, default=0.5)
-# How to name the PAI output files, must be changed if you run more than one test at a time
+'''
+How to name the PAI output files, must be changed to run more than
+one test at the same time
+'''
 parser.add_argument('--saveName', type=str)
 parser.add_argument(
     '--use_directed_graph',
@@ -243,22 +262,25 @@ else:
 # Set SAGEConv to be a module to create Dendrite versions of
 PBG.moduleNamesToConvert.append('SAGEConv')
 model = model.to(device)
-# Moing this to be called before convert network since it changes some pointers
+# Moing this to be called before convertnetwork since it changes pointers
 model.reset_parameters()
 
 # This is the main PAI function that converts everything under the hood
 # to allow for the addition of dendrites
 model = PBU.convertNetwork(model)
 
-# This initializes the Perforated Backpropagation Tracker object which organizes
-# communication between each individual Dendrite convereted module within a full network
+'''
+This initializes the Perforated Backpropagation Tracker object which
+organizes communication between each individual Dendrite convereted
+module within a full network
+'''
 PBG.pbTracker.initialize(
     doingPB=args.
-    doingPB,  #This can be set to false if you want to do just normal training 
+    doingPB,  # Can be set to False if you want to do just normal training 
     saveName=args.
     saveName,  # Change the save name for different parameter runs
     maximizingScore=
-    True,  # True for maximizing validation score, false for minimizing validation loss
+    True,  # True for maximizing score, False for minimizing loss
     makingGraphs=True)  # True if you want graphs to be saved
 '''
 # This can be added to pick up where it left off if something crashes.
@@ -321,13 +343,15 @@ for epoch in range(1, num_epochs + 1):
     PBG.pbTracker.addExtraScore(train_acc, 'Train Accuracy')
     '''
     Add the validation score
-    This is the function that determines when to add new Dendrites for Dendrite training
-    and when to connect trained Dendrites to neurons for neuron training.
-    model - The model to use going forward.  It is the same if there was not a chance
-        and it is a pointer to a new model if there was a change
+    This is the function that determines when to add new Dendrites for
+    Dendrite training and when to connect trained Dendrites to neurons
+    for neuron training.
+    model - The model to use going forward.  It is the same if there was not
+        a chance and it is a pointer to a new model if there was a change
     improved - Whether or not this validation score improved the old one
     restructured - If a restructing did happen
-    trainingComplete - if the tracker has determined that this is the final model to use
+    trainingComplete - if the tracker has determined that this is the final
+    model to use
     '''
     model, improved, restructured, trainingComplete = PBG.pbTracker.addValidationScore(
         val_acc, model, args.saveName)
@@ -336,7 +360,10 @@ for epoch in range(1, num_epochs + 1):
     # When training is complete break the loop of epochs
     if (trainingComplete):
         break
-    # If the network was restructured reinitialize the optimizer and scheduler for the new paramters
+    '''
+    If the network was restructured reinitialize the optimizer and scheduler
+    for the new paramters
+    '''
     elif (restructured):
         schedArgs = {
             'mode': 'max',
