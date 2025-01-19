@@ -276,7 +276,7 @@ module within a full network
 '''
 PBG.pbTracker.initialize(
     doingPB=args.
-    doingPB,  # Can be set to False if you want to do just normal training 
+    doingPB,  # Can set to False if you want to do just normal training
     saveName=args.
     saveName,  # Change the save name for different parameter runs
     maximizingScore=
