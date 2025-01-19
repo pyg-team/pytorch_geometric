@@ -353,8 +353,9 @@ for epoch in range(1, num_epochs + 1):
     trainingComplete - if the tracker has determined that this is the final
     model to use
     '''
-    model, improved, restructured, trainingComplete = PBG.pbTracker.addValidationScore(
+    outputs = PBG.pbTracker.addValidationScore(
         val_acc, model, args.saveName)
+    model, improved, restructured, trainingComplete = outputs
     # Need to setup GPU settings of the new model
     model = model.to(device)
     # When training is complete break the loop of epochs
@@ -362,8 +363,8 @@ for epoch in range(1, num_epochs + 1):
         break
     elif (restructured):
         '''
-        If the network was restructured reinitialize the optimizer and scheduler
-        for the new paramters
+        If the network was restructured reinitialize the optimizer
+        and scheduler for the new paramters
         '''
         schedArgs = {
             'mode': 'max',
