@@ -360,11 +360,11 @@ for epoch in range(1, num_epochs + 1):
     # When training is complete break the loop of epochs
     if (trainingComplete):
         break
-    '''
-    If the network was restructured reinitialize the optimizer and scheduler
-    for the new paramters
-    '''
     elif (restructured):
+        '''
+        If the network was restructured reinitialize the optimizer and scheduler
+        for the new paramters
+        '''
         schedArgs = {
             'mode': 'max',
             'patience': 5
