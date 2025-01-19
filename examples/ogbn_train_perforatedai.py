@@ -30,8 +30,8 @@ Run docker from torch_geometric directory
 Within Docker
 
     pip install -e .
+    pip perforatedai
     cd examples
-    pip install PAI wheel file
     
 Run original with:
 
