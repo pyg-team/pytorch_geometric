@@ -2,6 +2,10 @@ import argparse
 import os.path as osp
 import time
 
+# Include Perforated AI imports
+from perforatedai import pb_globals as PBG
+from perforatedai import pb_utils as PBU
+
 import psutil
 import torch
 import torch.nn.functional as F
@@ -13,10 +17,6 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
 
-# Include Perforated AI imports
-from perforatedai import pb_globals as PBG
-from perforatedai import pb_models as PBM
-from perforatedai import pb_utils as PBU
 '''
 PAI README:
 
@@ -26,7 +26,7 @@ https://github.com/PerforatedAI/PerforatedAI-API
 
 Run docker from torch_geometric directory
 
-   docker run --gpus all -i --shm-size=8g -v .:/pai -w /pai 
+   docker run --gpus all -i --shm-size=8g -v .:/pai -w /pai
    -t nvcr.io/nvidia/pyg:24.11-py3 /bin/bash
 
 Within Docker
@@ -34,21 +34,21 @@ Within Docker
     pip install -e .
     pip perforatedai
     cd examples
-    
+
 Run original with:
 
-    CUDA_VISIBLE_DEVICES=0 python ogbn_train.py --dataset ogbn-products 
+    CUDA_VISIBLE_DEVICES=0 python ogbn_train.py --dataset ogbn-products
     --batch_size 128
 
 Results:
 
     Test Accuracy: 77.19%
-    
+
 Run PAI with:
 
-    CUDA_VISIBLE_DEVICES=0 python ogbn_train_perforatedai.py --dataset 
+    CUDA_VISIBLE_DEVICES=0 python ogbn_train_perforatedai.py --dataset
     ogbn-products --batch_size 128 --saveName ogbnPAI
-    
+
 Results:
 
     Test Accuracy: 78.37%
@@ -68,7 +68,7 @@ PBG.historyLookback = 1
 PBG.nEpochsToSwitch = 25
 PBG.pEpochsToSwitch = 15  # Same as above for Dendrite epochs
 '''
-The default shape of input tensors will be [batch size, number of neurons 
+The default shape of input tensors will be [batch size, number of neurons
 in the layer]
 '''
 PBG.inputDimensions = [-1, 0]
