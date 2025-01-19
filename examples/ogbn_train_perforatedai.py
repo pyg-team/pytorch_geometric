@@ -13,7 +13,7 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
 
-#Include Perforated AI imports
+# Include Perforated AI imports
 from perforatedai import pb_globals as PBG
 from perforatedai import pb_models as PBM
 from perforatedai import pb_utils as PBU
@@ -95,11 +95,15 @@ parser.add_argument(
 )
 parser.add_argument('-e', '--epochs', type=int, default=50000)
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=2,
+parser.add_argument('--num_heads',
+                    type=int,
+                    default=2,
                     help='number of heads for GAT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
-parser.add_argument('--fan_out', type=int, default=10,
+parser.add_argument('--fan_out',
+                    type=int,
+                    default=10,
                     help='number of neighbors in each layer')
 parser.add_argument('--hidden_channels', type=int, default=256)
 # This can be set to 0 to run this code without Perforated Backpropagation happening.
@@ -337,7 +341,7 @@ for epoch in range(1, num_epochs + 1):
         schedArgs = {
             'mode': 'max',
             'patience': 5
-        }  #Make sure this is lower than epochs to switch
+        }  # Make sure this is lower than epochs to switch
         optimArgs = {
             'params': model.parameters(),
             'lr': args.lr,
