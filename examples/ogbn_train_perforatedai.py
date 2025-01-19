@@ -16,7 +16,6 @@ from tqdm import tqdm
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
-
 '''
 PAI README:
 
@@ -111,15 +110,11 @@ parser.add_argument(
 )
 parser.add_argument('-e', '--epochs', type=int, default=50000)
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads',
-                    type=int,
-                    default=2,
+parser.add_argument('--num_heads', type=int, default=2,
                     help='number of heads for GAT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
-parser.add_argument('--fan_out',
-                    type=int,
-                    default=10,
+parser.add_argument('--fan_out', type=int, default=10,
                     help='number of neighbors in each layer')
 parser.add_argument('--hidden_channels', type=int, default=256)
 # Set to 0 to run this code without Perforated Backpropagation happening.
@@ -268,7 +263,6 @@ model.reset_parameters()
 # This is the main PAI function that converts everything under the hood
 # to allow for the addition of dendrites
 model = PBU.convertNetwork(model)
-
 '''
 This initializes the Perforated Backpropagation Tracker object which
 organizes communication between each individual Dendrite convereted
@@ -280,10 +274,8 @@ PBG.pbTracker.initialize(
     doingPB,  # Can set to False if you want to do just normal training
     saveName=args.
     saveName,  # Change the save name for different parameter runs
-    maximizingScore=
-    True,  # True for maximizing score, False for minimizing loss
+    maximizingScore=True,  # True for max score, False for min loss
     makingGraphs=True)  # True if you want graphs to be saved
-
 '''
 # This can be added to pick up where it left off if something crashes.
 print('pre loading')
@@ -355,8 +347,7 @@ for epoch in range(1, num_epochs + 1):
     trainingComplete - if the tracker has determined that this is the final
     model to use
     '''
-    outputs = PBG.pbTracker.addValidationScore(
-        val_acc, model, args.saveName)
+    outputs = PBG.pbTracker.addValidationScore(val_acc, model, args.saveName)
     model, improved, restructured, trainingComplete = outputs
     # Need to setup GPU settings of the new model
     model = model.to(device)
