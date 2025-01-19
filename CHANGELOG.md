@@ -858,7 +858,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added a scheduler to the Graph Sage OGBN Example [#9877](https://github.com/pyg-team/pytorch_geometric/pull/9877)
 - Added Perforated AI OGBN example to examples repository [#9926](https://github.com/pyg-team/pytorch_geometric/pull/9926)
 
-
 ### Removed
 
 - Remove internal metrics in favor of `torchmetrics` ([#4287](https://github.com/pyg-team/pytorch_geometric/pull/4287))

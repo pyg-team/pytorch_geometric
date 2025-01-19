@@ -381,11 +381,11 @@ pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -
 
 where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu121`, or `cu124` depending on your PyTorch installation.
 
-|             | `cpu` | `cu118` | `cu121` | `cu124` |
+| | `cpu` | `cu118` | `cu121` | `cu124` |
 | ----------- | ----- | ------- | ------- | ------- |
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ✅      | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
+| **Linux** | ✅ | ✅ | ✅ | ✅ |
+| **Windows** | ✅ | ✅ | ✅ | ✅ |
+| **macOS** | ✅ | | | |
 
 #### PyTorch 2.4
 
@@ -397,11 +397,11 @@ pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -
 
 where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu121`, or `cu124` depending on your PyTorch installation.
 
-|             | `cpu` | `cu118` | `cu121` | `cu124` |
+| | `cpu` | `cu118` | `cu121` | `cu124` |
 | ----------- | ----- | ------- | ------- | ------- |
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ✅      | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
+| **Linux** | ✅ | ✅ | ✅ | ✅ |
+| **Windows** | ✅ | ✅ | ✅ | ✅ |
+| **macOS** | ✅ | | | |
 
 **Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, PyTorch 2.1.0/2.1.1/2.1.2, PyTorch 2.2.0/2.2.1/2.2.2, and PyTorch 2.3.0/2.3.1 (following the same procedure).
 **For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.

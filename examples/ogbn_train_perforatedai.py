@@ -2,20 +2,20 @@ import argparse
 import os.path as osp
 import time
 
-# Include Perforated AI imports
-from perforatedai import pb_globals as PBG
-from perforatedai import pb_utils as PBU
-
 import psutil
 import torch
 import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
+# Include Perforated AI imports
+from perforatedai import pb_globals as PBG
+from perforatedai import pb_utils as PBU
 from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
+
 '''
 PAI README:
 
