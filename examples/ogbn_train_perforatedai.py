@@ -15,9 +15,9 @@ from tqdm import tqdm
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE
 from torch_geometric.utils import to_undirected
-'''
-PAI README:
 
+# PAI README:
+'''
 Details about how to get started with Perfroated AI can be found at our home
 repository here:
 https://github.com/PerforatedAI/PerforatedAI-API
