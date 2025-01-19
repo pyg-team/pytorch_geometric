@@ -274,6 +274,7 @@ This initializes the Perforated Backpropagation Tracker object which
 organizes communication between each individual Dendrite convereted
 module within a full network
 '''
+
 PBG.pbTracker.initialize(
     doingPB=args.
     doingPB,  # Can set to False if you want to do just normal training
@@ -282,6 +283,7 @@ PBG.pbTracker.initialize(
     maximizingScore=
     True,  # True for maximizing score, False for minimizing loss
     makingGraphs=True)  # True if you want graphs to be saved
+
 '''
 # This can be added to pick up where it left off if something crashes.
 print('pre loading')
