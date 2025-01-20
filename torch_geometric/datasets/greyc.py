@@ -56,3 +56,9 @@ class GreycDataset(InMemoryDataset):
 
         data, slices = self.collate(data_list)
         torch.save((data, slices), self.processed_paths[0])
+
+    def __repr__(self) -> str:
+        name = self.name.capitalize()
+        if self.name == "mao":
+            name = self.name.upper()
+        return f'{name}({len(self)})'
