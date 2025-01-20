@@ -64,10 +64,6 @@ class LinkPredMetricData:
         pos = torch.searchsorted(flat_label_index, flat_pred_index)
         pos = pos.clamp(max=flat_label_index.size(0) - 1)  # Out-of-bounds.
 
-        print(flat_label_index.size())
-        print(flat_pred_index.size())
-        print(pos)
-
         pred_rel_mat = flat_label_index[pos] == flat_pred_index  # Find matches
         if edge_label_weight is not None:
             pred_rel_mat = edge_label_weight[pos].where(
