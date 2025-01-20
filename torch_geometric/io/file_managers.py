@@ -5,8 +5,13 @@ from os.path import dirname, splitext
 
 
 class DataLoader():
-    def __init__(self, filename, filename_targets=None, gformat=None,
-                 **kwargs):
+    def __init__(
+            self,
+            filename,
+            filename_targets=None,
+            gformat=None,
+            **kwargs
+        ) -> None:
         """Read graph data from filename and load them as NetworkX graphs.
 
         Parameters
