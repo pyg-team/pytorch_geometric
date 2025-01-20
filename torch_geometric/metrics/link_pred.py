@@ -380,6 +380,7 @@ class LinkPredPrecision(LinkPredMetric):
         k (int): The number of top-:math:`k` predictions to evaluate against.
     """
     higher_is_better: bool = True
+    weighted: bool = False
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
