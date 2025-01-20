@@ -139,7 +139,7 @@ class LinkPredMetric(BaseMetric):
     is_differentiable: bool = False
     full_state_update: bool = False
     higher_is_better: Optional[bool] = None
-    weighted: bool = False
+    weighted: bool
 
     def __init__(self, k: int) -> None:
         super().__init__()
