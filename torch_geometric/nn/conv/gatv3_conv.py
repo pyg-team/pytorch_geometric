@@ -14,8 +14,9 @@ from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 
 class GATv3Conv(MessagePassing):
-    """GATv3Conv implements a context-aware attention mechanism inspired by the
-    GATher framework [1], extending GATv2 with element-wise feature multiplication,
+    """GATv3Conv implements a context-aware attention mechanism
+    inspired by the GATher framework [1], extending GATv2 with 
+    element-wise feature multiplication,
     optional weight sharing, and scaling.
 
     Reference:
@@ -96,8 +97,12 @@ class GATv3Conv(MessagePassing):
                 )
 
         if edge_dim is not None:
-            self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
-                                   weight_initializer="glorot")
+            self.lin_edge = Linear(
+                edge_dim, 
+                heads * out_channels, 
+                bias=False,
+                weight_initializer="glorot"
+                )
         else:
             self.lin_edge = None
 
