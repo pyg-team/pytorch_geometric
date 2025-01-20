@@ -208,4 +208,4 @@ class GATv3Conv(MessagePassing):
         return super().update(inputs)
 
     def __repr__(self) -> str:
-        return f"{repr(self.__class__)}({self.in_channels}, {self.out_channels}, heads={self.heads})"
+        return f"GATv3Conv({self.in_channels}, {self.out_channels}, heads={self.heads})"

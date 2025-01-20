@@ -6,7 +6,6 @@ import torch_geometric.typing
 from torch_geometric.nn import GATv3Conv
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import Adj, SparseTensor
-from torch_geometric.utils import add_self_loops  # If needed
 from torch_geometric.utils import to_torch_csc_tensor
 
 
