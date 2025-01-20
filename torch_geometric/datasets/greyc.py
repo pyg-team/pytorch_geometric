@@ -3,14 +3,7 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
-from torch_geometric.io import read_greyc
-from torch_geometric.utils import from_networkx
+from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 
 
 class DatasetNotFoundError(Exception):
@@ -49,40 +42,19 @@ class GreycDataset(InMemoryDataset):
 
     def download(self) -> None:
         """Load the right data according to initializer."""
-        zips = {
-            "alkane": "Aklane.zip",
-            "acyclic": "Acyclic.zip",
-            "mao": "MAO.zip",
-        }
-        file = zips.get(self.name, None)
-        if file is None:
-            raise Exception("Wrong dataset name")
-        path = download_url(GreycDataset.URL + file, self.raw_dir)
+        path = download_url(GreycDataset.URL + self.name + ".zip", self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
     def process(self):
         """Read data into huge `Data` list."""
-        graph_list, property_list = read_greyc(self.raw_dir, self.name)
-
-        def from_nx_to_pyg(graph, y):
-            """Convert networkx graph to pytorch graph and add y."""
-            pyg_graph = from_networkx(
-                graph,
-                group_node_attrs=['atom_symbol', 'degree', 'x', 'y', 'z'])
-            pyg_graph.y = y
-            return pyg_graph
-
-        data_list = [
-            from_nx_to_pyg(graph, y)
-            for graph, y in zip(graph_list, property_list)
-        ]
+        dataset = torch.load(self.raw_dir + self.name + ".pth")
 
         if self.pre_filter is not None:
-            data_list = [data for data in data_list if self.pre_filter(data)]
+            dataset = [data for data in dataset if self.pre_filter(data)]
 
         if self.pre_transform is not None:
-            data_list = [self.pre_transform(data) for data in data_list]
+            dataset = [self.pre_transform(data) for data in dataset]
 
-        data, slices = self.collate(data_list)
+        data, slices = self.collate(dataset)
         torch.save((data, slices), self.processed_paths[0])
