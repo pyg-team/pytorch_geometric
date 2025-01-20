@@ -1,5 +1,5 @@
 import os
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
 import torch
 
@@ -25,13 +25,8 @@ class GreycDataset(InMemoryDataset):
         force_reload: bool = False,
     ) -> None:
         self.name = name.lower()
-        super().__init__(
-            root,
-            transform,
-            pre_transform,
-            pre_filter,
-            force_reload=force_reload
-        )
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -44,7 +39,8 @@ class GreycDataset(InMemoryDataset):
 
     def download(self) -> None:
         """Load the right data according to initializer."""
-        path = download_url(GreycDataset.URL + self.name + ".zip", self.raw_dir)
+        path = download_url(GreycDataset.URL + self.name + ".zip",
+                            self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
