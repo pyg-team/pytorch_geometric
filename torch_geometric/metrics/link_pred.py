@@ -139,7 +139,7 @@ class LinkPredMetric(BaseMetric):
     is_differentiable: bool = False
     full_state_update: bool = False
     higher_is_better: Optional[bool] = None
-    weighted: bool = False
+    weighted: bool
 
     def __init__(self, k: int) -> None:
         super().__init__()
@@ -380,11 +380,22 @@ class LinkPredPrecision(LinkPredMetric):
         k (int): The number of top-:math:`k` predictions to evaluate against.
     """
     higher_is_better: bool = True
-    weighted: bool = False
+
+    def __init__(self, k: int, weighted: bool = False):
+        super().__init__(k=k)
+        self.weighted = weighted
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
-        return pred_rel_mat.sum(dim=-1) / self.k
+        if not self.weighted:
+            return pred_rel_mat.sum(dim=-1) / self.k
+
+        # Compute ideal relevance @ k:
+        assert data.edge_label_weight is not None
+        pos = data.edge_label_weight_pos
+        assert pos is not None
+
+        mask = pos < self.k
 
 
 class LinkPredRecall(LinkPredMetric):
