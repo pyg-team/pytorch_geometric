@@ -6,7 +6,6 @@ from .obj import read_obj
 from .sdf import read_sdf, parse_sdf
 from .off import read_off, write_off
 from .npz import read_npz, parse_npz
-from .greyc import read_greyc
 
 __all__ = [
     'read_off',
@@ -21,5 +20,4 @@ __all__ = [
     'parse_sdf',
     'read_npz',
     'parse_npz',
-    'read_greyc',
 ]
