@@ -11,7 +11,7 @@ class DatasetNotFoundError(Exception):
 
 
 class GreycDataset(InMemoryDataset):
-    r"""Class to load three GREYC Datasets as pytorch geometric dataset."""
+    """Class to load three GREYC Datasets as pytorch geometric dataset."""
 
     URL = ('http://localhost:3000/')
 
@@ -25,20 +25,22 @@ class GreycDataset(InMemoryDataset):
         force_reload: bool = False,
     ) -> None:
         self.name = name.lower()
-        super().__init__(root, transform, pre_transform, pre_filter,
-                         force_reload=force_reload)
+        super().__init__(
+            root,
+            transform,
+            pre_transform,
+            pre_filter,
+            force_reload=force_reload
+        )
         self.data, self.slices = torch.load(self.processed_paths[0])
-
-    def __str__(self) -> str:
-        return self.name
 
     @property
     def processed_file_names(self) -> str:
         return 'data.pt'
 
     @property
-    def raw_file_names(self) -> List[str]:
-        return []
+    def raw_file_names(self) -> str:
+        return f"{self.name.lower()}.pth"
 
     def download(self) -> None:
         """Load the right data according to initializer."""
@@ -48,13 +50,13 @@ class GreycDataset(InMemoryDataset):
 
     def process(self):
         """Read data into huge `Data` list."""
-        dataset = torch.load(self.raw_dir + self.name + ".pth")
+        data_list = torch.load(os.path.join(self.raw_dir, self.name + ".pth"))
 
         if self.pre_filter is not None:
-            dataset = [data for data in dataset if self.pre_filter(data)]
+            data_list = [data for data in data_list if self.pre_filter(data)]
 
         if self.pre_transform is not None:
-            dataset = [self.pre_transform(data) for data in dataset]
+            data_list = [self.pre_transform(data) for data in data_list]
 
-        data, slices = self.collate(dataset)
+        data, slices = self.collate(data_list)
         torch.save((data, slices), self.processed_paths[0])
