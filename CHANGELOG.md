@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.7.0] - 2024-MM-DD
 
 ### Added
+
 - Implemented `GATv3Conv`, a context-aware extension of GATv2 ([#9937](https://github.com/pyg-team/pytorch_geometric/pull/9937))
 - Added support for weighted `LinkPredRecall` metric ([#9947](https://github.com/pyg-team/pytorch_geometric/pull/9947))
 - Added support for weighted `LinkPredNDCG` metric ([#9945](https://github.com/pyg-team/pytorch_geometric/pull/9945))
