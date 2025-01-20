@@ -180,24 +180,18 @@ class GATv3Conv(MessagePassing):
 
     def message(self, x_j: Tensor, x_i: Tensor, edge_index: Tensor) -> Tensor:
 
-        # Self dot product from Vaswani et al. Dec 2017 
+        # Self dot product from Vaswani et al. Dec 2017
         # https://arxiv.org/pdf/1706.03762.pdf
         alpha = x_i * x_j
         alpha = self.context_attention_layer(alpha).squeeze(-1)
 
-        # Equation 1 from Vaswani et al. Dec 2017 
+        # Equation 1 from Vaswani et al. Dec 2017
         # https://arxiv.org/pdf/1706.03762.pdf
         norm = math.sqrt(x_i.size(-1))
         alpha = alpha / norm
-        alpha = softmax(
-            alpha, index=edge_index[1, :], ptr=None
-        )
+        alpha = softmax(alpha, index=edge_index[1, :], ptr=None)
         self._alpha = alpha
-        alpha = F.dropout(
-            alpha, 
-            p=self.dropout, 
-            training=self.training
-            )
+        alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         alpha = alpha.unsqueeze(-1)  # Fix shapes
 
         return x_j * alpha
