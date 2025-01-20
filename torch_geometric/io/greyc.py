@@ -3,15 +3,18 @@
 
 import os
 from typing import List, Union
+import warnings
 
 from torch_geometric.io.file_managers import DataLoader
 
 PATH = os.path.dirname(__file__)
 
 
-def one_hot_encode(val: Union[int, str], allowable_set: Union[List[str],
-                                                              List[int]],
-                   include_unknown_set: bool = False) -> List[float]:
+def one_hot_encode(
+        val: Union[int, str],
+        allowable_set: Union[List[str], List[int]],
+        include_unknown_set: bool = False
+    ) -> List[float]:
     """One hot encoder for elements of a provided set.
 
     Examples:
@@ -32,27 +35,32 @@ def one_hot_encode(val: Union[int, str], allowable_set: Union[List[str],
     allowable_set: List[int] or List[str]
             List of allowable quantities.
     include_unknown_set: bool, default False
-            If true, the index of all values not in `allowable_set` is `len(allowable_set)`.
+            If true, the index of all values not
+            in `allowable_set` is `len(allowable_set)`.
 
     Returns:
     -------
     List[float]
             An one-hot vector of val.
-            If `include_unknown_set` is False, the length is `len(allowable_set)`.
-            If `include_unknown_set` is True, the length is `len(allowable_set) + 1`.
+            If `include_unknown_set` is False,
+            the length is `len(allowable_set)`.
+            If `include_unknown_set` is True,
+            the length is `len(allowable_set) + 1`.
 
     Raises:
     ------
     ValueError
             If include_unknown_set is False and `val` is not in `allowable_set`.
     """
-    if include_unknown_set is False:
+    if not include_unknown_set:
         if val not in allowable_set:
-            logger.info("input {} not in allowable set {}:".format(
-                val, allowable_set))
+            warnings.warn(
+                f"input {val} not in allowable set {allowable_set}.",           
+                UserWarning
+            )
 
     # init an one-hot vector
-    if include_unknown_set is False:
+    if not include_unknown_set:
         one_hot_legnth = len(allowable_set)
     else:
         one_hot_legnth = len(allowable_set) + 1
@@ -70,7 +78,8 @@ def one_hot_encode(val: Union[int, str], allowable_set: Union[List[str],
 
 
 def prepare_graph(
-        graph, atom_list=['C', 'N', 'O', 'F', 'P', 'S', 'Cl', 'Br', 'I', 'H']):
+        graph, atom_list=['C', 'N', 'O', 'F', 'P', 'S', 'Cl', 'Br', 'I', 'H']
+    ):
     """Prepare graph to include all data before pyg conversion
     Parameters
     ----------
@@ -141,15 +150,23 @@ def _loader_alkane(dir: str):
 
 
 def _loader_acyclic(dir: str):
-    dloader = DataLoader(os.path.join(dir,
-                                      'dataset_bps.ds'), filename_targets=None,
-                         dformat='ds', gformat='ct', y_separator=' ')
+    dloader = DataLoader(
+        os.path.join(dir, 'dataset_bps.ds'),
+        filename_targets=None,
+        dformat='ds',
+        gformat='ct',
+        y_separator=' '
+    )
     return dloader
 
 
 def _loader_mao(dir: str):
-    dloader = DataLoader(os.path.join(dir,
-                                      'dataset.ds'), filename_targets=None,
-                         dformat='ds', gformat='ct', y_separator=' ')
+    dloader = DataLoader(
+        os.path.join(dir, 'dataset.ds'),
+        filename_targets=None,
+        dformat='ds',
+        gformat='ct',
+        y_separator=' '
+    )
     dloader._targets = [int(yi) for yi in dloader.targets]
     return dloader

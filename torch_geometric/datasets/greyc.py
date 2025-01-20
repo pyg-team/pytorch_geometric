@@ -1,8 +1,14 @@
+import os
 from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_greyc
 from torch_geometric.utils import from_networkx
 
@@ -14,8 +20,7 @@ class DatasetNotFoundError(Exception):
 class GreycDataset(InMemoryDataset):
     r"""Class to load three GREYC Datasets as pytorch geometric dataset."""
 
-    URL = ('https://raw.githubusercontent.com/bgauzere/greycdata/refs/'
-           'heads/main/greycdata/data/')
+    URL = ('http://localhost:3000/')
 
     def __init__(
         self,
@@ -44,20 +49,21 @@ class GreycDataset(InMemoryDataset):
 
     def download(self) -> None:
         """Load the right data according to initializer."""
-        if self.name == 'alkane':
-            download_url(GreycDataset.URL + "Aklane", self.raw_dir)
-        elif self.name == 'acyclic':
-            download_url(GreycDataset.URL + "Acyclic", self.raw_dir)
-        elif self.name == 'mao':
-            download_url(GreycDataset.URL + "MAO", self.raw_dir)
-        else:
-            raise DatasetNotFoundError(f"Dataset `{self.name}` not found")
+        zips = {
+            "alkane": "Aklane.zip",
+            "acyclic": "Acyclic.zip",
+            "mao": "MAO.zip",
+        }
+        file = zips.get(self.name, None)
+        if file is None:
+            raise Exception("Wrong dataset name")
+        path = download_url(GreycDataset.URL + file, self.raw_dir)
+        extract_zip(path, self.raw_dir)
+        os.unlink(path)
 
     def process(self):
         """Read data into huge `Data` list."""
         graph_list, property_list = read_greyc(self.raw_dir, self.name)
-
-        # Convert to PyG.
 
         def from_nx_to_pyg(graph, y):
             """Convert networkx graph to pytorch graph and add y."""
