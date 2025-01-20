@@ -3,9 +3,8 @@ from typing import Callable, List, Optional
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url
+from torch_geometric.io import read_greyc
 from torch_geometric.utils import from_networkx
-
-# https://pytorch-geometric.readthedocs.io/en/latest/notes/create_dataset.html#creating-in-memory-datasets
 
 
 class DatasetNotFoundError(Exception):
@@ -15,7 +14,8 @@ class DatasetNotFoundError(Exception):
 class GreycDataset(InMemoryDataset):
     r"""Class to load three GREYC Datasets as pytorch geometric dataset."""
 
-    URL = 'https://github.com/bgauzere/greycdata/tree/main/greycdata/data/'
+    URL = ('https://raw.githubusercontent.com/bgauzere/greycdata/refs/'
+           'heads/main/greycdata/data/')
 
     def __init__(
         self,
@@ -42,21 +42,6 @@ class GreycDataset(InMemoryDataset):
     def raw_file_names(self) -> List[str]:
         return []
 
-    # def _load_alkane(self) -> None:
-    #     """Load Alkane dataset."""
-    #     url = GreycDataset.URL + "Alkane"
-    #     download_url(url, self.raw_dir)
-
-    # def _load_acyclic(self) -> None:
-    #     """Load Acyclic dataset."""
-    #     url = GreycDataset.URL + "Acyclic"
-    #     download_url(url, self.raw_dir)
-
-    # def _load_mao(self) -> None:
-    #     """Load MAO dataset."""
-    #     url = GreycDataset.URL + "MAO"
-    #     download_url(url, self.raw_dir)
-
     def download(self) -> None:
         """Load the right data according to initializer."""
         if self.name == 'alkane':
@@ -70,7 +55,7 @@ class GreycDataset(InMemoryDataset):
 
     def process(self):
         """Read data into huge `Data` list."""
-        graph_list, property_list = self._load_data()
+        graph_list, property_list = read_greyc(self.raw_dir, self.name)
 
         # Convert to PyG.
 
