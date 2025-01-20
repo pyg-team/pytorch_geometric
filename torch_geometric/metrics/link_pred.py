@@ -30,6 +30,14 @@ class LinkPredMetricData:
         if hasattr(self, '_pred_rel_mat'):
             return self._pred_rel_mat  # type: ignore
 
+        if self.edge_label_index[1].numel() == 0:
+            self._pred_rel_mat = torch.zeros_like(
+                self.pred_index_mat,
+                dtype=torch.bool if self.edge_label_weight is None else
+                torch.get_default_dtype(),
+            )
+            return self._pred_rel_mat
+
         # Flatten both prediction and ground-truth indices, and determine
         # overlaps afterwards via `torch.searchsorted`.
         max_index = max(  # type: ignore
@@ -55,6 +63,10 @@ class LinkPredMetricData:
 
         pos = torch.searchsorted(flat_label_index, flat_pred_index)
         pos = pos.clamp(max=flat_label_index.size(0) - 1)  # Out-of-bounds.
+
+        print(flat_label_index.size())
+        print(flat_pred_index.size())
+        print(pos)
 
         pred_rel_mat = flat_label_index[pos] == flat_pred_index  # Find matches
         if edge_label_weight is not None:
