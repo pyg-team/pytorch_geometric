@@ -7,15 +7,10 @@ from torch_geometric.data import InMemoryDataset, download_url, extract_zip
 
 
 class GreycDataset(InMemoryDataset):
-    r"""A variety of graph kernel benchmark datasets, *.e.g.*,
-    :obj:`"IMDB-BINARY"`, :obj:`"REDDIT-BINARY"` or :obj:`"PROTEINS"`,
-    collected from the `TU Dortmund University
-    <https://chrsmrrs.github.io/datasets>`_.
-    In addition, this dataset wrapper provides `cleaned dataset versions
-    <https://github.com/nd7141/graph_datasets>`_ as motivated by the
-    `"Understanding Isomorphism Bias in Graph Data Sets"
-    <https://arxiv.org/abs/1910.12091>`_ paper, containing only non-isomorphic
-    graphs.
+    r"""Implementation of three GREYC chemistry small datasets as pytorch
+        geometric datasets : Alkane, Acyclic and MAO.
+        See `"CHEMISTRY" <https://brunl01.users.greyc.fr/CHEMISTRY/>`_
+        for details.
 
     .. note::
         Some datasets may not come with any node labels.
@@ -28,7 +23,7 @@ class GreycDataset(InMemoryDataset):
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The `name
-            <https://chrsmrrs.github.io/datasets/docs/datasets/>`_ of the
+            <https://brunl01.users.greyc.fr/CHEMISTRY/>`_ of the
             dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -57,18 +52,24 @@ class GreycDataset(InMemoryDataset):
           - #edges
           - #features
           - #classes
-        * - MUTAG
-          - 188
-          - ~17.9
-          - ~39.6
-          - 7
-          - 2
-        * - ENZYMES
-          - 600
-          - ~32.6
-          - ~124.3
-          - 3
-          - 6
+        * - Acyclic
+          - 183
+          - /
+          - /
+          - /
+          - /
+        * - Alkane
+          - 150
+          - /
+          - /
+          - /
+          - /
+        * - MAO
+          - 68
+          - /
+          - /
+          - /
+          - /
     """
 
     URL = ('http://localhost:3000/')
