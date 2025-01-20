@@ -29,10 +29,13 @@ parser.add_argument(
     help='Root directory of dataset.',
 )
 parser.add_argument(
-    '--use_gat',
-    action='store_true',
-    help='Whether or not to use GAT model',
+    '--gnn-choice',
+    type=str,
+    choices=['sage', 'gat', 'gatv3'],
+    default='sage',
+    help='Select the GNN model: GraphSAGE, GAT, or GATv3.',
 )
+
 parser.add_argument('-e', '--epochs', type=int, default=10)
 parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=2,
@@ -154,7 +157,7 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-if args.use_gat:
+if args.gnn_choice == 'gat':
     model = GAT(
         in_channels=dataset.num_features,
         hidden_channels=num_hidden_channels,
@@ -163,7 +166,15 @@ if args.use_gat:
         dropout=args.dropout,
         heads=args.num_heads,
     )
-else:
+elif args.gnn_choice == 'gatv3':
+    from torch_geometric.nn import GATv3Conv  # Import GATv3
+    model = GATv3Conv(
+        in_channels=dataset.num_features,
+        out_channels=dataset.num_classes,
+        heads=args.num_heads,
+        dropout=args.dropout,
+    )
+else:  # Default is GraphSAGE
     model = GraphSAGE(
         in_channels=dataset.num_features,
         hidden_channels=num_hidden_channels,
@@ -171,6 +182,7 @@ else:
         out_channels=dataset.num_classes,
         dropout=args.dropout,
     )
+
 
 model = model.to(device)
 model.reset_parameters()
@@ -203,6 +215,7 @@ for epoch in range(1, num_epochs + 1):
 
     if val_acc > best_val:
         best_val = val_acc
+        best_model = args.gnn_choice  # Track the best model
     times.append(time.perf_counter() - train_start)
 
 print(f'Average Epoch Time on training: '

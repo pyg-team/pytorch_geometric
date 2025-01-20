@@ -31,11 +31,13 @@ def test_gatv3_conv(share_weights):
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)  # (num_nodes, heads * out_channels)
     # Check consistency on repeated calls:
+    conv.eval()
     assert torch.allclose(conv(x1, edge_index), out)
+
 
     # Check CSC adjacency:
     # (Tensors must often be transposed if needed, similar to GATv2 tests.)
-    assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x1, adj1.to_sparse_coo()), out, atol=1e-6)
 
     # If torch_sparse is available, also check with a SparseTensor:
     if torch_geometric.typing.WITH_TORCH_SPARSE:
