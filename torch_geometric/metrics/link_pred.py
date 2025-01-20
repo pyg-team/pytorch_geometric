@@ -381,21 +381,9 @@ class LinkPredPrecision(LinkPredMetric):
     """
     higher_is_better: bool = True
 
-    def __init__(self, k: int, weighted: bool = False):
-        super().__init__(k=k)
-        self.weighted = weighted
-
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
-        if not self.weighted:
-            return pred_rel_mat.sum(dim=-1) / self.k
-
-        # Compute ideal relevance @ k:
-        assert data.edge_label_weight is not None
-        pos = data.edge_label_weight_pos
-        assert pos is not None
-
-        mask = pos < self.k
+        return pred_rel_mat.sum(dim=-1) / self.k
 
 
 class LinkPredRecall(LinkPredMetric):
