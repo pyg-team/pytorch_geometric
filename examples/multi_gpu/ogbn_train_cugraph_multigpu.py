@@ -111,8 +111,9 @@ def evaluate(rank, loader, model):
             pred = out.argmax(dim=-1)
             y = batch.y[:batch_size].view(-1).to(torch.long)
 
-            total_correct += int((pred == y).sum())
+            total_correct += (pred == y).sum()
             total_examples += y.size(0)
+        total_correct = total_correct.item()
 
         acc = total_correct / total_examples
     return acc
@@ -234,12 +235,11 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
               "seconds")
         print("Beginning training...")
 
-    test_accs = []
     val_accs = []
     times = []
     train_times = []
     inference_times = []
-    best_val = best_test = 0.
+    best_val = 0.
     start = time.time()
     for epoch in range(1, epochs + 1):
         train_start = time.time()
@@ -269,27 +269,20 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         dist.barrier()
         val_acc = evaluate(rank, val_loader, model)
         dist.barrier()
-        test_acc = evaluate(rank, test_loader, model)
-        dist.barrier()
 
         inference_times.append(time.time() - inference_start)
-        test_accs.append(test_acc)
         val_accs.append(val_acc)
         if rank == 0:
             print(f'Epoch {epoch:02d}, Loss: {total_loss:.4f}, Approx. Train:'
                   f' {train_acc:.4f} Time: {train_end - train_start:.4f}s')
-            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                  f'Test: {test_acc:.4f}')
+            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, ')
 
         times.append(time.time() - train_start)
         if val_acc > best_val:
             best_val = val_acc
-        if test_acc > best_test:
-            best_test = test_acc
 
     print(f"Total time used for rank: {rank:02d} is {time.time()-start:.4f}")
     if rank == 0:
-        test_acc = torch.tensor(test_accs)
         val_acc = torch.tensor(val_accs)
         print('============================')
         print("Average Epoch Time on training: {:.4f}".format(
@@ -298,10 +291,8 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
             torch.tensor(inference_times).mean()))
         print(f"Average Epoch Time: {torch.tensor(times).mean():.4f}")
         print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
-        print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
         print(f'Final Validation: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
         print(f"Best validation accuracy: {best_val:.4f}")
-        print(f"Best testing accuracy: {best_test:.4f}")
 
     if rank == 0:
         print("Testing...")
@@ -356,7 +347,7 @@ if __name__ == '__main__':
             dataset.num_classes,
         )
     else:
-        pass
+        raise ValueError('Unsupported model type: {args.model}') 
 
     print("Data =", data)
     if args.num_devices < 1:
