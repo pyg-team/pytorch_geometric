@@ -1,9 +1,8 @@
 import os
 from typing import Callable, Optional
 
-import torch
-
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
+from torch_geometric.io import fs
 
 
 class GreycDataset(InMemoryDataset):
@@ -54,22 +53,22 @@ class GreycDataset(InMemoryDataset):
           - #classes
         * - Acyclic
           - 183
-          - /
-          - /
-          - /
-          - /
+          - ~8.2
+          - ~14.3
+          - 15
+          - 148
         * - Alkane
           - 150
-          - /
-          - /
-          - /
-          - /
+          - ~8.9
+          - ~15.8
+          - 15
+          - 123
         * - MAO
           - 68
-          - /
-          - /
-          - /
-          - /
+          - ~18.4
+          - ~39.3
+          - 15
+          - 2
     """
 
     URL = ('http://localhost:3000/')
@@ -88,7 +87,7 @@ class GreycDataset(InMemoryDataset):
             raise ValueError(f"Dataset {self.name} not found.")
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.data, self.slices = fs.torch_load(self.processed_paths[0])
 
     @property
     def processed_file_names(self) -> str:
@@ -105,7 +104,8 @@ class GreycDataset(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        data_list = torch.load(os.path.join(self.raw_dir, self.name + ".pth"))
+        data_list = fs.torch_load(
+            os.path.join(self.raw_dir, self.name + ".pth"))
 
         if self.pre_filter is not None:
             data_list = [data for data in data_list if self.pre_filter(data)]
@@ -114,7 +114,7 @@ class GreycDataset(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
 
         data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+        fs.torch_save((data, slices), self.processed_paths[0])
 
     def __repr__(self) -> str:
         name = self.name.capitalize()
