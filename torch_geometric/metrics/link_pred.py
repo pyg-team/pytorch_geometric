@@ -492,7 +492,7 @@ class LinkPredNDCG(LinkPredMetric):
                 self.discount,
                 self.discount.new_full((1, ), fill_value=float('inf')),
             ])
-            discount = discount[pos.clamp(max=self.k + 1)]
+            discount = discount[pos.clamp(max=self.k)]
 
             idcg = scatter(  # Apply discount and aggregate:
                 data.edge_label_weight / discount,
