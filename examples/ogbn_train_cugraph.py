@@ -14,6 +14,9 @@ from rmm.allocators.torch import rmm_torch_allocator
 # Must change allocators immediately upon import
 # or else other imports will cause memory to be
 # allocated and prevent changing the allocator
+# rmm.reinitialize() provides an easy way to initialize RMM 
+# with specific memory resource options across multiple devices. 
+# See help(rmm.reinitialize) for full details.
 rmm.reinitialize(devices=[0], pool_allocator=True, managed_memory=True)
 cupy.cuda.set_allocator(rmm_cupy_allocator)
 torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
@@ -125,8 +128,8 @@ def train(model, train_loader):
         loss.backward()
         optimizer.step()
 
-        total_loss += float(loss) * y.size(0)
-        total_correct += int(out.argmax(dim=-1).eq(y).sum())
+        total_loss += loss.item() * y.size(0)
+        total_correct += out.argmax(dim=-1).eq(y).sum().item()
         total_examples += y.size(0)
 
     return total_loss / total_examples, total_correct / total_examples
@@ -142,7 +145,7 @@ def test(model, loader):
         out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].view(-1).to(torch.long)
 
-        total_correct += int(out.argmax(dim=-1).eq(y).sum())
+        total_correct += out.argmax(dim=-1).eq(y).sum().item()
         total_examples += y.size(0)
 
     return total_correct / total_examples
@@ -202,7 +205,7 @@ if __name__ == '__main__':
             dataset.num_classes,
         ).cuda()
     else:
-        pass
+        raise ValueError('Unsupported model type: {args.model}')
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.wd)
@@ -238,12 +241,11 @@ if __name__ == '__main__':
         print("Total time before training begins (prep_time) =", prep_time,
               "seconds")
         print("Beginning training...")
-        test_accs = []
         val_accs = []
         times = []
         train_times = []
         inference_times = []
-        best_val = best_test = 0.
+        best_val = 0.
         start = time.time()
         epochs = args.epochs
         for epoch in range(1, epochs + 1):
@@ -254,24 +256,18 @@ if __name__ == '__main__':
             inference_start = time.time()
             train_acc = test(model, train_loader)
             val_acc = test(model, val_loader)
-            test_acc = test(model, test_loader)
 
             inference_times.append(time.time() - inference_start)
-            test_accs.append(test_acc)
             val_accs.append(val_acc)
             print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train:'
                   f' {train_acc:.4f} Time: {train_end - train_start:.4f}s')
-            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-                  f'Test: {test_acc:.4f}')
+            print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, ')
 
             times.append(time.time() - train_start)
             if val_acc > best_val:
                 best_val = val_acc
-            if test_acc > best_test:
-                best_test = test_acc
 
         print(f"Total time used: is {time.time()-start:.4f}")
-        test_acc = torch.tensor(test_accs)
         val_acc = torch.tensor(val_accs)
         print('============================')
         print("Average Epoch Time on training: {:.4f}".format(
@@ -280,10 +276,8 @@ if __name__ == '__main__':
             torch.tensor(inference_times).mean()))
         print(f"Average Epoch Time: {torch.tensor(times).mean():.4f}")
         print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
-        print(f'Final Test: {test_acc.mean():.4f} ± {test_acc.std():.4f}')
         print(f'Final Validation: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
         print(f"Best validation accuracy: {best_val:.4f}")
-        print(f"Best testing accuracy: {best_test:.4f}")
 
         print("Testing...")
         final_test_acc = test(model, test_loader)
