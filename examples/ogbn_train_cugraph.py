@@ -14,8 +14,8 @@ from rmm.allocators.torch import rmm_torch_allocator
 # Must change allocators immediately upon import
 # or else other imports will cause memory to be
 # allocated and prevent changing the allocator
-# rmm.reinitialize() provides an easy way to initialize RMM 
-# with specific memory resource options across multiple devices. 
+# rmm.reinitialize() provides an easy way to initialize RMM
+# with specific memory resource options across multiple devices.
 # See help(rmm.reinitialize) for full details.
 rmm.reinitialize(devices=[0], pool_allocator=True, managed_memory=True)
 cupy.cuda.set_allocator(rmm_cupy_allocator)
