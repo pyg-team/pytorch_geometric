@@ -215,7 +215,7 @@ def _parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
             potential_trip = tuple(split_trip)
         except:  # noqa
             continue
-        if 'tuple' in str(type(potential_trip)) and len(potential_trip) == 3:
+        if 'tuple' in str(type(potential_trip)) and len(potential_trip) == 3 and "note:" not in triple[0]:
             processed.append(potential_trip)
     return processed
 
