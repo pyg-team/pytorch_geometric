@@ -7,8 +7,8 @@ from torch_geometric.io import fs
 
 class GreycDataset(InMemoryDataset):
     r"""Implementation of three GREYC chemistry small datasets as pytorch
-        geometric datasets : Alkane, Acyclic and MAO.
-        See `"CHEMISTRY" <https://brunl01.users.greyc.fr/CHEMISTRY/>`_
+        geometric datasets : Alkane, Acyclic and MAO. See
+        `"GREYC's Chemistry dataset" <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_
         for details.
 
     .. note::
@@ -22,7 +22,7 @@ class GreycDataset(InMemoryDataset):
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The `name
-            <https://brunl01.users.greyc.fr/CHEMISTRY/>`_ of the
+            <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_ of the
             dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
