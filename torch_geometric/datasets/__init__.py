@@ -80,6 +80,7 @@ from .web_qsp_dataset import WebQSPDataset
 from .git_mol_dataset import GitMolDataset
 from .molecule_gpt_dataset import MoleculeGPTDataset
 from .tag_dataset import TAGDataset
+from .greyc import GreycDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -196,6 +197,7 @@ homo_datasets = [
     'GitMolDataset',
     'MoleculeGPTDataset',
     'TAGDataset',
+    'GreycDataset',
 ]
 
 hetero_datasets = [
@@ -217,9 +219,11 @@ hetero_datasets = [
     'RCDD',
     'OPFDataset',
 ]
+
 hyper_datasets = [
     'CornellTemporalHyperGraphDataset',
 ]
+
 synthetic_datasets = [
     'FakeDataset',
     'FakeHeteroDataset',
