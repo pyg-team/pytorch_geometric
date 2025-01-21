@@ -259,8 +259,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     def apply_retrieval_via_pcst(
         graph: Data,
         query: str,
-        topk: int = 10,
-        topk_e: int = 10,
+        topk: int = 5,
+        topk_e: int = 5,
         cost_e: float = 1.0,
     ) -> Tuple[Data, str]:
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
