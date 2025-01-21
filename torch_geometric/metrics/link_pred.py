@@ -477,13 +477,8 @@ class LinkPredNDCG(LinkPredMetric):
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
-        print()
-        print('pred_rel_mat')
-        print(pred_rel_mat)
         discount = self.discount[:pred_rel_mat.size(1)].view(1, -1)
         dcg = (pred_rel_mat / discount).sum(dim=-1)
-        print('dcg')
-        print(dcg)
 
         if not self.weighted:
             assert self.idcg is not None
