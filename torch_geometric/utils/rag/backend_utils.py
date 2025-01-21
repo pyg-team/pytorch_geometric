@@ -261,7 +261,7 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         query: str,
         topk: int = 5,
         topk_e: int = 5,
-        cost_e: float = 1.0,
+        cost_e: float = .5,
     ) -> Tuple[Data, str]:
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
         q_emb = model.encode([query]).to("cpu")
