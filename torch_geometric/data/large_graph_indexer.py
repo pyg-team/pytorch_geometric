@@ -31,6 +31,7 @@ KnowledgeGraphLike = Iterable[TripletLike]
 
 
 def ordered_set(values: Iterable[str]) -> List[str]:
+    # dicts mantain order while keeping unique keys
     return list(dict.fromkeys(values))
 
 
@@ -172,6 +173,7 @@ class LargeGraphIndexer:
             LargeGraphIndexer: Index of unique nodes and edges.
         """
         # NOTE: Right now assumes that all trips can be loaded into memory
+        # initialize as a list and then remove duplicates
         nodes = []
         edges = []
 
@@ -191,6 +193,7 @@ class LargeGraphIndexer:
 
             edge_idx = (h, r, t)
             edges.add(edge_idx)
+        # removes duplicates while mantaining order
         nodes = ordered_set(nodes)
         edges = ordered_set(edges)
         return cls(list(nodes), list(edges))
