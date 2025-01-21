@@ -128,9 +128,11 @@ def train(model, train_loader):
         loss.backward()
         optimizer.step()
 
-        total_loss += loss.item() * y.size(0)
-        total_correct += out.argmax(dim=-1).eq(y).sum().item()
+        total_loss += loss * y.size(0)
+        total_correct += out.argmax(dim=-1).eq(y).sum()
         total_examples += y.size(0)
+    total_loss = total_loss.item()
+    total_correct = total_correct.item()
 
     return total_loss / total_examples, total_correct / total_examples
 
