@@ -347,7 +347,7 @@ if __name__ == '__main__':
             dataset.num_classes,
         )
     else:
-        raise ValueError('Unsupported model type: {args.model}') 
+        raise ValueError('Unsupported model type: {args.model}')
 
     print("Data =", data)
     if args.num_devices < 1:
