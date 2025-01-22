@@ -160,7 +160,7 @@ def get_loss(model, batch, model_save_name: str) -> Tensor:
         )
 
 
-def inference_step(model, batch, model_save_name):
+def inference_step(model, batch, model_save_name="gnn+llm"):
     """Performs inference on a given batch of data using the provided model.
 
     Args:
@@ -185,6 +185,27 @@ def inference_step(model, batch, model_save_name):
             batch.desc  # description
         )
 
+def adjust_learning_rate(param_group, LR, epoch):
+        """Decay learning rate with half-cycle cosine after warmup.
+
+        Args:
+            param_group (dict): Parameter group.
+            LR (float): Learning rate.
+            epoch (int): Current epoch.
+
+        Returns:
+            float: Adjusted learning rate.
+        """
+        min_lr = 5e-6
+        warmup_epochs = 1
+        if epoch < warmup_epochs:
+            lr = LR
+        else:
+            lr = min_lr + (LR - min_lr) * 0.5 * (
+                1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
+                               (num_epochs - warmup_epochs)))
+        param_group['lr'] = lr
+        return lr
 
 def train(
         num_epochs,  # Total number of training epochs
@@ -218,27 +239,6 @@ def train(
     Returns:
         None
     """
-    def adjust_learning_rate(param_group, LR, epoch):
-        """Decay learning rate with half-cycle cosine after warmup.
-
-        Args:
-            param_group (dict): Parameter group.
-            LR (float): Learning rate.
-            epoch (int): Current epoch.
-
-        Returns:
-            float: Adjusted learning rate.
-        """
-        min_lr = 5e-6
-        warmup_epochs = 1
-        if epoch < warmup_epochs:
-            lr = LR
-        else:
-            lr = min_lr + (LR - min_lr) * 0.5 * (
-                1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
-                               (num_epochs - warmup_epochs)))
-        param_group['lr'] = lr
-        return lr
 
     # Start training time
     start_time = time.time()
