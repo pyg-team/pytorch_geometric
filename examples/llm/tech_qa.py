@@ -4,6 +4,7 @@ from itertools import chain
 
 import datasets
 import torch
+from llm.g_retriever import adjust_learning_rate, get_loss
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
@@ -15,7 +16,6 @@ from torch_geometric.utils.rag.backend_utils import (
     make_pcst_filter,
     preprocess_triplet,
 )
-from llm.g_retriever import get_loss, adjust_learning_rate
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
