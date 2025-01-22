@@ -239,6 +239,6 @@ if __name__ == '__main__':
 
     for test_batch in tqdm(test_loader, desc="Test:"):
         metrics.append(
-            eval(inference_step(model, test_batch), test_batch.answer))
+            eval(inference_step(model, test_batch), test_batch.label))
     avg_metrics = sum(metrics) / len(metrics)
     print("Avg metric=", avg_metrics)
