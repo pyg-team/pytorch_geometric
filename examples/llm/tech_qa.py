@@ -6,6 +6,7 @@ import datasets
 import torch
 from tqdm import tqdm
 
+from examples.llm.g_retriever import adjust_learning_rate, get_loss
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn.models import GAT, GRetriever
@@ -15,7 +16,6 @@ from torch_geometric.utils.rag.backend_utils import (
     make_pcst_filter,
     preprocess_triplet,
 )
-from examples.llm.g_retriever import get_loss, adjust_learning_rate
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
