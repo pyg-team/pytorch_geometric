@@ -120,7 +120,7 @@ def retrieval_via_pcst(
 
     data = Data(
         x=data.x[selected_nodes],
-        edge_index=torch.tensor([src, dst]),
+        edge_index=torch.tensor([src, dst]).to(torch.long),
         edge_attr=data.edge_attr[selected_edges],
     )
 
