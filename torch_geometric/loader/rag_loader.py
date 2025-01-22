@@ -60,7 +60,8 @@ class RAGQueryLoader:
                  seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
                  seed_edges_kwargs: Optional[Dict[str, Any]] = None,
                  sampler_kwargs: Optional[Dict[str, Any]] = None,
-                 loader_kwargs: Optional[Dict[str, Any]] = None):
+                 loader_kwargs: Optional[Dict[str, Any]] = None,
+                 local_filter_kwargs: Optional[Dict[str, Any]] = None):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -80,6 +81,8 @@ class RAGQueryLoader:
                 pass into process for sampling graph. Defaults to None.
             loader_kwargs (Optional[Dict[str, Any]], optional): Parameters to
                 pass into process for loading graph features. Defaults to None.
+            local_filter_kwargs (Optional[Dict[str, Any]], optional): Parameters to
+                pass into process for filtering features. Defaults to None.
         """
         fstore, gstore = data
         self.feature_store = fstore
@@ -91,6 +94,7 @@ class RAGQueryLoader:
         self.seed_edges_kwargs = seed_edges_kwargs or {}
         self.sampler_kwargs = sampler_kwargs or {}
         self.loader_kwargs = loader_kwargs or {}
+        self.local_filter_kwargs = local_filter_kwargs or {}
 
     def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
@@ -123,5 +127,5 @@ class RAGQueryLoader:
                 (remap_dict[int(src)], remap_dict[int(dst)]))
         data.edge_index = torch.tensor(list_edge_index).t()
         if self.local_filter:
-            data = self.local_filter(data, query)
+            data = self.local_filter(data, query, **self.local_filter_kwargs)
         return data

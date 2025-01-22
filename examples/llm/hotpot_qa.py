@@ -128,10 +128,16 @@ if __name__ == '__main__':
     fanout = 400
     # number of hops for neighborsampling
     num_hops = 2
+    local_filter_kwargs = {
+        topk:5, # nodes
+        topk_e:5, # edges
+        cost_e:.5 # edge cost
+    }
     query_loader = RAGQueryLoader(
         data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
         sampler_kwargs={"num_neighbors": [fanout] * num_hops},
-        local_filter=make_pcst_filter(triples, model))
+        local_filter=make_pcst_filter(triples, model),
+        local_filter_kwargs=local_filter_kwargs)
     """
     approx precision = num_golden_out_of_retrieved/num_retrieved_triples
     These are rough approximations since we do not know exactly which
