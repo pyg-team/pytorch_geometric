@@ -132,7 +132,8 @@ def train(model, train_loader):
         total_correct += out.argmax(dim=-1).eq(y).sum()
         total_examples += y.size(0)
 
-    return total_loss.item() / total_examples, total_correct.item() / total_examples
+    return total_loss.item() / total_examples, total_correct.item(
+    ) / total_examples
 
 
 @torch.no_grad()
