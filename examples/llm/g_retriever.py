@@ -186,7 +186,7 @@ def inference_step(model, batch, model_save_name="gnn+llm"):
         )
 
 
-def adjust_learning_rate(param_group, LR, epoch):
+def adjust_learning_rate(param_group, LR, epoch, num_epochs):
     """Decay learning rate with half-cycle cosine after warmup.
 
     Args:
@@ -325,7 +325,8 @@ def train(
 
             if (step + 1) % 2 == 0:
                 adjust_learning_rate(optimizer.param_groups[0], lr,
-                                     step / len(train_loader) + epoch)
+                                     step / len(train_loader) + epoch,
+                                     num_epochs)
 
             optimizer.step()
             epoch_loss = epoch_loss + float(loss)
