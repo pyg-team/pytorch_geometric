@@ -19,8 +19,6 @@ class GRetriever(torch.nn.Module):
             :obj:`peft` for training the LLM, see
             `here <https://huggingface.co/docs/peft/en/index>`_ for details.
             (default: :obj:`False`)
-        mlp_out_channels (int, optional): The size of each graph embedding
-            after projection. (default: :obj:`4096`)
         mlp_out_tokens (int, optional): Number of LLM prefix tokens to
             reserve for GNN output. (default: :obj:`1`)
 
@@ -44,7 +42,6 @@ class GRetriever(torch.nn.Module):
         llm: LLM,
         gnn: torch.nn.Module,
         use_lora: bool = False,
-        mlp_out_channels: int = 4096,
         mlp_out_tokens: int = 1,
     ) -> None:
         super().__init__()
@@ -54,6 +51,7 @@ class GRetriever(torch.nn.Module):
 
         self.word_embedding = self.llm.word_embedding
         self.llm_generator = self.llm.llm
+        mlp_out_channels = llm.word_embedding.embedding_dim
         if use_lora:
             from peft import (
                 LoraConfig,
