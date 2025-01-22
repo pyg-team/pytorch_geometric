@@ -61,7 +61,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_dataset(args):
+def make_dataset(args):
     if os.path.exists("tech_qa.pt"):
         print("Re-using Saved TechQA KG-RAG Dataset...")
         return torch.load("tech_qa.pt", weights_only=False)
@@ -203,6 +203,6 @@ if __name__ == '__main__':
     seed_everything(50)
 
     args = parse_args()
-    data_lists = load_dataset(args)
+    data_lists = make_dataset(args)
     model = train(args, data_lists)
     test(model, data_lists)
