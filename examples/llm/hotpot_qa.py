@@ -48,10 +48,10 @@ if __name__ == '__main__':
         )
     if os.path.exists("hotpot_kg.pt"):
         print("Re-using existing KG...")
-        relevant_triples = torch.load("hotpot_kg.pt")
+        relevant_triples = torch.load("hotpot_kg.pt", weights_only=False)
     elif os.path.exists("checkpoint_kg.pt"):
         print("Re-using existing checkpoint...")
-        relevant_triples = torch.load("checkpoint_kg.pt")
+        relevant_triples = torch.load("checkpoint_kg.pt", weights_only=False)
     else:
         # Use training set for simplicity since our retrieval method is nonparametric
         raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
