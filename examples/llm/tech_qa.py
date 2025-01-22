@@ -76,6 +76,10 @@ def make_dataset(args):
         triples = []
         for split_str in data_lists.keys():
             if split_str == "test":
+                """
+                Skip test since it is just a subset of val,
+                so it's a waste of time to re-parse triples.
+                """
                 break
             for data_point in tqdm(
                     rawset[split_str],
@@ -92,7 +96,6 @@ def make_dataset(args):
                     chain.from_iterable(
                         triple_set
                         for triple_set in relevant_triples.values())))
-        triples = [(i[0].lower(), i[1].lower(), i[2].lower()) for i in triples]
         triples = list(dict.fromkeys(triples))
         print("Size of KG (number of triples) =", len(triples))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -105,8 +108,16 @@ def make_dataset(args):
                 "batch_size": min(len(triples), 256)
             }, graph_db=NeighborSamplingRAGGraphStore,
             feature_db=SentenceTransformerFeatureStore).load()
+        """
+        NOTE: these retriever hyperparams are very important.
+        Tuning may be needed for custom data...
+        """
+
+        # k for KNN
         knn_neighsample_bs = 1024
+        # number of neighbors for each seed node selected by KNN
         fanout = 100
+        # number of hops for neighborsampling
         num_hops = 2
         local_filter_kwargs = {
             topk: 5,  # nodes
@@ -147,9 +158,10 @@ def train(args, data_lists):
     llm = LLM(model_name=args.llm_generator_name)
     model = GRetriever(llm=llm, gnn=gnn)
     params = [p for _, p in model.named_parameters() if p.requires_grad]
+    lr = args.lr
     optimizer = torch.optim.AdamW([{
         'params': params,
-        'lr': args.lr,
+        'lr': lr,
         'weight_decay': 0.05
     }], betas=(0.9, 0.95))
     float('inf')
@@ -164,13 +176,13 @@ def train(args, data_lists):
             loss.backward()
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
             if (step + 1) % 2 == 0:
-                adjust_learning_rate(optimizer.param_groups[0], args.lr,
+                adjust_learning_rate(optimizer.param_groups[0], lr,
                                      step / len(train_loader) + epoch,
                                      args.epochs)
             optimizer.step()
             epoch_loss += float(loss)
             if (step + 1) % 2 == 0:
-                args.lr = optimizer.param_groups[0]['lr']
+                lr = optimizer.param_groups[0]['lr']
         train_loss = epoch_loss / len(train_loader)
         print(epoch_str + f', Train Loss: {train_loss:4f}')
         val_loss = 0
@@ -184,16 +196,17 @@ def train(args, data_lists):
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     model.eval()
-    return model
+    return model, test_loader
 
 
-def test(model, data_lists):
+def test(model, test_loader):
     metrics = []
 
     def eval(pred, answer):
+        # add eval from gilberto
         return 1.0
 
-    for test_batch in tqdm(data_lists["test"], desc="Test:"):
+    for test_batch in tqdm(test_loader, desc="Test:"):
         metrics.append(
             eval(inference_step(model, test_batch), test_batch.label))
     avg_metrics = sum(metrics) / len(metrics)
@@ -206,5 +219,5 @@ if __name__ == '__main__':
 
     args = parse_args()
     data_lists = make_dataset(args)
-    model = train(args, data_lists)
-    test(model, data_lists)
+    model, test_loader = train(args, data_lists)
+    test(model, test_loader)
