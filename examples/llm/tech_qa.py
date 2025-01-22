@@ -21,7 +21,7 @@ from torch_geometric.utils.rag.feature_store import (
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
-from g_retriever import adjust_learning_rate, get_loss
+from g_retriever import adjust_learning_rate, get_loss, inference_step
 
 if __name__ == '__main__':
     seed_everything(50)
@@ -226,4 +226,15 @@ if __name__ == '__main__':
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     model.eval()
-    # add eval from gilberto
+    
+    # Test
+    metrics = []
+    def eval(pred, answer):
+        # add eval from gilberto
+        return 1.0
+
+    for test_batch in tqdm(test_loader, desc="Test:"):
+        metrics.append(eval(inference_step(model, test_batch), test_batch.answer))
+    avg_metrics = sum(metrics) / len(metrics)
+    print("Avg metric=", avg_metrics)
+    

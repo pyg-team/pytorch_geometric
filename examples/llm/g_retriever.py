@@ -133,7 +133,7 @@ def load_params_dict(model, save_path):
     return model
 
 
-def get_loss(model, batch, model_save_name: str) -> Tensor:
+def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
     """Compute the loss for a given model and batch of data.
 
     Args:
