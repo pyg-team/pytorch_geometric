@@ -14,7 +14,7 @@ from torch_geometric.utils.rag.backend_utils import (
     make_pcst_filter,
     preprocess_triplet,
 )
-from .g_retriever import get_loss, adjust_learning_rate
+from llm.g_retriever import get_loss, adjust_learning_rate
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
