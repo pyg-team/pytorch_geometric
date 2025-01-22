@@ -25,8 +25,8 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 CHUNK_SIZE_DEFAULT = 512
-GFN_HID_CHANNELS_DEFAULT = 1024
-GFN_LAYERS_DEFAULT = 4
+GNN_HID_CHANNELS_DEFAULT = 1024
+GNN_LAYERS_DEFAULT = 4
 LR_DEFAULT = 1e-5
 EPOCHS_DEFAULT = 2
 BATCH_SIZE_DEFAULT = 8
@@ -43,10 +43,10 @@ def parse_args():
     parser.add_argument('--chunk_size', type=int, default=CHUNK_SIZE_DEFAULT,
                         help="The maximum number of characters per chunk")
     parser.add_argument('--gnn_hidden_channels', type=int,
-                        default=GFN_HID_CHANNELS_DEFAULT,
+                        default=GNN_HID_CHANNELS_DEFAULT,
                         help="Hidden channels for GNN")
     parser.add_argument('--num_gnn_layers', type=int,
-                        default=GFN_LAYERS_DEFAULT,
+                        default=GNN_LAYERS_DEFAULT,
                         help="Number of GNN layers")
     parser.add_argument('--lr', type=float, default=LR_DEFAULT,
                         help="Learning rate")
@@ -119,7 +119,7 @@ def make_dataset(args):
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs)
         for split_str in data_lists.keys():
-            for data_point in tqdm(rawset[split_str], desc="Building dataset"):
+            for data_point in tqdm(rawset[split_str], desc="Building" + str(split_str) + "dataset"):
                 QA_pair = (data_point["question"], data_point["answer"])
                 relevant_triples[QA_pair]
                 q = QA_pair[0]
