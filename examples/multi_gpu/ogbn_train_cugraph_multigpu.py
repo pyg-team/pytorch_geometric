@@ -113,9 +113,8 @@ def evaluate(rank, loader, model):
 
             total_correct += (pred == y).sum()
             total_examples += y.size(0)
-        total_correct = total_correct.item()
 
-        acc = total_correct / total_examples
+        acc = total_correct.item() / total_examples
     return acc
 
 
@@ -240,9 +239,9 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     train_times = []
     inference_times = []
     best_val = 0.
-    start = time.time()
+    start = time.perf_counter()
     for epoch in range(1, epochs + 1):
-        train_start = time.time()
+        train_start = time.perf_counter()
         total_loss = 0
         i = 0
         for i, batch in enumerate(train_loader):
@@ -257,31 +256,31 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
             loss.backward()
             optimizer.step()
             total_loss += loss
-        train_end = time.time()
+        train_end = time.perf_counter()
         train_times.append(train_end - train_start)
         nb = i + 1.0
         total_loss /= nb
         dist.barrier()
         torch.cuda.synchronize()
 
-        inference_start = time.time()
+        inference_start = time.perf_counter()
         train_acc = evaluate(rank, train_loader, model)
         dist.barrier()
         val_acc = evaluate(rank, val_loader, model)
         dist.barrier()
 
-        inference_times.append(time.time() - inference_start)
+        inference_times.append(time.perf_counter() - inference_start)
         val_accs.append(val_acc)
         if rank == 0:
             print(f'Epoch {epoch:02d}, Loss: {total_loss:.4f}, Approx. Train:'
                   f' {train_acc:.4f} Time: {train_end - train_start:.4f}s')
             print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, ')
 
-        times.append(time.time() - train_start)
+        times.append(time.perf_counter() - train_start)
         if val_acc > best_val:
             best_val = val_acc
 
-    print(f"Total time used for rank: {rank:02d} is {time.time()-start:.4f}")
+    print(f"Total time used for rank: {rank:02d} is {time.perf_counter()-start:.4f}")
     if rank == 0:
         val_acc = torch.tensor(val_accs)
         print('============================')

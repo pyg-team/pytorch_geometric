@@ -131,10 +131,8 @@ def train(model, train_loader):
         total_loss += loss * y.size(0)
         total_correct += out.argmax(dim=-1).eq(y).sum()
         total_examples += y.size(0)
-    total_loss = total_loss.item()
-    total_correct = total_correct.item()
 
-    return total_loss / total_examples, total_correct / total_examples
+    return total_loss.item() / total_examples, total_correct.item() / total_examples
 
 
 @torch.no_grad()
@@ -147,10 +145,10 @@ def test(model, loader):
         out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].view(-1).to(torch.long)
 
-        total_correct += out.argmax(dim=-1).eq(y).sum().item()
+        total_correct += out.argmax(dim=-1).eq(y).sum()
         total_examples += y.size(0)
 
-    return total_correct / total_examples
+    return total_correct.item() / total_examples
 
 
 if __name__ == '__main__':
@@ -248,28 +246,28 @@ if __name__ == '__main__':
         train_times = []
         inference_times = []
         best_val = 0.
-        start = time.time()
+        start = time.perf_counter()
         epochs = args.epochs
         for epoch in range(1, epochs + 1):
-            train_start = time.time()
+            train_start = time.perf_counter()
             loss, train_acc = train(model, train_loader)
-            train_end = time.time()
+            train_end = time.perf_counter()
             train_times.append(train_end - train_start)
-            inference_start = time.time()
+            inference_start = time.perf_counter()
             train_acc = test(model, train_loader)
             val_acc = test(model, val_loader)
 
-            inference_times.append(time.time() - inference_start)
+            inference_times.append(time.perf_counter() - inference_start)
             val_accs.append(val_acc)
             print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train:'
                   f' {train_acc:.4f} Time: {train_end - train_start:.4f}s')
             print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, ')
 
-            times.append(time.time() - train_start)
+            times.append(time.perf_counter() - train_start)
             if val_acc > best_val:
                 best_val = val_acc
 
-        print(f"Total time used: is {time.time()-start:.4f}")
+        print(f"Total time used: is {time.perf_counter()-start:.4f}")
         val_acc = torch.tensor(val_accs)
         print('============================')
         print("Average Epoch Time on training: {:.4f}".format(
