@@ -8,7 +8,7 @@ from g_retriever import adjust_learning_rate, get_loss, inference_step
 from sentence_transformers import SentenceTransformer
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
-from torch_geometric.nn import GAT, LLM, GRetriever
+from torch_geometric.nn import GAT, LLM, GRetriever, TXT2KG
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
