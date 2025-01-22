@@ -6,9 +6,11 @@ import torch
 from datasets import load_dataset
 from g_retriever import adjust_learning_rate, get_loss, inference_step
 from sentence_transformers import SentenceTransformer
+from tqdm import tqdm
+
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
-from torch_geometric.nn import GAT, LLM, GRetriever, TXT2KG
+from torch_geometric.nn import GAT, LLM, TXT2KG, GRetriever
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
@@ -18,7 +20,6 @@ from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
-from tqdm import tqdm
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
