@@ -6,9 +6,9 @@ import datasets
 import torch
 
 from g_retriever import adjust_learning_rate, get_loss, inference_step
+from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
-from torch.nn.utils import clip_grad_norm_
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn.models import GAT, GRetriever
