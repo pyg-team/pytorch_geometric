@@ -182,6 +182,7 @@ def train(args, data_lists):
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     model.eval()
+    return model
 
 
 def test(model, data_lists):
