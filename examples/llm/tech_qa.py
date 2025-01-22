@@ -199,7 +199,9 @@ def test(model, data_lists):
 
 
 if __name__ == '__main__':
+    # for consistency
     seed_everything(50)
+
     args = parse_args()
     data_lists = load_dataset(args)
     model = train(args, data_lists)
