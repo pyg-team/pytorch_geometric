@@ -121,7 +121,6 @@ if __name__ == '__main__':
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
     """
-
     # k for KNN
     knn_neighsample_bs = 4096
     # number of neighbors for each seed node selected by KNN
