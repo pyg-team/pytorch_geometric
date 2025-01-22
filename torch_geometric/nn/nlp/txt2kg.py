@@ -116,12 +116,8 @@ class TXT2KG():
             "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm=True"
         if QA_pair:
             # QA_pairs should be unique keys, so check if it already exists in the KG
-            if QA_pair in self.relevant_triples.keys():
-                print("Warning: QA_Pair was already added to the set")
-                print("Q=", QA_pair[0])
-                print("A=", QA_pair[1])
-                print("Previously parsed triples=", self.relevant_triples[QA_pair])
-                print("Skipping...")
+            assert QA_pair not in self.relevant_triples.keys(
+            ), str(QA_pair) + ":" + str(self.relevant_triples[QA_pair])
             key = QA_pair
         else:
             # If no QA_pair, use the current doc_id_counter as the key
