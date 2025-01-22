@@ -197,10 +197,5 @@ if __name__ == '__main__':
     seed_everything(50)
     args = parse_args()
     data_lists = load_dataset(args)
-    train(args, data_lists)
-    test(
-        GRetriever(
-            LLM(model_name=args.llm_generator_name),
-            GAT(in_channels=1024, hidden_channels=args.gnn_hidden_channels,
-                out_channels=1024, num_layers=args.num_gnn_layers, heads=4)),
-        data_lists)
+    model = train(args, data_lists)
+    test(model, data_lists)
