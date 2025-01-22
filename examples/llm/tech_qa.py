@@ -67,7 +67,12 @@ def load_dataset(args):
         knn_neighsample_bs = 1024
         fanout = 100
         num_hops = 2
-        query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs}, sampler_kwargs={"num_neighbors": [fanout] * num_hops}, local_filter=make_pcst_filter(triples, model))
+        local_filter_kwargs = {
+        topk: 5,  # nodes
+        topk_e: 5,  # edges
+        cost_e: .5  # edge cost
+        }
+        query_loader = RAGQueryLoader(data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs}, sampler_kwargs={"num_neighbors": [fanout] * num_hops}, local_filter=make_pcst_filter(triples, model), local_filter_kwargs=local_filter_kwargs)
         for split_str in data_lists.keys():
             for data_point in tqdm(rawset[split_str], desc="Building dataset"):
                 QA_pair = (data_point["question"], data_point["answer"])
