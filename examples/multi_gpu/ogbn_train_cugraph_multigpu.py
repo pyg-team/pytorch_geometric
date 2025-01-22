@@ -280,7 +280,9 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         if val_acc > best_val:
             best_val = val_acc
 
-    print(f"Total time used for rank: {rank:02d} is {time.perf_counter()-start:.4f}")
+    print(
+        f"Total time used for rank: {rank:02d} is {time.perf_counter()-start:.4f}"
+    )
     if rank == 0:
         val_acc = torch.tensor(val_accs)
         print('============================')
