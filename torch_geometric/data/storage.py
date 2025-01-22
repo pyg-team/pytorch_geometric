@@ -371,6 +371,7 @@ class BaseStorage(MutableMapping):
         start_time: Union[float, int],
         end_time: Union[float, int],
         attr: str = 'time',
+        filter_all: bool = False,
     ) -> Self:
         if attr in self:
             time = self[attr]
@@ -384,6 +385,25 @@ class BaseStorage(MutableMapping):
             self._select(keys, mask)
 
             if self.is_node_attr(attr) and 'num_nodes' in self:
+                self.num_nodes: Optional[int] = int(mask.sum())
+
+            if not filter_all:
+                return self
+
+            if self.is_node_attr(attr):
+                keys = self.edge_attrs()
+                vals = torch.where(mask == True)[0]
+                mask = self.edge_index
+                mask = torch.isin(mask, vals).sum(axis=0).bool()
+            elif self.is_edge_attr(attr):
+                keys = self.node_attrs()
+                vals = self.edge_index.reshape(-1).unique()
+                mask = torch.zeros(self.num_nodes, dtype=bool)
+                mask[vals] = True
+
+            self._select(keys, mask)
+
+            if self.is_edge_attr(attr) and 'num_nodes' in self:
                 self.num_nodes: Optional[int] = int(mask.sum())
 
         return self
