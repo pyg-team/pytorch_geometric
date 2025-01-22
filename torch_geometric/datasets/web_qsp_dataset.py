@@ -47,7 +47,8 @@ def retrieval_via_pcst(
             e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, data.edge_attr)
             topk_e = min(topk_e, e_prizes.unique().size(0))
 
-            topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e, largest=True)
+            topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e,
+                                          largest=True)
             e_prizes[e_prizes < topk_e_values[-1]] = 0.0
             last_topk_e_value = topk_e
             for k in range(topk_e):
@@ -102,7 +103,8 @@ def retrieval_via_pcst(
         edge_index = data.edge_index[:, selected_edges]
         selected_nodes = np.unique(
             np.concatenate(
-                [selected_nodes, edge_index[0].numpy(), edge_index[1].numpy()]))
+                [selected_nodes, edge_index[0].numpy(),
+                 edge_index[1].numpy()]))
 
         n = textual_nodes.iloc[selected_nodes]
         e = textual_edges.iloc[selected_edges]

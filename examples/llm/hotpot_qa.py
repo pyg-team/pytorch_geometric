@@ -117,8 +117,6 @@ if __name__ == '__main__':
             "batch_size": min(len(triples), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=SentenceTransformerFeatureStore).load()
-
-
     """
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
@@ -130,9 +128,9 @@ if __name__ == '__main__':
     # number of hops for neighborsampling
     num_hops = 2
     local_filter_kwargs = {
-        topk:5, # nodes
-        topk_e:5, # edges
-        cost_e:.5 # edge cost
+        topk: 5,  # nodes
+        topk_e: 5,  # edges
+        cost_e: .5  # edge cost
     }
     query_loader = RAGQueryLoader(
         data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
