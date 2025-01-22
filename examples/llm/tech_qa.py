@@ -16,13 +16,12 @@ from torch_geometric.utils.rag.backend_utils import (
     make_pcst_filter,
     preprocess_triplet,
 )
-from examples.llm.g_retriever import get_loss, adjust_learning_rate
 from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
-from .g_retriever import adjust_learning_rate, get_loss
+from g_retriever import adjust_learning_rate, get_loss
 
 if __name__ == '__main__':
     seed_everything(50)
