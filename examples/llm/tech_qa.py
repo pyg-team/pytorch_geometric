@@ -200,7 +200,7 @@ def test(model, data_lists):
 
 
 if __name__ == '__main__':
-    # for consistency
+    # for reproducibility
     seed_everything(50)
 
     args = parse_args()
