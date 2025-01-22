@@ -6,8 +6,8 @@ from torch_geometric.io import fs
 
 
 class GreycDataset(InMemoryDataset):
-    r"""Implementation of three GREYC chemistry small datasets as pytorch
-        geometric datasets : Alkane, Acyclic and MAO. See
+    r"""Implementation of five GREYC chemistry small datasets as pytorch
+        geometric datasets : Alkane, Acyclic, MAO, Monoterpens and PAH. See
         `"GREYC's Chemistry dataset" <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_
         for details.
 
