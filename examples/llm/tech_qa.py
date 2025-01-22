@@ -132,7 +132,7 @@ if __name__ == '__main__':
                     break
                 QA_pair = (data_point["question"], data_point["answer"])
                 golden_triples = relevant_triples[QA_pair]
-               
+
                 q = QA_pair[0]
                 subgraph = query_loader.query(q)
                 subgraph.label = QA_pair[1]
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                 # Again, redundant since TXT2KG already provides lowercase
                 # in case loading a KG that was made some other way without lowercase
                 # golden_triples = [(i[0].lower(), i[1].lower(), i[2].lower())
-                                  # for i in golden_triples]
+                # for i in golden_triples]
                 # subgraph.golden_triples = golden_triples
                 data_lists[split_str].append(subgraph)
         torch.save(data_lists, "tech_qa.pt")
