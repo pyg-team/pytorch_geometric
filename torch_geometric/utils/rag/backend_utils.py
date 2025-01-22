@@ -281,6 +281,7 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         for trip in desc[where_trips_start + 18:-1].split("\n"):
             parsed_trips.append(tuple(trip.split(",")))
         out_graph["triples"] = parsed_trips
+        out_graph["question"] = query
         return out_graph
 
     return apply_retrieval_via_pcst
