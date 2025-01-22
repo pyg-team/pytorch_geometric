@@ -5,10 +5,11 @@ from itertools import chain
 import datasets
 import torch
 from tqdm import tqdm
+
 from torch_geometric import seed_everything
-from torch_geometric.loader import RAGQueryLoader, DataLoader
-from torch_geometric.nn.nlp import TXT2KG, SentenceTransformer, LLM
+from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn.models import GAT, GRetriever
+from torch_geometric.nn.nlp import LLM, TXT2KG, SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
@@ -19,6 +20,8 @@ from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+
+from .g_retriever import adjust_learning_rate, get_loss
 
 if __name__ == '__main__':
     seed_everything(50)
@@ -55,8 +58,9 @@ if __name__ == '__main__':
         data_lists = torch.load("tech_qa.pt", weights_only=False)
     else:
         # Use training set for simplicity since our retrieval method is nonparametric
-        rawset = datasets.load_dataset('rojagtap/tech-qa', trust_remote_code=True)
-        data_lists = {"train":[], "validation":[], "test":[]}
+        rawset = datasets.load_dataset('rojagtap/tech-qa',
+                                       trust_remote_code=True)
+        data_lists = {"train": [], "validation": [], "test": []}
         # Build KG
         num_data_pts = len(rawset)
         for split_str in data_lists.keys():
@@ -67,9 +71,11 @@ if __name__ == '__main__':
                 """
                 break
             i = 0
-            for data_point in tqdm(rawset[split_str], desc="Extracting triples from " + str(split_str)):
-                i+=1
-                if i>20:
+            for data_point in tqdm(
+                    rawset[split_str],
+                    desc="Extracting triples from " + str(split_str)):
+                i += 1
+                if i > 20:
                     break
                 q = data_point["question"]
                 a = data_point["answer"]
@@ -103,7 +109,6 @@ if __name__ == '__main__':
                 "batch_size": min(len(triples), 256)
             }, graph_db=NeighborSamplingRAGGraphStore,
             feature_db=SentenceTransformerFeatureStore).load()
-
         """
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
@@ -119,19 +124,19 @@ if __name__ == '__main__':
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model))
-        
+
         for split_str in data_lists.keys():
             i = 0
             for data_point in tqdm(rawset[split_str], desc="Building dataset"):
-                i+=1
-                if i>20:
+                i += 1
+                if i > 20:
                     break
                 QA_pair = (data_point["question"], data_point["answer"])
                 golden_triples = relevant_triples[QA_pair]
                 # Again, redundant since TXT2KG already provides lowercase
                 # in case loading a KG that was made some other way without lowercase
                 golden_triples = [(i[0].lower(), i[1].lower(), i[2].lower())
-                                for i in golden_triples]
+                                  for i in golden_triples]
                 q = QA_pair[0]
                 subgraph = query_loader.query(q)
                 """
@@ -145,8 +150,6 @@ if __name__ == '__main__':
         torch.save(data_lists, "tech_qa.pt")
     ##### Done Prepping Data!
 
-
-
     # Training
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
@@ -154,11 +157,12 @@ if __name__ == '__main__':
     num_gnn_layers = args.num_gnn_layers
     train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
                               drop_last=True, pin_memory=True, shuffle=True)
-    val_loader = DataLoader(data_lists["validation"], batch_size=eval_batch_size,
-                            drop_last=False, pin_memory=True, shuffle=False)
+    val_loader = DataLoader(data_lists["validation"],
+                            batch_size=eval_batch_size, drop_last=False,
+                            pin_memory=True, shuffle=False)
     test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
-    
+
     # Create GNN model
     gnn = GAT(
         in_channels=1024,
