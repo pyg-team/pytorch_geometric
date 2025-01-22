@@ -18,6 +18,7 @@ from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+from tqdm import tqdm
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
