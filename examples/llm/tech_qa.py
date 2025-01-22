@@ -138,6 +138,7 @@ if __name__ == '__main__':
                                   for i in golden_triples]
                 q = QA_pair[0]
                 subgraph = query_loader.query(q)
+                subgraph.answer = QA_pair[1]
                 """
                 store for golden triples for demo purpose:
                 see how (GNN+LLM vs LLM) w/ (golden retrieval, normal retriever) for (GraphRAG)
