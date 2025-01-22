@@ -1,6 +1,8 @@
 # flake8: noqa
 
 from .link_pred import (
+    LinkPredMetric,
+    LinkPredMetricCollection,
     LinkPredPrecision,
     LinkPredRecall,
     LinkPredF1,
@@ -10,6 +12,8 @@ from .link_pred import (
 )
 
 link_pred_metrics = [
+    'LinkPredMetric',
+    'LinkPredMetricCollection',
     'LinkPredPrecision',
     'LinkPredRecall',
     'LinkPredF1',
