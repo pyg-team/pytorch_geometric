@@ -4,6 +4,7 @@ from itertools import chain
 
 import datasets
 import torch
+from llm.g_retriever import adjust_learning_rate, get_loss
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
