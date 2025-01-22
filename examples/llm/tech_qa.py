@@ -130,7 +130,9 @@ def make_dataset(args):
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs)
         for split_str in data_lists.keys():
-            for data_point in tqdm(rawset[split_str], desc="Building" + str(split_str) + "dataset"):
+            for data_point in tqdm(
+                    rawset[split_str],
+                    desc="Building" + str(split_str) + "dataset"):
                 QA_pair = (data_point["question"], data_point["answer"])
                 relevant_triples[QA_pair]
                 q = QA_pair[0]
