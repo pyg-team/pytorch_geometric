@@ -15,7 +15,7 @@ For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see 
 
 For examples on using `torch.compile`, see the examples under [`examples/compile`](./compile).
 
-For examples on scaling PyG up via multi-GPUs, see the examples under [`examples/multi_gpu`](./multi_gpu).
+For examples on scaling PyG up via multiple GPUs, see the examples under [`examples/distributed/NVIDIA-RAPIDS`](./distributed/NVIDIA-RAPIDS).
 
 For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
 
