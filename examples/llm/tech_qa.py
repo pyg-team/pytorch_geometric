@@ -70,13 +70,9 @@ if __name__ == '__main__':
                 so it's a waste of time to re-parse triples.
                 """
                 break
-            i = 0
             for data_point in tqdm(
                     rawset[split_str],
                     desc="Extracting triples from " + str(split_str)):
-                i += 1
-                if i > 20:
-                    break
                 q = data_point["question"]
                 a = data_point["answer"]
                 context_doc = data_point["document"]
@@ -126,11 +122,7 @@ if __name__ == '__main__':
             local_filter=make_pcst_filter(triples, model))
 
         for split_str in data_lists.keys():
-            i = 0
             for data_point in tqdm(rawset[split_str], desc="Building dataset"):
-                i += 1
-                if i > 20:
-                    break
                 QA_pair = (data_point["question"], data_point["answer"])
                 golden_triples = relevant_triples[QA_pair]
 
