@@ -1,3 +1,4 @@
+# Import necessary libraries
 import argparse
 import os
 from itertools import chain
@@ -22,8 +23,12 @@ from torch_geometric.utils.rag.feature_store import (
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
+# Main function
 if __name__ == '__main__':
+    # Set random seed for reproducibility
     seed_everything(50)
+
+    # Parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_MODEL', type=str,
                         default="nvidia/llama-3.1-nemotron-70b-instruct",
@@ -43,23 +48,28 @@ if __name__ == '__main__':
                         default="meta-llama/Meta-Llama-3.1-8B-Instruct",
                         help="the LLM to use for Generation")
     args = parser.parse_args()
+
+    # Set hyperparameters
     lr = args.lr
     num_epochs = args.epochs
-    # see examples/llm/hotpot_qa.py for example of using local LM
+
+    # Create KG builder
     kg_maker = TXT2KG(
         NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
         NVIDIA_API_KEY=args.NV_NIM_KEY,
         chunk_size=args.chunk_size,
     )
-    # Data Prep
+
+    # Load dataset
     if os.path.exists("tech_qa.pt"):
         print("Re-using Saved TechQA KG-RAG Dataset...")
         data_lists = torch.load("tech_qa.pt", weights_only=False)
     else:
-        # Use training set for simplicity since our retrieval method is nonparametric
+        # Load TechQA dataset
         rawset = datasets.load_dataset('rojagtap/tech-qa',
                                        trust_remote_code=True)
         data_lists = {"train": [], "validation": [], "test": []}
+
         # Build KG
         num_data_pts = len(rawset)
         for split_str in data_lists.keys():
@@ -84,16 +94,14 @@ if __name__ == '__main__':
             kg_maker.save_kg("hotpot_kg.pt")
             relevant_triples = kg_maker.relevant_triples
 
+        # Preprocess triples
         triples = list(
             chain.from_iterable(triple_set
                                 for triple_set in relevant_triples.values()))
-        # redundant since TXT2KG already provides lowercase.
-        # in case loading a KG that was made some other way without lowercase
         triples = [(i[0].lower(), i[1].lower(), i[2].lower()) for i in triples]
-        # Make sure no duplicate triples for KG indexing
         triples = list(dict.fromkeys(triples))
 
-        print("Size of KG (number of triples) =", len(triples))
+        # Create backend
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
             model_name='sentence-transformers/all-roberta-large-v1').to(device)
@@ -104,22 +112,17 @@ if __name__ == '__main__':
                 "batch_size": min(len(triples), 256)
             }, graph_db=NeighborSamplingRAGGraphStore,
             feature_db=SentenceTransformerFeatureStore).load()
-        """
-        NOTE: these retriever hyperparams are very important.
-        Tuning may be needed for custom data...
-        """
 
-        # k for KNN
+        # Create query loader
         knn_neighsample_bs = 1024
-        # number of neighbors for each seed node selected by KNN
         fanout = 100
-        # number of hops for neighborsampling
         num_hops = 2
         query_loader = RAGQueryLoader(
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model))
 
+        # Build dataset
         for split_str in data_lists.keys():
             for data_point in tqdm(rawset[split_str], desc="Building dataset"):
                 QA_pair = (data_point["question"], data_point["answer"])
@@ -128,26 +131,18 @@ if __name__ == '__main__':
                 q = QA_pair[0]
                 subgraph = query_loader.query(q)
                 subgraph.label = QA_pair[1]
-                """
-                store for golden triples for demo purpose:
-                see how (GNN+LLM vs LLM) w/ (golden retrieval, normal retriever) for (GraphRAG)
-                vs existing SOTA vector RAG from gilberto
-                first comparison is for knowing how much retriever and model each matters
-                """
-                # Again, redundant since TXT2KG already provides lowercase
-                # in case loading a KG that was made some other way without lowercase
-                # golden_triples = [(i[0].lower(), i[1].lower(), i[2].lower())
-                # for i in golden_triples]
-                # subgraph.golden_triples = golden_triples
                 data_lists[split_str].append(subgraph)
-        torch.save(data_lists, "tech_qa.pt")
-    ##### Done Prepping Data!
 
-    # Training
+        # Save dataset
+        torch.save(data_lists, "tech_qa.pt")
+
+    # Done prepping data!
+
+    # Set batch sizes
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
-    hidden_channels = args.gnn_hidden_channels
-    num_gnn_layers = args.num_gnn_layers
+
+    # Create data loaders
     train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
                               drop_last=True, pin_memory=True, shuffle=True)
     val_loader = DataLoader(data_lists["validation"],
@@ -159,14 +154,19 @@ if __name__ == '__main__':
     # Create GNN model
     gnn = GAT(
         in_channels=1024,
-        hidden_channels=hidden_channels,
+        hidden_channels=args.gnn_hidden_channels,
         out_channels=1024,
-        num_layers=num_gnn_layers,
+        num_layers=args.num_gnn_layers,
         heads=4,
     )
-    # Create optimizer
+
+    # Create LLM model
     llm = LLM(model_name=args.llm_generator_name)
+
+    # Create GRetriever model
     model = GRetriever(llm=llm, gnn=gnn)
+
+    # Set optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW([
         {
@@ -216,6 +216,7 @@ if __name__ == '__main__':
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
             print(epoch_str + f", Val Loss: {val_loss:4f}")
+
     # Clean up memory
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
