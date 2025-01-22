@@ -7,7 +7,6 @@ import torch
 from llm.g_retriever import adjust_learning_rate, get_loss
 from tqdm import tqdm
 
-from examples.llm.g_retriever import adjust_learning_rate, get_loss
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn.models import GAT, GRetriever
