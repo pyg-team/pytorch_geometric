@@ -120,7 +120,8 @@ class TXT2KG():
                 print("Warning: QA_Pair was already added to the set")
                 print("Q=", QA_pair[0])
                 print("A=", QA_pair[1])
-                print("Previously parsed triples=", self.relevant_triples[QA_pair])
+                print("Previously parsed triples=",
+                      self.relevant_triples[QA_pair])
                 print("Skipping...")
             key = QA_pair
         else:
