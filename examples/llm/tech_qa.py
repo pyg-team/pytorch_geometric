@@ -145,7 +145,7 @@ def make_dataset(args):
             i = 0
             for data_point in tqdm(
                     rawset[split_str],
-                    desc="Building" + str(split_str) + "dataset"):
+                    desc="Building " + str(split_str) + " dataset"):
                 i += 1
                 if i > 20:
                     break
