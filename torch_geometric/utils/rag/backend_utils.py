@@ -240,19 +240,17 @@ def create_remote_backend_from_triplets(
                                         graph_db, feature_db)
 
 
-def make_pcst_filter(
-    triples: List[Tuple[str, str, str]],
-    model: SentenceTransformer
-) -> None:
-    """
-    Creates a PCST (Prize Collecting Tree) filter.
+def make_pcst_filter(triples: List[Tuple[str, str, str]],
+                     model: SentenceTransformer) -> None:
+    """Creates a PCST (Prize Collecting Tree) filter.
 
     :param triples: List of triples (head, relation, tail) representing knowledge graph data
     :param model: SentenceTransformer model for generating semantic representations
     :return: None
     """
     if DataFrame is None:
-        raise Exception("PCST requires `pip install pandas`")  # Check if pandas is installed
+        raise Exception("PCST requires `pip install pandas`"
+                        )  # Check if pandas is installed
 
     # Remove duplicate triples to ensure unique set
     triples = list(dict.fromkeys(triples))
@@ -273,14 +271,14 @@ def make_pcst_filter(
     full_textual_nodes = nodes
 
     def apply_retrieval_via_pcst(
-        graph: Data,  # Input graph data
-        query: str,  # Search query
-        topk: int = 5,  # Number of top-K results to return (default: 5)
-        topk_e: int = 5,  # Number of top-K entity results to return (default: 5)
-        cost_e: float = 0.5,  # Cost of entity retrieval (default: 0.5)
+            graph: Data,  # Input graph data
+            query: str,  # Search query
+            topk: int = 5,  # Number of top-K results to return (default: 5)
+            topk_e:
+        int = 5,  # Number of top-K entity results to return (default: 5)
+            cost_e: float = 0.5,  # Cost of entity retrieval (default: 0.5)
     ) -> Tuple[Data, str]:
-        """
-        Applies PCST filtering for retrieval.
+        """Applies PCST filtering for retrieval.
 
         :param graph: Input graph data
         :param query: Search query
