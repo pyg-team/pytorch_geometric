@@ -96,7 +96,7 @@ class RAGQueryLoader:
         self.loader_kwargs = loader_kwargs or {}
         self.local_filter_kwargs = local_filter_kwargs or {}
 
-    def query(self, query: Any) -> Data:
+    def query(self, query: str) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
         attributes.
         """
