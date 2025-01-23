@@ -241,28 +241,52 @@ def create_remote_backend_from_triplets(
 
 
 def make_pcst_filter(triples: List[Tuple[str, str, str]],
-                     model: SentenceTransformer):
+                     model: SentenceTransformer) -> None:
+    """Creates a PCST (Prize Collecting Tree) filter.
+
+    :param triples: List of triples (head, relation, tail) representing knowledge graph data
+    :param model: SentenceTransformer model for generating semantic representations
+    :return: None
+    """
     if DataFrame is None:
-        raise Exception("PCST requires `pip install pandas`")
-    # Ensure unique triples set
+        raise Exception("PCST requires `pip install pandas`"
+                        )  # Check if pandas is installed
+
+    # Remove duplicate triples to ensure unique set
     triples = list(dict.fromkeys(triples))
+
+    # Initialize empty list to store nodes (entities) from triples
     nodes = []
-    triples = list(dict.fromkeys(triples))
+
+    # Iterate over triples to extract unique nodes (entities)
     for h, r, t in triples:
-        for node in (h, t):
+        for node in (h, t):  # Extract head and tail entities from each triple
+            # Add node to list if not already present
             nodes.append(node)
-            # if node not in nodes:
-            #     nodes.append(node)
+
+    # Remove duplicates and create final list of unique nodes
     nodes = list(dict.fromkeys(nodes))
+
+    # Create full list of textual nodes (entities) for filtering
     full_textual_nodes = nodes
 
     def apply_retrieval_via_pcst(
-        graph: Data,
-        query: str,
-        topk: int = 5,
-        topk_e: int = 5,
-        cost_e: float = .5,
+            graph: Data,  # Input graph data
+            query: str,  # Search query
+            topk: int = 5,  # Number of top-K results to return (default: 5)
+            topk_e:
+        int = 5,  # Number of top-K entity results to return (default: 5)
+            cost_e: float = 0.5,  # Cost of entity retrieval (default: 0.5)
     ) -> Tuple[Data, str]:
+        """Applies PCST filtering for retrieval.
+
+        :param graph: Input graph data
+        :param query: Search query
+        :param topk: Number of top-K results to return (default: 5)
+        :param topk_e: Number of top-K entity results to return (default: 5)
+        :param cost_e: Cost of entity retrieval (default: 0.5)
+        :return: Retrieved graph data and query result
+        """
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
         q_emb = model.encode([query]).to("cpu")
         textual_nodes = [(int(i), full_textual_nodes[i])

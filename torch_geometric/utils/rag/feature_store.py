@@ -17,26 +17,48 @@ from torch_geometric.typing import InputEdges, InputNodes
 
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
+    """A feature store that uses a KNN-based approach to retrieve seed nodes and edges.
+    """
     def __init__(self, enc_model: Type[Module],
                  model_kwargs: Optional[Dict[str,
                                              Any]] = None, *args, **kwargs):
+        """Initializes the feature store.
+
+        Args:
+        - enc_model: The model to use for encoding queries.
+        - model_kwargs: Additional keyword arguments to pass to the encoding model.
+        - args and kwargs: Additional arguments to pass to the parent class.
+        """
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         self.enc_model = enc_model(*args, **kwargs).to(self.device)
         self.enc_model.eval()
-        self.model_kwargs = \
-            model_kwargs if model_kwargs is not None else dict()
+        self.model_kwargs = model_kwargs if model_kwargs is not None else dict(
+        )
         super().__init__()
 
     @property
     def x(self) -> Tensor:
+        """Returns the node features.
+        """
         return self.get_tensor(group_name=None, attr_name='x')
 
     @property
     def edge_attr(self) -> Tensor:
+        """Returns the edge attributes.
+        """
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
     def retrieve_seed_nodes(self, query: Any, k_nodes: int = 5) -> InputNodes:
+        """Retrieves the k_nodes most similar nodes to the given query.
+
+        Args:
+        - query: The query to search for.
+        - k_nodes: The number of nodes to retrieve (default: 5).
+
+        Returns:
+        - The indices of the most similar nodes.
+        """
         result = next(self._retrieve_seed_nodes_batch([query], k_nodes))
         gc.collect()
         torch.cuda.empty_cache()
@@ -44,6 +66,15 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
     def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
                                    k_nodes: int) -> Iterator[InputNodes]:
+        """Retrieves the k_nodes most similar nodes to each query in the batch.
+
+        Args:
+        - query: The batch of queries to search for.
+        - k_nodes: The number of nodes to retrieve.
+
+        Yields:
+        - The indices of the most similar nodes for each query.
+        """
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
 
@@ -56,6 +87,15 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             yield indices
 
     def retrieve_seed_edges(self, query: Any, k_edges: int = 3) -> InputEdges:
+        """Retrieves the k_edges most similar edges to the given query.
+
+        Args:
+        - query: The query to search for.
+        - k_edges: The number of edges to retrieve (default: 3).
+
+        Returns:
+        - The indices of the most similar edges.
+        """
         result = next(self._retrieve_seed_edges_batch([query], k_edges))
         gc.collect()
         torch.cuda.empty_cache()
@@ -63,6 +103,15 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
     def _retrieve_seed_edges_batch(self, query: Iterable[Any],
                                    k_edges: int) -> Iterator[InputEdges]:
+        """Retrieves the k_edges most similar edges to each query in the batch.
+
+        Args:
+        - query: The batch of queries to search for.
+        - k_edges: The number of edges to retrieve.
+
+        Yields:
+        - The indices of the most similar edges for each query.
+        """
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
 
@@ -79,12 +128,19 @@ class KNNRAGFeatureStore(LocalFeatureStore):
     def load_subgraph(
         self, sample: Union[SamplerOutput, HeteroSamplerOutput]
     ) -> Union[Data, HeteroData]:
+        """Loads a subgraph from the given sample.
 
+        Args:
+        - sample: The sample to load the subgraph from.
+
+        Returns:
+        - The loaded subgraph.
+        """
         if isinstance(sample, HeteroSamplerOutput):
             raise NotImplementedError
 
-        # NOTE: torch_geometric.loader.utils.filter_custom_store can be used
-        # here if it supported edge features
+        # NOTE: torch_geometric.loader.utils.filter_custom_store can be used here
+        # if it supported edge features
         edge_id = sample.edge
         edge_attr = self.edge_attr[edge_id]
         return Data(edge_attr=edge_attr, edge_idx=edge_id)
