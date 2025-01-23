@@ -28,9 +28,9 @@ if __name__ == '__main__':
     parser.add_argument('--local_lm', action="store_true")
     parser.add_argument('--percent_data', type=float, default=1.0)
     parser.add_argument(
-        '--chunk_size', type=int, default=512, help=
-        "When splitting context documents, the maximum number of characters per chunk."
-    )
+        '--chunk_size', type=int, default=512,
+        help="When splitting context documents for txt2kg,\
+        the maximum number of characters per chunk.")
     parser.add_argument('--checkpointing', action="store_true")
     parser.add_argument('--verbose', action="store_true")
     args = parser.parse_args()
@@ -128,9 +128,9 @@ if __name__ == '__main__':
     # number of hops for neighborsampling
     num_hops = 2
     local_filter_kwargs = {
-        topk: 5,  # nodes
-        topk_e: 5,  # edges
-        cost_e: .5  # edge cost
+        "topk": 5,  # nodes
+        "topk_e": 5,  # edges
+        "cost_e": .5  # edge cost
     }
     query_loader = RAGQueryLoader(
         data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
