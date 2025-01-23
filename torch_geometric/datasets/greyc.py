@@ -83,7 +83,7 @@ class GreycDataset(InMemoryDataset):
         force_reload: bool = False,
     ) -> None:
         self.name = name.lower()
-        if self.name not in {"acyclic", "alkane", "mao"}:
+        if self.name not in {"acyclic", "alkane", "mao", "monoterpens", "pah"}:
             raise ValueError(f"Dataset {self.name} not found.")
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
@@ -118,6 +118,6 @@ class GreycDataset(InMemoryDataset):
 
     def __repr__(self) -> str:
         name = self.name.capitalize()
-        if self.name == "mao":
+        if self.name in ["mao", "pah"]:
             name = self.name.upper()
         return f'{name}({len(self)})'
