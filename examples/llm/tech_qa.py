@@ -83,7 +83,6 @@ def make_dataset(args):
                           chunk_size=args.chunk_size)
         triples = []
         for split_str in data_lists.keys():
-            i = 0
             if split_str == "test":
                 """
                 Skip test since it is just a subset of val,
@@ -93,9 +92,6 @@ def make_dataset(args):
             for data_point in tqdm(
                     rawset[split_str],
                     desc="Extracting triples from " + str(split_str)):
-                i += 1
-                if i > 20:
-                    break
                 q = data_point["question"]
                 a = data_point["answer"]
                 context_doc = data_point["document"]
@@ -142,13 +138,9 @@ def make_dataset(args):
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs)
         for split_str in data_lists.keys():
-            i = 0
             for data_point in tqdm(
                     rawset[split_str],
                     desc="Building " + str(split_str) + " dataset"):
-                i += 1
-                if i > 20:
-                    break
                 QA_pair = (data_point["question"], data_point["answer"])
                 q = QA_pair[0]
                 subgraph = query_loader.query(q)
