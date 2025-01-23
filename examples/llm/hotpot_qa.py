@@ -29,7 +29,8 @@ if __name__ == '__main__':
     parser.add_argument('--percent_data', type=float, default=1.0)
     parser.add_argument(
         '--chunk_size', type=int, default=512, help=
-        "When splitting context documents, the maximum number of characters per chunk."
+        "When splitting context documents for txt2kg,\
+        the maximum number of characters per chunk."
     )
     parser.add_argument('--checkpointing', action="store_true")
     parser.add_argument('--verbose', action="store_true")
