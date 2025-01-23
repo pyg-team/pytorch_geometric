@@ -1,7 +1,14 @@
 import os
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
+import torch
+
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import fs
 
 
@@ -91,11 +98,13 @@ class GreycDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return os.path.join(self.root, "data.pt")
 
     @property
     def raw_file_names(self) -> str:
-        return f"{self.name.lower()}.pth"
+        self.gml_datafile = os.path.join(self.root, self.name,
+                                         f"{self.name}.gml")
+        return self.gml_datafile
 
     def download(self) -> None:
         path = download_url(GreycDataset.URL + self.name + ".zip",
@@ -115,6 +124,76 @@ class GreycDataset(InMemoryDataset):
 
         data, slices = self.collate(data_list)
         fs.torch_save((data, slices), self.processed_paths[0])
+
+    def _gml_to_data(gml: str, gml_file: bool = True) -> Data:
+        """Reads a `gml` file and creates a `Data` object.
+
+        Parameters :
+        ------------
+
+        * `gml`      : gml file path if `gml_file` is
+                       set to `True`, gml content otherwise.
+        * `gml_file` : indicates whether `gml` is a path
+                       to a gml file or a gml file content.
+
+        Returns :
+        ---------
+
+        * `Data` : the `Data` object created from the file content.
+
+        Raises :
+        --------
+
+        * `FileNotFoundError` : if `gml` is a file path and doesn't exist.
+        """
+        import networkx as nx
+        if gml_file:
+            if not os.path.exists(gml):
+                raise FileNotFoundError(f"File `{gml}` does not exist")
+            g: nx.Graph = nx.read_gml(gml)
+        else:
+            g: nx.Graph = nx.parse_gml(gml)
+
+        x, edge_index, edge_attr = [], [], []
+
+        y = torch.tensor([g.graph["y"]],
+                         dtype=torch.long) if "y" in g.graph else None
+
+        for _, attr in g.nodes(data=True):
+            x.append(attr["x"])
+
+        for u, v, attr in g.edges(data=True):
+            edge_index.append([int(u), int(v)])
+            edge_index.append([int(v), int(u)])
+            edge_attr.append(attr["edge_attr"])
+            edge_attr.append(attr["edge_attr"])
+
+        x = torch.tensor(x, dtype=torch.float)
+        edge_index = torch.tensor(edge_index,
+                                  dtype=torch.long).t().contiguous()
+        edge_attr = torch.tensor(edge_attr, dtype=torch.long)
+
+        return Data(x=x, edge_attr=edge_attr, edge_index=edge_index, y=y)
+
+    def _load_gml_data(self, gml: str) -> List[Data]:
+        """Reads a dataset from a gml file
+        and converts it into a list of `Data`.
+
+        Parameters :
+        ------------
+
+        * `gml` : Source filename. If `zip` file, it will be extracted.
+
+        Returns :
+        ---------
+
+        * `List[Data]` : Content of the gml dataset.
+        """
+        GML_SEPARATOR = "---"
+        with open(gml, encoding="utf8") as f:
+            gml_contents = f.read()
+        gml_files = gml_contents.split(GML_SEPARATOR)
+        return [self._gml_to_data(content, False) for content in gml_files]
 
     def __repr__(self) -> str:
         name = self.name.capitalize()
