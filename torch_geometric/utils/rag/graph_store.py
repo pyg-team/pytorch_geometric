@@ -13,15 +13,13 @@ from torch_geometric.sampler import (
 from torch_geometric.sampler.neighbor_sampler import NumNeighborsType
 from torch_geometric.typing import EdgeTensorType, InputEdges, InputNodes
 
-class NeighborSamplingRAGGraphStore(LocalGraphStore):
-    """
-    A graph store that uses neighbor sampling to store and retrieve graph data.
-    """
 
+class NeighborSamplingRAGGraphStore(LocalGraphStore):
+    """A graph store that uses neighbor sampling to store and retrieve graph data.
+    """
     def __init__(self, feature_store: Optional[FeatureStore] = None,
                  num_neighbors: NumNeighborsType = [1], **kwargs):
-        """
-        Initializes the graph store with an optional feature store and neighbor sampling settings.
+        """Initializes the graph store with an optional feature store and neighbor sampling settings.
 
         :param feature_store: The feature store to use, or None if not yet registered.
         :param num_neighbors: The number of neighbors to sample for each node.
@@ -34,8 +32,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         super().__init__()
 
     def _init_sampler(self):
-        """
-        Initializes the neighbor sampler with the registered feature store.
+        """Initializes the neighbor sampler with the registered feature store.
         """
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
@@ -45,8 +42,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._sampler_is_initialized = True
 
     def register_feature_store(self, feature_store: FeatureStore):
-        """
-        Registers a feature store with the graph store.
+        """Registers a feature store with the graph store.
 
         :param feature_store: The feature store to register.
         """
@@ -54,8 +50,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._sampler_is_initialized = False
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
-        """
-        Stores an edge ID in the graph store.
+        """Stores an edge ID in the graph store.
 
         :param edge_id: The edge ID to store.
         :return: Whether the operation was successful.
@@ -66,8 +61,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     @property
     def edge_index(self):
-        """
-        Gets the edge index of the graph.
+        """Gets the edge index of the graph.
 
         :return: The edge index as a tensor.
         """
@@ -75,8 +69,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
-        """
-        Stores an edge index in the graph store.
+        """Stores an edge index in the graph store.
 
         :param edge_index: The edge index to store.
         :return: Whether the operation was successful.
@@ -91,8 +84,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     # HACKY
     @edge_index.setter
     def edge_index(self, edge_index: EdgeTensorType):
-        """
-        Sets the edge index of the graph.
+        """Sets the edge index of the graph.
 
         :param edge_index: The edge index to set.
         """
@@ -108,8 +100,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     @property
     def num_neighbors(self):
-        """
-        Gets the number of neighbors to sample for each node.
+        """Gets the number of neighbors to sample for each node.
 
         :return: The number of neighbors.
         """
@@ -117,8 +108,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
-        """
-        Sets the number of neighbors to sample for each node.
+        """Sets the number of neighbors to sample for each node.
 
         :param num_neighbors: The new number of neighbors.
         """
