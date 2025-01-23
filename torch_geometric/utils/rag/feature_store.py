@@ -33,8 +33,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             "cuda" if torch.cuda.is_available() else "cpu")
         self.enc_model = enc_model(*args, **kwargs).to(self.device)
         self.enc_model.eval()
-        self.model_kwargs = model_kwargs if model_kwargs is not None else dict(
-        )
+        self.model_kwargs = model_kwargs if model_kwargs is not None else dict()
         super().__init__()
 
     @property
