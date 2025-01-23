@@ -221,3 +221,20 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
     metric_collection.update(pred_index_mat, edge_label_index)
     assert metric_collection.compute() == expected
     metric_collection.reset()
+
+
+def test_empty_ground_truth():
+    pred = torch.rand(10, 5)
+    pred_index_mat = pred.argsort(dim=1)
+    edge_label_index = torch.empty(2, 0, dtype=torch.long)
+    edge_label_weight = torch.empty(0)
+
+    metric = LinkPredMAP(k=5)
+    metric.update(pred_index_mat, edge_label_index)
+    assert metric.compute() == 0
+    metric.reset()
+
+    metric = LinkPredNDCG(k=5, weighted=True)
+    metric.update(pred_index_mat, edge_label_index, edge_label_weight)
+    assert metric.compute() == 0
+    metric.reset()

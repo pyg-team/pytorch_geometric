@@ -62,8 +62,8 @@ class LLM(torch.nn.Module):
     def __init__(
         self,
         model_name: str,
-        num_params: int = None,
-        dtype=torch.bfloat16,
+        num_params: Optional[int] = None,
+        dtype: Optional[torch.dtype] = torch.bfloat16,
     ) -> None:
         super().__init__()
 
