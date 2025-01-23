@@ -4,13 +4,19 @@ from itertools import chain
 
 import torch
 from datasets import load_dataset
-from torch.nn.utils import clip_grad_norm_
 from g_retriever import adjust_learning_rate, get_loss, inference_step
+from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
-from torch_geometric.nn import GAT, LLM, TXT2KG, GRetriever, SentenceTransformer
+from torch_geometric.nn import (
+    GAT,
+    LLM,
+    TXT2KG,
+    GRetriever,
+    SentenceTransformer,
+)
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
@@ -85,7 +91,7 @@ def make_dataset(args):
             for data_point in tqdm(
                     rawset[split_str],
                     desc="Extracting triples from " + str(split_str)):
-                i+=1
+                i += 1
                 if i > 20:
                     break
                 q = data_point["question"]
@@ -138,7 +144,7 @@ def make_dataset(args):
             for data_point in tqdm(
                     rawset[split_str],
                     desc="Building" + str(split_str) + "dataset"):
-                i+=1
+                i += 1
                 if i > 20:
                     break
                 QA_pair = (data_point["question"], data_point["answer"])
