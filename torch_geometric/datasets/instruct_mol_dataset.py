@@ -51,14 +51,14 @@ class InstructMolDataset(InMemoryDataset):
         return ['all_clean.json']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['data.pt']
 
-    def download(self):
+    def download(self) -> None:
         print('downloading dataset...')
         fs.cp(f'{self.raw_url}/all_clean.json', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         try:
             from rdkit import Chem
             from rdkit.Chem.rdchem import BondType as BT
@@ -93,7 +93,7 @@ class InstructMolDataset(InMemoryDataset):
 
         data_list = []
         for smiles, qa_pairs in tqdm(mols.items(), total=len(mols)):
-            mol: Chem.Mol = Chem.MolFromSmiles(smiles)
+            mol = Chem.MolFromSmiles(smiles)
             if mol is None:
                 continue
 
