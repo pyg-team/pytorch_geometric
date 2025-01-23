@@ -91,7 +91,7 @@ def make_dataset(args):
                 break
             for data_point in tqdm(
                     rawset[split_str],
-                    desc="Extracting triples from " + str(split_str)):
+                    desc="Extracting KG triples from " + str(split_str)):
                 q = data_point["question"]
                 a = data_point["answer"]
                 context_doc = data_point["document"]
@@ -207,17 +207,24 @@ def train(args, data_lists):
     model.eval()
     return model, test_loader
 
-
 def test(model, test_loader):
     metrics = []
 
-    def eval(pred, answer):
-        # add eval from gilberto
-        return 1.0
+    def eval(pred: str, answer: str, llm_judge: str = NV_NIM_MODEL_DEFAULT):
+        try:
+            """
+            TODO: implement LLM judge myself,
+            based on Gilberto unless I can import this
+            """
+            # calculate the score based on pred and answer
+            pass # llm_judge(pred, answer, eval_prompt)
+        except:
+            return 1.0
 
     for test_batch in tqdm(test_loader, desc="Test:"):
-        metrics.append(
-            eval(inference_step(model, test_batch), test_batch.label))
+        preds = inference_step(model, test_batch)
+        for pred, label in zip(preds, test_batch.label):
+            metrics.append(eval(pred, label))
     avg_metrics = sum(metrics) / len(metrics)
     print("Avg metric=", avg_metrics)
 
