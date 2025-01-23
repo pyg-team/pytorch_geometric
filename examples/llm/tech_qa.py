@@ -47,10 +47,9 @@ def parse_args():
     parser.add_argument('--NV_NIM_KEY', type=str, default="",
                         help="NVIDIA API key")
     parser.add_argument(
-        '--chunk_size', type=int, default=512, help=
-        "When splitting context documents for txt2kg,\
-        the maximum number of characters per chunk."
-    )
+        '--chunk_size', type=int, default=512,
+        help="When splitting context documents for txt2kg,\
+        the maximum number of characters per chunk.")
     parser.add_argument('--gnn_hidden_channels', type=int,
                         default=GNN_HID_CHANNELS_DEFAULT,
                         help="Hidden channels for GNN")
