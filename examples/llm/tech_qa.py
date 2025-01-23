@@ -208,24 +208,17 @@ def train(args, data_lists):
     return model, test_loader
 
 
-def test(model, test_loader):
+def test(model, test_loader, args):
     metrics = []
-
-    def eval(pred: str, answer: str, llm_judge: str = NV_NIM_MODEL_DEFAULT):
-        try:
-            """
-            TODO: implement LLM judge myself,
-            based on Gilberto unless I can import this
-            """
-            # calculate the score based on pred and answer
-            pass  # llm_judge(pred, answer, eval_prompt)
-        except:
-            return 1.0
+    llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY)
+    def eval(question: str, pred: str, correct_answer: str):
+        # calculate the score based on pred and correct answer
+        return llm_judge.score(question, pred, correct_answer)
 
     for test_batch in tqdm(test_loader, desc="Test:"):
         preds = inference_step(model, test_batch)
-        for pred, label in zip(preds, test_batch.label):
-            metrics.append(eval(pred, label))
+        for question, pred, label in zip(test_batch.questions, preds, test_batch.label):
+            metrics.append(eval(question, pred, label))
     avg_metrics = sum(metrics) / len(metrics)
     print("Avg metric=", avg_metrics)
 
