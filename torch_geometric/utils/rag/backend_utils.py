@@ -263,7 +263,7 @@ def make_pcst_filter(
     # Iterate over triples to extract unique nodes (entities)
     for h, r, t in triples:
         for node in (h, t):  # Extract head and tail entities from each triple
-            # Add node to list if not already present (using dict.fromkeys for efficient lookup)
+            # Add node to list if not already present
             nodes.append(node)
 
     # Remove duplicates and create final list of unique nodes
