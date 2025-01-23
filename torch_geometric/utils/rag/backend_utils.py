@@ -271,11 +271,12 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     full_textual_nodes = nodes
 
     def apply_retrieval_via_pcst(
-        graph: Data,  # Input graph data
-        query: str,  # Search query
-        topk: int = 5,  # Number of top-K results to return (default: 5)
-        topk_e: int = 5,  # Number of top-K entity results to return (default: 5)
-        cost_e: float = 0.5,  # Cost of entity retrieval (default: 0.5)
+            graph: Data,  # Input graph data
+            query: str,  # Search query
+            topk: int = 5,  # Number of top-K results to return (default: 5)
+            topk_e:
+        int = 5,  # Number of top-K entity results to return (default: 5)
+            cost_e: float = 0.5,  # Cost of entity retrieval (default: 0.5)
     ) -> Tuple[Data, str]:
         """Applies PCST filtering for retrieval.
 
