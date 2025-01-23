@@ -78,7 +78,8 @@ class GreycDataset(InMemoryDataset):
           - 2
     """
 
-    URL = ('http://localhost:3000/')
+    URL = ('https://raw.githubusercontent.com/thomasbauer76/'
+           'greycdata/refs/heads/main/greycdata/data_gml/')
 
     def __init__(
         self,
@@ -98,13 +99,11 @@ class GreycDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
-        return os.path.join(self.root, "data.pt")
+        return "data.pt"
 
     @property
     def raw_file_names(self) -> str:
-        self.gml_datafile = os.path.join(self.root, self.name,
-                                         f"{self.name}.gml")
-        return self.gml_datafile
+        return f"{self.name}.gml"
 
     def download(self) -> None:
         path = download_url(GreycDataset.URL + self.name + ".zip",
@@ -113,8 +112,7 @@ class GreycDataset(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        data_list = fs.torch_load(
-            os.path.join(self.raw_dir, self.name + ".pth"))
+        data_list = self._load_gml_data(self.raw_paths[0])
 
         if self.pre_filter is not None:
             data_list = [data for data in data_list if self.pre_filter(data)]
@@ -125,6 +123,7 @@ class GreycDataset(InMemoryDataset):
         data, slices = self.collate(data_list)
         fs.torch_save((data, slices), self.processed_paths[0])
 
+    @staticmethod
     def _gml_to_data(gml: str, gml_file: bool = True) -> Data:
         """Reads a `gml` file and creates a `Data` object.
 
@@ -175,7 +174,8 @@ class GreycDataset(InMemoryDataset):
 
         return Data(x=x, edge_attr=edge_attr, edge_index=edge_index, y=y)
 
-    def _load_gml_data(self, gml: str) -> List[Data]:
+    @staticmethod
+    def _load_gml_data(gml: str) -> List[Data]:
         """Reads a dataset from a gml file
         and converts it into a list of `Data`.
 
@@ -193,7 +193,9 @@ class GreycDataset(InMemoryDataset):
         with open(gml, encoding="utf8") as f:
             gml_contents = f.read()
         gml_files = gml_contents.split(GML_SEPARATOR)
-        return [self._gml_to_data(content, False) for content in gml_files]
+        return [
+            GreycDataset._gml_to_data(content, False) for content in gml_files
+        ]
 
     def __repr__(self) -> str:
         name = self.name.capitalize()
