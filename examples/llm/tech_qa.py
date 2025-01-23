@@ -151,7 +151,6 @@ def make_dataset(args):
                 if i > 20:
                     break
                 QA_pair = (data_point["question"], data_point["answer"])
-                relevant_triples[QA_pair]
                 q = QA_pair[0]
                 subgraph = query_loader.query(q)
                 subgraph.label = QA_pair[1]
