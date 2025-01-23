@@ -91,11 +91,11 @@ class GreycDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return os.path.join(self.root, "data.pt")
 
     @property
     def raw_file_names(self) -> str:
-        return f"{self.name.lower()}.pth"
+        return os.path.join(self.root, self.name, f"{self.name}.gml")
 
     def download(self) -> None:
         path = download_url(GreycDataset.URL + self.name + ".zip",
