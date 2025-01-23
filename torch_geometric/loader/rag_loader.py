@@ -110,7 +110,7 @@ class RAGQueryLoader:
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
-        
+
         # need to use sampled edge_idx to index into original graph then reindex
         total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
         data.node_idx = torch.tensor(
