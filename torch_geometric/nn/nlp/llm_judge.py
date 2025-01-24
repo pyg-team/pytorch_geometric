@@ -27,7 +27,7 @@ SYSTEM_PROMPT_1 = (
     "### Reference Answer: {correct_answer}\n" + "The rating is:\n")
 
 SYSTEM_PROMPT_2 = (
-    + "I will rate the User Answer in comparison to the Reference " +
+    "I will rate the User Answer in comparison to the Reference " +
     "Answer for a given Question.\n" +
     "A rating of 4 indicates that the User Answer is entirely " +
     "consistent with the Reference Answer, covering all aspects," +
