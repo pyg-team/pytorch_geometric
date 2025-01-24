@@ -24,8 +24,8 @@ SYSTEM_PROMPT_1 = (
     " answer the question.\n" +
     "Do not explain or justify your rating. Your rating must be " +
     "only 4, 2 or 0 according to the instructions above.\n" +
-    "### Question: {question}\n" + "### User Answer: {model_pred}\n" +
-    "### Reference Answer: {correct_answer}\n" + "The rating is:\n")
+    "### Question: \"{question}\"\n" + "### User Answer: \"{model_pred}\"\n" +
+    "### Reference Answer: \"{correct_answer}\"\n" + "The rating is:\n")
 
 SYSTEM_PROMPT_2 = (
     "I will rate the User Answer in comparison to the Reference " +
@@ -43,9 +43,9 @@ SYSTEM_PROMPT_2 = (
     "justification, adhering to the following scale: " +
     "0 (no match), 2 (partial match), 4 (exact match).\n" +
     "Do not explain or justify my rating. My rating must" +
-    " be only 4, 2 or 0 only.\n\n" + "Question: {question}\n\n" +
-    "Reference Answer: {model_pred}\n\n" +
-    "User Answer: {correct_answer}\n\n" + "Rating: ")
+    " be only 4, 2 or 0 only.\n\n" + "Question: \"{question}\"\n\n" +
+    "Reference Answer: \"{model_pred}\"\n\n" +
+    "User Answer: \"{correct_answer}\"\n\n" + "Rating: ")
 
 
 class LLMJudge():
@@ -69,7 +69,8 @@ class LLMJudge():
     ) -> None:
         self.NVIDIA_API_KEY = NVIDIA_API_KEY
         self.NIM_MODEL = NVIDIA_NIM_MODEL
-
+        print("System_promt1=", SYSTEM_PROMPT_1)
+        print("SYSTEM_PROMPT_2", SYSTEM_PROMPT_2)
     def _process_score(self, response: str) -> float:
         """Uses 3 and 1 even though prompt says only 0, 2, 4.
         This is because LLMs don't always follow instructions.
