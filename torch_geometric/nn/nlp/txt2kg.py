@@ -148,17 +148,31 @@ class TXT2KG():
                 in_chunks_per_proc = {
                     j:
                     chunks[j *
-                           meta_chunk_size:min((j + 1) *
-                                               meta_chunk_size, len(chunks))]
+                        meta_chunk_size:min((j + 1) *
+                                            meta_chunk_size, len(chunks))]
                     for j in range(num_procs)
                 }
 
                 # Spawn multiple processes to process chunks in parallel
-                mp.spawn(
-                    _multiproc_helper,
-                    args=(in_chunks_per_proc, _parse_n_check_triples,
-                          _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                          self.NIM_MODEL), nprocs=num_procs)
+                try:
+                    try:
+                        mp.spawn(
+                            _multiproc_helper,
+                            args=(in_chunks_per_proc, _parse_n_check_triples,
+                                _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                                self.NIM_MODEL), nprocs=num_procs)
+                    except:
+                        mp.spawn(
+                            _multiproc_helper,
+                            args=(in_chunks_per_proc, _parse_n_check_triples,
+                                _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                                self.NIM_MODEL), nprocs=num_procs)
+                except:
+                    mp.spawn(
+                            _multiproc_helper,
+                            args=(in_chunks_per_proc, _parse_n_check_triples,
+                                _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                                self.NIM_MODEL), nprocs=num_procs)
 
                 # Collect the results from each process
                 self.relevant_triples[key] = []
@@ -166,7 +180,6 @@ class TXT2KG():
                     self.relevant_triples[key] += torch.load(
                         "/tmp/outs_for_proc_" + str(rank))
                     os.remove("/tmp/outs_for_proc_" + str(rank))
-
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
@@ -245,11 +258,11 @@ def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
 def _get_num_procs():
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_proc = len(os.sched_getaffinity(0)) / (2)
+            num_proc = len(os.sched_getaffinity(0)) / (4)
         except Exception:
             pass
     if num_proc is None:
-        num_proc = os.cpu_count() / (2)
+        num_proc = os.cpu_count() / (4)
     return int(num_proc)
 
 
