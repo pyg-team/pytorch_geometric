@@ -44,6 +44,7 @@ def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     h, r, t = triplet
     return h.lower(), r, t.lower()
 
+
 def test_basic_collate():
     graphs = [sample_triplets(1000) for i in range(2)]
 
@@ -66,12 +67,16 @@ def test_basic_collate():
     assert len(set(big_indexer._nodes.values())) == len(big_indexer._nodes)
     assert len(set(big_indexer._edges.values())) == len(big_indexer._edges)
 
-    for i, node in enumerate((indexer_0._nodes.keys() | indexer_1._nodes.keys())):
+    for i, node in enumerate(indexer_0._nodes.keys()
+                             | indexer_1._nodes.keys()):
         assert big_indexer.node_attr[NODE_PID][
             big_indexer._nodes[node]] == node
         if i == 1:
             node_0 = list(indexer_0._nodes.keys())[0]
-            assert big_indexer.node_attr[NODE_PID][big_indexer._nodes[node_0]] != big_indexer.node_attr[NODE_PID][big_indexer._nodes[node]]
+            assert big_indexer.node_attr[NODE_PID][
+                big_indexer._nodes[node_0]] != big_indexer.node_attr[NODE_PID][
+                    big_indexer._nodes[node]]
+
 
 def test_large_graph_index():
     graphs = [sample_triplets(1000) for i in range(100)]
