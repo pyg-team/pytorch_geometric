@@ -71,7 +71,7 @@ class PointGNNConv(MessagePassing):
 
     def forward(self, x: Tensor, pos: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: Tensor, pos: Tensor)
-        out = self.propagate(edge_index, x=x, pos=pos, size=None)
+        out = self.propagate(edge_index, x=x, pos=pos)
         out = self.mlp_g(out)
         return x + out
 

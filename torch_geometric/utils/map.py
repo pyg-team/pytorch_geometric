@@ -1,6 +1,7 @@
 import warnings
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack
@@ -9,11 +10,11 @@ from torch.utils.dlpack import from_dlpack
 def map_index(
     src: Tensor,
     index: Tensor,
-    max_index: Optional[int] = None,
+    max_index: Optional[Union[int, Tensor]] = None,
     inclusive: bool = False,
 ) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Maps indices in :obj:`src` to the positional value of their
-    corresponding occurence in :obj:`index`.
+    corresponding occurrence in :obj:`index`.
     Indices must be strictly positive.
 
     Args:
@@ -63,7 +64,7 @@ def map_index(
                          f"(got '{src.device}' and '{index.device}')")
 
     if max_index is None:
-        max_index = max(src.max(), index.max())
+        max_index = torch.maximum(src.max(), index.max())
 
     # If the `max_index` is in a reasonable range, we can accelerate this
     # operation by creating a helper vector to perform the mapping.
@@ -72,9 +73,9 @@ def map_index(
     THRESHOLD = 40_000_000 if src.is_cuda else 10_000_000
     if max_index <= THRESHOLD:
         if inclusive:
-            assoc = src.new_empty(max_index + 1)
+            assoc = src.new_empty(max_index + 1)  # type: ignore
         else:
-            assoc = src.new_full((max_index + 1, ), -1)
+            assoc = src.new_full((max_index + 1, ), -1)  # type: ignore
         assoc[index] = torch.arange(index.numel(), dtype=src.dtype,
                                     device=src.device)
         out = assoc[src]
@@ -110,7 +111,12 @@ def map_index(
         result = pd.merge(left_ser, right_ser, how='left', left_on='left_ser',
                           right_index=True)
 
-        out = torch.from_numpy(result['right_ser'].values).to(index.device)
+        out_numpy = result['right_ser'].values
+        if (index.device.type == 'mps'  # MPS does not support `float64`
+                and issubclass(out_numpy.dtype.type, np.floating)):
+            out_numpy = out_numpy.astype(np.float32)
+
+        out = torch.from_numpy(out_numpy).to(index.device)
 
         if out.is_floating_point() and inclusive:
             raise ValueError("Found invalid entries in 'src' that do not have "

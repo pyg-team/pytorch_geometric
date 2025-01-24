@@ -124,8 +124,7 @@ class ARMAConv(MessagePassing):
                 out = out @ self.weight[0 if self.shared_weights else t - 1]
 
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            out = self.propagate(edge_index, x=out, edge_weight=edge_weight,
-                                 size=None)
+            out = self.propagate(edge_index, x=out, edge_weight=edge_weight)
 
             root = F.dropout(x, p=self.dropout, training=self.training)
             root = root @ self.root_weight[0 if self.shared_weights else t]
@@ -142,7 +141,7 @@ class ARMAConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     @torch.no_grad()

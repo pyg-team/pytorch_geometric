@@ -77,7 +77,7 @@ class DynamicFAUST(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
 
         subjects = self.subjects if subjects is None else subjects
         subjects = [sid.lower() for sid in subjects]
@@ -107,14 +107,14 @@ class DynamicFAUST(InMemoryDataset):
         ])
         return f'{sids}_{cats}.pt'
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f"Dataset not found. Please download male registrations "
             f"'registrations_m.hdf5' and female registrations "
             f"'registrations_f.hdf5' from '{self.url}' and move it to "
             f"'{self.raw_dir}'")
 
-    def process(self):
+    def process(self) -> None:
         import h5py
 
         fm = h5py.File(self.raw_paths[0], 'r')

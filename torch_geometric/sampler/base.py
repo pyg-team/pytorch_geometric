@@ -5,7 +5,7 @@ from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 import torch
 from torch import Tensor
@@ -183,6 +183,14 @@ class SamplerOutput(CastMixin):
             per hop. (default: :obj:`None`)
         num_sampled_edges (List[int], optional): The number of sampled edges
             per hop. (default: :obj:`None`)
+        orig_row (torch.Tensor, optional): The original source node indices
+            returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
+        orig_col (torch.Tensor, optional): The original destination node
+            indices indices returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -193,15 +201,30 @@ class SamplerOutput(CastMixin):
     batch: OptTensor = None
     num_sampled_nodes: Optional[List[int]] = None
     num_sampled_edges: Optional[List[int]] = None
+    orig_row: Tensor = None
+    orig_col: Tensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
-    def to_bidirectional(self) -> 'SamplerOutput':
+    def to_bidirectional(
+        self,
+        keep_orig_edges: bool = False,
+    ) -> 'SamplerOutput':
         r"""Converts the sampled subgraph into a bidirectional variant, in
         which all sampled edges are guaranteed to be bidirectional.
+
+        Args:
+            keep_orig_edges (bool, optional): If specified, directional edges
+                are still maintained. (default: :obj:`False`)
         """
         out = copy.copy(self)
+
+        if keep_orig_edges:
+            out.orig_row = self.row
+            out.orig_col = self.col
+        else:
+            out.num_sampled_nodes = out.num_sampled_edges = None
 
         out.row, out.col, out.edge = to_bidirectional(
             row=self.row,
@@ -211,7 +234,6 @@ class SamplerOutput(CastMixin):
             edge_id=self.edge,
             rev_edge_id=self.edge,
         )
-        out.num_sampled_nodes = out.num_sampled_edges = None
 
         return out
 
@@ -248,6 +270,14 @@ class HeteroSamplerOutput(CastMixin):
         num_sampled_edges (Dict[EdgeType, List[int]], optional): The number of
             sampled edges for each edge type and each layer.
             (default: :obj:`None`)
+        orig_row (Dict[EdgeType, torch.Tensor], optional): The original source
+            node indices returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
+        orig_col (Dict[EdgeType, torch.Tensor], optional): The original
+            destination node indices returned by the sampler.
+            Filled in case :meth:`to_bidirectional` is called with the
+            :obj:`keep_orig_edges` option. (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -258,18 +288,36 @@ class HeteroSamplerOutput(CastMixin):
     batch: Optional[Dict[NodeType, Tensor]] = None
     num_sampled_nodes: Optional[Dict[NodeType, List[int]]] = None
     num_sampled_edges: Optional[Dict[EdgeType, List[int]]] = None
+    orig_row: Optional[Dict[EdgeType, Tensor]] = None
+    orig_col: Optional[Dict[EdgeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
-    def to_bidirectional(self) -> 'SamplerOutput':
+    def to_bidirectional(
+        self,
+        keep_orig_edges: bool = False,
+    ) -> 'SamplerOutput':
         r"""Converts the sampled subgraph into a bidirectional variant, in
         which all sampled edges are guaranteed to be bidirectional.
+
+        Args:
+            keep_orig_edges (bool, optional): If specified, directional edges
+                are still maintained. (default: :obj:`False`)
         """
         out = copy.copy(self)
         out.row = copy.copy(self.row)
         out.col = copy.copy(self.col)
         out.edge = copy.copy(self.edge)
+
+        if keep_orig_edges:
+            out.orig_row = {}
+            out.orig_col = {}
+            for key in self.row.keys():
+                out.orig_row[key] = self.row[key]
+                out.orig_col[key] = self.col[key]
+        else:
+            out.num_sampled_nodes = out.num_sampled_edges = None
 
         src_dst_dict = defaultdict(list)
         edge_types = self.row.keys()
@@ -325,8 +373,6 @@ class HeteroSamplerOutput(CastMixin):
                                   f"since the edge type {edge_type} does not "
                                   f"seem to have a reverse edge type")
 
-        out.num_sampled_nodes = out.num_sampled_edges = None
-
         return out
 
 
@@ -379,6 +425,14 @@ class NumNeighbors:
             else:
                 assert False
 
+            # Confirm that `values` only hold valid edge types:
+            if isinstance(self.values, dict):
+                edge_types_str = {EdgeTypeStr(key) for key in edge_types}
+                invalid_edge_types = set(self.values.keys()) - edge_types_str
+                if len(invalid_edge_types) > 0:
+                    raise ValueError("Not all edge types specified in "
+                                     "'num_neighbors' exist in the graph")
+
             out = {}
             for edge_type in edge_types:
                 edge_type_str = EdgeTypeStr(edge_type)
@@ -398,7 +452,7 @@ class NumNeighbors:
             out = copy.copy(self.values)
 
         if isinstance(out, dict):
-            num_hops = set(len(v) for v in out.values())
+            num_hops = {len(v) for v in out.values()}
             if len(num_hops) > 1:
                 raise ValueError(f"Number of hops must be the same across all "
                                  f"edge types (got {len(num_hops)} different "
@@ -487,24 +541,31 @@ class NegativeSampling(CastMixin):
             destination nodes for each positive source node.
         amount (int or float, optional): The ratio of sampled negative edges to
             the number of positive edges. (default: :obj:`1`)
-        weight (torch.Tensor, optional): A node-level vector determining the
-            sampling of nodes. Does not necessariyl need to sum up to one.
-            If not given, negative nodes will be sampled uniformly.
+        src_weight (torch.Tensor, optional): A node-level vector determining
+            the sampling of source nodes. Does not necessarily need to sum up
+            to one. If not given, negative nodes will be sampled uniformly.
+            (default: :obj:`None`)
+        dst_weight (torch.Tensor, optional): A node-level vector determining
+            the sampling of destination nodes. Does not necessarily need to sum
+            up to one. If not given, negative nodes will be sampled uniformly.
             (default: :obj:`None`)
     """
     mode: NegativeSamplingMode
     amount: Union[int, float] = 1
-    weight: Optional[Tensor] = None
+    src_weight: Optional[Tensor] = None
+    dst_weight: Optional[Tensor] = None
 
     def __init__(
         self,
         mode: Union[NegativeSamplingMode, str],
         amount: Union[int, float] = 1,
-        weight: Optional[Tensor] = None,
+        src_weight: Optional[Tensor] = None,
+        dst_weight: Optional[Tensor] = None,
     ):
         self.mode = NegativeSamplingMode(mode)
         self.amount = amount
-        self.weight = weight
+        self.src_weight = src_weight
+        self.dst_weight = dst_weight
 
         if self.amount <= 0:
             raise ValueError(f"The attribute 'amount' needs to be positive "
@@ -525,22 +586,28 @@ class NegativeSampling(CastMixin):
     def is_triplet(self) -> bool:
         return self.mode == NegativeSamplingMode.triplet
 
-    def sample(self, num_samples: int,
-               num_nodes: Optional[int] = None) -> Tensor:
+    def sample(
+        self,
+        num_samples: int,
+        endpoint: Literal['src', 'dst'],
+        num_nodes: Optional[int] = None,
+    ) -> Tensor:
         r"""Generates :obj:`num_samples` negative samples."""
-        if self.weight is None:
+        weight = self.src_weight if endpoint == 'src' else self.dst_weight
+
+        if weight is None:
             if num_nodes is None:
                 raise ValueError(
                     f"Cannot sample negatives in '{self.__class__.__name__}' "
                     f"without passing the 'num_nodes' argument")
             return torch.randint(num_nodes, (num_samples, ))
 
-        if num_nodes is not None and self.weight.numel() != num_nodes:
+        if num_nodes is not None and weight.numel() != num_nodes:
             raise ValueError(
                 f"The 'weight' attribute in '{self.__class__.__name__}' "
                 f"needs to match the number of nodes {num_nodes} "
                 f"(got {self.weight.numel()})")
-        return torch.multinomial(self.weight, num_samples, replacement=True)
+        return torch.multinomial(weight, num_samples, replacement=True)
 
 
 class BaseSampler(ABC):

@@ -2,7 +2,6 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
-from scipy.linalg import expm
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -22,7 +21,7 @@ from torch_geometric.utils import (
 @functional_transform('gdc')
 class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
-    `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
+    `"Diffusion Improves Graph Learning" <https://arxiv.org/abs/1911.05485>`_
     paper (functional name: :obj:`gdc`).
 
     .. note::
@@ -80,10 +79,12 @@ class GDC(BaseTransform):
         normalization_in: str = 'sym',
         normalization_out: str = 'col',
         diffusion_kwargs: Dict[str, Any] = dict(method='ppr', alpha=0.15),
-        sparsification_kwargs: Dict[str, Any] = dict(method='threshold',
-                                                     avg_degree=64),
+        sparsification_kwargs: Dict[str, Any] = dict(
+            method='threshold',
+            avg_degree=64,
+        ),
         exact: bool = True,
-    ):
+    ) -> None:
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -96,8 +97,11 @@ class GDC(BaseTransform):
 
     @torch.no_grad()
     def forward(self, data: Data) -> Data:
-        N = data.num_nodes
+        assert data.edge_index is not None
         edge_index = data.edge_index
+        N = data.num_nodes
+        assert N is not None
+
         if data.edge_attr is None:
             edge_weight = torch.ones(edge_index.size(1),
                                      device=edge_index.device)
@@ -195,7 +199,7 @@ class GDC(BaseTransform):
         edge_weight: Tensor,
         num_nodes: int,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tensor:
         r"""Calculate the (dense) diffusion on a given sparse graph.
         Note that these exact variants are not scalable. They densify the
@@ -269,7 +273,7 @@ class GDC(BaseTransform):
         num_nodes: int,
         normalization: str,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tuple[Tensor, Tensor]:
         r"""Calculate the approximate, sparse diffusion on a given sparse
         graph.
@@ -333,10 +337,10 @@ class GDC(BaseTransform):
 
         elif method == 'heat':
             raise NotImplementedError(
-                ('Currently no fast heat kernel is implemented. You are '
-                 'welcome to create one yourself, e.g., based on '
-                 '"Kloster and Gleich: Heat kernel based community detection '
-                 '(KDD 2014)."'))
+                'Currently no fast heat kernel is implemented. You are '
+                'welcome to create one yourself, e.g., based on '
+                '"Kloster and Gleich: Heat kernel based community detection '
+                '(KDD 2014)."')
         else:
             raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
 
@@ -346,7 +350,7 @@ class GDC(BaseTransform):
         self,
         matrix: Tensor,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tuple[Tensor, Tensor]:
         r"""Sparsifies the given dense matrix.
 
@@ -417,7 +421,7 @@ class GDC(BaseTransform):
         edge_weight: Tensor,
         num_nodes: int,
         method: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> Tuple[Tensor, Tensor]:
         r"""Sparsifies a given sparse graph further.
 
@@ -468,6 +472,8 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`Tensor`)
         """
+        from scipy.linalg import expm
+
         if symmetric:
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
@@ -497,4 +503,4 @@ class GDC(BaseTransform):
 
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
-        return (left + right) / 2.0
+        return float(left + right) / 2.0

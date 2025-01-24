@@ -70,7 +70,7 @@ class TOSCA(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         categories = self.categories if categories is None else categories
         categories = [cat.lower() for cat in categories]
         for cat in categories:
@@ -89,12 +89,12 @@ class TOSCA(InMemoryDataset):
         name = '_'.join([cat[:2] for cat in self.categories])
         return f'{name}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         data_list = []
         for cat in self.categories:
             paths = glob.glob(osp.join(self.raw_dir, f'{cat}*.tri'))

@@ -1,14 +1,9 @@
-import os
 from typing import Any, Callable, List, Optional, Tuple
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.io import fs
 
 
 class EllipticBitcoinDataset(InMemoryDataset):
@@ -37,6 +32,8 @@ class EllipticBitcoinDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -55,9 +52,15 @@ class EllipticBitcoinDataset(InMemoryDataset):
     """
     url = 'https://data.pyg.org/datasets/elliptic'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -72,17 +75,15 @@ class EllipticBitcoinDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for file_name in self.raw_file_names:
-            path = download_url(f'{self.url}/{file_name}.zip', self.raw_dir)
-            extract_zip(path, self.raw_dir)
-            os.remove(path)
+            fs.cp(f'{self.url}/{file_name}.zip', self.raw_dir, extract=True)
 
     def _process_df(self, feat_df: Any, edge_df: Any,
                     class_df: Any) -> Tuple[Any, Any, Any]:
         return feat_df, edge_df, class_df
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         feat_df = pd.read_csv(self.raw_paths[0], header=None)

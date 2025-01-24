@@ -3,6 +3,7 @@ import copy
 import pytest
 import torch
 
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
 from torch_geometric.datasets import KarateClub
 from torch_geometric.testing import withPackage
@@ -121,6 +122,65 @@ def test_stored_hetero_in_memory_dataset(tmp_path):
     assert dataset[1]['paper'].num_nodes == 4
 
 
+def test_index(tmp_path):
+    index1 = Index([0, 1, 1, 2], dim_size=3, is_sorted=True)
+    index2 = Index([0, 1, 1, 2, 2, 3], dim_size=4, is_sorted=True)
+
+    data1 = Data(batch=index1)
+    data2 = Data(batch=index2)
+
+    dataset = MyTestDataset([data1, data2])
+    assert len(dataset) == 2
+    for data, index in zip(dataset, [index1, index2]):
+        assert isinstance(data.batch, Index)
+        assert data.batch.equal(index)
+        assert data.batch.dim_size == index.dim_size
+        assert data.batch.is_sorted == index.is_sorted
+
+    dataset = MyStoredTestDataset(tmp_path, [data1, data2])
+    assert len(dataset) == 2
+    for data, index in zip(dataset, [index1, index2]):
+        assert isinstance(data.batch, Index)
+        assert data.batch.equal(index)
+        assert data.batch.dim_size == index.dim_size
+        assert data.batch.is_sorted == index.is_sorted
+
+
+def test_edge_index(tmp_path):
+    edge_index1 = EdgeIndex(
+        [[0, 1, 1, 2], [1, 0, 2, 1]],
+        sparse_size=(3, 3),
+        sort_order='row',
+        is_undirected=True,
+    )
+    edge_index2 = EdgeIndex(
+        [[1, 0, 2, 1, 3, 2], [0, 1, 1, 2, 2, 3]],
+        sparse_size=(4, 4),
+        sort_order='col',
+    )
+
+    data1 = Data(edge_index=edge_index1)
+    data2 = Data(edge_index=edge_index2)
+
+    dataset = MyTestDataset([data1, data2])
+    assert len(dataset) == 2
+    for data, edge_index in zip(dataset, [edge_index1, edge_index2]):
+        assert isinstance(data.edge_index, EdgeIndex)
+        assert data.edge_index.equal(edge_index)
+        assert data.edge_index.sparse_size() == edge_index.sparse_size()
+        assert data.edge_index.sort_order == edge_index.sort_order
+        assert data.edge_index.is_undirected == edge_index.is_undirected
+
+    dataset = MyStoredTestDataset(tmp_path, [data1, data2])
+    assert len(dataset) == 2
+    for data, edge_index in zip(dataset, [edge_index1, edge_index2]):
+        assert isinstance(data.edge_index, EdgeIndex)
+        assert data.edge_index.equal(edge_index)
+        assert data.edge_index.sparse_size() == edge_index.sparse_size()
+        assert data.edge_index.sort_order == edge_index.sort_order
+        assert data.edge_index.is_undirected == edge_index.is_undirected
+
+
 def test_in_memory_num_classes():
     dataset = MyTestDataset([Data(), Data()])
     assert dataset.num_classes == 0
@@ -129,7 +189,8 @@ def test_in_memory_num_classes():
     assert dataset.num_classes == 2
 
     dataset = MyTestDataset([Data(y=1.5), Data(y=2.5), Data(y=3.5)])
-    assert dataset.num_classes == 3
+    with pytest.warns(UserWarning, match="unique elements"):
+        assert dataset.num_classes == 3
 
     dataset = MyTestDataset([
         Data(y=torch.tensor([[0, 1, 0, 1]])),

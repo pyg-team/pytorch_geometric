@@ -88,7 +88,7 @@ class BatchNorm(torch.nn.Module):
         return self.module(x)
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.module.num_features})'
+        return f'{self.__class__.__name__}({self.module.extra_repr()})'
 
 
 class HeteroBatchNorm(torch.nn.Module):

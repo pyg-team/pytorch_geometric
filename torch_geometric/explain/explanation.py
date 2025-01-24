@@ -232,8 +232,12 @@ class Explanation(Data, ExplanationMixin):
 
         return _visualize_score(score, feat_labels, path, top_k)
 
-    def visualize_graph(self, path: Optional[str] = None,
-                        backend: Optional[str] = None):
+    def visualize_graph(
+        self,
+        path: Optional[str] = None,
+        backend: Optional[str] = None,
+        node_labels: Optional[List[str]] = None,
+    ) -> None:
         r"""Visualizes the explanation graph with edge opacity corresponding to
         edge importance.
 
@@ -246,13 +250,15 @@ class Explanation(Data, ExplanationMixin):
                 If set to :obj:`None`, will use the most appropriate
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
+            node_labels (list[str], optional): The labels/IDs of nodes.
+                (default: :obj:`None`)
         """
         edge_mask = self.get('edge_mask')
         if edge_mask is None:
             raise ValueError(f"The attribute 'edge_mask' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
-        visualize_graph(self.edge_index, edge_mask, path, backend)
+        visualize_graph(self.edge_index, edge_mask, path, backend, node_labels)
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):
@@ -334,10 +340,10 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         """
         node_mask_dict = self.node_mask_dict
         for node_mask in node_mask_dict.values():
-            if node_mask.dim() != 2 or node_mask.size(1) <= 1:
+            if node_mask.dim() != 2:
                 raise ValueError(f"Cannot compute feature importance for "
                                  f"object-level 'node_mask' "
-                                 f"(got shape {node_mask_dict.size()})")
+                                 f"(got shape {node_mask.size()})")
 
         if feat_labels is None:
             feat_labels = {}

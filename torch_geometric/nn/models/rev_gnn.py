@@ -1,5 +1,4 @@
 import copy
-from abc import ABC, abstractmethod
 from typing import Any, List, Optional, Union
 
 import numpy as np
@@ -145,7 +144,7 @@ class InvertibleFunction(torch.autograd.Function):
         return (None, None, None, None) + gradients
 
 
-class InvertibleModule(torch.nn.Module, ABC):
+class InvertibleModule(torch.nn.Module):
     r"""An abstract class for implementing invertible modules.
 
     Args:
@@ -168,13 +167,11 @@ class InvertibleModule(torch.nn.Module, ABC):
     def inverse(self, *args):
         return self._fn_apply(args, self._inverse, self._forward)
 
-    @abstractmethod
     def _forward(self):
-        pass
+        raise NotImplementedError
 
-    @abstractmethod
     def _inverse(self):
-        pass
+        raise NotImplementedError
 
     def _fn_apply(self, args, fn, fn_inverse):
         if not self.disable:

@@ -1,25 +1,21 @@
 import warnings
-
-import torch
+from typing import Literal
 
 import torch_geometric
 
 
-def _is_compiling() -> bool:  # pragma: no cover
-    if torch_geometric.typing.WITH_PT21:
-        return torch._dynamo.is_compiling()
-    return False
-
-
-def warn(message: str):
-    if _is_compiling():
+def warn(message: str) -> None:
+    if torch_geometric.is_compiling():
         return
 
     warnings.warn(message)
 
 
-def filterwarnings(action: str, message: str):
-    if _is_compiling():
+def filterwarnings(
+    action: Literal['default', 'error', 'ignore', 'always', 'module', 'once'],
+    message: str,
+) -> None:
+    if torch_geometric.is_compiling():
         return
 
     warnings.filterwarnings(action, message)

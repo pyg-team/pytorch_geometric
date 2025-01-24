@@ -298,8 +298,7 @@ class DNAConv(MessagePassing):
                     edge_index = cache
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        return self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                              size=None)
+        return self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
     def message(self, x_i: Tensor, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         x_i = x_i[:, -1:]  # [num_edges, 1, channels]

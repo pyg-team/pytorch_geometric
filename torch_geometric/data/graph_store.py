@@ -17,7 +17,7 @@ index in a KV store. More complicated implementations may choose to partition
 the graph in interesting manners based on the provided metadata.
 """
 import copy
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
@@ -25,10 +25,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from torch import Tensor
 
+from torch_geometric.index import index2ptr, ptr2index
 from torch_geometric.typing import EdgeTensorType, EdgeType, OptTensor
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.mixin import CastMixin
-from torch_geometric.utils.sparse import index2ptr, ptr2index
 
 # The output of converting between two types in the GraphStore is a Tuple of
 # dictionaries: row, col, and perm. The dictionaries are keyed by the edge
@@ -98,7 +98,7 @@ class EdgeAttr(CastMixin):
         self.size = size
 
 
-class GraphStore:
+class GraphStore(ABC):
     r"""An abstract base class to access edges from a remote graph store.
 
     Args:
@@ -116,7 +116,6 @@ class GraphStore:
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
@@ -137,7 +136,6 @@ class GraphStore:
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
         r"""Synchronously obtains an :obj:`edge_index` tuple from the
@@ -160,7 +158,6 @@ class GraphStore:
     @abstractmethod
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         r"""To be implemented by :class:`GraphStore` subclasses."""
-        pass
 
     def remove_edge_index(self, *args, **kwargs) -> bool:
         r"""Synchronously deletes an :obj:`edge_index` tuple from the
@@ -177,7 +174,6 @@ class GraphStore:
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         r"""Returns all registered edge attributes."""
-        pass
 
     # Layout Conversion #######################################################
 
@@ -306,15 +302,14 @@ class GraphStore:
         store: bool = False,
     ) -> ConversionOutputType:
 
-        is_hetero = True  # Default.
+        edge_attrs: List[EdgeAttr] = self.get_all_edge_attrs()
+
         if hasattr(self, 'meta'):  # `LocalGraphStore` hack.
             is_hetero = self.meta.get('is_hetero', False)
+        else:
+            is_hetero = all(attr.edge_type is not None for attr in edge_attrs)
 
         if not is_hetero:
-            edge_attrs: List[EdgeAttr] = []
-            for attr in self.get_all_edge_attrs():
-                edge_attrs.append(attr)
-
             return self._edge_to_layout(edge_attrs[0], layout, store)
 
         # Obtain all edge attributes, grouped by type:

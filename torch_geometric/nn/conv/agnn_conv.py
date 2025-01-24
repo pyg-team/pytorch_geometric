@@ -73,7 +73,7 @@ class AGNNConv(MessagePassing):
         x_norm = F.normalize(x, p=2., dim=-1)
 
         # propagate_type: (x: Tensor, x_norm: Tensor)
-        return self.propagate(edge_index, x=x, x_norm=x_norm, size=None)
+        return self.propagate(edge_index, x=x, x_norm=x_norm)
 
     def message(self, x_j: Tensor, x_norm_i: Tensor, x_norm_j: Tensor,
                 index: Tensor, ptr: OptTensor,

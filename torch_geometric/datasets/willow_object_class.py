@@ -1,11 +1,11 @@
 import glob
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch.utils.data import DataLoader
 
 from torch_geometric.data import (
@@ -14,6 +14,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class WILLOWObjectClass(InMemoryDataset):
@@ -62,7 +63,7 @@ class WILLOWObjectClass(InMemoryDataset):
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
         device: Optional[str] = None,
-    ):
+    ) -> None:
         if device is None:
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -89,16 +90,16 @@ class WILLOWObjectClass(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         os.unlink(osp.join(self.root, 'README'))
         os.unlink(osp.join(self.root, 'demo_showAnno.m'))
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import torchvision.models as models
         import torchvision.transforms as T
         from PIL import Image
@@ -110,7 +111,7 @@ class WILLOWObjectClass(InMemoryDataset):
 
         vgg16_outputs = []
 
-        def hook(module, x, y):
+        def hook(module: torch.nn.Module, x: Tensor, y: Tensor) -> None:
             vgg16_outputs.append(y.to('cpu'))
 
         vgg16 = models.vgg16(pretrained=True).to(self.device)
@@ -141,14 +142,18 @@ class WILLOWObjectClass(InMemoryDataset):
             pos[:, 0] = pos[:, 0] * 256.0 / (img.size[0])
             pos[:, 1] = pos[:, 1] * 256.0 / (img.size[1])
 
-            img = img.resize((256, 256), resample=Image.BICUBIC)
+            img = img.resize((256, 256), resample=Image.Resampling.BICUBIC)
             img = transform(img)
 
             data = Data(img=img, pos=pos, name=name)
             data_list.append(data)
 
         imgs = [data.img for data in data_list]
-        loader = DataLoader(imgs, self.batch_size, shuffle=False)
+        loader = DataLoader(
+            dataset=imgs,  # type: ignore
+            batch_size=self.batch_size,
+            shuffle=False,
+        )
         for i, batch_img in enumerate(loader):
             vgg16_outputs.clear()
 
@@ -162,6 +167,7 @@ class WILLOWObjectClass(InMemoryDataset):
 
             for j in range(out1.size(0)):
                 data = data_list[i * self.batch_size + j]
+                assert data.pos is not None
                 idx = data.pos.round().long().clamp(0, 255)
                 x_1 = out1[j, :, idx[:, 1], idx[:, 0]].to('cpu')
                 x_2 = out2[j, :, idx[:, 1], idx[:, 0]].to('cpu')

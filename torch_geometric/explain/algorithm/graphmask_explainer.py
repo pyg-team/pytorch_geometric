@@ -1,7 +1,6 @@
 import math
 from typing import List, Optional, Tuple, Union
 
-import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -162,7 +161,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 (torch.log(u) - torch.log(1 - u) + input_element) / beta)
 
             penalty = torch.sigmoid(input_element -
-                                    beta * np.math.log(-gamma / zeta))
+                                    beta * math.log(-gamma / zeta))
         else:
             s = torch.sigmoid(input_element)
             penalty = torch.zeros_like(input_element)
@@ -526,12 +525,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 if i == 0:
                     edge_weight = sampling_weights
                 else:
-                    if edge_weight.size(-1) != sampling_weights.size(-1):
-                        sampling_weights = F.pad(
-                            input=sampling_weights,
-                            pad=(0, edge_weight.size(-1) -
-                                 sampling_weights.size(-1), 0, 0),
-                            mode='constant', value=0)
                     edge_weight = torch.cat((edge_weight, sampling_weights), 0)
                 if self.log:
                     pbar.update(1)

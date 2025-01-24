@@ -21,6 +21,21 @@ def test_visualize_graph_via_graphviz(tmp_path, backend):
     assert osp.exists(path)
 
 
+@onlyGraphviz
+@pytest.mark.parametrize('backend', [None, 'graphviz'])
+def test_visualize_graph_via_graphviz_with_node_labels(tmp_path, backend):
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    edge_weight = (torch.rand(edge_index.size(1)) > 0.5).float()
+    node_labels = ['A', 'B', 'C', 'D', 'E']
+
+    path = osp.join(tmp_path, 'graph.pdf')
+    visualize_graph(edge_index, edge_weight, path, backend, node_labels)
+    assert osp.exists(path)
+
+
 @withPackage('networkx', 'matplotlib')
 @pytest.mark.parametrize('backend', [None, 'networkx'])
 def test_visualize_graph_via_networkx(tmp_path, backend):

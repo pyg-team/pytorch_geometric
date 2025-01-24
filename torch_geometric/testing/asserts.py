@@ -8,7 +8,9 @@ from torch import Tensor
 from torch_geometric.typing import WITH_TORCH_SPARSE, SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor, to_torch_csc_tensor
 
-SPARSE_LAYOUTS = ['torch_sparse', torch.sparse_csc, torch.sparse_coo]
+SPARSE_LAYOUTS: List[Union[str, torch.layout]] = [
+    'torch_sparse', torch.sparse_csc, torch.sparse_coo
+]
 
 
 def assert_module(
@@ -19,13 +21,13 @@ def assert_module(
     expected_size: Tuple[int, ...],
     test_edge_permutation: bool = True,
     test_node_permutation: bool = False,
-    test_sparse_layouts: List[Union[str, int]] = SPARSE_LAYOUTS,
+    test_sparse_layouts: Optional[List[Union[str, torch.layout]]] = None,
     sparse_size: Optional[Tuple[int, int]] = None,
     atol: float = 1e-08,
     rtol: float = 1e-05,
     equal_nan: bool = False,
-    **kwargs,
-):
+    **kwargs: Any,
+) -> Any:
     r"""Asserts that the output of a :obj:`module` is correct.
 
     Specifically, this method tests that:
@@ -57,6 +59,9 @@ def assert_module(
         **kwargs (optional): Additional arguments passed to
             :meth:`module.forward`.
     """
+    if test_sparse_layouts is None:
+        test_sparse_layouts = SPARSE_LAYOUTS
+
     if sparse_size is None:
         if 'size' in kwargs:
             sparse_size = kwargs['size']

@@ -164,7 +164,7 @@ class PNAConv(MessagePassing):
             x = x.view(-1, 1, self.F_in).repeat(1, self.towers, 1)
 
         # propagate_type: (x: Tensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
 
         out = torch.cat([x, out], dim=-1)
         outs = [nn(out[:, i]) for i, nn in enumerate(self.post_nns)]

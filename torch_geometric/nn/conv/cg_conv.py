@@ -82,10 +82,10 @@ class CGConv(MessagePassing):
                 edge_attr: OptTensor = None) -> Tensor:
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
         out = out if self.bn is None else self.bn(out)
         out = out + x[1]
         return out

@@ -11,7 +11,7 @@ class HouseMotif(CustomMotif):
     undirected edges. Nodes are labeled according to their structural role:
     the top, middle and bottom of the house.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         structure = Data(
             num_nodes=5,
             edge_index=torch.tensor([

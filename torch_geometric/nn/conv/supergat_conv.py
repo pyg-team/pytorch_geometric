@@ -210,7 +210,7 @@ class SuperGATConv(MessagePassing):
         x = self.lin(x).view(-1, H, C)
 
         # propagate_type: (x: Tensor)
-        out = self.propagate(edge_index, x=x, size=None)
+        out = self.propagate(edge_index, x=x)
 
         if self.training:
             if isinstance(edge_index, SparseTensor):

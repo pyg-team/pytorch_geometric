@@ -9,10 +9,11 @@ import torch
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
+    download_google_url,
     extract_tar,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, to_undirected
 
 
@@ -98,9 +99,6 @@ class GEDDataset(InMemoryDataset):
           - 0
           - 0
     """
-
-    url = 'https://drive.google.com/uc?export=download&id={}'
-
     datasets = {
         'AIDS700nef': {
             'id': '10czBPJDEzEDI2tq7Z7mkBjLhj55F-a2z',
@@ -140,7 +138,7 @@ class GEDDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.name = name
         assert self.name in self.datasets.keys()
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -148,9 +146,9 @@ class GEDDataset(InMemoryDataset):
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
-        self.ged = torch.load(path)
+        self.ged = fs.torch_load(path)
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
-        self.norm_ged = torch.load(path)
+        self.norm_ged = fs.torch_load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -162,19 +160,22 @@ class GEDDataset(InMemoryDataset):
         # Returns, e.g., ['LINUX_training.pt', 'LINUX_test.pt']
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
 
-    def download(self):
+    def download(self) -> None:
         # Downloads the .tar/.zip file of the graphs and extracts them:
-        name = self.datasets[self.name]['id']
-        path = download_url(self.url.format(name), self.raw_dir)
-        self.datasets[self.name]['extract'](path, self.raw_dir)
+        id = self.datasets[self.name]['id']
+        assert isinstance(id, str)
+        path = download_google_url(id, self.raw_dir, 'data')
+        extract_fn = self.datasets[self.name]['extract']
+        assert callable(extract_fn)
+        extract_fn(path, self.raw_dir)
         os.unlink(path)
 
         # Downloads the pickle file containing pre-computed GEDs:
-        name = self.datasets[self.name]['pickle']
-        path = download_url(self.url.format(name), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
+        id = self.datasets[self.name]['pickle']
+        assert isinstance(id, str)
+        path = download_google_url(id, self.raw_dir, 'ged.pickle')
 
-    def process(self):
+    def process(self) -> None:
         import networkx as nx
 
         ids, Ns = [], []
@@ -183,7 +184,7 @@ class GEDDataset(InMemoryDataset):
             # Find the paths of all raw graphs:
             names = glob.glob(osp.join(r_path, '*.gexf'))
             # Get sorted graph IDs given filename: 123.gexf -> 123
-            ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
+            ids.append(sorted([int(osp.basename(i)[:-5]) for i in names]))
 
             data_list = []
             # Convert graphs in .gexf format to a NetworkX Graph:
@@ -207,6 +208,7 @@ class GEDDataset(InMemoryDataset):
                 # Create a one-hot encoded feature matrix denoting the atom
                 # type (for the `AIDS700nef` dataset):
                 if self.name == 'AIDS700nef':
+                    assert data.num_nodes is not None
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
                         x[int(node)] = self.types.index(info['type'])
@@ -232,9 +234,9 @@ class GEDDataset(InMemoryDataset):
         with open(path, 'rb') as f:
             obj = pickle.load(f)
             xs, ys, gs = [], [], []
-            for (x, y), g in obj.items():
-                xs += [assoc[x]]
-                ys += [assoc[y]]
+            for (_x, _y), g in obj.items():
+                xs += [assoc[_x]]
+                ys += [assoc[_y]]
                 gs += [g]
             # The pickle file does not contain GEDs for test graph pairs, i.e.
             # GEDs for (test_graph, test_graph) pairs are still float('inf'):

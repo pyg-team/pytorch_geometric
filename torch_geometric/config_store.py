@@ -1,5 +1,6 @@
 import copy
 import inspect
+import typing
 from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -15,12 +16,17 @@ MAPPING = {
 
 try:
     from omegaconf import MISSING
-except ImportError:
-    MISSING: Any = '???'
+except Exception:
+    MISSING = '???'
 
 try:
-    from hydra.core.config_store import ConfigStore
+    import hydra  # noqa
     WITH_HYDRA = True
+except Exception:
+    WITH_HYDRA = False
+
+if not typing.TYPE_CHECKING and WITH_HYDRA:
+    from hydra.core.config_store import ConfigStore
 
     def get_node(cls: Union[str, Any]) -> Optional[Any]:
         if (not isinstance(cls, str)
@@ -63,16 +69,14 @@ try:
         node = get_node(cls)
         return node._metadata.orig_type if node is not None else None
 
-except ImportError:
-
-    WITH_HYDRA = False
+else:
 
     class Singleton(type):
         _instances: Dict[type, Any] = {}
 
-        def __call__(cls, *args, **kwargs) -> Any:
+        def __call__(cls, *args: Any, **kwargs: Any) -> Any:
             if cls not in cls._instances:
-                instance = super(Singleton, cls).__call__(*args, **kwargs)
+                instance = super().__call__(*args, **kwargs)
                 cls._instances[cls] = instance
                 return instance
             return cls._instances[cls]
@@ -89,11 +93,11 @@ except ImportError:
         _metadata: Metadata = field(default_factory=Metadata)
 
     class ConfigStore(metaclass=Singleton):
-        def __init__(self):
+        def __init__(self) -> None:
             self.repo: Dict[str, Any] = defaultdict(dict)
 
         @classmethod
-        def instance(cls, *args, **kwargs) -> 'ConfigStore':
+        def instance(cls, *args: Any, **kwargs: Any) -> 'ConfigStore':
             return cls(*args, **kwargs)
 
         def store(
@@ -102,7 +106,7 @@ except ImportError:
             node: Any,
             group: Optional[str] = None,
             orig_type: Optional[Any] = None,
-        ):
+        ) -> None:
             cur = self.repo
             if group is not None:
                 cur = cur[group]
@@ -158,15 +162,22 @@ def map_annotation(
     annotation: Any,
     mapping: Optional[Dict[Any, Any]] = None,
 ) -> Any:
-
     origin = getattr(annotation, '__origin__', None)
-    args = getattr(annotation, '__args__', [])
-    if origin == Union or origin == list or origin == dict:
-        annotation = copy.copy(annotation)
-        annotation.__args__ = tuple(map_annotation(a, mapping) for a in args)
+    args: Tuple[Any, ...] = getattr(annotation, '__args__', tuple())
+    if origin in {Union, list, dict, tuple}:
+        assert origin is not None
+        args = tuple(map_annotation(a, mapping) for a in args)
+        if type(annotation).__name__ == 'GenericAlias':
+            # If annotated with `list[...]` or `dict[...]` (>= Python 3.10):
+            annotation = origin[args]
+        else:
+            # If annotated with `typing.List[...]` or `typing.Dict[...]`:
+            annotation = copy.copy(annotation)
+            annotation.__args__ = args
+
         return annotation
 
-    if annotation in mapping or {}:
+    if mapping is not None and annotation in mapping:
         return mapping[annotation]
 
     out = dataclass_from_class(annotation)
@@ -225,10 +236,10 @@ def to_dataclass(
     params = inspect.signature(cls.__init__).parameters
 
     if strict:  # Check that keys in map_args or exclude_args are present.
-        args = set() if map_args is None else set(map_args.keys())
+        keys = set() if map_args is None else set(map_args.keys())
         if exclude_args is not None:
-            args |= set([arg for arg in exclude_args if isinstance(arg, str)])
-        diff = args - set(params.keys())
+            keys |= {arg for arg in exclude_args if isinstance(arg, str)}
+        diff = keys - set(params.keys())
         if len(diff) > 0:
             raise ValueError(f"Expected input argument(s) {diff} in "
                              f"'{cls.__name__}'")
@@ -264,7 +275,7 @@ def to_dataclass(
                     annotation = List[Any]
             elif origin == dict:
                 if getattr(args[1], '__origin__', None) == Union:
-                    annotation = Dict[args[0], Any]
+                    annotation = Dict[args[0], Any]  # type: ignore
         else:
             annotation = Any
 
@@ -278,7 +289,7 @@ def to_dataclass(
                 # Avoid late binding of default values inside a loop:
                 # https://stackoverflow.com/questions/3431676/
                 # creating-functions-in-a-loop
-                def wrapper(default):
+                def wrapper(default: Any) -> Callable[[], Any]:
                     return lambda: default
 
                 default = field(default_factory=wrapper(default))
@@ -314,7 +325,7 @@ def register(
     cls: Optional[Any] = None,
     data_cls: Optional[Any] = None,
     group: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> Union[Any, Callable]:
     r"""Registers a class in the global configuration store.
 
@@ -344,7 +355,7 @@ def register(
                 f"The data class '{data_cls.__name__}' is already registered "
                 f"in the global configuration store")
 
-        if WITH_HYDRA:
+        if not typing.TYPE_CHECKING and WITH_HYDRA:
             get_config_store().store(name, data_cls, group)
             get_node(name)._metadata.orig_type = cls
         else:
@@ -395,20 +406,20 @@ class Config:
     lr_scheduler: Optional[LRScheduler] = None
 
 
-def fill_config_store():
+def fill_config_store() -> None:
     import torch_geometric
 
     config_store = get_config_store()
 
     # Register `torch_geometric.transforms` ###################################
     transforms = torch_geometric.transforms
-    for cls_name in set(transforms.__all__) - set([
+    for cls_name in set(transforms.__all__) - {
             'BaseTransform',
             'Compose',
             'ComposeFilters',
             'LinearTransformation',
             'AddMetaPaths',  # TODO
-    ]):
+    }:
         cls = to_dataclass(getattr(transforms, cls_name), base_cls=Transform)
         # We use an explicit additional nesting level inside each config to
         # allow for applying multiple transformations.
@@ -417,12 +428,12 @@ def fill_config_store():
 
     # Register `torch_geometric.datasets` #####################################
     datasets = torch_geometric.datasets
-    map_dataset_args = {
+    map_dataset_args: Dict[str, Any] = {
         'transform': (Dict[str, Transform], field(default_factory=dict)),
         'pre_transform': (Dict[str, Transform], field(default_factory=dict)),
     }
 
-    for cls_name in set(datasets.__all__) - set([]):
+    for cls_name in set(datasets.__all__) - set():
         cls = to_dataclass(getattr(datasets, cls_name), base_cls=Dataset,
                            map_args=map_dataset_args,
                            exclude_args=['pre_filter'])
@@ -430,32 +441,34 @@ def fill_config_store():
 
     # Register `torch_geometric.models` #######################################
     models = torch_geometric.nn.models.basic_gnn
-    for cls_name in set(models.__all__) - set([]):
+    for cls_name in set(models.__all__) - set():
         cls = to_dataclass(getattr(models, cls_name), base_cls=Model)
         config_store.store(cls_name, group='model', node=cls)
 
     # Register `torch.optim.Optimizer` ########################################
-    for cls_name in set([
-            key for key, cls in torch.optim.__dict__.items()
+    for cls_name in {
+            key
+            for key, cls in torch.optim.__dict__.items()
             if inspect.isclass(cls) and issubclass(cls, torch.optim.Optimizer)
-    ]) - set([
+    } - {
             'Optimizer',
-    ]):
+    }:
         cls = to_dataclass(getattr(torch.optim, cls_name), base_cls=Optimizer,
                            exclude_args=['params'])
         config_store.store(cls_name, group='optimizer', node=cls)
 
     # Register `torch.optim.lr_scheduler` #####################################
-    for cls_name in set([
-            key for key, cls in torch.optim.lr_scheduler.__dict__.items()
+    for cls_name in {
+            key
+            for key, cls in torch.optim.lr_scheduler.__dict__.items()
             if inspect.isclass(cls)
-    ]) - set([
+    } - {
             'Optimizer',
             '_LRScheduler',
             'Counter',
             'SequentialLR',
             'ChainedScheduler',
-    ]):
+    }:
         cls = to_dataclass(getattr(torch.optim.lr_scheduler, cls_name),
                            base_cls=LRScheduler, exclude_args=['optimizer'])
         config_store.store(cls_name, group='lr_scheduler', node=cls)

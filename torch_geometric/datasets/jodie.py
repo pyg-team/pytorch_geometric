@@ -24,6 +24,8 @@ class JODIEDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -66,11 +68,13 @@ class JODIEDataset(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.names
 
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=TemporalData)
 
     @property
@@ -89,10 +93,10 @@ class JODIEDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         download_url(self.url.format(self.name), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         df = pd.read_csv(self.raw_paths[0], skiprows=1, header=None)

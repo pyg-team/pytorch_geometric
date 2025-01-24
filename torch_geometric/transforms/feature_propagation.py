@@ -36,25 +36,29 @@ class FeaturePropagation(BaseTransform):
         num_iterations (int, optional): The number of propagations.
             (default: :obj:`40`)
     """
-    def __init__(self, missing_mask: Tensor, num_iterations: int = 40):
+    def __init__(self, missing_mask: Tensor, num_iterations: int = 40) -> None:
         self.missing_mask = missing_mask
         self.num_iterations = num_iterations
 
     def forward(self, data: Data) -> Data:
-        assert 'edge_index' in data or 'adj_t' in data
+        assert data.x is not None
+        assert data.edge_index is not None or data.adj_t is not None
+
         assert data.x.size() == self.missing_mask.size()
         gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
 
         missing_mask = self.missing_mask.to(data.x.device)
         known_mask = ~missing_mask
 
-        if 'edge_index' in data:
+        if data.edge_index is not None:
             edge_weight = data.edge_attr
             if 'edge_weight' in data:
                 edge_weight = data.edge_weight
-            edge_index = data.edge_index
-            adj_t = to_torch_csc_tensor(edge_index, edge_weight,
-                                        size=data.size()).t()
+            adj_t = to_torch_csc_tensor(
+                edge_index=data.edge_index,
+                edge_attr=edge_weight,
+                size=data.size(0),
+            ).t()
             adj_t, _ = gcn_norm(adj_t, add_self_loops=False)
         elif is_torch_sparse_tensor(data.adj_t):
             adj_t, _ = gcn_norm(data.adj_t, add_self_loops=False)

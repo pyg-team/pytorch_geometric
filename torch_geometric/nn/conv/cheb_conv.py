@@ -164,11 +164,11 @@ class ChebConv(MessagePassing):
 
         # propagate_type: (x: Tensor, norm: Tensor)
         if len(self.lins) > 1:
-            Tx_1 = self.propagate(edge_index, x=x, norm=norm, size=None)
+            Tx_1 = self.propagate(edge_index, x=x, norm=norm)
             out = out + self.lins[1](Tx_1)
 
         for lin in self.lins[2:]:
-            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm, size=None)
+            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm)
             Tx_2 = 2. * Tx_2 - Tx_0
             out = out + lin.forward(Tx_2)
             Tx_0, Tx_1 = Tx_1, Tx_2

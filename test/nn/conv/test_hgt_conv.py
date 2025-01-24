@@ -4,12 +4,11 @@ import torch_geometric.typing
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import HGTConv
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.testing import get_random_edge_index
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce, to_torch_csc_tensor
 
 
-@withPackage('torch>=1.12.0')  # TODO Investigate error
 def test_hgt_conv_same_dimensions():
     x_dict = {
         'author': torch.randn(4, 16),
@@ -60,7 +59,6 @@ def test_hgt_conv_same_dimensions():
     # allows indexing `ParameterDict` mappings :(
 
 
-@withPackage('torch>=1.12.0')  # TODO Investigate error
 def test_hgt_conv_different_dimensions():
     x_dict = {
         'author': torch.randn(4, 16),
@@ -111,7 +109,6 @@ def test_hgt_conv_different_dimensions():
             assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 
-@withPackage('torch>=1.12.0')  # TODO Investigate error
 def test_hgt_conv_lazy():
     x_dict = {
         'author': torch.randn(4, 16),

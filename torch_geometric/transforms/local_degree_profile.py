@@ -20,16 +20,17 @@ class LocalDegreeProfile(BaseTransform):
     to the node features, where :math:`DN(i) = \{ \deg(j) \mid j \in
     \mathcal{N}(i) \}`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         from torch_geometric.nn.aggr.fused import FusedAggregation
         self.aggr = FusedAggregation(['min', 'max', 'mean', 'std'])
 
     def forward(self, data: Data) -> Data:
+        assert data.edge_index is not None
         row, col = data.edge_index
-        N = data.num_nodes
+        num_nodes = data.num_nodes
 
-        deg = degree(row, N, dtype=torch.float).view(-1, 1)
-        xs = [deg] + self.aggr(deg[col], row, dim_size=N)
+        deg = degree(row, num_nodes, dtype=torch.float).view(-1, 1)
+        xs = [deg] + self.aggr(deg[col], row, dim_size=num_nodes)
 
         if data.x is not None:
             data.x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x

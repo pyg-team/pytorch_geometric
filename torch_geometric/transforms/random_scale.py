@@ -26,11 +26,13 @@ class RandomScale(BaseTransform):
             is randomly sampled from the range
             :math:`a \leq \mathrm{scale} \leq b`.
     """
-    def __init__(self, scales: Tuple[float, float]):
+    def __init__(self, scales: Tuple[float, float]) -> None:
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+
         scale = random.uniform(*self.scales)
         data.pos = data.pos * scale
         return data

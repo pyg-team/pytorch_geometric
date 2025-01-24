@@ -1,5 +1,3 @@
-import copy
-
 import pytest
 import torch
 
@@ -36,16 +34,13 @@ def test_gcn_conv():
         assert torch.allclose(conv(x, adj4.t()), out2, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
+        jit = torch.jit.script(conv)
         assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
         assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
 
-    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
-        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
-        assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
+            assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, edge_index)
@@ -63,19 +58,24 @@ def test_gcn_conv_with_decomposed_layers():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
+    def hook(module, inputs):
+        assert inputs[0]['x_j'].size() == (10, 32 // module.decomposed_layers)
+
     conv = GCNConv(16, 32)
-
-    decomposed_conv = copy.deepcopy(conv)
-    decomposed_conv.decomposed_layers = 2
-
+    conv.register_message_forward_pre_hook(hook)
     out1 = conv(x, edge_index)
-    out2 = decomposed_conv(x, edge_index)
+
+    conv.decomposed_layers = 2
+    assert conv.propagate.__module__.endswith('message_passing')
+    out2 = conv(x, edge_index)
     assert torch.allclose(out1, out2)
 
-    if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(decomposed_conv.jittable(t))
-        assert torch.allclose(jit(x, edge_index), out1)
+    # TorchScript should still work since it relies on class methods
+    # (but without decomposition).
+    torch.jit.script(conv)
+
+    conv.decomposed_layers = 1
+    assert conv.propagate.__module__.endswith('GCNConv_propagate')
 
 
 def test_gcn_conv_with_sparse_input_feature():

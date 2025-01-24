@@ -236,7 +236,9 @@ def to_captum_input(
         raise ValueError(
             "'x' and 'edge_index' need to be either"
             f"'Dict' or 'Tensor' got({type(x)}, {type(edge_index)})")
+
     additional_forward_args.extend(args)
+
     return tuple(inputs), tuple(additional_forward_args)
 
 

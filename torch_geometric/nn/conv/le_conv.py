@@ -77,8 +77,7 @@ class LEConv(MessagePassing):
         b = self.lin2(x[1])
 
         # propagate_type: (a: Tensor, b: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, a=a, b=b, edge_weight=edge_weight,
-                             size=None)
+        out = self.propagate(edge_index, a=a, b=b, edge_weight=edge_weight)
 
         return out + self.lin3(x[1])
 

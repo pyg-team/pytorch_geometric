@@ -76,7 +76,7 @@ def remove_isolated_nodes(
     mask[edge_index.view(-1)] = 1
 
     assoc = torch.full((num_nodes, ), -1, dtype=torch.long, device=mask.device)
-    assoc[mask] = torch.arange(mask.sum(), device=assoc.device)
+    assoc[mask] = torch.arange(mask.sum(), device=assoc.device)  # type: ignore
     edge_index = assoc[edge_index]
 
     loop_mask = torch.zeros_like(mask)

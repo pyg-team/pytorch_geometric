@@ -1,9 +1,9 @@
 import os
 import os.path as osp
-import shutil
 from typing import Callable, List, Optional
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import (
     Data,
@@ -11,6 +11,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class S3DIS(InMemoryDataset):
@@ -58,7 +59,7 @@ class S3DIS(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         assert test_area >= 1 and test_area <= 6
         self.test_area = test_area
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -74,28 +75,29 @@ class S3DIS(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'{split}_{self.test_area}.pt' for split in ['train', 'test']]
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        shutil.rmtree(self.raw_dir)
+        fs.rm(self.raw_dir)
         name = self.url.split('/')[-1].split('.')[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         import h5py
 
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             filenames = [x.split('/')[-1] for x in f.read().split('\n')[:-1]]
 
-        with open(self.raw_paths[1], 'r') as f:
+        with open(self.raw_paths[1]) as f:
             rooms = f.read().split('\n')[:-1]
 
-        xs, ys = [], []
+        xs: List[Tensor] = []
+        ys: List[Tensor] = []
         for filename in filenames:
-            f = h5py.File(osp.join(self.raw_dir, filename))
-            xs += torch.from_numpy(f['data'][:]).unbind(0)
-            ys += torch.from_numpy(f['label'][:]).to(torch.long).unbind(0)
+            h5 = h5py.File(osp.join(self.raw_dir, filename))
+            xs += torch.from_numpy(h5['data'][:]).unbind(0)
+            ys += torch.from_numpy(h5['label'][:]).to(torch.long).unbind(0)
 
         test_area = f'Area_{self.test_area}'
         train_data_list, test_data_list = [], []

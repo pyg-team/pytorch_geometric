@@ -2,14 +2,14 @@ import functools
 import inspect
 import logging
 import os
-import shutil
+import os.path as osp
 import warnings
 from collections.abc import Iterable
 from dataclasses import asdict
 from typing import Any
 
 import torch_geometric.graphgym.register as register
-from torch_geometric.data.makedirs import makedirs
+from torch_geometric.io import fs
 
 try:  # Define global config object
     from yacs.config import CfgNode as CN
@@ -483,8 +483,8 @@ def dump_cfg(cfg):
     Args:
         cfg (CfgNode): Configuration node
     """
-    makedirs(cfg.out_dir)
-    cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
+    os.makedirs(cfg.out_dir, exist_ok=True)
+    cfg_file = osp.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
@@ -502,8 +502,8 @@ def load_cfg(cfg, args):
 
 
 def makedirs_rm_exist(dir):
-    if os.path.isdir(dir):
-        shutil.rmtree(dir)
+    if osp.isdir(dir):
+        fs.rm(dir)
     os.makedirs(dir, exist_ok=True)
 
 
@@ -513,7 +513,7 @@ def get_fname(fname):
     Args:
         fname (str): Filename for the yaml format configuration file
     """
-    fname = os.path.basename(fname)
+    fname = osp.basename(fname)
     if fname.endswith('.yaml'):
         fname = fname[:-5]
     elif fname.endswith('.yml'):
@@ -529,7 +529,7 @@ def set_out_dir(out_dir, fname):
         fname (str): Filename for the yaml format configuration file
     """
     fname = get_fname(fname)
-    cfg.out_dir = os.path.join(out_dir, fname)
+    cfg.out_dir = osp.join(out_dir, fname)
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.out_dir, exist_ok=True)
@@ -543,7 +543,7 @@ def set_run_dir(out_dir):
     Args:
         out_dir (str): Directory for output, specified in :obj:`cfg.out_dir`
     """
-    cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
+    cfg.run_dir = osp.join(out_dir, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.run_dir, exist_ok=True)

@@ -449,7 +449,7 @@ def test_pad_num_nodes_not_complete():
     data = fake_hetero_data(node_types=2, edge_types=1)
     transform = Pad(max_num_nodes={'v0': 100})
 
-    with pytest.raises(AssertionError, match="The number of v1 nodes"):
+    with pytest.raises(KeyError):
         transform(data)
 
 

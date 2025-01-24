@@ -1,7 +1,6 @@
 import os
 import os.path as osp
 import pickle
-import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -13,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class ZINC(InMemoryDataset):
@@ -97,7 +97,7 @@ class ZINC(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
-    ):
+    ) -> None:
         self.subset = subset
         assert split in ['train', 'val', 'test']
         super().__init__(root, transform, pre_transform, pre_filter,
@@ -121,8 +121,8 @@ class ZINC(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
-    def download(self):
-        shutil.rmtree(self.raw_dir)
+    def download(self) -> None:
+        fs.rm(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, 'molecules'), self.raw_dir)
@@ -131,15 +131,15 @@ class ZINC(InMemoryDataset):
         for split in ['train', 'val', 'test']:
             download_url(self.split_url.format(split), self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         for split in ['train', 'val', 'test']:
             with open(osp.join(self.raw_dir, f'{split}.pickle'), 'rb') as f:
                 mols = pickle.load(f)
 
-            indices = range(len(mols))
+            indices = list(range(len(mols)))
 
             if self.subset:
-                with open(osp.join(self.raw_dir, f'{split}.index'), 'r') as f:
+                with open(osp.join(self.raw_dir, f'{split}.index')) as f:
                     indices = [int(x) for x in f.read()[:-1].split(',')]
 
             pbar = tqdm(total=len(indices))

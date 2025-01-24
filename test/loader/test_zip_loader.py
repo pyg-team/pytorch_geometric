@@ -21,6 +21,10 @@ def test_zip_loader(filter_per_worker):
     loader = ZipLoader(loaders, batch_size=10,
                        filter_per_worker=filter_per_worker)
 
+    batches = loader(torch.arange(5))
+    assert isinstance(batches, tuple)
+    assert len(batches) == 2
+
     assert str(loader) == ('ZipLoader(loaders=[NeighborLoader(), '
                            'NeighborLoader()])')
     assert len(loader) == 5

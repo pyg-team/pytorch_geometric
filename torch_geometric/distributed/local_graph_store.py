@@ -1,4 +1,3 @@
-import json
 import os.path as osp
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -6,13 +5,15 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
+from torch_geometric.distributed.partition import load_partition_info
+from torch_geometric.io import fs
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 from torch_geometric.utils import sort_edge_index
 
 
 class LocalGraphStore(GraphStore):
-    r"""This class implements the :class:`torch_geometric.data.GraphStore`
-    interface to act as a local graph store for distributed training.
+    r"""Implements the :class:`~torch_geometric.data.GraphStore` interface to
+    act as a local graph store for distributed training.
     """
     def __init__(self):
         super().__init__()
@@ -40,13 +41,19 @@ class LocalGraphStore(GraphStore):
         ids: torch.Tensor,
         node_type: Optional[NodeType] = None,
     ) -> Tensor:
-        r"""Get the partition IDs of node IDs for a specific node type."""
-        return self.node_pb[ids]
+        r"""Returns the partition IDs of node IDs for a specific node type."""
+        if self.meta['is_hetero']:
+            return self.node_pb[node_type][ids]
+        else:
+            return self.node_pb[ids]
 
     def get_partition_ids_from_eids(self, eids: torch.Tensor,
                                     edge_type: Optional[EdgeType] = None):
-        r"""Get the partition IDs of edge IDs for a specific edge type."""
-        return self.edge_pb[eids]
+        r"""Returns the partition IDs of edge IDs for a specific edge type."""
+        if self.meta['is_hetero']:
+            return self.edge_pb[edge_type][eids]
+        else:
+            return self.edge_pb[eids]
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
@@ -94,8 +101,8 @@ class LocalGraphStore(GraphStore):
             edge_id (torch.Tensor): The global identifier for every local edge.
             edge_index (torch.Tensor): The local edge indices.
             num_nodes (int): The number of nodes in the local graph.
-            is_sorted (bool): Indicate if edge_index is sorted on col/dst_node
-                (CSC format). (default: :obj:`False`)
+            is_sorted (bool): Whether edges are sorted by column/destination
+                nodes (CSC format). (default: :obj:`False`)
         """
         graph_store = cls()
         graph_store.meta = {'is_hetero': False}
@@ -136,8 +143,8 @@ class LocalGraphStore(GraphStore):
                 indices of every edge type.
             num_nodes_dict: (Dict[str, int]): The number of nodes for every
                 node type.
-            is_sorted (bool): Indicate if edge_index is sorted on col/dst_node
-                (CSC format)
+            is_sorted (bool): Whether edges are sorted by column/destination
+                nodes (CSC format). (default: :obj:`False`)
         """
         graph_store = cls()
         graph_store.meta = {'is_hetero': True}
@@ -163,14 +170,23 @@ class LocalGraphStore(GraphStore):
 
     @classmethod
     def from_partition(cls, root: str, pid: int) -> 'LocalGraphStore':
-        with open(osp.join(root, 'META.json'), 'r') as f:
-            meta = json.load(f)
-
         part_dir = osp.join(root, f'part_{pid}')
         assert osp.exists(part_dir)
-
-        graph_data = torch.load(osp.join(part_dir, 'graph.pt'))
         graph_store = cls()
+        (
+            meta,
+            num_partitions,
+            partition_idx,
+            node_pb,
+            edge_pb,
+        ) = load_partition_info(root, pid)
+        graph_store.num_partitions = num_partitions
+        graph_store.partition_idx = partition_idx
+        graph_store.node_pb = node_pb
+        graph_store.edge_pb = edge_pb
+        graph_store.meta = meta
+
+        graph_data = fs.torch_load(osp.join(part_dir, 'graph.pt'))
         graph_store.is_sorted = meta['is_sorted']
 
         if not meta['is_hetero']:
@@ -181,8 +197,12 @@ class LocalGraphStore(GraphStore):
                 edge_index, edge_id = sort_edge_index(edge_index, edge_id,
                                                       sort_by_row=False)
 
-            attr = dict(edge_type=None, layout='coo', size=graph_data['size'],
-                        is_sorted=True)
+            attr = dict(
+                edge_type=None,
+                layout='coo',
+                size=graph_data['size'],
+                is_sorted=True,
+            )
             graph_store.put_edge_index(edge_index, **attr)
             graph_store.put_edge_id(edge_id, **attr)
 

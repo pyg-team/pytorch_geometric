@@ -1,9 +1,10 @@
 import torch
 
 from torch_geometric.distributed import LocalGraphStore
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import get_random_edge_index, onlyDistributedTest
 
 
+@onlyDistributedTest
 def test_local_graph_store():
     graph_store = LocalGraphStore()
 
@@ -34,6 +35,7 @@ def test_local_graph_store():
     assert len(graph_store.get_all_edge_attrs()) == 0
 
 
+@onlyDistributedTest
 def test_homogeneous_graph_store():
     edge_id = torch.randperm(300)
     edge_index = get_random_edge_index(100, 100, 300)
@@ -63,6 +65,7 @@ def test_homogeneous_graph_store():
     )
 
 
+@onlyDistributedTest
 def test_heterogeneous_graph_store():
     edge_type = ('paper', 'to', 'paper')
     edge_id_dict = {edge_type: torch.randperm(300)}
@@ -94,6 +97,7 @@ def test_heterogeneous_graph_store():
     )
 
 
+@onlyDistributedTest
 def test_sorted_graph_store():
     edge_index_sorted = torch.tensor([[1, 7, 5, 6, 1], [0, 0, 1, 1, 2]])
     edge_id_sorted = torch.tensor([0, 1, 2, 3, 4])

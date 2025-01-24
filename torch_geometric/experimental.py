@@ -34,7 +34,7 @@ def is_experimental_mode_enabled(options: Options = None) -> bool:
     return all([__experimental_flag__[option] for option in options])
 
 
-def set_experimental_mode_enabled(mode: bool, options: Options = None):
+def set_experimental_mode_enabled(mode: bool, options: Options = None) -> None:
     for option in get_options(options):
         __experimental_flag__[option] = mode
 
@@ -52,17 +52,17 @@ class experimental_mode:
         options (str or list, optional): Currently there are no experimental
             features.
     """
-    def __init__(self, options: Options = None):
+    def __init__(self, options: Options = None) -> None:
         self.options = get_options(options)
         self.previous_state = {
             option: __experimental_flag__[option]
             for option in self.options
         }
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         set_experimental_mode_enabled(True, self.options)
 
-    def __exit__(self, *args) -> bool:
+    def __exit__(self, *args: Any) -> None:
         for option, value in self.previous_state.items():
             __experimental_flag__[option] = value
 
@@ -76,7 +76,7 @@ class set_experimental_mode:
 
     See :class:`experimental_mode` above for more details.
     """
-    def __init__(self, mode: bool, options: Options = None):
+    def __init__(self, mode: bool, options: Options = None) -> None:
         self.options = get_options(options)
         self.previous_state = {
             option: __experimental_flag__[option]
@@ -84,10 +84,10 @@ class set_experimental_mode:
         }
         set_experimental_mode_enabled(mode, self.options)
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         pass
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         for option, value in self.previous_state.items():
             __experimental_flag__[option] = value
 
@@ -112,7 +112,7 @@ def disable_dynamic_shapes(required_args: List[str]) -> Callable:
         num_positional_args = num_args - num_default_args
 
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             if not is_experimental_mode_enabled('disable_dynamic_shapes'):
                 return func(*args, **kwargs)
 
@@ -125,6 +125,7 @@ def disable_dynamic_shapes(required_args: List[str]) -> Callable:
                 elif required_arg in kwargs:
                     value = kwargs[required_arg]
                 elif num_default_args > 0:
+                    assert spec.defaults is not None
                     value = spec.defaults[index - num_positional_args]
 
                 if value is None:

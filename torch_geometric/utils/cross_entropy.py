@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -11,7 +11,7 @@ class SparseCrossEntropy(torch.autograd.Function):
     # double gradient computation to `inputs`.
     @staticmethod
     def forward(
-        ctx,
+        ctx: Any,
         inputs: Tensor,
         edge_label_index: Tensor,
         edge_label_weight: Optional[Tensor],
@@ -31,7 +31,7 @@ class SparseCrossEntropy(torch.autograd.Function):
 
     @staticmethod
     @torch.autograd.function.once_differentiable
-    def backward(ctx, grad_out: Tensor) -> Tuple[Tensor, None, None]:
+    def backward(ctx: Any, grad_out: Tensor) -> Tuple[Tensor, None, None]:
         inputs, edge_label_index, edge_label_weight, logsumexp = (
             ctx.saved_tensors)
 
