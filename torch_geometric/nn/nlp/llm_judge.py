@@ -42,9 +42,9 @@ SYSTEM_PROMPT_2 = (
     "justification, adhering to the following scale: " +
     "0 (no match), 2 (partial match), 4 (exact match).\n" +
     "Do not explain or justify my rating. My rating must" +
-    " be only 4, 2 or 0 only.\n\n" + "Question: {query}\n\n" +
-    "Reference Answer: {sentence_inference}\n\n" +
-    "User Answer: {sentence_true}\n\n" + "Rating: ")
+    " be only 4, 2 or 0 only.\n\n" + "Question: {question}\n\n" +
+    "Reference Answer: {model_pred}\n\n" +
+    "User Answer: {correct_answer}\n\n" + "Rating: ")
 
 
 class LLMJudge():
@@ -69,7 +69,7 @@ class LLMJudge():
         self.NVIDIA_API_KEY = NVIDIA_API_KEY
         self.NIM_MODEL = NVIDIA_NIM_MODEL
 
-    def _process_score(self, response):
+    def _process_score(self, response: str) -> float:
         """Uses 3 and 1 even though prompt says only 0, 2, 4.
         This is because LLMs don't always follow instructions.
         Credit to Gilberto.
@@ -79,15 +79,15 @@ class LLMJudge():
                 return i / 4
         return float("nan")
 
-    def _average_scores(self, score0, score1):
+    def _average_scores(self, score0: float, score1: float):
         """Take the average of score0 and score1.
         Sometimes the LLM fail to respond or have no score in the response.
         In those cases the failed score is discarded.
         Credit to Gilberto.
 
         Args:
-         score0 (str): judge accuracy score.
-         score1 (str): judge accuracy score by permuting agent answer and
+         score0 (float): judge accuracy score.
+         score1 (float): judge accuracy score by permuting agent answer and
          ground truth.
 
         Returns:
@@ -106,7 +106,7 @@ class LLMJudge():
         question: str,
         model_pred: str,
         correct_answer: str,
-    ):
+    ) -> float:
         """Args:
             question (str): The original question asked to the model.
             model_pred (str): The prediction made by the model.
