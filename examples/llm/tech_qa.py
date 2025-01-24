@@ -4,7 +4,7 @@ from itertools import chain
 
 import torch
 from datasets import load_dataset
-from g_retriever import adjust_learning_rate, get_loss, inference_step
+from g_retriever import adjust_learning_rate, get_loss, inference_step, save_params_dict, load_params_dict
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
@@ -167,45 +167,51 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     llm = LLM(model_name=args.llm_generator_name)
     model = GRetriever(llm=llm, gnn=gnn)
-    params = [p for _, p in model.named_parameters() if p.requires_grad]
-    lr = args.lr
-    optimizer = torch.optim.AdamW([{
-        'params': params,
-        'lr': lr,
-        'weight_decay': 0.05
-    }], betas=(0.9, 0.95))
-    float('inf')
-    for epoch in range(args.epochs):
-        model.train()
-        epoch_loss = 0
-        epoch_str = f'Epoch: {epoch + 1}|{args.epochs}'
-        loader = tqdm(train_loader, desc=epoch_str)
-        for step, batch in enumerate(loader):
-            optimizer.zero_grad()
-            loss = get_loss(model, batch)
-            loss.backward()
-            clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
-            if (step + 1) % 2 == 0:
-                adjust_learning_rate(optimizer.param_groups[0], lr,
-                                     step / len(train_loader) + epoch,
-                                     args.epochs)
-            optimizer.step()
-            epoch_loss += float(loss)
-            if (step + 1) % 2 == 0:
-                lr = optimizer.param_groups[0]['lr']
-        train_loss = epoch_loss / len(train_loader)
-        print(epoch_str + f', Train Loss: {train_loss:4f}')
-        val_loss = 0
-        model.eval()
-        with torch.no_grad():
-            for step, batch in enumerate(val_loader):
+    save_name = "tech-qa-model.pt"
+    if os.path.exists(save_name):
+        print("Re-using saved G-retriever model for testing...")
+        model = load_params_dict(model, save_name)
+    else:
+        params = [p for _, p in model.named_parameters() if p.requires_grad]
+        lr = args.lr
+        optimizer = torch.optim.AdamW([{
+            'params': params,
+            'lr': lr,
+            'weight_decay': 0.05
+        }], betas=(0.9, 0.95))
+        float('inf')
+        for epoch in range(args.epochs):
+            model.train()
+            epoch_loss = 0
+            epoch_str = f'Epoch: {epoch + 1}|{args.epochs}'
+            loader = tqdm(train_loader, desc=epoch_str)
+            for step, batch in enumerate(loader):
+                optimizer.zero_grad()
                 loss = get_loss(model, batch)
-                val_loss += loss.item()
-            val_loss = val_loss / len(val_loader)
-            print(epoch_str + f", Val Loss: {val_loss:4f}")
-    torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
-    model.eval()
+                loss.backward()
+                clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+                if (step + 1) % 2 == 0:
+                    adjust_learning_rate(optimizer.param_groups[0], lr,
+                                        step / len(train_loader) + epoch,
+                                        args.epochs)
+                optimizer.step()
+                epoch_loss += float(loss)
+                if (step + 1) % 2 == 0:
+                    lr = optimizer.param_groups[0]['lr']
+            train_loss = epoch_loss / len(train_loader)
+            print(epoch_str + f', Train Loss: {train_loss:4f}')
+            val_loss = 0
+            model.eval()
+            with torch.no_grad():
+                for step, batch in enumerate(val_loader):
+                    loss = get_loss(model, batch)
+                    val_loss += loss.item()
+                val_loss = val_loss / len(val_loader)
+                print(epoch_str + f", Val Loss: {val_loss:4f}")
+        torch.cuda.empty_cache()
+        torch.cuda.reset_max_memory_allocated()
+        model.eval()
+        save_params_dict(model, save_path=save_name)
     return model, test_loader
 
 
