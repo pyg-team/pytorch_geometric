@@ -218,7 +218,7 @@ def test(model, test_loader, args):
 
     for test_batch in tqdm(test_loader, desc="Test:"):
         preds = inference_step(model, test_batch)
-        for question, pred, label in zip(test_batch.questions, preds,
+        for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
             scores.append(eval(question, pred, label))
     avg_scores = sum(scores) / len(scores)
