@@ -9,28 +9,18 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.io import fs
 
 
 class GreycDataset(InMemoryDataset):
-    r"""Implementation of five GREYC chemistry small datasets as pytorch
-        geometric datasets : Alkane, Acyclic, MAO, Monoterpens and PAH. See
-        `"GREYC's Chemistry dataset" <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_
-        for details.
-
-    .. note::
-        Some datasets may not come with any node labels.
-        You can then either make use of the argument :obj:`use_node_attr`
-        to load additional continuous node attributes (if present) or provide
-        synthetic node features using transforms such as
-        :class:`torch_geometric.transforms.Constant` or
-        :class:`torch_geometric.transforms.OneHotDegree`.
+    r"""Implementation of five `GREYC's Chemistry datasets
+    <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_ : :obj:`Acyclic`,
+    :obj:`Alkane`, :obj:`MAO`, :obj:`Monoterpens` and :obj:`PAH`.
 
     Args:
         root (str): Root directory where the dataset should be saved.
-        name (str): The `name
-            <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_ of the
-            dataset.
+        name (str): The name (:obj:`Acyclic`,
+            :obj:`Alkane`, :obj:`MAO`, :obj:`Monoterpens` or :obj:`PAH`)
+            of the dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -49,7 +39,7 @@ class GreycDataset(InMemoryDataset):
     **STATS:**
 
     .. list-table::
-        :widths: 20 10 10 10 10 10
+        :widths: 20 10 10 10 10 10 10
         :header-rows: 1
 
         * - Name
@@ -58,27 +48,46 @@ class GreycDataset(InMemoryDataset):
           - #edges
           - #features
           - #classes
+          - Type
         * - Acyclic
           - 183
           - ~8.2
           - ~14.3
-          - 15
+          - 7
           - 148
+          - Regression
         * - Alkane
-          - 150
+          - 149
           - ~8.9
-          - ~15.8
-          - 15
+          - ~15.7
+          - 4
           - 123
+          - Regression
         * - MAO
           - 68
           - ~18.4
           - ~39.3
-          - 15
+          - 7
           - 2
+          - Classification
+        * - Monoterpens
+          - 302
+          - ~11.0
+          - ~22.2
+          - 7
+          - 10
+          - Classification
+        * - PAH
+          - 94
+          - ~20.7
+          - ~48.9
+          - 4
+          - 2
+          - Classification
     """
 
-    URL = ('http://localhost:3000/')
+    URL = ('https://raw.githubusercontent.com/bgauzere/'
+           'greycdata/refs/heads/main/greycdata/data_gml/')
 
     def __init__(
         self,
@@ -94,37 +103,15 @@ class GreycDataset(InMemoryDataset):
             raise ValueError(f"Dataset {self.name} not found.")
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        self.data, self.slices = fs.torch_load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
-    @property
-    def processed_file_names(self) -> str:
-        return os.path.join(self.root, "data.pt")
+    def __repr__(self) -> str:
+        name = self.name.capitalize()
+        if self.name in ["mao", "pah"]:
+            name = self.name.upper()
+        return f'{name}({len(self)})'
 
-    @property
-    def raw_file_names(self) -> str:
-        self.gml_datafile = os.path.join(self.root, self.name,
-                                         f"{self.name}.gml")
-        return self.gml_datafile
-
-    def download(self) -> None:
-        path = download_url(GreycDataset.URL + self.name + ".zip",
-                            self.raw_dir)
-        extract_zip(path, self.raw_dir)
-        os.unlink(path)
-
-    def process(self):
-        data_list = fs.torch_load(
-            os.path.join(self.raw_dir, self.name + ".pth"))
-
-        if self.pre_filter is not None:
-            data_list = [data for data in data_list if self.pre_filter(data)]
-
-        if self.pre_transform is not None:
-            data_list = [self.pre_transform(data) for data in data_list]
-
-        data, slices = self.collate(data_list)
-        fs.torch_save((data, slices), self.processed_paths[0])
-
+    @staticmethod
     def _gml_to_data(gml: str, gml_file: bool = True) -> Data:
         """Reads a `gml` file and creates a `Data` object.
 
@@ -156,8 +143,9 @@ class GreycDataset(InMemoryDataset):
 
         x, edge_index, edge_attr = [], [], []
 
-        y = torch.tensor([g.graph["y"]],
-                         dtype=torch.long) if "y" in g.graph else None
+        y = g.graph["y"] if "y" in g.graph else None
+        dtype = torch.float if isinstance(y, float) else torch.long
+        y = torch.tensor([y], dtype=dtype) if y is not None else None
 
         for _, attr in g.nodes(data=True):
             x.append(attr["x"])
@@ -175,7 +163,8 @@ class GreycDataset(InMemoryDataset):
 
         return Data(x=x, edge_attr=edge_attr, edge_index=edge_index, y=y)
 
-    def _load_gml_data(self, gml: str) -> List[Data]:
+    @staticmethod
+    def _load_gml_data(gml: str) -> List[Data]:
         """Reads a dataset from a gml file
         and converts it into a list of `Data`.
 
@@ -193,10 +182,43 @@ class GreycDataset(InMemoryDataset):
         with open(gml, encoding="utf8") as f:
             gml_contents = f.read()
         gml_files = gml_contents.split(GML_SEPARATOR)
-        return [self._gml_to_data(content, False) for content in gml_files]
+        return [
+            GreycDataset._gml_to_data(content, False) for content in gml_files
+        ]
 
-    def __repr__(self) -> str:
-        name = self.name.capitalize()
-        if self.name in ["mao", "pah"]:
-            name = self.name.upper()
-        return f'{name}({len(self)})'
+    @property
+    def processed_file_names(self) -> str:
+        return "data.pt"
+
+    @property
+    def raw_file_names(self) -> str:
+        return f"{self.name}.gml"
+
+    @property
+    def num_node_features(self) -> int:
+        return int(self.x.shape[1])
+
+    @property
+    def num_edge_features(self) -> int:
+        return int(self.edge_attr.shape[1])
+
+    @property
+    def num_classes(self) -> int:
+        return len(self.y.unique())
+
+    def download(self) -> None:
+        path = download_url(GreycDataset.URL + self.name + ".zip",
+                            self.raw_dir)
+        extract_zip(path, self.raw_dir)
+        os.unlink(path)
+
+    def process(self) -> None:
+        data_list = self._load_gml_data(self.raw_paths[0])
+
+        if self.pre_filter is not None:
+            data_list = [data for data in data_list if self.pre_filter(data)]
+
+        if self.pre_transform is not None:
+            data_list = [self.pre_transform(data) for data in data_list]
+
+        self.save(data_list, self.processed_paths[0])
