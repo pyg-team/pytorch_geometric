@@ -30,6 +30,14 @@ class LinkPredMetricData:
         if hasattr(self, '_pred_rel_mat'):
             return self._pred_rel_mat  # type: ignore
 
+        if self.edge_label_index[1].numel() == 0:
+            self._pred_rel_mat = torch.zeros_like(
+                self.pred_index_mat,
+                dtype=torch.bool if self.edge_label_weight is None else
+                torch.get_default_dtype(),
+            )
+            return self._pred_rel_mat
+
         # Flatten both prediction and ground-truth indices, and determine
         # overlaps afterwards via `torch.searchsorted`.
         max_index = max(  # type: ignore
@@ -139,7 +147,7 @@ class LinkPredMetric(BaseMetric):
     is_differentiable: bool = False
     full_state_update: bool = False
     higher_is_better: Optional[bool] = None
-    weighted: bool = False
+    weighted: bool
 
     def __init__(self, k: int) -> None:
         super().__init__()
@@ -484,7 +492,7 @@ class LinkPredNDCG(LinkPredMetric):
                 self.discount,
                 self.discount.new_full((1, ), fill_value=float('inf')),
             ])
-            discount = discount[pos.clamp(max=self.k + 1)]
+            discount = discount[pos.clamp(max=self.k)]
 
             idcg = scatter(  # Apply discount and aggregate:
                 data.edge_label_weight / discount,
