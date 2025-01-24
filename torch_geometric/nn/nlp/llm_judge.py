@@ -128,11 +128,7 @@ class LLMJudge():
         prompt1 = SYSTEM_PROMPT_1.format(query=question, model_pred=model_pred, correct_answer=correct_answer)
         prompt2 = SYSTEM_PROMPT_2.format(query=question, model_pred=model_pred, correct_answer=correct_answer)
 
-<<<<<<< HEAD
         score1 = self._process_score(call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
         score2 = self._process_score(call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
         
-        return self._average_scores        
-=======
-        return 1.0
->>>>>>> 941301b30e542255f1539699ec01f475834d1396
+        return self._average_scores(score1, score2)
