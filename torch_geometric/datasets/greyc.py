@@ -9,7 +9,6 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.io import fs
 
 
 class GreycDataset(InMemoryDataset):
@@ -95,7 +94,7 @@ class GreycDataset(InMemoryDataset):
             raise ValueError(f"Dataset {self.name} not found.")
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0])
 
     def __repr__(self) -> str:
         name = self.name.capitalize()
@@ -200,5 +199,4 @@ class GreycDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        data, slices = self.collate(data_list)
-        fs.torch_save((data, slices), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
