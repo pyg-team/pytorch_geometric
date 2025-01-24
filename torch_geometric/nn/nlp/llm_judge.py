@@ -1,5 +1,6 @@
-from typing import Optional
 from math import isnan
+from typing import Optional
+
 from torch_geometric.nn.nlp.txt2kg import \
     _chunk_to_triples_str_cloud as call_NIM
 
