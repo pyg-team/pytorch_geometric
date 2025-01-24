@@ -13,17 +13,9 @@ from torch_geometric.data import (
 
 class GreycDataset(InMemoryDataset):
     r"""Implementation of five GREYC chemistry small datasets as pytorch
-        geometric datasets : Alkane, Acyclic, MAO, Monoterpens and PAH. See
+        geometric datasets : Acyclic, Alkane, MAO, Monoterpens and PAH. See
         `"GREYC's Chemistry dataset" <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_
         for details.
-
-    .. note::
-        Some datasets may not come with any node labels.
-        You can then either make use of the argument :obj:`use_node_attr`
-        to load additional continuous node attributes (if present) or provide
-        synthetic node features using transforms such as
-        :class:`torch_geometric.transforms.Constant` or
-        :class:`torch_geometric.transforms.OneHotDegree`.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -48,7 +40,7 @@ class GreycDataset(InMemoryDataset):
     **STATS:**
 
     .. list-table::
-        :widths: 20 10 10 10 10 10
+        :widths: 20 10 10 10 10 10 10
         :header-rows: 1
 
         * - Name
@@ -57,24 +49,42 @@ class GreycDataset(InMemoryDataset):
           - #edges
           - #features
           - #classes
+          - #type
         * - Acyclic
           - 183
           - ~8.2
           - ~14.3
-          - 15
+          - 7
           - 148
+          - Regression
         * - Alkane
-          - 150
+          - 149
           - ~8.9
-          - ~15.8
-          - 15
+          - ~15.7
+          - 4
           - 123
+          - Regression
         * - MAO
           - 68
           - ~18.4
           - ~39.3
-          - 15
+          - 7
           - 2
+          - Classification
+        * - Monoterpens
+          - 302
+          - ~11.0
+          - ~22.2
+          - 7
+          - 10
+          - Classification
+        * - PAH
+          - 94
+          - ~20.7
+          - ~48.9
+          - 4
+          - 2
+          - Classification
     """
 
     URL = ('https://raw.githubusercontent.com/bgauzere/'
@@ -184,6 +194,19 @@ class GreycDataset(InMemoryDataset):
     @property
     def raw_file_names(self) -> str:
         return f"{self.name}.gml"
+
+    @property
+    def num_node_features(self) -> int:
+        print("test")
+        return int(self.x.shape[1])
+
+    @property
+    def num_edge_features(self) -> int:
+        return int(self.edge_attr.shape[1])
+
+    @property
+    def num_classes(self) -> int:
+        return len(self.y.unique())
 
     def download(self) -> None:
         path = download_url(GreycDataset.URL + self.name + ".zip",
