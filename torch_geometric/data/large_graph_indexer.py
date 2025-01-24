@@ -189,10 +189,10 @@ class LargeGraphIndexer:
         for h, r, t in triplets:
 
             for node in (h, t):
-                nodes.add(node)
+                nodes.append(node)
 
             edge_idx = (h, r, t)
-            edges.add(edge_idx)
+            edges.append(edge_idx)
         # removes duplicates while mantaining order
         nodes = ordered_set(nodes)
         edges = ordered_set(edges)
