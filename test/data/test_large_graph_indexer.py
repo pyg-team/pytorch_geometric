@@ -65,7 +65,7 @@ def test_basic_collate():
 
     assert len(set(big_indexer._nodes.values())) == len(big_indexer._nodes)
     assert len(set(big_indexer._edges.values())) == len(big_indexer._edges)
-    
+
     for i, node in enumerate((indexer_0._nodes.keys() | indexer_1._nodes.keys())):
         assert big_indexer.node_attr[NODE_PID][
             big_indexer._nodes[node]] == node
