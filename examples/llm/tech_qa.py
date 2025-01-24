@@ -230,4 +230,4 @@ if __name__ == '__main__':
     args = parse_args()
     data_lists = make_dataset(args)
     model, test_loader = train(args, data_lists)
-    test(model, test_loader)
+    test(model, test_loader, args)

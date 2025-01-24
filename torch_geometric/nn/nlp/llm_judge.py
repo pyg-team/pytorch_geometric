@@ -51,6 +51,7 @@ class LLMJudge():
     """Uses NIMs to score a triple of
     (question, model_pred, correct_answer)
     (TODO: add support for Local LM)
+    (TODO: add multiproc support like txt2kg)
     This whole class is an adaptation of Gilberto's work for PyG
     Args:
         NVIDIA_NIM_MODEL : str, optional
