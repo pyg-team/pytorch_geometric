@@ -13,6 +13,7 @@ from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn import (
     GAT,
     LLM,
+    LLMJudge,
     TXT2KG,
     GRetriever,
     SentenceTransformer,
