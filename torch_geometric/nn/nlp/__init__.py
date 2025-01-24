@@ -8,5 +8,6 @@ __all__ = classes = [
     'SentenceTransformer',
     'VisionTransformer',
     'LLM',
+    'LLMJudge',
     'TXT2KG',
 ]
