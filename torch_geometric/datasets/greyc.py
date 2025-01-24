@@ -135,8 +135,9 @@ class GreycDataset(InMemoryDataset):
 
         x, edge_index, edge_attr = [], [], []
 
-        y = torch.tensor([g.graph["y"]],
-                         dtype=torch.long) if "y" in g.graph else None
+        y = g.graph["y"] if "y" in g.graph else None
+        dtype = torch.float if isinstance(y, float) else torch.long
+        y = torch.tensor([y], dtype=dtype) if y is not None else None
 
         for _, attr in g.nodes(data=True):
             x.append(attr["x"])
