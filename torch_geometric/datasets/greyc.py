@@ -12,10 +12,9 @@ from torch_geometric.data import (
 
 
 class GreycDataset(InMemoryDataset):
-    r"""Implementation of five GREYC chemistry datasets : :obj:`Acyclic`,
-    :obj:`Alkane`, :obj:`MAO`, :obj:`Monoterpens` and :obj:`PAH`. See
-    `"GREYC's Chemistry dataset" <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_
-    for details.
+    r"""Implementation of five `GREYC's Chemistry datasets
+    <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_ : :obj:`Acyclic`,
+    :obj:`Alkane`, :obj:`MAO`, :obj:`Monoterpens` and :obj:`PAH`.
 
     Args:
         root (str): Root directory where the dataset should be saved.
