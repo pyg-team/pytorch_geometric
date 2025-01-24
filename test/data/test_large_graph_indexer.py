@@ -71,8 +71,7 @@ def test_basic_collate():
             big_indexer._nodes[node]] == node
         if i == 1:
             node_0 = list(indexer_0._nodes.keys())[0]
-            big_indexer.node_attr[NODE_PID][big_indexer._nodes[node_0]] == big_indexer.node_attr[NODE_PID][big_indexer._nodes[node]]
-     big_indexer._nodes[node]
+            assert big_indexer.node_attr[NODE_PID][big_indexer._nodes[node_0]] != big_indexer.node_attr[NODE_PID][big_indexer._nodes[node]]
 
 def test_large_graph_index():
     graphs = [sample_triplets(1000) for i in range(100)]
