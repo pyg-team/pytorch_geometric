@@ -4,9 +4,11 @@ from typing import List, Optional, Tuple
 
 import torch
 import torch.multiprocessing as mp
-
+from torch_geometric.nn.nlp.txt2kg import _chunk_to_triples_str_cloud as call_NIM
 
 # Credit for system prompts goes to Gilberto Titericz (NVIDIA)
+# These prompts generate a "Marlin Accuracy Metric"
+# This work is an adaptation of his for PyG
 SYSTEM_PROMPT_1 = (
     "Instruction: You are a world class state of the art "
     + "assistant for rating "
@@ -25,8 +27,8 @@ SYSTEM_PROMPT_1 = (
     + "Do not explain or justify your rating. Your rating must be "
     + "only 4, 2 or 0 according to the instructions above.\n"
     + "### Question: {question}\n"
-    + "### {answer0}: {model_pred}\n"
-    + "### {answer1}: {correct_answer}\n"
+    + "### User Answer: {model_pred}\n"
+    + "### Reference Answer: {correct_answer}\n"
     + "The rating is:\n"
 )
 
@@ -48,15 +50,15 @@ SYSTEM_PROMPT_2 = (
     + "Do not explain or justify my rating. My rating must"
     + " be only 4, 2 or 0 only.\n\n"
     + "Question: {query}\n\n"
-    + "{answer0}: {sentence_inference}\n\n"
-    + "{answer1}: {sentence_true}\n\n"
+    + "Reference Answer: {sentence_inference}\n\n"
+    + "User Answer: {sentence_true}\n\n"
     + "Rating: "
 )
 
 
 class LLMJudge():
     """Uses NIMs to score a triple of
-    (question, correct_answer, predicted_answer)
+    (question, model_pred, correct_answer)
     (TODO: add support for Local LM)
     Args:
         NVIDIA_NIM_MODEL : str, optional
@@ -74,6 +76,39 @@ class LLMJudge():
         self.NVIDIA_API_KEY = NVIDIA_API_KEY
         self.NIM_MODEL = NVIDIA_NIM_MODEL
 
+    def _process_score(self, response):
+        """
+        Uses 3 and 1 even though prompt says only 0, 2, 4.
+        This is because LLMs don't always follow instructions.
+        Credit to Gilberto.
+        """
+        for i in [4, 3, 2, 1, 0]:
+            if str(i) in response:
+                return i / 4
+        return float("nan")
+
+    def _average_scores(self, score0, score1):
+        """
+        Take the average of score0 and score1.
+        Sometimes the LLM fail to respond or have no score in the response.
+        In those cases the failed score is discarded.
+        Credit to Gilberto.
+        Args:
+         score0 (str): judge accuracy score.
+         score1 (str): judge accuracy score by permuting agent answer and
+         ground truth.
+
+        Returns:
+            (float) average of score0 and score1 of both contains scores,
+            otherwise pick the max.
+        """
+        score = np.nan
+        if score0 >= 0 and score1 >= 0:
+            score = (score0 + score1) / 2
+        else:
+            score = max(score0, score1)
+        return score
+
     def score(
         self,
         question: str, 
@@ -87,9 +122,13 @@ class LLMJudge():
             correct_answer (str): The actual correct answer to the question.
 
         Returns:
-            None
+            score (float): score of 0-1, may be nan due to LLM judge failure.
+                Evals should skip nan's when aggregating score. 
         """
-        #prompt1 = SYSTEM_PROMPT_1.format(query=question, sentence_inference=model_pred, )
+        prompt1 = SYSTEM_PROMPT_1.format(query=question, model_pred=model_pred, correct_answer=correct_answer)
+        prompt2 = SYSTEM_PROMPT_2.format(query=question, model_pred=model_pred, correct_answer=correct_answer)
 
-
-        return 1.0        
+        score1 = self._process_score(call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
+        score2 = self._process_score(call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
+        
+        return self._average_scores        
