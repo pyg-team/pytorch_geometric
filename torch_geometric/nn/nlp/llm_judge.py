@@ -107,11 +107,11 @@ class LLMJudge():
         model_pred: str,
         correct_answer: str,
     ):
-        """
-        Args:
+        """Args:
             question (str): The original question asked to the model.
             model_pred (str): The prediction made by the model.
             correct_answer (str): The actual correct answer to the question.
+
         Returns:
             score (float): score of 0-1, may be nan due to LLM judge failure.
                 Evals should skip nan's when aggregating score.
