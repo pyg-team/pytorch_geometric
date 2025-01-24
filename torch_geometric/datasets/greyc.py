@@ -197,7 +197,6 @@ class GreycDataset(InMemoryDataset):
 
     @property
     def num_node_features(self) -> int:
-        print("test")
         return int(self.x.shape[1])
 
     @property
