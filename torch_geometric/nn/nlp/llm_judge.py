@@ -3,8 +3,8 @@ from typing import Optional
 from torch_geometric.nn.nlp.txt2kg import \
     _chunk_to_triples_str_cloud as call_NIM
 
-# Credit for system prompts goes to Gilberto Titericz (NVIDIA)
-# These prompts generate a "Marlin Accuracy Metric"
+# Credit for original "Marlin Accuracy" system goes to:
+# Gilberto Titericz (NVIDIA)
 # This work is an adaptation of his for PyG
 SYSTEM_PROMPT_1 = (
     "Instruction: You are a world class state of the art " +
@@ -51,7 +51,7 @@ class LLMJudge():
     """Uses NIMs to score a triple of
     (question, model_pred, correct_answer)
     (TODO: add support for Local LM)
-
+    This whole class is an adaptation of Gilberto's work for PyG
     Args:
         NVIDIA_NIM_MODEL : str, optional
             The name of the NVIDIA NIM model to use.
@@ -93,7 +93,7 @@ class LLMJudge():
             (float) average of score0 and score1 of both contains scores,
             otherwise pick the max.
         """
-        score = np.nan
+        score = float("nan")
         if score0 >= 0 and score1 >= 0:
             score = (score0 + score1) / 2
         else:
@@ -106,11 +106,11 @@ class LLMJudge():
         model_pred: str,
         correct_answer: str,
     ):
-        """Args:
+        """
+        Args:
             question (str): The original question asked to the model.
             model_pred (str): The prediction made by the model.
             correct_answer (str): The actual correct answer to the question.
-
         Returns:
             score (float): score of 0-1, may be nan due to LLM judge failure.
                 Evals should skip nan's when aggregating score.
@@ -119,10 +119,17 @@ class LLMJudge():
                                          correct_answer=correct_answer)
         prompt2 = SYSTEM_PROMPT_2.format(query=question, model_pred=model_pred,
                                          correct_answer=correct_answer)
-
-        score1 = self._process_score(
-            call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
-        score2 = self._process_score(
-            call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
+        score1 = float("nan")
+        score1 = float("nan")
+        for retry in range(10):
+            score1 = self._process_score(
+                call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
+            if not isnan(score1):
+                break
+        for retry in range(10):
+            score2 = self._process_score(
+                call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
+            if not isnan(score2):
+                break
 
         return self._average_scores(score1, score2)

@@ -1,7 +1,6 @@
 import argparse
 import os
 from itertools import chain
-from math import isnan
 
 import torch
 from datasets import load_dataset
@@ -212,20 +211,16 @@ def train(args, data_lists):
 def test(model, test_loader, args):
     metrics = []
     llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY)
-
     def eval(question: str, pred: str, correct_answer: str):
         # calculate the score based on pred and correct answer
         return llm_judge.score(question, pred, correct_answer)
-
     for test_batch in tqdm(test_loader, desc="Test:"):
         preds = inference_step(model, test_batch)
         for question, pred, label in zip(test_batch.questions, preds,
                                          test_batch.label):
-            score = eval(question, pred, label)
-            if not isnan(score):
-                metrics.append(score)
-    avg_metrics = sum(metrics) / len(metrics)
-    print("Avg marlin accuracy=", avg_metrics)
+            scores.append(eval(question, pred, label))
+    avg_scores = sum(scores) / len(scores)
+    print("Avg marlin accuracy=", avg_scores)
 
 
 if __name__ == '__main__':
