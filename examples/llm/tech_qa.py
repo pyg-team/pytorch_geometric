@@ -236,7 +236,9 @@ def test(model, test_loader, args):
         since theres only 11 test questions and eval-batch-size
         is 16 by default
         """
-        for question, pred, label in tqdm(zip(test_batch.question, preds, test_batch.label), desc="Test:"):
+        for question, pred, label in tqdm(
+                zip(test_batch.question, preds, test_batch.label),
+                desc="Test:"):
             scores.append(eval(question, pred, label))
     avg_scores = sum(scores) / len(scores)
     print("Avg marlin accuracy=", avg_scores)
