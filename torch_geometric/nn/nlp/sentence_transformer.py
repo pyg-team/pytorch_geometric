@@ -10,6 +10,7 @@ class PoolingStrategy(Enum):
     MEAN = 'mean'
     LAST = 'last'
     CLS = 'cls'
+    LAST_HIDDEN_STATE = 'last_hidden_state'
 
 
 class SentenceTransformer(torch.nn.Module):
@@ -38,12 +39,44 @@ class SentenceTransformer(torch.nn.Module):
             emb = mean_pooling(emb, attention_mask)
         elif self.pooling_strategy == PoolingStrategy.LAST:
             emb = last_pooling(emb, attention_mask)
+        elif self.pooling_strategy == PoolingStrategy.LAST_HIDDEN_STATE:
+            emb = out.last_hidden_state
         else:
             assert self.pooling_strategy == PoolingStrategy.CLS
             emb = emb[:, 0, :]
 
         emb = F.normalize(emb, p=2, dim=1)
         return emb
+
+    def get_input_ids(
+        self,
+        text: List[str],
+        batch_size: Optional[int] = None,
+        output_device: Optional[Union[torch.device, str]] = None,
+    ) -> Tensor:
+        is_empty = len(text) == 0
+        text = ['dummy'] if is_empty else text
+
+        batch_size = len(text) if batch_size is None else batch_size
+
+        input_ids: List[Tensor] = []
+        attention_masks: List[Tensor] = []
+        for start in range(0, len(text), batch_size):
+            token = self.tokenizer(
+                text[start:start + batch_size],
+                padding=True,
+                truncation=True,
+                return_tensors='pt',
+            )
+            input_ids.append(token.input_ids.to(self.device))
+            attention_masks.append(token.attention_mask.to(self.device))
+
+        def _out(x: List[Tensor]) -> Tensor:
+            out = torch.cat(x, dim=0) if len(x) > 1 else x[0]
+            out = out[:0] if is_empty else out
+            return out.to(output_device)
+
+        return _out(input_ids), _out(attention_masks)
 
     @property
     def device(self) -> torch.device:
