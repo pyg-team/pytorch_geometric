@@ -2,6 +2,7 @@ import argparse
 import os
 from itertools import chain
 from math import isnan
+
 import torch
 from datasets import load_dataset
 from g_retriever import adjust_learning_rate, get_loss, inference_step
@@ -218,7 +219,8 @@ def test(model, test_loader, args):
 
     for test_batch in tqdm(test_loader, desc="Test:"):
         preds = inference_step(model, test_batch)
-        for question, pred, label in zip(test_batch.questions, preds, test_batch.label):
+        for question, pred, label in zip(test_batch.questions, preds,
+                                         test_batch.label):
             score = eval(question, pred, label)
             if not isnan(score):
                 metrics.append(score)

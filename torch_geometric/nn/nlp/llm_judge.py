@@ -1,59 +1,50 @@
-import os
-import time
 from typing import Optional
 
-import torch
-import torch.multiprocessing as mp
-from torch_geometric.nn.nlp.txt2kg import _chunk_to_triples_str_cloud as call_NIM
+from torch_geometric.nn.nlp.txt2kg import \
+    _chunk_to_triples_str_cloud as call_NIM
 
 # Credit for system prompts goes to Gilberto Titericz (NVIDIA)
 # These prompts generate a "Marlin Accuracy Metric"
 # This work is an adaptation of his for PyG
 SYSTEM_PROMPT_1 = (
-    "Instruction: You are a world class state of the art "
-    + "assistant for rating "
-    + "a User Answer given a Question. The Question is completely"
-    + " answered by the Reference Answer.\n"
-    + "Say 4, if User Answer is full contained and equivalent to"
-    + " Reference Answer"
-    + "in all terms, topics, numbers, metrics, dates and units.\n"
-    + "Say 2, if User Answer is partially contained and almost "
-    + "equivalent to Reference Answer"
-    + "in all terms, topics, numbers, metrics, dates and units.\n"
-    + "Say 0, if User Answer is not contained in Reference Answer"
-    + " or not accurate in all terms, topics,"
-    + "numbers, metrics, dates and units or the User Answer do not"
-    + " answer the question.\n"
-    + "Do not explain or justify your rating. Your rating must be "
-    + "only 4, 2 or 0 according to the instructions above.\n"
-    + "### Question: {question}\n"
-    + "### User Answer: {model_pred}\n"
-    + "### Reference Answer: {correct_answer}\n"
-    + "The rating is:\n"
-)
+    "Instruction: You are a world class state of the art " +
+    "assistant for rating " +
+    "a User Answer given a Question. The Question is completely" +
+    " answered by the Reference Answer.\n" +
+    "Say 4, if User Answer is full contained and equivalent to" +
+    " Reference Answer" +
+    "in all terms, topics, numbers, metrics, dates and units.\n" +
+    "Say 2, if User Answer is partially contained and almost " +
+    "equivalent to Reference Answer" +
+    "in all terms, topics, numbers, metrics, dates and units.\n" +
+    "Say 0, if User Answer is not contained in Reference Answer" +
+    " or not accurate in all terms, topics," +
+    "numbers, metrics, dates and units or the User Answer do not" +
+    " answer the question.\n" +
+    "Do not explain or justify your rating. Your rating must be " +
+    "only 4, 2 or 0 according to the instructions above.\n" +
+    "### Question: {question}\n" + "### User Answer: {model_pred}\n" +
+    "### Reference Answer: {correct_answer}\n" + "The rating is:\n")
 
 SYSTEM_PROMPT_2 = (
-    + "I will rate the User Answer in comparison to the Reference "
-    + "Answer for a given Question.\n"
-    + "A rating of 4 indicates that the User Answer is entirely "
-    + "consistent with the Reference Answer, covering all aspects,"
-    + " topics, numbers, metrics, dates, and units.\n"
-    + "A rating of 2 signifies that the User Answer is mostly "
-    + "aligned with the Reference Answer, with minor discrepancies"
-    + " in some areas.\n"
-    + "A rating of 0 means that the User Answer is either "
-    + "inaccurate, incomplete, or unrelated to the Reference "
-    + "Answer, or it fails to address the Question.\n"
-    + "I will provide the rating without any explanation or "
-    + "justification, adhering to the following scale: "
-    + "0 (no match), 2 (partial match), 4 (exact match).\n"
-    + "Do not explain or justify my rating. My rating must"
-    + " be only 4, 2 or 0 only.\n\n"
-    + "Question: {query}\n\n"
-    + "Reference Answer: {sentence_inference}\n\n"
-    + "User Answer: {sentence_true}\n\n"
-    + "Rating: "
-)
+    + "I will rate the User Answer in comparison to the Reference " +
+    "Answer for a given Question.\n" +
+    "A rating of 4 indicates that the User Answer is entirely " +
+    "consistent with the Reference Answer, covering all aspects," +
+    " topics, numbers, metrics, dates, and units.\n" +
+    "A rating of 2 signifies that the User Answer is mostly " +
+    "aligned with the Reference Answer, with minor discrepancies" +
+    " in some areas.\n" +
+    "A rating of 0 means that the User Answer is either " +
+    "inaccurate, incomplete, or unrelated to the Reference " +
+    "Answer, or it fails to address the Question.\n" +
+    "I will provide the rating without any explanation or " +
+    "justification, adhering to the following scale: " +
+    "0 (no match), 2 (partial match), 4 (exact match).\n" +
+    "Do not explain or justify my rating. My rating must" +
+    " be only 4, 2 or 0 only.\n\n" + "Question: {query}\n\n" +
+    "Reference Answer: {sentence_inference}\n\n" +
+    "User Answer: {sentence_true}\n\n" + "Rating: ")
 
 
 class LLMJudge():
@@ -78,8 +69,7 @@ class LLMJudge():
         self.NIM_MODEL = NVIDIA_NIM_MODEL
 
     def _process_score(self, response):
-        """
-        Uses 3 and 1 even though prompt says only 0, 2, 4.
+        """Uses 3 and 1 even though prompt says only 0, 2, 4.
         This is because LLMs don't always follow instructions.
         Credit to Gilberto.
         """
@@ -89,11 +79,11 @@ class LLMJudge():
         return float("nan")
 
     def _average_scores(self, score0, score1):
-        """
-        Take the average of score0 and score1.
+        """Take the average of score0 and score1.
         Sometimes the LLM fail to respond or have no score in the response.
         In those cases the failed score is discarded.
         Credit to Gilberto.
+
         Args:
          score0 (str): judge accuracy score.
          score1 (str): judge accuracy score by permuting agent answer and
@@ -123,12 +113,16 @@ class LLMJudge():
 
         Returns:
             score (float): score of 0-1, may be nan due to LLM judge failure.
-                Evals should skip nan's when aggregating score. 
+                Evals should skip nan's when aggregating score.
         """
-        prompt1 = SYSTEM_PROMPT_1.format(query=question, model_pred=model_pred, correct_answer=correct_answer)
-        prompt2 = SYSTEM_PROMPT_2.format(query=question, model_pred=model_pred, correct_answer=correct_answer)
+        prompt1 = SYSTEM_PROMPT_1.format(query=question, model_pred=model_pred,
+                                         correct_answer=correct_answer)
+        prompt2 = SYSTEM_PROMPT_2.format(query=question, model_pred=model_pred,
+                                         correct_answer=correct_answer)
 
-        score1 = self._process_score(call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
-        score2 = self._process_score(call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
-        
+        score1 = self._process_score(
+            call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
+        score2 = self._process_score(
+            call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
+
         return self._average_scores(score1, score2)
