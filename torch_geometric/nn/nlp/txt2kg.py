@@ -148,8 +148,8 @@ class TXT2KG():
                 in_chunks_per_proc = {
                     j:
                     chunks[j *
-                        meta_chunk_size:min((j + 1) *
-                                            meta_chunk_size, len(chunks))]
+                           meta_chunk_size:min((j + 1) *
+                                               meta_chunk_size, len(chunks))]
                     for j in range(num_procs)
                 }
 
@@ -159,20 +159,22 @@ class TXT2KG():
                         mp.spawn(
                             _multiproc_helper,
                             args=(in_chunks_per_proc, _parse_n_check_triples,
-                                _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                                self.NIM_MODEL), nprocs=num_procs)
+                                  _chunk_to_triples_str_cloud,
+                                  self.NVIDIA_API_KEY, self.NIM_MODEL),
+                            nprocs=num_procs)
                     except:
                         mp.spawn(
                             _multiproc_helper,
                             args=(in_chunks_per_proc, _parse_n_check_triples,
-                                _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                                self.NIM_MODEL), nprocs=num_procs)
+                                  _chunk_to_triples_str_cloud,
+                                  self.NVIDIA_API_KEY, self.NIM_MODEL),
+                            nprocs=num_procs)
                 except:
                     mp.spawn(
-                            _multiproc_helper,
-                            args=(in_chunks_per_proc, _parse_n_check_triples,
-                                _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                                self.NIM_MODEL), nprocs=num_procs)
+                        _multiproc_helper,
+                        args=(in_chunks_per_proc, _parse_n_check_triples,
+                              _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
+                              self.NIM_MODEL), nprocs=num_procs)
 
                 # Collect the results from each process
                 self.relevant_triples[key] = []
