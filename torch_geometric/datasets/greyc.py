@@ -137,29 +137,29 @@ class GreycDataset(InMemoryDataset):
         if gml_file:
             if not os.path.exists(gml):
                 raise FileNotFoundError(f"File `{gml}` does not exist")
-            g: nx.Graph = nx.read_gml(gml)
+            g = nx.read_gml(gml)
         else:
-            g: nx.Graph = nx.parse_gml(gml)
+            g = nx.parse_gml(gml)
 
-        x, edge_index, edge_attr = [], [], []
+        x_l, edge_index_l, edge_attr_l = [], [], []
 
         y = g.graph["y"] if "y" in g.graph else None
         dtype = torch.float if isinstance(y, float) else torch.long
         y = torch.tensor([y], dtype=dtype) if y is not None else None
 
         for _, attr in g.nodes(data=True):
-            x.append(attr["x"])
+            x_l.append(attr["x"])
 
         for u, v, attr in g.edges(data=True):
-            edge_index.append([int(u), int(v)])
-            edge_index.append([int(v), int(u)])
-            edge_attr.append(attr["edge_attr"])
-            edge_attr.append(attr["edge_attr"])
+            edge_index_l.append([int(u), int(v)])
+            edge_index_l.append([int(v), int(u)])
+            edge_attr_l.append(attr["edge_attr"])
+            edge_attr_l.append(attr["edge_attr"])
 
-        x = torch.tensor(x, dtype=torch.float)
-        edge_index = torch.tensor(edge_index,
+        x = torch.tensor(x_l, dtype=torch.float)
+        edge_index = torch.tensor(edge_index_l,
                                   dtype=torch.long).t().contiguous()
-        edge_attr = torch.tensor(edge_attr, dtype=torch.long)
+        edge_attr = torch.tensor(edge_attr_l, dtype=torch.long)
 
         return Data(x=x, edge_attr=edge_attr, edge_index=edge_index, y=y)
 
