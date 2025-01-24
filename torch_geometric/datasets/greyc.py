@@ -78,7 +78,7 @@ class GreycDataset(InMemoryDataset):
           - 2
     """
 
-    URL = ('https://raw.githubusercontent.com/thomasbauer76/'
+    URL = ('https://raw.githubusercontent.com/bgauzere/'
            'greycdata/refs/heads/main/greycdata/data_gml/')
 
     def __init__(
@@ -95,33 +95,13 @@ class GreycDataset(InMemoryDataset):
             raise ValueError(f"Dataset {self.name} not found.")
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        self.data, self.slices = fs.torch_load(self.processed_paths[0])
+        self.data, self.slices = torch.load(self.processed_paths[0])
 
-    @property
-    def processed_file_names(self) -> str:
-        return "data.pt"
-
-    @property
-    def raw_file_names(self) -> str:
-        return f"{self.name}.gml"
-
-    def download(self) -> None:
-        path = download_url(GreycDataset.URL + self.name + ".zip",
-                            self.raw_dir)
-        extract_zip(path, self.raw_dir)
-        os.unlink(path)
-
-    def process(self):
-        data_list = self._load_gml_data(self.raw_paths[0])
-
-        if self.pre_filter is not None:
-            data_list = [data for data in data_list if self.pre_filter(data)]
-
-        if self.pre_transform is not None:
-            data_list = [self.pre_transform(data) for data in data_list]
-
-        data, slices = self.collate(data_list)
-        fs.torch_save((data, slices), self.processed_paths[0])
+    def __repr__(self) -> str:
+        name = self.name.capitalize()
+        if self.name in ["mao", "pah"]:
+            name = self.name.upper()
+        return f'{name}({len(self)})'
 
     @staticmethod
     def _gml_to_data(gml: str, gml_file: bool = True) -> Data:
@@ -197,8 +177,28 @@ class GreycDataset(InMemoryDataset):
             GreycDataset._gml_to_data(content, False) for content in gml_files
         ]
 
-    def __repr__(self) -> str:
-        name = self.name.capitalize()
-        if self.name in ["mao", "pah"]:
-            name = self.name.upper()
-        return f'{name}({len(self)})'
+    @property
+    def processed_file_names(self) -> str:
+        return "data.pt"
+
+    @property
+    def raw_file_names(self) -> str:
+        return f"{self.name}.gml"
+
+    def download(self) -> None:
+        path = download_url(GreycDataset.URL + self.name + ".zip",
+                            self.raw_dir)
+        extract_zip(path, self.raw_dir)
+        os.unlink(path)
+
+    def process(self):
+        data_list = self._load_gml_data(self.raw_paths[0])
+
+        if self.pre_filter is not None:
+            data_list = [data for data in data_list if self.pre_filter(data)]
+
+        if self.pre_transform is not None:
+            data_list = [self.pre_transform(data) for data in data_list]
+
+        data, slices = self.collate(data_list)
+        fs.torch_save((data, slices), self.processed_paths[0])
