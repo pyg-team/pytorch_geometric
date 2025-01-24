@@ -223,10 +223,14 @@ def test(model, test_loader, args):
         return llm_judge.score(question, pred, correct_answer)
 
     scores = []
-    for test_batch in tqdm(test_loader, desc="Test:"):
+    for test_batch in test_loader:
         preds = inference_step(model, test_batch)
-        for question, pred, label in zip(test_batch.question, preds,
-                                         test_batch.label):
+        """
+        TQDM here since only 1 mini-batch for testing
+        since theres only 11 test questions and eval-batch-size
+        is 16 by default
+        """
+        for question, pred, label in tqdm(zip(test_batch.question, preds, test_batch.label), desc="Test:"):
             scores.append(eval(question, pred, label))
     avg_scores = sum(scores) / len(scores)
     print("Avg marlin accuracy=", avg_scores)
