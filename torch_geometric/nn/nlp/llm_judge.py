@@ -69,8 +69,6 @@ class LLMJudge():
     ) -> None:
         self.NVIDIA_API_KEY = NVIDIA_API_KEY
         self.NIM_MODEL = NVIDIA_NIM_MODEL
-        print("System_promt1=", SYSTEM_PROMPT_1)
-        print("SYSTEM_PROMPT_2", SYSTEM_PROMPT_2)
 
     def _process_score(self, response: str) -> float:
         """Uses 3 and 1 even though prompt says only 0, 2, 4.
