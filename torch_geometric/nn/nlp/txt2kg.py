@@ -143,7 +143,7 @@ class TXT2KG():
                     self._chunk_to_triples_str_local)
             else:
                 # Process chunks in parallel using multiple processes
-                num_procs = min(len(chunks), 4) #_get_num_procs())
+                num_procs = min(len(chunks), 4)  #_get_num_procs())
                 meta_chunk_size = int(len(chunks) / num_procs)
                 in_chunks_per_proc = {
                     j:
