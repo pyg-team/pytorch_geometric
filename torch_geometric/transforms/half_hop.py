@@ -33,7 +33,7 @@ class HalfHop(BaseTransform):
         out = model(data.x, data.edge_index)  # Feed-forward.
         out = out[~data.slow_node_mask]  # Get rid of slow nodes.
     """
-    def __init__(self, alpha: float = 0.5, p: float = 1.0):
+    def __init__(self, alpha: float = 0.5, p: float = 1.0) -> None:
         if alpha < 0. or alpha > 1.:
             raise ValueError(f"Interpolation factor has to be between 0 and 1 "
                              f"(got '{alpha}'")
@@ -49,7 +49,11 @@ class HalfHop(BaseTransform):
             raise ValueError("'HalfHop' augmentation is not supported if "
                              "'data' contains 'edge_weight' or 'edge_attr'")
 
+        assert data.x is not None
+        assert data.edge_index is not None
         x, edge_index = data.x, data.edge_index
+        num_nodes = data.num_nodes
+        assert num_nodes is not None
 
         # isolate self loops which are not half-hopped
         self_loop_mask = edge_index[0] == edge_index[1]
@@ -57,7 +61,7 @@ class HalfHop(BaseTransform):
         edge_index = edge_index[:, ~self_loop_mask]
 
         # randomly sample nodes and half-hop their edges
-        node_mask = torch.rand(data.num_nodes, device=x.device) < self.p
+        node_mask = torch.rand(num_nodes, device=x.device) < self.p
         edge_mask = node_mask[edge_index[1]]
         edge_index_to_halfhop = edge_index[:, edge_mask]
         edge_index_to_keep = edge_index[:, ~edge_mask]
@@ -66,7 +70,7 @@ class HalfHop(BaseTransform):
         # by linear interpolation
         num_halfhop_edges = edge_index_to_halfhop.size(1)
         slow_node_ids = torch.arange(num_halfhop_edges,
-                                     device=x.device) + data.num_nodes
+                                     device=x.device) + num_nodes
         x_src = x[edge_index_to_halfhop[0]]
         x_dst = x[edge_index_to_halfhop[1]]
         x_slow_node = self.alpha * x_src + (1 - self.alpha) * x_dst

@@ -13,7 +13,7 @@ from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 class AGNNConv(MessagePassing):
     r"""The graph attentional propagation layer from the
     `"Attention-based Graph Neural Network for Semi-Supervised Learning"
-    <https://arxiv.org/abs/1803.03735>`_ paper
+    <https://arxiv.org/abs/1803.03735>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{P} \mathbf{X},
@@ -73,7 +73,7 @@ class AGNNConv(MessagePassing):
         x_norm = F.normalize(x, p=2., dim=-1)
 
         # propagate_type: (x: Tensor, x_norm: Tensor)
-        return self.propagate(edge_index, x=x, x_norm=x_norm, size=None)
+        return self.propagate(edge_index, x=x, x_norm=x_norm)
 
     def message(self, x_j: Tensor, x_norm_i: Tensor, x_norm_j: Tensor,
                 index: Tensor, ptr: OptTensor,

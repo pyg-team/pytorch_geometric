@@ -5,10 +5,10 @@ from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 
+from torch_geometric.index import index2ptr
 from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_CLUSTER
 from torch_geometric.utils import sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_geometric.utils.sparse import index2ptr
 
 
 class Node2Vec(torch.nn.Module):
@@ -142,7 +142,6 @@ class Node2Vec(torch.nn.Module):
     @torch.jit.export
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
-
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
@@ -174,15 +173,15 @@ class Node2Vec(torch.nn.Module):
         test_z: Tensor,
         test_y: Tensor,
         solver: str = 'lbfgs',
-        multi_class: str = 'auto',
         *args,
         **kwargs,
     ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
-        task."""
+        task.
+        """
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
+        clf = LogisticRegression(solver=solver, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())
         return clf.score(test_z.detach().cpu().numpy(),

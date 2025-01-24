@@ -4,7 +4,6 @@ from itertools import product
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import (
@@ -35,14 +34,21 @@ class LastFM(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
-
     url = 'https://www.dropbox.com/s/jvlbs09pz6zwcka/LastFM_processed.zip?dl=1'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -55,12 +61,14 @@ class LastFM(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
+        import scipy.sparse as sp
+
         data = HeteroData()
 
         node_type_idx = np.load(osp.join(self.raw_dir, 'node_types.npy'))
@@ -106,7 +114,7 @@ class LastFM(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

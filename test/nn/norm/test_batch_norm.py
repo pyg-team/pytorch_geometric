@@ -2,10 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.nn import BatchNorm, HeteroBatchNorm
-from torch_geometric.testing import is_full_test, withCUDA
+from torch_geometric.testing import is_full_test, withDevice
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('conf', [True, False])
 def test_batch_norm(device, conf):
     x = torch.randn(100, 16, device=device)
@@ -13,7 +13,8 @@ def test_batch_norm(device, conf):
     norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
     norm.reset_running_stats()
     norm.reset_parameters()
-    assert str(norm) == 'BatchNorm(16)'
+    assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
+                         f'affine={conf}, track_running_stats={conf})')
 
     if is_full_test():
         torch.jit.script(norm)
@@ -38,7 +39,7 @@ def test_batch_norm_single_element():
     assert torch.allclose(out, x)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('conf', [True, False])
 def test_hetero_batch_norm(device, conf):
     x = torch.randn((100, 16), device=device)

@@ -19,7 +19,8 @@ from torch_geometric.typing import (
 
 class HGTSampler(BaseSampler):
     r"""An implementation of an in-memory heterogeneous layer-wise sampler
-    user by :class:`~torch_geometric.loader.HGTLoader`."""
+    user by :class:`~torch_geometric.loader.HGTLoader`.
+    """
     def __init__(
         self,
         data: HeteroData,
@@ -56,7 +57,6 @@ class HGTSampler(BaseSampler):
     def sample_from_nodes(
         self,
         inputs: NodeSamplerInput,
-        **kwargs,
     ) -> HeteroSamplerOutput:
 
         node, row, col, edge = torch.ops.torch_sparse.hgt_sample(

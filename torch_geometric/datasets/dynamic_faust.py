@@ -51,6 +51,8 @@ class DynamicFAUST(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'http://dfaust.is.tue.mpg.de/'
@@ -66,11 +68,16 @@ class DynamicFAUST(InMemoryDataset):
         'running_on_spot_bugfix', 'shake_arms', 'shake_hips', 'shake_shoulders'
     ]
 
-    def __init__(self, root: str, subjects: Optional[List[str]] = None,
-                 categories: Optional[List[str]] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        subjects: Optional[List[str]] = None,
+        categories: Optional[List[str]] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
 
         subjects = self.subjects if subjects is None else subjects
         subjects = [sid.lower() for sid in subjects]
@@ -84,8 +91,9 @@ class DynamicFAUST(InMemoryDataset):
             assert cat in self.categories
         self.categories = categories
 
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -99,14 +107,14 @@ class DynamicFAUST(InMemoryDataset):
         ])
         return f'{sids}_{cats}.pt'
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f"Dataset not found. Please download male registrations "
             f"'registrations_m.hdf5' and female registrations "
             f"'registrations_f.hdf5' from '{self.url}' and move it to "
             f"'{self.raw_dir}'")
 
-    def process(self):
+    def process(self) -> None:
         import h5py
 
         fm = h5py.File(self.raw_paths[0], 'r')
@@ -133,4 +141,4 @@ class DynamicFAUST(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

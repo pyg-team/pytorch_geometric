@@ -20,6 +20,9 @@ def set_masks(
     # Loop over layers and set masks on MessagePassing layers:
     for module in model.modules():
         if isinstance(module, MessagePassing):
+            # Skip layers that have been explicitly set to `False`:
+            if module.explain is False:
+                continue
 
             # Convert mask to a param if it was previously registered as one.
             # This is a workaround for the fact that PyTorch does not allow
@@ -41,26 +44,32 @@ def set_hetero_masks(
     apply_sigmoid: bool = True,
 ):
     r"""Apply masks to every heterogeneous graph layer in the :obj:`model`
-    according to edge types."""
+    according to edge types.
+    """
     for module in model.modules():
         if isinstance(module, torch.nn.ModuleDict):
             for edge_type in mask_dict.keys():
-                # TODO (jinu) Use common function get `str_edge_type`.
-                str_edge_type = '__'.join(edge_type)
-                if str_edge_type in module:
-                    set_masks(
-                        module[str_edge_type],
-                        mask_dict[edge_type],
-                        edge_index_dict[edge_type],
-                        apply_sigmoid=apply_sigmoid,
-                    )
+                if edge_type in module:
+                    edge_level_module = module[edge_type]
+                elif '__'.join(edge_type) in module:
+                    edge_level_module = module['__'.join(edge_type)]
+                else:
+                    continue
+
+                set_masks(
+                    edge_level_module,
+                    mask_dict[edge_type],
+                    edge_index_dict[edge_type],
+                    apply_sigmoid=apply_sigmoid,
+                )
 
 
 def clear_masks(model: torch.nn.Module):
     r"""Clear all masks from the model."""
     for module in model.modules():
         if isinstance(module, MessagePassing):
-            module.explain = False
+            if module.explain is True:
+                module.explain = None
             module._edge_mask = None
             module._loop_mask = None
             module._apply_sigmoid = True

@@ -9,8 +9,9 @@ class HouseMotif(CustomMotif):
     Generating Explanations for Graph Neural Networks"
     <https://arxiv.org/abs/1903.03894>`__ paper, containing 5 nodes and 6
     undirected edges. Nodes are labeled according to their structural role:
-    the top, middle and bottom of the house."""
-    def __init__(self):
+    the top, middle and bottom of the house.
+    """
+    def __init__(self) -> None:
         structure = Data(
             num_nodes=5,
             edge_index=torch.tensor([

@@ -1,10 +1,12 @@
 import os.path as osp
 
+import pytest
 import torch
 
 import torch_geometric.typing
+from torch_geometric.io import fs
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import is_full_test, withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import (
     dense_to_sparse,
@@ -14,7 +16,9 @@ from torch_geometric.utils import (
     to_torch_coo_tensor,
     to_torch_csc_tensor,
     to_torch_csr_tensor,
+    to_torch_sparse_tensor,
 )
+from torch_geometric.utils.sparse import cat
 
 
 def test_dense_to_sparse():
@@ -69,8 +73,7 @@ def test_dense_to_sparse():
                                    [0, 1, 0, 3, 3, 4, 3]]
     assert edge_attr.tolist() == [3, 1, 2, 1, 2, 3, 5]
 
-    # There is a bug in TorchScript for PyTorch < 1.12 :(
-    if torch_geometric.typing.WITH_PT112 and is_full_test():
+    if is_full_test():
         jit = torch.jit.script(dense_to_sparse)
         edge_index, edge_attr = jit(adj, mask)
         assert edge_index.tolist() == [[0, 0, 1, 2, 3, 3, 4],
@@ -172,7 +175,6 @@ def test_to_torch_csr_tensor():
         assert torch.allclose(coo.values(), edge_attr)
 
 
-@withPackage('torch>=1.12.0')
 def test_to_torch_csc_tensor():
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3],
@@ -223,7 +225,7 @@ def test_to_torch_coo_tensor_save_load(tmp_path):
 
     path = osp.join(tmp_path, 'adj.t')
     torch.save(adj, path)
-    adj = torch.load(path)
+    adj = fs.torch_load(path)
     assert adj.is_coalesced()
 
 
@@ -244,6 +246,47 @@ def test_to_edge_index():
         edge_index, edge_attr = jit(adj)
         assert edge_index.tolist() == [[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]]
         assert edge_attr.tolist() == [1., 1., 1., 1., 1., 1.]
+
+
+@withCUDA
+@pytest.mark.parametrize(
+    'layout',
+    [torch.sparse_coo, torch.sparse_csr, torch.sparse_csc],
+)
+@pytest.mark.parametrize('dim', [0, 1, (0, 1)])
+def test_cat(layout, dim, device):
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
+    if torch_geometric.typing.WITH_PT20:
+        edge_weight = torch.rand(4, 2, device=device)
+    else:
+        edge_weight = torch.rand(4, device=device)
+
+    adj = to_torch_sparse_tensor(edge_index, edge_weight, layout=layout)
+
+    out = cat([adj, adj], dim=dim)
+    edge_index, edge_weight = to_edge_index(out.to_sparse_csr())
+
+    if dim == 0:
+        if torch_geometric.typing.WITH_PT20:
+            assert out.size() == (6, 3, 2)
+        else:
+            assert out.size() == (6, 3)
+        assert edge_index[0].tolist() == [0, 1, 1, 2, 3, 4, 4, 5]
+        assert edge_index[1].tolist() == [1, 0, 2, 1, 1, 0, 2, 1]
+    elif dim == 1:
+        if torch_geometric.typing.WITH_PT20:
+            assert out.size() == (3, 6, 2)
+        else:
+            assert out.size() == (3, 6)
+        assert edge_index[0].tolist() == [0, 0, 1, 1, 1, 1, 2, 2]
+        assert edge_index[1].tolist() == [1, 4, 0, 2, 3, 5, 1, 4]
+    else:
+        if torch_geometric.typing.WITH_PT20:
+            assert out.size() == (6, 6, 2)
+        else:
+            assert out.size() == (6, 6)
+        assert edge_index[0].tolist() == [0, 1, 1, 2, 3, 4, 4, 5]
+        assert edge_index[1].tolist() == [1, 0, 2, 1, 4, 3, 5, 4]
 
 
 if __name__ == '__main__':

@@ -8,7 +8,8 @@ from torch_geometric.transforms import BaseTransform
 @functional_transform('center')
 class Center(BaseTransform):
     r"""Centers node positions :obj:`data.pos` around the origin
-    (functional name: :obj:`center`)."""
+    (functional name: :obj:`center`).
+    """
     def forward(
         self,
         data: Union[Data, HeteroData],

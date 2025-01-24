@@ -13,7 +13,7 @@ def dense_mincut_pool(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
-    paper
+    paper.
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
@@ -62,7 +62,6 @@ def dense_mincut_pool(
     :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`,
         :class:`torch.Tensor`, :class:`torch.Tensor`)
     """
-
     x = x.unsqueeze(0) if x.dim() == 2 else x
     adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
     s = s.unsqueeze(0) if s.dim() == 2 else s

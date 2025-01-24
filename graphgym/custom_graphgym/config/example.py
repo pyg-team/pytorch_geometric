@@ -5,11 +5,9 @@ from torch_geometric.graphgym.register import register_config
 
 @register_config('example')
 def set_cfg_example(cfg):
-    r'''
-    This function sets the default config value for customized options
+    r"""This function sets the default config value for customized options
     :return: customized configuration use by the experiment.
-    '''
-
+    """
     # ----------------------------------------------------------------------- #
     # Customized options
     # ----------------------------------------------------------------------- #

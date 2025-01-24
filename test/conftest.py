@@ -1,6 +1,6 @@
 import functools
+import logging
 import os.path as osp
-import shutil
 from typing import Callable
 
 import pytest
@@ -8,6 +8,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.data import Dataset
+from torch_geometric.io import fs
 
 
 def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
@@ -47,47 +48,50 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
 
 @pytest.fixture(scope='session')
 def get_dataset() -> Callable:
-    root = osp.join('/', 'tmp', 'pyg_test_datasets')
+    # TODO Support memory filesystem on Windows.
+    if torch_geometric.typing.WITH_WINDOWS:
+        root = osp.join('/', 'tmp', 'pyg_test_datasets')
+    else:
+        root = 'memory://pyg_test_datasets'
+
     yield functools.partial(load_dataset, root)
-    if osp.exists(root):
-        shutil.rmtree(root)
+
+    if fs.exists(root):
+        fs.rm(root)
 
 
-@pytest.fixture()
-def get_tensor_frame() -> Callable:
-    import torch_frame
-
-    def _get_tensor_frame(num_rows: int) -> torch_frame.TensorFrame:
-        feat_dict = {
-            torch_frame.categorical: torch.randint(0, 3, size=(num_rows, 3)),
-            torch_frame.numerical: torch.randn(size=(num_rows, 2)),
-        }
-        col_names_dict = {
-            torch_frame.categorical: ['a', 'b', 'c'],
-            torch_frame.numerical: ['x', 'y'],
-        }
-        y = torch.randn(num_rows)
-
-        return torch_frame.TensorFrame(
-            feat_dict=feat_dict,
-            col_names_dict=col_names_dict,
-            y=y,
-        )
-
-    return _get_tensor_frame
+@pytest.fixture
+def enable_extensions():  # Nothing to do.
+    yield
 
 
 @pytest.fixture
 def disable_extensions():
-    prev_state = {
-        'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
-        'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
-        'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
-        'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
-        'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
-    }
-    for key in prev_state.keys():
+    def is_setting(name: str) -> bool:
+        if not name.startswith('WITH_'):
+            return False
+        if name.startswith('WITH_PT') or name.startswith('WITH_WINDOWS'):
+            return False
+        return True
+
+    settings = dir(torch_geometric.typing)
+    settings = [key for key in settings if is_setting(key)]
+    state = {key: getattr(torch_geometric.typing, key) for key in settings}
+
+    for key in state.keys():
         setattr(torch_geometric.typing, key, False)
     yield
-    for key, value in prev_state.items():
+    for key, value in state.items():
         setattr(torch_geometric.typing, key, value)
+
+
+@pytest.fixture
+def without_extensions(request):
+    request.getfixturevalue(request.param)
+    return request.param == 'disable_extensions'
+
+
+@pytest.fixture(scope='function')
+def spawn_context():
+    torch.multiprocessing.set_start_method('spawn', force=True)
+    logging.info("Setting torch.multiprocessing context to 'spawn'")

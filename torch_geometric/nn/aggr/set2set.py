@@ -10,7 +10,7 @@ from torch_geometric.utils import softmax
 class Set2Set(Aggregation):
     r"""The Set2Set aggregation operator based on iterative content-based
     attention, as described in the `"Order Matters: Sequence to sequence for
-    Sets" <https://arxiv.org/abs/1511.06391>`_ paper
+    Sets" <https://arxiv.org/abs/1511.06391>`_ paper.
 
     .. math::
         \mathbf{q}_t &= \mathrm{LSTM}(\mathbf{q}^{*}_{t-1})

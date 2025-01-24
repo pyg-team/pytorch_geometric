@@ -24,7 +24,8 @@ class RandomPermutation(BaseTransform):
 class Random2ndMinimumDataset(InMemoryDataset):
     r""""A labeled dataset, where each sample is a multiset of integers
     encoded as bit-vectors, and the label is the second smallest integer
-    in the multiset."""
+    in the multiset.
+    """
     def __init__(
         self,
         num_examples: int,

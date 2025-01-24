@@ -13,7 +13,7 @@ class CorrectAndSmooth(torch.nn.Module):
     <https://arxiv.org/abs/2010.13993>`_ paper, where soft predictions
     :math:`\mathbf{Z}` (obtained from a simple base predictor) are
     first corrected based on ground-truth training
-    label information :math:`\mathbf{Y}` and residual propagation
+    label information :math:`\mathbf{Y}` and residual propagation.
 
     .. math::
         \mathbf{e}^{(0)}_i &= \begin{cases}
@@ -80,7 +80,8 @@ class CorrectAndSmooth(torch.nn.Module):
 
     def correct(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                 edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             y_soft (torch.Tensor): The soft predictions :math:`\mathbf{Z}`
                 obtained from a simple base predictor.
@@ -92,7 +93,6 @@ class CorrectAndSmooth(torch.nn.Module):
             edge_weight (torch.Tensor, optional): The edge weights.
                 (default: :obj:`None`)
         """
-
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel
 
@@ -125,7 +125,8 @@ class CorrectAndSmooth(torch.nn.Module):
 
     def smooth(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             y_soft (torch.Tensor): The corrected predictions :math:`\mathbf{Z}`
                 obtained from :meth:`correct`.

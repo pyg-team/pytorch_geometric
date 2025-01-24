@@ -13,7 +13,7 @@ def dense_diff_pool(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The differentiable pooling operator from the `"Hierarchical Graph
     Representation Learning with Differentiable Pooling"
-    <https://arxiv.org/abs/1806.08804>`_ paper
+    <https://arxiv.org/abs/1806.08804>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot

@@ -1,3 +1,5 @@
+r"""Visualization package."""
+
 from .graph import visualize_graph
 from .influence import influence
 

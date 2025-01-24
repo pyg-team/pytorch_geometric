@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Final, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -25,7 +25,7 @@ class Aggregation(torch.nn.Module):
     Notably, :obj:`index` does not have to be sorted (for most aggregation
     operators):
 
-    .. code-block::
+    .. code-block:: python
 
        # Feature matrix holding 10 elements with 64 features each:
        x = torch.randn(10, 64)
@@ -39,7 +39,7 @@ class Aggregation(torch.nn.Module):
     called :obj:`ptr`. Here, elements within the same set need to be grouped
     together in the input, and :obj:`ptr` defines their boundaries:
 
-    .. code-block::
+    .. code-block:: python
 
        # Feature matrix holding 10 elements with 64 features each:
        x = torch.randn(10, 64)
@@ -47,7 +47,7 @@ class Aggregation(torch.nn.Module):
        # Define the boundary indices for three sets:
        ptr = torch.tensor([0, 4, 7, 10])
 
-       output = aggr(x, ptr=ptr)  #  Output shape: [4, 64]
+       output = aggr(x, ptr=ptr)  #  Output shape: [3, 64]
 
     Note that at least one of :obj:`index` or :obj:`ptr` must be defined.
 
@@ -59,6 +59,13 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
+    def __init__(self) -> None:
+        super().__init__()
+
+        self._deterministic: Final[bool] = (
+            torch.are_deterministic_algorithms_enabled()
+            or torch.is_deterministic_algorithms_warn_only_enabled())
+
     def forward(
         self,
         x: Tensor,
@@ -68,7 +75,8 @@ class Aggregation(torch.nn.Module):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The source tensor.
             index (torch.Tensor, optional): The indices of elements for
@@ -86,11 +94,9 @@ class Aggregation(torch.nn.Module):
             max_num_elements: (int, optional): The maximum number of elements
                 within a single aggregation group. (default: :obj:`None`)
         """
-        pass
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        pass
 
     @disable_dynamic_shapes(required_args=['dim_size'])
     def __call__(
@@ -169,10 +175,13 @@ class Aggregation(torch.nn.Module):
                dim: int = -2, reduce: str = 'sum') -> Tensor:
 
         if ptr is not None:
-            ptr = expand_left(ptr, dim, dims=x.dim())
-            return segment(x, ptr, reduce=reduce)
+            if index is None or self._deterministic:
+                ptr = expand_left(ptr, dim, dims=x.dim())
+                return segment(x, ptr, reduce=reduce)
 
-        assert index is not None
+        if index is None:
+            raise RuntimeError("Aggregation requires 'index' to be specified")
+
         return scatter(x, index, dim, dim_size, reduce)
 
     def to_dense_batch(

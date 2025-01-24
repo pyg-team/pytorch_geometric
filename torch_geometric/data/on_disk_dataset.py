@@ -1,5 +1,5 @@
 import os
-from typing import Any, Callable, Iterable, List, Optional, Union
+from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
 from torch import Tensor
 
@@ -57,7 +57,7 @@ class OnDiskDataset(Dataset):
         backend: str = 'sqlite',
         schema: Schema = object,
         log: bool = True,
-    ):
+    ) -> None:
         if backend not in self.BACKENDS:
             raise ValueError(f"Database backend must be one of "
                              f"{set(self.BACKENDS.keys())} "
@@ -92,7 +92,7 @@ class OnDiskDataset(Dataset):
         self._numel = len(self._db)
         return self._db
 
-    def close(self):
+    def close(self) -> None:
         r"""Closes the connection to the underlying database."""
         if self._db is not None:
             self._db.close()
@@ -100,7 +100,8 @@ class OnDiskDataset(Dataset):
     def serialize(self, data: BaseData) -> Any:
         r"""Serializes the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object into the expected DB
-        schema."""
+        schema.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.serialize()` "
@@ -110,14 +111,15 @@ class OnDiskDataset(Dataset):
     def deserialize(self, data: Any) -> BaseData:
         r"""Deserializes the DB entry into a
         :class:`~torch_geometric.data.Data` or
-        :class:`~torch_geometric.data.HeteroData` object."""
+        :class:`~torch_geometric.data.HeteroData` object.
+        """
         if self.schema == object:
             return data
         raise NotImplementedError(f"`{self.__class__.__name__}.deserialize()` "
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def append(self, data: BaseData):
+    def append(self, data: BaseData) -> None:
         r"""Appends the data object to the dataset."""
         index = len(self)
         self.db.insert(index, self.serialize(data))
@@ -125,9 +127,9 @@ class OnDiskDataset(Dataset):
 
     def extend(
         self,
-        data_list: List[BaseData],
+        data_list: Sequence[BaseData],
         batch_size: Optional[int] = None,
-    ):
+    ) -> None:
         r"""Extends the dataset by a list of data objects."""
         start = len(self)
         end = start + len(data_list)
@@ -150,7 +152,13 @@ class OnDiskDataset(Dataset):
         else:
             data_list = self.db.multi_get(indices, batch_size)
 
-        return [self.deserialize(data) for data in data_list]
+        data_list = [self.deserialize(data) for data in data_list]
+        if self.transform is not None:
+            data_list = [self.transform(data) for data in data_list]
+        return data_list
+
+    def __getitems__(self, indices: List[int]) -> List[BaseData]:
+        return self.multi_get(indices)
 
     def len(self) -> int:
         if self._numel is None:

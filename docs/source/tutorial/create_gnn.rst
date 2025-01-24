@@ -101,7 +101,7 @@ The full layer implementation is shown below:
             out = self.propagate(edge_index, x=x, norm=norm)
 
             # Step 6: Apply a final bias vector.
-            out += self.bias
+            out = out + self.bias
 
             return out
 

@@ -1,11 +1,16 @@
 import copy
+import warnings
 
 import pytest
 import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.testing import (
+    get_random_edge_index,
+    get_random_tensor_frame,
+    withPackage,
+)
 from torch_geometric.typing import TensorFrame
 
 x_paper = torch.randn(10, 16)
@@ -328,6 +333,26 @@ def test_hetero_data_subgraph():
     assert out['paper', 'paper'].edge_attr.size() == (4, 8)
 
 
+def test_hetero_data_empty_subgraph():
+    data = HeteroData()
+    data.num_node_types = 3
+    data['paper'].x = torch.arange(5)
+    data['author'].x = torch.arange(5)
+    data['paper', 'author'].edge_weight = torch.arange(5)
+
+    out = data.subgraph(subset_dict={
+        'paper': torch.tensor([1, 2, 3]),
+        'author': torch.tensor([1, 2, 3]),
+    })
+
+    assert torch.equal(out['paper'].x, torch.arange(1, 4))
+    assert out['paper'].num_nodes == 3
+    assert torch.equal(out['author'].x, torch.arange(1, 4))
+    assert out['author'].num_nodes == 3
+    assert 'edge_index' not in out['paper', 'author']
+    assert torch.equal(out['paper', 'author'].edge_weight, torch.arange(5))
+
+
 def test_copy_hetero_data():
     data = HeteroData()
     data['paper'].x = x_paper
@@ -539,7 +564,13 @@ def test_hetero_data_invalid_names():
     data = HeteroData()
     with pytest.warns(UserWarning, match="single underscores"):
         data['my test', 'a__b', 'my test'].edge_attr = torch.randn(10, 16)
-    assert data.edge_types == [('my test', 'a__b', 'my test')]
+    with warnings.catch_warnings():  # No warning should be raised afterwards:
+        warnings.simplefilter('error')
+        data['my test', 'a__c', 'my test'].edge_attr = torch.randn(10, 16)
+    assert data.edge_types == [
+        ('my test', 'a__b', 'my test'),
+        ('my test', 'a__c', 'my test'),
+    ]
 
 
 def test_hetero_data_update():
@@ -603,10 +634,10 @@ def test_basic_feature_store():
 
 
 @withPackage('torch_frame')
-def test_hetero_data_with_tensor_frame(get_tensor_frame):
+def test_hetero_data_with_tensor_frame():
     data = HeteroData()
-    data['paper'].tf = get_tensor_frame(num_rows=x_paper.size(0))
-    data['author'].tf = get_tensor_frame(num_rows=x_author.size(0))
+    data['paper'].tf = get_random_tensor_frame(num_rows=x_paper.size(0))
+    data['author'].tf = get_random_tensor_frame(num_rows=x_author.size(0))
     data['author', 'paper'].edge_index = edge_index_author_paper
 
     # Basic functionality:
@@ -698,7 +729,7 @@ def test_basic_graph_store():
     assert len(data.get_all_edge_attrs()) == 0
 
 
-def test_data_generate_ids():
+def test_generate_ids():
     data = HeteroData()
 
     data['paper'].x = torch.randn(100, 128)
@@ -714,3 +745,21 @@ def test_data_generate_ids():
     assert data['author'].n_id.tolist() == list(range(200))
     assert data['paper', 'author'].e_id.tolist() == list(range(300))
     assert data['author', 'paper'].e_id.tolist() == list(range(400))
+
+
+def test_invalid_keys():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(10, 128)
+    data['paper'].node_attrs = ['y']
+    data['paper', 'paper'].edge_index = get_random_edge_index(10, 10, 20)
+    data['paper', 'paper'].edge_attrs = ['edge_attr']
+
+    assert data['paper'].node_attrs() == ['x']
+    assert data['paper']['node_attrs'] == ['y']
+    assert data['paper', 'paper'].edge_attrs() == ['edge_index']
+    assert data['paper', 'paper']['edge_attrs'] == ['edge_attr']
+
+    out = data.to_homogeneous()
+    assert set(out.node_attrs()) == {'x', 'node_type'}
+    assert set(out.edge_attrs()) == {'edge_index', 'edge_type'}

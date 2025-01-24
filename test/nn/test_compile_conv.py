@@ -2,14 +2,13 @@ import pytest
 import torch
 from torch import Tensor
 
-import torch_geometric
+from torch_geometric import EdgeIndex
 from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
-    disableExtensions,
     onlyFullTest,
     onlyLinux,
-    withCUDA,
+    withDevice,
     withPackage,
 )
 from torch_geometric.utils import scatter
@@ -27,18 +26,52 @@ class MySAGEConv(torch.nn.Module):
         return self.lin_src(out) + self.lin_dst(x)
 
 
-@withCUDA
+@withDevice
 @onlyLinux
 @onlyFullTest
-@disableExtensions
-@withPackage('torch>=2.0.0')
+@withPackage('torch>=2.1.0')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv(device, Conv):
+    import torch._dynamo as dynamo
+
     x = torch.randn(10, 16, device=device)
     edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
 
-    conv = Conv(16, 32).to(device)
-    out = torch_geometric.compile(conv)(x, edge_index)
+    if Conv == GCNConv:
+        conv = Conv(16, 32, add_self_loops=False).to(device)
+    else:
+        conv = Conv(16, 32).to(device)
+
+    explanation = dynamo.explain(conv)(x, edge_index)
+    assert explanation.graph_break_count == 0
+
+    out = torch.compile(conv)(x, edge_index)
+    assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
+
+
+@withDevice
+@onlyLinux
+@onlyFullTest
+@withPackage('torch==2.3')
+@pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
+def test_compile_conv_edge_index(device, Conv):
+    import torch._dynamo as dynamo
+
+    x = torch.randn(10, 16, device=device)
+    edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
+    edge_index = EdgeIndex(edge_index, sparse_size=(10, 10))
+    edge_index = edge_index.sort_by('col')[0]
+    edge_index.fill_cache_()
+
+    if Conv == GCNConv:
+        conv = Conv(16, 32, normalize=False).to(device)
+    else:
+        conv = Conv(16, 32).to(device)
+
+    explanation = dynamo.explain(conv)(x, edge_index)
+    assert explanation.graph_break_count == 0
+
+    out = torch.compile(conv, fullgraph=True)(x, edge_index)
     assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
 
 
@@ -56,7 +89,7 @@ if __name__ == '__main__':
 
     conv = MySAGEConv(64, 64).to(args.device)
     benchmark(
-        funcs=[conv, torch_geometric.compile(conv)],
+        funcs=[conv, torch.compile(conv)],
         func_names=['Vanilla', 'Compiled'],
         args=(x, edge_index),
         num_steps=50 if args.device == 'cpu' else 500,
@@ -68,7 +101,7 @@ if __name__ == '__main__':
         print(f'Conv: {Conv.__name__}')
 
         conv = Conv(64, 64).to(args.device)
-        compiled_conv = torch_geometric.compile(conv)
+        compiled_conv = torch.compile(conv)
 
         benchmark(
             funcs=[conv, compiled_conv],

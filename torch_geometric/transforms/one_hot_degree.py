@@ -24,12 +24,13 @@ class OneHotDegree(BaseTransform):
         max_degree: int,
         in_degree: bool = False,
         cat: bool = True,
-    ):
+    ) -> None:
         self.max_degree = max_degree
         self.in_degree = in_degree
         self.cat = cat
 
     def forward(self, data: Data) -> Data:
+        assert data.edge_index is not None
         idx, x = data.edge_index[1 if self.in_degree else 0], data.x
         deg = degree(idx, data.num_nodes, dtype=torch.long)
         deg = one_hot(deg, num_classes=self.max_degree + 1)

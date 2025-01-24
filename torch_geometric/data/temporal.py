@@ -34,7 +34,7 @@ class TemporalData(BaseData):
     represented with these four values.
 
     In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
-    the behavior of a regular Python dictionary.
+    the behavior of a regular :python:`Python` dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -108,7 +108,8 @@ class TemporalData(BaseData):
     @classmethod
     def from_dict(cls, mapping: Dict[str, Any]) -> 'TemporalData':
         r"""Creates a :class:`~torch_geometric.data.TemporalData` object from
-        a Python dictionary."""
+        a Python dictionary.
+        """
         return cls(**mapping)
 
     def index_select(self, idx: Any) -> 'TemporalData':
@@ -155,8 +156,7 @@ class TemporalData(BaseData):
         return self.num_events
 
     def __call__(self, *args: List[str]) -> Iterable:
-        for key, value in self._store.items(*args):
-            yield key, value
+        yield from self._store.items(*args)
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
@@ -239,7 +239,7 @@ class TemporalData(BaseData):
         return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'batch' in key:
+        if 'batch' in key and isinstance(value, Tensor):
             return int(value.max()) + 1
         elif key in ['src', 'dst']:
             return self.num_nodes

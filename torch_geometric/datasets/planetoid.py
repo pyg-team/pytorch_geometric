@@ -4,8 +4,8 @@ from typing import Callable, List, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url
-from torch_geometric.io import read_planetoid_data
+from torch_geometric.data import InMemoryDataset
+from torch_geometric.io import fs, read_planetoid_data
 
 
 class Planetoid(InMemoryDataset):
@@ -48,6 +48,8 @@ class Planetoid(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -80,16 +82,25 @@ class Planetoid(InMemoryDataset):
     geom_gcn_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
                     'geom-gcn/master')
 
-    def __init__(self, root: str, name: str, split: str = "public",
-                 num_train_per_class: int = 20, num_val: int = 500,
-                 num_test: int = 1000, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        split: str = "public",
+        num_train_per_class: int = 20,
+        num_val: int = 500,
+        num_test: int = 1000,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name
 
         self.split = split.lower()
         assert self.split in ['public', 'full', 'geom-gcn', 'random']
 
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
         if split == 'full':
@@ -138,15 +149,15 @@ class Planetoid(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for name in self.raw_file_names:
-            download_url(f'{self.url}/{name}', self.raw_dir)
+            fs.cp(f'{self.url}/{name}', self.raw_dir)
         if self.split == 'geom-gcn':
             for i in range(10):
                 url = f'{self.geom_gcn_url}/splits/{self.name.lower()}'
-                download_url(f'{url}_split_0.6_0.2_{i}.npz', self.raw_dir)
+                fs.cp(f'{url}_split_0.6_0.2_{i}.npz', self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         data = read_planetoid_data(self.raw_dir, self.name)
 
         if self.split == 'geom-gcn':

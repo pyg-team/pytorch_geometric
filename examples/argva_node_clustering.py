@@ -94,7 +94,8 @@ def test(data):
 
     # Cluster embedded values using k-means.
     kmeans_input = z.cpu().numpy()
-    kmeans = KMeans(n_clusters=7, random_state=0).fit(kmeans_input)
+    kmeans = KMeans(n_clusters=7, random_state=0,
+                    n_init='auto').fit(kmeans_input)
     pred = kmeans.predict(kmeans_input)
 
     labels = data.y.cpu().numpy()
@@ -111,9 +112,9 @@ def test(data):
 for epoch in range(1, 151):
     loss = train()
     auc, ap, completeness, hm, nmi = test(test_data)
-    print((f'Epoch: {epoch:03d}, Loss: {loss:.3f}, AUC: {auc:.3f}, '
-           f'AP: {ap:.3f}, Completeness: {completeness:.3f}, '
-           f'Homogeneity: {hm:.3f}, NMI: {nmi:.3f}'))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.3f}, AUC: {auc:.3f}, '
+          f'AP: {ap:.3f}, Completeness: {completeness:.3f}, '
+          f'Homogeneity: {hm:.3f}, NMI: {nmi:.3f}')
 
 
 @torch.no_grad()

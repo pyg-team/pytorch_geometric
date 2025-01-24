@@ -1,13 +1,14 @@
 package:
   name: pytorch-geometric
-  version: 2.3.1
+  version: 2.6.1
 
 source:
-  url: https://files.pythonhosted.org/packages/06/a5/9f5af849c4185da5ea55f70ef17e23f93355cd4e989d82cfc8ba2d8747af/torch_geometric-2.3.1.tar.gz
+  url: https://files.pythonhosted.org/packages/e8/81/e1b015494cb9e0bf4c47cc8426e49736120248733be0e22072a5628ae9ed/torch_geometric-2.6.1.tar.gz
 
 requirements:
   host:
     - pip
+    - flit-core
     - python {{ environ.get('PYTHON_VERSION') }}
 
   run:
@@ -15,13 +16,14 @@ requirements:
     - {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}
     - {{ environ.get('CONDA_CUDATOOLKIT_CONSTRAINT') }}
     - psutil
+    - fsspec
     - tqdm
     - jinja2
     - pyparsing
     - numpy
     - scipy
+    - aiohttp
     - requests
-    - scikit-learn
 
 build:
   string: py{{ environ.get('PYTHON_VERSION').replace('.', '') }}_torch_{{ environ['TORCH_VERSION'] }}_{{ environ['CUDA_VERSION'] }}

@@ -11,6 +11,7 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
     r"""The k-NN interpolation from the `"PointNet++: Deep Hierarchical
     Feature Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper.
+
     For each point :math:`y` with position :math:`\mathbf{p}(y)`, its
     interpolated features :math:`\mathbf{f}(y)` are given by
 
@@ -42,7 +43,6 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
             Has no effect in case :obj:`batch_x` or :obj:`batch_y` is not
             :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
     """
-
     with torch.no_grad():
         assign_index = knn(pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y,
                            num_workers=num_workers)
