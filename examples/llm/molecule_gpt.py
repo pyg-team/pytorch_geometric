@@ -181,8 +181,9 @@ def train(
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset_name", type=str, default='InstructMol',
-                        help='MoleculeGPT or InstructMol')
+    parser.add_argument("--dataset_name", type=str, default='MoleculeGPT',
+                        choices=['MoleculeGPT', 'InstructMol'],
+                        help='Support MoleculeGPT and InstructMol')
     parser.add_argument('--epochs', type=int, default=3)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--batch_size', type=int, default=2)
