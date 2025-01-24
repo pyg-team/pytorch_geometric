@@ -116,9 +116,11 @@ class LLMJudge():
             score (float): score of 0-1, may be nan due to LLM judge failure.
                 Evals should skip nan's when aggregating score.
         """
-        prompt1 = SYSTEM_PROMPT_1.format(question=question, model_pred=model_pred,
+        prompt1 = SYSTEM_PROMPT_1.format(question=question,
+                                         model_pred=model_pred,
                                          correct_answer=correct_answer)
-        prompt2 = SYSTEM_PROMPT_2.format(question=question, model_pred=model_pred,
+        prompt2 = SYSTEM_PROMPT_2.format(question=question,
+                                         model_pred=model_pred,
                                          correct_answer=correct_answer)
         score1 = float("nan")
         score1 = float("nan")
