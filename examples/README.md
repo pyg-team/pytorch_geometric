@@ -22,4 +22,5 @@ For examples on working with heterogeneous data, see the examples under [`exampl
 For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
 
 For an example on training a GraphTransformer see [`examples/sgformer.py`](examples/sgformer.py)
-  - [SGFormer Paper](https://arxiv.org/pdf/2306.10759)
+
+- [SGFormer Paper](https://arxiv.org/pdf/2306.10759)
