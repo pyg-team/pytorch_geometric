@@ -12,16 +12,16 @@ from torch_geometric.data import (
 
 
 class GreycDataset(InMemoryDataset):
-    r"""Implementation of five GREYC chemistry small datasets as pytorch
-        geometric datasets : Acyclic, Alkane, MAO, Monoterpens and PAH. See
-        `"GREYC's Chemistry dataset" <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_
-        for details.
+    r"""Implementation of five GREYC chemistry datasets : :obj:`Acyclic`,
+    :obj:`Alkane`, :obj:`MAO`, :obj:`Monoterpens` and :obj:`PAH`. See
+    `"GREYC's Chemistry dataset" <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_
+    for details.
 
     Args:
         root (str): Root directory where the dataset should be saved.
-        name (str): The `name
-            <https://lucbrun.ensicaen.fr/CHEMISTRY/>`_ of the
-            dataset.
+        name (str): The name (:obj:`Acyclic`,
+            :obj:`Alkane`, :obj:`MAO`, :obj:`Monoterpens` or :obj:`PAH`)
+            of the dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -49,7 +49,7 @@ class GreycDataset(InMemoryDataset):
           - #edges
           - #features
           - #classes
-          - #type
+          - Type
         * - Acyclic
           - 183
           - ~8.2
@@ -213,7 +213,7 @@ class GreycDataset(InMemoryDataset):
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         data_list = self._load_gml_data(self.raw_paths[0])
 
         if self.pre_filter is not None:
