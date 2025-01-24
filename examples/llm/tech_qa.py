@@ -232,7 +232,8 @@ def test(model, test_loader, args):
     eval_tuples = []
     for test_batch in tqdm(test_loader, desc="Testing"):
         preds = (inference_step(model, test_batch))
-        for question, pred, label in zip(test_batch.question, preds, test_batch.label):
+        for question, pred, label in zip(test_batch.question, preds,
+                                         test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
         scores.append(eval(question, pred, label))
