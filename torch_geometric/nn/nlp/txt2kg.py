@@ -159,10 +159,10 @@ class TXT2KG():
                         mp.spawn(
                             _multiproc_helper,
                             args=(in_chunks_per_proc, _parse_n_check_triples,
-                                    _chunk_to_triples_str_cloud,
-                                    self.NVIDIA_API_KEY, self.NIM_MODEL),
+                                  _chunk_to_triples_str_cloud,
+                                  self.NVIDIA_API_KEY, self.NIM_MODEL),
                             nprocs=num_procs)
-                    except: # noqa
+                    except:  # noqa
                         # keep retrying, txt2kg is costly -> stoppage is costly
                         pass
 
