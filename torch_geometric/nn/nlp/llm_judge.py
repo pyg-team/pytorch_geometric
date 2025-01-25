@@ -127,14 +127,20 @@ class LLMJudge():
         score1 = float("nan")
         score1 = float("nan")
         for retry in range(10):
-            score1 = self._process_score(
-                call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
-            if not isnan(score1):
-                break
+            try:
+                score1 = self._process_score(
+                    call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
+                if not isnan(score1):
+                    break
+            except: # noqa
+                pass
         for retry in range(10):
-            score2 = self._process_score(
-                call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
-            if not isnan(score2):
-                break
+            try:
+                score2 = self._process_score(
+                    call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL))
+                if not isnan(score2):
+                    break
+            except:
+                pass
 
         return self._average_scores(score1, score2)
