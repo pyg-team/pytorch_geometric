@@ -11,7 +11,7 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.datasets import MoleculeGPTDataset
+from torch_geometric.datasets import InstructMolDataset, MoleculeGPTDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv
 from torch_geometric.nn.models import MoleculeGPT
@@ -44,6 +44,7 @@ def eval(model, data_loader):
 
 
 def train(
+    dataset_name: str,
     num_epochs: int,
     lr: float,
     batch_size: int,
@@ -65,8 +66,11 @@ def train(
     start_time = time.time()
     # Load dataset ================================================
     path = osp.dirname(osp.realpath(__file__))
-    path = osp.join(path, '..', '..', 'data', 'MoleculeGPT')
-    dataset = MoleculeGPTDataset(path)
+    path = osp.join(path, '..', '..', 'data', dataset_name)
+    if dataset_name == 'MoleculeGPT':
+        dataset = MoleculeGPTDataset(path)
+    elif dataset_name == 'InstructMol':
+        dataset = InstructMolDataset(path)
     train_size, val_size = int(0.8 * len(dataset)), int(0.1 * len(dataset))
     train_dataset = dataset[:train_size]
     val_dataset = dataset[train_size:train_size + val_size]
@@ -177,6 +181,9 @@ def train(
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset_name", type=str, default='MoleculeGPT',
+                        choices=['MoleculeGPT', 'InstructMol'],
+                        help='Support MoleculeGPT and InstructMol')
     parser.add_argument('--epochs', type=int, default=3)
     parser.add_argument('--lr', type=float, default=1e-5)
     parser.add_argument('--batch_size', type=int, default=2)
@@ -185,6 +192,7 @@ if __name__ == '__main__':
 
     start_time = time.time()
     train(
+        args.dataset_name,
         args.epochs,
         args.lr,
         args.batch_size,
