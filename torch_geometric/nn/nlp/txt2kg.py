@@ -154,27 +154,17 @@ class TXT2KG():
                 }
 
                 # Spawn multiple processes to process chunks in parallel
-                try:
+                for retry in range(10):
                     try:
                         mp.spawn(
                             _multiproc_helper,
                             args=(in_chunks_per_proc, _parse_n_check_triples,
-                                  _chunk_to_triples_str_cloud,
-                                  self.NVIDIA_API_KEY, self.NIM_MODEL),
+                                    _chunk_to_triples_str_cloud,
+                                    self.NVIDIA_API_KEY, self.NIM_MODEL),
                             nprocs=num_procs)
-                    except:
-                        mp.spawn(
-                            _multiproc_helper,
-                            args=(in_chunks_per_proc, _parse_n_check_triples,
-                                  _chunk_to_triples_str_cloud,
-                                  self.NVIDIA_API_KEY, self.NIM_MODEL),
-                            nprocs=num_procs)
-                except:
-                    mp.spawn(
-                        _multiproc_helper,
-                        args=(in_chunks_per_proc, _parse_n_check_triples,
-                              _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                              self.NIM_MODEL), nprocs=num_procs)
+                    except: # noqa
+                        # keep retrying, txt2kg is costly -> stoppage is costly
+                        pass
 
                 # Collect the results from each process
                 self.relevant_triples[key] = []
