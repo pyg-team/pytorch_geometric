@@ -83,35 +83,39 @@ def make_dataset(args):
         print("Re-using Saved TechQA KG-RAG Dataset...")
         return torch.load("tech_qa.pt", weights_only=False)
     else:
-        rawset = load_dataset('rojagtap/tech-qa', trust_remote_code=True)
-        data_lists = {"train": [], "validation": [], "test": []}
-        kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
-                          NVIDIA_API_KEY=args.NV_NIM_KEY,
-                          chunk_size=args.chunk_size)
-        triples = []
-        for split_str in data_lists.keys():
-            if split_str == "test":
-                """
-                Skip test since it is just a subset of val,
-                so it's a waste of time to re-parse triples.
-                """
-                break
-            for data_point in tqdm(
-                    rawset[split_str],
-                    desc="Extracting KG triples from " + str(split_str)):
-                q = data_point["question"]
-                a = data_point["answer"]
-                context_doc = data_point["document"]
-                QA_pair = (q, a)
-                kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
-            kg_maker.save_kg("hotpot_kg.pt")
-            relevant_triples = kg_maker.relevant_triples
-            triples.extend(
-                list(
-                    chain.from_iterable(
-                        triple_set
-                        for triple_set in relevant_triples.values())))
-        triples = list(dict.fromkeys(triples))
+        if os.path.exists("tech_qa_just_triples.pt"):
+            torch.load("tech_qa.pt", weights_only=False)
+        else:
+            rawset = load_dataset('rojagtap/tech-qa', trust_remote_code=True)
+            data_lists = {"train": [], "validation": [], "test": []}
+            kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
+                            NVIDIA_API_KEY=args.NV_NIM_KEY,
+                            chunk_size=args.chunk_size)
+            triples = []
+            for split_str in data_lists.keys():
+                if split_str == "test":
+                    """
+                    Skip test since it is just a subset of val,
+                    so it's a waste of time to re-parse triples.
+                    """
+                    break
+                for data_point in tqdm(
+                        rawset[split_str],
+                        desc="Extracting KG triples from " + str(split_str)):
+                    q = data_point["question"]
+                    a = data_point["answer"]
+                    context_doc = data_point["document"]
+                    QA_pair = (q, a)
+                    kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
+                kg_maker.save_kg("hotpot_kg.pt")
+                relevant_triples = kg_maker.relevant_triples
+                triples.extend(
+                    list(
+                        chain.from_iterable(
+                            triple_set
+                            for triple_set in relevant_triples.values())))
+            triples = list(dict.fromkeys(triples))
+            torch.save(data_lists, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
