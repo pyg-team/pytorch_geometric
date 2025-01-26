@@ -104,7 +104,9 @@ class Planetoid(InMemoryDataset):
         self.name = name
 
         self.split = split.lower()
-        assert self.split in ['public', 'full', 'geom-gcn', 'random', 'temporal']
+        assert self.split in [
+            'public', 'full', 'geom-gcn', 'random', 'temporal'
+        ]
         assert self.split != 'temporal' or name.lower() == 'pubmed',\
             'Temporal split is only available for the PubMed dataset.'
 
@@ -192,11 +194,13 @@ class Planetoid(InMemoryDataset):
             data.test_mask = torch.stack(test_masks, dim=1)
 
         elif self.split == 'temporal':
-            splits = np.load(osp.join(self.raw_dir, 'temporal_split_0.6_0.2.npz'))
+            splits = np.load(
+                osp.join(self.raw_dir, 'temporal_split_0.6_0.2.npz'))
             data.train_mask = torch.from_numpy(splits['train_mask'])
             data.val_mask = torch.from_numpy(splits['val_mask'])
             data.test_mask = torch.from_numpy(splits['test_mask'])
-            data.time = torch.from_numpy(np.load(osp.join(self.raw_dir, 'edge_time.npy')))
+            data.time = torch.from_numpy(
+                np.load(osp.join(self.raw_dir, 'edge_time.npy')))
 
         data = data if self.pre_transform is None else self.pre_transform(data)
         self.save([data], self.processed_paths[0])
