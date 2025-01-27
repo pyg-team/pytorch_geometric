@@ -176,9 +176,11 @@ class TXT2KG():
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
+
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
-        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct", post_text=SYSTEM_PROMPT) -> str:
+        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+        post_text=SYSTEM_PROMPT) -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model

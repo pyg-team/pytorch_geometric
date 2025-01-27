@@ -132,7 +132,8 @@ class LLMJudge():
         for retry in range(10):
             try:
                 score1 = self._process_score(
-                    call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL, post_text=""))
+                    call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL,
+                             post_text=""))
                 if not isnan(score1):
                     break
             except:  # noqa
@@ -140,7 +141,8 @@ class LLMJudge():
         for retry in range(10):
             try:
                 score2 = self._process_score(
-                    call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL, post_text=""))
+                    call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL,
+                             post_text=""))
                 if not isnan(score2):
                     break
             except:
