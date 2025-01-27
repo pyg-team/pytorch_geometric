@@ -36,9 +36,7 @@ from torch_geometric.utils.rag.backend_utils import (
     make_pcst_filter,
     preprocess_triplet,
 )
-from torch_geometric.utils.rag.feature_store import (
-    ModernBertFeatureStore,
-)
+from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
 
