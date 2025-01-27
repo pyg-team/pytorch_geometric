@@ -133,9 +133,13 @@ def make_dataset(args):
                               chunk_size=args.chunk_size)
             triples = []
             for data_point in tqdm(rawset, desc="Extracting KG triples"):
+                if data_point["is_impossible"]:
+                    continue
                 q = data_point["question"]
                 a = data_point["answer"]
-                context_doc = data_point["document"]
+                context_doc = ''
+                for i in data_point["contexts"]:
+                    context_doc += i["text"]
                 QA_pair = (q, a)
                 kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
             relevant_triples = kg_maker.relevant_triples
