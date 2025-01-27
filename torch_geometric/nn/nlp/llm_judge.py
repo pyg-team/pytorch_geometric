@@ -134,7 +134,7 @@ class LLMJudge():
                     call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL))
                 if not isnan(score1):
                     break
-            except: # noqa
+            except:  # noqa
                 pass
         for retry in range(10):
             try:
