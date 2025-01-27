@@ -229,12 +229,12 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
 class SentenceTransformerFeatureStore(KNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
         kwargs['model_name'] = kwargs.get(
-            'model_name', 'sentence-transformers/all-roberta-large-v1')
+            'model_name', 'Alibaba-NLP/gte-modernbert-base')
         super().__init__(SentenceTransformer, *args, **kwargs)
 
 
 class SentenceTransformerApproxFeatureStore(ApproxKNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
         kwargs['model_name'] = kwargs.get(
-            'model_name', 'sentence-transformers/all-roberta-large-v1')
+            'model_name', 'Alibaba-NLP/gte-modernbert-base')
         super().__init__(SentenceTransformer, *args, **kwargs)
