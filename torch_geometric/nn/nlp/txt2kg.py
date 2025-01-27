@@ -148,9 +148,9 @@ class TXT2KG():
                     for j in range(num_procs)
                 }
 
-                # Spawn multiple processes to process chunks in parallel
-                for retry in range(10):
+                for retry in range(20):
                     try:
+                        # Spawn multiple processes to process chunks in parallel
                         mp.spawn(
                             _multiproc_helper,
                             args=(in_chunks_per_proc, _parse_n_check_triples,
