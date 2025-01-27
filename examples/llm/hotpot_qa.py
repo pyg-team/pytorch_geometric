@@ -163,7 +163,7 @@ if __name__ == '__main__':
             print("retrieved_triples =", retrieved_triples)
 
         num_relevant_out_of_retrieved  = float(
-                             sum(retrieved_triple in golden_triples 
+                             sum(retrieved_triple in golden_triples
                                  for retrieved_triple in retrieved_triples)
                              )
         precisions.append(num_relevant_out_of_retrieved /
