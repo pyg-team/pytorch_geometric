@@ -3,7 +3,7 @@ import logging
 import os
 import os.path as osp
 from collections import defaultdict
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 
@@ -12,7 +12,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.io import fs
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.sampler.utils import sort_csc
-from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
+from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
 
 class Partitioner:

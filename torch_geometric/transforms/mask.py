@@ -19,7 +19,11 @@ def get_attrs_with_suffix(
     return [key for key in store.keys() if key.endswith(suffix)]
 
 
-def get_mask_size(attr: str, store: BaseStorage, size: Optional[int]) -> int:
+def get_mask_size(
+    attr: str,
+    store: BaseStorage,
+    size: Optional[int],
+) -> Optional[int]:
     if size is not None:
         return size
     return store.num_edges if store.is_edge_attr(attr) else store.num_nodes
