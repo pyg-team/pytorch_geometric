@@ -147,7 +147,7 @@ if __name__ == '__main__':
         loader = relevant_triples.keys()
     else:
         loader = tqdm(relevant_triples.keys())
-    for QA_pair in tqdm(relevant_triples.keys(), disable=args.verbose): 
+    for QA_pair in tqdm(relevant_triples.keys(), disable=args.verbose):
         golden_triples = relevant_triples[QA_pair]
         # Again, redundant since TXT2KG already provides lowercase
         # in case loading a KG that was made some other way without lowercase
@@ -162,10 +162,9 @@ if __name__ == '__main__':
             print("A=", QA_pair[1])
             print("retrieved_triples =", retrieved_triples)
 
-        num_relevant_out_of_retrieved  = float(
-                             sum(retrieved_triple in golden_triples
-                                 for retrieved_triple in retrieved_triples)
-                             )
+        num_relevant_out_of_retrieved = float(
+            sum(retrieved_triple in golden_triples
+                for retrieved_triple in retrieved_triples))
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
     approx_precision = sum(precisions) / len(precisions)

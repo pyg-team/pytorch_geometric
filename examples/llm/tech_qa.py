@@ -85,7 +85,7 @@ def make_dataset(args):
         if os.path.exists("tech_qa_just_triples.pt"):
             torch.load("tech_qa.pt", weights_only=False)
         else:
-            rawset = [] # need function to extract json
+            rawset = []  # need function to extract json
             data_lists = {"train": [], "validation": [], "test": []}
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
@@ -138,9 +138,8 @@ def make_dataset(args):
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs)
         total_data_list = []
-        for data_point in tqdm(
-                    rawset,
-                    desc="Building " + str(split_str) + " dataset"):
+        for data_point in tqdm(rawset,
+                               desc="Building " + str(split_str) + " dataset"):
             QA_pair = (data_point["question"], data_point["answer"])
             q = QA_pair[0]
             subgraph = query_loader.query(q)
