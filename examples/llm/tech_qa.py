@@ -37,7 +37,7 @@ from torch_geometric.utils.rag.backend_utils import (
     preprocess_triplet,
 )
 from torch_geometric.utils.rag.feature_store import (
-    SentenceTransformerFeatureStore,
+    ModernBertFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
@@ -124,7 +124,7 @@ def make_dataset(args):
         return torch.load("tech_qa.pt", weights_only=False)
     else:
         if os.path.exists("tech_qa_just_triples.pt"):
-            torch.load("tech_qa.pt", weights_only=False)
+            torch.load("tech_qa_just_triples.pt", weights_only=False)
         else:
             rawset = get_data()
             data_lists = {"train": [], "validation": [], "test": []}
@@ -160,7 +160,7 @@ def make_dataset(args):
             pre_transform=preprocess_triplet, node_method_kwargs={
                 "batch_size": min(len(triples), 256)
             }, graph_db=NeighborSamplingRAGGraphStore,
-            feature_db=SentenceTransformerFeatureStore).load()
+            feature_db=ModernBertFeatureStore).load()
         """
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
