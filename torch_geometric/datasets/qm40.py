@@ -1,11 +1,11 @@
 import os
-import os.path as osp
+import shutil
 import sys
 from typing import Callable, List, Optional
-import shutil
+
 import numpy as np
+import pandas as pd
 import torch
-from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -22,26 +22,24 @@ import csv
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
 
-conversion = torch.tensor(
-    [
-        HAR2EV,
-        HAR2EV,
-        HAR2EV,
-        HAR2EV,
-        1.0,
-        1.0,
-        1.0,
-        KCALMOL2EV,
-        1.0,
-        1.0,
-        1.0,
-        HAR2EV,
-        HAR2EV,
-        HAR2EV,
-        KCALMOL2EV,
-        KCALMOL2EV,
-    ]
-)
+conversion = torch.tensor([
+    HAR2EV,
+    HAR2EV,
+    HAR2EV,
+    HAR2EV,
+    1.0,
+    1.0,
+    1.0,
+    KCALMOL2EV,
+    1.0,
+    1.0,
+    1.0,
+    HAR2EV,
+    HAR2EV,
+    HAR2EV,
+    KCALMOL2EV,
+    KCALMOL2EV,
+])
 
 
 def rename_files(root: str) -> None:
@@ -161,10 +159,8 @@ class QM40(InMemoryDataset):
 
         if not WITH_RDKIT:
             print(
-                (
-                    "Using a pre-processed version of the dataset. Please "
-                    "install 'rdkit' to alternatively process the raw data."
-                ),
+                ("Using a pre-processed version of the dataset. Please "
+                 "install 'rdkit' to alternatively process the raw data."),
                 file=sys.stderr,
             )
 
@@ -252,8 +248,7 @@ class QM40(InMemoryDataset):
             type_idx = np.array([type_idx_map[num] for num in atomic_numbers])
             aromatic = np.array([int(atom.GetIsAromatic()) for atom in atoms])
             hybridizations = np.array(
-                [atom.GetHybridization() for atom in atoms]
-            )
+                [atom.GetHybridization() for atom in atoms])
             sp = (hybridizations == HybridizationType.SP).astype(int)
             sp2 = (hybridizations == HybridizationType.SP2).astype(int)
             sp3 = (hybridizations == HybridizationType.SP3).astype(int)
@@ -270,14 +265,11 @@ class QM40(InMemoryDataset):
             z = torch.tensor(atomic_numbers, dtype=torch.long)
 
             # Process bonds
-            bond_data = [
-                (
-                    bond.GetBeginAtomIdx(),
-                    bond.GetEndAtomIdx(),
-                    bonds[bond.GetBondType()],
-                )
-                for bond in mol.GetBonds()
-            ]
+            bond_data = [(
+                bond.GetBeginAtomIdx(),
+                bond.GetEndAtomIdx(),
+                bonds[bond.GetBondType()],
+            ) for bond in mol.GetBonds()]
             rows, cols, edge_types = zip(*bond_data)
             rows, cols = rows + cols, cols + rows  # Add reverse edges
             edge_types = edge_types + edge_types
@@ -316,14 +308,10 @@ class QM40(InMemoryDataset):
 
             # Create node features
             x1 = one_hot(torch.tensor(type_idx), num_classes=len(types))
-            x2 = (
-                torch.tensor(
-                    np.array([aromatic, sp, sp2, sp3, num_hs]),
-                    dtype=torch.float,
-                )
-                .t()
-                .contiguous()
-            )
+            x2 = (torch.tensor(
+                np.array([aromatic, sp, sp2, sp3, num_hs]),
+                dtype=torch.float,
+            ).t().contiguous())
             x = torch.cat([x1, x2], dim=-1)
 
             data = Data(

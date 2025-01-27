@@ -20,6 +20,7 @@ from .utils import (
     get_gpu_memory_from_nvidia_smi,
     get_model_size,
 )
+from .nvtx import nvtxit
 
 __all__ = [
     'profileit',
@@ -38,6 +39,7 @@ __all__ = [
     'get_gpu_memory_from_nvidia_smi',
     'get_gpu_memory_from_ipex',
     'benchmark',
+    'nvtxit',
 ]
 
 classes = __all__
