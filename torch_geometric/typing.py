@@ -317,7 +317,7 @@ class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string.
     """
-    
+
     edge_type: tuple[str, str, str]
 
     def __new__(cls, *args: Any) -> 'EdgeTypeStr':
