@@ -1,7 +1,11 @@
 import argparse
+import json
 import os
+import random
+import zipfile
 from itertools import chain
 
+import gdown
 import torch
 
 from datasets import load_dataset
@@ -38,14 +42,11 @@ from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
-import gdown
-import zipfile
-import json
 
 
-def download_zip_from_google_drive(google_drive_link, output_path='downloaded_file.zip'):
-    """
-    Downloads a ZIP file from a Google Drive link.
+def download_zip_from_google_drive(google_drive_link,
+                                   output_path='downloaded_file.zip'):
+    """Downloads a ZIP file from a Google Drive link.
 
     :param google_drive_link: str - The Google Drive URL of the ZIP file.
     :param output_path: str - The local path to save the downloaded ZIP file.
@@ -55,9 +56,9 @@ def download_zip_from_google_drive(google_drive_link, output_path='downloaded_fi
     gdown.download(url=google_drive_link, output=output_path, quiet=False)
     return output_path
 
+
 def extract_zip_file(zip_path, extract_to='.'):
-    """
-    Extracts a ZIP file to the specified directory.
+    """Extracts a ZIP file to the specified directory.
 
     :param zip_path: str - The path to the ZIP file.
     :param extract_to: str - The directory to extract files into.
@@ -65,6 +66,7 @@ def extract_zip_file(zip_path, extract_to='.'):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(extract_to)
     print(f"Extracted '{zip_path}' to '{extract_to}'.")
+
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
@@ -114,7 +116,7 @@ def get_data():
     link = "https://drive.google.com/file/d/1U_jTNtDZsrdfTY2uI4rlSpuj9kyURxcA/view?usp=drive_link"
     download_zip_from_google_drive(link, output_path="tech_qa.zip")
     extract_zip_file("tech_qa.zip", extract_to='.')
-    with open('data.json', 'r') as file:
+    with open('data.json') as file:
         json_obj = json.load(file)
     return json_obj
 
@@ -191,7 +193,8 @@ def make_dataset(args):
 
         # 60:20:20 split
         data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
-        data_lists["validation"] = total_data_list[int(.6 * len(total_data_list)):int(.8 * len(total_data_list))]
+        data_lists["validation"] = total_data_list[
+            int(.6 * len(total_data_list)):int(.8 * len(total_data_list))]
         data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
         torch.save(data_lists, "tech_qa.pt")
