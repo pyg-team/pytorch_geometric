@@ -96,7 +96,7 @@ class RAGQueryLoader:
         self.loader_kwargs = loader_kwargs or {}
         self.local_filter_kwargs = local_filter_kwargs or {}
 
-    def query(self, query: str) -> Data:
+    def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
         attributes.
         """
@@ -110,14 +110,20 @@ class RAGQueryLoader:
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
+
+        # need to use sampled edge_idx to index into original graph then reindex
         total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
         data.node_idx = torch.tensor(
             list(
                 dict.fromkeys(seed_nodes.tolist() +
                               total_e_idx_t.reshape(-1).tolist())))
         data.num_nodes = len(data.node_idx)
+
+        # use node idx to get data.x
         data.x = self.feature_store.x[data.node_idx]
         list_edge_index = []
+
+        # remap the edge_index
         remap_dict = {
             int(data.node_idx[i]): i
             for i in range(len(data.node_idx))
@@ -126,6 +132,8 @@ class RAGQueryLoader:
             list_edge_index.append(
                 (remap_dict[int(src)], remap_dict[int(dst)]))
         data.edge_index = torch.tensor(list_edge_index).t()
+
+        # apply local filter
         if self.local_filter:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
         return data

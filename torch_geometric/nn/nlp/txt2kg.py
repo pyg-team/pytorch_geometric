@@ -149,11 +149,18 @@ class TXT2KG():
                 }
 
                 # Spawn multiple processes to process chunks in parallel
-                mp.spawn(
-                    _multiproc_helper,
-                    args=(in_chunks_per_proc, _parse_n_check_triples,
-                          _chunk_to_triples_str_cloud, self.NVIDIA_API_KEY,
-                          self.NIM_MODEL), nprocs=num_procs)
+                for retry in range(10):
+                    try:
+                        mp.spawn(
+                            _multiproc_helper,
+                            args=(in_chunks_per_proc, _parse_n_check_triples,
+                                  _chunk_to_triples_str_cloud,
+                                  self.NVIDIA_API_KEY, self.NIM_MODEL),
+                            nprocs=num_procs)
+                    except:  # noqa
+                        # keep retrying, txt2kg is costly -> stoppage is costly
+                        pass
+                    break
 
                 # Collect the results from each process
                 self.relevant_triples[key] = []
@@ -161,14 +168,14 @@ class TXT2KG():
                     self.relevant_triples[key] += torch.load(
                         "/tmp/outs_for_proc_" + str(rank))
                     os.remove("/tmp/outs_for_proc_" + str(rank))
-
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
 
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
-        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct") -> str:
+        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+        post_text=SYSTEM_PROMPT) -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
@@ -180,7 +187,7 @@ def _chunk_to_triples_str_cloud(
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
             "role": "user",
-            "content": txt + '\n' + SYSTEM_PROMPT
+            "content": txt + '\n' + post_text
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:

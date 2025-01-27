@@ -6,7 +6,14 @@ import torch
 
 from datasets import load_dataset
 
-from g_retriever import adjust_learning_rate, get_loss, inference_step
+from g_retriever import (
+    adjust_learning_rate,
+    get_loss,
+    inference_step,
+    load_params_dict,
+    save_params_dict,
+)
+
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
@@ -17,6 +24,7 @@ from torch_geometric.nn import (
     LLM,
     TXT2KG,
     GRetriever,
+    LLMJudge,
     SentenceTransformer,
 )
 from torch_geometric.utils.rag.backend_utils import (
@@ -78,35 +86,39 @@ def make_dataset(args):
         print("Re-using Saved TechQA KG-RAG Dataset...")
         return torch.load("tech_qa.pt", weights_only=False)
     else:
-        rawset = load_dataset('rojagtap/tech-qa', trust_remote_code=True)
-        data_lists = {"train": [], "validation": [], "test": []}
-        kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
-                          NVIDIA_API_KEY=args.NV_NIM_KEY,
-                          chunk_size=args.chunk_size)
-        triples = []
-        for split_str in data_lists.keys():
-            if split_str == "test":
-                """
-                Skip test since it is just a subset of val,
-                so it's a waste of time to re-parse triples.
-                """
-                break
-            for data_point in tqdm(
-                    rawset[split_str],
-                    desc="Extracting KG triples from " + str(split_str)):
-                q = data_point["question"]
-                a = data_point["answer"]
-                context_doc = data_point["document"]
-                QA_pair = (q, a)
-                kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
-            kg_maker.save_kg("hotpot_kg.pt")
-            relevant_triples = kg_maker.relevant_triples
-            triples.extend(
-                list(
-                    chain.from_iterable(
-                        triple_set
-                        for triple_set in relevant_triples.values())))
-        triples = list(dict.fromkeys(triples))
+        if os.path.exists("tech_qa_just_triples.pt"):
+            torch.load("tech_qa.pt", weights_only=False)
+        else:
+            rawset = load_dataset('rojagtap/tech-qa', trust_remote_code=True)
+            data_lists = {"train": [], "validation": [], "test": []}
+            kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
+                              NVIDIA_API_KEY=args.NV_NIM_KEY,
+                              chunk_size=args.chunk_size)
+            triples = []
+            for split_str in data_lists.keys():
+                if split_str == "test":
+                    """
+                    Skip test since it is just a subset of val,
+                    so it's a waste of time to re-parse triples.
+                    """
+                    break
+                for data_point in tqdm(
+                        rawset[split_str],
+                        desc="Extracting KG triples from " + str(split_str)):
+                    q = data_point["question"]
+                    a = data_point["answer"]
+                    context_doc = data_point["document"]
+                    QA_pair = (q, a)
+                    kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
+                kg_maker.save_kg("hotpot_kg.pt")
+                relevant_triples = kg_maker.relevant_triples
+                triples.extend(
+                    list(
+                        chain.from_iterable(
+                            triple_set
+                            for triple_set in relevant_triples.values())))
+            triples = list(dict.fromkeys(triples))
+            torch.save(data_lists, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
@@ -168,68 +180,72 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     llm = LLM(model_name=args.llm_generator_name)
     model = GRetriever(llm=llm, gnn=gnn)
-    params = [p for _, p in model.named_parameters() if p.requires_grad]
-    lr = args.lr
-    optimizer = torch.optim.AdamW([{
-        'params': params,
-        'lr': lr,
-        'weight_decay': 0.05
-    }], betas=(0.9, 0.95))
-    float('inf')
-    for epoch in range(args.epochs):
-        model.train()
-        epoch_loss = 0
-        epoch_str = f'Epoch: {epoch + 1}|{args.epochs}'
-        loader = tqdm(train_loader, desc=epoch_str)
-        for step, batch in enumerate(loader):
-            optimizer.zero_grad()
-            loss = get_loss(model, batch)
-            loss.backward()
-            clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
-            if (step + 1) % 2 == 0:
-                adjust_learning_rate(optimizer.param_groups[0], lr,
-                                     step / len(train_loader) + epoch,
-                                     args.epochs)
-            optimizer.step()
-            epoch_loss += float(loss)
-            if (step + 1) % 2 == 0:
-                lr = optimizer.param_groups[0]['lr']
-        train_loss = epoch_loss / len(train_loader)
-        print(epoch_str + f', Train Loss: {train_loss:4f}')
-        val_loss = 0
-        model.eval()
-        with torch.no_grad():
-            for step, batch in enumerate(val_loader):
+    save_name = "tech-qa-model.pt"
+    if os.path.exists(save_name):
+        print("Re-using saved G-retriever model for testing...")
+        model = load_params_dict(model, save_name)
+    else:
+        params = [p for _, p in model.named_parameters() if p.requires_grad]
+        lr = args.lr
+        optimizer = torch.optim.AdamW([{
+            'params': params,
+            'lr': lr,
+            'weight_decay': 0.05
+        }], betas=(0.9, 0.95))
+        float('inf')
+        for epoch in range(args.epochs):
+            model.train()
+            epoch_loss = 0
+            epoch_str = f'Epoch: {epoch + 1}|{args.epochs}'
+            loader = tqdm(train_loader, desc=epoch_str)
+            for step, batch in enumerate(loader):
+                optimizer.zero_grad()
                 loss = get_loss(model, batch)
-                val_loss += loss.item()
-            val_loss = val_loss / len(val_loader)
-            print(epoch_str + f", Val Loss: {val_loss:4f}")
-    torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
-    model.eval()
+                loss.backward()
+                clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+                if (step + 1) % 2 == 0:
+                    adjust_learning_rate(optimizer.param_groups[0], lr,
+                                         step / len(train_loader) + epoch,
+                                         args.epochs)
+                optimizer.step()
+                epoch_loss += float(loss)
+                if (step + 1) % 2 == 0:
+                    lr = optimizer.param_groups[0]['lr']
+            train_loss = epoch_loss / len(train_loader)
+            print(epoch_str + f', Train Loss: {train_loss:4f}')
+            val_loss = 0
+            model.eval()
+            with torch.no_grad():
+                for step, batch in enumerate(val_loader):
+                    loss = get_loss(model, batch)
+                    val_loss += loss.item()
+                val_loss = val_loss / len(val_loader)
+                print(epoch_str + f", Val Loss: {val_loss:4f}")
+        torch.cuda.empty_cache()
+        torch.cuda.reset_max_memory_allocated()
+        model.eval()
+        save_params_dict(model, save_path=save_name)
     return model, test_loader
 
 
-def test(model, test_loader):
-    metrics = []
+def test(model, test_loader, args):
+    llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY)
 
-    def eval(pred: str, answer: str, llm_judge: str = NV_NIM_MODEL_DEFAULT):
-        try:
-            """
-            TODO: implement LLM judge myself,
-            based on Gilberto unless I can import this
-            """
-            # calculate the score based on pred and answer
-            pass  # llm_judge(pred, answer, eval_prompt)
-        except:
-            return 1.0
+    def eval(question: str, pred: str, correct_answer: str):
+        # calculate the score based on pred and correct answer
+        return llm_judge.score(question, pred, correct_answer)
 
-    for test_batch in tqdm(test_loader, desc="Test:"):
-        preds = inference_step(model, test_batch)
-        for pred, label in zip(preds, test_batch.label):
-            metrics.append(eval(pred, label))
-    avg_metrics = sum(metrics) / len(metrics)
-    print("Avg metric=", avg_metrics)
+    scores = []
+    eval_tuples = []
+    for test_batch in tqdm(test_loader, desc="Testing"):
+        preds = (inference_step(model, test_batch))
+        for question, pred, label in zip(test_batch.question, preds,
+                                         test_batch.label):
+            eval_tuples.append((question, pred, label))
+    for question, pred, label in tqdm(eval_tuples, desc="Eval"):
+        scores.append(eval(question, pred, label))
+    avg_scores = sum(scores) / len(scores)
+    print("Avg marlin accuracy=", avg_scores)
 
 
 if __name__ == '__main__':
@@ -239,4 +255,4 @@ if __name__ == '__main__':
     args = parse_args()
     data_lists = make_dataset(args)
     model, test_loader = train(args, data_lists)
-    test(model, test_loader)
+    test(model, test_loader, args)
