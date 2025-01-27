@@ -129,7 +129,7 @@ class LLMJudge():
                                          correct_answer=correct_answer)
         score1 = float("nan")
         score1 = float("nan")
-        for retry in range(10):
+        for retry in range(20):
             try:
                 score1 = self._process_score(
                     call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL,
@@ -138,7 +138,7 @@ class LLMJudge():
                     break
             except:  # noqa
                 pass
-        for retry in range(10):
+        for retry in range(20):
             try:
                 score2 = self._process_score(
                     call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL,
