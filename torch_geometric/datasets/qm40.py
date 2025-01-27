@@ -12,6 +12,7 @@ from torch_geometric.data import (
     Data,
     InMemoryDataset,
     download_url,
+    download_google_url,
     extract_zip,
 )
 from torch_geometric.io import fs
@@ -100,7 +101,8 @@ class QM40(InMemoryDataset):
     """
 
     raw_url = "https://figshare.com/ndownloader/files/47535647"
-    processed_url = None
+    # processed_url = "https://drive.google.com/file/d/1d4NACk0KIxwuPpSxq-fNiqIU3v9s6BLE"
+    processed_url = "1d4NACk0KIxwuPpSxq-fNiqIU3v9s6BLE"
 
     def __init__(
         self,
@@ -142,7 +144,7 @@ class QM40(InMemoryDataset):
             rename_files(self.raw_dir)
 
         except ImportError:
-            path = download_url(self.processed_url, self.raw_dir)
+            path = download_google_url(self.processed_url, self.raw_dir, filename="qm40.zip")
             extract_zip(path, self.raw_dir)
             os.unlink(path)
 
