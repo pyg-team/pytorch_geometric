@@ -180,9 +180,8 @@ def make_dataset(args):
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs)
         total_data_list = []
-        for data_point in tqdm(
-                    rawset,
-                    desc="Building " + str(split_str) + " dataset"):
+        for data_point in tqdm(rawset,
+                               desc="Building " + str(split_str) + " dataset"):
             QA_pair = (data_point["question"], data_point["answer"])
             q = QA_pair[0]
             subgraph = query_loader.query(q)
