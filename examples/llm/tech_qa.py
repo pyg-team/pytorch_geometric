@@ -113,9 +113,8 @@ def parse_args():
 
 
 def get_data():
-    link = "https://drive.google.com/file/d/1U_jTNtDZsrdfTY2uI4rlSpuj9kyURxcA/view?usp=drive_link"
-    download_zip_from_google_drive(link, output_path="tech_qa.zip")
-    extract_zip_file("tech_qa.zip", extract_to='.')
+    # need the data formatted as a JSON
+    # TODO open source internal JSON data on huggingface
     with open('data.json') as file:
         json_obj = json.load(file)
     return json_obj
