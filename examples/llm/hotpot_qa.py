@@ -15,7 +15,7 @@ from torch_geometric.utils.rag.backend_utils import (
     preprocess_triplet,
 )
 from torch_geometric.utils.rag.feature_store import (
-    SentenceTransformerFeatureStore,
+    ModernBertFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
@@ -108,16 +108,14 @@ if __name__ == '__main__':
 
     print("Size of KG (number of triples) =", len(triples))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    sent_trans_name = 'Alibaba-NLP/gte-modernbert-base'
-    model = SentenceTransformer(model_name=sent_trans_name).to(device)
+    model = SentenceTransformer(model_name='Alibaba-NLP/gte-modernbert-base').to(device)
     fs, gs = create_remote_backend_from_triplets(
         triplets=triples, node_embedding_model=model,
         node_method_to_call="encode", path="backend",
         pre_transform=preprocess_triplet, node_method_kwargs={
             "batch_size": min(len(triples), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
-        feature_db=SentenceTransformerFeatureStore(
-            model_name=sent_trans_name)).load()
+        feature_db=ModernBertFeatureStore).load()
     """
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
