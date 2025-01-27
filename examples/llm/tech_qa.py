@@ -89,34 +89,24 @@ def make_dataset(args):
         if os.path.exists("tech_qa_just_triples.pt"):
             torch.load("tech_qa.pt", weights_only=False)
         else:
-            rawset = load_dataset('rojagtap/tech-qa', trust_remote_code=True)
+            rawset = [] # need function to extract json
             data_lists = {"train": [], "validation": [], "test": []}
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
             triples = []
-            for split_str in data_lists.keys():
-                if split_str == "test":
-                    """
-                    Skip test since it is just a subset of val,
-                    so it's a waste of time to re-parse triples.
-                    """
-                    break
-                for data_point in tqdm(
-                        rawset[split_str],
-                        desc="Extracting KG triples from " + str(split_str)):
-                    q = data_point["question"]
-                    a = data_point["answer"]
-                    context_doc = data_point["document"]
-                    QA_pair = (q, a)
-                    kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
-                kg_maker.save_kg("hotpot_kg.pt")
-                relevant_triples = kg_maker.relevant_triples
-                triples.extend(
-                    list(
-                        chain.from_iterable(
-                            triple_set
-                            for triple_set in relevant_triples.values())))
+            for data_point in tqdm(rawset, desc="Extracting KG triples"):
+                q = data_point["question"]
+                a = data_point["answer"]
+                context_doc = data_point["document"]
+                QA_pair = (q, a)
+                kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
+            relevant_triples = kg_maker.relevant_triples
+            triples.extend(
+                list(
+                    chain.from_iterable(
+                        triple_set
+                        for triple_set in relevant_triples.values())))
             triples = list(dict.fromkeys(triples))
             torch.save(data_lists, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
@@ -151,15 +141,16 @@ def make_dataset(args):
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs)
-        for split_str in data_lists.keys():
-            for data_point in tqdm(
-                    rawset[split_str],
+        total_data_list = []
+        for data_point in tqdm(
+                    rawset,
                     desc="Building " + str(split_str) + " dataset"):
-                QA_pair = (data_point["question"], data_point["answer"])
-                q = QA_pair[0]
-                subgraph = query_loader.query(q)
-                subgraph.label = QA_pair[1]
-                data_lists[split_str].append(subgraph)
+            QA_pair = (data_point["question"], data_point["answer"])
+            q = QA_pair[0]
+            subgraph = query_loader.query(q)
+            subgraph.label = QA_pair[1]
+            total_data_list.append(subgraph)
+
         torch.save(data_lists, "tech_qa.pt")
         return data_lists
 

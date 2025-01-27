@@ -147,7 +147,7 @@ if __name__ == '__main__':
         loader = relevant_triples.keys()
     else:
         loader = tqdm(relevant_triples.keys())
-for QA_pair in tqdm(relevant_triples.keys(), disable=args.verbose):
+    for QA_pair in tqdm(relevant_triples.keys(), disable=args.verbose): 
         golden_triples = relevant_triples[QA_pair]
         # Again, redundant since TXT2KG already provides lowercase
         # in case loading a KG that was made some other way without lowercase
