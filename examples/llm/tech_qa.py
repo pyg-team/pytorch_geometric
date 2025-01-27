@@ -124,7 +124,7 @@ def make_dataset(args):
         return torch.load("tech_qa.pt", weights_only=False)
     else:
         if os.path.exists("tech_qa_just_triples.pt"):
-            torch.load("tech_qa_just_triples.pt", weights_only=False)
+            triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
         else:
             rawset = get_data()
             data_lists = {"train": [], "validation": [], "test": []}
