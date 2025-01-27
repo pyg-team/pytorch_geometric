@@ -17,7 +17,7 @@ from torch_geometric.data import (
 from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, scatter
 
-import pandas as pd
+import csv
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -143,7 +143,6 @@ class QM40(InMemoryDataset):
             os.unlink(file_path)
             rename_files(self.raw_dir)
 
-
         except ImportError:
             path = download_url(self.processed_url, self.raw_dir)
             extract_zip(path, self.raw_dir)
@@ -155,9 +154,8 @@ class QM40(InMemoryDataset):
             from rdkit.Chem.rdchem import BondType as BT
             from rdkit.Chem.rdchem import HybridizationType
 
-            RDLogger.DisableLog("rdApp.*")  # type: ignore
+            RDLogger.DisableLog("rdApp.*")
             WITH_RDKIT = True
-
         except ImportError:
             WITH_RDKIT = False
 
@@ -187,25 +185,62 @@ class QM40(InMemoryDataset):
         bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
         print("Loading raw data...")
-        main_df = pd.read_csv(self.raw_paths[0])
-        xyz_df = pd.read_csv(self.raw_paths[1])
-        bond_df = pd.read_csv(self.raw_paths[2])
+        main_data = {}
+        xyz_data = {}
+        lmfc_data = {}
 
-        # Pre-process xyz_df and bond_df
-        xyz_df_grouped = xyz_df.groupby("Zinc_id")
-        bond_df_grouped = bond_df.groupby("Zinc_id")
+        # Read main CSV
+        with open(self.raw_paths[0], "r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                ID = row["Zinc_id"]
+                main_data[ID] = {
+                    "smile": row["smile"],
+                    "properties": [
+                        float(row[key])
+                        for key in row.keys()
+                        if key not in ["Zinc_id", "smile"]
+                    ],
+                }
+
+        # Read xyz CSV
+        with open(self.raw_paths[1], "r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                ID = row["Zinc_id"]
+                if ID not in xyz_data:
+                    xyz_data[ID] = []
+                xyz_data[ID].append(
+                    {
+                        "charge": float(row["charge"]),
+                        "final_x": float(row["final_x"]),
+                        "final_y": float(row["final_y"]),
+                        "final_z": float(row["final_z"]),
+                    }
+                )
+
+        # Read bond CSV
+        with open(self.raw_paths[2], "r") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                ID = row["Zinc_id"]
+                if ID not in lmfc_data:
+                    lmfc_data[ID] = []
+                lmfc_data[ID].append(
+                    (int(row["atom1"]), int(row["atom2"]), float(row["lmod"]))
+                )
 
         data_list = []
         print("Processing raw data...")
-        for mol_idx, row in tqdm(main_df.iterrows(), total=len(main_df)):
-            ID = row["Zinc_id"]
-            SMILES = row["smile"]
-            y = torch.tensor(
-                row.iloc[2:].values.astype(np.float32), dtype=torch.float
-            )
+        for mol_idx, ID in enumerate(tqdm(main_data.keys())):
+            if ID not in lmfc_data or ID not in xyz_data:
+                continue  # Skip molecules with missing data
 
-            mol_xyz = xyz_df_grouped.get_group(ID).reset_index(drop=True)
-            mol_bonds = bond_df_grouped.get_group(ID).reset_index(drop=True)
+            mol_data = main_data[ID]
+            SMILES = mol_data["smile"]
+            y = torch.tensor(mol_data["properties"], dtype=torch.float)
+
+            mol_xyz = xyz_data[ID]
 
             mol = Chem.MolFromSmiles(SMILES)
             mol = Chem.AddHs(mol)
@@ -225,10 +260,10 @@ class QM40(InMemoryDataset):
 
             # Set charges and positions
             conf = Chem.Conformer(N)
-            for i, row in mol_xyz.iterrows():
-                atoms[i].SetFormalCharge(int(round(row["charge"])))
+            for i, xyz in enumerate(mol_xyz):
+                atoms[i].SetFormalCharge(int(round(xyz["charge"])))
                 conf.SetAtomPosition(
-                    i, (row["final_x"], row["final_y"], row["final_z"])
+                    i, (xyz["final_x"], xyz["final_y"], xyz["final_z"])
                 )
 
             pos = torch.tensor(conf.GetPositions(), dtype=torch.float)
@@ -247,18 +282,32 @@ class QM40(InMemoryDataset):
             rows, cols = rows + cols, cols + rows  # Add reverse edges
             edge_types = edge_types + edge_types
 
+            # local mode force constants
+            lmfc = torch.stack(
+                [
+                    torch.stack(
+                        [
+                            torch.tensor([bond[0] - 1, bond[1] - 1, bond[2]], dtype=torch.float),
+                            torch.tensor([bond[1] - 1, bond[0] - 1, bond[2]], dtype=torch.float),
+                        ]
+                    )
+                    for bond in lmfc_data[ID]
+                ]
+            ).reshape(-1, 3)
+
             edge_index = torch.tensor([rows, cols], dtype=torch.long)
             edge_type = torch.tensor(edge_types, dtype=torch.long)
             edge_attr = one_hot(edge_type, num_classes=len(bonds))
-            edge_attr2 = torch.tensor(
-                mol_bonds["lmod"].tolist(), dtype=torch.float
-            )
 
             # Sort edges
             perm = (edge_index[0] * N + edge_index[1]).argsort()
             edge_index = edge_index[:, perm]
             edge_type = edge_type[perm]
             edge_attr = edge_attr[perm]
+
+            # Sort lmfc
+            perm = (lmfc[:, 0] * N + lmfc[:, 1]).argsort()
+            lmfc = lmfc[perm]
 
             # Count hydrogens
             row, col = edge_index
@@ -284,7 +333,7 @@ class QM40(InMemoryDataset):
                 edge_index=edge_index,
                 smiles=SMILES,
                 edge_attr=edge_attr,
-                edge_attr2=edge_attr2,
+                edge_attr2=lmfc[:, 2], 
                 y=y * conversion.view(1, -1),
                 name=ID,
                 idx=mol_idx,
