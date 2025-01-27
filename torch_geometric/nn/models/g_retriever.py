@@ -51,7 +51,6 @@ class GRetriever(torch.nn.Module):
 
         self.word_embedding = self.llm.word_embedding
         self.llm_generator = self.llm.llm
-        mlp_out_channels = llm.word_embedding.embedding_dim
         if use_lora:
             from peft import (
                 LoraConfig,
@@ -74,6 +73,7 @@ class GRetriever(torch.nn.Module):
             )
             self.llm_generator = get_peft_model(self.llm_generator, config)
 
+        mlp_out_channels = llm.word_embedding.embedding_dim
         mlp_hidden_channels = self.gnn.out_channels
         self.projector = torch.nn.Sequential(
             torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
