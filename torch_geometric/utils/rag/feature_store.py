@@ -228,13 +228,13 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
 # TODO: These two classes should be refactored
 class ModernBertFeatureStore(KNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
-        kwargs['model_name'] = kwargs.get(
-            'model_name', 'Alibaba-NLP/gte-modernbert-base')
+        kwargs['model_name'] = kwargs.get('model_name',
+                                          'Alibaba-NLP/gte-modernbert-base')
         super().__init__(SentenceTransformer, *args, **kwargs)
 
 
 class ModernBertApproxFeatureStore(ApproxKNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
-        kwargs['model_name'] = kwargs.get(
-            'model_name', 'Alibaba-NLP/gte-modernbert-base')
+        kwargs['model_name'] = kwargs.get('model_name',
+                                          'Alibaba-NLP/gte-modernbert-base')
         super().__init__(SentenceTransformer, *args, **kwargs)
