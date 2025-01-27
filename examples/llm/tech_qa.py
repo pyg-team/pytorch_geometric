@@ -6,6 +6,8 @@ import torch
 
 from datasets import load_dataset
 
+import random
+
 from g_retriever import (
     adjust_learning_rate,
     get_loss,
@@ -36,6 +38,33 @@ from torch_geometric.utils.rag.feature_store import (
     SentenceTransformerFeatureStore,
 )
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+import gdown
+import zipfile
+import json
+
+
+def download_zip_from_google_drive(google_drive_link, output_path='downloaded_file.zip'):
+    """
+    Downloads a ZIP file from a Google Drive link.
+
+    :param google_drive_link: str - The Google Drive URL of the ZIP file.
+    :param output_path: str - The local path to save the downloaded ZIP file.
+    :return: str - The path to the downloaded ZIP file.
+    """
+    # Use gdown to download the file from Google Drive
+    gdown.download(url=google_drive_link, output=output_path, quiet=False)
+    return output_path
+
+def extract_zip_file(zip_path, extract_to='.'):
+    """
+    Extracts a ZIP file to the specified directory.
+
+    :param zip_path: str - The path to the ZIP file.
+    :param extract_to: str - The directory to extract files into.
+    """
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+    print(f"Extracted '{zip_path}' to '{extract_to}'.")
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
@@ -81,6 +110,15 @@ def parse_args():
     return parser.parse_args()
 
 
+def get_data():
+    link = "https://drive.google.com/file/d/1U_jTNtDZsrdfTY2uI4rlSpuj9kyURxcA/view?usp=drive_link"
+    download_zip_from_google_drive(link, output_path="tech_qa.zip")
+    extract_zip_file("tech_qa.zip", extract_to='.')
+    with open('data.json', 'r') as file:
+        json_obj = json.load(file)
+    return json_obj
+
+
 def make_dataset(args):
     if os.path.exists("tech_qa.pt"):
         print("Re-using Saved TechQA KG-RAG Dataset...")
@@ -89,7 +127,7 @@ def make_dataset(args):
         if os.path.exists("tech_qa_just_triples.pt"):
             torch.load("tech_qa.pt", weights_only=False)
         else:
-            rawset = [] # need function to extract json
+            rawset = get_data()
             data_lists = {"train": [], "validation": [], "test": []}
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
@@ -150,6 +188,12 @@ def make_dataset(args):
             subgraph = query_loader.query(q)
             subgraph.label = QA_pair[1]
             total_data_list.append(subgraph)
+        total_data_list = random.shuffle(total_data_list)
+
+        # 60:20:20 split
+        data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
+        data_lists["validation"] = total_data_list[int(.6 * len(total_data_list)):int(.8 * len(total_data_list))]
+        data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
         torch.save(data_lists, "tech_qa.pt")
         return data_lists
