@@ -251,6 +251,8 @@ def train(args, data_lists):
                     lr = optimizer.param_groups[0]['lr']
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
+
+            # Eval Step
             val_loss = 0
             model.eval()
             with torch.no_grad():
