@@ -147,11 +147,11 @@ def make_dataset(args):
                         triple_set
                         for triple_set in relevant_triples.values())))
             triples = list(dict.fromkeys(triples))
-            torch.save(data_lists, "tech_qa_just_triples.pt")
+            torch.save(triples, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
-            model_name='sentence-transformers/all-roberta-large-v1').to(device)
+            model_name='Alibaba-NLP/gte-modernbert-base').to(device)
         fs, gs = create_remote_backend_from_triplets(
             triplets=triples, node_embedding_model=model,
             node_method_to_call="encode", path="backend",
