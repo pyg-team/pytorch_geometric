@@ -85,7 +85,7 @@ class TXT2KG():
         if not self.initd_LM:
             from torch_geometric.nn.nlp import LLM
             LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
-            self.model = LLM(LM_name, num_params=14).eval()
+            self.model = LLM(LM_name).eval()
             self.initd_LM = True
         out_str = self.model.inference(question=[txt + '\n' + SYSTEM_PROMPT],
                                        max_tokens=self.chunk_size)[0]
