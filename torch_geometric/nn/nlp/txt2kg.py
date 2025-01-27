@@ -165,6 +165,7 @@ class TXT2KG():
                     except:  # noqa
                         # keep retrying, txt2kg is costly -> stoppage is costly
                         pass
+                    break
 
                 # Collect the results from each process
                 self.relevant_triples[key] = []
