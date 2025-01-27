@@ -162,11 +162,10 @@ for QA_pair in tqdm(relevant_triples.keys(), disable=args.verbose):
             print("A=", QA_pair[1])
             print("retrieved_triples =", retrieved_triples)
 
-        num_relevant_out_of_retrieved = float(
-            sum([
-                int(bool(retrieved_triple in golden_triples))
-                for retrieved_triple in retrieved_triples
-            ]))
+        num_relevant_out_of_retrieved  = float(
+                             sum(retrieved_triple in golden_triples 
+                                 for retrieved_triple in retrieved_triples)
+                             )
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
     approx_precision = sum(precisions) / len(precisions)
