@@ -89,8 +89,8 @@ def make_dataset(args):
             rawset = load_dataset('rojagtap/tech-qa', trust_remote_code=True)
             data_lists = {"train": [], "validation": [], "test": []}
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
-                            NVIDIA_API_KEY=args.NV_NIM_KEY,
-                            chunk_size=args.chunk_size)
+                              NVIDIA_API_KEY=args.NV_NIM_KEY,
+                              chunk_size=args.chunk_size)
             triples = []
             for split_str in data_lists.keys():
                 if split_str == "test":
