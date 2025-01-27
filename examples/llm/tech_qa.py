@@ -2,10 +2,8 @@ import argparse
 import json
 import os
 import random
-import zipfile
 from itertools import chain
 
-import gdown
 import torch
 from g_retriever import (
     adjust_learning_rate,
