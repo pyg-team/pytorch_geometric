@@ -42,7 +42,6 @@ class GraphSAGE(torch.nn.Module):
 
 
 def test_set_clear_mask(hetero_data):
-    print(torch.__version__)
     edge_mask_dict = {
         ('paper', 'to', 'paper'): torch.ones(200),
         ('author', 'to', 'paper'): torch.ones(100),
