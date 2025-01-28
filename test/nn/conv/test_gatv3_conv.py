@@ -34,7 +34,6 @@ def test_gatv3_conv(share_weights):
     conv.eval()
     assert torch.allclose(conv(x1, edge_index), out)
 
-
     # Check CSC adjacency:
     # (Tensors must often be transposed if needed, similar to GATv2 tests.)
     assert torch.allclose(conv(x1, adj1.to_sparse_coo()), out, atol=1e-6)

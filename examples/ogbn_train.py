@@ -182,7 +182,6 @@ else:  # Default is GraphSAGE
         dropout=args.dropout,
     )
 
-
 model = model.to(device)
 model.reset_parameters()
 optimizer = torch.optim.Adam(
