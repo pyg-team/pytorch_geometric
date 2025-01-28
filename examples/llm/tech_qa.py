@@ -164,7 +164,7 @@ def make_dataset(args):
             subgraph = query_loader.query(q)
             subgraph.label = QA_pair[1]
             total_data_list.append(subgraph)
-        total_data_list = random.shuffle(total_data_list)
+        random.shuffle(total_data_list)
 
         # 60:20:20 split
         data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
