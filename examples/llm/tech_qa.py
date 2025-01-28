@@ -97,10 +97,10 @@ def make_dataset(args):
         return torch.load("tech_qa.pt", weights_only=False)
     else:
         rawset = get_data()
+        data_lists = {"train": [], "validation": [], "test": []}
         if os.path.exists("tech_qa_just_triples.pt"):
             triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
         else:
-            data_lists = {"train": [], "validation": [], "test": []}
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
