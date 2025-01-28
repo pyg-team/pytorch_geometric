@@ -39,31 +39,6 @@ from torch_geometric.utils.rag.backend_utils import (
 from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
-
-def download_zip_from_google_drive(google_drive_link,
-                                   output_path='downloaded_file.zip'):
-    """Downloads a ZIP file from a Google Drive link.
-
-    :param google_drive_link: str - The Google Drive URL of the ZIP file.
-    :param output_path: str - The local path to save the downloaded ZIP file.
-    :return: str - The path to the downloaded ZIP file.
-    """
-    # Use gdown to download the file from Google Drive
-    gdown.download(url=google_drive_link, output=output_path, quiet=False)
-    return output_path
-
-
-def extract_zip_file(zip_path, extract_to='.'):
-    """Extracts a ZIP file to the specified directory.
-
-    :param zip_path: str - The path to the ZIP file.
-    :param extract_to: str - The directory to extract files into.
-    """
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(extract_to)
-    print(f"Extracted '{zip_path}' to '{extract_to}'.")
-
-
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
