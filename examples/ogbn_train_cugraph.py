@@ -25,8 +25,6 @@ import cugraph_pyg  # noqa
 import torch.nn.functional as F  # noqa
 # Enable cudf spilling to save gpu memory
 from cugraph_pyg.loader import NeighborLoader  # noqa
-
-
 from ogb.nodeproppred import PygNodePropPredDataset  # noqa
 from tqdm import tqdm  # noqa
 
