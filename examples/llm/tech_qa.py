@@ -157,6 +157,8 @@ def make_dataset(args):
             local_filter_kwargs=local_filter_kwargs)
         total_data_list = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
+            if data_point["is_impossible"]:
+                    continue
             QA_pair = (data_point["question"], data_point["answer"])
             q = QA_pair[0]
             subgraph = query_loader.query(q)
