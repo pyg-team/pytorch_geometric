@@ -145,7 +145,7 @@ class LLMJudge():
                              post_text=""))
                 if not isnan(score2):
                     break
-            except: # noqa
+            except:  # noqa
                 pass
 
         return self._average_scores(score1, score2)
