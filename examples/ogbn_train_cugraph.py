@@ -24,10 +24,8 @@ torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 import cugraph_pyg  # noqa
 import torch.nn.functional as F  # noqa
 # Enable cudf spilling to save gpu memory
-from cugraph.testing.mg_utils import enable_spilling  # noqa
 from cugraph_pyg.loader import NeighborLoader  # noqa
 
-enable_spilling()
 
 from ogb.nodeproppred import PygNodePropPredDataset  # noqa
 from tqdm import tqdm  # noqa

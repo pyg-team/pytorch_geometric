@@ -131,10 +131,6 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
 
     cupy.cuda.set_allocator(rmm_cupy_allocator)
 
-    from cugraph.testing.mg_utils import enable_spilling
-
-    enable_spilling()
-
     torch.cuda.set_device(rank)
 
     os.environ['MASTER_ADDR'] = 'localhost'
