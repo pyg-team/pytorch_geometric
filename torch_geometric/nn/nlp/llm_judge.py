@@ -75,7 +75,6 @@ class LLMJudge():
         This is because LLMs don't always follow instructions.
         Credit to Gilberto.
         """
-        print("response from LLM Judge:", response)
         for i in [4, 3, 2, 1, 0]:
             if str(i) in response:
                 return i / 4
