@@ -51,7 +51,7 @@ if __name__ == '__main__':
         print("Re-using existing checkpoint...")
         relevant_triples = torch.load("checkpoint_kg.pt", weights_only=False)
     else:
-        # Use training set for simplicity since our retrieval method is nonparametric
+        # training set for simplicity since naive retrieval is nonparametric
         raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
                                             trust_remote_code=True)["train"]
         # Build KG
@@ -89,10 +89,10 @@ if __name__ == '__main__':
 
         relevant_triples = kg_maker.relevant_triples
         if args.local_lm:
-            print("Total number of context characters parsed by LLM",
+            print("Total # of context characters parsed by LLM",
                   kg_maker.total_chars_parsed)
             print(
-                "Average number of context characters parsed by LLM per second=",
+                "Average # of context characters parsed by LLM per second=",
                 kg_maker.avg_chars_parsed_per_sec)
 
     triples = list(
@@ -169,5 +169,6 @@ if __name__ == '__main__':
     print("approx_precision =",
           str(round(approx_precision * 100.0, 2)) + "% **")
     print(
-        "**:rough approximations since we do not know exactly which 'golden' triples are actually relevant."
+        "**:rough approximations since we do not know\
+        exactly which 'golden' triples are actually relevant."
     )
