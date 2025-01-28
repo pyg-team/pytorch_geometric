@@ -91,9 +91,8 @@ if __name__ == '__main__':
         if args.local_lm:
             print("Total # of context characters parsed by LLM",
                   kg_maker.total_chars_parsed)
-            print(
-                "Average # of context characters parsed by LLM per second=",
-                kg_maker.avg_chars_parsed_per_sec)
+            print("Average # of context characters parsed by LLM per second=",
+                  kg_maker.avg_chars_parsed_per_sec)
 
     triples = list(
         chain.from_iterable(triple_set
@@ -168,7 +167,5 @@ if __name__ == '__main__':
     approx_precision = sum(precisions) / len(precisions)
     print("approx_precision =",
           str(round(approx_precision * 100.0, 2)) + "% **")
-    print(
-        "**:rough approximations since we do not know\
-        exactly which 'golden' triples are actually relevant."
-    )
+    print("**:rough approximations since we do not know\
+        exactly which 'golden' triples are actually relevant.")
