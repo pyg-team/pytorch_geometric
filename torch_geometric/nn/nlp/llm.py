@@ -51,7 +51,7 @@ class LLM(torch.nn.Module):
 
     model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"` or
         :obj:`"gemma"`.
-    num_params (float, optional): An integer representing how many parameters the
+    num_params (float, optional): An integer representing how many params the
         HuggingFace model has, in billions. This is used to automatically
         allocate the correct number of GPUs needed, given the available GPU
         memory of your GPUs. If not specified, the number of parameters
