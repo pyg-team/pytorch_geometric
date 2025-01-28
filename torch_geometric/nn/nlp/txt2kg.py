@@ -9,7 +9,7 @@ CLIENT_INITD = False
 
 CLIENT = None
 GLOBAL_NIM_KEY = ""
-SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph."  #noqa
+SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Seperate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph."  # noqa
 
 
 class TXT2KG():
@@ -92,7 +92,7 @@ class TXT2KG():
         # for debug
         self.total_chars_parsed += len(txt)
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
-        self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse  #noqa
+        self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse  # noqa
         return out_str
 
     def add_doc_2_KG(
@@ -115,9 +115,14 @@ class TXT2KG():
         assert self.NVIDIA_API_KEY != '', \
             "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm=True"
         if QA_pair:
-            # QA_pairs should be unique keys, so check if it already exists in the KG
-            assert QA_pair not in self.relevant_triples.keys(
-            ), str(QA_pair) + ":" + str(self.relevant_triples[QA_pair])
+            # QA_pairs should be unique keys, check if already exists in KG
+            if QA_pair in self.relevant_triples.keys():
+                print("Warning: QA_Pair was already added to the set")
+                print("Q=", QA_pair[0])
+                print("A=", QA_pair[1])
+                print("Previously parsed triples=",
+                      self.relevant_triples[QA_pair])
+                print("Skipping...")
             key = QA_pair
         else:
             # If no QA_pair, use the current doc_id_counter as the key
@@ -150,7 +155,7 @@ class TXT2KG():
 
                 for retry in range(20):
                     try:
-                        # Spawn multiple processes to process chunks in parallel
+                        # Spawn multiple processes, process chunks in parallel
                         mp.spawn(
                             _multiproc_helper,
                             args=(in_chunks_per_proc, _parse_n_check_triples,

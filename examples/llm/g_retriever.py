@@ -192,7 +192,7 @@ def adjust_learning_rate(param_group, LR, epoch, num_epochs):
     Args:
         param_group (dict): Parameter group.
         LR (float): Learning rate.
-        epoch (int): Current epoch.
+        num_epochs (int): Current epoch.
 
     Returns:
         float: Adjusted learning rate.

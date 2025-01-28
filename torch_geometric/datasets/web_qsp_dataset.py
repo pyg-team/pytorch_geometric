@@ -56,7 +56,7 @@ def retrieval_via_pcst(
                 value = min((topk_e - k) / sum(indices), last_topk_e_value - c)
                 e_prizes[indices] = value
                 last_topk_e_value = value * (1 - c)
-            # reduce the cost of the edges such that at least one edge is selected
+            # reduce the cost of the edges so that at least one edge is chosen
             cost_e = min(cost_e, e_prizes.max().item() * (1 - c / 2))
         else:
             e_prizes = torch.zeros(data.num_edges)
