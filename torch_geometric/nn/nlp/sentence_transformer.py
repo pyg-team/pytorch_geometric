@@ -61,6 +61,7 @@ class NIMSentenceTransformer():
         embs: List[Tensor] = []
         for start in range(0, len(text), batch_size):
             batch = text[start:start + batch_size]
+            print("batch[:3]=", batch[:3])
             response = self.client.embeddings.create(
                 input=batch, model=self.embedding_model_name,
                 encoding_format="float", extra_body={
