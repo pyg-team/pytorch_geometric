@@ -83,6 +83,13 @@ def parse_args():
     return parser.parse_args()
 
 
+prompt_template ="""Answer this question based on the previous information. Just give the answer without explanation.
+[QUESTION]
+{question}
+[END_QUESTION]
+
+Answer: """
+
 def get_data():
     # need the data formatted as a JSON
     # TODO open source internal JSON data on huggingface
@@ -211,6 +218,11 @@ def train(args, data_lists):
             epoch_str = f'Epoch: {epoch + 1}|{args.epochs}'
             loader = tqdm(train_loader, desc=epoch_str)
             for step, batch in enumerate(loader):
+                new_qs = []
+                for q in batch["question"]:
+                    new_qs.append(prompt_template.format(question=q))
+                batch.question = new_qs
+
                 optimizer.zero_grad()
                 loss = get_loss(model, batch)
                 loss.backward()
