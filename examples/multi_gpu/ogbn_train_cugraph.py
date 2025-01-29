@@ -132,7 +132,7 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
     cupy.cuda.set_allocator(rmm_cupy_allocator)
 
     import cudf
-    cudf.set_option("spill", False)
+    cudf.set_option("spill", True)
     torch.cuda.set_device(rank)
 
     os.environ['MASTER_ADDR'] = 'localhost'
