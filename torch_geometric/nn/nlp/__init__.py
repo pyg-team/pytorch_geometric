@@ -6,7 +6,7 @@ from .llm_judge import LLMJudge
 
 __all__ = classes = [
     'SentenceTransformer',
-    'NIMSentenceTransformer'
+    'NIMSentenceTransformer',
     'VisionTransformer',
     'LLM',
     'LLMJudge',
