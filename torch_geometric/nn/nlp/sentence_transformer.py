@@ -55,25 +55,26 @@ class NIMSentenceTransformer():
         is_empty = len(text) == 0
         # for downstream ease, embed empty text list as the "dummy" vector
         text = ['dummy'] if is_empty else text
-
         batch_size = len(text) if batch_size is None else batch_size
 
         embs: List[Tensor] = []
         for start in range(0, len(text), batch_size):
             batch = text[start:start + batch_size]
-            print("batch=", batch)
-            print("type(batch)=", type(batch))
-            print("type(batch[0])=", type(batch[0]))
-            #batch = ["list", "of", "dummytext"]
-            response = self.client.embeddings.create(
-                input=batch, model=self.embedding_model_name,
-                encoding_format="float", extra_body={
-                    "input_type": "passage",
-                    "truncate": "END"
-                })
-            embs.append(
-                torch.tensor([[d.embedding for d in response.data]
-                              ]).to(torch.float32).to(output_device))
+            try:
+                response = self.client.embeddings.create(
+                    input=batch, model=self.embedding_model_name,
+                    encoding_format="float", extra_body={
+                        "input_type": "passage",
+                        "truncate": "END"
+                    })
+                embs.append(
+                    torch.tensor([[d.embedding for d in response.data]
+                                ]).to(torch.float32).to(output_device))
+            except AttributeError as e:
+                print("Lower batch_size as a potential solution to error")
+                print("Error=", e)
+                quit()
+
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out

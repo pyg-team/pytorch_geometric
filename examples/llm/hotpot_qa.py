@@ -129,7 +129,7 @@ if __name__ == '__main__':
         triplets=triples, node_embedding_model=model,
         node_method_to_call="encode", path="backend",
         pre_transform=preprocess_triplet, node_method_kwargs={
-            "batch_size": min(len(triples), 256)
+            "batch_size": min(len(triples), 64)
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=ModernBertFeatureStore).load()
     """
