@@ -225,7 +225,8 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         yield from output.index
 
 
-# TODO: These two classes should be refactored
+# TODO: These two classes should be refactored so they are easier to use
+# custom model with the create_remote_backend/ragqueryloader functionality
 class ModernBertFeatureStore(KNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
         kwargs['model_name'] = kwargs.get('model_name',
