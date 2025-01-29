@@ -8,7 +8,11 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import RAGQueryLoader
-from torch_geometric.nn.nlp import TXT2KG, SentenceTransformer, NIMSentenceTransformer
+from torch_geometric.nn.nlp import (
+    TXT2KG,
+    NIMSentenceTransformer,
+    SentenceTransformer,
+)
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
@@ -34,8 +38,9 @@ if __name__ == '__main__':
     parser.add_argument('--embedding_lm_name', type=str,
                         default=EMBEDDING_LM_NAME_DEFAULT,
                         help="The LLM to use for Generation")
-    parser.add_argument("--NIM_embedding", action='store_true',
-                        help="Wether to use a NIM for text embeddings.\
+    parser.add_argument(
+        "--NIM_embedding", action='store_true',
+        help="Wether to use a NIM for text embeddings.\
                         Uses a local huggingface LM by default. If setting\
                         This flag to true, need embedding_lm_name that\
                         exists in the NIM catalog.\
@@ -118,9 +123,8 @@ if __name__ == '__main__':
         model = SentenceTransformer(
             model_name=args.embedding_lm_name).to(device)
     else:
-        model = NIMSentenceTransformer(
-            model_name=args.embedding_lm_name,
-            NIM_KEY=args.NV_NIM_KEY)
+        model = NIMSentenceTransformer(model_name=args.embedding_lm_name,
+                                       NIM_KEY=args.NV_NIM_KEY)
     fs, gs = create_remote_backend_from_triplets(
         triplets=triples, node_embedding_model=model,
         node_method_to_call="encode", path="backend",

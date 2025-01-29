@@ -40,8 +40,7 @@ class NIMSentenceTransformer():
         batch_size: Optional[int] = None,
         output_device: Optional[Union[torch.device, str]] = None,
     ) -> Tensor:
-        """
-        Converts list of strings into tensor of vectors
+        """Converts list of strings into tensor of vectors
 
         Args:
         - text: List of strings to encode
@@ -165,9 +164,8 @@ class SentenceTransformer(torch.nn.Module):
         text: List[str],
         batch_size: Optional[int] = None,
         output_device: Optional[Union[torch.device, str]] = None,
-    ) -> Tensor:  # 
-        """
-        Converts list of strings into tensor of vectors
+    ) -> Tensor:  #
+        """Converts list of strings into tensor of vectors
 
         Args:
         - text: List of strings to encode
