@@ -83,12 +83,13 @@ def parse_args():
     return parser.parse_args()
 
 
-prompt_template ="""Answer this question based on the previous information. Just give the answer without explanation.
+prompt_template = """Answer this question based on the previous information. Just give the answer without explanation.
 [QUESTION]
 {question}
 [END_QUESTION]
 
 Answer: """
+
 
 def get_data():
     # need the data formatted as a JSON
