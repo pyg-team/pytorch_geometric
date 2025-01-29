@@ -28,6 +28,7 @@ class NIMSentenceTransformer():
         - model_name: Name of the machine learning model
         - NIM_KEY: NIM API Key.
         """
+        from openai import OpenAI
         self.client = OpenAI(
             base_url="https://integrate.api.nvidia.com/v1",
             api_key=NIM_KEY,
