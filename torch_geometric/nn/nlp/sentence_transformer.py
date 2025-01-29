@@ -38,10 +38,10 @@ class NIMSentenceTransformer():
 
     def encode(
         self,
-        text: List[str],
-        batch_size: Optional[int] = None,
-        output_device: Optional[Union[torch.device, str]] = None,
-    ) -> Tensor:
+        text: List[str],  # input text data to be encoded
+        batch_size: Optional[int] = None,  # optional batch size for encoding
+        output_device: Optional[Union[torch.device, str]] = None,  # optional device for output tensor
+    ) -> Tensor:  # returns a PyTorch tensor containing the encoded data
         is_empty = len(text) == 0
         # for downstream ease, embed empty text list as the "dummy" vector
         text = ['dummy'] if is_empty else text
@@ -58,7 +58,7 @@ class NIMSentenceTransformer():
                 extra_body={"input_type": "passage", "truncate": "END"}
             )   
 
-            embs.append(torch.tensor([[d.embedding for d in response.data]]).to(torchfloat32))
+            embs.append(torch.tensor([[d.embedding for d in response.data]]).to(torchfloat32).to(output_device))
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out
