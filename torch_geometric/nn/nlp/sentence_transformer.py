@@ -68,7 +68,7 @@ class NIMSentenceTransformer():
                     "input_type": "passage",
                     "truncate": "END"
                 })
-            print("response[:10]=", response[:10])
+            print("type(response)=", type(response))
             embs.append(
                 torch.tensor([[d.embedding for d in response.data]
                               ]).to(torchfloat32).to(output_device))
