@@ -32,7 +32,7 @@ from tqdm import tqdm  # noqa
 import torch_geometric  # noqa
 from torch_geometric.utils import to_undirected  # noqa
 
-cudf.set_option("spill", False)
+cudf.set_option("spill", True)
 
 
 def arg_parse():
