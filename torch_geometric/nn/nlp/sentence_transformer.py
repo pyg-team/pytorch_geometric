@@ -64,7 +64,7 @@ class NIMSentenceTransformer():
             response = self.client.embeddings.create(
                 input=batch, model=self.embedding_model_name,
                 encoding_format="float", extra_body={
-                    "input_type": "passage",
+                    #"input_type": "passage",
                     "truncate": "END"
                 })
             print("response=", response)
