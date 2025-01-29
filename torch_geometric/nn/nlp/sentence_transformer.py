@@ -70,7 +70,7 @@ class NIMSentenceTransformer():
                 })
             embs.append(
                 torch.tensor([[d.embedding for d in response.data]
-                              ]).to(torchfloat32).to(output_device))
+                              ]).to(torch.float32).to(output_device))
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out
