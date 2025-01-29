@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-
+from tqdm import tqdm
 
 class PoolingStrategy(Enum):
     MEAN = 'mean'
@@ -56,9 +56,8 @@ class NIMSentenceTransformer():
         # for downstream ease, embed empty text list as the "dummy" vector
         text = ['dummy'] if is_empty else text
         batch_size = len(text) if batch_size is None else batch_size
-
         embs: List[Tensor] = []
-        for start in range(0, len(text), batch_size):
+        for start in tqdm(range(0, len(text), batch_size), desc="text encoding"):
             batch = text[start:start + batch_size]
             try:
                 response = self.client.embeddings.create(
@@ -187,7 +186,7 @@ class SentenceTransformer(torch.nn.Module):
         batch_size = len(text) if batch_size is None else batch_size
 
         embs: List[Tensor] = []
-        for start in range(0, len(text), batch_size):
+        for start in tqdm(range(0, len(text), batch_size), desc="text embedding"):
             token = self.tokenizer(
                 text[start:start + batch_size],
                 padding=True,
