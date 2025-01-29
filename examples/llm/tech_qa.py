@@ -130,13 +130,13 @@ def make_dataset(args):
             torch.save(triples, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
         if not args.NIM_embedding:
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device(
+                "cuda" if torch.cuda.is_available() else "cpu")
             model = SentenceTransformer(
                 model_name=args.embedding_lm_name).to(device)
         else:
-            model = NIMSentenceTransformer(
-                model_name=args.embedding_lm_name,
-                NIM_KEY=args.NV_NIM_KEY)
+            model = NIMSentenceTransformer(model_name=args.embedding_lm_name,
+                                           NIM_KEY=args.NV_NIM_KEY)
         fs, gs = create_remote_backend_from_triplets(
             triplets=triples, node_embedding_model=model,
             node_method_to_call="encode", path="backend",
