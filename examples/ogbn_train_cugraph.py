@@ -21,6 +21,7 @@ rmm.reinitialize(devices=[0], pool_allocator=True, managed_memory=True)
 cupy.cuda.set_allocator(rmm_cupy_allocator)
 torch.cuda.memory.change_current_allocator(rmm_torch_allocator)
 
+import cudf
 import cugraph_pyg  # noqa
 import torch.nn.functional as F  # noqa
 # Enable cudf spilling to save gpu memory
@@ -31,6 +32,7 @@ from tqdm import tqdm  # noqa
 import torch_geometric  # noqa
 from torch_geometric.utils import to_undirected  # noqa
 import cudf #noqa
+
 cudf.set_option("spill", False)
 
 
