@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser.add_argument('--checkpointing', action="store_true")
     parser.add_argument('--verbose', action="store_true")
     parser.add_argument('--embedding_lm_name', type=str,
-                        default=EMBEDDING_LM_NAME_DEFAULT,
+                        default="Alibaba-NLP/gte-modernbert-base",
                         help="The LLM to use for Generation")
     parser.add_argument(
         "--NIM_embedding", action='store_true',

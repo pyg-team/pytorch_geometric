@@ -36,7 +36,7 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-EMBEDDING_LM_NAME_DEFAULT = 'Alibaba-NLP/gte-modernbert-base'
+EMBEDDING_LM_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
 CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
