@@ -122,16 +122,23 @@ if __name__ == '__main__':
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
             model_name=args.embedding_lm_name).to(device)
+        feat_store = ModernBertFeatureStore
     else:
         model = NIMSentenceTransformer(model_name=args.embedding_lm_name,
                                        NIM_KEY=args.NV_NIM_KEY)
+        class NIMFeatureStore(KNNRAGFeatureStore):
+            def __init__(self, *args, **kwargs):
+                kwargs['model_name'] = kwargs.get('model_name',
+                                                args.embedding_lm_name)
+                super().__init__(NIMSentenceTransformer, *args, **kwargs)
+        feat_store = NIMFeatureStore
     fs, gs = create_remote_backend_from_triplets(
         triplets=triples, node_embedding_model=model,
         node_method_to_call="encode", path="backend",
         pre_transform=preprocess_triplet, node_method_kwargs={
             "batch_size": min(len(triples), 64)
         }, graph_db=NeighborSamplingRAGGraphStore,
-        feature_db=ModernBertFeatureStore).load()
+        feature_db=feat_store).load()
     """
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
