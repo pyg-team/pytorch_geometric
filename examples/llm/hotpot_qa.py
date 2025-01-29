@@ -118,6 +118,7 @@ if __name__ == '__main__':
     triples = list(dict.fromkeys(triples))
 
     print("Size of KG (number of triples) =", len(triples))
+    # TODO cleanup this usage pattern
     if not args.NIM_embedding:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
