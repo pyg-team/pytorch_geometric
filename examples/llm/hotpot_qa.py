@@ -119,6 +119,7 @@ if __name__ == '__main__':
 
     print("Size of KG (number of triples) =", len(triples))
     # TODO cleanup this usage pattern
+    # Set Up Sentence Transformer for Indexing KG
     if not args.NIM_embedding:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(

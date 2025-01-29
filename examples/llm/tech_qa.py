@@ -130,6 +130,7 @@ def make_dataset(args):
             torch.save(triples, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
         # TODO cleanup this usage pattern
+        # Set Up Sentence Transformer for Indexing KG
         if not args.NIM_embedding:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model = SentenceTransformer(
