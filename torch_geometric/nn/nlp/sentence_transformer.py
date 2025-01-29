@@ -77,7 +77,6 @@ class NIMSentenceTransformer():
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out
-        print("out.size()", out.size())
         return out
 
 
