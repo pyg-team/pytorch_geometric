@@ -62,6 +62,8 @@ class NIMSentenceTransformer():
         for start in range(0, len(text), batch_size):
             batch = text[start:start + batch_size]
             print("batch=", batch)
+            print("type(batch)=", type(batch))
+            print("type(batch[0])=", type(batch[0]))
             #batch = ["list", "of", "dummytext"]
             response = self.client.embeddings.create(
                 input=batch, model=self.embedding_model_name,
