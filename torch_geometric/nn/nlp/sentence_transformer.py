@@ -12,13 +12,78 @@ class PoolingStrategy(Enum):
     CLS = 'cls'
     LAST_HIDDEN_STATE = 'last_hidden_state'
 
-
-class SentenceTransformer(torch.nn.Module):
+class NIMSentenceTransformer():
+    """
+    Class for converting strings into vectors for NLP tasks.
+    Uses NVIDIA Inference MicroServices.
+    """
     def __init__(
         self,
         model_name: str,
-        pooling_strategy: Union[PoolingStrategy, str] = 'mean',
+        NIM_KEY: str,
     ) -> None:
+        """
+        Initializes the class with the given parameters.
+
+        Args:
+        - model_name: Name of the machine learning model
+        - NIM_KEY: NIM API Key.
+        """
+        self.client = OpenAI(
+        base_url="https://integrate.api.nvidia.com/v1",
+        api_key=NIM_KEY,
+        )
+        self.embedding_model_name = model_name
+        
+
+    def encode(
+        self,
+        text: List[str],
+        batch_size: Optional[int] = None,
+        output_device: Optional[Union[torch.device, str]] = None,
+    ) -> Tensor:
+        is_empty = len(text) == 0
+        # for downstream ease, embed empty text list as the "dummy" vector
+        text = ['dummy'] if is_empty else text
+
+        batch_size = len(text) if batch_size is None else batch_size
+
+        embs: List[Tensor] = []
+        for start in range(0, len(text), batch_size):
+            batch = text[start:start + batch_size]
+            response = client.embeddings.create(
+                input=batch,
+                model=self.embedding_model_name,
+                encoding_format="float",
+                extra_body={"input_type": "passage", "truncate": "END"}
+            )   
+
+            embs.append(torch.tensor([[d.embedding for d in response.data]]).to(torchfloat32))
+
+        out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
+        out = out[:0] if is_empty else out
+        return out
+
+
+class SentenceTransformer(torch.nn.Module):
+    """
+    Class for converting strings into vectors for NLP tasks.
+    Generally freeze the weights
+    Uses local LM via HuggingFace.
+    """
+    def __init__(
+        self,
+        model_name: str,  # Name of the machine learning model
+        pooling_strategy: Union[PoolingStrategy, str] = 'mean',  # Strategy to apply to pool features
+    ) -> None:
+        """
+        Initializes the class with the given parameters.
+
+        Args:
+        - model_name: Name of the machine learning model
+        - pooling_strategy: Strategy to apply to pool features.
+            (default: 'mean')
+        """
         super().__init__()
 
         self.model_name = model_name
@@ -90,6 +155,7 @@ class SentenceTransformer(torch.nn.Module):
         output_device: Optional[Union[torch.device, str]] = None,
     ) -> Tensor:
         is_empty = len(text) == 0
+        # for downstream ease, embed empty text list as the "dummy" vector
         text = ['dummy'] if is_empty else text
 
         batch_size = len(text) if batch_size is None else batch_size
