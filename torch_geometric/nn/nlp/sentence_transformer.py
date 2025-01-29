@@ -38,10 +38,22 @@ class NIMSentenceTransformer():
 
     def encode(
         self,
-        text: List[str],  # input text data to be encoded
-        batch_size: Optional[int] = None,  # optional batch size for encoding
-        output_device: Optional[Union[torch.device, str]] = None,  # optional device for output tensor
-    ) -> Tensor:  # returns a PyTorch tensor containing the encoded data
+        text: List[str],
+        batch_size: Optional[int] = None,
+        output_device: Optional[Union[torch.device, str]] = None,
+    ) -> Tensor:
+        """
+        Converts list of strings into tensor of vectors
+
+        Args:
+        - text: List of strings to encode
+        - batch_size: optional batch size for encoding
+            Default: None
+        - output_device: optional device for output tensor
+            Default: None
+
+        Returns: a PyTorch tensor containing the encoded data
+        """
         is_empty = len(text) == 0
         # for downstream ease, embed empty text list as the "dummy" vector
         text = ['dummy'] if is_empty else text
@@ -153,7 +165,19 @@ class SentenceTransformer(torch.nn.Module):
         text: List[str],
         batch_size: Optional[int] = None,
         output_device: Optional[Union[torch.device, str]] = None,
-    ) -> Tensor:
+    ) -> Tensor:  # 
+        """
+        Converts list of strings into tensor of vectors
+
+        Args:
+        - text: List of strings to encode
+        - batch_size: optional batch size for encoding
+            Default: None
+        - output_device: optional device for output tensor
+            Default: None
+
+        Returns: a PyTorch tensor containing the encoded data
+        """
         is_empty = len(text) == 0
         # for downstream ease, embed empty text list as the "dummy" vector
         text = ['dummy'] if is_empty else text
