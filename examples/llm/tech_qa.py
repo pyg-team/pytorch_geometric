@@ -36,6 +36,7 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+EMBEDDING_LM_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
 CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
@@ -74,6 +75,16 @@ def parse_args():
     parser.add_argument('--llm_generator_name', type=str,
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
+    parser.add_argument('--embedding_lm_name', type=str,
+                        default=EMBEDDING_LM_NAME_DEFAULT,
+                        help="The LLM to use for Generation")
+    parser.add_argument(
+        "--NIM_embedding", action='store_true',
+        help="Wether to use a NIM for text embeddings.\
+                        Uses a local huggingface LM by default. If setting\
+                        This flag to true, need embedding_lm_name that\
+                        exists in the NIM catalog.\
+                        Example: 'nvidia/llama-3.2-nv-embedqa-1b-v2'")
     return parser.parse_args()
 
 
@@ -118,9 +129,14 @@ def make_dataset(args):
             triples = list(dict.fromkeys(triples))
             torch.save(triples, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model = SentenceTransformer(
-            model_name='Alibaba-NLP/gte-modernbert-base').to(device)
+        if not args.NIM_embedding:
+            device = torch.device(
+                "cuda" if torch.cuda.is_available() else "cpu")
+            model = SentenceTransformer(
+                model_name=args.embedding_lm_name).to(device)
+        else:
+            model = NIMSentenceTransformer(model_name=args.embedding_lm_name,
+                                           NIM_KEY=args.NV_NIM_KEY)
         fs, gs = create_remote_backend_from_triplets(
             triplets=triples, node_embedding_model=model,
             node_method_to_call="encode", path="backend",
