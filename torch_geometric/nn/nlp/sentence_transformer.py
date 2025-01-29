@@ -12,9 +12,9 @@ class PoolingStrategy(Enum):
     CLS = 'cls'
     LAST_HIDDEN_STATE = 'last_hidden_state'
 
+
 class NIMSentenceTransformer():
-    """
-    Class for converting strings into vectors for NLP tasks.
+    """Class for converting strings into vectors for NLP tasks.
     Uses NVIDIA Inference MicroServices.
     """
     def __init__(
@@ -22,25 +22,24 @@ class NIMSentenceTransformer():
         model_name: str,
         NIM_KEY: str,
     ) -> None:
-        """
-        Initializes the class with the given parameters.
+        """Initializes the class with the given parameters.
 
         Args:
         - model_name: Name of the machine learning model
         - NIM_KEY: NIM API Key.
         """
         self.client = OpenAI(
-        base_url="https://integrate.api.nvidia.com/v1",
-        api_key=NIM_KEY,
+            base_url="https://integrate.api.nvidia.com/v1",
+            api_key=NIM_KEY,
         )
         self.embedding_model_name = model_name
-        
 
     def encode(
         self,
         text: List[str],  # input text data to be encoded
         batch_size: Optional[int] = None,  # optional batch size for encoding
-        output_device: Optional[Union[torch.device, str]] = None,  # optional device for output tensor
+        output_device: Optional[Union[
+            torch.device, str]] = None,  # optional device for output tensor
     ) -> Tensor:  # returns a PyTorch tensor containing the encoded data
         is_empty = len(text) == 0
         # for downstream ease, embed empty text list as the "dummy" vector
@@ -52,13 +51,15 @@ class NIMSentenceTransformer():
         for start in range(0, len(text), batch_size):
             batch = text[start:start + batch_size]
             response = client.embeddings.create(
-                input=batch,
-                model=self.embedding_model_name,
-                encoding_format="float",
-                extra_body={"input_type": "passage", "truncate": "END"}
-            )   
+                input=batch, model=self.embedding_model_name,
+                encoding_format="float", extra_body={
+                    "input_type": "passage",
+                    "truncate": "END"
+                })
 
-            embs.append(torch.tensor([[d.embedding for d in response.data]]).to(torchfloat32).to(output_device))
+            embs.append(
+                torch.tensor([[d.embedding for d in response.data]
+                              ]).to(torchfloat32).to(output_device))
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out
@@ -66,18 +67,18 @@ class NIMSentenceTransformer():
 
 
 class SentenceTransformer(torch.nn.Module):
-    """
-    Class for converting strings into vectors for NLP tasks.
+    """Class for converting strings into vectors for NLP tasks.
     Generally freeze the weights
     Uses local LM via HuggingFace.
     """
     def __init__(
-        self,
-        model_name: str,  # Name of the machine learning model
-        pooling_strategy: Union[PoolingStrategy, str] = 'mean',  # Strategy to apply to pool features
+            self,
+            model_name: str,  # Name of the machine learning model
+            pooling_strategy: Union[
+                PoolingStrategy,
+                str] = 'mean',  # Strategy to apply to pool features
     ) -> None:
-        """
-        Initializes the class with the given parameters.
+        """Initializes the class with the given parameters.
 
         Args:
         - model_name: Name of the machine learning model

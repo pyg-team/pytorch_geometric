@@ -24,7 +24,6 @@ from torch_geometric.nn import (
     GRetriever,
     LLMJudge,
     SentenceTransformer,
-    NIMSentenceTransformer
 )
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
@@ -45,6 +44,7 @@ LR_DEFAULT = 1e-5
 EPOCHS_DEFAULT = 2
 BATCH_SIZE_DEFAULT = 8
 EVAL_BATCH_SIZE_DEFAULT = 16
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -78,8 +78,9 @@ def parse_args():
     parser.add_argument('--embedding_lm_name', type=str,
                         default=EMBEDDING_LM_NAME_DEFAULT,
                         help="The LLM to use for Generation")
-    parser.add_argument("--NIM_embedding", action='store_true',
-                        help="Wether to use a NIM for text embeddings.\
+    parser.add_argument(
+        "--NIM_embedding", action='store_true',
+        help="Wether to use a NIM for text embeddings.\
                         Uses a local huggingface LM by default. If setting\
                         This flag to true, need embedding_lm_name that\
                         exists in the NIM catalog.\
@@ -133,9 +134,8 @@ def make_dataset(args):
             model = SentenceTransformer(
                 model_name=args.embedding_lm_name).to(device)
         else:
-            model = SentenceTransformer(
-                model_name=args.embedding_lm_name,
-                NIM_KEY=args.NV_NIM_KEY).to(device)
+            model = SentenceTransformer(model_name=args.embedding_lm_name,
+                                        NIM_KEY=args.NV_NIM_KEY).to(device)
         fs, gs = create_remote_backend_from_triplets(
             triplets=triples, node_embedding_model=model,
             node_method_to_call="encode", path="backend",
