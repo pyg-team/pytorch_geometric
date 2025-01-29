@@ -18,7 +18,7 @@ from torch_geometric.utils.rag.backend_utils import (
     make_pcst_filter,
     preprocess_triplet,
 )
-from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore, KNNRAGFeatureStore
+from torch_geometric.utils.rag.feature_store import KNNRAGFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
 if __name__ == '__main__':
@@ -122,6 +122,11 @@ if __name__ == '__main__':
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
             model_name=args.embedding_lm_name).to(device)
+        class ModernBertFeatureStore(KNNRAGFeatureStore):
+            def __init__(self, *args, **kwargs):
+                kwargs['model_name'] = kwargs.get('model_name',
+                                                args.embedding_lm_name)
+                super().__init__(SentenceTransformer, *args, **kwargs)
         feat_store = ModernBertFeatureStore
     else:
         model = NIMSentenceTransformer(model_name=args.embedding_lm_name,
