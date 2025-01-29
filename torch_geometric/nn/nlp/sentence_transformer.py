@@ -68,8 +68,7 @@ class NIMSentenceTransformer():
                         "truncate": "END"
                     })
                 embs.append(
-                    torch.tensor([[d.embedding for d in response.data]
-                                ]).to(torch.float32).to(output_device))
+                    torch.tensor([d.embedding for d in response.data]).to(torch.float32).to(output_device))
             except AttributeError as e:
                 print("Lower batch_size as a potential solution to error")
                 print("Error=", e)
