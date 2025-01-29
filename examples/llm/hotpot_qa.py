@@ -124,19 +124,19 @@ if __name__ == '__main__':
         model = SentenceTransformer(
             model_name=args.embedding_lm_name).to(device)
         class ModernBertFeatureStore(KNNRAGFeatureStore):
-            def __init__(self, *args, **kwargs):
+            def __init__(self, *class_args, **kwargs):
                 kwargs['model_name'] = kwargs.get('model_name',
                                                 args.embedding_lm_name)
-                super().__init__(SentenceTransformer, *args, **kwargs)
+                super().__init__(SentenceTransformer, *class_args, **kwargs)
         feat_store = ModernBertFeatureStore
     else:
         model = NIMSentenceTransformer(model_name=args.embedding_lm_name,
                                        NIM_KEY=args.NV_NIM_KEY)
         class NIMFeatureStore(KNNRAGFeatureStore):
-            def __init__(self, *args, **kwargs):
+            def __init__(self, *class_args, **kwargs):
                 kwargs['model_name'] = kwargs.get('model_name',
                                                 args.embedding_lm_name)
-                super().__init__(NIMSentenceTransformer, *args, **kwargs)
+                super().__init__(NIMSentenceTransformer, *class_args, **kwargs)
         feat_store = NIMFeatureStore
     fs, gs = create_remote_backend_from_triplets(
         triplets=triples, node_embedding_model=model,
