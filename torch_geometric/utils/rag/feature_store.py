@@ -31,8 +31,14 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        self.enc_model = enc_model(*args, **kwargs).to(self.device)
-        self.enc_model.eval()
+        self.enc_model = enc_model(*args, **kwargs)
+        try:
+            self.enc_model = self.enc_model.to(self.device)
+            self.enc_model.eval()
+        except AttributeError:
+            # NIMs Encoder is not a torch module
+            pass
+        
         self.model_kwargs = model_kwargs if model_kwargs is not None else dict(
         )
         super().__init__()
