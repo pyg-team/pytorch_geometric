@@ -180,6 +180,11 @@ def make_dataset(args):
             "num_clusters": 10,  # num clusters
         }
         k = 10  # for VectorRAG
+        print("Now to retrieve from our Vector and Graph DBs...")
+        # GraphDB retrieval done with KNN+NeighborSampling+PCST
+        # PCST = Prize Collecting Steiner Tree
+        # VectorDB retrieval just vanilla RAG
+        # TODO add reranking NIM to VectorRAG
         query_loader = RAGQueryLoader(
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
@@ -198,9 +203,9 @@ def make_dataset(args):
             total_data_list.append(subgraph)
             extracted_triple_sizes.append(len(subgraph.triples))
         random.shuffle(total_data_list)
-        print("Min # of Extracted Triples =", min(extracted_triple_sizes))
-        print("Max # of Extracted Triples =", max(extracted_triple_sizes))
-        print("Average # of Extracted Triples =",
+        print("Min # of Retrieved Triples =", min(extracted_triple_sizes))
+        print("Max # of Retrieved Triples =", max(extracted_triple_sizes))
+        print("Average # of Retrieved Triples =",
               sum(extracted_triple_sizes) / len(extracted_triple_sizes))
 
         # 60:20:20 split
