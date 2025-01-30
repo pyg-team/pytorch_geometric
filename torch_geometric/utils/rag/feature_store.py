@@ -15,7 +15,8 @@ from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
 
 
-def batch_knn(query_enc: Tensor, embeds: Tensor, k: int) -> Iterator[InputNodes]:
+def batch_knn(query_enc: Tensor, embeds: Tensor,
+              k: int) -> Iterator[InputNodes]:
     prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
     topk = min(k, len(embeds))
     for i, q in enumerate(prizes):
