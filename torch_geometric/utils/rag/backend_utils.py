@@ -304,7 +304,14 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
         parsed_trips = []
         for trip in desc[where_trips_start + 18:-1].split("\n"):
             parsed_trips.append(tuple(trip.split(",")))
-        out_graph["triples"] = parsed_trips
+
+        # handle case where PCST returns an isolated node
+        # TODO find a better solution since these failed subgraphs
+        # severely hurt accuracy
+        if str(parsed_trips) == "[('',)]":
+            out_graph["triples"] = []
+        else:
+            out_graph["triples"] = parsed_trips
         out_graph["question"] = query
         return out_graph
 
