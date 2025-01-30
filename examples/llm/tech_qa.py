@@ -174,6 +174,9 @@ def make_dataset(args):
             subgraph.label = QA_pair[1]
             total_data_list.append(subgraph)
         random.shuffle(total_data_list)
+        print("Min # of Extracted Triples =", min(extracted_triple_sizes))
+        print("Max # of Extracted Triples =", max(extracted_triple_sizes))
+        print("Average # of Extracted Triples =", sum(extracted_triple_sizes) / len(extracted_triple_sizes))
 
         # 60:20:20 split
         data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]

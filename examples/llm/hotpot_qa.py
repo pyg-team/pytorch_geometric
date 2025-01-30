@@ -165,6 +165,9 @@ if __name__ == '__main__':
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
     approx_precision = sum(precisions) / len(precisions)
+    print("Min # of Extracted Triples =", min(extracted_triple_sizes))
+    print("Max # of Extracted Triples =", max(extracted_triple_sizes))
+    print("Average # of Extracted Triples =", sum(extracted_triple_sizes) / len(extracted_triple_sizes))
     print("approx_precision =",
           str(round(approx_precision * 100.0, 2)) + "% **")
     print("**:rough approximations since we do not know\
