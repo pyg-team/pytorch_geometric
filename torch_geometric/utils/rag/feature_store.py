@@ -89,7 +89,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
-        batch_knn(query_enc, self.x)
+        return batch_knn(query_enc, self.x)
 
     def retrieve_seed_edges(self, query: Any, k_edges: int = 3) -> InputEdges:
         """Retrieves the k_edges most similar edges to the given query.
