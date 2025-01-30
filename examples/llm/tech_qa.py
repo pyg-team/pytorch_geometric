@@ -163,8 +163,9 @@ def make_dataset(args):
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
         """
-        # encode the raw context docs 
-        embedded_docs = model.encode(context_docs, output_device=device, batch_size=sent_trans_batch_size/4)
+        # encode the raw context docs
+        embedded_docs = model.encode(context_docs, output_device=device,
+                                     batch_size=sent_trans_batch_size / 4)
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
