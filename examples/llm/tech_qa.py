@@ -149,13 +149,14 @@ def make_dataset(args):
                     chunk = i["text"]
                     context_docs.append(chunk)
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        sent_trans_batch_size = 256
         model = SentenceTransformer(
             model_name='Alibaba-NLP/gte-modernbert-base').to(device)
         fs, gs = create_remote_backend_from_triplets(
             triplets=triples, node_embedding_model=model,
             node_method_to_call="encode", path="backend",
             pre_transform=preprocess_triplet, node_method_kwargs={
-                "batch_size": min(len(triples), 256)
+                "batch_size": min(len(triples), sent_trans_batch_size)
             }, graph_db=NeighborSamplingRAGGraphStore,
             feature_db=ModernBertFeatureStore).load()
         """
@@ -163,7 +164,7 @@ def make_dataset(args):
         Tuning may be needed for custom data...
         """
         # encode the raw context docs 
-        embedded_docs = model.encode(context_docs, output_device=device, batch_size=256)
+        embedded_docs = model.encode(context_docs, output_device=device, batch_size=sent_trans_batch_size)
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
