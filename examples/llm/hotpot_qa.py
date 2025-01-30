@@ -128,6 +128,7 @@ if __name__ == '__main__':
         "topk": 5,  # nodes
         "topk_e": 5,  # edges
         "cost_e": .5  # edge cost
+        "num_clusters": 10,  # num clusters
     }
     query_loader = RAGQueryLoader(
         data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
