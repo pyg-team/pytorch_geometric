@@ -20,7 +20,7 @@ def batch_knn(query_enc: Tensor, embeds: Tensor, k: int) -> Iterator[InputNodes]
     topk = min(k, len(embeds))
     for i, q in enumerate(prizes):
         _, indices = torch.topk(q, topk, largest=True)
-        yield indices, query_enc[i]
+        yield indices, query_enc[i].unsqueeze(0)
 
 
 # NOTE: Only compatible with Homogeneous graphs for now
