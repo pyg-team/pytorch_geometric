@@ -139,7 +139,7 @@ def make_dataset(args):
             triples = list(dict.fromkeys(triples))
             torch.save(context_docs, "tech_qa_just_docs.pt")
             torch.save(triples, "tech_qa_just_triples.pt")
-        print("Size of KG (number of triples) =", len(triples))
+        print("Number of triples in our GraphDB =", len(triples))
         if not os.path.exists("tech_qa_just_docs.pt"):
             # store docs for VectorRAG in case KG was made seperately
             for data_point in rawset:
@@ -148,6 +148,7 @@ def make_dataset(args):
                 for i in data_point["contexts"]:
                     chunk = i["text"]
                     context_docs.append(chunk)
+        print("Number of Docs in our VectorDB =", len(context_docs))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         sent_trans_batch_size = 256
         model = SentenceTransformer(
