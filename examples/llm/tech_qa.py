@@ -255,7 +255,7 @@ def train(args, data_lists):
             loader = tqdm(train_loader, desc=epoch_str)
             for step, batch in enumerate(loader):
                 new_qs = []
-                for i, q in batch["question"]:
+                for i, q in enumerate(batch["question"]):
                     # insert VectorRAG context
                     new_qs.append(
                         prompt_template.format(question=q,
