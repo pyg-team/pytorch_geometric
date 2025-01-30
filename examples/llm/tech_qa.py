@@ -157,7 +157,7 @@ def make_dataset(args):
             "topk": 5,  # nodes
             "topk_e": 5,  # edges
             "cost_e": .5,  # edge cost
-            "num_clusters": 2,  # num clusters
+            "num_clusters": 10,  # num clusters
         }
         query_loader = RAGQueryLoader(
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
@@ -176,7 +176,8 @@ def make_dataset(args):
         random.shuffle(total_data_list)
         print("Min # of Extracted Triples =", min(extracted_triple_sizes))
         print("Max # of Extracted Triples =", max(extracted_triple_sizes))
-        print("Average # of Extracted Triples =", sum(extracted_triple_sizes) / len(extracted_triple_sizes))
+        print("Average # of Extracted Triples =",
+              sum(extracted_triple_sizes) / len(extracted_triple_sizes))
 
         # 60:20:20 split
         data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
