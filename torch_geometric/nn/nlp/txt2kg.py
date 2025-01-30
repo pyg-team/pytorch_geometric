@@ -231,7 +231,9 @@ def _parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
         if 'tuple' in str(type(potential_trip)) and len(
                 potential_trip
         ) == 3 and "note:" not in potential_trip[0].lower():
-            processed.append(potential_trip)
+            # additional check for empty node/edge attrs
+            if potential_trip[0] != '' and potential_trip[1] != '' and potential_trip[2] != '':
+                processed.append(potential_trip)
     return processed
 
 
