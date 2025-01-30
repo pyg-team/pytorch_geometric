@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union, List
 
 import torch
 
