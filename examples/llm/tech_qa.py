@@ -106,7 +106,8 @@ def make_dataset(args):
         data_lists = {"train": [], "validation": [], "test": []}
         if os.path.exists("tech_qa_just_triples.pt"):
             triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
-            context_docs = torch.load("tech_qa_just_docs.pt", weights_only=False)
+            if os.path.exists("tech_qa_just_docs.pt"):
+                context_docs = torch.load("tech_qa_just_docs.pt", weights_only=False)
         else:
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
@@ -138,6 +139,15 @@ def make_dataset(args):
             torch.save(context_docs, "tech_qa_just_docs.pt")
             torch.save(triples, "tech_qa_just_triples.pt")
         print("Size of KG (number of triples) =", len(triples))
+        if not os.path.exists("tech_qa_just_docs.pt"):
+            # store docs for VectorRAG in case KG was made seperately
+            context_docs = []
+            for data_point in tqdm(rawset, desc="Extracting KG triples"):
+                if data_point["is_impossible"]:
+                    continue
+                for i in data_point["contexts"]:
+                    chunk = i["text"]
+                    context_docs.append(chunk)
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model = SentenceTransformer(
             model_name='Alibaba-NLP/gte-modernbert-base').to(device)
