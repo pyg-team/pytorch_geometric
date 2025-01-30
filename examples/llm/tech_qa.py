@@ -142,7 +142,7 @@ def make_dataset(args):
         print("Size of KG (number of triples) =", len(triples))
         if not os.path.exists("tech_qa_just_docs.pt"):
             # store docs for VectorRAG in case KG was made seperately
-            for data_point in tqdm(rawset, desc="Extracting KG triples"):
+            for data_point in rawset:
                 if data_point["is_impossible"]:
                     continue
                 for i in data_point["contexts"]:
