@@ -8,6 +8,7 @@ from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
 from torch_geometric.utils.rag.feature_store import batch_knn
 
+
 class RAGFeatureStore(Protocol):
     """Feature store template for remote GNN RAG backend."""
     @abstractmethod
@@ -94,7 +95,8 @@ class RAGQueryLoader:
                 (Default: :obj:`10`).
         """
         fstore, gstore = data
-        assert len(raw_docs) == len(embedded_docs), "Need raw and embedded docs to match"
+        assert len(raw_docs) == len(
+            embedded_docs), "Need raw and embedded docs to match"
         self.raw_docs = raw_docs
         self.k = k
         self.embedded_docs
@@ -150,7 +152,9 @@ class RAGQueryLoader:
         if self.local_filter:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
         if self.raw_docs:
-            selected_doc_idxs, _ = next(batch_knn(query_enc, self.embedded_docs))
-            data.text_context = "\n".join([self.raw_docs[i] for i in selected_doc_idxs])
+            selected_doc_idxs, _ = next(
+                batch_knn(query_enc, self.embedded_docs))
+            data.text_context = "\n".join(
+                [self.raw_docs[i] for i in selected_doc_idxs])
 
         return data

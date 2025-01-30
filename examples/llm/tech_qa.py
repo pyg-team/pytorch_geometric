@@ -165,13 +165,13 @@ def make_dataset(args):
             "cost_e": .5,  # edge cost
             "num_clusters": 10,  # num clusters
         }
-        k = 10 # for VectorRAG
+        k = 10  # for VectorRAG
         query_loader = RAGQueryLoader(
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
-            local_filter_kwargs=local_filter_kwargs,
-            raw_docs=context_docs, doc_embeddings=embedded_docs)
+            local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
+            doc_embeddings=embedded_docs)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
@@ -237,7 +237,9 @@ def train(args, data_lists):
                 new_qs = []
                 for i, q in batch["question"]:
                     # insert VectorRAG context
-                    new_qs.append(prompt_template.format(question=q, context=batch.text_context[i]))
+                    new_qs.append(
+                        prompt_template.format(question=q,
+                                               context=batch.text_context[i]))
                 batch.question = new_qs
 
                 optimizer.zero_grad()

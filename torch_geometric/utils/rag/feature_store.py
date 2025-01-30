@@ -22,6 +22,7 @@ def batch_knn(query_enc: Tensor, embeds: Tensor) -> Iterator[InputNodes]:
         _, indices = torch.topk(q, topk, largest=True)
         yield indices, query_enc[i]
 
+
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based approach to retrieve seed nodes and edges.
@@ -66,7 +67,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         Returns:
         - The indices of the most similar nodes.
         """
-        result, query_enc = next(self._retrieve_seed_nodes_batch([query], k_nodes))
+        result, query_enc = next(
+            self._retrieve_seed_nodes_batch([query], k_nodes))
         gc.collect()
         torch.cuda.empty_cache()
         return result, query_enc
@@ -99,7 +101,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         Returns:
         - The indices of the most similar edges.
         """
-        result, query_enc = next(self._retrieve_seed_edges_batch([query], k_edges))
+        result, query_enc = next(
+            self._retrieve_seed_edges_batch([query], k_edges))
         gc.collect()
         torch.cuda.empty_cache()
         return result, query_enc
