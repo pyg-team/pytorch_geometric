@@ -157,7 +157,6 @@ def create_remote_backend_from_triplets(
     path: str = '', n_parts: int = 1,
     node_method_kwargs: Optional[Dict[str, Any]] = None,
     edge_method_kwargs: Optional[Dict[str, Any]] = None,
-    raw_docs: Optional[List[str]] = None,
 ) -> RemoteGraphBackendLoader:
     """Utility function that can be used to create a RAG Backend from triplets.
 
@@ -185,9 +184,6 @@ def create_remote_backend_from_triplets(
             into node encoding method. Defaults to None.
         edge_method_kwargs (Optional[Dict[str, Any]], optional): args to pass
             into edge encoding method. Defaults to None.
-        raw_docs (Optional[List[str]], optional): A list of the context documents
-        from which triples were extracted. This is used for VectorRAG.
-        The VectorRAG and GraphRAG are then combined for HybridRAG.
 
     Returns:
         RemoteGraphBackendLoader: Loader to load RAG backend from disk or
