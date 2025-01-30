@@ -20,7 +20,10 @@ from torch_geometric.typing import WITH_PT20
 
 # create possible nodes and edges for graph
 strkeys = string.ascii_letters + string.digits
+
 NODE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(1000)})
+# insert a duplicate node to test the unique ordering of from_triples
+NODE_POOL[1] = NODE_POOL[0]
 EDGE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(50)})
 
 
@@ -64,9 +67,15 @@ def test_basic_collate():
     assert len(set(big_indexer._nodes.values())) == len(big_indexer._nodes)
     assert len(set(big_indexer._edges.values())) == len(big_indexer._edges)
 
-    for node in (indexer_0._nodes.keys() | indexer_1._nodes.keys()):
+    for i, node in enumerate(indexer_0._nodes.keys()
+                             | indexer_1._nodes.keys()):
         assert big_indexer.node_attr[NODE_PID][
             big_indexer._nodes[node]] == node
+        if i == 1:
+            node_0 = list(indexer_0._nodes.keys())[0]
+            assert big_indexer.node_attr[NODE_PID][
+                big_indexer._nodes[node_0]] != big_indexer.node_attr[NODE_PID][
+                    big_indexer._nodes[node]]
 
 
 def test_large_graph_index():
