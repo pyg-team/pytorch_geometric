@@ -15,9 +15,9 @@ from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
 
 
-def batch_knn(query_enc: Tensor, embeds: Tensor) -> Iterator[InputNodes]:
+def batch_knn(query_enc: Tensor, embeds: Tensor, k: int) -> Iterator[InputNodes]:
     prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
-    topk = min(k_nodes, len(embeds))
+    topk = min(k, len(embeds))
     for i, q in enumerate(prizes):
         _, indices = torch.topk(q, topk, largest=True)
         yield indices, query_enc[i]
@@ -89,7 +89,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
-        return batch_knn(query_enc, self.x)
+        return batch_knn(query_enc, self.x, k_nodes)
 
     def retrieve_seed_edges(self, query: Any, k_edges: int = 3) -> InputEdges:
         """Retrieves the k_edges most similar edges to the given query.
@@ -123,7 +123,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
-        batch_knn(query_enc, self.edge_attr)
+        return batch_knn(query_enc, self.edge_attr, k_edges)
 
     def load_subgraph(
         self, sample: Union[SamplerOutput, HeteroSamplerOutput]

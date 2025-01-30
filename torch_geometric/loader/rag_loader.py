@@ -154,7 +154,7 @@ class RAGQueryLoader:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
         if self.raw_docs:
             selected_doc_idxs, _ = next(
-                batch_knn(query_enc, self.embedded_docs))
+                batch_knn(query_enc, self.embedded_docs, self.k))
             data.text_context = "\n".join(
                 [self.raw_docs[i] for i in selected_doc_idxs])
 
