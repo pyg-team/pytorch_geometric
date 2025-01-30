@@ -184,7 +184,7 @@ def make_dataset(args):
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
-            doc_embeddings=embedded_docs)
+            embedded_docs=embedded_docs)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
