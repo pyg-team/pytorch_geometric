@@ -19,6 +19,7 @@ def retrieval_via_pcst(
     topk: int = 3,
     topk_e: int = 5,
     cost_e: float = 0.5,
+    num_clusters: int = 1,
 ) -> Tuple[Data, str]:
     # skip PCST for bad graphs
     booly = data.edge_attr is None or data.edge_attr.numel() == 0
@@ -30,7 +31,6 @@ def retrieval_via_pcst(
         from pcst_fast import pcst_fast
 
         root = -1
-        num_clusters = 1
         pruning = 'gw'
         verbosity_level = 0
         if topk > 0:

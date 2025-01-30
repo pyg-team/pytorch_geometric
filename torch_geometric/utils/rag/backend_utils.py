@@ -274,17 +274,19 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
             graph: Data,  # Input graph data
             query: str,  # Search query
             topk: int = 5,  # Number of top-K results to return (default: 5)
-            topk_e:
-        int = 5,  # Number of top-K entity results to return (default: 5)
-            cost_e: float = 0.5,  # Cost of entity retrieval (default: 0.5)
+            topk_e: int = 5,
+            cost_e: float = 0.5,
+            num_clusters: int = 1,
     ) -> Tuple[Data, str]:
         """Applies PCST filtering for retrieval.
+        PCST = Prize Collecting Steiner Tree
 
         :param graph: Input graph data
         :param query: Search query
         :param topk: Number of top-K results to return (default: 5)
         :param topk_e: Number of top-K entity results to return (default: 5)
-        :param cost_e: Cost of entity retrieval (default: 0.5)
+        :param cost_e: Cost of edges (default: 0.5)
+        :param num_clusters: the number of connected components in the PCST output.
         :return: Retrieved graph data and query result
         """
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
@@ -298,17 +300,19 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
                                   columns=["src", "edge_attr", "dst"])
         out_graph, desc = retrieval_via_pcst(graph.to(q_emb.device), q_emb,
                                              textual_nodes, textual_edges,
-                                             topk, topk_e, cost_e)
+                                             topk, topk_e, cost_e, num_clusters)
         out_graph["desc"] = desc
         where_trips_start = desc.find("src,edge_attr,dst")
         parsed_trips = []
         for trip in desc[where_trips_start + 18:-1].split("\n"):
             parsed_trips.append(tuple(trip.split(",")))
 
-        # handle case where PCST returns an isolated node
-        # TODO find a better solution since these failed subgraphs
-        # severely hurt accuracy
-        if str(parsed_trips) == "[('',)]":
+        # Handle case where PCST returns an isolated node
+        """
+        TODO find a better solution since these failed subgraphs
+        severely hurt accuracy.
+        """
+        if str(parsed_trips) == "[('',)]" or out_graph.edge_index.numel() == 0:
             out_graph["triples"] = []
         else:
             out_graph["triples"] = parsed_trips
