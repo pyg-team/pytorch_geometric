@@ -3,7 +3,7 @@ import json
 import os
 import random
 from itertools import chain
-
+import gc
 import torch
 from g_retriever import (
     adjust_learning_rate,
@@ -216,6 +216,9 @@ def make_dataset(args):
         data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
         torch.save(data_lists, "tech_qa.pt")
+        del model
+        gc.collect()
+        torch.cuda.empty_cache()
         return data_lists
 
 
