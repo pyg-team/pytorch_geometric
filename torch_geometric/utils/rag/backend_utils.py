@@ -271,12 +271,12 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     full_textual_nodes = nodes
 
     def apply_retrieval_via_pcst(
-            graph: Data,  # Input graph data
-            query: str,  # Search query
-            topk: int = 5,  # Number of top-K results to return (default: 5)
-            topk_e: int = 5,
-            cost_e: float = 0.5,
-            num_clusters: int = 1,
+        graph: Data,  # Input graph data
+        query: str,  # Search query
+        topk: int = 5,  # Number of top-K results to return (default: 5)
+        topk_e: int = 5,
+        cost_e: float = 0.5,
+        num_clusters: int = 1,
     ) -> Tuple[Data, str]:
         """Applies PCST filtering for retrieval.
         PCST = Prize Collecting Steiner Tree
@@ -300,7 +300,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
                                   columns=["src", "edge_attr", "dst"])
         out_graph, desc = retrieval_via_pcst(graph.to(q_emb.device), q_emb,
                                              textual_nodes, textual_edges,
-                                             topk, topk_e, cost_e, num_clusters)
+                                             topk, topk_e, cost_e,
+                                             num_clusters)
         out_graph["desc"] = desc
         where_trips_start = desc.find("src,edge_attr,dst")
         parsed_trips = []
