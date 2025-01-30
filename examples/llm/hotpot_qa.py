@@ -144,6 +144,7 @@ if __name__ == '__main__':
         loader = relevant_triples.keys()
     else:
         loader = tqdm(relevant_triples.keys())
+    extracted_triple_sizes = []
     for QA_pair in tqdm(relevant_triples.keys(), disable=args.verbose):
         golden_triples = relevant_triples[QA_pair]
         # Again, redundant since TXT2KG already provides lowercase
@@ -153,6 +154,7 @@ if __name__ == '__main__':
         q = QA_pair[0]
         retrieved_subgraph = query_loader.query(q)
         retrieved_triples = retrieved_subgraph.triples
+        extracted_triple_sizes.append(len(retrieved_triples))
 
         if args.verbose:
             print("Q=", q)
@@ -165,6 +167,7 @@ if __name__ == '__main__':
         precisions.append(num_relevant_out_of_retrieved /
                           len(retrieved_triples))
     approx_precision = sum(precisions) / len(precisions)
+    print("Average # of Extracted Triples =", sum(extracted_triple_sizes) / len(extracted_triple_sizes))
     print("approx_precision =",
           str(round(approx_precision * 100.0, 2)) + "% **")
     print("**:rough approximations since we do not know\

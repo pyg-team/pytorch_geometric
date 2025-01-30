@@ -159,6 +159,7 @@ def make_dataset(args):
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs)
         total_data_list = []
+        extracted_triple_sizes = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
             if data_point["is_impossible"]:
                 continue
@@ -167,7 +168,9 @@ def make_dataset(args):
             subgraph = query_loader.query(q)
             subgraph.label = QA_pair[1]
             total_data_list.append(subgraph)
+            extracted_triple_sizes.append(len(subgraph.triples))
         random.shuffle(total_data_list)
+        print("Average # of Extracted Triples =", sum(extracted_triple_sizes) / len(extracted_triple_sizes))
 
         # 60:20:20 split
         data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
