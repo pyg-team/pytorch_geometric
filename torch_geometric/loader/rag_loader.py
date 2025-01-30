@@ -100,7 +100,7 @@ class RAGQueryLoader:
             embedded_docs), "Need raw and embedded docs to match"
         self.raw_docs = raw_docs
         self.k = k
-        self.embedded_docs
+        self.embedded_docs = embedded_docs
         self.feature_store = fstore
         self.graph_store = gstore
         self.graph_store.edge_index = self.graph_store.edge_index.contiguous()
