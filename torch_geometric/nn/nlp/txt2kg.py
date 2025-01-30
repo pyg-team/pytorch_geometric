@@ -152,27 +152,31 @@ class TXT2KG():
                                                meta_chunk_size, len(chunks))]
                     for j in range(num_procs)
                 }
-
-                for retry in range(20):
+                for retry in range(5):
                     try:
-                        # Spawn multiple processes, process chunks in parallel
-                        mp.spawn(
-                            _multiproc_helper,
-                            args=(in_chunks_per_proc, _parse_n_check_triples,
-                                  _chunk_to_triples_str_cloud,
-                                  self.NVIDIA_API_KEY, self.NIM_MODEL),
-                            nprocs=num_procs)
-                    except:  # noqa
-                        # keep retrying, txt2kg is costly -> stoppage is costly
+                        for retry in range(20):
+                            try:
+                                # Spawn multiple processes, process chunks in parallel
+                                mp.spawn(
+                                    _multiproc_helper,
+                                    args=(in_chunks_per_proc, _parse_n_check_triples,
+                                        _chunk_to_triples_str_cloud,
+                                        self.NVIDIA_API_KEY, self.NIM_MODEL),
+                                    nprocs=num_procs)
+                            except:  # noqa
+                                # keep retrying, txt2kg is costly -> stoppage is costly
+                                pass
+                            break
+
+                        # Collect the results from each process
+                        self.relevant_triples[key] = []
+                        for rank in range(num_procs):
+                            self.relevant_triples[key] += torch.load(
+                                "/tmp/outs_for_proc_" + str(rank))
+                            os.remove("/tmp/outs_for_proc_" + str(rank))
+                    except:
                         pass
                     break
-
-                # Collect the results from each process
-                self.relevant_triples[key] = []
-                for rank in range(num_procs):
-                    self.relevant_triples[key] += torch.load(
-                        "/tmp/outs_for_proc_" + str(rank))
-                    os.remove("/tmp/outs_for_proc_" + str(rank))
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
