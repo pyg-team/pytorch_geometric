@@ -107,6 +107,7 @@ def make_dataset(args):
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
             triples = []
+            context_docs = []
             for data_point in tqdm(rawset, desc="Extracting KG triples"):
                 if data_point["is_impossible"]:
                     continue
@@ -115,6 +116,9 @@ def make_dataset(args):
                 context_doc = ''
                 for i in data_point["contexts"]:
                     context_doc += i["text"]
+                # store for VectorRAG
+                context_docs.append(context_doc)
+                # store for GraphRAG
                 QA_pair = (q, a)
                 kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
             relevant_triples = kg_maker.relevant_triples
@@ -157,7 +161,8 @@ def make_dataset(args):
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
-            local_filter_kwargs=local_filter_kwargs)
+            local_filter_kwargs=local_filter_kwargs,
+            raw_docs=context_docs,)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
