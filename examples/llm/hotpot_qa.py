@@ -127,7 +127,7 @@ if __name__ == '__main__':
     local_filter_kwargs = {
         "topk": 5,  # nodes
         "topk_e": 5,  # edges
-        "cost_e": .5  # edge cost
+        "cost_e": .5,  # edge cost
         "num_clusters": 10,  # num clusters
     }
     query_loader = RAGQueryLoader(
