@@ -124,7 +124,7 @@ class LLMJudge():
                                          model_pred=model_pred,
                                          correct_answer=correct_answer)
         score1 = float("nan")
-        score1 = float("nan")
+        score2 = float("nan")
         for retry in range(20):
             try:
                 score1 = self._process_score(
