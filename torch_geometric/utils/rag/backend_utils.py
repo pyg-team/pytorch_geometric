@@ -147,14 +147,16 @@ class RemoteGraphBackendLoader:
 
 # TODO: make profilable
 def create_remote_backend_from_triplets(
-    triplets: Iterable[TripletLike], node_embedding_model: Module,
+    triplets: Iterable[TripletLike],
+    node_embedding_model: Module,
     edge_embedding_model: Module | None = None,
     graph_db: Type[ConvertableGraphStore] = LocalGraphStore,
     feature_db: Type[ConvertableFeatureStore] = LocalFeatureStore,
     node_method_to_call: str = "forward",
     edge_method_to_call: str | None = None,
     pre_transform: Callable[[TripletLike], TripletLike] | None = None,
-    path: str = '', n_parts: int = 1,
+    path: str = '',
+    n_parts: int = 1,
     node_method_kwargs: Optional[Dict[str, Any]] = None,
     edge_method_kwargs: Optional[Dict[str, Any]] = None,
 ) -> RemoteGraphBackendLoader:
