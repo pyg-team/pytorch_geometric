@@ -6,7 +6,7 @@ import torch
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
-
+from torch_geometric.utils.rag.feature_store import batch_knn
 
 class RAGFeatureStore(Protocol):
     """Feature store template for remote GNN RAG backend."""
@@ -61,7 +61,10 @@ class RAGQueryLoader:
                  seed_edges_kwargs: Optional[Dict[str, Any]] = None,
                  sampler_kwargs: Optional[Dict[str, Any]] = None,
                  loader_kwargs: Optional[Dict[str, Any]] = None,
-                 local_filter_kwargs: Optional[Dict[str, Any]] = None):
+                 local_filter_kwargs: Optional[Dict[str, Any]] = None,
+                 raw_docs: Optional[List[str]] = None,
+                 embedded_docs: Optional[Tensor] = None,
+                 k: Optional[int] = 10):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -83,8 +86,18 @@ class RAGQueryLoader:
                 pass into process for loading graph features. Defaults to None.
             local_filter_kwargs (Optional[Dict[str, Any]], optional): Parameters to
                 pass into process for filtering features. Defaults to None.
+            raw_docs (Optional[List[str]], optional): Raw context docs for VectorRAG.
+                Combines with GraphRAG to make HybridRAG. Defaults to None.
+            embedded_docs (Optional[Tensor], optional): Embedded context docs for VectorRAG.
+                Needs to match the `raw_docs`. Defaults to None.
+            k (Optional[int], optional): top-k docs to select for vectorRAG.
+                (Default: :obj:`10`).
         """
         fstore, gstore = data
+        assert len(raw_docs) == len(embedded_docs), "Need raw and embedded docs to match"
+        self.raw_docs = raw_docs
+        self.k = k
+        self.embedded_docs
         self.feature_store = fstore
         self.graph_store = gstore
         self.graph_store.edge_index = self.graph_store.edge_index.contiguous()
@@ -100,7 +113,7 @@ class RAGQueryLoader:
         """Retrieve a subgraph associated with the query with all its feature
         attributes.
         """
-        seed_nodes = self.feature_store.retrieve_seed_nodes(
+        seed_nodes, query_enc = self.feature_store.retrieve_seed_nodes(
             query, **self.seed_nodes_kwargs)
         # Graph Store does not Use These, save computation
         # seed_edges = self.feature_store.retrieve_seed_edges(
@@ -136,4 +149,8 @@ class RAGQueryLoader:
         # apply local filter
         if self.local_filter:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
+        if self.raw_docs:
+            selected_doc_idxs, _ = next(batch_knn(query_enc, self.embedded_docs))
+            data.text_context = "\n".join([self.raw_docs[i] for i in selected_doc_idxs])
+
         return data

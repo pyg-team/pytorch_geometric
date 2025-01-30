@@ -77,7 +77,11 @@ def parse_args():
     return parser.parse_args()
 
 
-prompt_template = """Answer this question based on the previous information. Just give the answer without explanation.
+prompt_template = """
+[CONTEXT]
+{context}
+[END_CONTEXT]
+Answer this question based on the context provided. Just give the answer without explanation.
 [QUESTION]
 {question}
 [END_QUESTION]
@@ -115,9 +119,11 @@ def make_dataset(args):
                 a = data_point["answer"]
                 context_doc = ''
                 for i in data_point["contexts"]:
-                    context_doc += i["text"]
-                # store for VectorRAG
-                context_docs.append(context_doc)
+                    chunk = i["text"]
+                    context_doc += chunk
+                    # store for VectorRAG
+                    context_docs.append(chunk)
+
                 # store for GraphRAG
                 QA_pair = (q, a)
                 kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
@@ -144,7 +150,7 @@ def make_dataset(args):
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
         """
-
+        embedded_docs = model.encode(context_docs, output_device=device)
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
@@ -157,12 +163,13 @@ def make_dataset(args):
             "cost_e": .5,  # edge cost
             "num_clusters": 10,  # num clusters
         }
+        k = 10 # for VectorRAG
         query_loader = RAGQueryLoader(
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs,
-            raw_docs=context_docs,)
+            raw_docs=context_docs, doc_embeddings=embedded_docs)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
@@ -226,8 +233,9 @@ def train(args, data_lists):
             loader = tqdm(train_loader, desc=epoch_str)
             for step, batch in enumerate(loader):
                 new_qs = []
-                for q in batch["question"]:
-                    new_qs.append(prompt_template.format(question=q))
+                for i, q in batch["question"]:
+                    # insert VectorRAG context
+                    new_qs.append(prompt_template.format(question=q, context=batch.text_context[i]))
                 batch.question = new_qs
 
                 optimizer.zero_grad()
