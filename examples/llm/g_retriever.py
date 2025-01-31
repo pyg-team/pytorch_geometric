@@ -180,7 +180,7 @@ def inference_step(model, batch, model_save_name="gnn+llm"):
             batch.edge_index,  # edge indices
             batch.batch,  # batch indices
             batch.edge_attr,  # edge attributes
-            # batch.desc  # description
+            batch.desc  # description
         )
 
 
