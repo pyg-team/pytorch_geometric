@@ -78,16 +78,16 @@ def parse_args():
     return parser.parse_args()
 
 
-prompt_template = """
-[CONTEXT]
-{context}
-[END_CONTEXT]
-Answer this question based on the context provided. Just give the answer without explanation.
-[QUESTION]
-{question}
-[END_QUESTION]
+prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
+    [QUESTION]
+    {question}
+    [END_QUESTION]
 
-Answer: """
+    [RETRIEVED_CONTEXTS]
+    {contexts}
+    [END_RETRIEVED_CONTEXTS]
+
+    Answer: """
 
 
 def get_data():
@@ -314,6 +314,7 @@ def test(model, test_loader, args):
             new_qs.append(
                 prompt_template.format(question=q,
                                        context=test_batch.text_context[i]))
+        batch.question = new_qs
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
