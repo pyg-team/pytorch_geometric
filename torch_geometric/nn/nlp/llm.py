@@ -58,19 +58,23 @@ class LLM(torch.nn.Module):
         is determined using the `huggingface_hub` module.
     dtype (torch.dtype, optional): The data type to use for the LLM.
         (default :obj: `torch.bfloat16`)
+     freeze (bool, optional): If set to :obj:`True`, will freeze the LM
+            `here <https://huggingface.co/docs/peft/en/index>`_ for details.
+            (default: :obj:`False`)
     """
     def __init__(
         self,
         model_name: str,
         num_params: Optional[float] = None,
         dtype: Optional[torch.dtype] = torch.bfloat16,
+        freeze: bool = False,
     ) -> None:
         super().__init__()
 
         self.model_name = model_name
 
         from transformers import AutoModelForCausalLM, AutoTokenizer
-
+        self.freeze = freeze
         if num_params is None:
             from huggingface_hub import get_safetensors_metadata
             safetensors_metadata = get_safetensors_metadata(model_name)
@@ -274,14 +278,14 @@ class LLM(torch.nn.Module):
         """
         inputs_embeds, attention_mask, label_input_ids = self._get_embeds(
             question, context, embedding, answer)
-
-        with self.autocast_context:
-            outputs = self.llm(
-                inputs_embeds=inputs_embeds,
-                attention_mask=attention_mask,
-                return_dict=True,
-                labels=label_input_ids,
-            )
+        with torch.no_grad() if self.freeze else nullcontext():
+            with self.autocast_context:
+                outputs = self.llm(
+                    inputs_embeds=inputs_embeds,
+                    attention_mask=attention_mask,
+                    return_dict=True,
+                    labels=label_input_ids,
+                )
         return outputs.loss
 
     @torch.no_grad()
@@ -314,15 +318,16 @@ class LLM(torch.nn.Module):
             add_special_tokens=False,
         ).input_ids[0]
 
-        with self.autocast_context:
-            outputs = self.llm.generate(
-                inputs_embeds=inputs_embeds,
-                bos_token_id=bos_token,
-                max_new_tokens=max_tokens,
-                attention_mask=attention_mask,
-                pad_token_id=self.tokenizer.eos_token_id,
-                use_cache=True,
-            )
+        with torch.no_grad() if self.freeze else nullcontext():
+            with self.autocast_context:
+                outputs = self.llm.generate(
+                    inputs_embeds=inputs_embeds,
+                    bos_token_id=bos_token,
+                    max_new_tokens=max_tokens,
+                    attention_mask=attention_mask,
+                    pad_token_id=self.tokenizer.eos_token_id,
+                    use_cache=True,
+                )
 
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
