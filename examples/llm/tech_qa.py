@@ -238,6 +238,7 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     # freeze LM
     llm = LLM(model_name=args.llm_generator_name).eval()
+    return llm, test_loader
     for _, p in llm.named_parameters():
         p.requires_grad = False
     model = GRetriever(llm=llm, gnn=gnn)
@@ -309,6 +310,11 @@ def test(model, test_loader, args):
     scores = []
     eval_tuples = []
     for test_batch in tqdm(test_loader, desc="Testing"):
+        for i, q in enumerate(batch["question"]):
+            # insert VectorRAG context
+            new_qs.append(
+                prompt_template.format(question=q,
+                                        context=batch.text_context[i]))
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
