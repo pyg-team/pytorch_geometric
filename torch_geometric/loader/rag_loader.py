@@ -65,7 +65,8 @@ class RAGQueryLoader:
                  loader_kwargs: Optional[Dict[str, Any]] = None,
                  local_filter_kwargs: Optional[Dict[str, Any]] = None,
                  raw_docs: Optional[List[str]] = None,
-                 embedded_docs: Optional[Tensor] = None, k: Optional[int] = 5):
+                 embedded_docs: Optional[Tensor] = None,
+                 k_for_docs: Optional[int] = 5):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -98,7 +99,7 @@ class RAGQueryLoader:
         assert len(raw_docs) == len(
             embedded_docs), "Need raw and embedded docs to match"
         self.raw_docs = raw_docs
-        self.k = k
+        self.k_for_docs = k_for_docs
         self.embedded_docs = embedded_docs
         self.feature_store = fstore
         self.graph_store = gstore
