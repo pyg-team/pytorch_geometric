@@ -137,7 +137,7 @@ class RAGQueryLoader:
             data.text_context = "\n".join(
                 retrieved_chunks)
             if self.docs_to_trips:
-                extra_triples = self.docs_to_trips[retrieved_chunks[0]] + elf.docs_to_trips[retrieved_chunks[1]]
+                extra_triples = self.docs_to_trips[retrieved_chunks[0]] + self.docs_to_trips[retrieved_chunks[1]]
                 data.triples = extra_triples
                 edge_idxs = [self.full_trips.index(extra_trip) for extra_trip in extra_triples]
                 data.edge_idx = torch.cat(data.edge_idx, torch.tensor(edge_idxs))
