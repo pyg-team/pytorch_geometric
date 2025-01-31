@@ -66,7 +66,7 @@ class RAGQueryLoader:
                  local_filter_kwargs: Optional[Dict[str, Any]] = None,
                  raw_docs: Optional[List[str]] = None,
                  embedded_docs: Optional[Tensor] = None,
-                 k: Optional[int] = 10):
+                 k: Optional[int] = 5):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -93,7 +93,7 @@ class RAGQueryLoader:
             embedded_docs (Optional[Tensor], optional): Embedded context docs for VectorRAG.
                 Needs to match the `raw_docs`. Defaults to None.
             k (Optional[int], optional): top-k docs to select for vectorRAG.
-                (Default: :obj:`10`).
+                (Default: :obj:`5`).
         """
         fstore, gstore = data
         assert len(raw_docs) == len(
