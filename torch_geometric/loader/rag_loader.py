@@ -139,7 +139,7 @@ class RAGQueryLoader:
             if self.docs_to_trips:
                 extra_triples = self.docs_to_trips[retrieved_chunks[0]] + self.docs_to_trips[retrieved_chunks[1]]
                 edge_idxs = [self.full_trips.index(extra_trip) for extra_trip in extra_triples]
-                data.edge_idx = torch.cat((data.edge_idx, torch.tensor(edge_idxs)))
+                data.edge_idx = list(dict.fromkeys(data.edge_idx.tolist() +edge_idxs))
         # need to use sampled edge_idx to index into original graph then reindex
         total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
         data.node_idx = torch.tensor(
