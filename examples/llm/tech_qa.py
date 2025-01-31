@@ -1,4 +1,5 @@
 import argparse
+import gc
 import json
 import os
 import random
@@ -47,8 +48,9 @@ GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
 LR_DEFAULT = 1e-5
 EPOCHS_DEFAULT = 2
-BATCH_SIZE_DEFAULT = 8
-EVAL_BATCH_SIZE_DEFAULT = 16
+BATCH_SIZE_DEFAULT = 1
+EVAL_BATCH_SIZE_DEFAULT = 2
+LLM_GEN_MODE_DEFAULT = "full"
 
 
 def parse_args():
@@ -80,15 +82,36 @@ def parse_args():
     parser.add_argument('--llm_generator_name', type=str,
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
+    parser.add_argument(
+        '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
+        choices=["frozen", "lora",
+                 "full"], help="Wether to freeze the Generator LLM,\
+                        use LORA, or fully finetune")
     return parser.parse_args()
 
 
-prompt_template = """Answer this question based on the previous information. Just give the answer without explanation.
-[QUESTION]
-{question}
-[END_QUESTION]
+# theirs
+prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
+    [QUESTION]
+    {question}
+    [END_QUESTION]
 
-Answer: """
+    [RETRIEVED_CONTEXTS]
+    {context}
+    [END_RETRIEVED_CONTEXTS]
+
+    Answer: """
+# my prompt
+# prompt_template = """
+# [CONTEXT]
+# {context}
+# [END_CONTEXT]
+# Answer this question based on the context provided. Just give the answer without explanation.
+# [QUESTION]
+# {question}
+# [END_QUESTION]
+
+# Answer: """
 
 
 def get_data():
@@ -106,13 +129,17 @@ def make_dataset(args):
     else:
         rawset = get_data()
         data_lists = {"train": [], "validation": [], "test": []}
+        triples = []
+        context_docs = []
         if os.path.exists("tech_qa_just_triples.pt"):
             triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
+            if os.path.exists("tech_qa_just_docs.pt"):
+                context_docs = torch.load("tech_qa_just_docs.pt",
+                                          weights_only=False)
         else:
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
-            triples = []
             for data_point in tqdm(rawset, desc="Extracting KG triples"):
                 if data_point["is_impossible"]:
                     continue
@@ -120,7 +147,12 @@ def make_dataset(args):
                 a = data_point["answer"]
                 context_doc = ''
                 for i in data_point["contexts"]:
-                    context_doc += i["text"]
+                    chunk = i["text"]
+                    context_doc += chunk
+                    # store for VectorRAG
+                    context_docs.append(chunk)
+
+                # store for GraphRAG
                 QA_pair = (q, a)
                 kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
             relevant_triples = kg_maker.relevant_triples
@@ -130,23 +162,36 @@ def make_dataset(args):
                         triple_set
                         for triple_set in relevant_triples.values())))
             triples = list(dict.fromkeys(triples))
+            torch.save(context_docs, "tech_qa_just_docs.pt")
             torch.save(triples, "tech_qa_just_triples.pt")
-        print("Size of KG (number of triples) =", len(triples))
+        print("Number of triples in our GraphDB =", len(triples))
+        if not os.path.exists("tech_qa_just_docs.pt"):
+            # store docs for VectorRAG in case KG was made seperately
+            for data_point in rawset:
+                if data_point["is_impossible"]:
+                    continue
+                for i in data_point["contexts"]:
+                    chunk = i["text"]
+                    context_docs.append(chunk)
+        print("Number of Docs in our VectorDB =", len(context_docs))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        sent_trans_batch_size = 256
         model = SentenceTransformer(
             model_name='Alibaba-NLP/gte-modernbert-base').to(device)
         fs, gs = create_remote_backend_from_triplets(
             triplets=triples, node_embedding_model=model,
             node_method_to_call="encode", path="backend",
             pre_transform=preprocess_triplet, node_method_kwargs={
-                "batch_size": min(len(triples), 256)
+                "batch_size": min(len(triples), sent_trans_batch_size)
             }, graph_db=NeighborSamplingRAGGraphStore,
             feature_db=ModernBertFeatureStore).load()
         """
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
         """
-
+        # encode the raw context docs
+        embedded_docs = model.encode(context_docs, output_device=device,
+                                     batch_size=int(sent_trans_batch_size / 4))
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
@@ -159,11 +204,18 @@ def make_dataset(args):
             "cost_e": .5,  # edge cost
             "num_clusters": 10,  # num clusters
         }
+        print("Now to retrieve context for each query from\
+            our Vector and Graph DBs...")
+        # GraphDB retrieval done with KNN+NeighborSampling+PCST
+        # PCST = Prize Collecting Steiner Tree
+        # VectorDB retrieval just vanilla RAG
+        # TODO add reranking NIM to VectorRAG
         query_loader = RAGQueryLoader(
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
-            local_filter_kwargs=local_filter_kwargs)
+            local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
+            embedded_docs=embedded_docs)
         total_data_list = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
             if data_point["is_impossible"]:
@@ -174,9 +226,9 @@ def make_dataset(args):
             subgraph.label = QA_pair[1]
             total_data_list.append(subgraph)
         random.shuffle(total_data_list)
-        print("Min # of Extracted Triples =", min(extracted_triple_sizes))
-        print("Max # of Extracted Triples =", max(extracted_triple_sizes))
-        print("Average # of Extracted Triples =",
+        print("Min # of Retrieved Triples =", min(extracted_triple_sizes))
+        print("Max # of Retrieved Triples =", max(extracted_triple_sizes))
+        print("Average # of Retrieved Triples =",
               sum(extracted_triple_sizes) / len(extracted_triple_sizes))
 
         # 60:20:20 split
@@ -186,6 +238,9 @@ def make_dataset(args):
         data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
         torch.save(data_lists, "tech_qa.pt")
+        del model
+        gc.collect()
+        torch.cuda.empty_cache()
         return data_lists
 
 
@@ -203,8 +258,19 @@ def train(args, data_lists):
                              drop_last=False, pin_memory=True, shuffle=False)
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
-    llm = LLM(model_name=args.llm_generator_name)
-    model = GRetriever(llm=llm, gnn=gnn)
+    if args.llm_generator_mode == "full":
+        llm = LLM(model_name=args.llm_generator_name)
+        model = GRetriever(llm=llm, gnn=gnn)
+    elif args.llm_generator_mode == "lora":
+        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
+        model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
+    else:
+        # frozen
+        llm = LLM(model_name=args.llm_generator_name,
+                  dtype=torch.float32).eval()
+        for _, p in llm.named_parameters():
+            p.requires_grad = False
+        model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name):
         print("Re-using saved G-retriever model for testing...")
@@ -225,8 +291,11 @@ def train(args, data_lists):
             loader = tqdm(train_loader, desc=epoch_str)
             for step, batch in enumerate(loader):
                 new_qs = []
-                for q in batch["question"]:
-                    new_qs.append(prompt_template.format(question=q))
+                for i, q in enumerate(batch["question"]):
+                    # insert VectorRAG context
+                    new_qs.append(
+                        prompt_template.format(question=q,
+                                               context=batch.text_context[i]))
                 batch.question = new_qs
 
                 optimizer.zero_grad()
@@ -270,6 +339,13 @@ def test(model, test_loader, args):
     scores = []
     eval_tuples = []
     for test_batch in tqdm(test_loader, desc="Testing"):
+        new_qs = []
+        for i, q in enumerate(test_batch["question"]):
+            # insert VectorRAG context
+            new_qs.append(
+                prompt_template.format(question=q,
+                                       context=test_batch.text_context[i]))
+        test_batch.question = new_qs
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):

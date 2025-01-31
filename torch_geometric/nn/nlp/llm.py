@@ -99,7 +99,10 @@ class LLM(torch.nn.Module):
             self.autocast_context = nullcontext()
         else:
             self.device = self.llm.device
-            self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+            if dtype == torch.float32:
+                self.autocast_context = nullcontext()
+            else:
+                self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
 
     def _encode_inputs(
         self,

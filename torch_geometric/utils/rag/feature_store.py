@@ -5,7 +5,6 @@ from typing import Any, Dict, Optional, Type, Union
 import torch
 from torch import Tensor
 from torch.nn import Module
-from torchmetrics.functional import pairwise_cosine_similarity
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
@@ -13,6 +12,16 @@ from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
+
+
+def batch_knn(query_enc: Tensor, embeds: Tensor,
+              k: int) -> Iterator[InputNodes]:
+    from torchmetrics.functional import pairwise_cosine_similarity
+    prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
+    topk = min(k, len(embeds))
+    for i, q in enumerate(prizes):
+        _, indices = torch.topk(q, topk, largest=True)
+        yield indices, query_enc[i].unsqueeze(0)
 
 
 # NOTE: Only compatible with Homogeneous graphs for now
@@ -59,10 +68,11 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         Returns:
         - The indices of the most similar nodes.
         """
-        result = next(self._retrieve_seed_nodes_batch([query], k_nodes))
+        result, query_enc = next(
+            self._retrieve_seed_nodes_batch([query], k_nodes))
         gc.collect()
         torch.cuda.empty_cache()
-        return result
+        return result, query_enc
 
     def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
                                    k_nodes: int) -> Iterator[InputNodes]:
@@ -80,11 +90,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
-        prizes = pairwise_cosine_similarity(query_enc, self.x.to(self.device))
-        topk = min(k_nodes, len(self.x))
-        for q in prizes:
-            _, indices = torch.topk(q, topk, largest=True)
-            yield indices
+        return batch_knn(query_enc, self.x, k_nodes)
 
     def retrieve_seed_edges(self, query: Any, k_edges: int = 3) -> InputEdges:
         """Retrieves the k_edges most similar edges to the given query.
@@ -96,10 +102,11 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         Returns:
         - The indices of the most similar edges.
         """
-        result = next(self._retrieve_seed_edges_batch([query], k_edges))
+        result, query_enc = next(
+            self._retrieve_seed_edges_batch([query], k_edges))
         gc.collect()
         torch.cuda.empty_cache()
-        return result
+        return result, query_enc
 
     def _retrieve_seed_edges_batch(self, query: Iterable[Any],
                                    k_edges: int) -> Iterator[InputEdges]:
@@ -117,13 +124,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
-
-        prizes = pairwise_cosine_similarity(query_enc,
-                                            self.edge_attr.to(self.device))
-        topk = min(k_edges, len(self.edge_attr))
-        for q in prizes:
-            _, indices = torch.topk(q, topk, largest=True)
-            yield indices
+        return batch_knn(query_enc, self.edge_attr, k_edges)
 
     def load_subgraph(
         self, sample: Union[SamplerOutput, HeteroSamplerOutput]
