@@ -93,7 +93,7 @@ class RAGQueryLoader:
             embedded_docs (Optional[Tensor], optional): Embedded context docs for VectorRAG.
                 Needs to match the `raw_docs`. Defaults to None.
             k_for_docs (Optional[int], optional): top-k docs to select for vectorRAG.
-                (Default: :obj:`5`).
+                (Default: :obj:`10`).
         """
         fstore, gstore = data
         assert len(raw_docs) == len(
