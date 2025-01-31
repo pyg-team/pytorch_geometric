@@ -261,6 +261,7 @@ def train(args, data_lists):
         llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
         model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     else:
+        # frozen
         llm = LLM(model_name=args.llm_generator_name,
                   dtype=torch.float32).eval()
         for _, p in llm.named_parameters():
