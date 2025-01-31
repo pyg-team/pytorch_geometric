@@ -280,7 +280,6 @@ def train(args, data_lists):
                 epoch_loss += float(loss)
                 if (step + 1) % 2 == 0:
                     lr = optimizer.param_groups[0]['lr']
-                track_parameter_changes(llm)
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
 
