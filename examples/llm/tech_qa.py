@@ -315,7 +315,7 @@ def test(model, test_loader, args):
             # insert VectorRAG context
             new_qs.append(
                 prompt_template.format(question=q,
-                                       context=batch.text_context[i]))
+                                       context=test_batch.text_context[i]))
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
