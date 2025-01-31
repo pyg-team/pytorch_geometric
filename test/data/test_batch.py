@@ -608,3 +608,69 @@ def test_torch_nested_batch():
         batch.x.to_padded_tensor(0.0),
         expected.to_padded_tensor(0.0),
     )
+
+
+def test_batch_filtering():
+    # Create initial HeteroData object and batch
+    data_list = []
+    for i in range(1, 5):
+        data = Data(
+            x=torch.randn(2 * i, 2),
+            edge_index=torch.stack((torch.arange(2 * i).repeat(2),
+                                    torch.arange(2 * i).repeat_interleave(2))),
+            edge_attr=torch.randn(4 * i, 3))
+        data.info = [i] * i  # Add argument of variable size
+        data_list.append(data)
+    batch = Batch.from_data_list(data_list)
+
+    # Check different filtering methods:
+    assert isinstance(batch[1:], Batch)
+    assert isinstance(batch[torch.tensor([0, 1])], Batch)
+    assert isinstance(batch[torch.tensor([True, False, True, False])], Batch)
+    assert isinstance(batch[np.array([0, 1])], Batch)
+    assert isinstance(batch[np.array([True, False, True, False])], Batch)
+    assert isinstance(batch[[1, 2]], Batch)
+
+    batch_filtered = batch[[False, True, True, False]]
+    assert isinstance(batch, Batch)
+    assert isinstance(batch_filtered, Batch)
+    assert len(batch) == 4
+    assert len(batch_filtered) == 2
+    assert batch_filtered[0].x.shape == batch[1].x.shape
+    assert batch_filtered[1].x.shape == batch[2].x.shape
+    assert len(batch_filtered.batch.unique()) == 2
+    assert len(batch_filtered.info) == 2
+    assert len(batch_filtered.info[0]) == 2
+    assert len(batch_filtered.info[1]) == 3
+    # Check if result supports round-trip conversion to and from a data list
+    assert Batch.from_data_list(batch_filtered.to_data_list())
+
+
+def test_herero_batch_filtering():
+    # Create initial HeteroData object and batch
+    data_list = []
+    for i in range(1, 5):
+        data = HeteroData()
+        data.info_1 = torch.ones(3)  # graph attribute
+        data.info_2 = torch.ones(3)  # graph attribute
+        data['paper'].x = torch.randn(2 * i, 16)
+        data['paper'].exist = torch.randn(
+            4 * i, 1)  # node attributes of different length than x
+        data['author'].x = torch.randn(3 * i, 2)
+        data['author', 'writes', 'paper'].edge_index = torch.stack(
+            (torch.arange(3 * i).repeat(2), torch.arange(2 * i).repeat(3)))
+        data['author', 'writes', 'paper'].edge_attr = torch.randn(6 * i, 3)
+        data_list.append(data)
+    batch = Batch.from_data_list(data_list)
+    batch_filtered = batch[[1, 3]]
+    assert isinstance(batch, Batch)
+    assert isinstance(batch_filtered, Batch)
+    assert len(batch) == 4
+    assert len(batch_filtered) == 2
+    assert batch_filtered[0]['paper'].x.shape == batch[1]['paper'].x.shape
+    assert batch_filtered[0]['paper'].exist.shape == batch[1][
+        'paper'].exist.shape
+    assert batch_filtered[1]['author'].x.shape == batch[3]['author'].x.shape
+
+    # Check if result supports round-trip conversion to and from a data list
+    assert Batch.from_data_list(batch_filtered.to_data_list())
