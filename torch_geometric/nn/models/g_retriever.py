@@ -145,14 +145,14 @@ class GRetriever(torch.nn.Module):
             attention_mask,
             label_input_ids,
         ) = self.llm._get_embeds(question, additional_text_context, xs, label)
-        with torch.no_grad() if self.llm.freeze else nullcontext():
-            with self.llm.autocast_context:
-                outputs = self.llm_generator(
-                    inputs_embeds=inputs_embeds,
-                    attention_mask=attention_mask,
-                    return_dict=True,
-                    labels=label_input_ids,
-                )
+        
+        with self.llm.autocast_context:
+            outputs = self.llm_generator(
+                inputs_embeds=inputs_embeds,
+                attention_mask=attention_mask,
+                return_dict=True,
+                labels=label_input_ids,
+            )
 
         return outputs.loss
 
@@ -206,20 +206,20 @@ class GRetriever(torch.nn.Module):
             BOS,
             add_special_tokens=False,
         ).input_ids[0]
-        with torch.no_grad() if self.llm.freeze else nullcontext():
-            with self.llm.autocast_context:
-                outputs = self.llm_generator.generate(
-                    inputs_embeds=inputs_embeds,
-                    max_new_tokens=max_out_tokens,
-                    attention_mask=attention_mask,
-                    bos_token_id=bos_token,
-                    use_cache=True  # Important to set!
-                )
 
-            return self.llm.tokenizer.batch_decode(
-                outputs,
-                skip_special_tokens=True,
+        with self.llm.autocast_context:
+            outputs = self.llm_generator.generate(
+                inputs_embeds=inputs_embeds,
+                max_new_tokens=max_out_tokens,
+                attention_mask=attention_mask,
+                bos_token_id=bos_token,
+                use_cache=True  # Important to set!
             )
+
+        return self.llm.tokenizer.batch_decode(
+            outputs,
+            skip_special_tokens=True,
+        )
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(\n'

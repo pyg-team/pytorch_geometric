@@ -236,7 +236,8 @@ def train(args, data_lists):
                              drop_last=False, pin_memory=True, shuffle=False)
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
-    llm = LLM(model_name=args.llm_generator_name, freeze=True).eval()
+    # freeze LM
+    llm = LLM(model_name=args.llm_generator_name).eval()
     model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name):
