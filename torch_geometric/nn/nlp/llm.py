@@ -318,15 +318,16 @@ class LLM(torch.nn.Module):
             add_special_tokens=False,
         ).input_ids[0]
 
-        with self.autocast_context:
-            outputs = self.llm.generate(
-                inputs_embeds=inputs_embeds,
-                bos_token_id=bos_token,
-                max_new_tokens=max_tokens,
-                attention_mask=attention_mask,
-                pad_token_id=self.tokenizer.eos_token_id,
-                use_cache=True,
-            )
+        with torch.no_grad() if self.freeze else nullcontext():
+            with self.autocast_context:
+                outputs = self.llm.generate(
+                    inputs_embeds=inputs_embeds,
+                    bos_token_id=bos_token,
+                    max_new_tokens=max_tokens,
+                    attention_mask=attention_mask,
+                    pad_token_id=self.tokenizer.eos_token_id,
+                    use_cache=True,
+                )
 
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
