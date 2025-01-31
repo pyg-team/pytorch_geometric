@@ -238,7 +238,7 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     # freeze LM
     llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32).eval()
-    for _, p in model.named_parameters():
+    for _, p in llm.named_parameters():
         p.requires_grad = False
     model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
