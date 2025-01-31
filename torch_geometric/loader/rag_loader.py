@@ -65,8 +65,7 @@ class RAGQueryLoader:
                  loader_kwargs: Optional[Dict[str, Any]] = None,
                  local_filter_kwargs: Optional[Dict[str, Any]] = None,
                  raw_docs: Optional[List[str]] = None,
-                 embedded_docs: Optional[Tensor] = None,
-                 k: Optional[int] = 5):
+                 embedded_docs: Optional[Tensor] = None, k: Optional[int] = 5):
         """Loader meant for making queries from a remote backend.
 
         Args:
