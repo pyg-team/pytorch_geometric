@@ -298,7 +298,7 @@ def train(args, data_lists):
     # freeze LM
     llm = LLM(model_name=args.llm_generator_name).eval()
     track_parameter_changes(llm)
-    llm_params = [p for _, p in model.named_parameters() if p.requires_grad]
+    llm_params = [p for _, p in llm.named_parameters() if p.requires_grad]
     for p in llm_params:
         p.requires_grad = False
     model = GRetriever(llm=llm, gnn=gnn)
