@@ -179,7 +179,6 @@ class Batch(metaclass=DynamicInheritance):
         object (e.g., :obj:`[2:5]`), or a :obj:`torch.Tensor`/:obj:`np.ndarray`
         of type long or bool, or any sequence of integers (excluding strings).
         """
-
         mask = torch.zeros(len(self), dtype=torch.bool)
         try:
             mask[idx] = True
