@@ -76,10 +76,10 @@ def parse_args():
     parser.add_argument('--llm_generator_name', type=str,
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
-    parser.add_argument('--llm_generator_mode', type=str,
-                        default=LLM_GEN_MODE_DEFAULT,
-                        choices=["frozen", "lora", "full"],
-                        help="Wether to freeze the Generator LLM,\
+    parser.add_argument(
+        '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
+        choices=["frozen", "lora",
+                 "full"], help="Wether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
     return parser.parse_args()
 
