@@ -145,7 +145,7 @@ class GRetriever(torch.nn.Module):
             attention_mask,
             label_input_ids,
         ) = self.llm._get_embeds(question, additional_text_context, xs, label)
-        with torch.no_grad() if self.llm.freeze else nullcontext():
+        if True:
             with self.llm.autocast_context:
                 outputs = self.llm_generator(
                     inputs_embeds=inputs_embeds,
@@ -206,7 +206,8 @@ class GRetriever(torch.nn.Module):
             BOS,
             add_special_tokens=False,
         ).input_ids[0]
-        with torch.no_grad() if self.llm.freeze else nullcontext():
+        #with torch.no_grad() if self.llm.freeze else nullcontext():
+        if True:
             with self.llm.autocast_context:
                 outputs = self.llm_generator.generate(
                     inputs_embeds=inputs_embeds,
