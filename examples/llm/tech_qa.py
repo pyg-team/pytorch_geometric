@@ -50,7 +50,7 @@ LLM_GEN_MODE_DEFAULT = "frozen"
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_MODEL', type=str,
-                        default=NV_NIM_MOD_DEFAULT,
+                        default=NV_NIM_MODEL_DEFAULT,
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, default="",
                         help="NVIDIA API key")
