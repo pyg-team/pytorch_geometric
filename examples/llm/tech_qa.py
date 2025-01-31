@@ -79,27 +79,27 @@ def parse_args():
 
 
 # theirs
-# prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
-#     [QUESTION]
-#     {question}
-#     [END_QUESTION]
+prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
+    [QUESTION]
+    {question}
+    [END_QUESTION]
 
-#     [RETRIEVED_CONTEXTS]
-#     {context}
-#     [END_RETRIEVED_CONTEXTS]
+    [RETRIEVED_CONTEXTS]
+    {context}
+    [END_RETRIEVED_CONTEXTS]
 
-#     Answer: """
+    Answer: """
 # my prompt
-prompt_template = """
-[CONTEXT]
-{context}
-[END_CONTEXT]
-Answer this question based on the context provided. Just give the answer without explanation.
-[QUESTION]
-{question}
-[END_QUESTION]
+# prompt_template = """
+# [CONTEXT]
+# {context}
+# [END_CONTEXT]
+# Answer this question based on the context provided. Just give the answer without explanation.
+# [QUESTION]
+# {question}
+# [END_QUESTION]
 
-Answer: """
+# Answer: """
 
 
 def get_data():
@@ -248,11 +248,8 @@ def train(args, data_lists):
                              drop_last=False, pin_memory=True, shuffle=False)
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
-    # freeze LM
-    llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32).eval()
-    for _, p in llm.named_parameters():
-        p.requires_grad = False
-    model = GRetriever(llm=llm, gnn=gnn)
+    llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
+    model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name):
         print("Re-using saved G-retriever model for testing...")
