@@ -116,6 +116,7 @@ def make_dataset(args):
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
+            doc_to_trips = {}
             for data_point in tqdm(rawset, desc="Extracting KG triples"):
                 if data_point["is_impossible"]:
                     continue
@@ -129,8 +130,8 @@ def make_dataset(args):
                     context_docs.append(chunk)
 
                 # store for GraphRAG
-                QA_pair = (q, a)
-                kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
+                    QA_pair = (q, a)
+                    kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
             relevant_triples = kg_maker.relevant_triples
             triples.extend(
                 list(
@@ -149,6 +150,7 @@ def make_dataset(args):
                 for i in data_point["contexts"]:
                     chunk = i["text"]
                     context_docs.append(chunk)
+                    doc_to_trips[chunk] = kg_maker.relevant_triples[data_point["question"]]
         print("Number of Docs in our VectorDB =", len(context_docs))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         sent_trans_batch_size = 256
@@ -191,7 +193,9 @@ def make_dataset(args):
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
-            embedded_docs=embedded_docs)
+            embedded_docs=embedded_docs,
+            docs_to_trips=doc_to_trips,
+            full_trips=triples)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):
@@ -201,6 +205,7 @@ def make_dataset(args):
             q = QA_pair[0]
             subgraph = query_loader.query(q)
             subgraph.label = QA_pair[1]
+            subgraph.triples += doc_to_trips[subgraph.text_contexts[0]] + doc_to_trips[subgraph.text_context[1]]
             total_data_list.append(subgraph)
             extracted_triple_sizes.append(len(subgraph.triples))
         random.shuffle(total_data_list)

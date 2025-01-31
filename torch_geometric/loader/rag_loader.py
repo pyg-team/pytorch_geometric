@@ -66,7 +66,9 @@ class RAGQueryLoader:
                  local_filter_kwargs: Optional[Dict[str, Any]] = None,
                  raw_docs: Optional[List[str]] = None,
                  embedded_docs: Optional[Tensor] = None,
-                 k_for_docs: Optional[int] = 10):
+                 k_for_docs: Optional[int] = 10,
+                 docs_to_trips: Optional[Dict[str, List[Tuple[str, str, str]]]] = None,
+                 full_trips = None):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -111,6 +113,8 @@ class RAGQueryLoader:
         self.sampler_kwargs = sampler_kwargs or {}
         self.loader_kwargs = loader_kwargs or {}
         self.local_filter_kwargs = local_filter_kwargs or {}
+        self.docs_to_trips = docs_to_trips
+        self.full_trips = full_trips
 
     def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
@@ -126,7 +130,17 @@ class RAGQueryLoader:
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample,
                                                 **self.loader_kwargs)
-
+        if self.raw_docs:
+            selected_doc_idxs, _ = next(
+                batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
+            retrieved_chunks = [self.raw_docs[i] for i in selected_doc_idxs]
+            data.text_context = "\n".join(
+                retrieved_chunks)
+            if self.docs_to_trips:
+                extra_triples = self.docs_to_trips[retrieved_chunks[0]] + elf.docs_to_trips[retrieved_chunks[1]]
+                data.triples = extra_triples
+                edge_idxs = [self.full_trips.index(extra_trip) for extra_trip in extra_triples]
+                data.edge_idx = torch.cat(data.edge_idx, torch.tensor(edge_idxs))
         # need to use sampled edge_idx to index into original graph then reindex
         total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
         data.node_idx = torch.tensor(
@@ -152,10 +166,6 @@ class RAGQueryLoader:
         # apply local filter
         if self.local_filter:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
-        if self.raw_docs:
-            selected_doc_idxs, _ = next(
-                batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
-            data.text_context = "\n".join(
-                [self.raw_docs[i] for i in selected_doc_idxs])
+
 
         return data
