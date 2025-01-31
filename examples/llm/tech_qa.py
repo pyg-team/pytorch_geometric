@@ -78,16 +78,16 @@ def parse_args():
     return parser.parse_args()
 
 
-prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
-    [QUESTION]
-    {question}
-    [END_QUESTION]
+prompt_template = """
+[CONTEXT]
+{context}
+[END_CONTEXT]
+Answer this question based on the context provided. Just give the answer without explanation.
+[QUESTION]
+{question}
+[END_QUESTION]
 
-    [RETRIEVED_CONTEXTS]
-    {contexts}
-    [END_RETRIEVED_CONTEXTS]
-
-    Answer: """
+Answer: """
 
 
 def get_data():
@@ -223,7 +223,7 @@ def make_dataset(args):
 
 
 def train(args, data_lists):
-    args.batch_size
+    batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
     hidden_channels = args.gnn_hidden_channels
     num_gnn_layers = args.num_gnn_layers
@@ -238,10 +238,7 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     # freeze LM
     llm = LLM(model_name=args.llm_generator_name).eval()
-    return llm, DataLoader(
-        data_lists["train"] + data_lists["validation"] + data_lists["test"],
-        batch_size=eval_batch_size, drop_last=False, pin_memory=True,
-        shuffle=False)
+    return llm, DataLoader(data_lists["train"] + data_lists["validation"] + data_lists["test"], batch_size=eval_batch_size, drop_last=False, pin_memory=True, shuffle=False)
     model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name):
@@ -317,7 +314,7 @@ def test(model, test_loader, args):
             new_qs.append(
                 prompt_template.format(question=q,
                                        context=test_batch.text_context[i]))
-        batch.question = new_qs
+        test_batch.question = new_qs
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
