@@ -148,8 +148,8 @@ def make_dataset(args):
             for i, data_point in enumerate(rawset):
                 if data_point["is_impossible"]:
                     continue
-                for i in data_point["contexts"]:
-                    chunk = i["text"]
+                for z in data_point["contexts"]:
+                    chunk = z["text"]
                     context_docs.append(chunk)
                     doc_to_trips[chunk] = [triples[j] for j in range(i*num_trips_per_chunk_approx, (i+1)*num_trips_per_chunk_approx)]
         print("Number of Docs in our VectorDB =", len(context_docs))
