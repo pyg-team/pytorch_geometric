@@ -144,14 +144,14 @@ def make_dataset(args):
         print("Number of triples in our GraphDB =", len(triples))
         if not os.path.exists("tech_qa_just_docs.pt"):
             # store docs for VectorRAG in case KG was made seperately
-            num_trips_per_chunk_approx = len(triples)/610
+            num_trips_per_chunk_approx = int(len(triples)/610)
             for i, data_point in enumerate(rawset):
                 if data_point["is_impossible"]:
                     continue
                 for z in data_point["contexts"]:
                     chunk = z["text"]
                     context_docs.append(chunk)
-                    doc_to_trips[chunk] = [triples[j] for j in range(i*num_trips_per_chunk_approx, max((i+1)*num_trips_per_chunk_approx), len(triples))]
+                    doc_to_trips[chunk] = [triples[j] for j in range(i*num_trips_per_chunk_approx, max((i+1)*num_trips_per_chunk_approx, len(triples)))]
         print("Number of Docs in our VectorDB =", len(context_docs))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         sent_trans_batch_size = 256
