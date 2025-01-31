@@ -254,14 +254,20 @@ def train(args, data_lists):
                              drop_last=False, pin_memory=True, shuffle=False)
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
+<<<<<<< HEAD
     if args. llm_generator_mode == "full":
         llm = LLM(model_name=args.llm_generator_name)
+=======
+    if args.llm_generator_mode == "full":
+        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
+>>>>>>> fe9a7002184a2f0395475130fac8602c03cc36c5
         model = GRetriever(llm=llm, gnn=gnn)
-    elif args. llm_generator_mode == "lora":
+    elif args.llm_generator_mode == "lora":
         llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
         model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     else:
-        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32).eval()
+        llm = LLM(model_name=args.llm_generator_name,
+                  dtype=torch.float32).eval()
         for _, p in llm.named_parameters():
             p.requires_grad = False
         model = GRetriever(llm=llm, gnn=gnn)
