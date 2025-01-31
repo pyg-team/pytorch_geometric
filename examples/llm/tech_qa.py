@@ -116,7 +116,6 @@ def make_dataset(args):
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
-            doc_to_trips = {}
             for data_point in tqdm(rawset, desc="Extracting KG triples"):
                 if data_point["is_impossible"]:
                     continue
@@ -142,6 +141,7 @@ def make_dataset(args):
             torch.save(context_docs, "tech_qa_just_docs.pt")
             torch.save(triples, "tech_qa_just_triples.pt")
         print("Number of triples in our GraphDB =", len(triples))
+        doc_to_trips = {}
         if not os.path.exists("tech_qa_just_docs.pt"):
             # store docs for VectorRAG in case KG was made seperately
             num_trips_per_chunk_approx = int(len(triples)/610)
