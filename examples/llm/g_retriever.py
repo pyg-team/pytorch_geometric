@@ -154,7 +154,7 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
             batch.batch,  # batch indices
             batch.label,  # answers (labels)
             batch.edge_attr,  # edge attributes
-            # batch.desc  # description
+            batch.desc  # description
         )
 
 

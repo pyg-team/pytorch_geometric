@@ -78,6 +78,7 @@ def parse_args():
     return parser.parse_args()
 
 
+# theirs
 # prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
 #     [QUESTION]
 #     {question}
@@ -88,6 +89,7 @@ def parse_args():
 #     [END_RETRIEVED_CONTEXTS]
 
 #     Answer: """
+# my prompt
 prompt_template = """
 [CONTEXT]
 {context}
