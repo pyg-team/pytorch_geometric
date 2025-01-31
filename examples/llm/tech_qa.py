@@ -223,7 +223,7 @@ def make_dataset(args):
 
 
 def train(args, data_lists):
-    batch_size = args.batch_size
+    args.batch_size
     eval_batch_size = args.eval_batch_size
     hidden_channels = args.gnn_hidden_channels
     num_gnn_layers = args.num_gnn_layers
@@ -238,7 +238,10 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     # freeze LM
     llm = LLM(model_name=args.llm_generator_name).eval()
-    return llm, DataLoader(data_lists["train"] + data_lists["validation"] + data_lists["test"], batch_size=eval_batch_size, drop_last=False, pin_memory=True, shuffle=False)
+    return llm, DataLoader(
+        data_lists["train"] + data_lists["validation"] + data_lists["test"],
+        batch_size=eval_batch_size, drop_last=False, pin_memory=True,
+        shuffle=False)
     model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name):
