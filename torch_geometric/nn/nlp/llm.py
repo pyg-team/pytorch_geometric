@@ -284,7 +284,7 @@ class LLM(torch.nn.Module):
                 attention_mask=attention_mask,
                 return_dict=True,
                 labels=label_input_ids,
-                )
+            )
         return outputs.loss
 
     @torch.no_grad()
