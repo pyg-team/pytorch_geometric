@@ -145,7 +145,7 @@ class GRetriever(torch.nn.Module):
             attention_mask,
             label_input_ids,
         ) = self.llm._get_embeds(question, additional_text_context, xs, label)
-        
+
         with self.llm.autocast_context:
             outputs = self.llm_generator(
                 inputs_embeds=inputs_embeds,
