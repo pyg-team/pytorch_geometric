@@ -307,6 +307,12 @@ def test(model, test_loader, args):
     scores = []
     eval_tuples = []
     for test_batch in tqdm(test_loader, desc="Testing"):
+        new_qs = []
+        for i, q in enumerate(test_batch["question"]):
+            # insert VectorRAG context
+            new_qs.append(
+                prompt_template.format(question=q,
+                                        context=test_batch.text_context[i]))
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
