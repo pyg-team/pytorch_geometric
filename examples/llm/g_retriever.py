@@ -158,7 +158,7 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         )
 
 
-def inference_step(model, batch, model_save_name="gnn+llm"):
+def inference_step(model, batch, model_save_name="llm"):
     """Performs inference on a given batch of data using the provided model.
 
     Args:
