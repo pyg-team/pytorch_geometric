@@ -50,7 +50,7 @@ LLM_GEN_MODE_DEFAULT = "frozen"
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_MODEL', type=str,
-                        default=NV_NIM_MODEL_DEFAULT,
+                        default=NV_NIM_MOD_DEFAULT,
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, default="",
                         help="NVIDIA API key")
@@ -254,8 +254,17 @@ def train(args, data_lists):
                              drop_last=False, pin_memory=True, shuffle=False)
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
-    llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
-    model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
+    if args. llm_generator_mode == "full":
+        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
+        model = GRetriever(llm=llm, gnn=gnne)
+    elif args. llm_generator_mode == "lora":
+        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
+        model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
+    else:
+        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32).eval()
+        for _, p in llm.named_parameters():
+            p.requires_grad = False
+        model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name):
         print("Re-using saved G-retriever model for testing...")
