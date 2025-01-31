@@ -237,8 +237,7 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     # freeze LM
     llm = LLM(model_name=args.llm_generator_name).eval()
-    llm_params = [p for _, p in llm.named_parameters() if p.requires_grad]
-    for p in llm_params:
+    for _, p in llm.named_parameters():
         p.requires_grad = False
     model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
