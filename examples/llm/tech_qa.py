@@ -223,7 +223,7 @@ def make_dataset(args):
 
 
 def train(args, data_lists):
-    args.batch_size
+    batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
     hidden_channels = args.gnn_hidden_channels
     num_gnn_layers = args.num_gnn_layers
