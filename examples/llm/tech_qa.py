@@ -256,7 +256,7 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     if args. llm_generator_mode == "full":
         llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
-        model = GRetriever(llm=llm, gnn=gnne)
+        model = GRetriever(llm=llm, gnn=gnn)
     elif args. llm_generator_mode == "lora":
         llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
         model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
