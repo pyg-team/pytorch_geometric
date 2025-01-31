@@ -44,7 +44,7 @@ LR_DEFAULT = 1e-5
 EPOCHS_DEFAULT = 2
 BATCH_SIZE_DEFAULT = 1
 EVAL_BATCH_SIZE_DEFAULT = 2
-
+LLM_GEN_MODE_DEFAULT = "frozen"
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -75,6 +75,11 @@ def parse_args():
     parser.add_argument('--llm_generator_name', type=str,
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
+    parser.add_argument('--llm_generator_mode', type=str,
+                        default=LLM_GENERATOR_NAME_DEFAULT,
+                        choices=["frozen", "lora", "full"],
+                        help="Wether to freeze the Generator LLM,\
+                        use LORA, or fully finetune")
     return parser.parse_args()
 
 
