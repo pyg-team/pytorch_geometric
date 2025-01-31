@@ -180,7 +180,6 @@ def make_dataset(args):
             "cost_e": .5,  # edge cost
             "num_clusters": 10,  # num clusters
         }
-        k = 10  # for VectorRAG
         print("Now to retrieve context for each query from\
             our Vector and Graph DBs...")
         # GraphDB retrieval done with KNN+NeighborSampling+PCST
