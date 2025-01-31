@@ -5,7 +5,6 @@ from typing import Any, Dict, Optional, Type, Union
 import torch
 from torch import Tensor
 from torch.nn import Module
-from torchmetrics.functional import pairwise_cosine_similarity
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
@@ -17,6 +16,7 @@ from torch_geometric.typing import InputEdges, InputNodes
 
 def batch_knn(query_enc: Tensor, embeds: Tensor,
               k: int) -> Iterator[InputNodes]:
+    from torchmetrics.functional import pairwise_cosine_similarity
     prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
     topk = min(k, len(embeds))
     for i, q in enumerate(prizes):
