@@ -221,66 +221,6 @@ def make_dataset(args):
         torch.cuda.empty_cache()
         return data_lists
 
-
-from typing import Dict
-
-import torch
-
-# Global dictionary to store parameter values
-_parameter_state: Dict[str, torch.Tensor] = {}
-
-
-def track_parameter_changes(model: torch.nn.Module,
-                            verbose: bool = True) -> Dict[str, float]:
-    """Track changes in model parameters by comparing current values with stored values.
-
-    Args:
-        model: PyTorch model to track
-        verbose: If True, print messages about parameter changes
-
-    Returns:
-        Dictionary of parameter names and their max absolute changes
-    """
-    global _parameter_state
-    changes = {}
-
-    # Initialize parameter state if first call
-    if not _parameter_state:
-        for name, param in model.named_parameters():
-            _parameter_state[name] = param.detach().clone()
-        if verbose:
-            print("Initial parameter state stored.")
-        return changes
-
-    # Check for changes in parameters
-    for name, param in model.named_parameters():
-        if name not in _parameter_state:
-            if verbose:
-                print(f"New parameter detected: {name}")
-            _parameter_state[name] = param.detach().clone()
-            continue
-
-        # Compare current values with stored values
-        param_tensor = param.detach()
-        diff = torch.abs(param_tensor - _parameter_state[name])
-        max_diff = diff.max().item()
-
-        if max_diff > 0:
-            changes[name] = max_diff
-            if verbose:
-                print(
-                    f"Parameter '{name}' changed. Max absolute difference: {max_diff:.6f}"
-                )
-
-        # Update stored values
-        _parameter_state[name] = param_tensor.clone()
-
-    if not changes and verbose:
-        print("No parameter changes detected.")
-
-    return changes
-
-
 def train(args, data_lists):
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
@@ -297,7 +237,6 @@ def train(args, data_lists):
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     # freeze LM
     llm = LLM(model_name=args.llm_generator_name).eval()
-    track_parameter_changes(llm)
     llm_params = [p for _, p in llm.named_parameters() if p.requires_grad]
     for p in llm_params:
         p.requires_grad = False
