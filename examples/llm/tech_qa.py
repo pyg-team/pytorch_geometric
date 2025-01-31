@@ -310,7 +310,7 @@ def test(model, test_loader, args):
     scores = []
     eval_tuples = []
     for test_batch in tqdm(test_loader, desc="Testing"):
-        for i, q in enumerate(batch["question"]):
+        for i, q in enumerate(test_batch["question"]):
             # insert VectorRAG context
             new_qs.append(
                 prompt_template.format(question=q,
