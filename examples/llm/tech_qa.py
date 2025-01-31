@@ -46,6 +46,7 @@ BATCH_SIZE_DEFAULT = 1
 EVAL_BATCH_SIZE_DEFAULT = 2
 LLM_GEN_MODE_DEFAULT = "frozen"
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_MODEL', type=str,
