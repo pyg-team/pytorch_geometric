@@ -152,6 +152,7 @@ def make_dataset(args):
                     chunk = z["text"]
                     context_docs.append(chunk)
                     doc_to_trips[chunk] = [triples[j] for j in range(i*num_trips_per_chunk_approx, min((i+1)*num_trips_per_chunk_approx, len(triples)))]
+        print("docs_to_tips[0]", doc_to_trips[doc_to_trips.keys()[0]])
         print("Number of Docs in our VectorDB =", len(context_docs))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         sent_trans_batch_size = 256
