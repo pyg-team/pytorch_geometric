@@ -87,6 +87,7 @@ class LargeGraphIndexer:
         Args:
             nodes (Iterable[str]): Node ids in the graph.
             edges (KnowledgeGraphLike): Edge ids in the graph.
+                Example: [("cats", "eat", "dogs")]
             node_attr (Optional[Dict[str, List[Any]]], optional): Mapping node
                 attribute name and list of their values in order of unique node
                 ids. Defaults to None.
@@ -147,7 +148,6 @@ class LargeGraphIndexer:
                 self.edge_attr[EDGE_TAIL].append(t)
                 self.edge_attr[EDGE_INDEX].append(
                     (self._nodes[h], self._nodes[t]))
-
         for i, tup in enumerate(edges):
             self._edges[tup] = i
 
@@ -163,7 +163,8 @@ class LargeGraphIndexer:
 
         Args:
             triplets (KnowledgeGraphLike): Series of triplets representing
-                knowledge graph relations.
+                knowledge graph relations. Example: [("cats", "eat", dogs")].
+                Note: Please ensure triplets are unique.
             pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
                 Optional preprocessing function to apply to triplets.
                 Defaults to None.
@@ -172,8 +173,8 @@ class LargeGraphIndexer:
             LargeGraphIndexer: Index of unique nodes and edges.
         """
         # NOTE: Right now assumes that all trips can be loaded into memory
-        nodes = set()
-        edges = set()
+        nodes = []
+        edges = []
 
         if pre_transform is not None:
 
@@ -182,16 +183,17 @@ class LargeGraphIndexer:
                 for trip in trips:
                     yield pre_transform(trip)
 
-            triplets = apply_transform(triplets)
+            triplets = list(apply_transform(triplets))
 
         for h, r, t in triplets:
 
             for node in (h, t):
-                nodes.add(node)
+                nodes.append(node)
 
             edge_idx = (h, r, t)
-            edges.add(edge_idx)
-
+            edges.append(edge_idx)
+        nodes = ordered_set(nodes)
+        edges = ordered_set(edges)
         return cls(list(nodes), list(edges))
 
     @classmethod
@@ -290,14 +292,14 @@ class LargeGraphIndexer:
             values = self.node_attr[feature_name].values
         else:
             values = self.node_attr[feature_name]
-
         # TODO: torch_geometric.utils.select
         if isinstance(values, torch.Tensor):
             idxs = list(
                 self.get_node_features_iter(feature_name, pids,
                                             index_only=True))
             return values[idxs]
-        return list(self.get_node_features_iter(feature_name, pids))
+        return_value = list(self.get_node_features_iter(feature_name, pids))
+        return return_value
 
     def get_node_features_iter(
         self,
@@ -531,7 +533,6 @@ class LargeGraphIndexer:
         """
         x = torch.Tensor(self.get_node_features(node_feature_name))
         node_id = torch.LongTensor(range(len(x)))
-
         edge_index = torch.t(
             torch.LongTensor(self.get_edge_features(EDGE_INDEX)))
 
