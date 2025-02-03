@@ -59,7 +59,7 @@ def get_mesh_laplacian(
     # 1. Compute edge vectors of edges opposite to each vertex
     e_21 = pos[face[2]] - pos[face[1]]
     e_02 = pos[face[0]] - pos[face[2]]
-    e_10 = - (e_21 + e_02) # this is equal to pos[face[1]] - pos[face[0]]
+    e_10 = -(e_21 + e_02)  # this is equal to pos[face[1]] - pos[face[0]]
 
     # 2. Compute areas of all triangles
     area_times_four =  2 * torch.norm(torch.cross(e_02, e_10, dim=1), dim=1)
@@ -81,22 +81,10 @@ def get_mesh_laplacian(
 
     if normalization is not None:
 
-        def get_areas(left: Tensor, centre: Tensor, right: Tensor) -> Tensor:
-            central_pos = pos[centre]
-            left_vec = pos[left] - central_pos
-            right_vec = pos[right] - central_pos
-            cross = torch.norm(torch.cross(left_vec, right_vec, dim=1), dim=1)
-            area = cross / 6.0  # one-third of a triangle's area is cross / 6.0
-            return area / 2.0  # since each corresponding area is counted twice
-
         # Like before, but here we only need the diagonal (the mass matrix):
-        area_021 = get_areas(face[0], face[2], face[1])
-        area_102 = get_areas(face[1], face[0], face[2])
-        area_012 = get_areas(face[0], face[1], face[2])
-        area_weight = torch.cat([area_021, area_102, area_012])
-        area_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
-        area_index, area_weight = to_undirected(area_index, area_weight)
-        area_deg = scatter(area_weight, area_index[0], 0, num_nodes, 'sum')
+        # Attribute a third of the area from a face to each contained vertex and accumulate
+        area_weight = (area_times_four / 12).repeat(3)
+        area_deg = scatter(area_weight, face.flatten(), 0, num_nodes, 'sum')
 
         if normalization == 'sym':
             area_deg_inv_sqrt = area_deg.pow_(-0.5)
