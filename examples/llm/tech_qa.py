@@ -245,6 +245,8 @@ def train(args, data_lists):
     if args.llm_generator_mode == "full":
         llm = LLM(model_name=args.llm_generator_name)
         model = llm
+    return model, DataLoader(data_lists["test"], batch_size=eval_batch_size,
+                             drop_last=False, pin_memory=True, shuffle=False)
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name):
         print("Re-using saved G-retriever model for testing...")
