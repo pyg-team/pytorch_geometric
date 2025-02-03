@@ -55,20 +55,20 @@ def get_mesh_laplacian(
 
     num_nodes = pos.shape[0]
 
-    def get_cots(left: Tensor, centre: Tensor, right: Tensor) -> Tensor:
-        left_pos, central_pos, right_pos = pos[left], pos[centre], pos[right]
-        left_vec = left_pos - central_pos
-        right_vec = right_pos - central_pos
-        dot = torch.einsum('ij, ij -> i', left_vec, right_vec)
-        cross = torch.norm(torch.cross(left_vec, right_vec, dim=1), dim=1)
-        cot = dot / cross  # cot = cos / sin
-        return cot / 2.0  # by definition
-
     # For each triangle face, get all three cotangents:
-    cot_021 = get_cots(face[0], face[2], face[1])
-    cot_102 = get_cots(face[1], face[0], face[2])
-    cot_012 = get_cots(face[0], face[1], face[2])
-    cot_weight = torch.cat([cot_021, cot_102, cot_012])
+    # 1. Compute edge vectors of edges opposite to each vertex
+    e_21 = pos[face[2]] - pos[face[1]]
+    e_02 = pos[face[0]] - pos[face[2]]
+    e_10 = - (e_21 + e_02) # this is equal to pos[face[1]] - pos[face[0]]
+
+    # 2. Compute areas of all triangles
+    area_times_four =  2 * torch.norm(torch.cross(e_02, e_10, dim=1), dim=1)
+
+    # 3. Compute cotangent weights cot(e_ik, e_kj) = -dot(e_ik, e_kj) / (4 * area)
+    cot_0 = -torch.sum(e_10 * e_02, dim=1) / area_times_four
+    cot_1 = -torch.sum(e_21 * e_10, dim=1) / area_times_four
+    cot_2 = -torch.sum(e_02 * e_21, dim=1) / area_times_four
+    cot_weight = torch.cat([cot_2, cot_0, cot_1])
 
     # Face to edge:
     cot_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
