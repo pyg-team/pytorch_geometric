@@ -165,7 +165,7 @@ class RAGQueryLoader:
             selected_doc_idxs, _, all_idxs = next(
                 batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
             if self.use_nvidia_rerank:
-                topN_ids = all_idxs[:self.top_n_for_reranking]
+                topN_ids = all_idxs[:self.top_n_for_rerank]
                 for retry in range(10):
                     try:
                         reranked = rerank(query, [self.raw_docs[j] for j in topN_ids])
