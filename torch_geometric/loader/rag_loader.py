@@ -163,9 +163,9 @@ class RAGQueryLoader:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
         if self.raw_docs:
             selected_doc_idxs, _, all_idxs = next(
-                batch_knn(query_enc, self.embedded_docs, self.k_for_docs, rerank=self.use_nvidia_rerank))
-            if reranking:
-                topN_ids = all_idxs[:top_n_for_reranking]
+                batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
+            if self.use_nvidia_rerank:
+                topN_ids = all_idxs[:self.top_n_for_reranking]
                 for retry in range(10):
                     try:
                         reranked = rerank(query, [self.raw_docs[j] for j in topN_ids])
@@ -173,7 +173,7 @@ class RAGQueryLoader:
                         pass
                     break
                 reranked_ids = topN_ids[reranked]
-                selected_doc_idxs = reranked_ids[:k]
+                selected_doc_idxs = reranked_ids[:self.k_for_docs]
             data.text_context = "\n".join(
                 [self.raw_docs[i] for i in selected_doc_idxs])
 
