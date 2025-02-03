@@ -167,10 +167,10 @@ class RAGQueryLoader:
             if self.use_nvidia_rerank:
                 topN_ids = all_idxs[:self.top_n_for_rerank]
                 for retry in range(10):
-                    try:
-                        reranked = rerank(query, [self.raw_docs[j] for j in topN_ids])
-                    except:
-                        pass
+                    # try:
+                    reranked = _rerank(query, [self.raw_docs[j] for j in topN_ids])
+                    # except:
+                    #     pass
                     break
                 reranked_ids = topN_ids[reranked]
                 selected_doc_idxs = reranked_ids[:self.k_for_docs]
@@ -179,7 +179,7 @@ class RAGQueryLoader:
 
         return data
 
-def rerank(query, passages):
+def _rerank(query, passages):
     invoke_url = "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking"
     reranker_model_name="nvidia/llama-3.2-nv-rerankqa-1b-v2"
     headers = {
