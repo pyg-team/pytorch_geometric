@@ -145,7 +145,7 @@ def get_loss(model, batch, model_save_name="llm") -> Tensor:
     # Check the type of model being used to determine the input arguments
     if model_save_name == 'llm':
         # For LLM models
-        return model(batch.question, batch.label, batch.desc)
+        return model(batch.question, batch.label,)#batch.desc)
     else:  # (GNN+LLM)
         return model(
             batch.question,
@@ -172,7 +172,7 @@ def inference_step(model, batch, model_save_name="llm"):
     # Check the type of model being used to determine the input arguments
     if model_save_name == 'llm':
         # Perform inference on the question and textual graph description
-        return model.inference(batch.question, batch.desc)
+        return model.inference(batch.question)# batch.desc)
     else:  # (GNN+LLM)
         return model.inference(
             batch.question,

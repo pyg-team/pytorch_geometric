@@ -84,15 +84,10 @@ def parse_args():
     return parser.parse_args()
 
 
-prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
+prompt_template = """Answer this question. Just give the answer without explanation.
     [QUESTION]
     {question}
     [END_QUESTION]
-
-    [RETRIEVED_CONTEXTS]
-    {context}
-    [END_RETRIEVED_CONTEXTS]
-
     Answer: """
 
 
