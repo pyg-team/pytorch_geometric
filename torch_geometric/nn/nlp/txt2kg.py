@@ -164,10 +164,10 @@ class TXT2KG():
                                           _chunk_to_triples_str_cloud,
                                           self.NVIDIA_API_KEY, self.NIM_MODEL),
                                     nprocs=num_procs)
+                                break
                             except:  # noqa
                                 # keep retrying, txt2kg is costly -> stoppage is costly
                                 pass
-                            break
 
                         # Collect the results from each process
                         self.relevant_triples[key] = []
@@ -175,9 +175,9 @@ class TXT2KG():
                             self.relevant_triples[key] += torch.load(
                                 "/tmp/outs_for_proc_" + str(rank))
                             os.remove("/tmp/outs_for_proc_" + str(rank))
+                        break
                     except:
                         pass
-                    break
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
