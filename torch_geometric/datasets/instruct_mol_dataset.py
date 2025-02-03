@@ -32,7 +32,7 @@ class InstructMolDataset(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
     """
-    raw_url = 'https://huggingface.co/datasets/OpenMol/PubChemSFT/blob/main'
+    raw_url = 'https://huggingface.co/datasets/OpenMol/PubChemSFT/resolve/main'
 
     def __init__(
         self,
