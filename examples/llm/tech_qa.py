@@ -198,7 +198,8 @@ def make_dataset(args):
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
             embedded_docs=embedded_docs,
-            use_nvidia_rerank=True)
+            use_nvidia_rerank=True,
+            NIM_KEY_FOR_RERANK=args.NV_NIM_KEY)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(rawset, desc="Building un-split dataset"):

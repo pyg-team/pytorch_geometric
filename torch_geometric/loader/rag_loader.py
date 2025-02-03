@@ -68,7 +68,8 @@ class RAGQueryLoader:
                  embedded_docs: Optional[Tensor] = None,
                  k_for_docs: Optional[int] = 2,
                  use_nvidia_rerank: Optional[bool] = False,
-                 top_n_for_rerank: Optional[int] = 50):
+                 top_n_for_rerank: Optional[int] = 50,
+                 NIM_KEY_FOR_RERANK: Optional[str] = '',):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -101,6 +102,8 @@ class RAGQueryLoader:
                 (Default: :obj:`False`).
             top_n_for_rerank (Optional[int], optional): Number of docs to pass to NVIDIA reranker.
                 (Default: :obj:`50`).
+            NIM_KEY_FOR_RERANK: Optional[str], optional: NIM API Key needed for using reranker.
+                (Default: obj:`''`)
         """
         fstore, gstore = data
         assert len(raw_docs) == len(
@@ -120,6 +123,7 @@ class RAGQueryLoader:
         self.local_filter_kwargs = local_filter_kwargs or {}
         self.use_nvidia_rerank = use_nvidia_rerank
         self.top_n_for_rerank = top_n_for_rerank
+        self.NIM_KEY_FOR_RERANK = NIM_KEY_FOR_RERANK
 
     def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
@@ -167,10 +171,10 @@ class RAGQueryLoader:
             if self.use_nvidia_rerank:
                 topN_ids = all_idxs[:self.top_n_for_rerank]
                 for retry in range(10):
-                    # try:
-                    reranked = _rerank(query, [self.raw_docs[j] for j in topN_ids])
-                    # except:
-                    #     pass
+                    try:
+                        reranked = _rerank(query, [self.raw_docs[j] for j in topN_ids], self.NIM_KEY_FOR_RERANK)
+                    except:
+                        pass
                     break
                 reranked_ids = topN_ids[reranked]
                 selected_doc_idxs = reranked_ids[:self.k_for_docs]
@@ -179,11 +183,11 @@ class RAGQueryLoader:
 
         return data
 
-def _rerank(query, passages):
+def _rerank(query, passages, key):
     invoke_url = "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking"
     reranker_model_name="nvidia/llama-3.2-nv-rerankqa-1b-v2"
     headers = {
-        "Authorization": f"Bearer {nvidia_api_key}",
+        "Authorization": f"Bearer {key}",
         "Accept": "application/json",
     }
     
