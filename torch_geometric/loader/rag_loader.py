@@ -171,11 +171,11 @@ class RAGQueryLoader:
             if self.use_nvidia_rerank:
                 topN_ids = all_idxs[:self.top_n_for_rerank]
                 for retry in range(10):
-                    try:
-                        reranked = _rerank(query, [self.raw_docs[j] for j in topN_ids], self.NIM_KEY_FOR_RERANK)
-                    except:
-                        pass
-                    break
+                    # try:
+                    reranked = _rerank(query, [self.raw_docs[j] for j in topN_ids], self.NIM_KEY_FOR_RERANK)
+                    # except:
+                    #     pass
+                    # break
                 reranked_ids = topN_ids[reranked]
                 selected_doc_idxs = reranked_ids[:self.k_for_docs]
             data.text_context = "\n".join(
