@@ -57,19 +57,22 @@ class RAGGraphStore(Protocol):
 
 class RAGQueryLoader:
     """Loader meant for making RAG queries from a remote backend."""
-    def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
-                 local_filter: Optional[Callable[[Data, Any], Data]] = None,
-                 seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
-                 seed_edges_kwargs: Optional[Dict[str, Any]] = None,
-                 sampler_kwargs: Optional[Dict[str, Any]] = None,
-                 loader_kwargs: Optional[Dict[str, Any]] = None,
-                 local_filter_kwargs: Optional[Dict[str, Any]] = None,
-                 raw_docs: Optional[List[str]] = None,
-                 embedded_docs: Optional[Tensor] = None,
-                 k_for_docs: Optional[int] = 2,
-                 use_nvidia_rerank: Optional[bool] = False,
-                 top_n_for_rerank: Optional[int] = 50,
-                 NIM_KEY_FOR_RERANK: Optional[str] = '',):
+    def __init__(
+        self,
+        data: Tuple[RAGFeatureStore, RAGGraphStore],
+        local_filter: Optional[Callable[[Data, Any], Data]] = None,
+        seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
+        seed_edges_kwargs: Optional[Dict[str, Any]] = None,
+        sampler_kwargs: Optional[Dict[str, Any]] = None,
+        loader_kwargs: Optional[Dict[str, Any]] = None,
+        local_filter_kwargs: Optional[Dict[str, Any]] = None,
+        raw_docs: Optional[List[str]] = None,
+        embedded_docs: Optional[Tensor] = None,
+        k_for_docs: Optional[int] = 2,
+        use_nvidia_rerank: Optional[bool] = False,
+        top_n_for_rerank: Optional[int] = 50,
+        NIM_KEY_FOR_RERANK: Optional[str] = '',
+    ):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -172,12 +175,13 @@ class RAGQueryLoader:
                 topN_ids = all_idxs[:self.top_n_for_rerank]
                 for retry in range(10):
                     try:
-                        reranked = _rerank(query, [self.raw_docs[j] for j in topN_ids], self.NIM_KEY_FOR_RERANK)
+                        reranked = _rerank(
+                            query, [self.raw_docs[j] for j in topN_ids],
+                            self.NIM_KEY_FOR_RERANK)
                         break
-                    except Exception as e: # noqa
+                    except Exception as e:  # noqa
                         print("Retrying after", e)
                         print("...")
-                        pass
                 reranked_ids = topN_ids[reranked]
                 selected_doc_idxs = reranked_ids[:self.k_for_docs]
             data.text_context = "\n".join(
@@ -185,26 +189,30 @@ class RAGQueryLoader:
 
         return data
 
+
 def _rerank(query, passages, key):
     import requests
     invoke_url = "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking"
-    reranker_model_name="nvidia/llama-3.2-nv-rerankqa-1b-v2"
+    reranker_model_name = "nvidia/llama-3.2-nv-rerankqa-1b-v2"
     headers = {
         "Authorization": f"Bearer {key}",
         "Accept": "application/json",
     }
-    
+
     payload = {
         "model": reranker_model_name,
         "query": {
             "text": query
         },
-        "passages": [{"text": p} for p in passages],
-        "truncate": "NONE"  # No truncation, if passage is longer than context window, let it fail explicitly
+        "passages": [{
+            "text": p
+        } for p in passages],
+        "truncate":
+        "NONE"  # No truncation, if passage is longer than context window, let it fail explicitly
     }
     # re-use connections
     session = requests.Session()
-    response = session.post(invoke_url, headers=headers, json=payload)    
+    response = session.post(invoke_url, headers=headers, json=payload)
     response.raise_for_status()
     response_body = response.json()
     return [x['index'] for x in response_body['rankings']]

@@ -169,7 +169,6 @@ class TXT2KG():
                                 # keep retrying, txt2kg is costly -> stoppage is costly
                                 print("Retrying after", e)
                                 print("...")
-                                pass
 
                         # Collect the results from each process
                         self.relevant_triples[key] = []
@@ -178,10 +177,9 @@ class TXT2KG():
                                 "/tmp/outs_for_proc_" + str(rank))
                             os.remove("/tmp/outs_for_proc_" + str(rank))
                         break
-                    except Exception as e: # noqa
+                    except Exception as e:  # noqa
                         print("Retrying after", e)
                         print("...")
-                        pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
