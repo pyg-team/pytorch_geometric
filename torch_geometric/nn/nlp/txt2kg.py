@@ -170,7 +170,6 @@ class TXT2KG():
                                 print("Retrying after", e)
                                 print("...")
                                 pass
-                            
 
                         # Collect the results from each process
                         self.relevant_triples[key] = []
