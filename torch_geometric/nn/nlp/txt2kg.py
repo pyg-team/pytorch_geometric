@@ -165,8 +165,10 @@ class TXT2KG():
                                           self.NVIDIA_API_KEY, self.NIM_MODEL),
                                     nprocs=num_procs)
                                 break
-                            except:  # noqa
+                            except Exception as e:  # noqa
                                 # keep retrying, txt2kg is costly -> stoppage is costly
+                                print("Retrying after", e)
+                                print("...")
                                 pass
                             
 
@@ -177,7 +179,9 @@ class TXT2KG():
                                 "/tmp/outs_for_proc_" + str(rank))
                             os.remove("/tmp/outs_for_proc_" + str(rank))
                         break
-                    except:
+                    except Exception as e: # noqa
+                        print("Retrying after", e)
+                        print("...")
                         pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1

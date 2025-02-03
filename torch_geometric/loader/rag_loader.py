@@ -174,7 +174,9 @@ class RAGQueryLoader:
                     try:
                         reranked = _rerank(query, [self.raw_docs[j] for j in topN_ids], self.NIM_KEY_FOR_RERANK)
                         break
-                    except:
+                    except Exception as e: # noqa
+                        print("Retrying after", e)
+                        print("...")
                         pass
                 reranked_ids = topN_ids[reranked]
                 selected_doc_idxs = reranked_ids[:self.k_for_docs]
