@@ -185,7 +185,7 @@ class RAGQueryLoader:
 
 def _rerank(query, passages, key):
     import requests
-    invoke_url = "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking"
+    invoke_url = "https://ai.api.nvidia.com/v1/nvdev/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking"
     reranker_model_name="nvidia/llama-3.2-nv-rerankqa-1b-v2"
     headers = {
         "Authorization": f"Bearer {key}",
