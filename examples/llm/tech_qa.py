@@ -87,9 +87,8 @@ def parse_args():
         choices=["frozen", "lora",
                  "full"], help="Wether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
-    parser.add_argument(
-        '--save_model', action="store_true",
-        help="Wether save model.")
+    parser.add_argument('--save_model', action="store_true",
+                        help="Wether save model.")
     return parser.parse_args()
 
 
