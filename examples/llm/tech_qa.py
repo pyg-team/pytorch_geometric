@@ -96,7 +96,7 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
     [END_QUESTION]
 
     [RETRIEVED_CONTEXTS]
-    {contexts}
+    {context}
     [END_RETRIEVED_CONTEXTS]
 
     Answer: """
