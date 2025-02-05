@@ -62,9 +62,10 @@ def get_mesh_laplacian(
     e_10 = -(e_21 + e_02)  # this is equal to pos[face[1]] - pos[face[0]]
 
     # 2. Compute areas of all triangles
-    area_times_four =  2 * torch.norm(torch.cross(e_02, e_10, dim=1), dim=1)
+    area_times_four = 2 * torch.norm(torch.cross(e_02, e_10, dim=1), dim=1)
 
-    # 3. Compute cotangent weights cot(e_ik, e_kj) = -dot(e_ik, e_kj) / (4 * area)
+    # 3. Compute cotangent weights
+    #    cot(e_ik, e_kj) = -dot(e_ik, e_kj) / (4 * area)
     cot_0 = -torch.sum(e_10 * e_02, dim=1) / area_times_four
     cot_1 = -torch.sum(e_21 * e_10, dim=1) / area_times_four
     cot_2 = -torch.sum(e_02 * e_21, dim=1) / area_times_four
@@ -82,7 +83,8 @@ def get_mesh_laplacian(
     if normalization is not None:
 
         # Like before, but here we only need the diagonal (the mass matrix):
-        # Attribute a third of the area from a face to each contained vertex and accumulate
+        # Attribute a third of the area from a face to each contained vertex
+        # and accumulate
         area_weight = (area_times_four / 12).repeat(3)
         area_deg = scatter(area_weight, face.flatten(), 0, num_nodes, 'sum')
 
