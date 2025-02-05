@@ -96,10 +96,11 @@ class RAGQueryLoader:
                 (Default: :obj:`2`).
         """
         fstore, gstore = data
-        assert len(raw_docs) == len(
-            embedded_docs), "Need raw and embedded docs to match"
         self.raw_docs = raw_docs
         self.k_for_docs = k_for_docs
+        if self.raw_docs:
+            assert len(raw_docs) == len(
+                embedded_docs), "Need raw and embedded docs to match"
         self.embedded_docs = embedded_docs
         self.feature_store = fstore
         self.graph_store = gstore
