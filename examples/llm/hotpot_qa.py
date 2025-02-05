@@ -164,7 +164,7 @@ if __name__ == '__main__':
             sum(retrieved_triple in golden_triples
                 for retrieved_triple in retrieved_triples))
         precisions.append(num_relevant_out_of_retrieved /
-                          min(len(retrieved_triples), 1))  # handle div by 0
+                          max(len(retrieved_triples), 1))  # handle div by 0
     approx_precision = sum(precisions) / len(precisions)
     print("Min # of Extracted Triples =", min(extracted_triple_sizes))
     print("Max # of Extracted Triples =", max(extracted_triple_sizes))
