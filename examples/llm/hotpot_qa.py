@@ -115,8 +115,10 @@ if __name__ == '__main__':
         }, graph_db=NeighborSamplingRAGGraphStore,
         feature_db=ModernBertFeatureStore).load()
     """
+    !!!
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
+    !!!
     """
     # k for KNN
     knn_neighsample_bs = 4096
@@ -128,7 +130,7 @@ if __name__ == '__main__':
         "topk": 5,  # nodes
         "topk_e": 5,  # edges
         "cost_e": .5,  # edge cost
-        "num_clusters": 10,  # num clusters
+        "num_clusters": 2,  # num clusters
     }
     query_loader = RAGQueryLoader(
         data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
