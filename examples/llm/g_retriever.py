@@ -181,6 +181,7 @@ def inference_step(model, batch, model_save_name="llm"):
             batch.batch,  # batch indices
             batch.edge_attr,  # edge attributes
             batch.desc  # description
+            max_out_tokens=256,
         )
 
 
