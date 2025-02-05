@@ -226,7 +226,7 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         yield from output.index
 
 
-# TODO: These two classes should be refactored so they are easier to use
+# TODO: These classes should be refactored so they are easier to use
 # custom model with the create_remote_backend/ragqueryloader functionality
 class ModernBertFeatureStore(KNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
@@ -239,4 +239,17 @@ class ModernBertApproxFeatureStore(ApproxKNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
         kwargs['model_name'] = kwargs.get('model_name',
                                           'Alibaba-NLP/gte-modernbert-base')
+        super().__init__(SentenceTransformer, *args, **kwargs)
+
+class RobertaFeatureStore(KNNRAGFeatureStore):
+    def __init__(self, *args, **kwargs):
+        kwargs['model_name'] = kwargs.get('model_name',
+                                          'sentence-transformers/all-roberta-large-v1')
+        super().__init__(SentenceTransformer, *args, **kwargs)
+
+
+class RobertaApproxFeatureStore(ApproxKNNRAGFeatureStore):
+    def __init__(self, *args, **kwargs):
+        kwargs['model_name'] = kwargs.get('model_name',
+                                          'sentence-transformers/all-roberta-large-v1')
         super().__init__(SentenceTransformer, *args, **kwargs)

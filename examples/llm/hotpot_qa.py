@@ -113,7 +113,7 @@ if __name__ == '__main__':
         pre_transform=preprocess_triplet, node_method_kwargs={
             "batch_size": min(len(triples), 256)
         }, graph_db=NeighborSamplingRAGGraphStore,
-        feature_db=ModernBertFeatureStore).load()
+        feature_db=RobertaFeatureStore).load()
     """
     !!!
     NOTE: these retriever hyperparams are very important.
