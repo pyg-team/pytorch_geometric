@@ -36,7 +36,7 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
-LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+LLM_GENERATOR_NAME_DEFAULT = "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF"
 CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
@@ -84,12 +84,22 @@ def parse_args():
     return parser.parse_args()
 
 
-prompt_template = """Answer this question. Just give the answer without explanation.
+# prompt_template = """Answer this question. Just give the answer without explanation.
+#     [QUESTION]
+#     {question}
+#     [END_QUESTION]
+#     Answer: """
+
+prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
     [QUESTION]
     {question}
     [END_QUESTION]
-    Answer: """
 
+    [RETRIEVED_CONTEXTS]
+    {contexts}
+    [END_RETRIEVED_CONTEXTS]
+
+    Answer: """
 
 def get_data():
     # need the data formatted as a JSON
