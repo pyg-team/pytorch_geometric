@@ -306,7 +306,7 @@ def train(args, data_lists):
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         model.eval()
-        save_params_dict(model, save_path=save_name)
+        #save_params_dict(model, save_path=save_name)
     return model, test_loader
 
 
