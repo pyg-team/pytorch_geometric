@@ -248,7 +248,7 @@ def train(args, data_lists):
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     if args.llm_generator_mode == "full":
-        llm = LLM(model_name=args.llm_generator_name)
+        llm = LLM(model_name=args.llm_generator_name, num_params=70.0)
         model = llm
     return model, DataLoader(data_lists["test"], batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
