@@ -11,8 +11,8 @@ from tqdm import tqdm
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
-    download_url,
     download_google_url,
+    download_url,
     extract_zip,
 )
 from torch_geometric.io import fs
@@ -146,9 +146,8 @@ class QM40(InMemoryDataset):
             rename_files(self.raw_dir)
 
         except ImportError:
-            path = download_google_url(
-                self.processed_url, self.raw_dir, filename="qm40.pt"
-            )
+            path = download_google_url(self.processed_url, self.raw_dir,
+                                       filename="qm40.zip")
             extract_zip(path, self.raw_dir)
             os.unlink(path)
 
