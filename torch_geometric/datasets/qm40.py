@@ -1,10 +1,10 @@
-import csv
 import os
 import shutil
 import sys
 from typing import Callable, List, Optional
 
 import numpy as np
+import pandas as pd
 import torch
 from tqdm import tqdm
 
@@ -18,27 +18,31 @@ from torch_geometric.data import (
 from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, scatter
 
+import csv
+
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
 
-conversion = torch.tensor([
-    HAR2EV,
-    HAR2EV,
-    HAR2EV,
-    HAR2EV,
-    1.0,
-    1.0,
-    1.0,
-    KCALMOL2EV,
-    1.0,
-    1.0,
-    1.0,
-    HAR2EV,
-    HAR2EV,
-    HAR2EV,
-    KCALMOL2EV,
-    KCALMOL2EV,
-])
+conversion = torch.tensor(
+    [
+        HAR2EV,
+        HAR2EV,
+        HAR2EV,
+        HAR2EV,
+        1.0,
+        1.0,
+        1.0,
+        KCALMOL2EV,
+        1.0,
+        1.0,
+        1.0,
+        HAR2EV,
+        HAR2EV,
+        HAR2EV,
+        KCALMOL2EV,
+        KCALMOL2EV,
+    ]
+)
 
 
 def rename_files(root: str) -> None:
@@ -142,7 +146,9 @@ class QM40(InMemoryDataset):
             rename_files(self.raw_dir)
 
         except ImportError:
-            path = download_google_url(self.processed_url, self.raw_dir, filename="qm40.zip")
+            path = download_google_url(
+                self.processed_url, self.raw_dir, filename="qm40.pt"
+            )
             extract_zip(path, self.raw_dir)
             os.unlink(path)
 
@@ -159,8 +165,10 @@ class QM40(InMemoryDataset):
 
         if not WITH_RDKIT:
             print(
-                ("Using a pre-processed version of the dataset. Please "
-                 "install 'rdkit' to alternatively process the raw data."),
+                (
+                    "Using a pre-processed version of the dataset. Please "
+                    "install 'rdkit' to alternatively process the raw data."
+                ),
                 file=sys.stderr,
             )
 
@@ -186,42 +194,45 @@ class QM40(InMemoryDataset):
         lmfc_data = {}
 
         # Read main CSV
-        with open(self.raw_paths[0]) as f:
+        with open(self.raw_paths[0], "r") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 ID = row["Zinc_id"]
                 main_data[ID] = {
-                    "smile":
-                    row["smile"],
+                    "smile": row["smile"],
                     "properties": [
-                        float(row[key]) for key in row.keys()
+                        float(row[key])
+                        for key in row.keys()
                         if key not in ["Zinc_id", "smile"]
                     ],
                 }
 
         # Read xyz CSV
-        with open(self.raw_paths[1]) as f:
+        with open(self.raw_paths[1], "r") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 ID = row["Zinc_id"]
                 if ID not in xyz_data:
                     xyz_data[ID] = []
-                xyz_data[ID].append({
-                    "charge": float(row["charge"]),
-                    "final_x": float(row["final_x"]),
-                    "final_y": float(row["final_y"]),
-                    "final_z": float(row["final_z"]),
-                })
+                xyz_data[ID].append(
+                    {
+                        "charge": float(row["charge"]),
+                        "final_x": float(row["final_x"]),
+                        "final_y": float(row["final_y"]),
+                        "final_z": float(row["final_z"]),
+                    }
+                )
 
         # Read bond CSV
-        with open(self.raw_paths[2]) as f:
+        with open(self.raw_paths[2], "r") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 ID = row["Zinc_id"]
                 if ID not in lmfc_data:
                     lmfc_data[ID] = []
                 lmfc_data[ID].append(
-                    (int(row["atom1"]), int(row["atom2"]), float(row["lmod"])))
+                    (int(row["atom1"]), int(row["atom2"]), float(row["lmod"]))
+                )
 
         data_list = []
         print("Processing raw data...")
@@ -245,7 +256,8 @@ class QM40(InMemoryDataset):
             type_idx = np.array([type_idx_map[num] for num in atomic_numbers])
             aromatic = np.array([int(atom.GetIsAromatic()) for atom in atoms])
             hybridizations = np.array(
-                [atom.GetHybridization() for atom in atoms])
+                [atom.GetHybridization() for atom in atoms]
+            )
             sp = (hybridizations == HybridizationType.SP).astype(int)
             sp2 = (hybridizations == HybridizationType.SP2).astype(int)
             sp3 = (hybridizations == HybridizationType.SP3).astype(int)
@@ -255,30 +267,43 @@ class QM40(InMemoryDataset):
             for i, xyz in enumerate(mol_xyz):
                 atoms[i].SetFormalCharge(int(round(xyz["charge"])))
                 conf.SetAtomPosition(
-                    i, (xyz["final_x"], xyz["final_y"], xyz["final_z"]))
+                    i, (xyz["final_x"], xyz["final_y"], xyz["final_z"])
+                )
 
             pos = torch.tensor(conf.GetPositions(), dtype=torch.float)
             z = torch.tensor(atomic_numbers, dtype=torch.long)
 
             # Process bonds
-            bond_data = [(
-                bond.GetBeginAtomIdx(),
-                bond.GetEndAtomIdx(),
-                bonds[bond.GetBondType()],
-            ) for bond in mol.GetBonds()]
+            bond_data = [
+                (
+                    bond.GetBeginAtomIdx(),
+                    bond.GetEndAtomIdx(),
+                    bonds[bond.GetBondType()],
+                )
+                for bond in mol.GetBonds()
+            ]
             rows, cols, edge_types = zip(*bond_data)
             rows, cols = rows + cols, cols + rows  # Add reverse edges
             edge_types = edge_types + edge_types
 
             # local mode force constants
-            lmfc = torch.stack([
-                torch.stack([
-                    torch.tensor([bond[0] - 1, bond[1] - 1, bond[2]],
-                                 dtype=torch.float),
-                    torch.tensor([bond[1] - 1, bond[0] - 1, bond[2]],
-                                 dtype=torch.float),
-                ]) for bond in lmfc_data[ID]
-            ]).reshape(-1, 3)
+            lmfc = torch.stack(
+                [
+                    torch.stack(
+                        [
+                            torch.tensor(
+                                [bond[0] - 1, bond[1] - 1, bond[2]],
+                                dtype=torch.float,
+                            ),
+                            torch.tensor(
+                                [bond[1] - 1, bond[0] - 1, bond[2]],
+                                dtype=torch.float,
+                            ),
+                        ]
+                    )
+                    for bond in lmfc_data[ID]
+                ]
+            ).reshape(-1, 3)
 
             edge_index = torch.tensor([rows, cols], dtype=torch.long)
             edge_type = torch.tensor(edge_types, dtype=torch.long)
@@ -296,28 +321,32 @@ class QM40(InMemoryDataset):
 
             # Count hydrogens
             row, col = edge_index
-            hs = (z == 1).to(torch.float)
+            hs = (z == 1).to(torch.long)
             num_hs = scatter(hs[row], col, dim_size=N, reduce="sum").tolist()
 
             # Create node features
             x1 = one_hot(torch.tensor(type_idx), num_classes=len(types))
-            x2 = (torch.tensor(
-                np.array([aromatic, sp, sp2, sp3, num_hs]),
-                dtype=torch.float,
-            ).t().contiguous())
+            x2 = (
+                torch.tensor(
+                    np.array([aromatic, sp, sp2, sp3, num_hs]),
+                    dtype=torch.long,
+                )
+                .t()
+                .contiguous()
+            )
             x = torch.cat([x1, x2], dim=-1)
 
             data = Data(
-                x=x,
-                z=z,
-                pos=pos,
-                edge_index=edge_index,
-                smiles=SMILES,
-                edge_attr=edge_attr,
-                edge_attr2=lmfc[:, 2],
-                y=y * conversion.view(1, -1),
-                name=ID,
-                idx=mol_idx,
+                x=x.to(torch.long),     # [num_nodes, num_node_features]
+                z=z,                    # [num_nodes]
+                pos=pos,                # [num_nodes, 3] 
+                edge_index=edge_index,  # [2, num_edges]
+                smiles=SMILES,          # str
+                edge_attr=edge_attr.to(torch.long), # [num_edges,num_edge_feats]
+                edge_attr2=lmfc[:, 2].view(-1, 1),  # [num_edges, 1]
+                y=y * conversion.view(1, -1),  # [1, num_targets]
+                name=ID,                # str
+                idx=mol_idx,            # int
             )
 
             if self.pre_filter is not None and not self.pre_filter(data):
