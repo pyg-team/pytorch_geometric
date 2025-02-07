@@ -521,3 +521,52 @@ class LinkPredMRR(LinkPredMetric):
         device = pred_rel_mat.device
         arange = torch.arange(1, pred_rel_mat.size(1) + 1, device=device)
         return (pred_rel_mat / arange).max(dim=-1)[0]
+
+
+class LinkPredCoverage(BaseMetric):
+    r"""A link prediction metric to compute the Coverage @ :math:`k`.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    is_differentiable: bool = False
+    full_state_update: bool = True
+    higher_is_better: bool = True
+    weighted: bool = False
+
+    def __init__(self, k: int, num_dst_nodes: int) -> None:
+        super().__init__()
+
+        if k <= 0:
+            raise ValueError(f"'k' needs to be a positive integer in "
+                             f"'{self.__class__.__name__}' (got {k})")
+
+        self.k = k
+        self.num_dst_nodes = num_dst_nodes
+
+        mask = torch.zeros(num_dst_nodes, dtype=torch.bool)
+        if WITH_TORCHMETRICS:
+            self.add_state('mask', mask, dist_reduce_fx='max')
+        else:
+            self.register_buffer('mask', mask)
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
+        self.mask[pred_index_mat[:, :self.k].view(-1)] = True
+
+    def compute(self) -> Tensor:
+        return self.mask.to(torch.get_default_dtype()).mean()
+
+    def reset(self) -> None:
+        if WITH_TORCHMETRICS:
+            super().reset()
+        else:
+            self.mask.zero_()
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(k={self.k}, '
+                f'num_dst_nodes={self.num_dst_nodes})')
