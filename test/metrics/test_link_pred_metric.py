@@ -205,7 +205,7 @@ def test_coverage():
 @pytest.mark.parametrize('num_src_nodes', [10])
 @pytest.mark.parametrize('num_dst_nodes', [50])
 @pytest.mark.parametrize('num_edges', [200])
-def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
+def test_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
     metrics = [
         LinkPredMAP(k=10),
         LinkPredPrecision(k=100),
@@ -213,6 +213,7 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         LinkPredF1(k=20),
         LinkPredMRR(k=40),
         LinkPredNDCG(k=80),
+        LinkPredCoverage(k=5, num_dst_nodes=num_dst_nodes),
     ]
 
     row = torch.randint(0, num_src_nodes, (num_edges, ))
@@ -232,6 +233,7 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         '  LinkPredF1@20: LinkPredF1(k=20),\n'
         '  LinkPredMRR@40: LinkPredMRR(k=40),\n'
         '  LinkPredNDCG@80: LinkPredNDCG(k=80),\n'
+        '  LinkPredCoverage@5: LinkPredCoverage(k=5, num_dst_nodes=50),\n'
         '])')
     assert metric_collection.max_k == 100
 

@@ -138,7 +138,7 @@ class LinkPredMetricData:
         return pos
 
 
-class LinkPredMetric(BaseMetric):
+class _LinkPredMetric(BaseMetric):
     r"""An abstract class for computing link prediction retrieval metrics.
 
     Args:
@@ -147,7 +147,6 @@ class LinkPredMetric(BaseMetric):
     is_differentiable: bool = False
     full_state_update: bool = False
     higher_is_better: Optional[bool] = None
-    weighted: bool
 
     def __init__(self, k: int) -> None:
         super().__init__()
@@ -157,16 +156,6 @@ class LinkPredMetric(BaseMetric):
                              f"'{self.__class__.__name__}' (got {k})")
 
         self.k = k
-
-        self.accum: Tensor
-        self.total: Tensor
-
-        if WITH_TORCHMETRICS:
-            self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
-            self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
-        else:
-            self.register_buffer('accum', torch.tensor(0.))
-            self.register_buffer('total', torch.tensor(0))
 
     def update(
         self,
@@ -194,6 +183,51 @@ class LinkPredMetric(BaseMetric):
                 a vector of positive values. Required for weighted metrics,
                 ignored otherwise. (default: :obj:`None`)
         """
+        raise NotImplementedError
+
+    def compute(self) -> Tensor:
+        r"""Computes the final metric value."""
+        raise NotImplementedError
+
+    def reset(self) -> None:
+        r"""Resets metric state variables to their default value."""
+        if WITH_TORCHMETRICS:
+            super().reset()
+        else:
+            for buffer in self.buffers():
+                buffer.zero_()
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(k={self.k})'
+
+
+class LinkPredMetric(_LinkPredMetric):
+    r"""An abstract class for computing link prediction retrieval metrics.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+    """
+    weighted: bool
+
+    def __init__(self, k: int) -> None:
+        super().__init__(k)
+
+        self.accum: Tensor
+        self.total: Tensor
+
+        if WITH_TORCHMETRICS:
+            self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
+            self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
+        else:
+            self.register_buffer('accum', torch.tensor(0.))
+            self.register_buffer('total', torch.tensor(0))
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
         if self.weighted and edge_label_weight is None:
             raise ValueError(f"'edge_label_weight' is a required argument for "
                              f"weighted '{self.__class__.__name__}' metrics")
@@ -214,18 +248,9 @@ class LinkPredMetric(BaseMetric):
         self.total += (data.label_count > 0).sum()
 
     def compute(self) -> Tensor:
-        r"""Computes the final metric value."""
         if self.total == 0:
             return torch.zeros_like(self.accum)
         return self.accum / self.total
-
-    def reset(self) -> None:
-        r"""Resets metric state variables to their default value."""
-        if WITH_TORCHMETRICS:
-            super().reset()
-        else:
-            self.accum.zero_()
-            self.total.zero_()
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         r"""Computes the specific metric.
@@ -284,7 +309,7 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         if isinstance(metrics, (list, tuple)):
             metrics = {
-                (f'{"Weighted" if metric.weighted else ""}'
+                (f'{"Weighted" if getattr(metric, "weighted", False) else ""}'
                  f'{metric.__class__.__name__}@{metric.k}'):
                 metric
                 for metric in metrics
@@ -293,6 +318,7 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         assert isinstance(metrics, dict)
 
         for name, metric in metrics.items():
+            assert isinstance(metric, _LinkPredMetric)
             self[name] = metric
 
     @property
@@ -307,7 +333,8 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         r"""Returns :obj:`True` in case the collection holds at least one
         weighted link prediction metric.
         """
-        return any([metric.weighted for metric in self.values()])
+        return any(
+            [getattr(metric, 'weighted', False) for metric in self.values()])
 
     def update(  # type: ignore
         self,
@@ -348,7 +375,7 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         )
 
         for metric in self.values():
-            if metric.weighted:
+            if isinstance(metric, LinkPredMetric) and metric.weighted:
                 metric._update(data)
                 if WITH_TORCHMETRICS:
                     metric._update_count += 1
@@ -362,10 +389,18 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
             del data._edge_label_weight_pos
 
         for metric in self.values():
-            if not metric.weighted:
+            if isinstance(metric, LinkPredMetric) and not metric.weighted:
                 metric._update(data)
                 if WITH_TORCHMETRICS:
                     metric._update_count += 1
+
+        for metric in self.values():
+            if not isinstance(metric, LinkPredMetric):
+                metric.update(
+                    pred_index_mat=pred_index_mat,
+                    edge_label_index=edge_label_index,
+                    edge_label_weight=edge_label_weight,
+                )
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
@@ -523,27 +558,20 @@ class LinkPredMRR(LinkPredMetric):
         return (pred_rel_mat / arange).max(dim=-1)[0]
 
 
-class LinkPredCoverage(BaseMetric):
+class LinkPredCoverage(_LinkPredMetric):
     r"""A link prediction metric to compute the Coverage @ :math:`k`.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
+        num_dst_nodes (int): The total number of destination nodes.
     """
-    is_differentiable: bool = False
-    full_state_update: bool = True
     higher_is_better: bool = True
-    weighted: bool = False
 
     def __init__(self, k: int, num_dst_nodes: int) -> None:
-        super().__init__()
-
-        if k <= 0:
-            raise ValueError(f"'k' needs to be a positive integer in "
-                             f"'{self.__class__.__name__}' (got {k})")
-
-        self.k = k
+        super().__init__(k)
         self.num_dst_nodes = num_dst_nodes
 
+        self.mask: Tensor
         mask = torch.zeros(num_dst_nodes, dtype=torch.bool)
         if WITH_TORCHMETRICS:
             self.add_state('mask', mask, dist_reduce_fx='max')
@@ -556,16 +584,10 @@ class LinkPredCoverage(BaseMetric):
         edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
         edge_label_weight: Optional[Tensor] = None,
     ) -> None:
-        self.mask[pred_index_mat[:, :self.k].view(-1)] = True
+        self.mask[pred_index_mat[:, :self.k].flatten()] = True
 
     def compute(self) -> Tensor:
         return self.mask.to(torch.get_default_dtype()).mean()
-
-    def reset(self) -> None:
-        if WITH_TORCHMETRICS:
-            super().reset()
-        else:
-            self.mask.zero_()
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(k={self.k}, '
