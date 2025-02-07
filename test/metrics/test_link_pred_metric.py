@@ -5,6 +5,7 @@ import torch
 
 from torch_geometric.metrics import (
     LinkPredCoverage,
+    LinkPredDiversity,
     LinkPredF1,
     LinkPredMAP,
     LinkPredMetricCollection,
@@ -181,7 +182,7 @@ def test_mrr():
 
 def test_coverage():
     pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2], [0, 1]])
-    edge_label_index = torch.tensor([[0, 0, 2, 2, 3], [0, 1, 2, 1, 2]])
+    edge_label_index = torch.empty(2, 0, dtype=torch.long)
 
     metric = LinkPredCoverage(k=2, num_dst_nodes=3)
     assert str(metric) == 'LinkPredCoverage(k=2, num_dst_nodes=3)'
@@ -200,6 +201,20 @@ def test_coverage():
     assert metric.mask.sum() == 0
 
     assert float(result) == 2 / 4
+
+
+def test_diversity():
+    pred_index_mat = torch.tensor([[0, 1, 2], [3, 1, 0]])
+    category = torch.tensor([0, 1, 2, 0])
+    edge_label_index = torch.empty(2, 0, dtype=torch.long)
+
+    metric = LinkPredDiversity(k=3, category=category)
+    assert str(metric) == 'LinkPredDiversity(k=3)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+
+    assert pytest.approx(float(result)) == (1 + 2 / 3) / 2
 
 
 @pytest.mark.parametrize('num_src_nodes', [10])
