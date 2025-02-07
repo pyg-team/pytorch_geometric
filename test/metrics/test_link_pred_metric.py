@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from torch_geometric.metrics import (
+    LinkPredCoverage,
     LinkPredF1,
     LinkPredMAP,
     LinkPredMetricCollection,
@@ -176,6 +177,29 @@ def test_mrr():
     metric.update(pred_index_mat[:, :1], edge_label_index)
     metric.compute()
     metric.reset()
+
+
+def test_coverage():
+    pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2], [0, 1]])
+    edge_label_index = torch.tensor([[0, 0, 2, 2, 3], [0, 1, 2, 1, 2]])
+
+    metric = LinkPredCoverage(k=2, num_dst_nodes=3)
+    assert str(metric) == 'LinkPredCoverage(k=2, num_dst_nodes=3)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+    assert metric.mask.sum() == 0
+
+    assert float(result) == 1.0
+
+    metric = LinkPredCoverage(k=1, num_dst_nodes=4)
+    assert str(metric) == 'LinkPredCoverage(k=1, num_dst_nodes=4)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+    assert metric.mask.sum() == 0
+
+    assert float(result) == 2 / 4
 
 
 @pytest.mark.parametrize('num_src_nodes', [10])
