@@ -565,7 +565,8 @@ class LinkPredMRR(LinkPredMetric):
 
 
 class LinkPredCoverage(_LinkPredMetric):
-    r"""A link prediction metric to compute the Coverage @ :math:`k`.
+    r"""A link prediction metric to compute the Coverage @ :math:`k` of
+    predictions.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -601,3 +602,68 @@ class LinkPredCoverage(_LinkPredMetric):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(k={self.k}, '
                 f'num_dst_nodes={self.num_dst_nodes})')
+
+
+class LinkPredDiversity(_LinkPredMetric):
+    r"""A link prediction metric to compute the Diversity @ :math:`k` of
+    predictions according to item categories.
+
+    Diversity is computed as
+
+    .. math::
+        div_{u@k} = 1 - \left( \frac{1}{k \cdot (k-1)} \right) \sum_{i \neq j}
+        sim(i, j)
+
+    where
+
+    .. math::
+        sim(i,j) = \begin{cases}
+            1 & \quad \text{if } i,j \text{ share category,}\\
+            0 & \quad \text{otherwise.}
+        \end{cases}
+
+    which measures the pair-wise inequality of recommendations according to
+    item categories.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+        category (torch.Tensor): A vector that assigns each destination node to
+            a specific category.
+    """
+    higher_is_better: bool = True
+
+    def __init__(self, k: int, category: Tensor) -> None:
+        super().__init__(k)
+
+        if WITH_TORCHMETRICS:
+            self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
+            self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
+        else:
+            self.register_buffer('accum', torch.tensor(0.))
+            self.register_buffer('total', torch.tensor(0))
+
+        self.category: Tensor
+        self.register_buffer('category', category)
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
+        category = self.category[pred_index_mat[:, :self.k]]
+
+        sim = (category.unsqueeze(-2) == category.unsqueeze(-1)).sum(dim=-1)
+        div = 1 - 1 / (self.k * (self.k - 1)) * (sim - 1).sum(dim=-1)
+
+        self.accum += div.sum()
+        self.total += pred_index_mat.size(0)
+
+    def compute(self) -> Tensor:
+        if self.total == 0:
+            return torch.zeros_like(self.accum)
+        return self.accum / self.total
+
+    def _reset(self) -> None:
+        self.accum.zero_()
+        self.total.zero_()
