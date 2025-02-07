@@ -194,8 +194,10 @@ class _LinkPredMetric(BaseMetric):
         if WITH_TORCHMETRICS:
             super().reset()
         else:
-            for buffer in self.buffers():
-                buffer.zero_()
+            self._reset()
+
+    def _reset(self) -> None:
+        raise NotImplementedError
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(k={self.k})'
@@ -261,6 +263,10 @@ class LinkPredMetric(_LinkPredMetric):
                 prediction metric per example.
         """
         raise NotImplementedError
+
+    def _reset(self) -> None:
+        self.accum.zero_()
+        self.total.zero_()
 
     def __repr__(self) -> str:
         weighted_repr = ', weighted=True' if self.weighted else ''
@@ -588,6 +594,9 @@ class LinkPredCoverage(_LinkPredMetric):
 
     def compute(self) -> Tensor:
         return self.mask.to(torch.get_default_dtype()).mean()
+
+    def _reset(self) -> None:
+        self.mask.zero_()
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(k={self.k}, '
