@@ -34,7 +34,7 @@ parser.add_argument(
     help='Root directory of dataset.',
 )
 parser.add_argument(
-    '--model',
+    '--gnn_choice',
     type=str,
     default='sgformer',
     choices=['gat', 'graphsage', 'sgformer'],
@@ -72,7 +72,7 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-print(f'Training {args.dataset} with {args.model} model.')
+print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -168,8 +168,8 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-def get_model(name: str) -> torch.nn.Module:
-    if name == 'gat':
+def get_model(gnn_choice: str) -> torch.nn.Module:
+    if gnn_choice == 'gat':
         model = GAT(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -178,7 +178,7 @@ def get_model(name: str) -> torch.nn.Module:
             dropout=args.dropout,
             heads=args.num_heads,
         )
-    elif name == 'graphsage':
+    elif gnn_choice == 'graphsage':
         model = GraphSAGE(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -186,7 +186,7 @@ def get_model(name: str) -> torch.nn.Module:
             out_channels=dataset.num_classes,
             dropout=args.dropout,
         )
-    elif name == 'sgformer':
+    elif gnn_choice == 'sgformer':
         model = SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -197,12 +197,12 @@ def get_model(name: str) -> torch.nn.Module:
             gnn_dropout=args.dropout,
         )
     else:
-        raise ValueError(f'Model {name} is not supported.')
+        raise ValueError(f'{gnn_choice} is not supported.')
 
     return model
 
 
-model = get_model(args.model).to(device)
+model = get_model(args.gnn_choice).to(device)
 model.reset_parameters()
 optimizer = torch.optim.Adam(
     model.parameters(),
