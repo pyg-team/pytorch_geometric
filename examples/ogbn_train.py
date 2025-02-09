@@ -36,13 +36,13 @@ parser.add_argument(
 parser.add_argument(
     '--model',
     type=str,
-    default='gat',
+    default='sgformer',
     choices=['gat', 'graphsage', 'sgformer'],
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=2,
+parser.add_argument('--num_heads', type=int, default=1,
                     help='number of heads for GAT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
@@ -168,7 +168,7 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-def get_model(name: str):
+def get_model(name: str) -> torch.nn.Module:
     if name == 'gat':
         model = GAT(
             in_channels=dataset.num_features,
@@ -191,13 +191,10 @@ def get_model(name: str):
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
             out_channels=dataset.num_classes,
-            trans_num_layers=2,
-            trans_num_heads=1,
-            trans_dropout=0.5,
-            gnn_num_layers=3,
-            gnn_dropout=0.5,
-            graph_weight=0.5,
-            aggregate='add',
+            trans_num_heads=args.num_heads,
+            trans_dropout=args.dropout,
+            gnn_num_layers=num_layers,
+            gnn_dropout=args.dropout,
         )
     else:
         raise ValueError(f'Model {name} is not supported.')
