@@ -20,3 +20,7 @@ For examples on scaling PyG up via multi-GPUs, see the examples under [`examples
 For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
 
 For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
+
+For an example on training a GraphTransformer see [`examples/ogbn_train.py`](examples/ogbn_train.py)
+
+- [SGFormer Paper](https://arxiv.org/pdf/2306.10759)
