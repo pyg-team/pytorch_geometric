@@ -8,3 +8,4 @@ Use-Cases & Applications
     point_cloud
     explain
     shallow_node_embeddings
+    graph_transformer
