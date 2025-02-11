@@ -7,6 +7,7 @@ from torch_geometric.metrics import (
     LinkPredCoverage,
     LinkPredDiversity,
     LinkPredF1,
+    LinkPredHitRatio,
     LinkPredMAP,
     LinkPredMetricCollection,
     LinkPredMRR,
@@ -173,6 +174,23 @@ def test_mrr():
     result = metric.compute()
 
     assert float(result) == pytest.approx((1 + 0.5 + 0) / 3)
+
+    # Test with `k > pred_index_mat.size(1)`:
+    metric.update(pred_index_mat[:, :1], edge_label_index)
+    metric.compute()
+    metric.reset()
+
+
+def test_hit_ratio():
+    pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2], [0, 1]])
+    edge_label_index = torch.tensor([[0, 0, 2, 2, 3], [0, 1, 2, 1, 2]])
+
+    metric = LinkPredHitRatio(k=2)
+    assert str(metric) == 'LinkPredHitRatio(k=2)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+
+    assert float(result) == pytest.approx(2 / 3)
 
     # Test with `k > pred_index_mat.size(1)`:
     metric.update(pred_index_mat[:, :1], edge_label_index)
