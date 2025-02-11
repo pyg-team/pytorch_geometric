@@ -757,7 +757,7 @@ class LinkPredPersonalization(_LinkPredMetric):
 
         # Calculate all pairs of nodes (e.g., triu_indices with offset=1).
         # NOTE We do this in chunks to avoid memory blow-up, which leads to a
-        # more efficient but tricker implementation.
+        # more efficient but trickier implementation.
         num_pairs = (pred.size(0) * (pred.size(0) - 1)) // 2
         offset = torch.arange(pred.size(0) - 1, 0, -1, device=device)
         rowptr = cumsum(offset)
@@ -765,7 +765,9 @@ class LinkPredPersonalization(_LinkPredMetric):
             end = min(start + self.batch_size, num_pairs)
             idx = torch.arange(start, end, device=device)
 
+            # Find the corresponding row:
             row = torch.searchsorted(rowptr, idx, right=True) - 1
+            # Find the corresponding column:
             col = idx - rowptr[row] + (pred.size(0) - offset[row])
 
             left = pred[row.cpu()].to(device)
