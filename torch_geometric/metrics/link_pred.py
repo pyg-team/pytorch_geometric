@@ -744,16 +744,16 @@ class LinkPredPersonalization(_LinkPredMetric):
 
     def compute(self) -> Tensor:
         device = self.dev_tensor.device
+        score = torch.tensor(0.0, device=device)
+        total = torch.tensor(0, device=device)
 
         if len(self.preds) == 0:
-            return torch.tensor(0.0, device=device)
+            return score
 
         pred = torch.cat(self.preds, dim=0)
 
         if pred.size(0) == 0:
-            return torch.tensor(0.0, device=device)
-
-        scores = []
+            return score
 
         # Calculate all pairs of nodes (e.g., triu_indices with offset=1).
         # NOTE We do this in chunks to avoid memory blow-up, which leads to a
@@ -777,10 +777,13 @@ class LinkPredPersonalization(_LinkPredMetric):
             i = max(left.max(), right.max()) + 1  # type: ignore
             i = torch.arange(0, i * row.size(0), i, device=device).view(-1, 1)
             isin = torch.isin(left + i, right + i)
-            cos = isin.sum(dim=-1) / pred.size(1)
-            scores.append(1 - cos)
 
-        return torch.cat(scores, dim=0).mean()
+            # Compute personalization via average inverse cosine similarity:
+            cos = isin.sum(dim=-1) / pred.size(1)
+            score += (1 - cos).sum()
+            total += cos.numel()
+
+        return score / total
 
     def _reset(self) -> None:
         self.preds = []
