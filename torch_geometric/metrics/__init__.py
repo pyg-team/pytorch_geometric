@@ -9,6 +9,7 @@ from .link_pred import (
     LinkPredMAP,
     LinkPredNDCG,
     LinkPredMRR,
+    LinkPredHitRatio,
     LinkPredCoverage,
     LinkPredDiversity,
 )
@@ -22,6 +23,7 @@ link_pred_metrics = [
     'LinkPredMAP',
     'LinkPredNDCG',
     'LinkPredMRR',
+    'LinkPredHitRatio',
     'LinkPredCoverage',
     'LinkPredDiversity',
 ]
