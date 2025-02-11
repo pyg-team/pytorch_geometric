@@ -423,7 +423,12 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
 
 class LinkPredPrecision(LinkPredMetric):
-    r"""A link prediction metric to compute Precision @ :math:`k`.
+    r"""A link prediction metric to compute Precision @ :math:`k`, *i.e.* the
+    proportion of recommendations within the top-:math:`k` that are actually
+    relevant.
+
+    A higher precision indicates the model's ability to surface relevant items
+    early in the ranking.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -437,7 +442,11 @@ class LinkPredPrecision(LinkPredMetric):
 
 
 class LinkPredRecall(LinkPredMetric):
-    r"""A link prediction metric to compute Recall @ :math:`k`.
+    r"""A link prediction metric to compute Recall @ :math:`k`, *i.e.* the
+    proportion of relevant items that appear within the top-:math:`k`.
+
+    A higher recall indicates the model's ability to retrieve a larger
+    proportion of relevant items.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -472,7 +481,11 @@ class LinkPredF1(LinkPredMetric):
 
 class LinkPredMAP(LinkPredMetric):
     r"""A link prediction metric to compute MAP @ :math:`k` (Mean Average
-    Precision).
+    Precision), considering the order of relevant items within the
+    top-:math:`k`.
+
+    MAP @ :math:`k` can provide a more comprehensive view of ranking quality
+    than precision alone.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -492,6 +505,10 @@ class LinkPredMAP(LinkPredMetric):
 class LinkPredNDCG(LinkPredMetric):
     r"""A link prediction metric to compute the NDCG @ :math:`k` (Normalized
     Discounted Cumulative Gain).
+
+    In particular, can account for the position of relevant items by
+    considering relevance scores, giving higher weight to more relevant items
+    appearing at the top.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -549,7 +566,8 @@ class LinkPredNDCG(LinkPredMetric):
 
 class LinkPredMRR(LinkPredMetric):
     r"""A link prediction metric to compute the MRR @ :math:`k` (Mean
-    Reciprocal Rank).
+    Reciprocal Rank), *i.e.* the mean reciprocal rank of the first correct
+    prediction (or zero otherwise).
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -564,9 +582,28 @@ class LinkPredMRR(LinkPredMetric):
         return (pred_rel_mat / arange).max(dim=-1)[0]
 
 
+class LinkPredHitRatio(LinkPredMetric):
+    r"""A link prediction metric to compute the hit ratio @ :math:`k`, *i.e.*
+    the percentage of users for whom at least one relevant item is present
+    within the top-:math:`k` recommendations.
+
+    A high ratio signifies the model's effectiveness in satisfying a broad
+    range of user preferences.
+    """
+    higher_is_better: bool = True
+    weighted: bool = False
+
+    def _compute(self, data: LinkPredMetricData) -> Tensor:
+        pred_rel_mat = data.pred_rel_mat[:, :self.k]
+        return pred_rel_mat.max(dim=-1)[0].to(torch.get_default_dtype())
+
+
 class LinkPredCoverage(_LinkPredMetric):
     r"""A link prediction metric to compute the Coverage @ :math:`k` of
-    predictions.
+    predictions, *i.e.* the percentage of unique items recommended across all
+    users within the top-:math:`k`.
+
+    Higher coverage indicates a wider exploration of the item catalog.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
