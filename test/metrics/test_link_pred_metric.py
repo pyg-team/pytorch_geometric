@@ -12,9 +12,11 @@ from torch_geometric.metrics import (
     LinkPredMetricCollection,
     LinkPredMRR,
     LinkPredNDCG,
+    LinkPredPersonalization,
     LinkPredPrecision,
     LinkPredRecall,
 )
+from torch_geometric.testing import withCUDA
 
 
 @pytest.mark.parametrize('num_src_nodes', [100])
@@ -233,6 +235,28 @@ def test_diversity():
     metric.reset()
 
     assert pytest.approx(float(result)) == (1 + 2 / 3) / 2
+
+
+@withCUDA
+def test_personalization(device):
+    pred_index_mat = torch.tensor([[0, 1, 2, 3], [2, 1, 0, 4], [1, 0, 2, 5]],
+                                  device=device)
+    edge_label_index = torch.empty(2, 0, dtype=torch.long, device=device)
+
+    metric = LinkPredPersonalization(k=4).to(device)
+    assert str(metric) == 'LinkPredPersonalization(k=4)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    assert result.device == device
+    assert float(result) == 0.25
+    metric.reset()
+    assert metric.preds == []
+
+    metric.update(pred_index_mat[:0], edge_label_index)
+    result = metric.compute()
+    assert result.device == device
+    assert float(result) == 0.0
+    metric.reset()
 
 
 @pytest.mark.parametrize('num_src_nodes', [10])
