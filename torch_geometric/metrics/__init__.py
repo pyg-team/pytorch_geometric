@@ -12,6 +12,7 @@ from .link_pred import (
     LinkPredHitRatio,
     LinkPredCoverage,
     LinkPredDiversity,
+    LinkPredPersonalization,
 )
 
 link_pred_metrics = [
@@ -26,6 +27,7 @@ link_pred_metrics = [
     'LinkPredHitRatio',
     'LinkPredCoverage',
     'LinkPredDiversity',
+    'LinkPredPersonalization',
 ]
 
 __all__ = link_pred_metrics
