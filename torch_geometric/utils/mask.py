@@ -27,27 +27,26 @@ def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
     dim = dim + src.dim() if dim < 0 else dim
     assert dim >= 0 and dim < src.dim()
 
-    size = [1] * src.dim()
-    size[dim] = mask.numel()
+    # Applying a 1-dimensional mask in the first dimension is significantly
+    # faster than broadcasting the mask and utilizing `masked_select`.
+    # As such, we transpose in the first dimension, perform the masking, and
+    # then transpose back to the original shape.
+    src = src.transpose(0, dim) if dim != 0 else src
+    out = src[mask]
+    out = out.transpose(0, dim) if dim != 0 else out
 
-    out = src.masked_select(mask.view(size))
-
-    size = list(src.size())
-    size[dim] = -1
-
-    return out.view(size)
+    return out
 
 
 def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
     r"""Converts indices to a mask representation.
 
     Args:
-        idx (Tensor): The indices.
-        size (int, optional). The size of the mask. If set to :obj:`None`, a
+        index (Tensor): The indices.
+        size (int, optional): The size of the mask. If set to :obj:`None`, a
             minimal sized output mask is returned.
 
     Example:
-
         >>> index = torch.tensor([1, 3, 5])
         >>> index_to_mask(index)
         tensor([False,  True, False,  True, False,  True])
@@ -69,7 +68,6 @@ def mask_to_index(mask: Tensor) -> Tensor:
         mask (Tensor): The mask.
 
     Example:
-
         >>> mask = torch.tensor([False, True, False])
         >>> mask_to_index(mask)
         tensor([1])

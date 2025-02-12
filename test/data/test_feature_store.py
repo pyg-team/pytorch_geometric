@@ -78,7 +78,7 @@ def test_feature_store():
 
     # Partially-specified forms, when called, produce a Tensor output
     # from the `TensorAttr` that has been partially specified.
-    store[group_name] = tensor
+    store[group_name, None, None] = tensor
     assert isinstance(store[group_name], AttrView)
     assert torch.equal(store[group_name](), tensor)
 

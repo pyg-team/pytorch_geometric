@@ -123,7 +123,8 @@ class MetaLayer(torch.nn.Module):
         u: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]:
-        r"""
+        r"""Forward pass.
+
         Args:
             x (torch.Tensor): The node features.
             edge_index (torch.Tensor): The edge indices.

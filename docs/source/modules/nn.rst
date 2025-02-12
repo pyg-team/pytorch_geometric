@@ -147,7 +147,7 @@ Finally, we added full support for customization of aggregations into the :class
 
 .. note::
 
-   You can read more about the :class:`torch_geometric.nn.aggr` package in this [blog post](https://medium.com/@pytorch_geometric/a-principled-approach-to-aggregations-983c086b10b3).
+   You can read more about the :class:`torch_geometric.nn.aggr` package in this `blog post <https://medium.com/@pytorch_geometric/a-principled-approach-to-aggregations-983c086b10b3>`__.
 
 .. autosummary::
    :nosignatures:

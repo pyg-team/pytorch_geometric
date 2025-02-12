@@ -517,7 +517,12 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         edge_label_time=edge_label_time,
         time_attr=time_attr,
         disjoint=disjoint,
-        neg_sampling=dict(mode='triplet', amount=amount, weight=weight),
+        neg_sampling=dict(
+            mode='triplet',
+            amount=amount,
+            src_weight=weight,
+            dst_weight=weight,
+        ),
         shuffle=True,
     )
 

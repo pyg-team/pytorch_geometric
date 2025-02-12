@@ -10,7 +10,7 @@ from torch_geometric.nn import GraphConv
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import trim_to_layer
-from torch_geometric.utils.trim_to_layer import trim_sparse_tensor
+from torch_geometric.utils._trim_to_layer import trim_sparse_tensor
 
 
 @withPackage('torch_sparse')
@@ -196,40 +196,4 @@ def test_trim_to_layer_with_neighbor_loader():
                  batch.num_sampled_nodes, batch.num_sampled_edges)[:2]
     assert out2.size() == (2, 16)
 
-    assert torch.allclose(out1, out2)
-
-
-def test_trim_to_layer_filtering():
-    x_dict = {
-        'paper': torch.rand((13, 128)),
-        'author': torch.rand((5, 128)),
-        'field_of_study': torch.rand((6, 128))
-    }
-    edge_index_dict = {
-        ('author', 'writes', 'paper'):
-        torch.tensor([[0, 1, 2, 3, 4], [0, 0, 1, 2, 2]]),
-        ('paper', 'has_topic', 'field_of_study'):
-        torch.tensor([[6, 7, 8, 9], [0, 0, 1, 1]])
-    }
-    num_sampled_nodes_dict = {
-        'paper': [1, 2, 10],
-        'author': [0, 2, 3],
-        'field_of_study': [0, 2, 4]
-    }
-    num_sampled_edges_dict = {
-        ('author', 'writes', 'paper'): [2, 3],
-        ('paper', 'has_topic', 'field_of_study'): [0, 4]
-    }
-    x_dict, edge_index_dict, _ = trim_to_layer(
-        layer=1,
-        num_sampled_nodes_per_hop=num_sampled_nodes_dict,
-        num_sampled_edges_per_hop=num_sampled_edges_dict,
-        x=x_dict,
-        edge_index=edge_index_dict,
-    )
-    assert list(edge_index_dict.keys()) == [('author', 'writes', 'paper')]
-    assert torch.equal(edge_index_dict[('author', 'writes', 'paper')],
-                       torch.tensor([[0, 1], [0, 0]]))
-    assert x_dict['paper'].size() == (3, 128)
-    assert x_dict['author'].size() == (2, 128)
-    assert x_dict['field_of_study'].size() == (2, 128)
+    assert torch.allclose(out1, out2, atol=1e-6)

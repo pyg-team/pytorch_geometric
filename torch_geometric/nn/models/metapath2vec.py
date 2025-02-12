@@ -5,9 +5,9 @@ from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 
+from torch_geometric.index import index2ptr
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import sort_edge_index
-from torch_geometric.utils.sparse import index2ptr
 
 EPS = 1e-15
 
@@ -103,7 +103,7 @@ class MetaPath2Vec(torch.nn.Module):
         self.num_negative_samples = num_negative_samples
         self.num_nodes_dict = num_nodes_dict
 
-        types = set([x[0] for x in metapath]) | set([x[-1] for x in metapath])
+        types = {x[0] for x in metapath} | {x[-1] for x in metapath}
         types = sorted(list(types))
 
         count = 0
@@ -132,7 +132,8 @@ class MetaPath2Vec(torch.nn.Module):
 
     def forward(self, node_type: str, batch: OptTensor = None) -> Tensor:
         r"""Returns the embeddings for the nodes in :obj:`batch` of type
-        :obj:`node_type`."""
+        :obj:`node_type`.
+        """
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
         return emb if batch is None else emb.index_select(0, batch)
 
@@ -201,7 +202,6 @@ class MetaPath2Vec(torch.nn.Module):
 
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
-
         # Positive loss.
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
@@ -227,13 +227,13 @@ class MetaPath2Vec(torch.nn.Module):
         return pos_loss + neg_loss
 
     def test(self, train_z: Tensor, train_y: Tensor, test_z: Tensor,
-             test_y: Tensor, solver: str = "lbfgs", multi_class: str = "auto",
-             *args, **kwargs) -> float:
+             test_y: Tensor, solver: str = "lbfgs", *args, **kwargs) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
-        task."""
+        task.
+        """
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
+        clf = LogisticRegression(solver=solver, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())
         return clf.score(test_z.detach().cpu().numpy(),
@@ -255,6 +255,7 @@ def sample(rowptr: Tensor, col: Tensor, rowcount: Tensor, subset: Tensor,
     rand = torch.rand((subset.size(0), num_neighbors), device=subset.device)
     rand *= count.to(rand.dtype).view(-1, 1)
     rand = rand.to(torch.long) + rowptr[subset].view(-1, 1)
+    rand = rand.clamp(max=col.numel() - 1)  # If last node is isolated.
 
     col = col[rand] if col.numel() > 0 else rand
     col[mask | (count == 0)] = dummy_idx

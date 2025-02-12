@@ -10,9 +10,9 @@ try:
     from torch.utils.data import IterDataPipe, functional_datapipe
     from torch.utils.data.datapipes.iter import Batcher as IterBatcher
 except ImportError:
-    IterDataPipe = IterBatcher = object
+    IterDataPipe = IterBatcher = object  # type: ignore
 
-    def functional_datapipe(name: str) -> Callable:
+    def functional_datapipe(name: str) -> Callable:  # type: ignore
         return lambda cls: cls
 
 
@@ -23,7 +23,7 @@ class Batcher(IterBatcher):
         dp: IterDataPipe,
         batch_size: int,
         drop_last: bool = False,
-    ):
+    ) -> None:
         super().__init__(
             dp,
             batch_size=batch_size,
@@ -39,7 +39,7 @@ class SMILESParser(IterDataPipe):
         dp: IterDataPipe,
         smiles_key: str = 'smiles',
         target_key: Optional[str] = None,
-    ):
+    ) -> None:
         super().__init__()
         self.dp = dp
         self.smiles_key = smiles_key
@@ -65,7 +65,7 @@ class SMILESParser(IterDataPipe):
 
 
 class DatasetAdapter(IterDataPipe):
-    def __init__(self, dataset: Sequence[Any]):
+    def __init__(self, dataset: Sequence[Any]) -> None:
         super().__init__()
         self.dataset = dataset
         self.range = range(len(self))
@@ -73,7 +73,7 @@ class DatasetAdapter(IterDataPipe):
     def is_shardable(self) -> bool:
         return True
 
-    def apply_sharding(self, num_shards: int, shard_idx: int):
+    def apply_sharding(self, num_shards: int, shard_idx: int) -> None:
         self.range = range(shard_idx, len(self), num_shards)
 
     def __iter__(self) -> Iterator:
@@ -88,7 +88,12 @@ def functional_transform(name: str) -> Callable:
     def wrapper(cls: Any) -> Any:
         @functional_datapipe(name)
         class DynamicMapper(IterDataPipe):
-            def __init__(self, dp: IterDataPipe, *args, **kwargs):
+            def __init__(
+                self,
+                dp: IterDataPipe,
+                *args: Any,
+                **kwargs: Any,
+            ) -> None:
                 super().__init__()
                 self.dp = dp
                 self.fn = cls(*args, **kwargs)

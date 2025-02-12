@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric
+from torch_geometric import is_compiling
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import cumsum, scatter
 
@@ -53,7 +54,7 @@ class ToHeteroLinear(torch.nn.Module):
         x_dict: Dict[Union[NodeType, EdgeType], Tensor],
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
 
-        if not torch_geometric.typing.WITH_PYG_LIB:
+        if not torch_geometric.typing.WITH_PYG_LIB or is_compiling():
             return {
                 key:
                 F.linear(x_dict[key], self.hetero_module.weight[i].t()) +

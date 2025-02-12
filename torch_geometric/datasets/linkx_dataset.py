@@ -5,6 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.io import fs
 from torch_geometric.utils import one_hot
 
 
@@ -30,11 +31,12 @@ class LINKXDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
-
     github_url = ('https://github.com/CUAI/Non-Homophily-Large-Scale/'
                   'raw/master/data')
-    gdrive_url = 'https://drive.google.com/uc?confirm=t&'
+    gdrive_url = 'https://drive.usercontent.google.com/download?confirm=t'
 
     facebook_datasets = [
         'penn94', 'reed98', 'amherst41', 'cornell5', 'johnshopkins55'
@@ -61,11 +63,11 @@ class LINKXDataset(InMemoryDataset):
         },
         'wiki': {
             'wiki_views2M.pt':
-            f'{gdrive_url}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
+            f'{gdrive_url}&id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
             'wiki_edges2M.pt':
-            f'{gdrive_url}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
+            f'{gdrive_url}&id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
             'wiki_features2M.pt':
-            f'{gdrive_url}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
+            f'{gdrive_url}&id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
         }
     }
 
@@ -73,13 +75,19 @@ class LINKXDataset(InMemoryDataset):
         'penn94': f'{github_url}/splits/fb100-Penn94-splits.npy',
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.datasets.keys()
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_dir(self) -> str:
@@ -100,22 +108,21 @@ class LINKXDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         for filename, path in self.datasets[self.name].items():
             download_url(path, self.raw_dir, filename=filename)
         if self.name in self.splits:
             download_url(self.splits[self.name], self.raw_dir)
 
-    def _process_wiki(self):
-
+    def _process_wiki(self) -> Data:
         paths = {x.split('/')[-1]: x for x in self.raw_paths}
-        x = torch.load(paths['wiki_features2M.pt'])
-        edge_index = torch.load(paths['wiki_edges2M.pt']).t().contiguous()
-        y = torch.load(paths['wiki_views2M.pt'])
+        x = fs.torch_load(paths['wiki_features2M.pt'])
+        edge_index = fs.torch_load(paths['wiki_edges2M.pt']).t().contiguous()
+        y = fs.torch_load(paths['wiki_views2M.pt'])
 
         return Data(x=x, edge_index=edge_index, y=y)
 
-    def _process_facebook(self):
+    def _process_facebook(self) -> Data:
         from scipy.io import loadmat
 
         mat = loadmat(self.raw_paths[0])
@@ -139,6 +146,7 @@ class LINKXDataset(InMemoryDataset):
 
         if self.name in self.splits:
             splits = np.load(self.raw_paths[1], allow_pickle=True)
+            assert data.num_nodes is not None
             sizes = (data.num_nodes, len(splits))
             data.train_mask = torch.zeros(sizes, dtype=torch.bool)
             data.val_mask = torch.zeros(sizes, dtype=torch.bool)
@@ -151,7 +159,7 @@ class LINKXDataset(InMemoryDataset):
 
         return data
 
-    def _process_genius(self):
+    def _process_genius(self) -> Data:
         from scipy.io import loadmat
 
         mat = loadmat(self.raw_paths[0])
@@ -161,7 +169,7 @@ class LINKXDataset(InMemoryDataset):
 
         return Data(x=x, edge_index=edge_index, y=y)
 
-    def process(self):
+    def process(self) -> None:
         if self.name in self.facebook_datasets:
             data = self._process_facebook()
         elif self.name == 'genius':
@@ -175,7 +183,7 @@ class LINKXDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name.capitalize()}({len(self)})'

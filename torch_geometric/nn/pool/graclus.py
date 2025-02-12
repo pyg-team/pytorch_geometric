@@ -2,9 +2,11 @@ from typing import Optional
 
 from torch import Tensor
 
-try:
+import torch_geometric.typing
+
+if torch_geometric.typing.WITH_TORCH_CLUSTER:
     from torch_cluster import graclus_cluster
-except ImportError:
+else:
     graclus_cluster = None
 
 
@@ -28,7 +30,6 @@ def graclus(edge_index: Tensor, weight: Optional[Tensor] = None,
 
     :rtype: :class:`torch.Tensor`
     """
-
     if graclus_cluster is None:
         raise ImportError('`graclus` requires `torch-cluster`.')
 

@@ -51,6 +51,8 @@ class TOSCA(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'http://tosca.cs.technion.ac.il/data/toscahires-asci.zip'
@@ -67,14 +69,16 @@ class TOSCA(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
         categories = self.categories if categories is None else categories
         categories = [cat.lower() for cat in categories]
         for cat in categories:
             assert cat in self.categories
         self.categories = categories
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -85,12 +89,12 @@ class TOSCA(InMemoryDataset):
         name = '_'.join([cat[:2] for cat in self.categories])
         return f'{name}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         data_list = []
         for cat in self.categories:
             paths = glob.glob(osp.join(self.raw_dir, f'{cat}*.tri'))
@@ -108,4 +112,4 @@ class TOSCA(InMemoryDataset):
                     data = self.pre_transform(data)
                 data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

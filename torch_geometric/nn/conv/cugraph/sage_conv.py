@@ -1,9 +1,10 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
 
+from torch_geometric import EdgeIndex
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 
@@ -68,10 +69,10 @@ class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
     def forward(
         self,
         x: Tensor,
-        csc: Tuple[Tensor, Tensor, int],
+        edge_index: EdgeIndex,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
-        graph = self.get_cugraph(csc, max_num_neighbors)
+        graph = self.get_cugraph(edge_index, max_num_neighbors)
 
         if self.project:
             x = self.pre_lin(x).relu()

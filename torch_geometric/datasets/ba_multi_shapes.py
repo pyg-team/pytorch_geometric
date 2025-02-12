@@ -12,6 +12,7 @@ class BAMultiShapesDataset(InMemoryDataset):
     evaluating explainabilty algorithms, as described in the
     `"Global Explainability of GNNs via Logic Combination of Learned Concepts"
     <https://arxiv.org/abs/2210.07147>`_ paper.
+
     Given three atomic motifs, namely House (H), Wheel (W), and Grid (G),
     :class:`~torch_geometric.datasets.BAMultiShapesDataset` contains 1,000
     graphs where each graph is obtained by attaching the motifs to a random
@@ -24,19 +25,19 @@ class BAMultiShapesDataset(InMemoryDataset):
     This dataset is pre-computed from the official implementation.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+        root: Root directory where the dataset should be saved.
+        transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
+        pre_transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
+            being saved to disk.
+        pre_filter: A function that takes in a
+            :class:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
+            final dataset.
+        force_reload: Whether to re-process the dataset.
 
     **STATS:**
 
@@ -64,9 +65,11 @@ class BAMultiShapesDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -76,10 +79,10 @@ class BAMultiShapesDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         download_url(self.url, self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         with open(self.raw_paths[0], 'rb') as f:
             adjs, xs, ys = pickle.load(f)
 
@@ -98,4 +101,4 @@ class BAMultiShapesDataset(InMemoryDataset):
 
             data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])

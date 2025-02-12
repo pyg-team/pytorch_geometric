@@ -6,12 +6,11 @@ from torch_geometric.graphgym.config import cfg
 
 
 def compute_loss(pred, true):
-    """
-    Compute loss and prediction score
+    """Compute loss and prediction score.
 
     Args:
         pred (torch.tensor): Unnormalized prediction
-        true (torch.tensor): Grou
+        true (torch.tensor): Ground truth labels
 
     Returns: Loss, normalized prediction score
 

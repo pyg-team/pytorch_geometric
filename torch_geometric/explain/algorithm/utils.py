@@ -44,7 +44,8 @@ def set_hetero_masks(
     apply_sigmoid: bool = True,
 ):
     r"""Apply masks to every heterogeneous graph layer in the :obj:`model`
-    according to edge types."""
+    according to edge types.
+    """
     for module in model.modules():
         if isinstance(module, torch.nn.ModuleDict):
             for edge_type in mask_dict.keys():

@@ -1,13 +1,11 @@
 import json
-import os
 import os.path as osp
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import Data, InMemoryDataset, download_google_url
 
 
 class Flickr(InMemoryDataset):
@@ -25,6 +23,8 @@ class Flickr(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -41,17 +41,21 @@ class Flickr(InMemoryDataset):
           - 500
           - 7
     """
-    url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
-
     adj_full_id = '1crmsTbd1-2sEXsGwa2IKnIB7Zd3TmUsy'
     feats_id = '1join-XdvX3anJU_MLVtick7MgeAQiWIZ'
     class_map_id = '1uxIkbtg5drHTsKt-PAsZZ4_yJmgFmle9'
     role_id = '1htXCtuktuCW8TR8KiKfrFDAxUgekQoV7'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> List[str]:
@@ -61,20 +65,15 @@ class Flickr(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
-        path = download_url(self.url.format(self.adj_full_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'adj_full.npz'))
+    def download(self) -> None:
+        download_google_url(self.adj_full_id, self.raw_dir, 'adj_full.npz')
+        download_google_url(self.feats_id, self.raw_dir, 'feats.npy')
+        download_google_url(self.class_map_id, self.raw_dir, 'class_map.json')
+        download_google_url(self.role_id, self.raw_dir, 'role.json')
 
-        path = download_url(self.url.format(self.feats_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'feats.npy'))
+    def process(self) -> None:
+        import scipy.sparse as sp
 
-        path = download_url(self.url.format(self.class_map_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'class_map.json'))
-
-        path = download_url(self.url.format(self.role_id), self.raw_dir)
-        os.rename(path, osp.join(self.raw_dir, 'role.json'))
-
-    def process(self):
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()
@@ -109,4 +108,4 @@ class Flickr(InMemoryDataset):
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

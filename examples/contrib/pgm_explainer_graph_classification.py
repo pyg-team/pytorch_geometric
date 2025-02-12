@@ -1,6 +1,5 @@
-"""
-This is an example of using the PGM explainer algorithm
-on a graph classification task
+"""This is an example of using the PGM explainer algorithm on a graph
+classification task.
 """
 import os.path as osp
 

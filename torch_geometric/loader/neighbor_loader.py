@@ -14,7 +14,7 @@ class NeighborLoader(NodeLoader):
     This loader allows for mini-batch training of GNNs on large-scale graphs
     where full-batch training is not feasible.
 
-    More specifically, :obj:`num_neighbors` denotes how much neighbors are
+    More specifically, :obj:`num_neighbors` denotes how many neighbors are
     sampled for each node in each iteration.
     :class:`~torch_geometric.loader.NeighborLoader` takes in this list of
     :obj:`num_neighbors` and iteratively samples :obj:`num_neighbors[i]` for
@@ -160,7 +160,7 @@ class NeighborLoader(NodeLoader):
             fulfill temporal constraints.
             (default: :obj:`"uniform"`)
         time_attr (str, optional): The name of the attribute that denotes
-            timestamps for the nodes in the graph.
+            timestamps for either the nodes or edges in the graph.
             If set, temporal sampling will be used such that neighbors are
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
             an earlier or equal timestamp than the center node.

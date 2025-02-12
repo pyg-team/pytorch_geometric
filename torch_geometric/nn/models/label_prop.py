@@ -12,7 +12,7 @@ from torch_geometric.utils import one_hot, spmm
 class LabelPropagation(MessagePassing):
     r"""The label propagation operator, firstly introduced in the
     `"Learning from Labeled and Unlabeled Data with Label Propagation"
-    <http://mlg.eng.cam.ac.uk/zoubin/papers/CMU-CALD-02-107.pdf>`_ paper
+    <http://mlg.eng.cam.ac.uk/zoubin/papers/CMU-CALD-02-107.pdf>`_ paper.
 
     .. math::
         \mathbf{Y}^{\prime} = \alpha \cdot \mathbf{D}^{-1/2} \mathbf{A}
@@ -48,7 +48,8 @@ class LabelPropagation(MessagePassing):
         edge_weight: OptTensor = None,
         post_step: Optional[Callable[[Tensor], Tensor]] = None,
     ) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             y (torch.Tensor): The ground-truth label information
                 :math:`\mathbf{Y}`.
@@ -79,9 +80,8 @@ class LabelPropagation(MessagePassing):
 
         res = (1 - self.alpha) * out
         for _ in range(self.num_layers):
-            # propagate_type: (y: Tensor, edge_weight: OptTensor)
-            out = self.propagate(edge_index, x=out, edge_weight=edge_weight,
-                                 size=None)
+            # propagate_type: (x: Tensor, edge_weight: OptTensor)
+            out = self.propagate(edge_index, x=out, edge_weight=edge_weight)
             out.mul_(self.alpha).add_(res)
             if post_step is not None:
                 out = post_step(out)

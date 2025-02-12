@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withDevice, withPackage
 from torch_geometric.utils import (
     bipartite_subgraph,
     get_num_hops,
@@ -50,7 +50,7 @@ def test_subgraph():
         assert out[1].tolist() == [7, 8, 9, 10]
 
 
-@withCUDA
+@withDevice
 @withPackage('pandas')
 def test_subgraph_large_index(device):
     subset = torch.tensor([50_000_000], device=device)
@@ -82,7 +82,7 @@ def test_bipartite_subgraph():
         assert out[1].tolist() == [3.0, 4.0, 9.0, 10.0]
 
 
-@withCUDA
+@withDevice
 @withPackage('pandas')
 def test_bipartite_subgraph_large_index(device):
     subset = torch.tensor([50_000_000], device=device)
@@ -101,9 +101,12 @@ def test_k_hop_subgraph():
         [0, 1, 2, 3, 4, 5],
         [2, 2, 4, 4, 6, 6],
     ])
-
     subset, edge_index, mapping, edge_mask = k_hop_subgraph(
-        6, 2, edge_index, relabel_nodes=True)
+        node_idx=6,
+        num_hops=2,
+        edge_index=edge_index,
+        relabel_nodes=True,
+    )
     assert subset.tolist() == [2, 3, 4, 5, 6]
     assert edge_index.tolist() == [[0, 1, 2, 3], [2, 2, 4, 4]]
     assert mapping.tolist() == [4]
@@ -113,12 +116,29 @@ def test_k_hop_subgraph():
         [1, 2, 4, 5],
         [0, 1, 5, 6],
     ])
-
-    subset, edge_index, mapping, edge_mask = k_hop_subgraph([0, 6], 2,
-                                                            edge_index,
-                                                            relabel_nodes=True)
-
+    subset, edge_index, mapping, edge_mask = k_hop_subgraph(
+        node_idx=[0, 6],
+        num_hops=2,
+        edge_index=edge_index,
+        relabel_nodes=True,
+    )
     assert subset.tolist() == [0, 1, 2, 4, 5, 6]
     assert edge_index.tolist() == [[1, 2, 3, 4], [0, 1, 4, 5]]
     assert mapping.tolist() == [0, 5]
     assert edge_mask.tolist() == [True, True, True, True]
+
+    edge_index = torch.tensor([
+        [0, 1, 2, 3, 4, 4, 5],
+        [2, 2, 4, 4, 2, 6, 6],
+    ])
+    subset, edge_index, mapping, edge_mask = k_hop_subgraph(
+        node_idx=6,
+        num_hops=2,
+        edge_index=edge_index,
+        relabel_nodes=False,
+        directed=True,
+    )
+    assert subset.tolist() == [2, 3, 4, 5, 6]
+    assert edge_index.tolist() == [[2, 3, 4, 5], [4, 4, 6, 6]]
+    assert mapping.tolist() == [4]
+    assert edge_mask.tolist() == [False, False, True, True, False, True, True]

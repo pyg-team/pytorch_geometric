@@ -27,22 +27,30 @@ from torch_geometric.utils.sparse import set_sparse_value
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             flow, dtype):
+def gcn_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
+        dtype):
     # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
     pass
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
-             flow, dtype):
+def gcn_norm(  # noqa: F811
+        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
+        dtype):
     # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
     pass
 
 
-def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, flow="source_to_target", dtype=None):
-
+def gcn_norm(  # noqa: F811
+    edge_index: Adj,
+    edge_weight: OptTensor = None,
+    num_nodes: Optional[int] = None,
+    improved: bool = False,
+    add_self_loops: bool = True,
+    flow: str = "source_to_target",
+    dtype: Optional[torch.dtype] = None,
+):
     fill_value = 2. if improved else 1.
 
     if isinstance(edge_index, SparseTensor):
@@ -108,7 +116,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 class GCNConv(MessagePassing):
     r"""The graph convolutional operator from the `"Semi-supervised
     Classification with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1609.02907>`_ paper
+    <https://arxiv.org/abs/1609.02907>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
@@ -252,8 +260,7 @@ class GCNConv(MessagePassing):
         x = self.lin(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
         if self.bias is not None:
             out = out + self.bias
@@ -263,5 +270,5 @@ class GCNConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)

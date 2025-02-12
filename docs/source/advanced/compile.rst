@@ -11,38 +11,24 @@ Under the hood, :meth:`torch.compile` captures :pytorch:`PyTorch` programs via :
 
 In this tutorial, we show how to optimize your custom :pyg:`PyG` model via :meth:`torch.compile`.
 
-:meth:`torch_geometric.compile`
--------------------------------
-
-By default, :meth:`torch.compile` struggles to optimize a custom :pyg:`PyG` model since its underlying :class:`~torch_geometric.nn.conv.MessagePassing` interface is JIT-unfriendly due to its generality.
-As such, in :pyg:`PyG 2.3`, we introduce :meth:`torch_geometric.compile`, a wrapper around :meth:`torch.compile` with the same signature.
-
-:meth:`torch_geometric.compile` applies further optimizations to make :pyg:`PyG` models more compiler-friendly.
-Specifically, it:
-
-#. Temporarily disables the usage of the extension packages :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` during GNN execution workflows (since these are not *yet* directly optimizable by :pytorch:`PyTorch`).
-   From :pyg:`PyG 2.3` onwards, these packages are purely optional and not required anymore for running :pyg:`PyG` models (but :obj:`pyg_lib` may be required for graph sampling routines).
-
-#. Converts all instances of :class:`~torch_geometric.nn.conv.MessagePassing` modules into their jittable instances (see :meth:`torch_geometric.nn.conv.MessagePassing.jittable`)
-
-Without these adjustments, :meth:`torch.compile` may currently fail to correctly optimize your :pyg:`PyG` model.
-We are working on fully relying on :meth:`torch.compile` for future releases.
+.. note::
+    From :pyg:`PyG` 2.5 (and onwards), :meth:`torch.compile` is now fully compatible with all :pyg:`PyG` GNN layers.
+    If you are on an earlier version of :pyg:`PyG`, consider using :meth:`torch_geometric.compile` instead.
 
 Basic Usage
 -----------
 
-Leveraging :meth:`torch_geometric.compile` is as simple as the usage of :meth:`torch.compile`.
-Once you have a :pyg:`PyG` model defined, simply wrap it with :meth:`torch_geometric.compile` to obtain its optimized version:
+Once you have a :pyg:`PyG` model defined, simply wrap it with :meth:`torch.compile` to obtain its optimized version:
 
 .. code-block:: python
 
-    import torch_geometric
+    import torch
     from torch_geometric.nn import GraphSAGE
 
     model = GraphSAGE(in_channels, hidden_channels, num_layers, out_channels)
     model = model.to(device)
 
-    model = torch_geometric.compile(model)
+    model = torch.compile(model)
 
 and execute it as usual:
 
@@ -58,14 +44,14 @@ and execute it as usual:
 Maximizing Performance
 ----------------------
 
-The :meth:`torch.compile`/:meth:`torch_geometric.compile` method provides two important arguments to be aware of:
+The :meth:`torch.compile` method provides two important arguments to be aware of:
 
 * Most of the mini-batches observed in :pyg:`PyG` are dynamic by nature, meaning that their shape varies across different mini-batches.
   For these scenarios, we can enforce dynamic shape tracing in :pytorch:`PyTorch` via the :obj:`dynamic=True` argument:
 
   .. code-block:: python
 
-      torch_geometric.compile(model, dynamic=True)
+      torch.compile(model, dynamic=True)
 
   With this, :pytorch:`PyTorch` will up-front attempt to generate a kernel that is as dynamic as possible to avoid recompilations when sizes change across mini-batches changes.
   Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, and thus only works when graph sizes are guaranteed to never change (*e.g.*, in full-batch training on small graphs).
@@ -77,7 +63,7 @@ The :meth:`torch.compile`/:meth:`torch_geometric.compile` method provides two im
 
   .. code-block:: python
 
-      torch_geometric.compile(model, fullgraph=True)
+      torch.compile(model, fullgraph=True)
 
   It is generally a good practice to confirm that your written model does not contain any graph breaks.
   Importantly, there exists a few operations in :pyg:`PyG` that will currently lead to graph breaks (but workaround exists), *e.g.*:
@@ -85,18 +71,18 @@ The :meth:`torch.compile`/:meth:`torch_geometric.compile` method provides two im
   1. :meth:`~torch_geometric.nn.pool.global_mean_pool` (and other pooling operators) perform device synchronization in case the batch size :obj:`size` is not passed, leading to a graph break.
 
   2. :meth:`~torch_geometric.utils.remove_self_loops` and :meth:`~torch_geometric.utils.add_remaining_self_loops` mask the given :obj:`edge_index`, leading to a device synchronization to compute its final output shape.
-     As such, we recommend to augment your graph *before* inputting it into your GNN, *e.g.*, via the :class:`~torch_geometric.transforms.AddSelfLoops` or :class:`~torch_geometric.transforms.GCNNorm` transformations, and setting :obj:`add_self_loops=False`/:obj:`normalize=False` when initializing layers such as :class:`~torch_geometric.nn.conv.GCNNorm`.
+     As such, we recommend to augment your graph *before* inputting it into your GNN, *e.g.*, via the :class:`~torch_geometric.transforms.AddSelfLoops` or :class:`~torch_geometric.transforms.GCNNorm` transformations, and setting :obj:`add_self_loops=False`/:obj:`normalize=False` when initializing layers such as :class:`~torch_geometric.nn.conv.GCNConv`.
 
 Exampe Scripts
 --------------
 
-We have incorporated multiple examples in :obj:`examples/compile` that further show the practical usage of :meth:`torch_geometric.compile`:
+We have incorporated multiple examples in :obj:`examples/compile` that further show the practical usage of :meth:`torch.compile`:
 
 #. `Node Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN` (:obj:`dynamic=False`)
 #. `Graph Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN` (:obj:`dynamic=True`)
 
-If you notice that :meth:`~torch_geometric.compile` fails for a certain :pyg:`PyG` model, do not hesitate to reach out either on :github:`null` `GitHub <https://github.com/pyg-team/pytorch_geometric/issues>`_ or :slack:`null` `Slack <https://data.pyg.org/slack.html>`_.
-We are very eager to improve :meth:`~torch_geometric.compile` support across the whole :pyg:`PyG` code base.
+If you notice that :meth:`torch.compile` fails for a certain :pyg:`PyG` model, do not hesitate to reach out either on :github:`null` `GitHub <https://github.com/pyg-team/pytorch_geometric/issues>`_ or :slack:`null` `Slack <https://data.pyg.org/slack.html>`_.
+We are very eager to improve :meth:`torch.compile` support across the whole :pyg:`PyG` code base.
 
 Benchmark
 ---------
@@ -104,7 +90,7 @@ Benchmark
 :meth:`torch.compile` works **fantastically well** for many :pyg:`PyG` models.
 **Overall, we observe runtime improvements of nearly up to 300%.**
 
-Specifically, we benchmark :class:`~torch_geometric.nn.models.GCN`, :class:`~torch_geometric.nn.models.GraphSAGE` and :class:`~torch_geometric.nn.models.GIN` and compare runtimes obtained from traditional eager mode and :meth:`torch_geometric.compile`.
+Specifically, we benchmark :class:`~torch_geometric.nn.models.GCN`, :class:`~torch_geometric.nn.models.GraphSAGE` and :class:`~torch_geometric.nn.models.GIN` and compare runtimes obtained from traditional eager mode and :meth:`torch.compile`.
 We use a synthetic graph with 10,000 nodes and 200,000 edges, and a hidden feature dimensionality of 64.
 We report runtimes over 500 optimization steps:
 

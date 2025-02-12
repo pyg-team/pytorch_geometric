@@ -1,18 +1,26 @@
-from .profile import profileit, timeit, get_stats_summary
+r"""GNN profiling package."""
+
+from .benchmark import benchmark
 from .profile import (
-    trace_handler,
+    get_stats_summary,
     print_time_total,
+    profileit,
     rename_profile_file,
+    timeit,
     torch_profile,
+    trace_handler,
     xpu_profile,
 )
-from .utils import count_parameters
-from .utils import get_model_size
-from .utils import get_data_size
-from .utils import get_cpu_memory_from_gc
-from .utils import get_gpu_memory_from_gc
-from .utils import get_gpu_memory_from_nvidia_smi
-from .benchmark import benchmark
+from .utils import (
+    count_parameters,
+    get_cpu_memory_from_gc,
+    get_data_size,
+    get_gpu_memory_from_gc,
+    get_gpu_memory_from_ipex,
+    get_gpu_memory_from_nvidia_smi,
+    get_model_size,
+)
+from .nvtx import nvtxit
 
 __all__ = [
     'profileit',
@@ -29,7 +37,9 @@ __all__ = [
     'get_cpu_memory_from_gc',
     'get_gpu_memory_from_gc',
     'get_gpu_memory_from_nvidia_smi',
+    'get_gpu_memory_from_ipex',
     'benchmark',
+    'nvtxit',
 ]
 
 classes = __all__

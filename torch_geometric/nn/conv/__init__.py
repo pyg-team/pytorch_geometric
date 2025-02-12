@@ -63,6 +63,8 @@ from .dir_gnn_conv import DirGNNConv
 from .mixhop_conv import MixHopConv
 from .egt_conv import EGTConv
 
+import torch_geometric.nn.conv.utils  # noqa
+
 __all__ = [
     'MessagePassing',
     'SimpleConv',

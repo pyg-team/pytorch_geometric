@@ -21,7 +21,6 @@ def erdos_renyi_graph(
             directed graph. (default: :obj:`False`)
 
     Examples:
-
         >>> erdos_renyi_graph(5, 0.2, directed=False)
         tensor([[0, 1, 1, 4],
                 [1, 0, 4, 1]])
@@ -30,7 +29,6 @@ def erdos_renyi_graph(
         tensor([[0, 1, 3, 3, 4, 4],
                 [4, 3, 1, 2, 1, 3]])
     """
-
     if directed:
         idx = torch.arange((num_nodes - 1) * num_nodes)
         idx = idx.view(num_nodes - 1, num_nodes)
@@ -70,7 +68,6 @@ def stochastic_blockmodel_graph(
             directed graph. (default: :obj:`False`)
 
     Examples:
-
         >>> block_sizes = [2, 2, 4]
         >>> edge_probs = [[0.25, 0.05, 0.02],
         ...               [0.05, 0.35, 0.07],
@@ -85,7 +82,6 @@ def stochastic_blockmodel_graph(
         tensor([[0, 2, 3, 4, 4, 5, 5],
                 [3, 4, 1, 5, 6, 6, 7]])
     """
-
     size, prob = block_sizes, edge_probs
 
     if not isinstance(size, torch.Tensor):
@@ -132,12 +128,10 @@ def barabasi_albert_graph(num_nodes: int, num_edges: int) -> torch.Tensor:
         num_edges (int): The number of edges from a new node to existing nodes.
 
     Example:
-
         >>> barabasi_albert_graph(num_nodes=4, num_edges=3)
         tensor([[0, 0, 0, 1, 1, 2, 2, 3],
                 [1, 2, 3, 0, 2, 0, 1, 0]])
     """
-
     assert num_edges > 0 and num_edges < num_nodes
 
     row, col = torch.arange(num_edges), torch.randperm(num_edges)

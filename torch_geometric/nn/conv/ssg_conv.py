@@ -12,7 +12,7 @@ from torch_geometric.utils import spmm
 class SSGConv(MessagePassing):
     r"""The simple spectral graph convolutional operator from the
     `"Simple Spectral Graph Convolution"
-    <https://openreview.net/forum?id=CYO5T-YjWZV>`_ paper
+    <https://openreview.net/forum?id=CYO5T-YjWZV>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \frac{1}{K} \sum_{k=1}^K\left((1-\alpha)
@@ -102,8 +102,7 @@ class SSGConv(MessagePassing):
             h = x * self.alpha
             for k in range(self.K):
                 # propagate_type: (x: Tensor, edge_weight: OptTensor)
-                x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                                   size=None)
+                x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
                 h = h + (1 - self.alpha) / self.K * x
             if self.cached:
                 self._cached_h = h
@@ -115,7 +114,7 @@ class SSGConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
