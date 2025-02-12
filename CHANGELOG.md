@@ -7,11 +7,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `AveragePopularity` metric for link prediction ([#10022](https://github.com/pyg-team/pytorch_geometric/pull/10022))
+- Added `Personalization` metric for link prediction ([#10015](https://github.com/pyg-team/pytorch_geometric/pull/10015))
+- Added `HitRatio` metric for link prediction ([#10013](https://github.com/pyg-team/pytorch_geometric/pull/10013))
 - Added Data Splitting Tutorial ([#8366](https://github.com/pyg-team/pytorch_geometric/pull/8366))
 - Added `Diversity` metric for link prediction ([#10009](https://github.com/pyg-team/pytorch_geometric/pull/10009))
 - Added `Coverage` metric for link prediction ([#10006](https://github.com/pyg-team/pytorch_geometric/pull/10006))
 - Added Graph Transformer Tutorial ([#8144](https://github.com/pyg-team/pytorch_geometric/pull/8144))
-- Consolidate Cugraph examples into ogbn_train_cugraph.py and ogbn_train_cugraph_multigpu.py for ogbn-arxiv, ogbn-products and ogbn-papers100M ([#9953](https://github.com/pyg-team/pytorch_geometric/pull/9953))
+- Consolidate Cugraph examples into `ogbn_train_cugraph.py` and `ogbn_train_cugraph_multigpu.py` for `ogbn-arxiv`, `ogbn-products` and `ogbn-papers100M` ([#9953](https://github.com/pyg-team/pytorch_geometric/pull/9953))
 - Added `InstructMol` dataset ([#9975](https://github.com/pyg-team/pytorch_geometric/pull/9975))
 - Added support for weighted `LinkPredRecall` metric ([#9947](https://github.com/pyg-team/pytorch_geometric/pull/9947))
 - Added support for weighted `LinkPredNDCG` metric ([#9945](https://github.com/pyg-team/pytorch_geometric/pull/9945))
