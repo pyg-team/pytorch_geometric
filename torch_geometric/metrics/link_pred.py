@@ -722,12 +722,14 @@ class LinkPredPersonalization(_LinkPredMetric):
             of user recommendations should be processed at once.
             (default: :obj:`2**16`)
     """
+    higher_is_better: bool = True
+
     def __init__(self, k: int, batch_size: int = 2**16) -> None:
         super().__init__(k)
         self.batch_size = batch_size
 
         if WITH_TORCHMETRICS:
-            self.add_state("preds", default=[], dist_reduce_fx="cat")
+            self.add_state('preds', default=[], dist_reduce_fx='cat')
             self.add_state('dev_tensor', torch.empty(0), dist_reduce_fx='sum')
         else:
             self.preds: List[Tensor] = []
@@ -787,3 +789,51 @@ class LinkPredPersonalization(_LinkPredMetric):
 
     def _reset(self) -> None:
         self.preds = []
+
+
+class LinkPredAveragePopularity(_LinkPredMetric):
+    r"""A link prediction metric to compute the Average Recommendation
+    Popularity (ARP) @ :math:`k`, which provides insights into the model's
+    tendency to recommend popular items by averaging the popularity scores of
+    items within the top-:math:`k` recommendations.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+        popularity (torch.Tensor): The popularity of every item in the training
+            set, *e.g.*, the number of times an item has been rated.
+    """
+    higher_is_better: bool = False
+
+    def __init__(self, k: int, popularity: Tensor) -> None:
+        super().__init__(k)
+
+        if WITH_TORCHMETRICS:
+            self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
+            self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
+        else:
+            self.register_buffer('accum', torch.tensor(0.))
+            self.register_buffer('total', torch.tensor(0))
+
+        self.popularity: Tensor
+        self.register_buffer('popularity', popularity)
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
+        pred_index_mat = pred_index_mat[:, :self.k]
+        popularity = self.popularity[pred_index_mat]
+        popularity = popularity.to(self.accum.dtype).mean(dim=-1)
+        self.accum += popularity.sum()
+        self.total += popularity.numel()
+
+    def compute(self) -> Tensor:
+        if self.total == 0:
+            return torch.zeros_like(self.accum)
+        return self.accum / self.total
+
+    def _reset(self) -> None:
+        self.accum.zero_()
+        self.total.zero_()
