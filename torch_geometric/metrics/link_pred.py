@@ -704,3 +704,136 @@ class LinkPredDiversity(_LinkPredMetric):
     def _reset(self) -> None:
         self.accum.zero_()
         self.total.zero_()
+
+
+class LinkPredPersonalization(_LinkPredMetric):
+    r"""A link prediction metric to compute the Personalization @ :math:`k`,
+    *i.e.* the dissimilarity of recommendations across different users.
+
+    Higher personalization suggests that the model tailors recommendations to
+    individual user preferences rather than providing generic results.
+
+    Dissimilarity is defined by the average inverse cosine similarity between
+    users' lists of recommendations.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+        batch_size (int, optional): The batch size to determine how many pairs
+            of user recommendations should be processed at once.
+            (default: :obj:`2**16`)
+    """
+    higher_is_better: bool = True
+
+    def __init__(self, k: int, batch_size: int = 2**16) -> None:
+        super().__init__(k)
+        self.batch_size = batch_size
+
+        if WITH_TORCHMETRICS:
+            self.add_state('preds', default=[], dist_reduce_fx='cat')
+            self.add_state('dev_tensor', torch.empty(0), dist_reduce_fx='sum')
+        else:
+            self.preds: List[Tensor] = []
+            self.register_buffer('dev_tensor', torch.empty(0))
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
+        # NOTE Move to CPU to avoid memory blowup.
+        self.preds.append(pred_index_mat[:, :self.k].cpu())
+
+    def compute(self) -> Tensor:
+        device = self.dev_tensor.device
+        score = torch.tensor(0.0, device=device)
+        total = torch.tensor(0, device=device)
+
+        if len(self.preds) == 0:
+            return score
+
+        pred = torch.cat(self.preds, dim=0)
+
+        if pred.size(0) == 0:
+            return score
+
+        # Calculate all pairs of nodes (e.g., triu_indices with offset=1).
+        # NOTE We do this in chunks to avoid memory blow-up, which leads to a
+        # more efficient but trickier implementation.
+        num_pairs = (pred.size(0) * (pred.size(0) - 1)) // 2
+        offset = torch.arange(pred.size(0) - 1, 0, -1, device=device)
+        rowptr = cumsum(offset)
+        for start in range(0, num_pairs, self.batch_size):
+            end = min(start + self.batch_size, num_pairs)
+            idx = torch.arange(start, end, device=device)
+
+            # Find the corresponding row:
+            row = torch.searchsorted(rowptr, idx, right=True) - 1
+            # Find the corresponding column:
+            col = idx - rowptr[row] + (pred.size(0) - offset[row])
+
+            left = pred[row.cpu()].to(device)
+            right = pred[col.cpu()].to(device)
+
+            # Use offset to work around applying `isin` along a specific dim:
+            i = max(left.max(), right.max()) + 1  # type: ignore
+            i = torch.arange(0, i * row.size(0), i, device=device).view(-1, 1)
+            isin = torch.isin(left + i, right + i)
+
+            # Compute personalization via average inverse cosine similarity:
+            cos = isin.sum(dim=-1) / pred.size(1)
+            score += (1 - cos).sum()
+            total += cos.numel()
+
+        return score / total
+
+    def _reset(self) -> None:
+        self.preds = []
+
+
+class LinkPredAveragePopularity(_LinkPredMetric):
+    r"""A link prediction metric to compute the Average Recommendation
+    Popularity (ARP) @ :math:`k`, which provides insights into the model's
+    tendency to recommend popular items by averaging the popularity scores of
+    items within the top-:math:`k` recommendations.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+        popularity (torch.Tensor): The popularity of every item in the training
+            set, *e.g.*, the number of times an item has been rated.
+    """
+    higher_is_better: bool = False
+
+    def __init__(self, k: int, popularity: Tensor) -> None:
+        super().__init__(k)
+
+        if WITH_TORCHMETRICS:
+            self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
+            self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
+        else:
+            self.register_buffer('accum', torch.tensor(0.))
+            self.register_buffer('total', torch.tensor(0))
+
+        self.popularity: Tensor
+        self.register_buffer('popularity', popularity)
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
+        pred_index_mat = pred_index_mat[:, :self.k]
+        popularity = self.popularity[pred_index_mat]
+        popularity = popularity.to(self.accum.dtype).mean(dim=-1)
+        self.accum += popularity.sum()
+        self.total += popularity.numel()
+
+    def compute(self) -> Tensor:
+        if self.total == 0:
+            return torch.zeros_like(self.accum)
+        return self.accum / self.total
+
+    def _reset(self) -> None:
+        self.accum.zero_()
+        self.total.zero_()
