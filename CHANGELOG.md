@@ -53,8 +53,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed `is_node_attr()` and `is_edge_attr()` errors when `cat_dim` is a tuple ([#9895](https://github.com/pyg-team/pytorch_geometric/issues/9895))
 
 ### Removed
-- Removed `SAMPLED_OP` flag from `torch_geometric/typing.py` ([#10023](https://github.com/pyg-team/pytorch_geometric/pull/10023))
 
+- Removed `SAMPLED_OP` flag from `torch_geometric/typing.py` ([#10023](https://github.com/pyg-team/pytorch_geometric/pull/10023))
 
 ## [2.6.0] - 2024-09-13
 
