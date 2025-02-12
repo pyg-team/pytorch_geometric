@@ -21,7 +21,12 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric
-from torch_geometric.utils import to_undirected
+from torch_geometric import seed_everything
+from torch_geometric.utils import (
+    add_self_loops,
+    remove_self_loops,
+    to_undirected,
+)
 
 # Allow computation on objects that are larger than GPU memory
 # https://docs.rapids.ai/api/cudf/stable/developer_guide/library_design/#spilling-to-host-memory
@@ -38,20 +43,20 @@ def arg_parse():
     parser.add_argument(
         '--dataset',
         type=str,
-        default='ogbn-papers100M',
+        default='ogbn-arxiv',
         choices=['ogbn-papers100M', 'ogbn-products', 'ogbn-arxiv'],
         help='Dataset name.',
     )
     parser.add_argument(
         '--dataset_dir',
         type=str,
-        default='/workspace/data',
+        default='./data',
         help='Root directory of dataset.',
     )
     parser.add_argument(
         "--dataset_subdir",
         type=str,
-        default="ogb-papers100M",
+        default="ogbn-arxiv",
         help="directory of dataset.",
     )
     parser.add_argument('--hidden_channels', type=int, default=256)
@@ -69,17 +74,22 @@ def arg_parse():
         help='Whether or not to use directed graph',
     )
     parser.add_argument(
+        '--add_self_loop',
+        action='store_true',
+        help='Whether or not to add self loop',
+    )
+    parser.add_argument(
         "--model",
         type=str,
         default='GCN',
-        choices=['SAGE', 'GAT', 'GCN'],
+        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
         help="Model used for training, default GraphSAGE",
     )
     parser.add_argument(
-        "--num_gat_conv_heads",
+        "--num_heads",
         type=int,
         default=4,
-        help="If using GATConv, number of attention heads to use",
+        help="If using GATConv or GT, number of attention heads to use",
     )
     parser.add_argument('--tempdir_root', type=str, default=None)
     parser.add_argument(
@@ -310,7 +320,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
 if __name__ == '__main__':
 
     args = arg_parse()
-
+    seed_everything(123)
     wall_clock_start = time.perf_counter()
 
     root = osp.join(args.dataset_dir, args.dataset_subdir)
@@ -319,17 +329,20 @@ if __name__ == '__main__':
     data = dataset[0]
     if not args.use_directed_graph:
         data.edge_index = to_undirected(data.edge_index, reduce="mean")
+    if args.add_self_loop:
+        data.edge_index, _ = remove_self_loops(data.edge_index)
+        data.edge_index, _ = add_self_loops(data.edge_index,
+                                            num_nodes=data.num_nodes)
     data.y = data.y.reshape(-1)
 
+    print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        print(f"Training {args.dataset} with GAT model.")
         model = torch_geometric.nn.models.GAT(dataset.num_features,
                                               args.hidden_channels,
                                               args.num_layers,
                                               dataset.num_classes,
-                                              heads=args.num_gat_conv_heads)
+                                              heads=args.num_heads)
     elif args.model == "GCN":
-        print(f"Training {args.dataset} with GCN model.")
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
             args.hidden_channels,
@@ -337,15 +350,24 @@ if __name__ == '__main__':
             dataset.num_classes,
         )
     elif args.model == "SAGE":
-        print(f"Training {args.dataset} with GraphSAGE model.")
         model = torch_geometric.nn.models.GraphSAGE(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         )
+    elif args.model == 'SGFormer':
+        model = torch_geometric.nn.models.SGFormer(
+            in_channels=dataset.num_features,
+            hidden_channels=args.hidden_channels,
+            out_channels=dataset.num_classes,
+            trans_num_heads=args.num_heads,
+            trans_dropout=args.dropout,
+            gnn_num_layers=args.num_layers,
+            gnn_dropout=args.dropout,
+        )
     else:
-        raise ValueError('Unsupported model type: {args.model}')
+        raise ValueError(f'Unsupported model type: {args.model}')
 
     print("Data =", data)
     if args.num_devices < 1:

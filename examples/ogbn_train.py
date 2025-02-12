@@ -197,7 +197,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             gnn_dropout=args.dropout,
         )
     else:
-        raise ValueError(f'{gnn_choice} is not supported.')
+        raise ValueError(f'Unsupported model type: {gnn_choice}')
 
     return model
 
