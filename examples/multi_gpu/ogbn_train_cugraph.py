@@ -179,8 +179,8 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     )] = ixr
 
     feature_store = TensorDictFeatureStore()
-    feature_store['node', 'x'] = data.x
-    feature_store['node', 'y'] = data.y
+    feature_store['node', 'x', None] = data.x
+    feature_store['node', 'y', None] = data.y
 
     dist.barrier()
 
