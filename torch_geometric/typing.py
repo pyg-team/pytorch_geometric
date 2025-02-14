@@ -3,7 +3,7 @@ import os
 import sys
 import typing
 import warnings
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, TypeAlias, Union
 
 import numpy as np
 import torch
@@ -86,7 +86,7 @@ except Exception as e:
     WITH_CUDA_HASH_MAP = False
 
 if WITH_CPU_HASH_MAP:
-    CPUHashMap = torch.classes.pyg.CPUHashMap
+    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
 else:
 
     class CPUHashMap:
@@ -98,7 +98,7 @@ else:
 
 
 if WITH_CUDA_HASH_MAP:
-    CUDAHashMap = torch.classes.pyg.CUDAHashMap
+    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
 else:
 
     class CUDAHashMap:
