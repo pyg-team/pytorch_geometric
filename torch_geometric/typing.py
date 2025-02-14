@@ -56,7 +56,6 @@ try:
         except RuntimeError:
             WITH_GMM = False
             WITH_SEGMM = False
-    WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
     WITH_SOFTMAX = hasattr(pyg_lib.ops, 'softmax_csr')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
     WITH_METIS = hasattr(pyg_lib, 'partition')
@@ -72,7 +71,6 @@ except Exception as e:
     WITH_PYG_LIB = False
     WITH_GMM = False
     WITH_SEGMM = False
-    WITH_SAMPLED_OP = False
     WITH_SOFTMAX = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
