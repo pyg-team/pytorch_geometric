@@ -64,6 +64,8 @@ try:
         pyg_lib.sampler.neighbor_sample).parameters)
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
+    WITH_CPU_HASH_MAP = hasattr(torch.classes.pyg, 'CPUHashMap')
+    WITH_CUDA_HASH_MAP = hasattr(torch.classes.pyg, 'CUDAHashMap')
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
@@ -78,6 +80,32 @@ except Exception as e:
     WITH_METIS = False
     WITH_EDGE_TIME_NEIGHBOR_SAMPLE = False
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
+    WITH_CPU_HASH_MAP = False
+    WITH_CUDA_HASH_MAP = False
+
+if WITH_CPU_HASH_MAP:
+    CPUHashMap = torch.classes.pyg.CPUHashMap
+else:
+
+    class CPUHashMap:
+        def __init__(self, key: Tensor) -> None:
+            raise ImportError("'CPUHashMap' requires 'pyg-lib'")
+
+        def get(self, query: Tensor) -> Tensor:
+            raise ImportError("'CPUHashMap' requires 'pyg-lib'")
+
+
+if WITH_CUDA_HASH_MAP:
+    CUDAHashMap = torch.classes.pyg.CUDAHashMap
+else:
+
+    class CUDAHashMap:
+        def __init__(self, key: Tensor) -> None:
+            raise ImportError("'CUDAHashMap' requires 'pyg-lib'")
+
+        def get(self, query: Tensor) -> Tensor:
+            raise ImportError("'CUDAHashMap' requires 'pyg-lib'")
+
 
 try:
     import torch_scatter  # noqa
