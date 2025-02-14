@@ -50,7 +50,7 @@ def arg_parse():
     parser.add_argument(
         '--dataset_dir',
         type=str,
-        default='./data',
+        default='/workspace/data',
         help='Root directory of dataset.',
     )
     parser.add_argument(
@@ -60,14 +60,15 @@ def arg_parse():
         help="directory of dataset.",
     )
     parser.add_argument('--hidden_channels', type=int, default=256)
-    parser.add_argument('--num_layers', type=int, default=2)
+    parser.add_argument('--num_layers', type=int, default=3)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
-    parser.add_argument('-e', '--epochs', type=int, default=10)
+    parser.add_argument('-e', '--epochs', type=int, default=50)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
     parser.add_argument('--eval_steps', type=int, default=1000)
     parser.add_argument('--warmup_steps', type=int, default=20)
+    parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument(
         '--use_directed_graph',
         action='store_true',
@@ -83,12 +84,12 @@ def arg_parse():
         type=str,
         default='GCN',
         choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
-        help="Model used for training, default GraphSAGE",
+        help="Model used for training, default GCN",
     )
     parser.add_argument(
         "--num_heads",
         type=int,
-        default=4,
+        default=1,
         help="If using GATConv or GT, number of attention heads to use",
     )
     parser.add_argument('--tempdir_root', type=str, default=None)

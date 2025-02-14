@@ -46,7 +46,7 @@ def arg_parse():
     parser.add_argument(
         '--dataset_dir',
         type=str,
-        default='./data',
+        default='/workspace/data',
         help='Root directory of dataset.',
     )
     parser.add_argument(
@@ -55,7 +55,7 @@ def arg_parse():
         default="ogbn-arxiv",
         help="directory of dataset.",
     )
-    parser.add_argument('-e', '--epochs', type=int, default=10)
+    parser.add_argument('-e', '--epochs', type=int, default=50)
     parser.add_argument('--num_layers', type=int, default=3)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
@@ -78,14 +78,14 @@ def arg_parse():
     parser.add_argument(
         "--model",
         type=str,
-        default='SAGE',
+        default='SGFormer',
         choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
-        help="Model used for training, default GraphSAGE",
+        help="Model used for training, default SGFormer",
     )
     parser.add_argument(
         "--num_heads",
         type=int,
-        default=4,
+        default=1,
         help="If using GATConv or GT, number of attention heads to use",
     )
     parser.add_argument('--tempdir_root', type=str, default=None)
@@ -188,8 +188,8 @@ if __name__ == '__main__':
     )] = data.edge_index
 
     feature_store = cugraph_pyg.data.TensorDictFeatureStore()
-    feature_store['node', 'x'] = data.x
-    feature_store['node', 'y'] = data.y
+    feature_store['node', 'x', None] = data.x
+    feature_store['node', 'y', None] = data.y
 
     data = (feature_store, graph_store)
 
