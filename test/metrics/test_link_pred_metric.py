@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from torch_geometric.metrics import (
+    LinkPredAveragePopularity,
     LinkPredCoverage,
     LinkPredDiversity,
     LinkPredF1,
@@ -257,6 +258,20 @@ def test_personalization(device):
     assert result.device == device
     assert float(result) == 0.0
     metric.reset()
+
+
+def test_average_popularity():
+    pred_index_mat = torch.tensor([[0, 1, 2], [3, 1, 0]])
+    popularity = torch.tensor([10, 5, 2, 1])
+    edge_label_index = torch.empty(2, 0, dtype=torch.long)
+
+    metric = LinkPredAveragePopularity(k=3, popularity=popularity)
+    assert str(metric) == 'LinkPredAveragePopularity(k=3)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+
+    assert pytest.approx(float(result)) == (10 + 5 + 2 + 1 + 5 + 10) / 6
 
 
 @pytest.mark.parametrize('num_src_nodes', [10])
