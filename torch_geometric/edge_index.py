@@ -183,7 +183,7 @@ class EdgeIndex(Tensor):
 
         edge_index = EdgeIndex(
             [[0, 1, 1, 2],
-             [1, 0, 2, 1]]
+             [1, 0, 2, 1]],
             sparse_size=(3, 3),
             sort_order='row',
             is_undirected=True,
@@ -210,7 +210,7 @@ class EdgeIndex(Tensor):
         assert not edge_index.is_undirected
 
         # Sparse-Dense Matrix Multiplication:
-        out = edge_index.flip(0) @ torch.randn(3, 16)
+        out = edge_index.flip(0) @ torch.randn(3, 16)
         assert out.size() == (3, 16)
     """
     # See "https://pytorch.org/docs/stable/notes/extending.html"
