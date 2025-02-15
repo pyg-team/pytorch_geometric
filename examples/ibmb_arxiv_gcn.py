@@ -40,7 +40,7 @@ class GraphPreprocess:
 class GCN(torch.nn.Module):
     def __init__(self, num_node_features, num_classes, hidden_channels,
                  num_layers, normalize, add_self_loops):
-        super(GCN, self).__init__()
+        super().__init__()
         self.conv_layers = torch.nn.ModuleList([])
         self.bns = torch.nn.ModuleList([])
 
