@@ -4,6 +4,7 @@ import os.path as osp
 
 import torch
 
+import torch_geometric
 from torch_geometric.datasets import AMiner
 from torch_geometric.nn import MetaPath2Vec
 
@@ -18,7 +19,12 @@ metapath = [
     ('paper', 'written_by', 'author'),
 ]
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif torch_geometric.is_xpu_available():
+    device = torch.device('xpu')
+else:
+    device = torch.device('cpu')
 model = MetaPath2Vec(data.edge_index_dict, embedding_dim=128,
                      metapath=metapath, walk_length=50, context_size=7,
                      walks_per_node=5, num_negative_samples=5,
@@ -40,14 +46,14 @@ def train(epoch, log_steps=100, eval_steps=2000):
 
         total_loss += loss.item()
         if (i + 1) % log_steps == 0:
-            print((f'Epoch: {epoch}, Step: {i + 1:05d}/{len(loader)}, '
-                   f'Loss: {total_loss / log_steps:.4f}'))
+            print(f'Epoch: {epoch}, Step: {i + 1:05d}/{len(loader)}, '
+                  f'Loss: {total_loss / log_steps:.4f}')
             total_loss = 0
 
         if (i + 1) % eval_steps == 0:
             acc = test()
-            print((f'Epoch: {epoch}, Step: {i + 1:05d}/{len(loader)}, '
-                   f'Acc: {acc:.4f}'))
+            print(f'Epoch: {epoch}, Step: {i + 1:05d}/{len(loader)}, '
+                  f'Acc: {acc:.4f}')
 
 
 @torch.no_grad()

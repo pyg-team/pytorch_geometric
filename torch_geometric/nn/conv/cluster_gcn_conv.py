@@ -18,7 +18,7 @@ from torch_geometric.utils.sparse import set_sparse_value
 class ClusterGCNConv(MessagePassing):
     r"""The ClusterGCN graph convolutional operator from the
     `"Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph
-    Convolutional Networks" <https://arxiv.org/abs/1905.07953>`_ paper
+    Convolutional Networks" <https://arxiv.org/abs/1905.07953>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \left( \mathbf{\hat{A}} + \lambda \cdot
@@ -118,8 +118,7 @@ class ClusterGCNConv(MessagePassing):
             edge_weight[row == col] += self.diag_lambda * deg_inv
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight)
         out = self.lin_out(out) + self.lin_root(x)
 
         return out
@@ -127,7 +126,7 @@ class ClusterGCNConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:

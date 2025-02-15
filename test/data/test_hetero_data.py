@@ -1,4 +1,5 @@
 import copy
+import warnings
 
 import pytest
 import torch
@@ -563,7 +564,13 @@ def test_hetero_data_invalid_names():
     data = HeteroData()
     with pytest.warns(UserWarning, match="single underscores"):
         data['my test', 'a__b', 'my test'].edge_attr = torch.randn(10, 16)
-    assert data.edge_types == [('my test', 'a__b', 'my test')]
+    with warnings.catch_warnings():  # No warning should be raised afterwards:
+        warnings.simplefilter('error')
+        data['my test', 'a__c', 'my test'].edge_attr = torch.randn(10, 16)
+    assert data.edge_types == [
+        ('my test', 'a__b', 'my test'),
+        ('my test', 'a__c', 'my test'),
+    ]
 
 
 def test_hetero_data_update():

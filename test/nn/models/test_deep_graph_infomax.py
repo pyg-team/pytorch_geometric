@@ -1,10 +1,10 @@
 import torch
 
 from torch_geometric.nn import GCN, DeepGraphInfomax
-from torch_geometric.testing import is_full_test, withCUDA
+from torch_geometric.testing import has_package, is_full_test, withDevice
 
 
-@withCUDA
+@withDevice
 def test_infomax(device):
     def corruption(z):
         return z + 1
@@ -33,16 +33,17 @@ def test_infomax(device):
         assert pos_z.size() == (20, 16) and neg_z.size() == (20, 16)
         assert summary.size() == (16, )
 
-    acc = model.test(
-        train_z=torch.ones(20, 16),
-        train_y=torch.randint(10, (20, )),
-        test_z=torch.ones(20, 16),
-        test_y=torch.randint(10, (20, )),
-    )
-    assert 0 <= acc <= 1
+    if has_package('sklearn'):
+        acc = model.test(
+            train_z=torch.ones(20, 16),
+            train_y=torch.randint(10, (20, )),
+            test_z=torch.ones(20, 16),
+            test_y=torch.randint(10, (20, )),
+        )
+        assert 0 <= acc <= 1
 
 
-@withCUDA
+@withDevice
 def test_infomax_predefined_model(device):
     def corruption(x, edge_index, edge_weight):
         return (

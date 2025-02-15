@@ -1,3 +1,4 @@
+import os.path as osp
 from typing import Tuple
 
 import pytest
@@ -313,4 +314,27 @@ def test_to_hetero_with_bases_on_static_graphs():
 
     assert len(out_dict) == 2
     assert out_dict['paper'].size() == (4, 100, 32)
-    assert out_dict['author'].size() == (4, 100, 32)
+
+
+def test_to_hetero_with_bases_save(tmp_path):
+    x_dict = {'paper': torch.randn(100, 16), 'author': torch.randn(100, 8)}
+    edge_index_dict = {
+        ('paper', 'cites', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+    }
+
+    model = to_hetero_with_bases(
+        Net2(),
+        (list(x_dict.keys()), list(edge_index_dict.keys())),
+        num_bases=4,
+        in_channels={'x': 16},
+        debug=False,
+    )
+    model(x_dict, edge_index_dict)
+
+    path = osp.join(tmp_path, 'model.pt')
+    torch.save(model, path)

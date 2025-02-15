@@ -34,6 +34,8 @@ class LocalCartesian(BaseTransform):
         self.interval = interval
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+        assert data.edge_index is not None
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
 
         cart = pos[row] - pos[col]

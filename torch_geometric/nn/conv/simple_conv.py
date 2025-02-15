@@ -18,7 +18,7 @@ from torch_geometric.utils import add_self_loops, spmm
 
 class SimpleConv(MessagePassing):
     r"""A simple message passing operator that performs (non-trainable)
-    propagation
+    propagation.
 
     .. math::
         \mathbf{x}^{\prime}_i = \bigoplus_{j \in \mathcal{N(i)}} e_{ji} \cdot
@@ -77,7 +77,7 @@ class SimpleConv(MessagePassing):
                     edge_index = torch_sparse.set_diag(edge_index)
 
         if isinstance(x, Tensor):
-            x: OptPairTensor = (x, x)
+            x = (x, x)
 
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
@@ -95,6 +95,6 @@ class SimpleConv(MessagePassing):
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: OptPairTensor) -> Tensor:
+    def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
+        assert isinstance(self.aggr, str)
         return spmm(adj_t, x[0], reduce=self.aggr)

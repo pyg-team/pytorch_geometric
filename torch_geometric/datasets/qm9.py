@@ -4,6 +4,7 @@ import sys
 from typing import Callable, List, Optional
 
 import torch
+from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -12,6 +13,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, scatter
 
 HAR2EV = 27.211386246
@@ -115,6 +117,8 @@ class QM9(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -139,10 +143,16 @@ class QM9(InMemoryDataset):
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
     processed_url = 'https://data.pyg.org/datasets/qm9_v3.zip'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform, pre_filter)
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     def mean(self, target: int) -> float:
@@ -153,7 +163,7 @@ class QM9(InMemoryDataset):
         y = torch.cat([self.get(i).y for i in range(len(self))], dim=0)
         return float(y[:, target].std())
 
-    def atomref(self, target) -> Optional[torch.Tensor]:
+    def atomref(self, target: int) -> Optional[Tensor]:
         if target in atomrefs:
             out = torch.zeros(100)
             out[torch.tensor([1, 6, 7, 8, 9])] = torch.tensor(atomrefs[target])
@@ -172,7 +182,7 @@ class QM9(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data_v3.pt'
 
-    def download(self):
+    def download(self) -> None:
         try:
             import rdkit  # noqa
             file_path = download_url(self.raw_url, self.raw_dir)
@@ -187,23 +197,23 @@ class QM9(InMemoryDataset):
             extract_zip(path, self.raw_dir)
             os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         try:
-            import rdkit
             from rdkit import Chem, RDLogger
             from rdkit.Chem.rdchem import BondType as BT
             from rdkit.Chem.rdchem import HybridizationType
-            RDLogger.DisableLog('rdApp.*')
+            RDLogger.DisableLog('rdApp.*')  # type: ignore
+            WITH_RDKIT = True
 
         except ImportError:
-            rdkit = None
+            WITH_RDKIT = False
 
-        if rdkit is None:
+        if not WITH_RDKIT:
             print(("Using a pre-processed version of the dataset. Please "
                    "install 'rdkit' to alternatively process the raw data."),
                   file=sys.stderr)
 
-            data_list = torch.load(self.raw_paths[0])
+            data_list = fs.torch_load(self.raw_paths[0])
             data_list = [Data(**data_dict) for data_dict in data_list]
 
             if self.pre_filter is not None:
@@ -218,15 +228,14 @@ class QM9(InMemoryDataset):
         types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
         bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
-        with open(self.raw_paths[1], 'r') as f:
-            target = f.read().split('\n')[1:-1]
+        with open(self.raw_paths[1]) as f:
             target = [[float(x) for x in line.split(',')[1:20]]
-                      for line in target]
-            target = torch.tensor(target, dtype=torch.float)
-            target = torch.cat([target[:, 3:], target[:, :3]], dim=-1)
-            target = target * conversion.view(1, -1)
+                      for line in f.read().split('\n')[1:-1]]
+            y = torch.tensor(target, dtype=torch.float)
+            y = torch.cat([y[:, 3:], y[:, :3]], dim=-1)
+            y = y * conversion.view(1, -1)
 
-        with open(self.raw_paths[2], 'r') as f:
+        with open(self.raw_paths[2]) as f:
             skip = [int(x.split()[0]) - 1 for x in f.read().split('\n')[9:-2]]
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,
@@ -261,15 +270,15 @@ class QM9(InMemoryDataset):
 
             z = torch.tensor(atomic_number, dtype=torch.long)
 
-            row, col, edge_type = [], [], []
+            rows, cols, edge_types = [], [], []
             for bond in mol.GetBonds():
                 start, end = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
-                row += [start, end]
-                col += [end, start]
-                edge_type += 2 * [bonds[bond.GetBondType()]]
+                rows += [start, end]
+                cols += [end, start]
+                edge_types += 2 * [bonds[bond.GetBondType()]]
 
-            edge_index = torch.tensor([row, col], dtype=torch.long)
-            edge_type = torch.tensor(edge_type, dtype=torch.long)
+            edge_index = torch.tensor([rows, cols], dtype=torch.long)
+            edge_type = torch.tensor(edge_types, dtype=torch.long)
             edge_attr = one_hot(edge_type, num_classes=len(bonds))
 
             perm = (edge_index[0] * N + edge_index[1]).argsort()
@@ -286,7 +295,6 @@ class QM9(InMemoryDataset):
                               dtype=torch.float).t().contiguous()
             x = torch.cat([x1, x2], dim=-1)
 
-            y = target[i].unsqueeze(0)
             name = mol.GetProp('_Name')
             smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
 
@@ -297,7 +305,7 @@ class QM9(InMemoryDataset):
                 edge_index=edge_index,
                 smiles=smiles,
                 edge_attr=edge_attr,
-                y=y,
+                y=y[i].unsqueeze(0),
                 name=name,
                 idx=i,
             )

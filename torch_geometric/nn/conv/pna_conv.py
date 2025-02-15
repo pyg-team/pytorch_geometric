@@ -17,7 +17,7 @@ from torch_geometric.utils import degree
 class PNAConv(MessagePassing):
     r"""The Principal Neighbourhood Aggregation graph convolution operator
     from the `"Principal Neighbourhood Aggregation for Graph Nets"
-    <https://arxiv.org/abs/2004.05718>`_ paper
+    <https://arxiv.org/abs/2004.05718>`_ paper.
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left(
@@ -164,7 +164,7 @@ class PNAConv(MessagePassing):
             x = x.view(-1, 1, self.F_in).repeat(1, self.towers, 1)
 
         # propagate_type: (x: Tensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
 
         out = torch.cat([x, out], dim=-1)
         outs = [nn(out[:, i]) for i, nn in enumerate(self.post_nns)]
@@ -195,7 +195,8 @@ class PNAConv(MessagePassing):
     @staticmethod
     def get_degree_histogram(loader: DataLoader) -> Tensor:
         r"""Returns the degree histogram to be used as input for the :obj:`deg`
-        argument in :class:`PNAConv`."""
+        argument in :class:`PNAConv`.
+        """
         deg_histogram = torch.zeros(1, dtype=torch.long)
         for data in loader:
             deg = degree(data.edge_index[1], num_nodes=data.num_nodes,

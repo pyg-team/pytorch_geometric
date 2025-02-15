@@ -86,7 +86,7 @@ class KGEModel(torch.nn.Module):
                 :class:`torch.utils.data.DataLoader`, such as
                 :obj:`batch_size`, :obj:`shuffle`, :obj:`drop_last`
                 or :obj:`num_workers`.
-            """
+        """
         return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
 
     @torch.no_grad()

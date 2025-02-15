@@ -23,7 +23,11 @@ class LargestConnectedComponents(BaseTransform):
             undirected edges produces a connected (undirected) graph.
             (default: :obj:`'weak'`)
     """
-    def __init__(self, num_components: int = 1, connection: str = 'weak'):
+    def __init__(
+        self,
+        num_components: int = 1,
+        connection: str = 'weak',
+    ) -> None:
         assert connection in ['strong', 'weak'], 'Unknown connection type'
         self.num_components = num_components
         self.connection = connection
@@ -31,6 +35,8 @@ class LargestConnectedComponents(BaseTransform):
     def forward(self, data: Data) -> Data:
         import numpy as np
         import scipy.sparse as sp
+
+        assert data.edge_index is not None
 
         adj = to_scipy_sparse_matrix(data.edge_index, num_nodes=data.num_nodes)
 
@@ -41,9 +47,11 @@ class LargestConnectedComponents(BaseTransform):
             return data
 
         _, count = np.unique(component, return_counts=True)
-        subset = np.in1d(component, count.argsort()[-self.num_components:])
+        subset_np = np.in1d(component, count.argsort()[-self.num_components:])
+        subset = torch.from_numpy(subset_np)
+        subset = subset.to(data.edge_index.device, torch.bool)
 
-        return data.subgraph(torch.from_numpy(subset).to(torch.bool))
+        return data.subgraph(subset)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.num_components})'

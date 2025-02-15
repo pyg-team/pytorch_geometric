@@ -108,7 +108,7 @@ def characterization_score(
 ) -> Tensor:
     r"""Returns the componentwise characterization score as described in the
     `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for
-    Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper:
+    Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper.
 
     ..  math::
        \textrm{charact} = \frac{w_{+} + w_{-}}{\frac{w_{+}}{\textrm{fid}_{+}} +

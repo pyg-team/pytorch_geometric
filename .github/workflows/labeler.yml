@@ -5,7 +5,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  triage:
+  assign-labels:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
 
@@ -15,15 +15,20 @@ jobs:
 
     steps:
       - name: Add PR labels
-        uses: actions/labeler@v4
+        uses: actions/labeler@v5
         continue-on-error: true
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           sync-labels: true
 
+  assign-author:
+    if: github.repository == 'pyg-team/pytorch_geometric'
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Add PR author
         uses: samspills/assign-pr-to-author@v1.0
-        if: github.event_name == 'pull_request'
         continue-on-error: true
+        if: github.event_name == 'pull_request'
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"

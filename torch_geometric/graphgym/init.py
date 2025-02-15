@@ -2,8 +2,7 @@ import torch
 
 
 def init_weights(m):
-    r"""
-    Performs weight initialization
+    r"""Performs weight initialization.
 
     Args:
         m (nn.Module): PyTorch module

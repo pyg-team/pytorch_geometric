@@ -1,8 +1,11 @@
+from typing import Any
+
 import torch
+from torch import Tensor
 from torch.autograd import grad
 
 
-def influence(model, src, *args):
+def influence(model: torch.nn.Module, src: Tensor, *args: Any) -> Tensor:
     x = src.clone().requires_grad_()
     out = model(x, *args).sum(dim=-1)
 

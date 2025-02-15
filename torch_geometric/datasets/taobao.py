@@ -35,6 +35,8 @@ class Taobao(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     """
     url = ('https://alicloud-dev.oss-cn-hangzhou.aliyuncs.com/'
@@ -42,11 +44,13 @@ class Taobao(InMemoryDataset):
 
     def __init__(
         self,
-        root,
+        root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -57,12 +61,12 @@ class Taobao(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
         cols = ['userId', 'itemId', 'categoryId', 'behaviorType', 'timestamp']
@@ -81,10 +85,10 @@ class Taobao(InMemoryDataset):
         df['behaviorType'] = df['behaviorType'].map(behavior_dict)
 
         num_entries = {}
-        for col in ['userId', 'itemId', 'categoryId']:
+        for name in ['userId', 'itemId', 'categoryId']:
             # Map IDs to consecutive integers:
-            value, df[col] = np.unique(df[[col]].values, return_inverse=True)
-            num_entries[col] = value.shape[0]
+            value, df[name] = np.unique(df[[name]].values, return_inverse=True)
+            num_entries[name] = value.shape[0]
 
         data = HeteroData()
 

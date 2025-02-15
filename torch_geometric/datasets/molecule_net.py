@@ -1,12 +1,13 @@
 import os
 import os.path as osp
 import re
-from typing import Callable, Optional
+import warnings
+from typing import Callable, Dict, Optional, Tuple, Union
 
 import torch
 
 from torch_geometric.data import InMemoryDataset, download_url, extract_gz
-from torch_geometric.utils import from_smiles
+from torch_geometric.utils import from_smiles as _from_smiles
 
 
 class MoleculeNet(InMemoryDataset):
@@ -36,6 +37,12 @@ class MoleculeNet(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        from_smiles (callable, optional): A custom function that takes a SMILES
+            string and outputs a :obj:`~torch_geometric.data.Data` object.
+            If not set, defaults to :meth:`~torch_geometric.utils.from_smiles`.
+            (default: :obj:`None`)
 
     **STATS:**
 
@@ -125,27 +132,21 @@ class MoleculeNet(InMemoryDataset):
 
     url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/{}'
 
-    # Format: name: [display_name, url_name, csv_name, smiles_idx, y_idx]
-    names = {
-        'esol': ['ESOL', 'delaney-processed.csv', 'delaney-processed', -1, -2],
-        'freesolv': ['FreeSolv', 'SAMPL.csv', 'SAMPL', 1, 2],
-        'lipo': ['Lipophilicity', 'Lipophilicity.csv', 'Lipophilicity', 2, 1],
-        'pcba': ['PCBA', 'pcba.csv.gz', 'pcba', -1,
-                 slice(0, 128)],
-        'muv': ['MUV', 'muv.csv.gz', 'muv', -1,
-                slice(0, 17)],
-        'hiv': ['HIV', 'HIV.csv', 'HIV', 0, -1],
-        'bace': ['BACE', 'bace.csv', 'bace', 0, 2],
-        'bbbp': ['BBBP', 'BBBP.csv', 'BBBP', -1, -2],
-        'tox21': ['Tox21', 'tox21.csv.gz', 'tox21', -1,
-                  slice(0, 12)],
+    # Format: name: (display_name, url_name, csv_name, smiles_idx, y_idx)
+    names: Dict[str, Tuple[str, str, str, int, Union[int, slice]]] = {
+        'esol': ('ESOL', 'delaney-processed.csv', 'delaney-processed', -1, -2),
+        'freesolv': ('FreeSolv', 'SAMPL.csv', 'SAMPL', 1, 2),
+        'lipo': ('Lipophilicity', 'Lipophilicity.csv', 'Lipophilicity', 2, 1),
+        'pcba': ('PCBA', 'pcba.csv.gz', 'pcba', -1, slice(0, 128)),
+        'muv': ('MUV', 'muv.csv.gz', 'muv', -1, slice(0, 17)),
+        'hiv': ('HIV', 'HIV.csv', 'HIV', 0, -1),
+        'bace': ('BACE', 'bace.csv', 'bace', 0, 2),
+        'bbbp': ('BBBP', 'BBBP.csv', 'BBBP', -1, -2),
+        'tox21': ('Tox21', 'tox21.csv.gz', 'tox21', -1, slice(0, 12)),
         'toxcast':
-        ['ToxCast', 'toxcast_data.csv.gz', 'toxcast_data', 0,
-         slice(1, 618)],
-        'sider': ['SIDER', 'sider.csv.gz', 'sider', 0,
-                  slice(1, 28)],
-        'clintox': ['ClinTox', 'clintox.csv.gz', 'clintox', 0,
-                    slice(1, 3)],
+        ('ToxCast', 'toxcast_data.csv.gz', 'toxcast_data', 0, slice(1, 618)),
+        'sider': ('SIDER', 'sider.csv.gz', 'sider', 0, slice(1, 28)),
+        'clintox': ('ClinTox', 'clintox.csv.gz', 'clintox', 0, slice(1, 3)),
     }
 
     def __init__(
@@ -155,10 +156,14 @@ class MoleculeNet(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+        from_smiles: Optional[Callable] = None,
+    ) -> None:
         self.name = name.lower()
         assert self.name in self.names.keys()
-        super().__init__(root, transform, pre_transform, pre_filter)
+        self.from_smiles = from_smiles or _from_smiles
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -177,32 +182,37 @@ class MoleculeNet(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         url = self.url.format(self.names[self.name][1])
         path = download_url(url, self.raw_dir)
         if self.names[self.name][1][-2:] == 'gz':
             extract_gz(path, self.raw_dir)
             os.unlink(path)
 
-    def process(self):
-        with open(self.raw_paths[0], 'r') as f:
+    def process(self) -> None:
+        with open(self.raw_paths[0]) as f:
             dataset = f.read().split('\n')[1:-1]
             dataset = [x for x in dataset if len(x) > 0]  # Filter empty lines.
 
         data_list = []
         for line in dataset:
             line = re.sub(r'\".*\"', '', line)  # Replace ".*" strings.
-            line = line.split(',')
+            values = line.split(',')
 
-            smiles = line[self.names[self.name][3]]
-            ys = line[self.names[self.name][4]]
-            ys = ys if isinstance(ys, list) else [ys]
+            smiles = values[self.names[self.name][3]]
+            labels = values[self.names[self.name][4]]
+            labels = labels if isinstance(labels, list) else [labels]
 
-            ys = [float(y) if len(y) > 0 else float('NaN') for y in ys]
+            ys = [float(y) if len(y) > 0 else float('NaN') for y in labels]
             y = torch.tensor(ys, dtype=torch.float).view(1, -1)
 
-            data = from_smiles(smiles)
+            data = self.from_smiles(smiles)
             data.y = y
+
+            if data.num_nodes == 0:
+                warnings.warn(f"Skipping molecule '{smiles}' since it "
+                              f"resulted in zero atoms")
+                continue
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue

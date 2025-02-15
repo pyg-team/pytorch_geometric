@@ -9,7 +9,7 @@ from torch_geometric.utils import (
     structured_negative_sampling_feasible,
     to_undirected,
 )
-from torch_geometric.utils.negative_sampling import (
+from torch_geometric.utils._negative_sampling import (
     edge_index_to_vector,
     vector_to_edge_index,
 )

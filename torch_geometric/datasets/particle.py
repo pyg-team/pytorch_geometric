@@ -1,5 +1,6 @@
 import glob
 import os.path as osp
+from typing import Any, Callable, List, Optional
 
 import numpy as np
 import torch
@@ -9,7 +10,7 @@ from torch_geometric.utils import index_sort, scatter
 
 
 class TrackingData(Data):
-    def __inc__(self, key, value, *args, **kwargs):
+    def __inc__(self, key: str, value: Any, *args: Any, **kwargs: Any) -> Any:
         if key == 'y_index':
             return torch.tensor([value[0].max().item() + 1, self.num_nodes])
         else:
@@ -31,14 +32,18 @@ class TrackMLParticleTrackingDataset(Dataset):
 
     url = 'https://www.kaggle.com/c/trackml-particle-identification'
 
-    def __init__(self, root, transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+    ) -> None:
         super().__init__(root, transform)
         events = glob.glob(osp.join(self.raw_dir, 'event*-hits.csv'))
         events = [e.split(osp.sep)[-1].split('-')[0][5:] for e in events]
-        self.events = sorted(events)
+        self.events: List[str] = sorted(events)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         event_indices = ['000001000']
         file_names = []
         file_names += [f'event{idx}-cells.csv' for idx in event_indices]
@@ -47,18 +52,18 @@ class TrackMLParticleTrackingDataset(Dataset):
         file_names += [f'event{idx}-truth.csv' for idx in event_indices]
         return file_names
 
-    def download(self):
+    def download(self) -> None:
         raise RuntimeError(
             f'Dataset not found. Please download it from {self.url} and move '
             f'all *.csv files to {self.raw_dir}')
 
-    def len(self):
+    def len(self) -> int:
         return len(glob.glob(osp.join(self.raw_dir, 'event*-hits.csv')))
 
-    def get(self, idx):
+    def get(self, i: int) -> TrackingData:
         import pandas as pd
 
-        idx = self.events[idx]
+        idx = self.events[i]
 
         # Get hit positions.
         hits_path = osp.join(self.raw_dir, f'event{idx}-hits.csv')

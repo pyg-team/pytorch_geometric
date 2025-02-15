@@ -1,9 +1,9 @@
+import os
 import os.path as osp
 
 import torch
 
 from torch_geometric.data import download_url, extract_gz
-from torch_geometric.data.makedirs import makedirs
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import onlyOnline, withPackage
 from torch_geometric.transforms import ToSLIC
@@ -27,8 +27,8 @@ def test_to_superpixels(tmp_path):
     raw_folder = osp.join(tmp_path, 'MNIST', 'raw')
     processed_folder = osp.join(tmp_path, 'MNIST', 'processed')
 
-    makedirs(raw_folder)
-    makedirs(processed_folder)
+    os.makedirs(raw_folder, exist_ok=True)
+    os.makedirs(processed_folder, exist_ok=True)
     for resource in resources:
         path = download_url(resource, raw_folder)
         extract_gz(path, osp.join(tmp_path, raw_folder))

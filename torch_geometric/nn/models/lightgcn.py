@@ -151,6 +151,14 @@ class LightGCN(torch.nn.Module):
         r"""Predict links between nodes specified in :obj:`edge_label_index`.
 
         Args:
+            edge_index (torch.Tensor or SparseTensor): Edge tensor specifying
+                the connectivity of the graph.
+            edge_label_index (torch.Tensor, optional): Edge tensor specifying
+                the node pairs for which to compute probabilities.
+                If :obj:`edge_label_index` is set to :obj:`None`, all edges in
+                :obj:`edge_index` will be used instead. (default: :obj:`None`)
+            edge_weight (torch.Tensor, optional): The weight of each edge in
+                :obj:`edge_index`. (default: :obj:`None`)
             prob (bool, optional): Whether probabilities should be returned.
                 (default: :obj:`False`)
         """
@@ -169,6 +177,10 @@ class LightGCN(torch.nn.Module):
         r"""Get top-:math:`k` recommendations for nodes in :obj:`src_index`.
 
         Args:
+            edge_index (torch.Tensor or SparseTensor): Edge tensor specifying
+                the connectivity of the graph.
+            edge_weight (torch.Tensor, optional): The weight of each edge in
+                :obj:`edge_index`. (default: :obj:`None`)
             src_index (torch.Tensor, optional): Node indices for which
                 recommendations should be generated.
                 If set to :obj:`None`, all nodes will be used.
@@ -263,7 +275,7 @@ class BPRLoss(_Loss):
         \sum_{j \not\in \mathcal{N}_u} \ln \sigma(\hat{y}_{ui} - \hat{y}_{uj})
         + \lambda \vert\vert \textbf{x}^{(0)} \vert\vert^2
 
-    where :math:`lambda` controls the :math:`L_2` regularization strength.
+    where :math:`\lambda` controls the :math:`L_2` regularization strength.
     We compute the mean BPR loss for simplicity.
 
     Args:

@@ -120,7 +120,7 @@ class SelectTopK(Select):
         x: Tensor,
         batch: Optional[Tensor] = None,
     ) -> SelectOutput:
-        """"""
+        """"""  # noqa: D419
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 

@@ -67,7 +67,7 @@ class DataParallel(torch.nn.DataParallel):
         self.exclude_keys = exclude_keys or []
 
     def forward(self, data_list):
-        """"""
+        """"""  # noqa: D419
         if len(data_list) == 0:
             logging.warning('DataParallel received an empty data list, which '
                             'may result in unexpected behavior.')

@@ -1,5 +1,4 @@
 import warnings
-from collections import defaultdict
 from typing import Dict, List, Optional
 
 import torch
@@ -71,8 +70,8 @@ class HeteroConv(torch.nn.Module):
         for edge_type, module in convs.items():
             check_add_self_loops(module, [edge_type])
 
-        src_node_types = set([key[0] for key in convs.keys()])
-        dst_node_types = set([key[-1] for key in convs.keys()])
+        src_node_types = {key[0] for key in convs.keys()}
+        dst_node_types = {key[-1] for key in convs.keys()}
         if len(src_node_types - dst_node_types) > 0:
             warnings.warn(
                 f"There exist node types ({src_node_types - dst_node_types}) "
@@ -103,7 +102,7 @@ class HeteroConv(torch.nn.Module):
                 individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
                 :class:`torch_sparse.SparseTensor`.
-            *args_dict (optional): Additional forward arguments of invididual
+            *args_dict (optional): Additional forward arguments of individual
                 :class:`torch_geometric.nn.conv.MessagePassing` layers.
             **kwargs_dict (optional): Additional forward arguments of
                 individual :class:`torch_geometric.nn.conv.MessagePassing`
@@ -114,9 +113,9 @@ class HeteroConv(torch.nn.Module):
                 :meth:`~torch_geometric.nn.conv.HeteroConv.forward` via
                 :obj:`edge_attr_dict = { edge_type: edge_attr }`.
         """
-        out_dict = defaultdict(list)
+        out_dict: Dict[str, List[Tensor]] = {}
 
-        for edge_type in self.convs.keys():
+        for edge_type, conv in self.convs.items():
             src, rel, dst = edge_type
 
             has_edge_level_arg = False
@@ -156,8 +155,12 @@ class HeteroConv(torch.nn.Module):
             if not has_edge_level_arg:
                 continue
 
-            out = self.convs[edge_type](*args, **kwargs)
-            out_dict[dst].append(out)
+            out = conv(*args, **kwargs)
+
+            if dst not in out_dict:
+                out_dict[dst] = [out]
+            else:
+                out_dict[dst].append(out)
 
         for key, value in out_dict.items():
             out_dict[key] = group(value, self.aggr)

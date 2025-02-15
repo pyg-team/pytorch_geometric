@@ -20,9 +20,11 @@ def use_segment_matmul_heuristic(
     out_channels: int,
 ) -> bool:
     r"""A heuristic based on input sizes to determine whether the usage of
-    :meth:`segment_matmul` can speed up computation."""
+    :meth:`segment_matmul` can speed up computation.
+    """
     # NOTE This heuristic was learned on an A100 via sklearn using a simple
     # StandardScaler() -> LinearSVC() model.
+    # For now, it is only used in combination with `RGCNConv`.
     x = torch.tensor([
         num_segments,
         max_segment_size,

@@ -32,6 +32,8 @@ class MovieLens(InMemoryDataset):
         model_name (str): Name of model used to transform movie titles to node
             features. The model comes from the`Huggingface SentenceTransformer
             <https://huggingface.co/sentence-transformers>`_.
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
     url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
@@ -41,9 +43,11 @@ class MovieLens(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         model_name: Optional[str] = 'all-MiniLM-L6-v2',
-    ):
+        force_reload: bool = False,
+    ) -> None:
         self.model_name = model_name
-        super().__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
@@ -57,12 +61,12 @@ class MovieLens(InMemoryDataset):
     def processed_file_names(self) -> str:
         return f'data_{self.model_name}.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.remove(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
         from sentence_transformers import SentenceTransformer
 
@@ -90,8 +94,11 @@ class MovieLens(InMemoryDataset):
         edge_index = torch.tensor([src, dst])
 
         rating = torch.from_numpy(df['rating'].values).to(torch.long)
+        time = torch.from_numpy(df['timestamp'].values).to(torch.long)
+
         data['user', 'rates', 'movie'].edge_index = edge_index
         data['user', 'rates', 'movie'].edge_label = rating
+        data['user', 'rates', 'movie'].time = time
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)

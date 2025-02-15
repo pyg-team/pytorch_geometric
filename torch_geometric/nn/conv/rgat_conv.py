@@ -16,6 +16,7 @@ from torch_geometric.utils.sparse import set_sparse_value
 class RGATConv(MessagePassing):
     r"""The relational graph attentional operator from the `"Relational Graph
     Attention Networks" <https://arxiv.org/abs/1904.05811>`_ paper.
+
     Here, attention logits :math:`\mathbf{a}^{(r)}_{i,j}` are computed for each
     relation type :math:`r` with the help of both query and key kernels, *i.e.*
 
@@ -312,13 +313,19 @@ class RGATConv(MessagePassing):
             glorot(self.lin_edge)
             glorot(self.e)
 
-    def forward(self, x: Tensor, edge_index: Adj, edge_type: OptTensor = None,
-                edge_attr: OptTensor = None, size: Size = None,
-                return_attention_weights=None):
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_type: OptTensor = None,
+        edge_attr: OptTensor = None,
+        size: Size = None,
+        return_attention_weights=None,
+    ):
         r"""Runs the forward pass of the module.
 
         Args:
-            x (torch.Tensor or tuple, optional): The input node features.
+            x (torch.Tensor): The input node features.
                 Can be either a :obj:`[num_nodes, in_channels]` node feature
                 matrix, or an optional one-dimensional node index tensor (in
                 which case input features are treated as trainable node
@@ -331,12 +338,15 @@ class RGATConv(MessagePassing):
                 :class:`torch.sparse.Tensor`. (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
+            size ((int, int), optional): The shape of the adjacency matrix.
+                (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed
                 attention weights for each edge. (default: :obj:`None`)
         """
-        # propagate_type: (x: Tensor, edge_type: OptTensor, edge_attr: OptTensor)  # noqa
+        # propagate_type: (x: Tensor, edge_type: OptTensor,
+        #                  edge_attr: OptTensor)
         out = self.propagate(edge_index=edge_index, edge_type=edge_type, x=x,
                              size=size, edge_attr=edge_attr)
 

@@ -9,7 +9,7 @@ from torch_geometric.typing import Adj
 class PointGNNConv(MessagePassing):
     r"""The PointGNN operator from the `"Point-GNN: Graph Neural Network for
     3D Object Detection in a Point Cloud" <https://arxiv.org/abs/2003.01251>`_
-    paper
+    paper.
 
     .. math::
 
@@ -71,7 +71,7 @@ class PointGNNConv(MessagePassing):
 
     def forward(self, x: Tensor, pos: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: Tensor, pos: Tensor)
-        out = self.propagate(edge_index, x=x, pos=pos, size=None)
+        out = self.propagate(edge_index, x=x, pos=pos)
         out = self.mlp_g(out)
         return x + out
 
