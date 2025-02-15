@@ -28,3 +28,8 @@ def test_basic(dtype, device):
     value = torch.randn(key.size(0), 2, device=device)
 
     HashTensor(key, value)
+
+
+@withCUDA
+def test_string_key(device):
+    HashTensor(['1', '2', '3'], device=device)

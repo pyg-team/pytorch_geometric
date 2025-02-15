@@ -2,6 +2,7 @@ from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
 
 import torch
 import torch.utils._pytree as pytree
+import xxhash
 from torch import Tensor
 
 from torch_geometric.typing import CPUHashMap, CUDAHashMap
@@ -9,15 +10,30 @@ from torch_geometric.typing import CPUHashMap, CUDAHashMap
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
 
-def to_key_tensor(
+def as_key_tensor(
     key: Any,
     *,
     device: Optional[torch.device] = None,
 ) -> Tensor:
-    if not isinstance(key, Tensor):
-        key = torch.tensor(key, device=device)
+    try:
+        key = torch.as_tensor(key, device=device)
+    except Exception:
+        key = torch.tensor([
+            xxhash.xxh64(item).intdigest() & 0x7FFFFFFFFFFFFFFF for item in key
+        ], dtype=torch.int64, device=device)
+
+    if key.element_size() == 1:
+        key = key.view(torch.uint8)
+    elif key.element_size() == 2:
+        key = key.view(torch.int16)
+    elif key.element_size() == 4:
+        key = key.view(torch.int32)
+    elif key.element_size() == 8:
+        key = key.view(torch.int64)
     else:
-        key = key.to(device)
+        raise ValueError(f"Received invalid dtype '{key.dtype}' with "
+                         f"{key.element_size()} bytes")
+
     return key
 
 
@@ -36,22 +52,11 @@ class HashTensor(Tensor):
     ) -> 'HashTensor':
 
         if value is not None:
-            if not isinstance(value, Tensor):
-                value = torch.tensor(value, dtype=dtype, device=device)
-            else:
-                value = value.to(device, dtype)
+            value = torch.as_tensor(value, dtype=dtype, device=device)
+            device = value.device
 
-        device = value.device if value is not None else device
-        key = to_key_tensor(key, device=device)
+        key = as_key_tensor(key, device=device)
         device = key.device
-
-        # TODO Add numpy support
-        if not isinstance(key, Tensor):
-            device = value.device if value is not None else device
-            key = torch.tensor(key, device=device)
-        else:
-            key = key.to(device)
-            device = key.device
 
         if key.dim() != 1:
             raise ValueError(f"'key' data in '{cls.__name__}' needs to be "
