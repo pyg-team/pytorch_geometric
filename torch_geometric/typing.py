@@ -3,11 +3,16 @@ import os
 import sys
 import typing
 import warnings
-from typing import Any, Dict, List, Optional, Set, Tuple, TypeAlias, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import torch
 from torch import Tensor
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
@@ -89,7 +94,7 @@ if WITH_CPU_HASH_MAP:
     CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
 else:
 
-    class CPUHashMap:
+    class CPUHashMap:  # type: ignore
         def __init__(self, key: Tensor) -> None:
             raise ImportError("'CPUHashMap' requires 'pyg-lib'")
 
@@ -101,7 +106,7 @@ if WITH_CUDA_HASH_MAP:
     CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
 else:
 
-    class CUDAHashMap:
+    class CUDAHashMap:  # type: ignore
         def __init__(self, key: Tensor) -> None:
             raise ImportError("'CUDAHashMap' requires 'pyg-lib'")
 
