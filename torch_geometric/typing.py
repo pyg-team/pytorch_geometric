@@ -10,7 +10,7 @@ import torch
 from torch import Tensor
 
 try:
-    from typing import TypeAlias
+    from typing import TypeAlias  # type: ignore
 except ImportError:
     from typing_extensions import TypeAlias
 
