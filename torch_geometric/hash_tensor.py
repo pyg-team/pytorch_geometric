@@ -9,6 +9,18 @@ from torch_geometric.typing import CPUHashMap, CUDAHashMap
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
 
 
+def to_key_tensor(
+    key: Any,
+    *,
+    device: Optional[torch.device] = None,
+) -> Tensor:
+    if not isinstance(key, Tensor):
+        key = torch.tensor(key, device=device)
+    else:
+        key = key.to(device)
+    return key
+
+
 class HashTensor(Tensor):
     _map: Union[Tensor, CPUHashMap, CUDAHashMap]
     _value: Optional[Tensor]
@@ -28,6 +40,10 @@ class HashTensor(Tensor):
                 value = torch.tensor(value, dtype=dtype, device=device)
             else:
                 value = value.to(device, dtype)
+
+        device = value.device if value is not None else device
+        key = to_key_tensor(key, device=device)
+        device = key.device
 
         # TODO Add numpy support
         if not isinstance(key, Tensor):
