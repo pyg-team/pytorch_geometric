@@ -24,16 +24,14 @@ IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 class TAGDataset(InMemoryDataset):
     r"""The Text Attributed Graph datasets from the
-    `"Learning on Large-scale Text-attributed Graphs via Variational Inference"
-    <https://arxiv.org/abs/2210.14709>`_ paper and `"Harnessing Explanations:
-    LLM-to-LM Interpreter for Enhanced Text-Attributed Graph Representation
-    Learning" <https://arxiv.org/abs/2305.19523>`_ paper.
+    `"Learning on Large-scale Text-attributed Graphs via Variational Inference
+    " <https://arxiv.org/abs/2210.14709>`_ paper.
     This dataset is aiming on transform `ogbn products`, `ogbn arxiv`
     into Text Attributed Graph that each node in graph is associate with a
-    raw text, LLM prediction and explanation, that dataset can be adapt to
-    DataLoader (for LM training) and NeighborLoader(for GNN training).
-    In addition, this class can be use as a wrapper class by convert a
-    InMemoryDataset with Tokenizer and text into Text Attributed Graph.
+    raw text, that dataset can be adapt to DataLoader (for LM training) and
+    NeighborLoader(for GNN training). In addition, this class can be use as a
+    wrapper class by convert a InMemoryDataset with Tokenizer and text into
+    Text Attributed Graph.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -44,12 +42,6 @@ class TAGDataset(InMemoryDataset):
             on huggingface.co.
         text (List[str]): list of raw text associate with node, the order of
             list should be align with node list
-        llm_explanation (Optional[List[str]]): list of llm explanation
-            associate with node, which should be align with node list
-        llm_prediction (Optional[List[str]]): list of llm prediction associate
-            with node, the order of list should be align with node list
-        llm_prediction_topk (int): Top K prediction from LLM used as
-            features for GNN training, default: 5
         split_idx (Optional[Dict[str, torch.Tensor]]): Optional dictionary,
             for saving split index, it is required that if your dataset doesn't
             have get_split_idx function
@@ -61,7 +53,7 @@ class TAGDataset(InMemoryDataset):
             or not, default: False
         force_reload (bool): default: False
     .. note::
-        See `example/llm/glem.py` for example usage
+        See `example/llm_plus_gnn/glem.py` for example usage
     """
     raw_text_id = {
         'ogbn-arxiv': '1g3OOVhRyiyKv13LY6gbp8GLITocOUr_3',
@@ -342,7 +334,6 @@ class TAGDataset(InMemoryDataset):
         Args:
             batch_size (Optional[int]): batch size of list of text for
                 generating emebdding
-            text_type (Optional[str]): type of text
         Returns:
             Dict[str, torch.Tensor]: tokenized graph
         """
