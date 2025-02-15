@@ -203,7 +203,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             out_channels=dataset.num_classes,
         )
     else:
-        raise ValueError(f'{gnn_choice} is not supported.')
+        raise ValueError(f'Unsupported model type: {gnn_choice}')
 
     return model
 

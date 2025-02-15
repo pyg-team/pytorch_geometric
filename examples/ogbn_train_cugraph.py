@@ -27,10 +27,8 @@ import torch.nn.functional as F  # noqa
 # Enable cudf spilling to save gpu memory
 from cugraph_pyg.loader import NeighborLoader  # noqa
 from ogb.nodeproppred import PygNodePropPredDataset  # noqa
-from tqdm import tqdm  # noqa
 
 import torch_geometric  # noqa
-from torch_geometric.utils import to_undirected  # noqa
 
 cudf.set_option("spill", True)
 
@@ -41,7 +39,7 @@ def arg_parse():
     parser.add_argument(
         '--dataset',
         type=str,
-        default='ogbn-papers100M',
+        default='ogbn-arxiv',
         choices=['ogbn-papers100M', 'ogbn-products', 'ogbn-arxiv'],
         help='Dataset name.',
     )
@@ -54,10 +52,10 @@ def arg_parse():
     parser.add_argument(
         "--dataset_subdir",
         type=str,
-        default="ogb-papers100M",
+        default="ogbn-arxiv",
         help="directory of dataset.",
     )
-    parser.add_argument('-e', '--epochs', type=int, default=10)
+    parser.add_argument('-e', '--epochs', type=int, default=50)
     parser.add_argument('--num_layers', type=int, default=3)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
@@ -73,17 +71,22 @@ def arg_parse():
         help='Whether or not to use directed graph',
     )
     parser.add_argument(
-        "--model",
-        type=str,
-        default='SAGE',
-        choices=['SAGE', 'GAT', 'GCN'],
-        help="Model used for training, default GraphSAGE",
+        '--add_self_loop',
+        action='store_true',
+        help='Whether or not to add self loop',
     )
     parser.add_argument(
-        "--num_gat_conv_heads",
+        "--model",
+        type=str,
+        default='SGFormer',
+        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
+        help="Model used for training, default SGFormer",
+    )
+    parser.add_argument(
+        "--num_heads",
         type=int,
-        default=4,
-        help="If using GATConv, number of attention heads to use",
+        default=1,
+        help="If using GATConv or GT, number of attention heads to use",
     )
     parser.add_argument('--tempdir_root', type=str, default=None)
     args = parser.parse_args()
@@ -153,6 +156,7 @@ def test(model, loader):
 
 if __name__ == '__main__':
     args = arg_parse()
+    torch_geometric.seed_everything(123)
     if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
                                           (1024**3)) < 390:
         print("Warning: may not have enough RAM to use this many GPUs.")
@@ -167,7 +171,13 @@ if __name__ == '__main__':
 
     data = dataset[0]
     if not args.use_directed_graph:
-        data.edge_index = to_undirected(data.edge_index, reduce="mean")
+        data.edge_index = torch_geometric.utils.to_undirected(
+            data.edge_index, reduce="mean")
+    if args.add_self_loop:
+        data.edge_index, _ = torch_geometric.utils.remove_self_loops(
+            data.edge_index)
+        data.edge_index, _ = torch_geometric.utils.add_self_loops(
+            data.edge_index, num_nodes=data.num_nodes)
 
     graph_store = cugraph_pyg.data.GraphStore()
     graph_store[dict(
@@ -178,18 +188,19 @@ if __name__ == '__main__':
     )] = data.edge_index
 
     feature_store = cugraph_pyg.data.TensorDictFeatureStore()
-    feature_store['node', 'x'] = data.x
-    feature_store['node', 'y'] = data.y
+    feature_store['node', 'x', None] = data.x
+    feature_store['node', 'y', None] = data.y
 
     data = (feature_store, graph_store)
 
+    print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        print(f"Training {args.dataset} with GAT model.")
-        model = torch_geometric.nn.models.GAT(
-            dataset.num_features, args.hidden_channels, args.num_layers,
-            dataset.num_classes, heads=args.num_gat_conv_heads).cuda()
+        model = torch_geometric.nn.models.GAT(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes,
+                                              heads=args.num_heads).cuda()
     elif args.model == "GCN":
-        print(f"Training {args.dataset} with GCN model.")
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
             args.hidden_channels,
@@ -197,12 +208,21 @@ if __name__ == '__main__':
             dataset.num_classes,
         ).cuda()
     elif args.model == "SAGE":
-        print(f"Training {args.dataset} with GraphSAGE model.")
         model = torch_geometric.nn.models.GraphSAGE(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
+        ).cuda()
+    elif args.model == 'SGFormer':
+        model = torch_geometric.nn.models.SGFormer(
+            in_channels=dataset.num_features,
+            hidden_channels=args.hidden_channels,
+            out_channels=dataset.num_classes,
+            trans_num_heads=args.num_heads,
+            trans_dropout=args.dropout,
+            gnn_num_layers=args.num_layers,
+            gnn_dropout=args.dropout,
         ).cuda()
     else:
         raise ValueError('Unsupported model type: {args.model}')
