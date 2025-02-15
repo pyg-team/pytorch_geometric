@@ -5,25 +5,8 @@ import torch
 from torch import Tensor
 
 import torch_geometric
+from torch_geometric import EdgeIndex
 from torch_geometric.typing import EdgeType, NodeType, SparseTensor
-
-
-@torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):
-    # type: (Tensor, Optional[int]) -> int
-    pass
-
-
-@torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):
-    # type: (Tuple[Tensor, Tensor], Optional[int]) -> int
-    pass
-
-
-@torch.jit._overload
-def maybe_num_nodes(edge_index, num_nodes):
-    # type: (SparseTensor, Optional[int]) -> int
-    pass
 
 
 def maybe_num_nodes(
@@ -32,6 +15,8 @@ def maybe_num_nodes(
 ) -> int:
     if num_nodes is not None:
         return num_nodes
+    elif not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        return max(edge_index.get_sparse_size())
     elif isinstance(edge_index, Tensor):
         if torch_geometric.utils.is_torch_sparse_tensor(edge_index):
             return max(edge_index.size(0), edge_index.size(1))
@@ -42,7 +27,7 @@ def maybe_num_nodes(
                 edge_index.view(-1),
                 edge_index.new_full((1, ), fill_value=-1)
             ])
-            return tmp.max() + 1
+            return tmp.max() + 1  # type: ignore
 
         return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
     elif isinstance(edge_index, tuple):
@@ -52,8 +37,7 @@ def maybe_num_nodes(
         )
     elif isinstance(edge_index, SparseTensor):
         return max(edge_index.size(0), edge_index.size(1))
-    else:
-        raise NotImplementedError
+    raise NotImplementedError
 
 
 def maybe_num_nodes_dict(

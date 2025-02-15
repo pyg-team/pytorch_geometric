@@ -1,11 +1,9 @@
 import pytest
 
 from torch_geometric.testing import withPackage
-from torch_geometric.utils import from_smiles, to_smiles
+from torch_geometric.utils import from_rdmol, from_smiles, to_rdmol, to_smiles
 
-
-@withPackage('rdkit')
-@pytest.mark.parametrize('smiles', [
+smiles = [
     r'F/C=C/F',
     r'F/C=C\F',
     r'F/C=C\F',
@@ -16,7 +14,21 @@ from torch_geometric.utils import from_smiles, to_smiles
     r'COC(=O)[C@@]1(Cc2ccccc2)[C@H]2C(=O)N(C)C(=O)[C@H]2[C@H]2CN=C(SC)N21',
     (r'O=C(O)c1ccc(NS(=O)(=O)c2ccc3c(c2)C(=O)c2cc(S(=O)(=O)Nc4ccc(C(=O)O)'
      r'cc4)ccc2-3)cc1'),
-])
+]
+
+
+@withPackage('rdkit')
+@pytest.mark.parametrize('smiles', smiles)
 def test_from_to_smiles(smiles):
     data = from_smiles(smiles)
     assert to_smiles(data) == smiles
+
+
+@withPackage('rdkit')
+@pytest.mark.parametrize('smiles', smiles)
+def test_from_to_rdmol(smiles):
+    from rdkit import Chem
+    mol1 = Chem.MolFromSmiles(smiles)
+    data = from_rdmol(mol1)
+    mol2 = to_rdmol(data)
+    assert Chem.MolToSmiles(mol1) == Chem.MolToSmiles(mol2)

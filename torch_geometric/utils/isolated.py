@@ -22,7 +22,6 @@ def contains_isolated_nodes(
     :rtype: bool
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> contains_isolated_nodes(edge_index)
@@ -57,7 +56,6 @@ def remove_isolated_nodes(
     :rtype: (LongTensor, Tensor, BoolTensor)
 
     Examples:
-
         >>> edge_index = torch.tensor([[0, 1, 0],
         ...                            [1, 0, 0]])
         >>> edge_index, edge_attr, mask = remove_isolated_nodes(edge_index)
@@ -78,7 +76,7 @@ def remove_isolated_nodes(
     mask[edge_index.view(-1)] = 1
 
     assoc = torch.full((num_nodes, ), -1, dtype=torch.long, device=mask.device)
-    assoc[mask] = torch.arange(mask.sum(), device=assoc.device)
+    assoc[mask] = torch.arange(mask.sum(), device=assoc.device)  # type: ignore
     edge_index = assoc[edge_index]
 
     loop_mask = torch.zeros_like(mask)

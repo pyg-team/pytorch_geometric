@@ -12,8 +12,10 @@ from torch_geometric.utils import to_torch_csc_tensor
 
 class RootedSubgraphData(Data):
     r"""A data object describing a homogeneous graph together with each node's
-    rooted subgraph. It contains several additional properties that hold the
-    information to map to batch of every node's rooted subgraph:
+    rooted subgraph.
+
+    It contains several additional properties that hold the information to map
+    to batch of every node's rooted subgraph:
 
     * :obj:`sub_edge_index` (Tensor): The edge indices of all combined rooted
       subgraphs.
@@ -26,7 +28,7 @@ class RootedSubgraphData(Data):
     * :obj:`e_sub_batch` (Tensor): The batch vector to distinguish edges across
       different subgraphs.
     """
-    def __inc__(self, key, value, *args, **kwargs) -> Any:
+    def __inc__(self, key: str, value: Any, *args: Any, **kwargs: Any) -> Any:
         if key == 'sub_edge_index':
             return self.n_id.size(0)
         if key in ['n_sub_batch', 'e_sub_batch']:
@@ -34,6 +36,7 @@ class RootedSubgraphData(Data):
         elif key == 'n_id':
             return self.num_nodes
         elif key == 'e_id':
+            assert self.edge_index is not None
             return self.edge_index.size(1)
         return super().__inc__(key, value, *args, **kwargs)
 
@@ -79,13 +82,17 @@ class RootedSubgraph(BaseTransform, ABC):
         n_mask: Tensor,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
 
+        assert data.edge_index is not None
+        num_nodes = data.num_nodes
+        assert num_nodes is not None
+
         n_sub_batch, n_id = n_mask.nonzero().t()
         e_mask = n_mask[:, data.edge_index[0]] & n_mask[:, data.edge_index[1]]
         e_sub_batch, e_id = e_mask.nonzero().t()
 
         sub_edge_index = data.edge_index[:, e_id]
         arange = torch.arange(n_id.size(0), device=data.edge_index.device)
-        node_map = data.edge_index.new_ones(data.num_nodes, data.num_nodes)
+        node_map = data.edge_index.new_ones(num_nodes, num_nodes)
         node_map[n_sub_batch, n_id] = arange
         sub_edge_index += (arange * data.num_nodes)[e_sub_batch]
         sub_edge_index = node_map.view(-1)[sub_edge_index]
@@ -107,7 +114,7 @@ class RootedEgoNets(RootedSubgraph):
     Args:
         num_hops (int): the number of hops :math:`k`.
     """
-    def __init__(self, num_hops: int):
+    def __init__(self, num_hops: int) -> None:
         super().__init__()
         self.num_hops = num_hops
 
@@ -116,8 +123,12 @@ class RootedEgoNets(RootedSubgraph):
         data: Data,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
 
+        assert data.edge_index is not None
+        num_nodes = data.num_nodes
+        assert num_nodes is not None
+
         adj_t = to_torch_csc_tensor(data.edge_index, size=data.size()).t()
-        n_mask = torch.eye(data.num_nodes, device=data.edge_index.device)
+        n_mask = torch.eye(num_nodes, device=data.edge_index.device)
         for _ in range(self.num_hops):
             n_mask += adj_t @ n_mask
 
@@ -148,13 +159,17 @@ class RootedRWSubgraph(RootedSubgraph):
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
         from torch_cluster import random_walk
 
-        start = torch.arange(data.num_nodes, device=data.edge_index.device)
+        assert data.edge_index is not None
+        num_nodes = data.num_nodes
+        assert num_nodes is not None
+
+        start = torch.arange(num_nodes, device=data.edge_index.device)
         start = start.view(-1, 1).repeat(1, self.repeat).view(-1)
         walk = random_walk(data.edge_index[0], data.edge_index[1], start,
                            self.walk_length, num_nodes=data.num_nodes)
 
-        n_mask = torch.zeros((data.num_nodes, data.num_nodes),
-                             dtype=torch.bool, device=walk.device)
+        n_mask = torch.zeros((num_nodes, num_nodes), dtype=torch.bool,
+                             device=walk.device)
         start = start.view(-1, 1).repeat(1, (self.walk_length + 1)).view(-1)
         n_mask[start, walk.view(-1)] = True
 

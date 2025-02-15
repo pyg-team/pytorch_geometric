@@ -44,6 +44,8 @@ class PCPNetDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'http://geometry.cs.ucl.ac.uk/projects/2018/pcpnet/pclouds.zip'
@@ -80,7 +82,8 @@ class PCPNetDataset(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-    ):
+        force_reload: bool = False,
+    ) -> None:
 
         assert split in ['train', 'val', 'test']
 
@@ -94,8 +97,9 @@ class PCPNetDataset(InMemoryDataset):
         self.category = category
         self.split = split
 
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        super().__init__(root, transform, pre_transform, pre_filter,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -110,14 +114,14 @@ class PCPNetDataset(InMemoryDataset):
     def processed_file_names(self) -> str:
         return self.split + '_' + self.category + '.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         path_file = self.raw_paths
-        with open(path_file[0], "r") as f:
+        with open(path_file[0]) as f:
             filenames = f.read().split('\n')[:-1]
         data_list = []
         for filename in filenames:
@@ -138,7 +142,7 @@ class PCPNetDataset(InMemoryDataset):
                 data = self.pre_transform(data)
             data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        self.save(data_list, self.processed_paths[0])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '

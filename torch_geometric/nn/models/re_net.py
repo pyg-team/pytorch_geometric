@@ -13,7 +13,7 @@ from torch_geometric.utils import scatter
 class RENet(torch.nn.Module):
     r"""The Recurrent Event Network model from the `"Recurrent Event Network
     for Reasoning over Temporal Knowledge Graphs"
-    <https://arxiv.org/abs/1904.05530>`_ paper
+    <https://arxiv.org/abs/1904.05530>`_ paper.
 
     .. math::
         f_{\mathbf{\Theta}}(\mathbf{e}_s, \mathbf{e}_r,
@@ -86,7 +86,7 @@ class RENet(torch.nn.Module):
 
     @staticmethod
     def pre_transform(seq_len: int) -> Callable:
-        r"""Precomputes history objects
+        r"""Precomputes history objects.
 
         .. math::
             \{ \mathcal{O}^{(t-k-1)}_r(s), \ldots, \mathcal{O}^{(t-1)}_r(s) \}
@@ -173,7 +173,6 @@ class RENet(torch.nn.Module):
                 The same information must be given for objects (:obj:`h_obj`,
                 :obj:`h_obj_t`, :obj:`h_obj_batch`).
         """
-
         assert 'h_sub_batch' in data and 'h_obj_batch' in data
         batch_size, seq_len = data.sub.size(0), self.seq_len
 
@@ -210,8 +209,8 @@ class RENet(torch.nn.Module):
 
     def test(self, logits: Tensor, y: Tensor) -> Tensor:
         """Given ground-truth :obj:`y`, computes Mean Reciprocal Rank (MRR)
-        and Hits at 1/3/10."""
-
+        and Hits at 1/3/10.
+        """
         _, perm = logits.sort(dim=1, descending=True)
         mask = (y.view(-1, 1) == perm)
 

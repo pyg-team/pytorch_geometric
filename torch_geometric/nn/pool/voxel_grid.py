@@ -3,11 +3,12 @@ from typing import List, Optional, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.utils.repeat import repeat
 
-try:
+if torch_geometric.typing.WITH_TORCH_CLUSTER:
     from torch_cluster import grid_cluster
-except ImportError:
+else:
     grid_cluster = None
 
 
@@ -39,7 +40,6 @@ def voxel_grid(
 
     :rtype: :class:`torch.Tensor`
     """
-
     if grid_cluster is None:
         raise ImportError('`voxel_grid` requires `torch-cluster`.')
 

@@ -9,6 +9,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.io import fs
 
 
 class GDELTLite(InMemoryDataset):
@@ -33,6 +34,8 @@ class GDELTLite(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
     **STATS:**
 
@@ -56,8 +59,10 @@ class GDELTLite(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-    ):
-        super().__init__(root, transform, pre_transform)
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -68,17 +73,17 @@ class GDELTLite(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
-    def process(self):
+    def process(self) -> None:
         import pandas as pd
 
-        x = torch.load(self.raw_paths[0])
+        x = fs.torch_load(self.raw_paths[0])
         df = pd.read_csv(self.raw_paths[1])
-        edge_attr = torch.load(self.raw_paths[2])
+        edge_attr = fs.torch_load(self.raw_paths[2])
 
         row = torch.from_numpy(df['src'].values)
         col = torch.from_numpy(df['dst'].values)

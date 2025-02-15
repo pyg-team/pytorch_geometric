@@ -28,13 +28,19 @@ class SamplePoints(BaseTransform):
         self.include_normals = include_normals
 
     def forward(self, data: Data) -> Data:
+        assert data.pos is not None
+        assert data.face is not None
+
         pos, face = data.pos, data.face
         assert pos.size(1) == 3 and face.size(0) == 3
 
         pos_max = pos.abs().max()
         pos = pos / pos_max
 
-        area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]])
+        area = (pos[face[1]] - pos[face[0]]).cross(
+            pos[face[2]] - pos[face[0]],
+            dim=1,
+        )
         area = area.norm(p=2, dim=1).abs() / 2
 
         prob = area / area.sum()
@@ -49,7 +55,8 @@ class SamplePoints(BaseTransform):
         vec2 = pos[face[2]] - pos[face[0]]
 
         if self.include_normals:
-            data.normal = torch.nn.functional.normalize(vec1.cross(vec2), p=2)
+            data.normal = torch.nn.functional.normalize(
+                vec1.cross(vec2, dim=1), p=2)
 
         pos_sampled = pos[face[0]]
         pos_sampled += frac[:, :1] * vec1

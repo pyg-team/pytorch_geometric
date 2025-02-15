@@ -13,4 +13,4 @@ jobs:
       - name: Enforce changelog entry
         uses: dangoslen/changelog-enforcer@v3
         with:
-          skipLabels: 'skip-changelog'
+          skipLabels: skip-changelog, auto-skip-changelog

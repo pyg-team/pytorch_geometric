@@ -24,7 +24,6 @@ class CycleMotif(CustomMotif):
             num_nodes=num_nodes,
             edge_index=torch.stack([row, col], dim=0),
         )
-
         super().__init__(structure)
 
     def __repr__(self) -> str:

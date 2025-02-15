@@ -1,9 +1,17 @@
+r"""Testing package.
+
+This package provides helper methods and decorators to ease testing.
+"""
+
 from .decorators import (
     is_full_test,
     onlyFullTest,
+    is_distributed_test,
+    onlyDistributedTest,
     onlyLinux,
     noWindows,
-    onlyPython,
+    noMac,
+    minPython,
     onlyCUDA,
     onlyXPU,
     onlyOnline,
@@ -11,8 +19,11 @@ from .decorators import (
     onlyNeighborSampler,
     has_package,
     withPackage,
+    withDevice,
     withCUDA,
+    withMETIS,
     disableExtensions,
+    withoutExtensions,
 )
 from .asserts import assert_module
 from .feature_store import MyFeatureStore
@@ -26,9 +37,12 @@ from .data import (
 __all__ = [
     'is_full_test',
     'onlyFullTest',
+    'is_distributed_test',
+    'onlyDistributedTest',
     'onlyLinux',
     'noWindows',
-    'onlyPython',
+    'noMac',
+    'minPython',
     'onlyCUDA',
     'onlyXPU',
     'onlyOnline',
@@ -36,8 +50,11 @@ __all__ = [
     'onlyNeighborSampler',
     'has_package',
     'withPackage',
+    'withDevice',
     'withCUDA',
+    'withMETIS',
     'disableExtensions',
+    'withoutExtensions',
     'assert_module',
     'MyFeatureStore',
     'MyGraphStore',

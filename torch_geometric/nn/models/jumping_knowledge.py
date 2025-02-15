@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import torch
 from torch import Tensor
@@ -8,18 +8,20 @@ from torch.nn import LSTM, Linear
 class JumpingKnowledge(torch.nn.Module):
     r"""The Jumping Knowledge layer aggregation module from the
     `"Representation Learning on Graphs with Jumping Knowledge Networks"
-    <https://arxiv.org/abs/1806.03536>`_ paper based on either
-    **concatenation** (:obj:`"cat"`)
+    <https://arxiv.org/abs/1806.03536>`_ paper.
+
+    Jumping knowledge is performed based on either **concatenation**
+    (:obj:`"cat"`)
 
     .. math::
 
-        \mathbf{x}_v^{(1)} \, \Vert \, \ldots \, \Vert \, \mathbf{x}_v^{(T)}
+        \mathbf{x}_v^{(1)} \, \Vert \, \ldots \, \Vert \, \mathbf{x}_v^{(T)},
 
     **max pooling** (:obj:`"max"`)
 
     .. math::
 
-        \max \left( \mathbf{x}_v^{(1)}, \ldots, \mathbf{x}_v^{(T)} \right)
+        \max \left( \mathbf{x}_v^{(1)}, \ldots, \mathbf{x}_v^{(T)} \right),
 
     or **weighted summation**
 
@@ -39,8 +41,12 @@ class JumpingKnowledge(torch.nn.Module):
         num_layers (int, optional): The number of layers to aggregate. Needs to
             be only set for LSTM-style aggregation. (default: :obj:`None`)
     """
-    def __init__(self, mode: str, channels: Optional[int] = None,
-                 num_layers: Optional[int] = None):
+    def __init__(
+        self,
+        mode: str,
+        channels: Optional[int] = None,
+        num_layers: Optional[int] = None,
+    ) -> None:
         super().__init__()
         self.mode = mode.lower()
         assert self.mode in ['cat', 'max', 'lstm']
@@ -61,7 +67,7 @@ class JumpingKnowledge(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
         if self.lstm is not None:
             self.lstm.reset_parameters()
@@ -69,7 +75,8 @@ class JumpingKnowledge(torch.nn.Module):
             self.att.reset_parameters()
 
     def forward(self, xs: List[Tensor]) -> Tensor:
-        r"""
+        r"""Forward pass.
+
         Args:
             xs (List[torch.Tensor]): List containing the layer-wise
                 representations.
@@ -91,3 +98,58 @@ class JumpingKnowledge(torch.nn.Module):
             return (f'{self.__class__.__name__}({self.mode}, '
                     f'channels={self.channels}, layers={self.num_layers})')
         return f'{self.__class__.__name__}({self.mode})'
+
+
+class HeteroJumpingKnowledge(torch.nn.Module):
+    r"""A heterogeneous version of the :class:`JumpingKnowledge` module.
+
+    Args:
+        types (List[str]): The keys of the input dictionary.
+        mode (str): The aggregation scheme to use
+            (:obj:`"cat"`, :obj:`"max"` or :obj:`"lstm"`).
+        channels (int, optional): The number of channels per representation.
+            Needs to be only set for LSTM-style aggregation.
+            (default: :obj:`None`)
+        num_layers (int, optional): The number of layers to aggregate. Needs to
+            be only set for LSTM-style aggregation. (default: :obj:`None`)
+    """
+    def __init__(
+        self,
+        types: List[str],
+        mode: str,
+        channels: Optional[int] = None,
+        num_layers: Optional[int] = None,
+    ) -> None:
+        super().__init__()
+
+        self.mode = mode.lower()
+
+        self.jk_dict = torch.nn.ModuleDict({
+            key:
+            JumpingKnowledge(mode, channels, num_layers)
+            for key in types
+        })
+
+    def reset_parameters(self) -> None:
+        r"""Resets all learnable parameters of the module."""
+        for jk in self.jk_dict.values():
+            jk.reset_parameters()
+
+    def forward(self, xs_dict: Dict[str, List[Tensor]]) -> Dict[str, Tensor]:
+        r"""Forward pass.
+
+        Args:
+            xs_dict (Dict[str, List[torch.Tensor]]): A dictionary holding a
+                list of layer-wise representation for each type.
+        """
+        return {key: jk(xs_dict[key]) for key, jk in self.jk_dict.items()}
+
+    def __repr__(self):
+        if self.mode == 'lstm':
+            jk = next(iter(self.jk_dict.values()))
+            return (f'{self.__class__.__name__}('
+                    f'num_types={len(self.jk_dict)}, '
+                    f'mode={self.mode}, channels={jk.channels}, '
+                    f'layers={jk.num_layers})')
+        return (f'{self.__class__.__name__}(num_types={len(self.jk_dict)}, '
+                f'mode={self.mode})')

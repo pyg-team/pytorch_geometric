@@ -44,7 +44,7 @@ class CaptumModel(torch.nn.Module):
         self.model_config = model_config
 
     def forward(self, mask, *args):
-        """"""
+        """"""  # noqa: D419
         # The mask tensor, which comes from Captum's attribution methods,
         # contains the number of samples in dimension 0. Since we are
         # working with only one sample, we squeeze the tensors below.
@@ -115,8 +115,8 @@ class CaptumHeteroModel(CaptumModel):
     ) -> Tuple[Dict[NodeType, Tensor], Dict[EdgeType, Tensor], Optional[Dict[
             EdgeType, Tensor]]]:
         """Converts tuple of tensors to `x_dict`, `edge_index_dict` and
-        `edge_mask_dict`."""
-
+        `edge_mask_dict`.
+        """
         if self.mask_type == MaskLevelType.node:
             node_tensors = args[:self.num_node_types]
             node_tensors = [mask.squeeze(0) for mask in node_tensors]
@@ -189,7 +189,6 @@ def to_captum_input(
     See :meth:`~torch_geometric.nn.models.to_captum_model` for example usage.
 
     Args:
-
         x (torch.Tensor or Dict[NodeType, torch.Tensor]): The node features.
             For heterogeneous graphs this is a dictionary holding node featues
             for each node type.
@@ -237,7 +236,9 @@ def to_captum_input(
         raise ValueError(
             "'x' and 'edge_index' need to be either"
             f"'Dict' or 'Tensor' got({type(x)}, {type(edge_index)})")
+
     additional_forward_args.extend(args)
+
     return tuple(inputs), tuple(additional_forward_args)
 
 

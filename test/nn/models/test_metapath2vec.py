@@ -1,10 +1,10 @@
 import torch
 
 from torch_geometric.nn import MetaPath2Vec
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import has_package, withDevice
 
 
-@withCUDA
+@withDevice
 def test_metapath2vec(device):
     edge_index_dict = {
         ('author', 'writes', 'paper'):
@@ -36,6 +36,29 @@ def test_metapath2vec(device):
     loss = model.loss(pos_rw.to(device), neg_rw.to(device))
     assert 0 <= loss.item()
 
-    acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
-                     torch.ones(20, 16), torch.randint(10, (20, )))
-    assert 0 <= acc and acc <= 1
+    if has_package('sklearn'):
+        acc = model.test(torch.ones(20, 16), torch.randint(10, (20, )),
+                         torch.ones(20, 16), torch.randint(10, (20, )))
+        assert 0 <= acc and acc <= 1
+
+
+def test_metapath2vec_empty_edges():
+    num_nodes_dict = {'a': 3, 'b': 4}
+    edge_index_dict = {
+        ('a', 'to', 'b'): torch.empty((2, 0), dtype=torch.long),
+        ('b', 'to', 'a'): torch.empty((2, 0), dtype=torch.long),
+    }
+    metapath = [('a', 'to', 'b'), ('b', 'to', 'a')]
+
+    model = MetaPath2Vec(
+        edge_index_dict,
+        embedding_dim=16,
+        metapath=metapath,
+        walk_length=10,
+        context_size=7,
+        walks_per_node=5,
+        num_negative_samples=5,
+        num_nodes_dict=num_nodes_dict,
+    )
+    loader = model.loader(batch_size=16, shuffle=True)
+    next(iter(loader))

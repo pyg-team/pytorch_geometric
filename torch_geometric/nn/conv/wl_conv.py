@@ -14,10 +14,11 @@ from torch_geometric.utils import (
 
 
 class WLConv(torch.nn.Module):
-    r"""The Weisfeiler Lehman operator from the `"A Reduction of a Graph to a
-    Canonical Form and an Algebra Arising During this Reduction"
-    <https://www.iti.zcu.cz/wl2018/pdf/wl_paper_translation.pdf>`_ paper, which
-    iteratively refines node colorings:
+    r"""The Weisfeiler Lehman (WL) operator from the `"A Reduction of a Graph
+    to a Canonical Form and an Algebra Arising During this Reduction"
+    <https://www.iti.zcu.cz/wl2018/pdf/wl_paper_translation.pdf>`_ paper.
+
+    :class:`WLConv` iteratively refines node colorings according to:
 
     .. math::
         \mathbf{x}^{\prime}_i = \textrm{hash} \left( \mathbf{x}_i, \{
@@ -70,8 +71,8 @@ class WLConv(torch.nn.Module):
     def histogram(self, x: Tensor, batch: Optional[Tensor] = None,
                   norm: bool = False) -> Tensor:
         r"""Given a node coloring :obj:`x`, computes the color histograms of
-        the respective graphs (separated by :obj:`batch`)."""
-
+        the respective graphs (separated by :obj:`batch`).
+        """
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
 

@@ -21,7 +21,7 @@ class PointNetConv(MessagePassing):
     for 3D Classification and Segmentation"
     <https://arxiv.org/abs/1612.00593>`_ and `"PointNet++: Deep Hierarchical
     Feature Learning on Point Sets in a Metric Space"
-    <https://arxiv.org/abs/1706.02413>`_ papers
+    <https://arxiv.org/abs/1706.02413>`_ papers.
 
     .. math::
         \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in
@@ -78,14 +78,18 @@ class PointNetConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x: Union[OptTensor, PairOptTensor],
-                pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+    def forward(
+        self,
+        x: Union[OptTensor, PairOptTensor],
+        pos: Union[Tensor, PairTensor],
+        edge_index: Adj,
+    ) -> Tensor:
 
         if not isinstance(x, tuple):
-            x: PairOptTensor = (x, None)
+            x = (x, None)
 
         if isinstance(pos, Tensor):
-            pos: PairTensor = (pos, pos)
+            pos = (pos, pos)
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
@@ -96,7 +100,7 @@ class PointNetConv(MessagePassing):
                 edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairOptTensor, pos: PairTensor)
-        out = self.propagate(edge_index, x=x, pos=pos, size=None)
+        out = self.propagate(edge_index, x=x, pos=pos)
 
         if self.global_nn is not None:
             out = self.global_nn(out)

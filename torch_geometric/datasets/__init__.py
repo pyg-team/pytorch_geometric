@@ -61,7 +61,6 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .lrgb import LRGBDataset
-from .neurograph import NeuroGraphDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -76,6 +75,12 @@ from .jodie import JODIEDataset
 from .wikidata import Wikidata5M
 from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
+from .neurograph import NeuroGraphDataset
+from .web_qsp_dataset import WebQSPDataset, CWQDataset
+from .git_mol_dataset import GitMolDataset
+from .molecule_gpt_dataset import MoleculeGPTDataset
+from .instruct_mol_dataset import InstructMolDataset
+from .tag_dataset import TAGDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -92,6 +97,10 @@ from .igmc_dataset import IGMCDataset
 from .amazon_book import AmazonBook
 from .hm import HM
 from .ose_gvcs import OSE_GVCS
+from .rcdd import RCDD
+from .opf import OPFDataset
+
+from .cornell import CornellTemporalHyperGraphDataset
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -103,7 +112,7 @@ from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
 
-import torch_geometric.datasets.utils  # noqa
+import torch_geometric.datasets.utils
 
 homo_datasets = [
     'KarateClub',
@@ -184,6 +193,12 @@ homo_datasets = [
     'MyketDataset',
     'BrcaTcga',
     'NeuroGraphDataset',
+    'WebQSPDataset',
+    'CWQDataset',
+    'GitMolDataset',
+    'MoleculeGPTDataset',
+    'InstructMolDataset',
+    'TAGDataset',
 ]
 
 hetero_datasets = [
@@ -202,6 +217,11 @@ hetero_datasets = [
     'AmazonBook',
     'HM',
     'OSE_GVCS',
+    'RCDD',
+    'OPFDataset',
+]
+hyper_datasets = [
+    'CornellTemporalHyperGraphDataset',
 ]
 synthetic_datasets = [
     'FakeDataset',
@@ -216,4 +236,4 @@ synthetic_datasets = [
     'BAShapes',
 ]
 
-__all__ = homo_datasets + hetero_datasets + synthetic_datasets
+__all__ = homo_datasets + hetero_datasets + hyper_datasets + synthetic_datasets

@@ -7,7 +7,7 @@ from torch.nn import GRUCell, Linear
 
 from torch_geometric.nn.inits import zeros
 from torch_geometric.utils import scatter
-from torch_geometric.utils.scatter import scatter_argmax
+from torch_geometric.utils._scatter import scatter_argmax
 
 TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 
@@ -90,7 +90,8 @@ class TGNMemory(torch.nn.Module):
 
     def forward(self, n_id: Tensor) -> Tuple[Tensor, Tensor]:
         """Returns, for all nodes :obj:`n_id`, their current memory and their
-        last updated timestamp."""
+        last updated timestamp.
+        """
         if self.training:
             memory, last_update = self._get_updated_memory(n_id)
         else:
@@ -101,7 +102,8 @@ class TGNMemory(torch.nn.Module):
     def update_state(self, src: Tensor, dst: Tensor, t: Tensor,
                      raw_msg: Tensor):
         """Updates the memory with newly encountered interactions
-        :obj:`(src, dst, t, raw_msg)`."""
+        :obj:`(src, dst, t, raw_msg)`.
+        """
         n_id = torch.cat([src, dst]).unique()
 
         if self.training:
@@ -162,10 +164,13 @@ class TGNMemory(torch.nn.Module):
                      msg_module: Callable):
         data = [msg_store[i] for i in n_id.tolist()]
         src, dst, t, raw_msg = list(zip(*data))
-        src = torch.cat(src, dim=0)
-        dst = torch.cat(dst, dim=0)
-        t = torch.cat(t, dim=0)
-        raw_msg = torch.cat(raw_msg, dim=0)
+        src = torch.cat(src, dim=0).to(self.device)
+        dst = torch.cat(dst, dim=0).to(self.device)
+        t = torch.cat(t, dim=0).to(self.device)
+        # Filter out empty tensors to avoid `invalid configuration argument`.
+        # TODO Investigate why this is needed.
+        raw_msg = [m for i, m in enumerate(raw_msg) if m.numel() > 0 or i == 0]
+        raw_msg = torch.cat(raw_msg, dim=0).to(self.device)
         t_rel = t - self.last_update[src]
         t_enc = self.time_enc(t_rel.to(raw_msg.dtype))
 

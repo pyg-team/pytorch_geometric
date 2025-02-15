@@ -38,6 +38,8 @@ def benchmark(
         args ((Any, ) or [(Any, )]): The arguments to pass to the functions.
             Can be a list of arguments for each function in :obj:`funcs` in
             case their headers differ.
+            Alternatively, you can pass in functions that generate arguments
+            on-the-fly (e.g., useful for benchmarking models on various sizes).
         num_steps (int): The number of steps to run the benchmark.
         func_names ([str], optional): The names of the functions. If not given,
             will try to infer the name from the function itself.
@@ -69,7 +71,7 @@ def benchmark(
                          f"'func_names' (got {len(func_names)}) must be equal")
 
     # Zero-copy `args` for each function (if necessary):
-    args_list = [args] * len(funcs) if isinstance(args, tuple) else args
+    args_list = [args] * len(funcs) if not isinstance(args, list) else args
 
     iterator = zip(funcs, args_list, func_names)
     if progress_bar:
@@ -77,9 +79,10 @@ def benchmark(
         iterator = tqdm(iterator, total=len(funcs))
 
     ts: List[List[str]] = []
-    for func, args, name in iterator:
+    for func, inputs, name in iterator:
         t_forward = t_backward = 0
         for i in range(num_warmups + num_steps):
+            args = inputs() if callable(inputs) else inputs
             args = require_grad(args, backward)
 
             if torch.cuda.is_available():

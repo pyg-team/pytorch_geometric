@@ -29,9 +29,12 @@ class GridSampling(BaseTransform):
             maximum coordinates found in :obj:`data.pos`.
             (default: :obj:`None`)
     """
-    def __init__(self, size: Union[float, List[float], Tensor],
-                 start: Optional[Union[float, List[float], Tensor]] = None,
-                 end: Optional[Union[float, List[float], Tensor]] = None):
+    def __init__(
+        self,
+        size: Union[float, List[float], Tensor],
+        start: Optional[Union[float, List[float], Tensor]] = None,
+        end: Optional[Union[float, List[float], Tensor]] = None,
+    ) -> None:
         self.size = size
         self.start = start
         self.end = end
@@ -39,16 +42,15 @@ class GridSampling(BaseTransform):
     def forward(self, data: Data) -> Data:
         num_nodes = data.num_nodes
 
-        batch = data.get('batch', None)
-
-        c = torch_geometric.nn.voxel_grid(data.pos, self.size, batch,
+        assert data.pos is not None
+        c = torch_geometric.nn.voxel_grid(data.pos, self.size, data.batch,
                                           self.start, self.end)
         c, perm = torch_geometric.nn.pool.consecutive.consecutive_cluster(c)
 
-        for key, item in data:
+        for key, item in data.items():
             if bool(re.search('edge', key)):
-                raise ValueError(
-                    'GridSampling does not support coarsening of edges')
+                raise ValueError(f"'{self.__class__.__name__}' does not "
+                                 f"support coarsening of edges")
 
             if torch.is_tensor(item) and item.size(0) == num_nodes:
                 if key == 'y':

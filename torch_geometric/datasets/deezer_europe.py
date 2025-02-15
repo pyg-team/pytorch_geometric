@@ -24,14 +24,22 @@ class DeezerEurope(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
     """
 
     url = 'https://graphmining.ai/datasets/ptg/deezer_europe.npz'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        force_reload: bool = False,
+    ) -> None:
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
+        self.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
@@ -41,10 +49,10 @@ class DeezerEurope(InMemoryDataset):
     def processed_file_names(self) -> str:
         return 'data.pt'
 
-    def download(self):
+    def download(self) -> None:
         download_url(self.url, self.raw_dir)
 
-    def process(self):
+    def process(self) -> None:
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
         x = torch.from_numpy(data['features']).to(torch.float)
         y = torch.from_numpy(data['target']).to(torch.long)
@@ -56,4 +64,4 @@ class DeezerEurope(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])

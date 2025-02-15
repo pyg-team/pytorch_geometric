@@ -1,11 +1,11 @@
 Installation
 ============
 
-:pyg:`PyG` is available for Python 3.8 to Python 3.11.
+:pyg:`PyG` is available for :python:`Python 3.9` to :python:`Python 3.12`.
 
 .. note::
-   We do not recommend installation as a root user on your system Python.
-   Please setup a virtual environment, *e.g.*, via `Anaconda or Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install>`_, or create a `Docker image <https://www.docker.com/>`_.
+   We do not recommend installation as a root user on your system :python:`Python`.
+   Please setup a virtual environment, *e.g.*, via :conda:`null` `Anaconda or Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install>`_, or create a `Docker image <https://www.docker.com/>`_.
 
 Quick Start
 -----------
@@ -16,8 +16,8 @@ Quick Start
 Installation via Anaconda
 -------------------------
 
-You can now install :pyg:`PyG` via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS, :pytorch:`PyTorch` and CUDA combinations 🤗
-If you have not yet installed :pytorch:`PyTorch`, install it via :obj:`conda` as described in its `official documentation <https://pytorch.org/get-started/locally/>`_.
+You can now install :pyg:`PyG` via :conda:`null` `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS, :pytorch:`PyTorch` and CUDA combinations 🤗.
+If you have not yet installed :pytorch:`PyTorch`, install it via :conda:`null` :obj:`conda install` as described in its `official documentation <https://pytorch.org/get-started/locally/>`_.
 Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.11.0`), simply run
 
 .. code-block:: none
@@ -26,6 +26,12 @@ Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.11.0`), simply run
 
 .. warning::
    Conda packages are currently not available for Windows and M1/M2/M3 macs.
+
+If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:`PyG`, you can enforce it as follows:
+
+.. code-block:: none
+
+   conda install pyg=*=*cu* -c pyg
 
 Installation via PyPi
 ---------------------
@@ -36,8 +42,6 @@ For this, simply run:
 .. code-block:: none
 
    pip install torch_geometric
-
-PyG 2.3 requires that at least PyTorch 1.11 is installed.
 
 Additional Libraries
 --------------------
@@ -63,19 +67,19 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    Wheels are currently not available for M1/M2/M3 macs.
    Please install the extension packages `from source <installation.html#installation-from-source>`__.
 
-#. Ensure that at least :pytorch:`PyTorch` 1.11.0 is installed:
+#. Ensure that at least :pytorch:`PyTorch` 1.13.0 is installed:
 
    .. code-block:: none
 
       python -c "import torch; print(torch.__version__)"
-      >>> 2.1.0
+      >>> 2.5.0
 
 #. Find the CUDA version :pytorch:`PyTorch` was installed with:
 
    .. code-block:: none
 
       python -c "import torch; print(torch.version.cuda)"
-      >>> 11.8
+      >>> 12.4
 
 #. Install the relevant packages:
 
@@ -85,23 +89,27 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
+   * :pytorch:`PyTorch` 2.5: :obj:`${TORCH}=2.5.0` and :obj:`${CUDA}=cpu|cu118|cu121|cu124`
+   * :pytorch:`PyTorch` 2.4: :obj:`${TORCH}=2.4.0` and :obj:`${CUDA}=cpu|cu118|cu121|cu124`
+   * :pytorch:`PyTorch` 2.3: :obj:`${TORCH}=2.3.0` and :obj:`${CUDA}=cpu|cu118|cu121`
+   * :pytorch:`PyTorch` 2.2: :obj:`${TORCH}=2.2.0` and :obj:`${CUDA}=cpu|cu118|cu121`
    * :pytorch:`PyTorch` 2.1: :obj:`${TORCH}=2.1.0` and :obj:`${CUDA}=cpu|cu118|cu121`
    * :pytorch:`PyTorch` 2.0: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
 
-   For example, for :pytorch:`PyTorch` 2.1.* and CUDA 12.1, type:
+   For example, for :pytorch:`PyTorch` 2.5.* and CUDA 12.4, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.1.0+cu121.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.5.0+cu124.html
 
-   For example, for :pytorch:`PyTorch` 2.0.* and CUDA 11.8, type:
+   For example, for :pytorch:`PyTorch` 2.4.* and CUDA 11.8, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.4.0+cu118.html
 
-**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1 and 1.13.0/1.13.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1, 1.13.0/1.13.1, 2.0.0/2.0.1, 2.1.0/2.1.1/2.1.2, 2.2.0/2.2.1/2.2.2, and 2.3.0/2.3.1 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 
@@ -173,7 +181,7 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
       pip install --verbose torch_cluster
       pip install --verbose torch_spline_conv
 
-In rare cases, CUDA or Python path problems can prevent a successful installation.
+In rare cases, CUDA or :python:`Python` path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.
 We collected common installation errors in the `Frequently Asked Questions <installation.html#frequently-asked-questions>`__ subsection.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/pyg-team/pytorch_geometric/issues>`_.

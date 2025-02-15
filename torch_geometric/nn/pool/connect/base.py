@@ -66,7 +66,6 @@ class Connect(torch.nn.Module):
     """
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        pass
 
     def forward(
         self,
@@ -75,7 +74,8 @@ class Connect(torch.nn.Module):
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> ConnectOutput:
-        r"""
+        r"""Forward pass.
+
         Args:
             select_output (SelectOutput): The output of :class:`Select`.
             edge_index (torch.Tensor): The edge indices.

@@ -14,7 +14,7 @@ from torch_geometric.utils import get_laplacian
 class ChebConv(MessagePassing):
     r"""The chebyshev spectral graph convolutional operator from the
     `"Convolutional Neural Networks on Graphs with Fast Localized Spectral
-    Filtering" <https://arxiv.org/abs/1606.09375>`_ paper
+    Filtering" <https://arxiv.org/abs/1606.09375>`_ paper.
 
     .. math::
         \mathbf{X}^{\prime} = \sum_{k=1}^{K} \mathbf{Z}^{(k)} \cdot
@@ -164,11 +164,11 @@ class ChebConv(MessagePassing):
 
         # propagate_type: (x: Tensor, norm: Tensor)
         if len(self.lins) > 1:
-            Tx_1 = self.propagate(edge_index, x=x, norm=norm, size=None)
+            Tx_1 = self.propagate(edge_index, x=x, norm=norm)
             out = out + self.lins[1](Tx_1)
 
         for lin in self.lins[2:]:
-            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm, size=None)
+            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm)
             Tx_2 = 2. * Tx_2 - Tx_0
             out = out + lin.forward(Tx_2)
             Tx_0, Tx_1 = Tx_1, Tx_2

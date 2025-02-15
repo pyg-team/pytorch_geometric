@@ -25,7 +25,8 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
     r"""Converts a homogeneous GNN model into its heterogeneous equivalent
     via the basis-decomposition technique introduced in the
     `"Modeling Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper:
+    <https://arxiv.org/abs/1703.06103>`_ paper.
+
     For this, the heterogeneous graph is mapped to a typed homogeneous graph,
     in which its feature representations are aligned and grouped to a single
     representation.
@@ -271,7 +272,6 @@ class ToHeteroWithBasesTransformer(Transformer):
                     args=(value, self.find_by_name('edge_offset_dict')),
                     name=f'{value.name}__split')
 
-                pass
             elif isinstance(value, Node):
                 self.graph.inserting_before(node)
                 return self.graph.create_node(
@@ -308,6 +308,24 @@ class ToHeteroWithBasesTransformer(Transformer):
 ###############################################################################
 
 
+# We make use of a post-message computation hook to inject the
+# basis re-weighting for each individual edge type.
+# This currently requires us to set `conv.fuse = False`, which leads
+# to a materialization of messages.
+def hook(module, inputs, output):
+    assert isinstance(module._edge_type, Tensor)
+    if module._edge_type.size(0) != output.size(-2):
+        raise ValueError(
+            f"Number of messages ({output.size(0)}) does not match "
+            f"with the number of original edges "
+            f"({module._edge_type.size(0)}). Does your message "
+            f"passing layer create additional self-loops? Try to "
+            f"remove them via 'add_self_loops=False'")
+    weight = module.edge_type_weight.view(-1)[module._edge_type]
+    weight = weight.view([1] * (output.dim() - 2) + [-1, 1])
+    return weight * output
+
+
 class HeteroBasisConv(torch.nn.Module):
     # A wrapper layer that applies the basis-decomposition technique to a
     # heterogeneous graph.
@@ -317,23 +335,6 @@ class HeteroBasisConv(torch.nn.Module):
 
         self.num_relations = num_relations
         self.num_bases = num_bases
-
-        # We make use of a post-message computation hook to inject the
-        # basis re-weighting for each individual edge type.
-        # This currently requires us to set `conv.fuse = False`, which leads
-        # to a materialization of messages.
-        def hook(module, inputs, output):
-            assert isinstance(module._edge_type, Tensor)
-            if module._edge_type.size(0) != output.size(0):
-                raise ValueError(
-                    f"Number of messages ({output.size(0)}) does not match "
-                    f"with the number of original edges "
-                    f"({module._edge_type.size(0)}). Does your message "
-                    f"passing layer create additional self-loops? Try to "
-                    f"remove them via 'add_self_loops=False'")
-            weight = module.edge_type_weight.view(-1)[module._edge_type]
-            weight = weight.view([-1] + [1] * (output.dim() - 1))
-            return weight * output
 
         params = list(module.parameters())
         device = params[0].device if len(params) > 0 else 'cpu'
@@ -415,7 +416,7 @@ def get_node_offset_dict(
     out: Dict[NodeType, int] = {}
     for key in type2id.keys():
         out[key] = cumsum
-        cumsum += input_dict[key].size(0)
+        cumsum += input_dict[key].size(-2)
     return out
 
 
@@ -433,7 +434,7 @@ def get_edge_offset_dict(
         elif value.dtype == torch.long and value.size(0) == 2:
             cumsum += value.size(-1)
         else:
-            cumsum += value.size(0)
+            cumsum += value.size(-2)
     return out
 
 
@@ -458,7 +459,7 @@ def get_edge_type(
             out = torch.full((value.nnz(), ), i, dtype=torch.long,
                              device=value.device())
         else:
-            out = value.new_full((value.size(0), ), i, dtype=torch.long)
+            out = value.new_full((value.size(-2), ), i, dtype=torch.long)
         outs.append(out)
 
     return outs[0] if len(outs) == 1 else torch.cat(outs, dim=0)
@@ -467,14 +468,14 @@ def get_edge_type(
 ###############################################################################
 
 # These methods are used to group the individual type-wise components into a
-# unfied single representation.
+# unified single representation.
 
 
 def group_node_placeholder(input_dict: Dict[NodeType, Tensor],
                            type2id: Dict[NodeType, int]) -> Tensor:
 
     inputs = [input_dict[key] for key in type2id.keys()]
-    return inputs[0] if len(inputs) == 1 else torch.cat(inputs, dim=0)
+    return inputs[0] if len(inputs) == 1 else torch.cat(inputs, dim=-2)
 
 
 def group_edge_placeholder(
@@ -528,7 +529,7 @@ def group_edge_placeholder(
         return torch.stack([row, col], dim=0)
 
     else:
-        return torch.cat(inputs, dim=0)
+        return torch.cat(inputs, dim=-2)
 
 
 ###############################################################################
@@ -542,9 +543,9 @@ def split_output(
     offset_dict: Union[Dict[NodeType, int], Dict[EdgeType, int]],
 ) -> Union[Dict[NodeType, Tensor], Dict[EdgeType, Tensor]]:
 
-    cumsums = list(offset_dict.values()) + [output.size(0)]
+    cumsums = list(offset_dict.values()) + [output.size(-2)]
     sizes = [cumsums[i + 1] - cumsums[i] for i in range(len(offset_dict))]
-    outputs = output.split(sizes)
+    outputs = output.split(sizes, dim=-2)
     return {key: output for key, output in zip(offset_dict, outputs)}
 
 

@@ -11,7 +11,7 @@ from torch.nn.parameter import UninitializedParameter
 import torch_geometric.backend
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import withCUDA, withDevice, withPackage
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import cumsum
 
@@ -19,7 +19,7 @@ weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('weight', weight_inits)
 @pytest.mark.parametrize('bias', bias_inits)
 def test_linear(weight, bias, device):
@@ -30,29 +30,39 @@ def test_linear(weight, bias, device):
     assert lin(x).size() == (3, 4, 32)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('weight', weight_inits)
 @pytest.mark.parametrize('bias', bias_inits)
 def test_lazy_linear(weight, bias, device):
     x = torch.randn(3, 4, 16, device=device)
     lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias)
     lin = lin.to(device)
+    copied_lin = copy.deepcopy(lin)
+
+    assert lin.weight.device == device
+    assert lin.bias.device == device
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
 
+    assert copied_lin.weight.device == device
+    assert copied_lin.bias.device == device
+    assert copied_lin(x).size() == (3, 4, 32)
 
-@withCUDA
+
+@withDevice
 @pytest.mark.parametrize('dim1', [-1, 16])
 @pytest.mark.parametrize('dim2', [-1, 16])
-def test_load_lazy_linear(dim1, dim2, device):
-    lin1 = Linear(dim1, 32).to(device)
-    lin2 = Linear(dim1, 32).to(device)
+@pytest.mark.parametrize('bias', [True, False])
+def test_load_lazy_linear(dim1, dim2, bias, device):
+    lin1 = Linear(dim1, 32, bias=bias).to(device)
+    lin2 = Linear(dim2, 32, bias=bias).to(device)
     lin2.load_state_dict(lin1.state_dict())
 
     if dim1 != -1:
+        assert isinstance(lin1.weight, torch.nn.Parameter)
+        assert isinstance(lin2.weight, torch.nn.Parameter)
         assert torch.allclose(lin1.weight, lin2.weight)
-        assert torch.allclose(lin1.bias, lin2.bias)
         assert not hasattr(lin1, '_hook')
         assert not hasattr(lin2, '_hook')
     else:
@@ -60,6 +70,15 @@ def test_load_lazy_linear(dim1, dim2, device):
         assert isinstance(lin2.weight, UninitializedParameter)
         assert hasattr(lin1, '_hook')
         assert hasattr(lin2, '_hook')
+
+    if bias:
+        assert isinstance(lin1.bias, torch.nn.Parameter)
+        assert isinstance(lin2.bias, torch.nn.Parameter)
+        if dim1 != -1:  # Only check for equality on materialized bias:
+            assert torch.allclose(lin1.bias, lin2.bias)
+    else:
+        assert lin1.bias is None
+        assert lin2.bias is None
 
     with pytest.raises(RuntimeError, match="in state_dict"):
         lin1.load_state_dict({}, strict=True)
@@ -91,7 +110,7 @@ def test_copy_unintialized_parameter():
             copy.deepcopy(weight)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('lazy', [True, False])
 def test_copy_linear(lazy, device):
     lin = Linear(-1 if lazy else 16, 32).to(device)
@@ -117,7 +136,7 @@ def test_copy_linear(lazy, device):
 
 
 @withCUDA
-def test_hetero_linear(device):
+def test_hetero_linear_basic(device):
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
 
@@ -155,7 +174,7 @@ def test_hetero_linear_amp(device, use_segment_matmul):
 
     lin = HeteroLinear(16, 32, num_types=3).to(device)
 
-    with torch.cuda.amp.autocast():
+    with torch.amp.autocast('cuda'):
         assert lin(x, type_vec).size() == (3, 32)
 
     torch_geometric.backend.use_segment_matmul = old_state
@@ -173,7 +192,7 @@ def test_lazy_hetero_linear(device):
     assert out.size() == (3, 32)
 
 
-@withCUDA
+@withDevice
 @pytest.mark.parametrize('bias', [True, False])
 def test_hetero_dict_linear(bias, device):
     x_dict = {
@@ -217,7 +236,7 @@ def test_hetero_dict_linear_jit():
     assert len(jit(x_dict)) == 2
 
 
-@withCUDA
+@withDevice
 def test_lazy_hetero_dict_linear(device):
     x_dict = {
         'v': torch.randn(3, 16, device=device),
@@ -235,7 +254,6 @@ def test_lazy_hetero_dict_linear(device):
 
 @withCUDA
 @withPackage('pyg_lib')
-@withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('type_vec', [
     torch.tensor([0, 0, 1, 1, 2, 2]),
     torch.tensor([0, 1, 2, 0, 1, 2]),
@@ -257,7 +275,7 @@ if __name__ == '__main__':
     try:
         import dgl
         WITH_DLG = True
-    except:  # noqa
+    except Exception:
         WITH_DGL = False
 
     warnings.filterwarnings('ignore', '.*API of nested tensors.*')
