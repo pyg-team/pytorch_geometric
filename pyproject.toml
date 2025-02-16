@@ -37,6 +37,7 @@ dependencies=[
     "pyparsing",
     "requests",
     "tqdm",
+    "xxhash",
 ]
 
 [project.optional-dependencies]

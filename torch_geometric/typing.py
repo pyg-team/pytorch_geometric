@@ -69,10 +69,16 @@ try:
         pyg_lib.sampler.neighbor_sample).parameters)
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
-    # WITH_CPU_HASH_MAP = hasattr(torch.classes.pyg, 'CPUHashMap')
-    # WITH_CUDA_HASH_MAP = hasattr(torch.classes.pyg, 'CUDAHashMap')
-    WITH_CPU_HASH_MAP = False
-    WITH_CUDA_HASH_MAP = False
+    try:
+        torch.classes.pyg.CPUHashMap
+        WITH_CPU_HASH_MAP = True
+    except Exception:
+        WITH_CPU_HASH_MAP = False
+    try:
+        torch.classes.pyg.CUDAHashMap
+        WITH_CUDA_HASH_MAP = True
+    except Exception:
+        WITH_CUDA_HASH_MAP = False
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
