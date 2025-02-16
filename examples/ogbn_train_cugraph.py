@@ -56,7 +56,9 @@ def arg_parse():
         help="directory of dataset.",
     )
     parser.add_argument('-e', '--epochs', type=int, default=50)
-    parser.add_argument('--num_layers', type=int, default=3)
+    parser.add_argument('-le', '--local_epochs', type=int, default=50,
+                        help='warmup epochs for polynormer')
+    parser.add_argument('--num_layers', type=int, default=6)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
     parser.add_argument('--hidden_channels', type=int, default=256)
@@ -78,8 +80,8 @@ def arg_parse():
     parser.add_argument(
         "--model",
         type=str,
-        default='SGFormer',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
+        default='Polynormer',
+        choices=['SAGE', 'GAT', 'GCN', 'SGFormer', 'Polynormer'],
         help="Model used for training, default SGFormer",
     )
     parser.add_argument(
@@ -199,7 +201,7 @@ if __name__ == '__main__':
                                               args.hidden_channels,
                                               args.num_layers,
                                               dataset.num_classes,
-                                              heads=args.num_heads).cuda()
+                                              heads=args.num_heads,).cuda()
     elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
@@ -223,6 +225,13 @@ if __name__ == '__main__':
             trans_dropout=args.dropout,
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
+        ).cuda()
+    elif args.model == 'Polynormer':
+        model = torch_geometric.nn.models.Polynormer(
+            in_channels=dataset.num_features,
+            hidden_channels=args.hidden_channels,
+            out_channels=dataset.num_classes,
+            local_layers=args.num_layers,
         ).cuda()
     else:
         raise ValueError('Unsupported model type: {args.model}')
@@ -267,9 +276,12 @@ if __name__ == '__main__':
         inference_times = []
         best_val = 0.
         start = time.perf_counter()
-        epochs = args.epochs
+        epochs = args.local_epochs + args.epochs
         for epoch in range(1, epochs + 1):
             train_start = time.perf_counter()
+            if args.model == 'Polynormer' and epoch == args.local_epochs:
+                print('start global attention!')
+                model._global = True
             loss, train_acc = train(model, train_loader)
             train_end = time.perf_counter()
             train_times.append(train_end - train_start)
