@@ -60,10 +60,12 @@ def arg_parse():
         help="directory of dataset.",
     )
     parser.add_argument('--hidden_channels', type=int, default=256)
-    parser.add_argument('--num_layers', type=int, default=3)
+    parser.add_argument('--num_layers', type=int, default=6)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
     parser.add_argument('-e', '--epochs', type=int, default=50)
+    parser.add_argument('-le', '--local_epochs', type=int, default=50,
+                        help='warmup epochs for polynormer')
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
     parser.add_argument('--eval_steps', type=int, default=1000)
@@ -82,8 +84,8 @@ def arg_parse():
     parser.add_argument(
         "--model",
         type=str,
-        default='GCN',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
+        default='Polynormer',
+        choices=['SAGE', 'GAT', 'GCN', 'SGFormer', 'Polynormer'],
         help="Model used for training, default GCN",
     )
     parser.add_argument(
@@ -157,7 +159,7 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
 def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
               num_classes, wall_clock_start, tempdir=None):
 
-    epochs = args.epochs
+    epochs = args.local_epochs + args.epochs
     batch_size = args.batch_size
     fan_out = args.fan_out
     num_layers = args.num_layers
@@ -169,7 +171,8 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     )
 
     model = model.to(rank)
-    model = DistributedDataParallel(model, device_ids=[rank])
+    model = DistributedDataParallel(model, device_ids=[rank],
+                                    find_unused_parameters=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.wd)
 
@@ -253,6 +256,9 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         train_start = time.perf_counter()
         total_loss = 0
         i = 0
+        if args.model == 'Polynormer' and epoch == args.local_epochs:
+            print('start global attention!')
+            model.module._global = True
         for i, batch in enumerate(train_loader):
             if i == warmup_steps:
                 torch.cuda.synchronize()
@@ -338,11 +344,13 @@ if __name__ == '__main__':
 
     print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        model = torch_geometric.nn.models.GAT(dataset.num_features,
-                                              args.hidden_channels,
-                                              args.num_layers,
-                                              dataset.num_classes,
-                                              heads=args.num_heads)
+        model = torch_geometric.nn.models.GAT(
+            dataset.num_features,
+            args.hidden_channels,
+            args.num_layers,
+            dataset.num_classes,
+            heads=args.num_heads,
+        )
     elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
@@ -366,6 +374,13 @@ if __name__ == '__main__':
             trans_dropout=args.dropout,
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
+        )
+    elif args.model == 'Polynormer':
+        model = torch_geometric.nn.models.Polynormer(
+            in_channels=dataset.num_features,
+            hidden_channels=args.hidden_channels,
+            out_channels=dataset.num_classes,
+            local_layers=args.num_layers,
         )
     else:
         raise ValueError(f'Unsupported model type: {args.model}')

@@ -53,7 +53,7 @@ class Polynormer(torch.nn.Module):
         local_attn: bool = False,
     ):
         super().__init__()
-        self._global = True
+        self._global = False
         self.in_drop = in_dropout
         self.dropout = dropout
         self.pre_ln = pre_ln

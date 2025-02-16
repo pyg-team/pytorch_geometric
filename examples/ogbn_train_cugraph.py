@@ -197,11 +197,13 @@ if __name__ == '__main__':
 
     print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        model = torch_geometric.nn.models.GAT(dataset.num_features,
-                                              args.hidden_channels,
-                                              args.num_layers,
-                                              dataset.num_classes,
-                                              heads=args.num_heads,).cuda()
+        model = torch_geometric.nn.models.GAT(
+            dataset.num_features,
+            args.hidden_channels,
+            args.num_layers,
+            dataset.num_classes,
+            heads=args.num_heads,
+        ).cuda()
     elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
