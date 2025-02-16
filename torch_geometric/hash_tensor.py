@@ -5,6 +5,7 @@ import torch.utils._pytree as pytree
 import xxhash
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import CPUHashMap, CUDAHashMap
 
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
@@ -18,9 +19,16 @@ def as_key_tensor(
     try:
         key = torch.as_tensor(key, device=device)
     except Exception:
-        key = torch.tensor([
-            xxhash.xxh64(item).intdigest() & 0x7FFFFFFFFFFFFFFF for item in key
-        ], dtype=torch.int64, device=device)
+        device = device or torch.get_default_device()
+        # On GPU, we default to int32 for faster 'CUDAHashMap' implementation:
+        if device.type == 'cuda':
+            key = torch.tensor(
+                [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
+                dtype=torch.int32, device=device)
+        else:
+            key = torch.tensor([
+                xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF for x in key
+            ], dtype=torch.int64, device=device)
 
     if key.element_size() == 1:
         key = key.view(torch.uint8)
@@ -40,6 +48,8 @@ def as_key_tensor(
 class HashTensor(Tensor):
     _map: Union[Tensor, CPUHashMap, CUDAHashMap]
     _value: Optional[Tensor]
+    _min_key: Tensor
+    _max_key: Tensor
 
     @staticmethod
     def __new__(
@@ -101,6 +111,34 @@ class HashTensor(Tensor):
         )
 
         out._value = value
+
+        out._min_key = key.min() if key.numel() > 0 else key.new_zeros(())
+        out._max_key = key.max() if key.numel() > 0 else key.new_zeros(())
+
+        _range = out._max_key - out._min_key
+        # TODO Expose fixed threshold as argument.
+        if (key.dtype in {torch.uint8, torch.int16} or _range <= 1_000_000
+                or _range <= 2 * key.numel()):
+            out._map = torch.full(
+                size=(_range + 2, ),
+                fill_value=-1,
+                dtype=torch.int64,
+                device=device,
+            )
+            out._map[(key - (out._min_key - 1)).long()] = torch.arange(
+                key.numel(),
+                dtype=out._map.dtype,
+                device=out._map.device,
+            )
+        elif torch_geometric.typing.WITH_CUDA_HASH_MAP and key.is_cuda:
+            # TODO Convert int64 to int32.
+            out._map = CUDAHashMap(key, 0.5)
+        elif torch_geometric.typing.WITH_CPU_HASH_MAP and key.is_cpu:
+            out._map = CPUHashMap(key, -1)
+        else:
+            # TODO Expose pandas fallback.
+            # warnings.warn()
+            raise NotImplementedError
 
         return out
 
