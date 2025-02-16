@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
+from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer, Polynormer
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -36,14 +36,16 @@ parser.add_argument(
 parser.add_argument(
     '--gnn_choice',
     type=str,
-    default='sgformer',
+    default='polynormer',
     choices=['gat', 'graphsage', 'sgformer', 'polynormer'],
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
-parser.add_argument('--num_layers', type=int, default=3)
+parser.add_argument('-le', '--local_epochs', type=int, default=50,
+                    help='warmup epochs for polynormer')
+parser.add_argument('--num_layers', type=int, default=7)
 parser.add_argument('--num_heads', type=int, default=1,
-                    help='number of heads for GAT model.')
+                    help='number of heads for GAT ot GT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
@@ -76,7 +78,7 @@ print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-num_epochs = args.epochs
+num_epochs = args.epochs + args.local_epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
 num_hidden_channels = args.hidden_channels
@@ -126,6 +128,9 @@ test_loader = NeighborLoader(
 
 
 def train(epoch: int) -> tuple[Tensor, float]:
+    if args.gnn_choice == 'polynormer' and epoch == args.local_epochs:
+        print('start global attention!')
+        model._global = True
     model.train()
 
     pbar = tqdm(total=split_idx['train'].size(0))
@@ -201,6 +206,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
             out_channels=dataset.num_classes,
+            local_layers=num_layers,
         )
     else:
         raise ValueError(f'Unsupported model type: {gnn_choice}')

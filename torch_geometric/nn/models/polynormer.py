@@ -6,6 +6,36 @@ from torch_geometric.nn.attention import PolynormerAttention
 
 
 class Polynormer(torch.nn.Module):
+    r"""The polynormer module from the
+    `"Polynormer: polynomial-expressive graph
+    transformer in linear time"
+    <https://arxiv.org/abs/2403.01232>`_ paper.
+
+    Args:
+        in_channels (int): Input channels.
+        hidden_channels (int): Hidden channels.
+        out_channels (int): Output channels.
+        local_layers (int): The number of local attention layers.
+            (default: :obj:`7`)
+        global_layers (int): The number of global attention layers.
+            (default: :obj:`2`)
+        in_dropout (float): Input dropout rate.
+            (default: :obj:`0.15`)
+        dropout (float): Dropout rate.
+            (default: :obj:`0.5`)
+        global_dropout (float): Global dropout rate.
+            (default: :obj:`0.5`)
+        heads (int): The number of heads.
+            (default: :obj:`1`)
+        beta (float): Aggregate type.
+            (default: :obj:`0.9`)
+        pre_ln (bool): Pre layer normalization.
+            (default: :obj:`False`)
+        post_bn (bool): Post batch normlization.
+            (default: :obj:`True`)
+        local_attn (bool): Whether use local attention.
+            (default: :obj:`False`)
+    """
     def __init__(
         self,
         in_channels: int,
@@ -23,14 +53,6 @@ class Polynormer(torch.nn.Module):
         local_attn: bool = False,
     ):
         super().__init__()
-        """
-        _global = False
-            Best Validation Accuracy: 71.90%
-            Test Accuracy: 69.02%
-        _global = True
-            Best Validation Accuracy: 72.20%
-            Test Accuracy: 70.05%
-        """
         self._global = True
         self.in_drop = in_dropout
         self.dropout = dropout
@@ -147,4 +169,4 @@ class Polynormer(torch.nn.Module):
         else:
             x = self.pred_local(x_local)
 
-        return x
+        return F.log_softmax(x, dim=-1)
