@@ -137,7 +137,7 @@ class HashTensor(Tensor):
         elif torch_geometric.typing.WITH_CPU_HASH_MAP and key.is_cpu:
             out._map = CPUHashMap(key, -1)
         else:
-            if out.is_cuda:
+            if key.is_cuda:
                 warnings.warn(f"Fallback to CPU-based mapping algorithm which "
                               f"may cause slowdowns and device "
                               f"synchronization. Please install 'pyg-lib' for "
