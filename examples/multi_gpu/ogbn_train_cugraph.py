@@ -84,7 +84,7 @@ def arg_parse():
         type=str,
         default='Polynormer',
         choices=['SAGE', 'GAT', 'GCN', 'SGFormer', 'Polynormer'],
-        help="Model used for training, default GCN",
+        help="Model used for training, default Polynormer",
     )
     parser.add_argument(
         "--num_heads",

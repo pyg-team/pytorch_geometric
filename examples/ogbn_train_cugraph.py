@@ -78,7 +78,7 @@ def arg_parse():
     parser.add_argument(
         "--model",
         type=str,
-        default='Polynormer',
+        default='SGFormer',
         choices=['SAGE', 'GAT', 'GCN', 'SGFormer', 'Polynormer'],
         help="Model used for training, default SGFormer",
     )

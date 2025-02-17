@@ -36,7 +36,7 @@ parser.add_argument(
 parser.add_argument(
     '--gnn_choice',
     type=str,
-    default='polynormer',
+    default='sgformer',
     choices=['gat', 'graphsage', 'sgformer', 'polynormer'],
     help='Model name.',
 )
