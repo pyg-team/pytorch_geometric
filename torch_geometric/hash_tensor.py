@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
 
 import torch
@@ -136,9 +137,19 @@ class HashTensor(Tensor):
         elif torch_geometric.typing.WITH_CPU_HASH_MAP and key.is_cpu:
             out._map = CPUHashMap(key, -1)
         else:
-            # TODO Expose pandas fallback.
-            # warnings.warn()
-            raise NotImplementedError
+            if out.is_cuda:
+                warnings.warn(f"Fallback to CPU-based mapping algorithm which "
+                              f"may cause slowdowns and device "
+                              f"synchronization. Please install 'pyg-lib' for "
+                              f"an accelerated '{cls.__name__}' "
+                              f"implementation.")
+
+            import pandas as pd
+
+            out._map = pd.CategoricalDtype(
+                categories=key.cpu().numpy(),
+                ordered=True,
+            )
 
         return out
 

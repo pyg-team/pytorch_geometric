@@ -19,7 +19,6 @@ KEY_DTYPES = [
 
 
 @withCUDA
-@withPackage('pyg_lib')  # TODO Remove
 @pytest.mark.parametrize('dtype', KEY_DTYPES)
 def test_basic(dtype, device):
     if dtype != torch.bool:
@@ -32,6 +31,5 @@ def test_basic(dtype, device):
 
 
 @withCUDA
-@withPackage('pyg_lib')  # TODO Remove
 def test_string_key(device):
     HashTensor(['1', '2', '3'], device=device)
