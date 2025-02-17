@@ -1,4 +1,3 @@
-import copy
 import functools
 import warnings
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
@@ -35,15 +34,16 @@ def as_key_tensor(
         key = torch.as_tensor(key, device=device)
     except Exception:
         device = device or torch.get_default_device()
+        # TODO Convert int64 to int32.
         # On GPU, we default to int32 for faster 'CUDAHashMap' implementation:
-        if torch_geometric.typing.WITH_CUDA_HASH_MAP and device.type == 'cuda':
-            key = torch.tensor(
-                [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
-                dtype=torch.int32, device=device)
-        else:
-            key = torch.tensor([
-                xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF for x in key
-            ], dtype=torch.int64, device=device)
+        # if torch_geometric.typing.WITH_CUDA_HASH_MAP and device.type == 'cuda':
+        #     key = torch.tensor(
+        #         [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
+        #         dtype=torch.int32, device=device)
+        # else:
+        key = torch.tensor(
+            [xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF for x in key],
+            dtype=torch.int64, device=device)
 
     if key.element_size() == 1:
         key = key.view(torch.uint8)
@@ -145,16 +145,25 @@ class HashTensor(Tensor):
         else:
             _map = get_hash_map(key)
 
-        return cls._from_data(_map, value, key.numel(), min_key, max_key)
+        return cls._from_data(
+            _map,
+            value,
+            min_key,
+            max_key,
+            size=key.numel(),
+            dtype=dtype,
+        )
 
     @classmethod
     def _from_data(
         cls,
         _map: Union[Tensor, CPUHashMap, CUDAHashMap],
         value: Optional[Tensor],
-        size: int,
         min_key: Tensor,
         max_key: Tensor,
+        *,
+        size: int,
+        dtype: Optional[torch.dtype],
     ) -> 'HashTensor':
 
         device = min_key.device
@@ -260,5 +269,11 @@ def _to_copy(
         key = aten._to_copy.default(key, device=device)
         _map = get_hash_map(key)
 
-    size = tensor.size(0)
-    return tensor.__class__._from_data(_map, value, size, min_key, max_key)
+    return tensor.__class__._from_data(
+        _map,
+        value,
+        min_key,
+        max_key,
+        size=tensor.size(0),
+        dtype=dtype or tensor.dtype,
+    )

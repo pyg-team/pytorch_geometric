@@ -32,7 +32,7 @@ def test_basic(dtype, device):
 
 @withCUDA
 @pytest.mark.skipif(
-    not (has_package('pyg-lib') and has_package('pandas')),
+    not has_package('pyg-lib') and not has_package('pandas'),
     reason='Missing dependencies',
 )
 def test_string_key(device):
