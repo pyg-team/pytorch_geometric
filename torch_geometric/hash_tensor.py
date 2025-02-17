@@ -166,8 +166,6 @@ class HashTensor(Tensor):
         dtype: Optional[torch.dtype],
     ) -> 'HashTensor':
 
-        device = min_key.device
-
         if value is not None:
             dtype = value.dtype
             size = value.size()
@@ -186,7 +184,7 @@ class HashTensor(Tensor):
             size=size,
             strides=stride,
             dtype=dtype,
-            device=device,
+            device=min_key.device,
             layout=layout,
             requires_grad=requires_grad,
         )
