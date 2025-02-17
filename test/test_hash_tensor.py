@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric import HashTensor
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import has_package, withCUDA
 
 KEY_DTYPES = [
     torch.bool,
@@ -19,7 +19,10 @@ KEY_DTYPES = [
 
 
 @withCUDA
-@withPackage('pyg_lib')  # TODO Remove
+@pytest.mark.skipif(
+    not has_package('pyg-lib') and not has_package('pandas'),
+    reason='Missing dependencies',
+)
 @pytest.mark.parametrize('dtype', KEY_DTYPES)
 def test_basic(dtype, device):
     if dtype != torch.bool:
@@ -32,6 +35,9 @@ def test_basic(dtype, device):
 
 
 @withCUDA
-@withPackage('pyg_lib')  # TODO Remove
+@pytest.mark.skipif(
+    not has_package('pyg-lib') and not has_package('pandas'),
+    reason='Missing dependencies',
+)
 def test_string_key(device):
     HashTensor(['1', '2', '3'], device=device)

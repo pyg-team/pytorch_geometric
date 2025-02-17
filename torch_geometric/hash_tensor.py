@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
 
 import torch
@@ -21,7 +22,7 @@ def as_key_tensor(
     except Exception:
         device = device or torch.get_default_device()
         # On GPU, we default to int32 for faster 'CUDAHashMap' implementation:
-        if device.type == 'cuda':
+        if torch_geometric.typing.WITH_CUDA_HASH_MAP and device.type == 'cuda':
             key = torch.tensor(
                 [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
                 dtype=torch.int32, device=device)
@@ -136,9 +137,19 @@ class HashTensor(Tensor):
         elif torch_geometric.typing.WITH_CPU_HASH_MAP and key.is_cpu:
             out._map = CPUHashMap(key, -1)
         else:
-            # TODO Expose pandas fallback.
-            # warnings.warn()
-            raise NotImplementedError
+            if out.is_cuda:
+                warnings.warn(f"Fallback to CPU-based mapping algorithm which "
+                              f"may cause slowdowns and device "
+                              f"synchronization. Please install 'pyg-lib' for "
+                              f"an accelerated '{cls.__name__}' "
+                              f"implementation.")
+
+            import pandas as pd
+
+            out._map = pd.CategoricalDtype(
+                categories=key.cpu().numpy(),
+                ordered=True,
+            )
 
         return out
 
