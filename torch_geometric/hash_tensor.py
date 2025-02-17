@@ -1,3 +1,5 @@
+import copy
+import functools
 import warnings
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
 
@@ -9,7 +11,19 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.typing import CPUHashMap, CUDAHashMap
 
+aten = torch.ops.aten
+
 HANDLED_FUNCTIONS: Dict[Callable, Callable] = {}
+
+
+def implements(torch_function: Callable) -> Callable:
+    r"""Registers a :pytorch:`PyTorch` function override."""
+    @functools.wraps(torch_function)
+    def decorator(my_function: Callable) -> Callable:
+        HANDLED_FUNCTIONS[torch_function] = my_function
+        return my_function
+
+    return decorator
 
 
 def as_key_tensor(
@@ -46,6 +60,28 @@ def as_key_tensor(
     return key
 
 
+def get_hash_map(key: Tensor) -> Union[CPUHashMap, CUDAHashMap]:
+    if torch_geometric.typing.WITH_CUDA_HASH_MAP and key.is_cuda:
+        # TODO Convert int64 to int32.
+        return CUDAHashMap(key, 0.5)
+
+    if key.is_cuda:
+        warnings.warn("Fallback to CPU-based mapping algorithm which may "
+                      "cause slowdowns and device synchronization. Please "
+                      "install 'pyg-lib' for an accelerated 'HashTensor' "
+                      "implementation.")
+
+    if torch_geometric.typing.WITH_CPU_HASH_MAP:
+        return CPUHashMap(key.cpu(), -1)
+
+    import pandas as pd
+
+    return pd.CategoricalDtype(
+        categories=key.cpu().numpy(),
+        ordered=True,
+    )
+
+
 class HashTensor(Tensor):
     _map: Union[Tensor, CPUHashMap, CUDAHashMap]
     _value: Optional[Tensor]
@@ -67,7 +103,6 @@ class HashTensor(Tensor):
             device = value.device
 
         key = as_key_tensor(key, device=device)
-        device = key.device
 
         if key.dim() != 1:
             raise ValueError(f"'key' data in '{cls.__name__}' needs to be "
@@ -89,6 +124,42 @@ class HashTensor(Tensor):
                                  f"first dimension (got {key.size(0)} and "
                                  f"{value.size(0)})")
 
+        min_key = key.min() if key.numel() > 0 else key.new_zeros(())
+        max_key = key.max() if key.numel() > 0 else key.new_zeros(())
+
+        _range = max_key - min_key
+        # TODO Expose fixed threshold as argument.
+        if (key.dtype in {torch.uint8, torch.int16} or _range <= 1_000_000
+                or _range <= 2 * key.numel()):
+            _map = torch.full(
+                size=(_range + 2, ),
+                fill_value=-1,
+                dtype=torch.int64,
+                device=device,
+            )
+            _map[(key - (min_key - 1)).long()] = torch.arange(
+                key.numel(),
+                dtype=_map.dtype,
+                device=_map.device,
+            )
+        else:
+            _map = get_hash_map(key)
+
+        return cls._from_data(_map, value, key.numel(), min_key, max_key)
+
+    @classmethod
+    def _from_data(
+        cls,
+        _map: Union[Tensor, CPUHashMap, CUDAHashMap],
+        value: Optional[Tensor],
+        size: int,
+        min_key: Tensor,
+        max_key: Tensor,
+    ) -> 'HashTensor':
+
+        device = min_key.device
+
+        if value is not None:
             dtype = value.dtype
             size = value.size()
             stride = value.stride()
@@ -96,7 +167,7 @@ class HashTensor(Tensor):
             requires_grad = value.requires_grad
         else:
             dtype = dtype or torch.int64
-            size = torch.Size([key.numel()])
+            size = torch.Size([size])
             stride = (1, )
             layout = torch.strided
             requires_grad = False
@@ -110,46 +181,12 @@ class HashTensor(Tensor):
             layout=layout,
             requires_grad=requires_grad,
         )
+        assert isinstance(out, HashTensor)
 
+        out._map = _map
         out._value = value
-
-        out._min_key = key.min() if key.numel() > 0 else key.new_zeros(())
-        out._max_key = key.max() if key.numel() > 0 else key.new_zeros(())
-
-        _range = out._max_key - out._min_key
-        # TODO Expose fixed threshold as argument.
-        if (key.dtype in {torch.uint8, torch.int16} or _range <= 1_000_000
-                or _range <= 2 * key.numel()):
-            out._map = torch.full(
-                size=(_range + 2, ),
-                fill_value=-1,
-                dtype=torch.int64,
-                device=device,
-            )
-            out._map[(key - (out._min_key - 1)).long()] = torch.arange(
-                key.numel(),
-                dtype=out._map.dtype,
-                device=out._map.device,
-            )
-        elif torch_geometric.typing.WITH_CUDA_HASH_MAP and key.is_cuda:
-            # TODO Convert int64 to int32.
-            out._map = CUDAHashMap(key, 0.5)
-        elif torch_geometric.typing.WITH_CPU_HASH_MAP and key.is_cpu:
-            out._map = CPUHashMap(key, -1)
-        else:
-            if out.is_cuda:
-                warnings.warn(f"Fallback to CPU-based mapping algorithm which "
-                              f"may cause slowdowns and device "
-                              f"synchronization. Please install 'pyg-lib' for "
-                              f"an accelerated '{cls.__name__}' "
-                              f"implementation.")
-
-            import pandas as pd
-
-            out._map = pd.CategoricalDtype(
-                categories=key.cpu().numpy(),
-                ordered=True,
-            )
+        out._min_key = min_key
+        out._max_key = max_key
 
         return out
 
@@ -160,6 +197,9 @@ class HashTensor(Tensor):
         if self._value is not None:
             return self._value
         return torch.arange(self.size(0), dtype=self.dtype, device=self.device)
+
+    # Prevent auto-wrapping outputs back into the proper subclass type:
+    __torch_function__ = torch._C._disabled_torch_function_impl
 
     @classmethod
     def __torch_dispatch__(
@@ -180,3 +220,45 @@ class HashTensor(Tensor):
             kwargs = pytree.tree_map_only(HashTensor, lambda x: x.as_tensor(),
                                           kwargs)
         return func(*args, **(kwargs or {}))
+
+
+@implements(aten._to_copy.default)
+def _to_copy(
+    tensor: HashTensor,
+    *,
+    dtype: Optional[torch.dtype] = None,
+    layout: Optional[torch.layout] = None,
+    device: Optional[torch.device] = None,
+    pin_memory: bool = False,
+    non_blocking: bool = False,
+    memory_format: Optional[torch.memory_format] = None,
+) -> HashTensor:
+
+    value = tensor._value
+    if value is not None:
+        value = aten._to_copy.default(
+            value,
+            dtype=dtype,
+            layout=layout,
+            device=device,
+            pin_memory=pin_memory,
+            non_blocking=non_blocking,
+            memory_format=memory_format,
+        )
+
+    min_key = aten._to_copy.default(tensor._min_key, device=device)
+    max_key = aten._to_copy.default(tensor._max_key, device=device)
+
+    _map = tensor._map
+    if isinstance(_map, Tensor):
+        _map = aten._to_copy.default(_map, device=device)
+    # Only convert `_map` in case `CUDAHashMap` exists - otherwise we use
+    # CPU-based mapping anyway and there is no need for a copy.
+    elif (torch_geometric.typing.WITH_CUDA_HASH_MAP and min_key.is_cuda
+          and tensor._min_key.device != min_key.device):
+        key = _map.keys()  # type: ignore
+        key = aten._to_copy.default(key, device=device)
+        _map = get_hash_map(key)
+
+    size = tensor.size(0)
+    return tensor.__class__._from_data(_map, value, size, min_key, max_key)
