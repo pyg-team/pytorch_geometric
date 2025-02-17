@@ -56,8 +56,6 @@ def arg_parse():
         help="directory of dataset.",
     )
     parser.add_argument('-e', '--epochs', type=int, default=50)
-    parser.add_argument('-le', '--local_epochs', type=int, default=50,
-                        help='warmup epochs for polynormer')
     parser.add_argument('--num_layers', type=int, default=6)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
@@ -278,12 +276,9 @@ if __name__ == '__main__':
         inference_times = []
         best_val = 0.
         start = time.perf_counter()
-        epochs = args.local_epochs + args.epochs
+        epochs = args.epochs
         for epoch in range(1, epochs + 1):
             train_start = time.perf_counter()
-            if args.model == 'Polynormer' and epoch == args.local_epochs:
-                print('start global attention!')
-                model._global = True
             loss, train_acc = train(model, train_loader)
             train_end = time.perf_counter()
             train_times.append(train_end - train_start)

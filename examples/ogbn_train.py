@@ -41,8 +41,6 @@ parser.add_argument(
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
-parser.add_argument('-le', '--local_epochs', type=int, default=50,
-                    help='warmup epochs for polynormer')
 parser.add_argument('--num_layers', type=int, default=7)
 parser.add_argument('--num_heads', type=int, default=1,
                     help='number of heads for GAT ot GT model.')
@@ -78,7 +76,7 @@ print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-num_epochs = args.epochs + args.local_epochs
+num_epochs = args.epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
 num_hidden_channels = args.hidden_channels
@@ -128,9 +126,6 @@ test_loader = NeighborLoader(
 
 
 def train(epoch: int) -> tuple[Tensor, float]:
-    if args.gnn_choice == 'polynormer' and epoch == args.local_epochs:
-        print('start global attention!')
-        model._global = True
     model.train()
 
     pbar = tqdm(total=split_idx['train'].size(0))

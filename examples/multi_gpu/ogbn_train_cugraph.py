@@ -64,8 +64,6 @@ def arg_parse():
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
     parser.add_argument('-e', '--epochs', type=int, default=50)
-    parser.add_argument('-le', '--local_epochs', type=int, default=50,
-                        help='warmup epochs for polynormer')
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
     parser.add_argument('--eval_steps', type=int, default=1000)
@@ -159,7 +157,7 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
 def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
               num_classes, wall_clock_start, tempdir=None):
 
-    epochs = args.local_epochs + args.epochs
+    epochs = args.epochs
     batch_size = args.batch_size
     fan_out = args.fan_out
     num_layers = args.num_layers
@@ -256,9 +254,6 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         train_start = time.perf_counter()
         total_loss = 0
         i = 0
-        if args.model == 'Polynormer' and epoch == args.local_epochs:
-            print('start global attention!')
-            model.module._global = True
         for i, batch in enumerate(train_loader):
             if i == warmup_steps:
                 torch.cuda.synchronize()
