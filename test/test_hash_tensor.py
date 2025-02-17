@@ -40,6 +40,10 @@ def test_string_key(device):
 
 
 @withCUDA
+@pytest.mark.skipif(
+    not has_package('pyg-lib') and not has_package('pandas'),
+    reason='Missing dependencies',
+)
 def test_to_function(device):
     key = torch.tensor([2, 1, 0], device=device)
     value = torch.randn(key.size(0), 2, device=device)
