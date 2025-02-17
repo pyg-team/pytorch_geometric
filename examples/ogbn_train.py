@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer
+from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -37,13 +37,13 @@ parser.add_argument(
     '--gnn_choice',
     type=str,
     default='sgformer',
-    choices=['gat', 'graphsage', 'sgformer'],
+    choices=['gat', 'graphsage', 'sgformer', 'polynormer'],
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
-parser.add_argument('--num_layers', type=int, default=3)
+parser.add_argument('--num_layers', type=int, default=7)
 parser.add_argument('--num_heads', type=int, default=1,
-                    help='number of heads for GAT model.')
+                    help='number of heads for GAT ot GT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
@@ -195,6 +195,13 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             trans_dropout=args.dropout,
             gnn_num_layers=num_layers,
             gnn_dropout=args.dropout,
+        )
+    elif gnn_choice == 'polynormer':
+        model = Polynormer(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            out_channels=dataset.num_classes,
+            local_layers=num_layers,
         )
     else:
         raise ValueError(f'Unsupported model type: {gnn_choice}')
