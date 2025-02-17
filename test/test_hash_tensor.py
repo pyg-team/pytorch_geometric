@@ -19,6 +19,10 @@ KEY_DTYPES = [
 
 
 @withCUDA
+@pytest.mark.skipif(
+    not has_package('pyg-lib') and not has_package('pandas'),
+    reason='Missing dependencies',
+)
 @pytest.mark.parametrize('dtype', KEY_DTYPES)
 def test_basic(dtype, device):
     if dtype != torch.bool:
