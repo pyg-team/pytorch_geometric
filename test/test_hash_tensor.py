@@ -75,3 +75,40 @@ def test_to_function(device):
     out = tensor.double()
     assert isinstance(out, HashTensor)
     assert out._value.dtype == torch.double
+
+
+@withCUDA
+@pytest.mark.parametrize('dtype', KEY_DTYPES[:1])
+def test_index_select(dtype, device):
+    if dtype != torch.bool:
+        key = torch.tensor([2, 1, 0], dtype=dtype, device=device)
+    else:
+        key = torch.tensor([True, False], device=device)
+    value = torch.randn(key.size(0), 2, device=device)
+
+    tensor = HashTensor(key, value)
+
+    out = tensor.index_select(0, ['0', '3'])
+    print(out)
+
+    # kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
+    # adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)
+
+    # index = tensor([1, 3], device=device)
+    # out = adj.index_select(1, index)
+    # assert out.equal(tensor([[1, 2], [0, 1]], device=device))
+    # assert isinstance(out, EdgeIndex)
+    # assert not out.is_sorted
+    # assert not out.is_undirected
+
+    # index = tensor([0], device=device)
+    # out = adj.index_select(0, index)
+    # assert out.equal(tensor([[0, 1, 1, 2]], device=device))
+    # assert not isinstance(out, EdgeIndex)
+
+    # index = tensor([1, 3], device=device)
+    # inplace = torch.empty(2, 2, dtype=dtype, device=device)
+    # out = torch.index_select(adj, 1, index, out=inplace)
+    # assert out.data_ptr() == inplace.data_ptr()
+    # assert not isinstance(out, EdgeIndex)
+    # assert not isinstance(inplace, EdgeIndex)

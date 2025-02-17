@@ -1,6 +1,16 @@
 import functools
 import warnings
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 import torch
 import torch.utils._pytree as pytree
@@ -218,6 +228,7 @@ class HashTensor(Tensor):
     ) -> Any:
         # Hold a number of `HANDLED_FUNCTIONS` that implement specific
         # functions for valid `HashTensor` routines.
+        print(func.__name__)
         if func in HANDLED_FUNCTIONS:
             return HANDLED_FUNCTIONS[func](*args, **(kwargs or {}))
 
@@ -275,3 +286,13 @@ def _to_copy(
         num_keys=tensor.size(0),
         dtype=dtype or tensor.dtype,
     )
+
+
+@implements(aten.index.Tensor)
+def _index(
+    input: Union[HashTensor, Tensor],
+    indices: List[Optional[Union[Tensor, HashTensor]]],
+) -> Tensor:
+    print(input)
+    print(indices)
+    return input
