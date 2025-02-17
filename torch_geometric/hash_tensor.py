@@ -1,4 +1,3 @@
-import copy
 import functools
 import warnings
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
