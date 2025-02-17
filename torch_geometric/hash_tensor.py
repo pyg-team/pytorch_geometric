@@ -36,11 +36,11 @@ def as_key_tensor(
         device = device or torch.get_default_device()
         # TODO Convert int64 to int32.
         # On GPU, we default to int32 for faster 'CUDAHashMap' implementation:
-        # if torch_geometric.typing.WITH_CUDA_HASH_MAP and device.type == 'cuda':
-        #     key = torch.tensor(
-        #         [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
-        #         dtype=torch.int32, device=device)
-        # else:
+        if torch_geometric.typing.WITH_CUDA_HASH_MAP and device.type == 'cuda':
+            pass
+            # key = torch.tensor(
+            #     [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
+            #     dtype=torch.int32, device=device)
         key = torch.tensor(
             [xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF for x in key],
             dtype=torch.int64, device=device)
@@ -150,7 +150,7 @@ class HashTensor(Tensor):
             value,
             min_key,
             max_key,
-            size=key.numel(),
+            num_keys=key.numel(),
             dtype=dtype,
         )
 
@@ -162,7 +162,7 @@ class HashTensor(Tensor):
         min_key: Tensor,
         max_key: Tensor,
         *,
-        size: int,
+        num_keys: int,
         dtype: Optional[torch.dtype],
     ) -> 'HashTensor':
 
@@ -174,7 +174,7 @@ class HashTensor(Tensor):
             requires_grad = value.requires_grad
         else:
             dtype = dtype or torch.int64
-            size = torch.Size([size])
+            size = torch.Size([num_keys])
             stride = (1, )
             layout = torch.strided
             requires_grad = False
@@ -272,6 +272,6 @@ def _to_copy(
         value,
         min_key,
         max_key,
-        size=tensor.size(0),
+        num_keys=tensor.size(0),
         dtype=dtype or tensor.dtype,
     )
