@@ -1,5 +1,5 @@
 [build-system]
-requires=["flit_core >=3.11,<4"]
+requires=["flit_core >=3.2,<4"]
 build-backend="flit_core.buildapi"
 
 [project]
@@ -18,8 +18,7 @@ keywords=[
     "graph-neural-networks",
     "graph-convolutional-networks",
 ]
-license="MIT"
-license_files=["LICENSE"]
+license = {file = "LICENSE"}
 classifiers=[
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
