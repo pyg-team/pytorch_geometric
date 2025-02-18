@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 from torch_geometric.nn.attention import SGFormerAttention
 from torch_geometric.nn.conv import GCNConv
-
+from torch import Tensor
 
 class GraphModule(torch.nn.Module):
     def __init__(
@@ -179,8 +179,15 @@ class SGFormer(torch.nn.Module):
         self.graph_conv.reset_parameters()
         self.fc.reset_parameters()
 
-    def forward(self, x, edge_index):
-        x1 = self.trans_conv(x)
+    def forward(self, x: Tensor, edge_index: Tensor, batch: Tensor):
+        """
+        x (torch.Tensor): The input node features.
+        edge_index (torch.Tensor or SparseTensor): The edge indices.
+        batch (torch.Tensor, optional): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+            each element to a specific example.
+        """
+        x1 = self.trans_conv(x, batch)
         x2 = self.graph_conv(x, edge_index)
         if self.aggregate == 'add':
             x = self.graph_weight * x2 + (1 - self.graph_weight) * x1
