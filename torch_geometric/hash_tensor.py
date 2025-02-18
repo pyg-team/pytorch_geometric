@@ -207,6 +207,8 @@ class HashTensor(Tensor):
 
         return out
 
+    # Methods #################################################################
+
     def as_tensor(self) -> Tensor:
         r"""Zero-copies the :class:`HashTensor` representation back to a
         :class:`torch.Tensor` representation.
@@ -214,6 +216,8 @@ class HashTensor(Tensor):
         if self._value is not None:
             return self._value
         return torch.arange(self.size(0), dtype=self.dtype, device=self.device)
+
+    # PyTorch/Python builtins #################################################
 
     # Prevent auto-wrapping outputs back into the proper subclass type:
     __torch_function__ = torch._C._disabled_torch_function_impl
@@ -238,6 +242,39 @@ class HashTensor(Tensor):
             kwargs = pytree.tree_map_only(HashTensor, lambda x: x.as_tensor(),
                                           kwargs)
         return func(*args, **(kwargs or {}))
+
+    def index_select(self, dim: int, index: Any) -> Tensor:
+        return torch.index_select(self, dim, index)
+
+    def __getitem__(self, indices: Any) -> Tensor:
+        if not isinstance(indices, tuple):
+            indices = (indices, )
+        assert len(indices) > 0
+
+        index_first_dim = False
+        # TODO Shall we allow indexing via `None`/unsqueeze?
+        if len([i for i in indices if i is None]) == 0:
+            if indices[0] is Ellipsis:
+                index_first_dim = (len(indices[1:]) == self.dim()
+                                   and indices[1] is not None
+                                   and not isinstance(indices[1], slice))
+            else:
+                index_first_dim = not isinstance(indices[0], slice)
+
+        # We convert any index tensor in the first dimension into a tensor. This
+        # means that downstream handling (i.e. in `aten.index.Tensor`) needs to
+        # take this pre-conversion into account.
+        if index_first_dim:
+            if indices[0] is Ellipsis:
+                key = as_key_tensor(indices[1], device=self.device)
+                indices = (Ellipsis, key) + indices[2:]
+            else:
+                key = as_key_tensor(indices[0], device=self.device)
+                indices = (key, ) + indices[1:]
+
+        indices = indices[0] if len(indices) == 1 else indices
+
+        return super().__getitem__(indices)
 
 
 @implements(aten._to_copy.default)
@@ -278,7 +315,7 @@ def _to_copy(
         key = aten._to_copy.default(key, device=device)
         _map = get_hash_map(key)
 
-    return tensor.__class__._from_data(
+    return tensor._from_data(
         _map,
         value,
         min_key,
@@ -288,11 +325,54 @@ def _to_copy(
     )
 
 
+# Since PyTorch does only allow PyTorch tensors as indices in `index_select`,
+# we need to create a wrapper function and monkey patch `index_select` :(
+_old_index_select = torch.index_select
+
+
+def _new_index_select(
+    input: Tensor,
+    dim: int,
+    index: Any,
+    *,
+    out: Optional[Tensor] = None,
+) -> Tensor:
+    # We convert any index tensor in the first dimension into a tensor. This
+    # means that downstream handling (i.e. in `aten.index_select.default`)
+    # needs to take this pre-conversion into account.
+    if isinstance(input, HashTensor) and (dim == 0 or dim == -input.dim()):
+        index = as_key_tensor(index, device=input.device)
+    return _old_index_select(input, dim, index, out=out)
+
+
+torch.index_select = _new_index_select
+
+
+@implements(aten.index_select.default)
+def _index_select(
+    input: HashTensor,
+    dim: int,
+    index: Tensor,
+) -> Tensor:
+
+    if dim == 0 or dim == -input.dim():
+        return input.as_tensor()  # TODO
+        # return input._index_key_tensor(index)
+
+    return aten.index_select.default(input.as_tensor(), dim, index)
+
+
 @implements(aten.index.Tensor)
 def _index(
-    input: Union[HashTensor, Tensor],
-    indices: List[Optional[Union[Tensor, HashTensor]]],
+    input: HashTensor,
+    indices: List[Optional[Tensor]],
 ) -> Tensor:
-    print(input)
-    print(indices)
-    return input
+
+    if len(indices) > 0 and indices[0] is not None:
+        # out = input._index_key_tensor(indices[0])
+        out = input.as_tensor()
+        if len(indices) > 1:
+            out = aten.index.Tensor(out, indices[1:])
+        return out
+
+    return aten.index.Tensor(input.as_tensor, indices)

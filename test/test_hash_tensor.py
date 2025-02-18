@@ -88,8 +88,39 @@ def test_index_select(dtype, device):
 
     tensor = HashTensor(key, value)
 
-    out = tensor.index_select(0, ['0', '3'])
-    print(out)
+    import numpy as np
+    out = torch.index_select(tensor, 0, np.array([0, 1]))
+
+    torch.index_select(tensor, 0, torch.tensor([0, 1]))
+    out = torch.zeros_like(value)
+    torch.index_select(tensor, 0, torch.tensor([0, 1]), out=out)
+    # print(out)
+
+    print('--------')
+    print('...')
+    out = tensor[...]  # done
+    # print(out)
+    print('..., [1, 0]')
+    out = tensor[..., torch.tensor([1, 0])]  # done
+    print('..., [1, 0], [1, 0]')
+    out = tensor[..., torch.tensor([1, 0]), torch.tensor([1, 0])]  # done
+    print('..., [1, 0], None')
+    out = tensor[..., torch.tensor([1, 0]), None]  # done
+    print('[1, 0], None')
+    out = tensor[torch.tensor([1, 0]), None]  # done
+    print('None, [1, 0]')
+    out = tensor[None, torch.tensor([1, 0])]  # done
+    # print(out)
+    print('--------')
+    # out = tensor[None, torch.tensor([1, 0])]  # done, not doable
+    # print(out)
+    # print('--------')
+    # out = tensor[..., torch.tensor([1, 0]), torch.tensor([1])]  # index
+    # print(out)
+    # print('--------')
+    # out = tensor[np.array(['1', '0']), torch.tensor([True, False])]  # index
+    # print(out)
+    # print('--------')
 
     # kwargs = dict(dtype=dtype, device=device, is_undirected=is_undirected)
     # adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]], sort_order='row', **kwargs)

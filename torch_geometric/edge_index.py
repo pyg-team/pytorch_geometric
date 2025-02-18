@@ -1478,6 +1478,7 @@ def _slice(
     step: int = 1,
 ) -> Union[EdgeIndex, Tensor]:
 
+    # TODO this does not cover all cases.
     if ((start is None or start <= 0)
             and (end is None or end > input.size(dim)) and step == 1):
         return input._shallow_copy()  # No-op.
