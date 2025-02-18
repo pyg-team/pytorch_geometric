@@ -1,6 +1,8 @@
 import torch
 from torch import Tensor
+
 from torch_geometric.utils import to_dense_batch
+
 
 class SGFormerAttention(torch.nn.Module):
     r"""The simple global attention mechanism from the
@@ -39,15 +41,16 @@ class SGFormerAttention(torch.nn.Module):
         self.v = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
 
     def forward(self, x: Tensor, batch: Tensor) -> Tensor:
-        """
-        x (torch.Tensor): The input node features.
+        r"""X (torch.Tensor): The input node features.
         batch (torch.Tensor, optional): The batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
             each element to a specific example.
         """
         # feature transformation
         batch_size = len(torch.unique(batch))
-        x, mask = to_dense_batch(x, batch) # [num_nodes, num_feats] -> [num_batches, nodes_in_batch, num_feats]
+        x, mask = to_dense_batch(
+            x, batch
+        )  # [num_nodes, num_feats] -> [num_batches, nodes_in_batch, num_feats]
         qs = self.q(x).reshape(batch_size, -1, self.heads, self.head_channels)
         ks = self.k(x).reshape(batch_size, -1, self.heads, self.head_channels)
         vs = self.v(x).reshape(batch_size, -1, self.heads, self.head_channels)
@@ -67,8 +70,8 @@ class SGFormerAttention(torch.nn.Module):
         ks_sum = torch.einsum("lhm,l->hm", ks, all_ones)
         attention_normalizer = torch.einsum("nhm,hm->nh", qs, ks_sum)
         # attentive aggregated results
-        attention_normalizer = torch.unsqueeze(
-            attention_normalizer, len(attention_normalizer.shape))
+        attention_normalizer = torch.unsqueeze(attention_normalizer,
+                                               len(attention_normalizer.shape))
         attention_normalizer += torch.ones_like(attention_normalizer) * N
         attn_output = attention_num / attention_normalizer
         list_to_cat = []
