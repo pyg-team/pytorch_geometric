@@ -197,6 +197,8 @@ class HashTensor(Tensor):
 
         return out
 
+    # Methods #################################################################
+
     def as_tensor(self) -> Tensor:
         r"""Zero-copies the :class:`HashTensor` representation back to a
         :class:`torch.Tensor` representation.
@@ -204,6 +206,8 @@ class HashTensor(Tensor):
         if self._value is not None:
             return self._value
         return torch.arange(self.size(0), dtype=self.dtype, device=self.device)
+
+    # PyTorch/Python builtins #################################################
 
     # Prevent auto-wrapping outputs back into the proper subclass type:
     __torch_function__ = torch._C._disabled_torch_function_impl
@@ -267,11 +271,27 @@ def _to_copy(
         key = aten._to_copy.default(key, device=device)
         _map = get_hash_map(key)
 
-    return tensor.__class__._from_data(
+    return tensor._from_data(
         _map,
         value,
         min_key,
         max_key,
         num_keys=tensor.size(0),
         dtype=dtype or tensor.dtype,
+    )
+
+
+@implements(aten.unsqueeze.default)
+def _unsqueeze(tensor: HashTensor, dim: int) -> HashTensor:
+    if dim == 0 or dim == -(tensor.dim() + 1):
+        raise IndexError(f"Cannot unsqueeze '{tensor.__class__.__name__}' in "
+                         f"the first dimension")
+
+    return tensor._from_data(
+        tensor._map,
+        aten.unsqueeze.default(tensor.as_tensor(), dim),
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
     )
