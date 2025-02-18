@@ -75,3 +75,40 @@ def test_to_function(device):
     out = tensor.double()
     assert isinstance(out, HashTensor)
     assert out._value.dtype == torch.double
+
+
+@withCUDA
+@pytest.mark.skipif(
+    not has_package('pyg-lib') and not has_package('pandas'),
+    reason='Missing dependencies',
+)
+def test_unsqueeze(device):
+    key = torch.tensor([2, 1, 0], device=device)
+    tensor = HashTensor(key)
+
+    with pytest.raises(IndexError, match="in the first dimension"):
+        tensor.unsqueeze(0)
+
+    with pytest.raises(IndexError, match="in the first dimension"):
+        tensor.unsqueeze(-2)
+
+    with pytest.raises(IndexError, match="out of range"):
+        tensor.unsqueeze(2)
+
+    with pytest.raises(IndexError, match="out of range"):
+        tensor.unsqueeze(-3)
+
+    out = tensor.unsqueeze(-1)
+    assert out.size() == (3, 1)
+    assert out._value is not None
+
+    value = torch.randn(key.size(0), 2, device=device)
+    tensor = HashTensor(key, value)
+
+    out = tensor.unsqueeze(-1)
+    assert out.size() == (3, 2, 1)
+    assert out._value is not None
+
+    out = tensor.unsqueeze(1)
+    assert out.size() == (3, 1, 2)
+    assert out._value is not None
