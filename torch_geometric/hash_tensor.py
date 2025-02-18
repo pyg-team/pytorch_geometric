@@ -376,3 +376,5 @@ def _index(
         return out
 
     return aten.index.Tensor(input.as_tensor, indices)
+=======
+>>>>>>> master
