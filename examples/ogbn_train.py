@@ -9,17 +9,22 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch import Tensor
 from tqdm import tqdm
 
+from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE
-from torch_geometric.utils import to_undirected
+from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer
+from torch_geometric.utils import (
+    add_self_loops,
+    remove_self_loops,
+    to_undirected,
+)
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter, )
 parser.add_argument(
     '--dataset',
     type=str,
-    default='ogbn-papers100M',
-    choices=['ogbn-papers100M', 'ogbn-products'],
+    default='ogbn-arxiv',
+    choices=['ogbn-papers100M', 'ogbn-products', 'ogbn-arxiv'],
     help='Dataset name.',
 )
 parser.add_argument(
@@ -29,13 +34,15 @@ parser.add_argument(
     help='Root directory of dataset.',
 )
 parser.add_argument(
-    '--use_gat',
-    action='store_true',
-    help='Whether or not to use GAT model',
+    '--gnn_choice',
+    type=str,
+    default='sgformer',
+    choices=['gat', 'graphsage', 'sgformer'],
+    help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=2,
+parser.add_argument('--num_heads', type=int, default=1,
                     help='number of heads for GAT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
@@ -50,6 +57,11 @@ parser.add_argument(
     action='store_true',
     help='Whether or not to use directed graph',
 )
+parser.add_argument(
+    '--add_self_loop',
+    action='store_true',
+    help='Whether or not to add self loop',
+)
 args = parser.parse_args()
 
 wall_clock_start = time.perf_counter()
@@ -60,11 +72,9 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-if args.use_gat:
-    print(f'Training {args.dataset} with GAT model.')
-else:
-    print(f'Training {args.dataset} with GraphSage model.')
+print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
+seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = args.epochs
 num_layers = args.num_layers
@@ -79,6 +89,10 @@ data = dataset[0]
 
 if not args.use_directed_graph:
     data.edge_index = to_undirected(data.edge_index, reduce='mean')
+if args.add_self_loop:
+    data.edge_index, _ = remove_self_loops(data.edge_index)
+    data.edge_index, _ = add_self_loops(data.edge_index,
+                                        num_nodes=data.num_nodes)
 
 data.to(device, 'x', 'y')
 
@@ -154,25 +168,41 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-if args.use_gat:
-    model = GAT(
-        in_channels=dataset.num_features,
-        hidden_channels=num_hidden_channels,
-        num_layers=num_layers,
-        out_channels=dataset.num_classes,
-        dropout=args.dropout,
-        heads=args.num_heads,
-    )
-else:
-    model = GraphSAGE(
-        in_channels=dataset.num_features,
-        hidden_channels=num_hidden_channels,
-        num_layers=num_layers,
-        out_channels=dataset.num_classes,
-        dropout=args.dropout,
-    )
+def get_model(gnn_choice: str) -> torch.nn.Module:
+    if gnn_choice == 'gat':
+        model = GAT(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            num_layers=num_layers,
+            out_channels=dataset.num_classes,
+            dropout=args.dropout,
+            heads=args.num_heads,
+        )
+    elif gnn_choice == 'graphsage':
+        model = GraphSAGE(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            num_layers=num_layers,
+            out_channels=dataset.num_classes,
+            dropout=args.dropout,
+        )
+    elif gnn_choice == 'sgformer':
+        model = SGFormer(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            out_channels=dataset.num_classes,
+            trans_num_heads=args.num_heads,
+            trans_dropout=args.dropout,
+            gnn_num_layers=num_layers,
+            gnn_dropout=args.dropout,
+        )
+    else:
+        raise ValueError(f'Unsupported model type: {gnn_choice}')
 
-model = model.to(device)
+    return model
+
+
+model = get_model(args.gnn_choice).to(device)
 model.reset_parameters()
 optimizer = torch.optim.Adam(
     model.parameters(),
