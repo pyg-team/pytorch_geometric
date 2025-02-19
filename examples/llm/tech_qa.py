@@ -89,8 +89,8 @@ def parse_args():
         choices=["frozen", "lora",
                  "full"], help="Wether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
-    parser.add_argument('--save_model', action="store_true",
-                        help="Wether save model.")
+    parser.add_argument('--dont_save_model', action="store_true",
+                        help="Wether to skip model saving.")
     return parser.parse_args()
 
 
@@ -344,7 +344,7 @@ def train(args, data_lists):
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         model.eval()
-        if args.save_model:
+        if not args.dont_save_model:
             save_params_dict(model, save_path=save_name)
     return model, test_loader
 
