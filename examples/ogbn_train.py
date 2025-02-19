@@ -134,7 +134,10 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
+        if args.gnn_choice == "sgformer":
+            out = model(batch.x, batch.edge_index.to(device), batch.batch.to(device))[:batch.batch_size]
+        else:
+            out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze().to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
@@ -158,7 +161,10 @@ def test(loader: NeighborLoader) -> float:
     for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
-        out = model(batch.x, batch.edge_index)[:batch_size]
+        if args.gnn_choice == "sgformer":
+            out = model(batch.x, batch.edge_index, batch.batch)[:batch.batch_size]
+        else:
+            out = model(batch.x, batch.edge_index)[:batch_size]
         pred = out.argmax(dim=-1)
         y = batch.y[:batch_size].view(-1).to(torch.long)
 
