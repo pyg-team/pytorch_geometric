@@ -57,16 +57,22 @@ class RAGGraphStore(Protocol):
 
 class RAGQueryLoader:
     """Loader meant for making RAG queries from a remote backend."""
-    def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
-                 local_filter: Optional[Callable[[Data, Any], Data]] = None,
-                 seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
-                 seed_edges_kwargs: Optional[Dict[str, Any]] = None,
-                 sampler_kwargs: Optional[Dict[str, Any]] = None,
-                 loader_kwargs: Optional[Dict[str, Any]] = None,
-                 local_filter_kwargs: Optional[Dict[str, Any]] = None,
-                 raw_docs: Optional[List[str]] = None,
-                 embedded_docs: Optional[Tensor] = None,
-                 k_for_docs: Optional[int] = 2):
+    def __init__(
+        self,
+        data: Tuple[RAGFeatureStore, RAGGraphStore],
+        local_filter: Optional[Callable[[Data, Any], Data]] = None,
+        seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
+        seed_edges_kwargs: Optional[Dict[str, Any]] = None,
+        sampler_kwargs: Optional[Dict[str, Any]] = None,
+        loader_kwargs: Optional[Dict[str, Any]] = None,
+        local_filter_kwargs: Optional[Dict[str, Any]] = None,
+        raw_docs: Optional[List[str]] = None,
+        embedded_docs: Optional[Tensor] = None,
+        k_for_docs: Optional[int] = 2,
+        use_nvidia_rerank: Optional[bool] = False,
+        top_n_for_rerank: Optional[int] = 50,
+        NIM_KEY_FOR_RERANK: Optional[str] = '',
+    ):
         """Loader meant for making queries from a remote backend.
 
         Args:
@@ -94,6 +100,13 @@ class RAGQueryLoader:
                 Needs to match the `raw_docs`. Defaults to None.
             k_for_docs (Optional[int], optional): top-k docs to select for vectorRAG.
                 (Default: :obj:`2`).
+            use_nvidia_rerank (Optional[bool], optional): Take the `top_n_for_rerank` docs and re-order them
+                before selecting the top `k_for_docs`. `top_n_for_rerank` should be greater than `k_for_docs`.
+                (Default: :obj:`False`).
+            top_n_for_rerank (Optional[int], optional): Number of docs to pass to NVIDIA reranker.
+                (Default: :obj:`50`).
+            NIM_KEY_FOR_RERANK: Optional[str], optional: NIM API Key needed for using reranker.
+                (Default: obj:`''`)
         """
         fstore, gstore = data
         self.raw_docs = raw_docs
@@ -112,6 +125,9 @@ class RAGQueryLoader:
         self.sampler_kwargs = sampler_kwargs or {}
         self.loader_kwargs = loader_kwargs or {}
         self.local_filter_kwargs = local_filter_kwargs or {}
+        self.use_nvidia_rerank = use_nvidia_rerank
+        self.top_n_for_rerank = top_n_for_rerank
+        self.NIM_KEY_FOR_RERANK = NIM_KEY_FOR_RERANK
 
     def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
@@ -154,9 +170,50 @@ class RAGQueryLoader:
         if self.local_filter:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
         if self.raw_docs:
-            selected_doc_idxs, _ = next(
+            selected_doc_idxs, _, all_idxs = next(
                 batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
+            if self.use_nvidia_rerank:
+                topN_ids = all_idxs[:self.top_n_for_rerank]
+                for retry in range(10):
+                    try:
+                        reranked = _rerank(
+                            query, [self.raw_docs[j] for j in topN_ids],
+                            self.NIM_KEY_FOR_RERANK)
+                        break
+                    except Exception as e:  # noqa
+                        print("Retrying after", e)
+                        print("...")
+                reranked_ids = topN_ids[reranked]
+                selected_doc_idxs = reranked_ids[:self.k_for_docs]
             data.text_context = "\n".join(
                 [self.raw_docs[i] for i in selected_doc_idxs])
 
         return data
+
+
+def _rerank(query, passages, key):
+    import requests
+    invoke_url = "https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-3_2-nv-rerankqa-1b-v2/reranking"
+    reranker_model_name = "nvidia/llama-3.2-nv-rerankqa-1b-v2"
+    headers = {
+        "Authorization": f"Bearer {key}",
+        "Accept": "application/json",
+    }
+
+    payload = {
+        "model": reranker_model_name,
+        "query": {
+            "text": query
+        },
+        "passages": [{
+            "text": p
+        } for p in passages],
+        "truncate":
+        "NONE"  # No truncation, if passage is longer than context window, let it fail explicitly
+    }
+    # re-use connections
+    session = requests.Session()
+    response = session.post(invoke_url, headers=headers, json=payload)
+    response.raise_for_status()
+    response_body = response.json()
+    return [x['index'] for x in response_body['rankings']]
