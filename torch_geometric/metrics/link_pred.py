@@ -402,11 +402,8 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         for metric in self.values():
             if not isinstance(metric, LinkPredMetric):
-                metric.update(
-                    pred_index_mat=pred_index_mat,
-                    edge_label_index=edge_label_index,
-                    edge_label_weight=edge_label_weight,
-                )
+                metric.update(pred_index_mat, edge_label_index,
+                              edge_label_weight)
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
