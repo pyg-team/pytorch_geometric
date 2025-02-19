@@ -104,6 +104,7 @@ train_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.gnn_choice=="sgformer",
 )
 val_loader = NeighborLoader(
     data,
@@ -113,6 +114,7 @@ val_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.gnn_choice=="sgformer",
 )
 test_loader = NeighborLoader(
     data,
@@ -122,6 +124,7 @@ test_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.gnn_choice=="sgformer",
 )
 
 
