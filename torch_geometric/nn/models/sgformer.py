@@ -85,7 +85,7 @@ class SGModule(torch.nn.Module):
         for fc in self.fcs:
             fc.reset_parameters()
 
-    def forward(self, x):
+    def forward(self, x: Tensor, batch: Tensor):
         layer_ = []
 
         # input MLP layer
@@ -98,7 +98,7 @@ class SGModule(torch.nn.Module):
         layer_.append(x)
 
         for i, attn in enumerate(self.attns):
-            x = attn(x)
+            x = attn(x, batch)
             x = (x + layer_[i]) / 2.
             x = self.bns[i + 1](x)
             x = self.activation(x)
