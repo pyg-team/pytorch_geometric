@@ -108,32 +108,31 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
 
 def get_data():
     # need the data formatted as a JSON
-    """
-    Example preproc:
+    """Example preproc:
     # Load train and dev sets. 910 records in total.
     df = pd.concat([
         pd.read_json(f'{input_dir}/techqa/training_and_dev/training_Q_A.json', lines=False),
         pd.read_json(f'{input_dir}/techqa/training_and_dev/dev_Q_A.json', lines=False),
     ])
-    
-    # Add the `contexts` by looking up the DOCUMENT id in the corpus, and fetch the `text` field. 
+
+    # Add the `contexts` by looking up the DOCUMENT id in the corpus, and fetch the `text` field.
     # Put an empty list if no matches (not answerable cases)
     df["contexts"] = df["DOCUMENT"].apply(
         lambda doc_id: [{"filename": doc_id + '.txt', "text": 'Title: '+corpus.get(doc_id, {}).get("title", "No Title")+'\n\nText:\n'+corpus.get(doc_id, {}).get("text", "No Text")}]
-        if doc_id in corpus 
+        if doc_id in corpus
         else []
     )
-    
+
     # Set is_impossible to be reverse of ANSWERABLE
     df["is_impossible"] = df["ANSWERABLE"].apply(lambda x: x == "N")
-    
+
     df['question'] = df['QUESTION_TITLE'] + '\n\n' + df['QUESTION_TEXT']
     df = df.rename(columns={"QUESTION_ID": "id", "ANSWER":"answer"})
     df = cleanup(df, ['question', 'answer'])
     df = df.loc[ df['is_impossible']==False ].reset_index(drop=True)
     df = df.loc[ df['contexts'].apply(lambda x: len(x)) >= 1].reset_index(drop=True)
     df = df.loc[ df['contexts'].apply(lambda x: len(x[0]['text'])) >= 1].reset_index(drop=True)
-    
+
     df[['id', 'question', 'answer', 'is_impossible', 'contexts']].to_json(f'{output_dir}/techqa/train.json', orient='records', lines=False)
     df[['id', 'question', 'answer', 'is_impossible', 'contexts']]
     """
