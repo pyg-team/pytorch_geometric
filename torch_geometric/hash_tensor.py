@@ -1,6 +1,16 @@
 import functools
 import warnings
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Type, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 import torch
 import torch.utils._pytree as pytree
@@ -197,6 +207,16 @@ class HashTensor(Tensor):
 
         return out
 
+    def _shallow_copy(self) -> 'HashTensor':
+        return self._from_data(
+            self._map,
+            self._value,
+            self._min_key,
+            self._max_key,
+            num_keys=self.size(0),
+            dtype=self.dtype,
+        )
+
     # Methods #################################################################
 
     def as_tensor(self) -> Tensor:
@@ -231,6 +251,11 @@ class HashTensor(Tensor):
             kwargs = pytree.tree_map_only(HashTensor, lambda x: x.as_tensor(),
                                           kwargs)
         return func(*args, **(kwargs or {}))
+
+
+@implements(aten.alias.default)
+def _alias(tensor: HashTensor) -> HashTensor:
+    return tensor._shallow_copy()
 
 
 @implements(aten._to_copy.default)
@@ -290,6 +315,51 @@ def _unsqueeze(tensor: HashTensor, dim: int) -> HashTensor:
     return tensor._from_data(
         tensor._map,
         aten.unsqueeze.default(tensor.as_tensor(), dim),
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
+
+
+@implements(aten.squeeze.default)
+def _squeeze_default(tensor: HashTensor) -> HashTensor:
+    if tensor._value is None:
+        return tensor._shallow_copy()
+
+    return tensor._from_data(
+        tensor._map,
+        aten.squeeze.dims(tensor._value, list(range(1, tensor.dim()))),
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
+
+
+@implements(aten.squeeze.dim)
+@implements(getattr(aten.squeeze, 'dims', aten.squeeze.dim))
+def _squeeze_dim(
+    tensor: HashTensor,
+    dim: Union[int, List[int]],
+) -> HashTensor:
+    if isinstance(dim, int):
+        dim = [dim]
+
+    for d in dim:
+        if d < -tensor.dim() or d >= tensor.dim():
+            raise IndexError(f"Dimension out of range (expected to be in "
+                             f"range of [{-tensor.dim()}, {tensor.dim()-1}], "
+                             f"but got {d})")
+
+    if tensor._value is None:
+        return tensor._shallow_copy()
+
+    dim = [d for d in dim if d != 0 and d != -tensor.dim()]
+
+    return tensor._from_data(
+        tensor._map,
+        aten.squeeze.dims(tensor._value, dim),
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
