@@ -112,3 +112,55 @@ def test_unsqueeze(device):
     out = tensor.unsqueeze(1)
     assert out.size() == (3, 1, 2)
     assert out._value is not None
+
+
+@withCUDA
+@pytest.mark.skipif(
+    not has_package('pyg-lib') and not has_package('pandas'),
+    reason='Missing dependencies',
+)
+@pytest.mark.parametrize('num_keys', [3, 1])
+def test_squeeze(num_keys, device):
+    key = torch.tensor([2, 1, 0][:num_keys], device=device)
+    tensor = HashTensor(key)
+
+    out = tensor.squeeze()
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, )
+
+    out = tensor.squeeze(0)
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, )
+
+    out = tensor.squeeze(-1)
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, )
+
+    out = tensor.squeeze([0])
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, )
+
+    with pytest.raises(IndexError, match="out of range"):
+        tensor.squeeze(1)
+
+    with pytest.raises(IndexError, match="out of range"):
+        tensor.squeeze(-2)
+
+    value = torch.randn(key.size(0), 1, 1, device=device)
+    tensor = HashTensor(key, value)
+
+    out = tensor.squeeze()
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, )
+
+    out = tensor.squeeze(0)
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, 1, 1)
+
+    out = tensor.squeeze(-1)
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, 1)
+
+    out = tensor.squeeze([0, 1, 2])
+    assert isinstance(out, HashTensor)
+    assert out.size() == (num_keys, )
