@@ -379,10 +379,9 @@ def _slice(
     if dim == 0 or dim == -tensor.dim():
         return aten.slice.Tensor(tensor.as_tensor(), dim, start, end, step)
 
-    assert tensor._value is not None
     return tensor._from_data(
         tensor._map,
-        aten.slice.Tensor(tensor._value, dim, start, end, step),
+        aten.slice.Tensor(tensor.as_tensor(), dim, start, end, step),
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
