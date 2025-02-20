@@ -10,7 +10,8 @@ from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.loader import NeighborLoader
+from torch_geometric.data import Data
+from torch_geometric.loader import IBMBNodeLoader, NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer
 from torch_geometric.utils import (
     add_self_loops,
@@ -40,6 +41,28 @@ parser.add_argument(
     choices=['gat', 'graphsage', 'sgformer'],
     help='Model name.',
 )
+parser.add_argument(
+    '--loader_choice',
+    type=str,
+    default='ibmb',
+    choices=['neighbor', 'ibmb'],
+    help='Node loader type.',
+)
+# ibmb loader parameters
+parser.add_argument('--num_aux', type=int, default=16,
+                    help='number of auxiliary nodes per output node')
+parser.add_argument('--num_train_prime', type=int, default=9000,
+                    help='number of output nodes in a training batch')
+parser.add_argument(
+    '--num_val_prime', type=int, default=18000,
+    help='number of output nodes in a validation batch,'
+    'typically larger than num_train_prime because '
+    'it requires no backward propagation')
+parser.add_argument('--alpha', type=float, default=0.25,
+                    help='parameter controlling PPR calculation')
+parser.add_argument('--eps', type=float, default=2.e-4,
+                    help='parameter controlling PPR calculation')
+# trainig parameters
 parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=1,
@@ -94,34 +117,53 @@ if args.add_self_loop:
     data.edge_index, _ = add_self_loops(data.edge_index,
                                         num_nodes=data.num_nodes)
 
-data.to(device, 'x', 'y')
 
-train_loader = NeighborLoader(
+def get_loader(loader_choice: str, data: Data, split: str, num_prime: int):
+    assert split in ['train', 'valid', 'test']
+    if loader_choice == 'neighbor':
+        return NeighborLoader(
+            data,
+            input_nodes=split_idx[split],
+            num_neighbors=[args.fan_out] * num_layers,
+            batch_size=batch_size,
+            shuffle=True,
+            num_workers=num_workers,
+            persistent_workers=True,
+        )
+    elif loader_choice == 'ibmb':
+        return IBMBNodeLoader(
+            data,
+            batch_order='order',
+            input_nodes=split_idx["train"],
+            return_edge_index_type='adj',
+            num_auxiliary_nodes=args.num_aux,
+            num_nodes_per_batch=num_prime,
+            alpha=args.alpha,
+            eps=args.eps,
+            batch_size=batch_size,
+            shuffle=False,
+        )
+    else:
+        raise ValueError(f'Unsupported loader type: {loader_choice}')
+
+
+train_loader = get_loader(
+    args.loader_choice,
     data,
-    input_nodes=split_idx['train'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
+    'train',
+    args.num_train_prime,
 )
-val_loader = NeighborLoader(
+val_loader = get_loader(
+    args.loader_choice,
     data,
-    input_nodes=split_idx['valid'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
+    'valid',
+    args.num_val_prime,
 )
-test_loader = NeighborLoader(
+test_loader = get_loader(
+    args.loader_choice,
     data,
-    input_nodes=split_idx['test'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
+    'test',
+    args.num_val_prime,
 )
 
 
@@ -133,8 +175,10 @@ def train(epoch: int) -> tuple[Tensor, float]:
 
     total_loss = total_correct = 0
     for batch in train_loader:
+        batch = batch.to(device)
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
+        batch.batch_size = batch_size
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze().to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
@@ -157,7 +201,10 @@ def test(loader: NeighborLoader) -> float:
     total_correct = total_examples = 0
     for batch in loader:
         batch = batch.to(device)
-        batch_size = batch.num_sampled_nodes[0]
+        if args.loader_choice == 'neighbor':
+            batch_size = batch.num_sampled_nodes[0]
+        elif args.loader_choice == 'ibmb':
+            batch_size = batch.output_node_mask[0]
         out = model(batch.x, batch.edge_index)[:batch_size]
         pred = out.argmax(dim=-1)
         y = batch.y[:batch_size].view(-1).to(torch.long)
