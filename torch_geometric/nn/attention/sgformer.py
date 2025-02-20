@@ -61,14 +61,14 @@ class SGFormerAttention(torch.nn.Module):
         N = qs.shape[0]
 
         # numerator
-        kvs = torch.einsum("...lhm,...lhd->hmd", ks, vs)
-        attention_num = torch.einsum("...nhm,...hmd->nhd", qs, kvs)
+        kvs = torch.einsum("...lhm,...lhd->...hmd", ks, vs)
+        attention_num = torch.einsum("...nhm,...hmd->...nhd", qs, kvs)
         attention_num += N * vs
 
         # denominator
         all_ones = torch.ones([ks.shape[0]]).to(ks.device)
-        ks_sum = torch.einsum("...lhm,...l->hm", ks, all_ones)
-        attention_normalizer = torch.einsum("...nhm,...hm->nh", qs, ks_sum)
+        ks_sum = torch.einsum("...lhm,l->hm", ks, all_ones)
+        attention_normalizer = torch.einsum("nhm,hm->nh", qs, ks_sum)
         # attentive aggregated results
         attention_normalizer = torch.unsqueeze(attention_normalizer,
                                                len(attention_normalizer.shape))
