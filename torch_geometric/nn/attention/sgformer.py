@@ -62,7 +62,7 @@ class SGFormerAttention(torch.nn.Module):
 
         # numerator
         kvs = torch.einsum("blhm,blhd->bhmd", ks, vs)
-        attention_num = torch.einsum("nhm,hmd->nhd", qs, kvs)
+        attention_num = torch.einsum("bnhm,bhmd->bnhd", qs, kvs)
         attention_num += N * vs
 
         # denominator
