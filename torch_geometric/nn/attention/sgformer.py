@@ -1,7 +1,7 @@
+from typing import Optional
+
 import torch
 from torch import Tensor
-
-from torch_geometric.utils import to_dense_batch
 
 
 class SGFormerAttention(torch.nn.Module):
@@ -40,25 +40,33 @@ class SGFormerAttention(torch.nn.Module):
         self.k = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
         self.v = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
 
-    def forward(self, x: Tensor, batch: Tensor) -> Tensor:
-        r"""X (torch.Tensor): The input node features.
-        batch (torch.Tensor, optional): The batch vector
-            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-            each element to a specific example.
-        """
-        # feature transformation
-        batch_size = len(torch.unique(batch))
-        x, mask = to_dense_batch(
-            x, batch
-        )  # [num_nodes, num_feats] -> [num_batches, nodes_in_batch, num_feats]
-        qs = self.q(x).reshape(batch_size, -1, self.heads, self.head_channels)
-        ks = self.k(x).reshape(batch_size, -1, self.heads, self.head_channels)
-        vs = self.v(x).reshape(batch_size, -1, self.heads, self.head_channels)
+    def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+        r"""Forward pass.
 
-        # normalize input
-        qs = qs / torch.norm(qs, p=2)
-        ks = ks / torch.norm(ks, p=2)
-        N = qs.shape[0]
+        Args:
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
+            mask (torch.Tensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+                the valid nodes for each graph. (default: :obj:`None`)
+        """
+        B, N, *_ = x.shape
+        qs, ks, vs = self.q(x), self.k(x), self.v(x)
+        # reshape and permute q, k and v to proper shape
+        # (b, n, num_heads * head_channels) to (b, n, num_heads, head_channels)
+        qs, ks, vs = map(
+            lambda t: t.reshape(B, N, self.heads, self.head_channels),
+            (qs, ks, vs))
+
+        if mask is not None:
+            mask = mask[:, :, None, None]
+            vs.masked_fill_(~mask, 0.)
+
+        # normalize input, shape not changed
+        qs, ks = map(lambda t: t / torch.norm(t, p=2, dim=-1, keepdim=True),
+                     (qs, ks))
 
         # numerator
         kvs = torch.einsum("blhm,blhd->bhmd", ks, vs)
@@ -66,20 +74,16 @@ class SGFormerAttention(torch.nn.Module):
         attention_num += N * vs
 
         # denominator
-        all_ones = torch.ones([ks.shape[0]]).to(ks.device)
-        ks_sum = torch.einsum("lhm,l->hm", ks, all_ones)
-        attention_normalizer = torch.einsum("nhm,hm->nh", qs, ks_sum)
+        all_ones = torch.ones([B, N]).to(ks.device)
+        ks_sum = torch.einsum("blhm,bl->bhm", ks, all_ones)
+        attention_normalizer = torch.einsum("bnhm,bhm->bnh", qs, ks_sum)
         # attentive aggregated results
         attention_normalizer = torch.unsqueeze(attention_normalizer,
                                                len(attention_normalizer.shape))
         attention_normalizer += torch.ones_like(attention_normalizer) * N
         attn_output = attention_num / attention_normalizer
-        list_to_cat = []
-        for i, submask in enumerate(mask):
-            list_to_cat.append(attn_output[i][submask].mean(dim=1))
-        torch.cat(list_to_cat)
 
-        return attn_output
+        return attn_output.mean(dim=2)
 
     def reset_parameters(self):
         self.q.reset_parameters()
