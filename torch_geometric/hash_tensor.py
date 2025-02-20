@@ -365,3 +365,25 @@ def _squeeze_dim(
         num_keys=tensor.size(0),
         dtype=tensor.dtype,
     )
+
+
+@implements(aten.slice.Tensor)
+def _slice(
+    tensor: HashTensor,
+    dim: int,
+    start: Optional[int] = None,
+    end: Optional[int] = None,
+    step: int = 1,
+) -> Union[HashTensor, Tensor]:
+
+    if dim == 0 or dim == -tensor.dim():
+        return aten.slice.Tensor(tensor.as_tensor(), dim, start, end, step)
+
+    return tensor._from_data(
+        tensor._map,
+        aten.slice.Tensor(tensor.as_tensor(), dim, start, end, step),
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
