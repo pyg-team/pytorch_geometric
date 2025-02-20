@@ -338,7 +338,7 @@ def _squeeze_default(tensor: HashTensor) -> HashTensor:
 
 
 @implements(aten.squeeze.dim)
-@implements(aten.squeeze.dims)
+@implements(getattr(aten.squeeze, 'dims', aten.squeeze.dim))
 def _squeeze_dim(
     tensor: HashTensor,
     dim: Union[int, List[int]],
