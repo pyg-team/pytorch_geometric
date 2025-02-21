@@ -407,15 +407,6 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
-        import time
-        out_dict = {}
-        for name, metric in self.items():
-            t = time.perf_counter()
-            print('---------')
-            print(name)
-            out_dict[name] = metric.compute()
-            print(name, time.perf_counter() - t)
-        return out_dict
         return {name: metric.compute() for name, metric in self.items()}
 
     def reset(self) -> None:
