@@ -89,6 +89,9 @@ class SGModule(torch.nn.Module):
             fc.reset_parameters()
 
     def forward(self, x: Tensor, batch: Tensor):
+        # to dense batch expects sorted batch
+        batch, indices = batch.sort()
+        x = x[indices]
         x, mask = to_dense_batch(x, batch)
         layer_ = []
 
@@ -109,7 +112,10 @@ class SGModule(torch.nn.Module):
             x = F.dropout(x, p=self.dropout, training=self.training)
             layer_.append(x)
 
-        return x[mask]
+        x_mask = x[mask]
+        # reverse the sorting
+        unsorted_x_mask = x_mask[indices.argsort())]
+        return unsorted_x_mask
 
 
 class SGFormer(torch.nn.Module):
