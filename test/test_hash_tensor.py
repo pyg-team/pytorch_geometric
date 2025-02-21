@@ -5,16 +5,16 @@ from torch_geometric import HashTensor
 from torch_geometric.testing import has_package, withCUDA
 
 KEY_DTYPES = [
-    torch.bool,
-    torch.uint8,
-    torch.int8,
-    torch.int16,
-    torch.int32,
-    torch.int64,
-    torch.float16,
-    torch.bfloat16,
-    torch.float32,
-    torch.float64,
+    pytest.param(torch.bool, id='bool'),
+    pytest.param(torch.uint8, id='uint8'),
+    pytest.param(torch.int8, id='int8'),
+    pytest.param(torch.int16, id='int16'),
+    pytest.param(torch.int32, id='int32'),
+    pytest.param(torch.int64, id='int64'),
+    pytest.param(torch.float16, id='float16'),
+    pytest.param(torch.bfloat16, id='bfloat16'),
+    pytest.param(torch.float32, id='float32'),
+    pytest.param(torch.float64, id='float64'),
 ]
 
 
@@ -220,3 +220,59 @@ def test_slice(device):
     out = torch.narrow(tensor, dim=1, start=2, length=1)
     assert isinstance(out, HashTensor)
     assert out.as_tensor().equal(value[..., 2:3])
+
+
+@withCUDA
+@pytest.mark.skipif(
+    not has_package('pyg-lib') and not has_package('pandas'),
+    reason='Missing dependencies',
+)
+@pytest.mark.parametrize('dtype', KEY_DTYPES)
+def test_index_select(dtype, device):
+    if dtype != torch.bool:
+        key = torch.tensor([2, 1, 0], dtype=dtype, device=device)
+        query = torch.tensor([0, 3, 2], dtype=dtype, device=device)
+    else:
+        key = torch.tensor([True, False], device=device)
+        query = torch.tensor([False, True], device=device)
+
+    tensor = HashTensor(key)
+
+    out = torch.index_select(tensor, 0, query)
+    assert not isinstance(out, HashTensor)
+    if dtype != torch.bool:
+        assert out.equal(torch.tensor([2, -1, 0], device=device))
+    else:
+        assert out.equal(torch.tensor([1, 0], device=device))
+
+    out = tensor.index_select(-1, query)
+    assert not isinstance(out, HashTensor)
+    if dtype != torch.bool:
+        assert out.equal(torch.tensor([2, -1, 0], device=device))
+    else:
+        assert out.equal(torch.tensor([1, 0], device=device))
+
+    with pytest.raises(IndexError, match="out of range"):
+        torch.index_select(tensor, 1, query)
+
+    with pytest.raises(IndexError, match="out of range"):
+        tensor.index_select(-2, query)
+
+    value = torch.randn(key.size(0), 2, device=device)
+    tensor = HashTensor(key, value)
+
+    out = torch.index_select(tensor, 0, query)
+    assert not isinstance(out, HashTensor)
+    if dtype != torch.bool:
+        expected = torch.full_like(value, float('NaN'))
+        expected[0] = value[2]
+        expected[2] = value[0]
+        assert out.allclose(expected, equal_nan=True)
+    else:
+        assert out.allclose(value.flip(dims=[0]))
+
+    index = torch.tensor([1], device=device)
+    out = tensor.index_select(1, index)
+    assert isinstance(out, HashTensor)
+    assert out.size() == (3 if dtype != torch.bool else 2, 1)
+    assert out.as_tensor().allclose(value[:, 1:])
