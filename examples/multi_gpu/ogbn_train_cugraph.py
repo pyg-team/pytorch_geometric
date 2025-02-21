@@ -60,7 +60,7 @@ def arg_parse():
         help="directory of dataset.",
     )
     parser.add_argument('--hidden_channels', type=int, default=256)
-    parser.add_argument('--num_layers', type=int, default=3)
+    parser.add_argument('--num_layers', type=int, default=6)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
     parser.add_argument('-e', '--epochs', type=int, default=50)
@@ -82,9 +82,9 @@ def arg_parse():
     parser.add_argument(
         "--model",
         type=str,
-        default='GCN',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
-        help="Model used for training, default GCN",
+        default='Polynormer',
+        choices=['SAGE', 'GAT', 'GCN', 'SGFormer', 'Polynormer'],
+        help="Model used for training, default Polynormer",
     )
     parser.add_argument(
         "--num_heads",
@@ -169,7 +169,8 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     )
 
     model = model.to(rank)
-    model = DistributedDataParallel(model, device_ids=[rank])
+    model = DistributedDataParallel(model, device_ids=[rank],
+                                    find_unused_parameters=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.wd)
 
@@ -338,11 +339,13 @@ if __name__ == '__main__':
 
     print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        model = torch_geometric.nn.models.GAT(dataset.num_features,
-                                              args.hidden_channels,
-                                              args.num_layers,
-                                              dataset.num_classes,
-                                              heads=args.num_heads)
+        model = torch_geometric.nn.models.GAT(
+            dataset.num_features,
+            args.hidden_channels,
+            args.num_layers,
+            dataset.num_classes,
+            heads=args.num_heads,
+        )
     elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
@@ -366,6 +369,13 @@ if __name__ == '__main__':
             trans_dropout=args.dropout,
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
+        )
+    elif args.model == 'Polynormer':
+        model = torch_geometric.nn.models.Polynormer(
+            in_channels=dataset.num_features,
+            hidden_channels=args.hidden_channels,
+            out_channels=dataset.num_classes,
+            local_layers=args.num_layers,
         )
     else:
         raise ValueError(f'Unsupported model type: {args.model}')
