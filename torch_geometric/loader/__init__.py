@@ -11,7 +11,7 @@ from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
                           GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
 from .shadow import ShaDowKHopSampler
 from .random_node_loader import RandomNodeLoader
-# from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
+from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 from .zip_loader import ZipLoader
 from .data_list_loader import DataListLoader
 from .dense_data_loader import DenseDataLoader
@@ -39,8 +39,8 @@ __all__ = classes = [
     'GraphSAINTRandomWalkSampler',
     'ShaDowKHopSampler',
     'RandomNodeLoader',
-    # 'IBMBBatchLoader',
-    # 'IBMBNodeLoader',
+    'IBMBBatchLoader',
+    'IBMBNodeLoader',
     'ZipLoader',
     'DataListLoader',
     'DenseDataLoader',
@@ -53,7 +53,7 @@ __all__ = classes = [
     'AffinityMixin',
     'RAGQueryLoader',
     'RAGFeatureStore',
-    'RAGGraphStore'
+    'RAGGraphStore',
 ]
 
 RandomNodeSampler = deprecated(
