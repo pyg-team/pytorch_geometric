@@ -46,6 +46,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
+- examples/multi_gpu/distributed_batch.py and examples/multi_gpu/distributed_sampling.py ([#100057](https://github.com/pyg-team/pytorch_geometric/pull/10057))
+
 ### Fixed
 
 - Fixed the `k_hop_subgraph()` method for directed graphs ([#9756](https://github.com/pyg-team/pytorch_geometric/pull/9756))
