@@ -281,7 +281,7 @@ class HashTensor(Tensor):
                                           kwargs)
         return func(*args, **(kwargs or {}))
 
-    def index_select(self, dim: int, index: Any) -> Tensor:
+    def index_select(self, dim: int, index: Any) -> Tensor:  # type: ignore
         return torch.index_select(self, dim, index)
 
 
@@ -446,7 +446,7 @@ def _new_index_select(
     return _old_index_select(input, dim, index, out=out)
 
 
-torch.index_select = _new_index_select
+torch.index_select = _new_index_select  # type: ignore
 
 
 @implements(aten.index_select.default)
