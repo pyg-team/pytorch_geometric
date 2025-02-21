@@ -142,12 +142,12 @@ class HashTensor(Tensor):
         if (key.dtype in {torch.uint8, torch.int16} or _range <= 1_000_000
                 or _range <= 2 * key.numel()):
             _map = torch.full(
-                size=(_range + 2, ),
+                size=(_range + 3, ),
                 fill_value=-1,
                 dtype=torch.int64,
-                device=device,
+                device=key.device,
             )
-            _map[(key - (min_key - 1)).long()] = torch.arange(
+            _map[key.long() - (min_key.long() - 1)] = torch.arange(
                 key.numel(),
                 dtype=_map.dtype,
                 device=_map.device,
@@ -163,6 +163,8 @@ class HashTensor(Tensor):
             num_keys=key.numel(),
             dtype=dtype,
         )
+
+    # Private Methods #########################################################
 
     @classmethod
     def _from_data(
@@ -217,6 +219,33 @@ class HashTensor(Tensor):
             dtype=self.dtype,
         )
 
+    def _get(self, query: Tensor) -> Tensor:
+        if isinstance(self._map, Tensor):
+            index = query.long() - (self._min_key.long() - 1)
+            index = self._map[index.clamp_(min=0, max=self._map.numel() - 1)]
+        elif torch_geometric.typing.WITH_CUDA_HASH_MAP and query.is_cuda:
+            index = self._map.get(query)
+        elif torch_geometric.typing.WITH_CPU_HASH_MAP:
+            index = self._map.get(query.cpu())
+        else:
+            import pandas as pd
+
+            ser = pd.Series(query.cpu().numpy(), dtype=self._map)
+            index = torch.from_numpy(ser.cat.codes.to_numpy()).to(torch.long)
+
+        index = index.to(self.device)
+
+        if self._value is None:
+            return index.to(self.dtype)
+
+        out = self._value[index]
+        mask = index != -1
+        mask = mask.view([-1] + [1] * (out.dim() - 1))
+        if out.is_floating_point():
+            return out.where(mask, float('NaN'))
+        else:
+            return out.where(mask, -1)
+
     # Methods #################################################################
 
     def as_tensor(self) -> Tensor:
@@ -251,6 +280,9 @@ class HashTensor(Tensor):
             kwargs = pytree.tree_map_only(HashTensor, lambda x: x.as_tensor(),
                                           kwargs)
         return func(*args, **(kwargs or {}))
+
+    def index_select(self, dim: int, index: Any) -> Tensor:  # type: ignore
+        return torch.index_select(self, dim, index)
 
 
 @implements(aten.alias.default)
@@ -382,6 +414,54 @@ def _slice(
     return tensor._from_data(
         tensor._map,
         aten.slice.Tensor(tensor.as_tensor(), dim, start, end, step),
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
+
+
+# Since PyTorch does only allow PyTorch tensors as indices in `index_select`,
+# we need to create a wrapper function and monkey patch `index_select` :(
+_old_index_select = torch.index_select
+
+
+def _new_index_select(
+    input: Tensor,
+    dim: int,
+    index: Any,
+    *,
+    out: Optional[Tensor] = None,
+) -> Tensor:
+
+    if dim < -input.dim() or dim >= input.dim():
+        raise IndexError(f"Dimension out of range (expected to be in range of "
+                         f"[{-input.dim()}, {input.dim()-1}], but got {dim})")
+
+    # We convert any index tensor in the first dimension into a tensor. This
+    # means that downstream handling (i.e. in `aten.index_select.default`)
+    # needs to take this pre-conversion into account.
+    if isinstance(input, HashTensor) and (dim == 0 or dim == -input.dim()):
+        index = as_key_tensor(index, device=input.device)
+    return _old_index_select(input, dim, index, out=out)
+
+
+torch.index_select = _new_index_select  # type: ignore
+
+
+@implements(aten.index_select.default)
+def _index_select(
+    tensor: HashTensor,
+    dim: int,
+    index: Tensor,
+) -> Union[HashTensor, Tensor]:
+
+    if dim == 0 or dim == -tensor.dim():
+        return tensor._get(index)
+
+    return tensor._from_data(
+        tensor._map,
+        aten.index_select.default(tensor.as_tensor(), dim, index),
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
