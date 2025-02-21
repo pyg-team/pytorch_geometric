@@ -114,7 +114,7 @@ class SGModule(torch.nn.Module):
 
         x_mask = x[mask]
         # reverse the sorting
-        unsorted_x_mask = x_mask[indices.argsort())]
+        unsorted_x_mask = x_mask[indices.argsort()]
         return unsorted_x_mask
 
 
