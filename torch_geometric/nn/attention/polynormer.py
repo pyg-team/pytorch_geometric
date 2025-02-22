@@ -1,5 +1,8 @@
+from typing import Optional
+
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 
 
 class PolynormerAttention(torch.nn.Module):
@@ -31,7 +34,7 @@ class PolynormerAttention(torch.nn.Module):
         qkv_bias: bool = False,
         qk_shared: bool = True,
         dropout: float = 0.0,
-    ):
+    ) -> None:
         super().__init__()
 
         self.head_channels = head_channels
@@ -49,33 +52,44 @@ class PolynormerAttention(torch.nn.Module):
         self.lin_out = torch.nn.Linear(inner_channels, inner_channels)
         self.dropout = torch.nn.Dropout(dropout)
 
-    def forward(self, x):
-        N = x.size(0)
+    def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
+            mask (torch.Tensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+                the valid nodes for each graph. (default: :obj:`None`)
+        """
+        B, N, *_ = x.shape
         h = self.h_lins(x)
-        k = F.sigmoid(self.k(x)).view(N, self.head_channels, self.heads)
+        k = F.sigmoid(self.k(x)).view(B, N, self.head_channels, self.heads)
         if self.qk_shared:
             q = k
         else:
-            q = F.sigmoid(self.q(x)).view(N, self.head_channels, self.heads)
-        v = self.v(x).view(N, self.head_channels, self.heads)
+            q = F.sigmoid(self.q(x)).view(B, N, self.head_channels, self.heads)
+        v = self.v(x).view(B, N, self.head_channels, self.heads)
 
         # numerator
-        kv = torch.einsum('ndh, nmh -> dmh', k, v)
-        num = torch.einsum('ndh, dmh -> nmh', q, kv)
+        kv = torch.einsum('bndh, bnmh -> bdmh', k, v)
+        num = torch.einsum('bndh, bdmh -> bnmh', q, kv)
 
         # denominator
-        k_sum = torch.einsum('ndh -> dh', k)
-        den = torch.einsum('ndh, dh -> nh', q, k_sum).unsqueeze(1)
+        k_sum = torch.einsum('bndh -> bdh', k)
+        den = torch.einsum('bndh, bdh -> bnh', q, k_sum).unsqueeze(2)
 
         # linear global attention based on kernel trick
-        x = (num / den).reshape(N, -1)
+        x = (num / den).reshape(B, N, -1)
         x = self.lns(x) * (h + self.beta)
         x = F.relu(self.lin_out(x))
         x = self.dropout(x)
 
         return x
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.h_lins.reset_parameters()
         if not self.qk_shared:
             self.q.reset_parameters()

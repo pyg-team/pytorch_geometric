@@ -1,8 +1,12 @@
+from typing import Optional
+
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 
 from torch_geometric.nn import GATConv, GCNConv
 from torch_geometric.nn.attention import PolynormerAttention
+from torch_geometric.utils import to_dense_batch
 
 
 class Polynormer(torch.nn.Module):
@@ -51,7 +55,7 @@ class Polynormer(torch.nn.Module):
         pre_ln: bool = False,
         post_bn: bool = True,
         local_attn: bool = False,
-    ):
+    ) -> None:
         super().__init__()
         self._global = True
         self.in_drop = in_dropout
@@ -111,20 +115,22 @@ class Polynormer(torch.nn.Module):
 
         self.lin_in = torch.nn.Linear(in_channels, inner_channels)
         self.ln = torch.nn.LayerNorm(inner_channels)
-        self.global_attn = torch.nn.Sequential(*[
-            PolynormerAttention(
-                hidden_channels,
-                heads,
-                hidden_channels,
-                beta,
-                global_dropout,
-            ) for _ in range(global_layers)
-        ])
+
+        self.global_attn = torch.nn.ModuleList()
+        for _ in range(global_layers):
+            self.global_attn.append(
+                PolynormerAttention(
+                    hidden_channels,
+                    heads,
+                    hidden_channels,
+                    beta,
+                    global_dropout,
+                ))
         self.pred_local = torch.nn.Linear(inner_channels, out_channels)
         self.pred_global = torch.nn.Linear(inner_channels, out_channels)
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         for local_conv in self.local_convs:
             local_conv.reset_parameters()
         for lin in self.lins:
@@ -144,7 +150,21 @@ class Polynormer(torch.nn.Module):
         self.pred_local.reset_parameters()
         self.pred_global.reset_parameters()
 
-    def forward(self, x, edge_index):
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Optional[Tensor],
+    ) -> Tensor:
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+        """
         x = F.dropout(x, p=self.in_drop, training=self.training)
 
         # equivariant local attention
@@ -164,8 +184,13 @@ class Polynormer(torch.nn.Module):
 
         # equivariant global attention
         if self._global:
-            x_global = self.global_attn(self.ln(x_local))
-            x = self.pred_global(x_global)
+            batch, indices = batch.sort()
+            x_local = self.ln(x_local[indices])
+            x_global, mask = to_dense_batch(x_local, batch)
+            for attn in self.global_attn:
+                x_global = attn(x_global, mask)
+            x = x_global[mask][indices.argsort()]
+            x = self.pred_global(x)
         else:
             x = self.pred_local(x_local)
 
