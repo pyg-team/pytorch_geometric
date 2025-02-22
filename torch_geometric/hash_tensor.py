@@ -258,7 +258,7 @@ class HashTensor(Tensor):
         mask = mask.view([-1] + [1] * (out.dim() - 1))
         fill_value = float('NaN') if out.is_floating_point() else -1
         if torch_geometric.typing.WITH_PT20:
-            other = fill_value
+            other: Union[int, float, Tensor] = fill_value
         else:
             other = torch.full_like(out, fill_value)
 

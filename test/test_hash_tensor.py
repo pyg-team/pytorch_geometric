@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric import HashTensor
 from torch_geometric.testing import withCUDA, withHashTensor
 
@@ -137,9 +138,10 @@ def test_squeeze(num_keys, device):
     assert isinstance(out, HashTensor)
     assert out.size() == (num_keys, )
 
-    out = tensor.squeeze([0])
-    assert isinstance(out, HashTensor)
-    assert out.size() == (num_keys, )
+    if torch_geometric.typing.WITH_PT20:
+        out = tensor.squeeze([0])
+        assert isinstance(out, HashTensor)
+        assert out.size() == (num_keys, )
 
     with pytest.raises(IndexError, match="out of range"):
         tensor.squeeze(1)
@@ -162,9 +164,10 @@ def test_squeeze(num_keys, device):
     assert isinstance(out, HashTensor)
     assert out.size() == (num_keys, 1)
 
-    out = tensor.squeeze([0, 1, 2])
-    assert isinstance(out, HashTensor)
-    assert out.size() == (num_keys, )
+    if torch_geometric.typing.WITH_PT20:
+        out = tensor.squeeze([0, 1, 2])
+        assert isinstance(out, HashTensor)
+        assert out.size() == (num_keys, )
 
 
 @withCUDA
