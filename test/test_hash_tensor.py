@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric import HashTensor
-from torch_geometric.testing import has_package, withCUDA
+from torch_geometric.testing import withCUDA, withHashTensor
 
 KEY_DTYPES = [
     pytest.param(torch.bool, id='bool'),
@@ -19,10 +19,7 @@ KEY_DTYPES = [
 
 
 @withCUDA
-@pytest.mark.skipif(
-    not has_package('pyg-lib') and not has_package('pandas'),
-    reason='Missing dependencies',
-)
+@withHashTensor
 @pytest.mark.parametrize('dtype', KEY_DTYPES)
 def test_basic(dtype, device):
     if dtype != torch.bool:
@@ -35,19 +32,13 @@ def test_basic(dtype, device):
 
 
 @withCUDA
-@pytest.mark.skipif(
-    not has_package('pyg-lib') and not has_package('pandas'),
-    reason='Missing dependencies',
-)
+@withHashTensor
 def test_string_key(device):
     HashTensor(['1', '2', '3'], device=device)
 
 
 @withCUDA
-@pytest.mark.skipif(
-    not has_package('pyg-lib') and not has_package('pandas'),
-    reason='Missing dependencies',
-)
+@withHashTensor
 def test_to_function(device):
     key = torch.tensor([2, 1, 0], device=device)
     value = torch.randn(key.size(0), 2, device=device)
@@ -78,10 +69,7 @@ def test_to_function(device):
 
 
 @withCUDA
-@pytest.mark.skipif(
-    not has_package('pyg-lib') and not has_package('pandas'),
-    reason='Missing dependencies',
-)
+@withHashTensor
 def test_unsqueeze(device):
     key = torch.tensor([2, 1, 0], device=device)
     tensor = HashTensor(key)
@@ -131,10 +119,7 @@ def test_unsqueeze(device):
 
 
 @withCUDA
-@pytest.mark.skipif(
-    not has_package('pyg-lib') and not has_package('pandas'),
-    reason='Missing dependencies',
-)
+@withHashTensor
 @pytest.mark.parametrize('num_keys', [3, 1])
 def test_squeeze(num_keys, device):
     key = torch.tensor([2, 1, 0][:num_keys], device=device)
@@ -183,10 +168,7 @@ def test_squeeze(num_keys, device):
 
 
 @withCUDA
-@pytest.mark.skipif(
-    not has_package('pyg-lib') and not has_package('pandas'),
-    reason='Missing dependencies',
-)
+@withHashTensor
 def test_slice(device):
     key = torch.tensor([2, 1, 0], device=device)
     tensor = HashTensor(key)
@@ -231,10 +213,7 @@ def test_slice(device):
 
 
 @withCUDA
-@pytest.mark.skipif(
-    not has_package('pyg-lib') and not has_package('pandas'),
-    reason='Missing dependencies',
-)
+@withHashTensor
 @pytest.mark.parametrize('dtype', KEY_DTYPES)
 def test_index_select(dtype, device):
     if dtype != torch.bool:
