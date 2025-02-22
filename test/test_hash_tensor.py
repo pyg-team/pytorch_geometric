@@ -188,30 +188,38 @@ def test_squeeze(num_keys, device):
     reason='Missing dependencies',
 )
 def test_slice(device):
-    key = torch.tensor([2, 1, 0], device=device)
+    key = torch.tensor([20, 10, 0], device=device)
     tensor = HashTensor(key)
 
     with pytest.raises(IndexError, match="out of range"):
         torch.narrow(tensor, dim=-2, start=0, length=2)
 
+    out = tensor[:]
+    assert isinstance(out, HashTensor)
+    assert out._value is None
+
     out = tensor[-2:4]
-    assert not isinstance(out, HashTensor)
-    assert out.equal(torch.tensor([1, 2], device=device))
+    assert isinstance(out, HashTensor)
+    assert out.as_tensor().equal(torch.tensor([1, 2], device=device))
 
     out = tensor[..., 0:2]
-    assert not isinstance(out, HashTensor)
-    assert out.equal(torch.tensor([0, 1], device=device))
+    assert isinstance(out, HashTensor)
+    assert out.as_tensor().equal(torch.tensor([0, 1], device=device))
 
     out = torch.narrow(tensor, dim=0, start=2, length=1)
-    assert not isinstance(out, HashTensor)
-    assert out.equal(torch.tensor([2], device=device))
+    assert isinstance(out, HashTensor)
+    assert out.as_tensor().equal(torch.tensor([2], device=device))
 
     out = tensor.narrow(dim=0, start=1, length=2)
-    assert not isinstance(out, HashTensor)
-    assert out.equal(torch.tensor([1, 2], device=device))
+    assert isinstance(out, HashTensor)
+    assert out.as_tensor().equal(torch.tensor([1, 2], device=device))
 
     value = torch.randn(key.size(0), 4, device=device)
     tensor = HashTensor(key, value)
+
+    out = tensor[0:2]
+    assert isinstance(out, HashTensor)
+    assert out.as_tensor().equal(value[0:2])
 
     out = tensor[..., 0:2]
     assert isinstance(out, HashTensor)

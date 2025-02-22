@@ -209,6 +209,20 @@ class HashTensor(Tensor):
 
         return out
 
+    @property
+    def _key(self) -> Tensor:
+        if isinstance(self._map, Tensor):
+            mask = self._map >= 0
+            key = mask.nonzero().view(-1) - 1
+            key = key[self._map[mask]]
+        elif (torch_geometric.typing.WITH_CUDA_HASH_MAP
+              or torch_geometric.typing.WITH_CPU_HASH_MAP):
+            key = self._map.keys().to(self.device)
+        else:
+            key = torch.from_numpy(self._map.categories.to_numpy())
+
+        return key.to(self.device)
+
     def _shallow_copy(self) -> 'HashTensor':
         return self._from_data(
             self._map,
@@ -280,6 +294,9 @@ class HashTensor(Tensor):
             kwargs = pytree.tree_map_only(HashTensor, lambda x: x.as_tensor(),
                                           kwargs)
         return func(*args, **(kwargs or {}))
+
+    def tolist(self) -> List[Any]:
+        return self.as_tensor().tolist()
 
     def index_select(self, dim: int, index: Any) -> Tensor:  # type: ignore
         return torch.index_select(self, dim, index)
@@ -406,10 +423,18 @@ def _slice(
     start: Optional[int] = None,
     end: Optional[int] = None,
     step: int = 1,
-) -> Union[HashTensor, Tensor]:
+) -> HashTensor:
 
     if dim == 0 or dim == -tensor.dim():
-        return aten.slice.Tensor(tensor.as_tensor(), dim, start, end, step)
+        copy = start is None or (start == 0 or start <= -tensor.size(0))
+        copy &= end is None or (end > tensor.size(0))
+        copy &= step == 1
+        if copy:
+            return tensor._shallow_copy()
+
+        key = aten.slice.Tensor(tensor._key, 0, start, end, step)
+        value = aten.slice.Tensor(tensor.as_tensor(), 0, start, end, step)
+        return tensor.__class__(key, value)
 
     return tensor._from_data(
         tensor._map,
