@@ -253,12 +253,16 @@ class HashTensor(Tensor):
             return index.to(self.dtype)
 
         out = self._value[index]
+
         mask = index != -1
         mask = mask.view([-1] + [1] * (out.dim() - 1))
-        if out.is_floating_point():
-            return out.where(mask, float('NaN'))
+        fill_value = float('NaN') if out.is_floating_point() else -1
+        if torch_geometric.typing.WITH_PT20:
+            other = fill_value
         else:
-            return out.where(mask, -1)
+            other = torch.full_like(out, fill_value)
+
+        return out.where(mask, other)
 
     # Methods #################################################################
 
