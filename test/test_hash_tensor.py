@@ -188,7 +188,7 @@ def test_squeeze(num_keys, device):
     reason='Missing dependencies',
 )
 def test_slice(device):
-    key = torch.tensor([20, 10, 0], device=device)
+    key = torch.tensor([2, 1, 0], device=device)
     tensor = HashTensor(key)
 
     with pytest.raises(IndexError, match="out of range"):
