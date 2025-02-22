@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric import HashTensor
 from torch_geometric.testing import withCUDA, withHashTensor
 
@@ -137,9 +138,10 @@ def test_squeeze(num_keys, device):
     assert isinstance(out, HashTensor)
     assert out.size() == (num_keys, )
 
-    out = tensor.squeeze([0])
-    assert isinstance(out, HashTensor)
-    assert out.size() == (num_keys, )
+    if torch_geometric.typing.WITH_PT20:
+        out = tensor.squeeze([0])
+        assert isinstance(out, HashTensor)
+        assert out.size() == (num_keys, )
 
     with pytest.raises(IndexError, match="out of range"):
         tensor.squeeze(1)
@@ -162,9 +164,10 @@ def test_squeeze(num_keys, device):
     assert isinstance(out, HashTensor)
     assert out.size() == (num_keys, 1)
 
-    out = tensor.squeeze([0, 1, 2])
-    assert isinstance(out, HashTensor)
-    assert out.size() == (num_keys, )
+    if torch_geometric.typing.WITH_PT20:
+        out = tensor.squeeze([0, 1, 2])
+        assert isinstance(out, HashTensor)
+        assert out.size() == (num_keys, )
 
 
 @withCUDA
@@ -263,3 +266,37 @@ def test_index_select(dtype, device):
     assert isinstance(out, HashTensor)
     assert out.size() == (3 if dtype != torch.bool else 2, 1)
     assert out.as_tensor().allclose(value[:, 1:])
+
+
+@withCUDA
+@withHashTensor
+def test_select(device):
+    key = torch.tensor([2, 1, 0], device=device)
+    tensor = HashTensor(key)
+
+    out = tensor[0]
+    assert not isinstance(out, HashTensor)
+    assert out.dim() == 0
+    assert int(out) == 2
+
+    out = tensor.select(0, 4)
+    assert not isinstance(out, HashTensor)
+    assert out.dim() == 0
+    assert int(out) == -1
+
+    with pytest.raises(IndexError, match="out of range"):
+        torch.select(tensor, 1, 0)
+
+    with pytest.raises(IndexError, match="out of range"):
+        tensor.select(-2, 0)
+
+    value = torch.randn(key.size(0), 2, device=device)
+    tensor = HashTensor(key, value)
+
+    out = tensor[0]
+    assert not isinstance(out, HashTensor)
+    assert out.equal(value[2])
+
+    out = tensor.select(-1, 0)
+    assert isinstance(out, HashTensor)
+    assert out.as_tensor().equal(value[:, 0])

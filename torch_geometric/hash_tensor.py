@@ -253,12 +253,16 @@ class HashTensor(Tensor):
             return index.to(self.dtype)
 
         out = self._value[index]
+
         mask = index != -1
         mask = mask.view([-1] + [1] * (out.dim() - 1))
-        if out.is_floating_point():
-            return out.where(mask, float('NaN'))
+        fill_value = float('NaN') if out.is_floating_point() else -1
+        if torch_geometric.typing.WITH_PT20:
+            other: Union[int, float, Tensor] = fill_value
         else:
-            return out.where(mask, -1)
+            other = torch.full_like(out, fill_value)
+
+        return out.where(mask, other)
 
     # Methods #################################################################
 
@@ -298,8 +302,19 @@ class HashTensor(Tensor):
     def tolist(self) -> List[Any]:
         return self.as_tensor().tolist()
 
-    def index_select(self, dim: int, index: Any) -> Tensor:  # type: ignore
+    def index_select(  # type: ignore
+        self,
+        dim: int,
+        index: Any,
+    ) -> Union['HashTensor', Tensor]:
         return torch.index_select(self, dim, index)
+
+    def select(  # type: ignore
+        self,
+        dim: int,
+        index: Any,
+    ) -> Union['HashTensor', Tensor]:
+        return torch.select(self, dim, index)
 
 
 @implements(aten.alias.default)
@@ -376,9 +391,13 @@ def _squeeze_default(tensor: HashTensor) -> HashTensor:
     if tensor._value is None:
         return tensor._shallow_copy()
 
+    value = tensor.as_tensor()
+    for d in range(tensor.dim() - 1, 0, -1):
+        value = value.squeeze(d)
+
     return tensor._from_data(
         tensor._map,
-        aten.squeeze.dims(tensor._value, list(range(1, tensor.dim()))),
+        value,
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
@@ -404,11 +423,14 @@ def _squeeze_dim(
     if tensor._value is None:
         return tensor._shallow_copy()
 
-    dim = [d for d in dim if d != 0 and d != -tensor.dim()]
+    value = tensor.as_tensor()
+    for d in dim[::-1]:
+        if d != 0 and d != -tensor.dim():
+            value = value.squeeze(d)
 
     return tensor._from_data(
         tensor._map,
-        aten.squeeze.dims(tensor._value, dim),
+        value,
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
@@ -454,7 +476,7 @@ _old_index_select = torch.index_select
 def _new_index_select(
     input: Tensor,
     dim: int,
-    index: Any,
+    index: Tensor,
     *,
     out: Optional[Tensor] = None,
 ) -> Tensor:
@@ -487,6 +509,57 @@ def _index_select(
     return tensor._from_data(
         tensor._map,
         aten.index_select.default(tensor.as_tensor(), dim, index),
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
+
+
+# Since PyTorch does only allow PyTorch tensors as indices in `select`, we need
+# to create a wrapper function and monkey patch `select` :(
+_old_select = torch.select
+
+
+def _new_select(
+    input: Tensor,
+    dim: int,
+    index: int,
+) -> Tensor:
+
+    if dim < -input.dim() or dim >= input.dim():
+        raise IndexError(f"Dimension out of range (expected to be in range of "
+                         f"[{-input.dim()}, {input.dim()-1}], but got {dim})")
+
+    # We convert any index in the first dimension into an integer. This means
+    # that downstream handling (i.e. in `aten.select.int`) needs to take this
+    # pre-conversion into account.
+    if isinstance(input, HashTensor) and (dim == 0 or dim == -input.dim()):
+        index = int(as_key_tensor([index]))
+    return _old_select(input, dim, index)
+
+
+torch.select = _new_select  # type: ignore
+
+
+@implements(aten.select.int)
+def _select(
+    tensor: HashTensor,
+    dim: int,
+    index: int,
+) -> Union[HashTensor, Tensor]:
+
+    if dim == 0 or dim == -tensor.dim():
+        key = torch.tensor(
+            [index],
+            dtype=tensor._min_key.dtype,
+            device=tensor._min_key.device,
+        )
+        return tensor._get(key).squeeze(0)
+
+    return tensor._from_data(
+        tensor._map,
+        aten.select.int(tensor.as_tensor(), dim, index),
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
