@@ -391,9 +391,13 @@ def _squeeze_default(tensor: HashTensor) -> HashTensor:
     if tensor._value is None:
         return tensor._shallow_copy()
 
+    value = tensor.as_tensor()
+    for d in range(tensor.dim() - 1, 0, -1):
+        value = value.squeeze(d)
+
     return tensor._from_data(
         tensor._map,
-        aten.squeeze.dims(tensor._value, list(range(1, tensor.dim()))),
+        value,
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
@@ -419,11 +423,14 @@ def _squeeze_dim(
     if tensor._value is None:
         return tensor._shallow_copy()
 
-    dim = [d for d in dim if d != 0 and d != -tensor.dim()]
+    value = tensor.as_tensor()
+    for d in dim[::-1]:
+        if d != 0 and d != -tensor.dim():
+            value = value.squeeze(d)
 
     return tensor._from_data(
         tensor._map,
-        aten.squeeze.dims(tensor._value, dim),
+        value,
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
