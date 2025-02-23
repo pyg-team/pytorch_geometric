@@ -354,8 +354,8 @@ def _to_copy(
         _map = aten._to_copy.default(_map, device=device)
     # Only convert `_map` in case `CUDAHashMap` exists - otherwise we use
     # CPU-based mapping anyway and there is no need for a copy.
-    elif (torch_geometric.typing.WITH_CUDA_HASH_MAP and min_key.is_cuda
-          and tensor._min_key.device != min_key.device):
+    elif (torch_geometric.typing.WITH_CUDA_HASH_MAP and tensor.is_cuda
+          and tensor.device != min_key.device):
         key = _map.keys()
         key = aten._to_copy.default(key, device=device)
         _map = get_hash_map(key)
@@ -553,7 +553,7 @@ def _select(
         key = torch.tensor(
             [index],
             dtype=tensor._min_key.dtype,
-            device=tensor._min_key.device,
+            device=tensor.device,
         )
         return tensor._get(key).squeeze(0)
 
