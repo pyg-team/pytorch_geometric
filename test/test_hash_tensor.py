@@ -27,9 +27,46 @@ def test_basic(dtype, device):
         key = torch.tensor([2, 1, 0], dtype=dtype, device=device)
     else:
         key = torch.tensor([True, False], device=device)
-    value = torch.randn(key.size(0), 2, device=device)
 
-    HashTensor(key, value)
+    tensor = HashTensor(key)
+    assert tensor.dtype == torch.int64
+    assert tensor.device == device
+    assert tensor.size() == (key.size(0), )
+
+    value = torch.randn(key.size(0), 2, device=device)
+    tensor = HashTensor(key, value)
+    assert tensor.dtype == torch.float
+    assert tensor.device == device
+    assert tensor.size() == (key.size(0), 2)
+
+
+@withCUDA
+@withHashTensor
+@pytest.mark.parametrize('dtype', KEY_DTYPES)
+def test_empty(dtype, device):
+    key = torch.empty(0, dtype=dtype, device=device)
+    tensor = HashTensor(key)
+    assert tensor.dtype == torch.int64
+    assert tensor.device == device
+    assert tensor.size() == (0, )
+
+    out = tensor.index_select(0, torch.empty(0, dtype=dtype, device=device))
+    assert not isinstance(out, HashTensor)
+    assert out.dtype == torch.int64
+    assert out.device == device
+    assert out.size() == (0, )
+
+    value = torch.empty(0, device=device)
+    tensor = HashTensor(key, value)
+    assert tensor.dtype == value.dtype
+    assert tensor.device == device
+    assert tensor.size() == (0, )
+
+    out = tensor.index_select(0, torch.empty(0, dtype=dtype, device=device))
+    assert not isinstance(out, HashTensor)
+    assert out.dtype == value.dtype
+    assert out.device == device
+    assert out.size() == (0, )
 
 
 @withCUDA
