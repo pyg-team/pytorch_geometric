@@ -300,6 +300,7 @@ class HashTensor(Tensor):
         return func(*args, **(kwargs or {}))
 
     def tolist(self) -> List[Any]:
+        """"""  # noqa: D419
         return self.as_tensor().tolist()
 
     def index_select(  # type: ignore
@@ -307,6 +308,7 @@ class HashTensor(Tensor):
         dim: int,
         index: Any,
     ) -> Union['HashTensor', Tensor]:
+        """"""  # noqa: D419
         return torch.index_select(self, dim, index)
 
     def select(  # type: ignore
@@ -314,12 +316,70 @@ class HashTensor(Tensor):
         dim: int,
         index: Any,
     ) -> Union['HashTensor', Tensor]:
+        """"""  # noqa: D419
         return torch.select(self, dim, index)
+
+    def share_memory_(self) -> 'HashTensor':
+        """"""  # noqa: D419
+        if isinstance(self._map, Tensor):
+            self._map.share_memory_()
+        if self._value is not None:
+            self._value.share_memory_()
+        self._min_key.share_memory_()
+        self._max_key.share_memory_()
+        return self
+
+    def is_shared(self) -> bool:
+        """"""  # noqa: D419
+        return self._min_key.is_shared()
+
+    def detach_(self) -> 'HashTensor':
+        """"""  # noqa: D419
+        if self._value is not None:
+            self._value.detach_()
+        return super().detach_()  # type: ignore
 
 
 @implements(aten.alias.default)
 def _alias(tensor: HashTensor) -> HashTensor:
     return tensor._shallow_copy()
+
+
+@implements(aten.clone.default)
+def _clone(
+    tensor: HashTensor,
+    *,
+    memory_format: torch.memory_format = torch.preserve_format,
+) -> HashTensor:
+
+    value = tensor._value
+    if value is not None:
+        value = aten.clone.default(value, memory_format=memory_format)
+
+    return tensor._from_data(
+        tensor._map,  # NOTE No reason to do clone since it is read-only.
+        value,
+        tensor._min_key,  # NOTE No reason to do clone since it is read-only.
+        tensor._max_key,  # NOTE No reason to do clone since it is read-only.
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
+
+
+@implements(aten.detach.default)
+def _detach(tensor: HashTensor) -> HashTensor:
+    value = tensor._value
+    if value is not None:
+        value = aten.detach.default(value)
+
+    return tensor._from_data(
+        tensor._map,
+        value,
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
 
 
 @implements(aten._to_copy.default)
@@ -367,6 +427,26 @@ def _to_copy(
         max_key,
         num_keys=tensor.size(0),
         dtype=dtype or tensor.dtype,
+    )
+
+
+@implements(aten._pin_memory.default)
+def _pin_memory(tensor: HashTensor) -> HashTensor:
+    _map = tensor._map
+    if isinstance(_map, Tensor):
+        _map = aten._pin_memory.default(_map)
+
+    value = tensor._value
+    if value is not None:
+        value = aten._pin_memory.default(value)
+
+    return tensor._from_data(
+        _map,
+        value,
+        aten._pin_memory.default(tensor._min_key),
+        aten._pin_memory.default(tensor._max_key),
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
     )
 
 
