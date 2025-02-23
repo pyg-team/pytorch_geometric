@@ -31,13 +31,13 @@ def test_basic(dtype, device):
     tensor = HashTensor(key)
     assert tensor.dtype == torch.int64
     assert tensor.device == device
-    assert tensor.size() == (3, )
+    assert tensor.size() == (key.size(0), )
 
     value = torch.randn(key.size(0), 2, device=device)
     tensor = HashTensor(key, value)
     assert tensor.dtype == torch.float
     assert tensor.device == device
-    assert tensor.size() == (3, 2)
+    assert tensor.size() == (key.size(0), 2)
 
 
 @withCUDA
