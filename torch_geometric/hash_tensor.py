@@ -333,7 +333,7 @@ class HashTensor(Tensor):
         """"""  # noqa: D419
         return self._min_key.is_shared()
 
-    def detach_(self) -> 'HashTensor':
+    def detach_(self) -> 'HashTensor':  # type: ignore
         """"""  # noqa: D419
         if self._value is not None:
             self._value.detach_()
