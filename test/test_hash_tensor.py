@@ -1,9 +1,13 @@
+import os.path as osp
+from typing import List
+
 import pytest
 import torch
 
 import torch_geometric.typing
 from torch_geometric import HashTensor
-from torch_geometric.testing import withCUDA, withHashTensor
+from torch_geometric.io import fs
+from torch_geometric.testing import onlyCUDA, withCUDA, withHashTensor
 
 KEY_DTYPES = [
     pytest.param(torch.bool, id='bool'),
@@ -72,7 +76,104 @@ def test_empty(dtype, device):
 @withCUDA
 @withHashTensor
 def test_string_key(device):
+    # TODO
     HashTensor(['1', '2', '3'], device=device)
+
+
+@withCUDA
+@withHashTensor
+def test_clone(device):
+    key = torch.tensor([2, 1, 0], device=device)
+    value = torch.randn(key.size(0), 2, device=device)
+    tensor = HashTensor(key, value)
+
+    out = tensor.clone()
+    assert isinstance(out, HashTensor)
+    assert out.dtype == tensor.dtype
+    assert out.device == tensor.device
+    assert out._value.data_ptr() != tensor._value.data_ptr()
+
+    out = torch.clone(tensor)
+    assert isinstance(out, HashTensor)
+    assert out.dtype == tensor.dtype
+    assert out.device == tensor.device
+    assert out._value.data_ptr() != tensor._value.data_ptr()
+
+
+@withCUDA
+@withHashTensor
+def test_share_memory(device):
+    key = torch.tensor([2, 1, 0], device=device)
+    value = torch.randn(key.size(0), 2, device=device)
+    tensor = HashTensor(key, value)
+
+    out = tensor.share_memory_()
+    assert isinstance(out, HashTensor)
+    assert out.is_shared()
+    assert out._value.is_shared()
+    assert out.data_ptr() == tensor.data_ptr()
+
+
+@onlyCUDA
+@withHashTensor
+def test_pin_memory():
+    key = torch.tensor([2, 1, 0])
+    value = torch.randn(key.size(0), 2)
+    tensor = HashTensor(key, value)
+
+    assert not tensor.is_pinned()
+    out = tensor.pin_memory()
+    assert isinstance(out, HashTensor)
+    assert out.is_pinned()
+
+
+@withCUDA
+@withHashTensor
+def test_detach(device):
+    key = torch.tensor([2, 1, 0], device=device)
+    value = torch.randn(key.size(0), 2, device=device, requires_grad=True)
+    tensor = HashTensor(key, value)
+
+    assert tensor.requires_grad
+    out = tensor.detach()
+    assert isinstance(out, HashTensor)
+    assert not out.requires_grad
+    assert not out._value.requires_grad
+
+    tensor.detach_()
+    assert not tensor.requires_grad
+    assert not tensor._value.requires_grad
+
+
+@withCUDA
+@withHashTensor
+def test_contiguous(device):
+    key = torch.tensor([2, 1, 0], device=device)
+    value = torch.randn(2, key.size(0), device=device).t()
+    assert not value.is_contiguous()
+
+    tensor = HashTensor(key, value)
+    assert not tensor.is_contiguous()
+    out = tensor.contiguous()
+    assert out.is_contiguous()
+    assert out._value.is_contiguous()
+
+
+@withCUDA
+@withHashTensor
+def test_save_and_load(device, tmp_path):
+    key = torch.tensor([2, 1, 0], device=device)
+    value = torch.randn(key.size(0), 2, device=device)
+    tensor = HashTensor(key, value)
+
+    path = osp.join(tmp_path, 'hash_tensor.pt')
+    torch.save(tensor, path)
+    out = fs.torch_load(path)
+
+    assert isinstance(out, HashTensor)
+    assert out._value.equal(value)
+    assert out._min_key.equal(key.min())
+    assert out._max_key.equal(key.max())
 
 
 @withCUDA
@@ -337,3 +438,33 @@ def test_select(device):
     out = tensor.select(-1, 0)
     assert isinstance(out, HashTensor)
     assert out.as_tensor().equal(value[:, 0])
+
+
+def _collate_fn(hash_tensors: List[HashTensor]) -> List[HashTensor]:
+    return hash_tensors
+
+
+@pytest.mark.parametrize('num_workers', [0, 2])
+@pytest.mark.parametrize('pin_memory', [False, True])
+def test_data_loader(num_workers, pin_memory):
+    key = torch.tensor([2, 1, 0])
+    value = torch.randn(key.size(0), 2)
+    tensor = HashTensor(key, value)
+
+    loader = torch.utils.data.DataLoader(
+        [tensor] * 4,
+        batch_size=2,
+        num_workers=num_workers,
+        collate_fn=_collate_fn,
+        pin_memory=pin_memory,
+        drop_last=True,
+    )
+
+    assert len(loader) == 2
+    for batch in loader:
+        assert isinstance(batch, list)
+        assert len(batch) == 2
+        for tensor in batch:
+            assert isinstance(tensor, HashTensor)
+            assert tensor.dtype == value.dtype
+            assert tensor.is_shared() != (num_workers == 0) or pin_memory
