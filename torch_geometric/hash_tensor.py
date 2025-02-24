@@ -557,7 +557,6 @@ def _new_index_select(
     input: Tensor,
     dim: int,
     index: Tensor,
-    *,
     out: Optional[Tensor] = None,
 ) -> Tensor:
 
@@ -568,9 +567,10 @@ def _new_index_select(
     # We convert any index tensor in the first dimension into a tensor. This
     # means that downstream handling (i.e. in `aten.index_select.default`)
     # needs to take this pre-conversion into account.
-    if isinstance(input, HashTensor) and (dim == 0 or dim == -input.dim()):
+    if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
+            and (dim == 0 or dim == -input.dim())):
         index = as_key_tensor(index, device=input.device)
-    return _old_index_select(input, dim, index, out=out)
+    return _old_index_select(input, dim, index)  #, out=out)
 
 
 torch.index_select = _new_index_select  # type: ignore
@@ -614,7 +614,8 @@ def _new_select(
     # We convert any index in the first dimension into an integer. This means
     # that downstream handling (i.e. in `aten.select.int`) needs to take this
     # pre-conversion into account.
-    if isinstance(input, HashTensor) and (dim == 0 or dim == -input.dim()):
+    if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
+            and (dim == 0 or dim == -input.dim())):
         index = int(as_key_tensor([index]))
     return _old_select(input, dim, index)
 
