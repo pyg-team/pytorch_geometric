@@ -354,10 +354,10 @@ class HashTensor(Tensor):
             indices = (indices, )
         assert len(indices) > 0
 
-        # We convert any index tensor in the first dimension into a tensor. This
-        # means that downstream handling (i.e. in `aten.index.Tensor`) needs to
-        # take this pre-conversion into account. However, detecting whether the
-        # first dimension is indexed can be tricky at times:
+        # We convert any index tensor in the first dimension into a tensor.
+        # This means that downstream handling (i.e. in `aten.index.Tensor`)
+        # needs to take this pre-conversion into account. However, detecting
+        # whether the first dimension is indexed can be tricky at times:
         # * We need to take into account `Ellipsis`
         # * We need to take any unsqueezing into account
         if indices[0] is Ellipsis and len(indices) > 1:
@@ -366,7 +366,7 @@ class HashTensor(Tensor):
                 indices = indices[1:]
 
         if isinstance(indices[0], (int, bool)):
-            index = int(as_key_tensor([indices[0]]))
+            index: Union[int, Tensor] = int(as_key_tensor([indices[0]]))
             indices = (index, ) + indices[1:]
         elif isinstance(indices[0], Tensor):
             index = as_key_tensor(indices[0], device=self.device)
