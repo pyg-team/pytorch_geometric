@@ -300,6 +300,11 @@ class HashTensor(Tensor):
                                           kwargs)
         return func(*args, **(kwargs or {}))
 
+    def __repr__(self) -> str:  # type: ignore
+        indent = len(f'{self.__class__.__name__}(')
+        tensor_str = torch._tensor_str._tensor_str(self.as_tensor(), indent)
+        return torch._tensor_str._str_intern(self, tensor_contents=tensor_str)
+
     def tolist(self) -> List[Any]:
         """"""  # noqa: D419
         return self.as_tensor().tolist()
