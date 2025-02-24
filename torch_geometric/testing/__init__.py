@@ -22,6 +22,7 @@ from .decorators import (
     withDevice,
     withCUDA,
     withMETIS,
+    withHashTensor,
     disableExtensions,
     withoutExtensions,
 )
@@ -53,6 +54,7 @@ __all__ = [
     'withDevice',
     'withCUDA',
     'withMETIS',
+    'withHashTensor',
     'disableExtensions',
     'withoutExtensions',
     'assert_module',
