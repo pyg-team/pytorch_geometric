@@ -90,7 +90,7 @@ class SGModule(torch.nn.Module):
 
     def forward(self, x: Tensor, batch: Tensor):
         # to dense batch expects sorted batch
-        batch, indices = batch.sort()
+        batch, indices = batch.sort(stable=True)
         x = x[indices]
         x, mask = to_dense_batch(x, batch)
         layer_ = []
