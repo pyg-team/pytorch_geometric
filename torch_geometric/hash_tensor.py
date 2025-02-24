@@ -393,7 +393,7 @@ class HashTensor(Tensor):
         if isinstance(indices[0], (int, bool)):
             index: Union[int, Tensor] = int(as_key_tensor([indices[0]]))
             indices = (index, ) + indices[1:]
-        elif isinstance(indices[0], (list, Tensor)):
+        elif isinstance(indices[0], (Tensor, list, np.ndarray)):
             index = as_key_tensor(indices[0], device=self.device)
             indices = (index, ) + indices[1:]
 
