@@ -528,3 +528,11 @@ def test_getitem(dtype, device):
     out = tensor[..., None, torch.tensor([1, 2])]
     assert isinstance(out, HashTensor)
     assert out.as_tensor().allclose(value[..., None, torch.tensor([1, 2])])
+
+    out = tensor[...]
+    assert isinstance(out, HashTensor)
+    assert out.size() == value.size()
+
+    out = tensor[:2]
+    assert isinstance(out, HashTensor)
+    assert out.size() == (2, ) + value.size()[1:]
