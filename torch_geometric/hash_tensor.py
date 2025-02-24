@@ -349,6 +349,33 @@ class HashTensor(Tensor):
             self._value.detach_()
         return super().detach_()  # type: ignore
 
+    def __getitem__(self, indices: Any) -> Union['HashTensor', Tensor]:
+        if not isinstance(indices, tuple):
+            indices = (indices, )
+        assert len(indices) > 0
+
+        # We convert any index tensor in the first dimension into a tensor.
+        # This means that downstream handling (i.e. in `aten.index.Tensor`)
+        # needs to take this pre-conversion into account. However, detecting
+        # whether the first dimension is indexed can be tricky at times:
+        # * We need to take into account `Ellipsis`
+        # * We need to take any unsqueezing into account
+        if indices[0] is Ellipsis and len(indices) > 1:
+            nonempty_indices = [i for i in indices[1:] if i is not None]
+            if len(nonempty_indices) == self.dim():
+                indices = indices[1:]
+
+        if isinstance(indices[0], (int, bool)):
+            index: Union[int, Tensor] = int(as_key_tensor([indices[0]]))
+            indices = (index, ) + indices[1:]
+        elif isinstance(indices[0], Tensor):
+            index = as_key_tensor(indices[0], device=self.device)
+            indices = (index, ) + indices[1:]
+
+        indices = indices[0] if len(indices) == 1 else indices
+
+        return super().__getitem__(indices)
+
 
 @implements(aten.alias.default)
 def _alias(tensor: HashTensor) -> HashTensor:
@@ -464,7 +491,8 @@ def _pin_memory(tensor: HashTensor) -> HashTensor:
 def _unsqueeze(tensor: HashTensor, dim: int) -> HashTensor:
     if dim == 0 or dim == -(tensor.dim() + 1):
         raise IndexError(f"Cannot unsqueeze '{tensor.__class__.__name__}' in "
-                         f"the first dimension")
+                         f"the first dimension. Please call `as_tensor()` "
+                         f"beforehand")
 
     return tensor._from_data(
         tensor._map,
@@ -665,6 +693,30 @@ def _select(
     return tensor._from_data(
         tensor._map,
         aten.select.int(tensor.as_tensor(), dim, index),
+        tensor._min_key,
+        tensor._max_key,
+        num_keys=tensor.size(0),
+        dtype=tensor.dtype,
+    )
+
+
+@implements(aten.index.Tensor)
+def _index(
+    tensor: HashTensor,
+    indices: List[Optional[Tensor]],
+) -> Union[HashTensor, Tensor]:
+
+    assert len(indices) > 0
+
+    if indices[0] is not None:
+        out = tensor._get(indices[0])
+        if len(indices) > 1:
+            out = aten.index.Tensor(out, [None] + indices[1:])
+        return out
+
+    return tensor._from_data(
+        tensor._map,
+        aten.index.Tensor(tensor.as_tensor(), indices),
         tensor._min_key,
         tensor._max_key,
         num_keys=tensor.size(0),
