@@ -1,6 +1,7 @@
 import os.path as osp
 from typing import List
 
+import numpy as np
 import pytest
 import torch
 
@@ -438,6 +439,18 @@ def test_select(device):
     out = tensor.select(-1, 0)
     assert isinstance(out, HashTensor)
     assert out.as_tensor().equal(value[:, 0])
+
+
+def test_tolist():
+    key = torch.tensor([2, 1, 0])
+    value = torch.randn(key.size(0), 2)
+    assert HashTensor(key, value).tolist() == value.tolist()
+
+
+def test_numpy():
+    key = torch.tensor([2, 1, 0])
+    value = torch.randn(key.size(0), 2)
+    assert np.allclose(HashTensor(key, value).numpy(), value.numpy())
 
 
 def _collate_fn(hash_tensors: List[HashTensor]) -> List[HashTensor]:
