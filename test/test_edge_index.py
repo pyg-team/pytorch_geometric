@@ -1212,7 +1212,7 @@ def test_sparse_resize(dtype, device):
     assert out._T_indptr is None
 
 
-def test_to_list():
+def test_tolist():
     adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
     with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
         adj.tolist()

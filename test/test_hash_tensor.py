@@ -1,6 +1,7 @@
 import os.path as osp
 from typing import List
 
+import numpy as np
 import pytest
 import torch
 
@@ -33,12 +34,19 @@ def test_basic(dtype, device):
         key = torch.tensor([True, False], device=device)
 
     tensor = HashTensor(key)
+    if tensor.is_cuda:
+        assert str(tensor) == (f"HashTensor({tensor.as_tensor().tolist()}, "
+                               f"device='{tensor.device}')")
+    else:
+        assert str(tensor) == f"HashTensor({tensor.as_tensor().tolist()})"
+
     assert tensor.dtype == torch.int64
     assert tensor.device == device
     assert tensor.size() == (key.size(0), )
 
     value = torch.randn(key.size(0), 2, device=device)
     tensor = HashTensor(key, value)
+    assert str(tensor).startswith("HashTensor([")
     assert tensor.dtype == torch.float
     assert tensor.device == device
     assert tensor.size() == (key.size(0), 2)
@@ -438,6 +446,18 @@ def test_select(device):
     out = tensor.select(-1, 0)
     assert isinstance(out, HashTensor)
     assert out.as_tensor().equal(value[:, 0])
+
+
+def test_tolist():
+    key = torch.tensor([2, 1, 0])
+    value = torch.randn(key.size(0), 2)
+    assert HashTensor(key, value).tolist() == value.tolist()
+
+
+def test_numpy():
+    key = torch.tensor([2, 1, 0])
+    value = torch.randn(key.size(0), 2)
+    assert np.allclose(HashTensor(key, value).numpy(), value.numpy())
 
 
 def _collate_fn(hash_tensors: List[HashTensor]) -> List[HashTensor]:

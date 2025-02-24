@@ -15,7 +15,7 @@ resources = [
 
 
 @onlyOnline
-@withPackage('torchvision', 'skimage')
+@withPackage('torch>=2.0.0', 'torchvision', 'skimage')
 def test_to_superpixels(tmp_path):
     import torchvision.transforms as T
     from torchvision.datasets.mnist import (

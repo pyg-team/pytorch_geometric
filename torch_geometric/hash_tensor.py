@@ -12,6 +12,7 @@ from typing import (
     Union,
 )
 
+import numpy as np
 import torch
 import torch.utils._pytree as pytree
 import xxhash
@@ -299,9 +300,18 @@ class HashTensor(Tensor):
                                           kwargs)
         return func(*args, **(kwargs or {}))
 
+    def __repr__(self) -> str:  # type: ignore
+        indent = len(f'{self.__class__.__name__}(')
+        tensor_str = torch._tensor_str._tensor_str(self.as_tensor(), indent)
+        return torch._tensor_str._str_intern(self, tensor_contents=tensor_str)
+
     def tolist(self) -> List[Any]:
         """"""  # noqa: D419
         return self.as_tensor().tolist()
+
+    def numpy(self, *, force: bool = False) -> np.ndarray:
+        """"""  # noqa: D419
+        return self.as_tensor().numpy(force=force)
 
     def index_select(  # type: ignore
         self,
@@ -555,22 +565,32 @@ _old_index_select = torch.index_select
 
 def _new_index_select(
     input: Tensor,
-    dim: int,
+    dim: Union[int, str],
     index: Tensor,
-    *,
     out: Optional[Tensor] = None,
 ) -> Tensor:
 
-    if dim < -input.dim() or dim >= input.dim():
+    if isinstance(dim, int) and (dim < -input.dim() or dim >= input.dim()):
         raise IndexError(f"Dimension out of range (expected to be in range of "
                          f"[{-input.dim()}, {input.dim()-1}], but got {dim})")
 
     # We convert any index tensor in the first dimension into a tensor. This
     # means that downstream handling (i.e. in `aten.index_select.default`)
     # needs to take this pre-conversion into account.
-    if isinstance(input, HashTensor) and (dim == 0 or dim == -input.dim()):
+    if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
+            and isinstance(dim, int) and (dim == 0 or dim == -input.dim())):
         index = as_key_tensor(index, device=input.device)
-    return _old_index_select(input, dim, index, out=out)
+
+    if isinstance(dim, int):  # Type narrowing...
+        if out is None:
+            return _old_index_select(input, dim, index)
+        else:
+            return _old_index_select(input, dim, index, out=out)
+    else:
+        if out is None:
+            return _old_index_select(input, dim, index)
+        else:
+            return _old_index_select(input, dim, index, out=out)
 
 
 torch.index_select = _new_index_select  # type: ignore
@@ -603,20 +623,25 @@ _old_select = torch.select
 
 def _new_select(
     input: Tensor,
-    dim: int,
+    dim: Union[int, str],
     index: int,
 ) -> Tensor:
 
-    if dim < -input.dim() or dim >= input.dim():
+    if isinstance(dim, int) and (dim < -input.dim() or dim >= input.dim()):
         raise IndexError(f"Dimension out of range (expected to be in range of "
                          f"[{-input.dim()}, {input.dim()-1}], but got {dim})")
 
     # We convert any index in the first dimension into an integer. This means
     # that downstream handling (i.e. in `aten.select.int`) needs to take this
     # pre-conversion into account.
-    if isinstance(input, HashTensor) and (dim == 0 or dim == -input.dim()):
+    if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
+            and isinstance(dim, int) and (dim == 0 or dim == -input.dim())):
         index = int(as_key_tensor([index]))
-    return _old_select(input, dim, index)
+
+    if isinstance(dim, int):  # Type narrowing...
+        return _old_select(input, dim, index)
+    else:
+        return _old_select(input, dim, index)
 
 
 torch.select = _new_select  # type: ignore
