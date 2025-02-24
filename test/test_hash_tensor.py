@@ -441,7 +441,7 @@ def test_select(device):
     assert out.as_tensor().equal(value[:, 0])
 
 
-def test_to_list():
+def test_tolist():
     key = torch.tensor([2, 1, 0])
     value = torch.randn(key.size(0), 2)
     assert HashTensor(key, value).tolist() == value.tolist()
