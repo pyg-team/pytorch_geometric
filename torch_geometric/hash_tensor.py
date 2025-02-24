@@ -246,7 +246,7 @@ class HashTensor(Tensor):
             import pandas as pd
 
             ser = pd.Series(query.cpu().numpy(), dtype=self._map)
-            index = torch.from_numpy(ser.cat.codes.to_numpy()).to(torch.long)
+            index = torch.from_numpy(ser.cat.codes.to_numpy().copy()).long()
 
         index = index.to(self.device)
 
@@ -299,6 +299,31 @@ class HashTensor(Tensor):
             kwargs = pytree.tree_map_only(HashTensor, lambda x: x.as_tensor(),
                                           kwargs)
         return func(*args, **(kwargs or {}))
+
+    def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
+        attrs = ['_map', '_min_key', '_max_key']
+        if self._value is not None:
+            attrs.append('_value')
+
+        ctx = (self.size(0), self.dtype)
+
+        return attrs, ctx
+
+    @staticmethod
+    def __tensor_unflatten__(
+        inner_tensors: Dict[str, Any],
+        ctx: Tuple[Any, ...],
+        outer_size: Tuple[int, ...],
+        outer_stride: Tuple[int, ...],
+    ) -> 'HashTensor':
+        return HashTensor._from_data(
+            inner_tensors['_map'],
+            inner_tensors.get('_value', None),
+            inner_tensors['_min_key'],
+            inner_tensors['_min_key'],
+            num_keys=ctx[0],
+            dtype=ctx[1],
+        )
 
     def __repr__(self) -> str:  # type: ignore
         indent = len(f'{self.__class__.__name__}(')
@@ -368,7 +393,7 @@ class HashTensor(Tensor):
         if isinstance(indices[0], (int, bool)):
             index: Union[int, Tensor] = int(as_key_tensor([indices[0]]))
             indices = (index, ) + indices[1:]
-        elif isinstance(indices[0], Tensor):
+        elif isinstance(indices[0], (Tensor, list, np.ndarray)):
             index = as_key_tensor(indices[0], device=self.device)
             indices = (index, ) + indices[1:]
 
