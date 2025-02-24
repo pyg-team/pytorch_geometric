@@ -12,6 +12,7 @@ from typing import (
     Union,
 )
 
+import numpy as np
 import torch
 import torch.utils._pytree as pytree
 import xxhash
@@ -302,6 +303,10 @@ class HashTensor(Tensor):
     def tolist(self) -> List[Any]:
         """"""  # noqa: D419
         return self.as_tensor().tolist()
+
+    def numpy(self, *, force: bool = False) -> np.ndarray:
+        """"""  # noqa: D419
+        return self.as_tensor().numpy(force=force)
 
     def index_select(  # type: ignore
         self,
