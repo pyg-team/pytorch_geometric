@@ -570,7 +570,7 @@ def _new_index_select(
     if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
             and (dim == 0 or dim == -input.dim())):
         index = as_key_tensor(index, device=input.device)
-    return _old_index_select(input, dim, index)  #, out=out)
+    return _old_index_select(input, dim, index, out=out)
 
 
 torch.index_select = _new_index_select  # type: ignore
