@@ -337,7 +337,8 @@ def test_to_hetero_with_gcn():
     assert out['paper'].size() == (100, 64)
 
 
-def test_to_hetero_with_basic_model():
+@pytest.mark.parametrize('root_weight', [None, False, True])
+def test_to_hetero_with_basic_model(root_weight):
     x_dict = {
         'paper': torch.randn(100, 16),
         'author': torch.randn(100, 16),
@@ -353,12 +354,13 @@ def test_to_hetero_with_basic_model():
 
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
-    model = GraphSAGE((-1, -1), 32, num_layers=3)
+    model = GraphSAGE((-1, -1), 32, num_layers=3, root_weight=root_weight)
     model = to_hetero(model, metadata, debug=False)
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 2
 
-    model = GAT((-1, -1), 32, num_layers=3, add_self_loops=False)
+    model = GAT((-1, -1), 32, num_layers=3, add_self_loops=False,
+                root_weight=root_weight)
     model = to_hetero(model, metadata, debug=False)
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 2
