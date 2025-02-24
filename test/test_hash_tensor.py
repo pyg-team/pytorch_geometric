@@ -441,12 +441,14 @@ def test_select(device):
     assert out.as_tensor().equal(value[:, 0])
 
 
+@withHashTensor
 def test_tolist():
     key = torch.tensor([2, 1, 0])
     value = torch.randn(key.size(0), 2)
     assert HashTensor(key, value).tolist() == value.tolist()
 
 
+@withHashTensor
 def test_numpy():
     key = torch.tensor([2, 1, 0])
     value = torch.randn(key.size(0), 2)
@@ -481,3 +483,48 @@ def test_data_loader(num_workers, pin_memory):
             assert isinstance(tensor, HashTensor)
             assert tensor.dtype == value.dtype
             assert tensor.is_shared() != (num_workers == 0) or pin_memory
+
+
+@withCUDA
+@withHashTensor
+@pytest.mark.parametrize('dtype', KEY_DTYPES[:1])
+def test_getitem(dtype, device):
+    if dtype != torch.bool:
+        key = torch.tensor([20, 10, 0], dtype=dtype, device=device)
+    else:
+        key = torch.tensor([True, False], device=device)
+
+    value = torch.randn(key.size(0), 2, 4, device=device)
+    tensor = HashTensor(key, value)
+
+    if dtype != torch.bool:
+        out = tensor[10, :, None, torch.tensor([1, 2])]
+    else:
+        out = tensor[False, :, None, torch.tensor([1, 2])]
+    assert not isinstance(out, HashTensor)
+    assert out.allclose(value[1, :, None, torch.tensor([1, 2])])
+
+    if dtype != torch.bool:
+        out = tensor[..., 10, :, None, torch.tensor([1, 2])]
+    else:
+        out = tensor[..., False, :, None, torch.tensor([1, 2])]
+    assert not isinstance(out, HashTensor)
+    assert out.allclose(value[1, :, None, torch.tensor([1, 2])])
+
+    if dtype != torch.bool:
+        out = tensor[..., [10, 20], 1, None, 0:2]
+    else:
+        out = tensor[..., [False, True], 1, None, 0:2]
+    assert not isinstance(out, HashTensor)
+    assert out.allclose(value[torch.tensor([1, 0]), 1, None, 0:2])
+
+    if dtype != torch.bool:
+        out = tensor[[10, 20], 1, None, 0:2]
+    else:
+        out = tensor[[False, True], 1, None, 0:2]
+    assert not isinstance(out, HashTensor)
+    assert out.allclose(value[torch.tensor([1, 0]), 1, None, 0:2])
+
+    out = tensor[..., None, torch.tensor([1, 2])]
+    assert isinstance(out, HashTensor)
+    assert out.as_tensor().allclose(value[..., None, torch.tensor([1, 2])])
