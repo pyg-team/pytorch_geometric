@@ -625,7 +625,7 @@ def _new_select(
     # that downstream handling (i.e. in `aten.select.int`) needs to take this
     # pre-conversion into account.
     if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
-            and (dim == 0 or dim == -input.dim())):
+            and isinstance(dim, int) and (dim == 0 or dim == -input.dim())):
         index = int(as_key_tensor([index]))
 
     if isinstance(dim, int):  # Type narrowing...
