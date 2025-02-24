@@ -34,12 +34,19 @@ def test_basic(dtype, device):
         key = torch.tensor([True, False], device=device)
 
     tensor = HashTensor(key)
+    if tensor.is_cuda:
+        assert str(tensor) == (f"HashTensor({tensor.as_tensor().tolist()}, "
+                               f"device='{tensor.device}')")
+    else:
+        assert str(tensor) == f"HashTensor({tensor.as_tensor().tolist()})"
+
     assert tensor.dtype == torch.int64
     assert tensor.device == device
     assert tensor.size() == (key.size(0), )
 
     value = torch.randn(key.size(0), 2, device=device)
     tensor = HashTensor(key, value)
+    assert str(tensor).startswith("HashTensor([")
     assert tensor.dtype == torch.float
     assert tensor.device == device
     assert tensor.size() == (key.size(0), 2)
