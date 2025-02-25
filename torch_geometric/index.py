@@ -641,7 +641,7 @@ def _slice(
     step: int = 1,
 ) -> Index:
 
-    if ((start is None or start <= 0)
+    if ((start is None or start <= 0 or start <= -input.size(dim))
             and (end is None or end > input.size(dim)) and step == 1):
         return input._shallow_copy()  # No-op.
 

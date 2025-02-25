@@ -45,13 +45,6 @@ def as_key_tensor(
         key = torch.as_tensor(key, device=device)
     except Exception:
         device = device or torch.get_default_device()
-        # TODO Convert int64 to int32.
-        # On GPU, we default to int32 for faster 'CUDAHashMap' implementation:
-        if torch_geometric.typing.WITH_CUDA_HASH_MAP and device.type == 'cuda':
-            pass
-            # key = torch.tensor(
-            #     [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
-            #     dtype=torch.int32, device=device)
         key = torch.tensor(
             [xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF for x in key],
             dtype=torch.int64, device=device)
@@ -73,7 +66,6 @@ def as_key_tensor(
 
 def get_hash_map(key: Tensor) -> Union[CPUHashMap, CUDAHashMap]:
     if torch_geometric.typing.WITH_CUDA_HASH_MAP and key.is_cuda:
-        # TODO Convert int64 to int32.
         return CUDAHashMap(key, 0.5)
 
     if key.is_cuda:
@@ -647,7 +639,7 @@ def _slice(
 ) -> HashTensor:
 
     if dim == 0 or dim == -tensor.dim():
-        copy = start is None or (start == 0 or start <= -tensor.size(0))
+        copy = start is None or start == 0 or start <= -tensor.size(0)
         copy &= end is None or end > tensor.size(0)
         copy &= step == 1
         if copy:
