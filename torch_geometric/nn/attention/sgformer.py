@@ -65,7 +65,7 @@ class SGFormerAttention(torch.nn.Module):
             vs.masked_fill_(~mask, 0.)
 
         # normalize input, shape not changed
-        qs, ks = map(lambda t: t / torch.norm(t, p=2, dim=-1, keepdim=True),
+        qs, ks = map(lambda t: t / torch.linalg.norm(t, p=2, dim=-1, keepdim=True),
                      (qs, ks))
 
         # numerator
