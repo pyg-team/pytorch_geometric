@@ -134,8 +134,7 @@ def test(loader):
     total_error = 0
     for data in loader:
         data = data.to(device)
-        out = model(data.x, data.pe, data.edge_index, data.edge_attr,
-                    data.batch)
+        out = model(data.x, data.edge_index, data.edge_attr)
         total_error += (out.squeeze() - data.y).abs().sum().item()
     return total_error / len(loader.dataset)
 
