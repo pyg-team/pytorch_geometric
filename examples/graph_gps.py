@@ -105,6 +105,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 attn_kwargs = {'dropout': 0.5}
 model = GPS(channels=64, pe_dim=8, num_layers=10, attn_type=args.attn_type,
             attn_kwargs=attn_kwargs).to(device)
+from torch_geometric.nn.models import SAGE
+model = SAGE(in_channels=28, hidden_channels=64, out_channels=1, dropout=.5)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
                               min_lr=0.00001)
@@ -117,9 +119,7 @@ def train():
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        model.redraw_projection.redraw_projections()
-        out = model(data.x, data.pe, data.edge_index, data.edge_attr,
-                    data.batch)
+        out = model(data.x, data.edge_index, data.edge_attr)
         loss = (out.squeeze() - data.y).abs().mean()
         loss.backward()
         total_loss += loss.item() * data.num_graphs
