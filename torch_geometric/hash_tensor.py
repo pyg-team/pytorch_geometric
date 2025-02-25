@@ -647,7 +647,7 @@ def _slice(
 ) -> HashTensor:
 
     if dim == 0 or dim == -tensor.dim():
-        copy = start is None or (start == 0 or start <= -tensor.size(0))
+        copy = start is None or start == 0 or start <= -tensor.size(0)
         copy &= end is None or end > tensor.size(0)
         copy &= step == 1
         if copy:
