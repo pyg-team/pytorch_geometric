@@ -12,6 +12,7 @@ Tensor Objects
 
    Index
    EdgeIndex
+   HashTensor
 
 Functions
 ---------
