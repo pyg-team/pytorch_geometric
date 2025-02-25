@@ -2,6 +2,7 @@ import os.path as osp
 import warnings
 from typing import List, Optional
 
+import numpy as np
 import pytest
 import torch
 from torch import Tensor, tensor
@@ -1213,15 +1214,15 @@ def test_sparse_resize(dtype, device):
 
 
 def test_tolist():
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
-    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
-        adj.tolist()
+    data = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    adj = EdgeIndex(data)
+    assert adj.tolist() == data.tolist()
 
 
 def test_numpy():
-    adj = EdgeIndex([[0, 1, 1, 2], [1, 0, 2, 1]])
-    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
-        adj.numpy()
+    data = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    adj = EdgeIndex(data)
+    assert np.array_equal(adj.numpy(), data.numpy())
 
 
 @withCUDA

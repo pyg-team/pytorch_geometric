@@ -17,6 +17,7 @@ from typing import (
     overload,
 )
 
+import numpy as np
 import torch
 import torch.utils._pytree as pytree
 from torch import Tensor
@@ -1245,6 +1246,14 @@ class EdgeIndex(Tensor):
 
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
+
+    def tolist(self) -> List[Any]:
+        """"""  # noqa: D419
+        return self._data.tolist()
+
+    def numpy(self, *, force: bool = False) -> np.ndarray:
+        """"""  # noqa: D419
+        return self._data.numpy(force=force)
 
     # Helpers #################################################################
 
