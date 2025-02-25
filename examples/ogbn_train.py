@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer
+from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -37,13 +37,13 @@ parser.add_argument(
     '--gnn_choice',
     type=str,
     default='sgformer',
-    choices=['gat', 'graphsage', 'sgformer'],
+    choices=['gat', 'graphsage', 'sgformer', 'polynormer'],
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
-parser.add_argument('--num_layers', type=int, default=3)
+parser.add_argument('--num_layers', type=int, default=7)
 parser.add_argument('--num_heads', type=int, default=1,
-                    help='number of heads for GAT model.')
+                    help='number of heads for GAT ot GT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
@@ -104,6 +104,7 @@ train_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.gnn_choice == "polynormer",
 )
 val_loader = NeighborLoader(
     data,
@@ -113,6 +114,7 @@ val_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.gnn_choice == "polynormer",
 )
 test_loader = NeighborLoader(
     data,
@@ -122,6 +124,7 @@ test_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.gnn_choice == "polynormer",
 )
 
 
@@ -134,7 +137,12 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
+        if args.gnn_choice == 'polynormer':
+            out = model(batch.x, batch.edge_index.to(device),
+                        batch.batch.to(device))[:batch.batch_size]
+        else:
+            out = model(batch.x,
+                        batch.edge_index.to(device))[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze().to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
@@ -158,7 +166,11 @@ def test(loader: NeighborLoader) -> float:
     for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
-        out = model(batch.x, batch.edge_index)[:batch_size]
+        if args.gnn_choice == 'polynormer':
+            out = model(batch.x, batch.edge_index,
+                        batch.batch)[:batch.batch_size]
+        else:
+            out = model(batch.x, batch.edge_index)[:batch_size]
         pred = out.argmax(dim=-1)
         y = batch.y[:batch_size].view(-1).to(torch.long)
 
@@ -195,6 +207,13 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             trans_dropout=args.dropout,
             gnn_num_layers=num_layers,
             gnn_dropout=args.dropout,
+        )
+    elif gnn_choice == 'polynormer':
+        model = Polynormer(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            out_channels=dataset.num_classes,
+            local_layers=num_layers,
         )
     else:
         raise ValueError(f'Unsupported model type: {gnn_choice}')
