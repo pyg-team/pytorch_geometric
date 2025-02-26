@@ -63,10 +63,14 @@ class SGFormerAttention(torch.nn.Module):
         if mask is not None:
             mask = mask[:, :, None, None]
             vs.masked_fill_(~mask, 0.)
-
+        # replace 0's with epsilon
+        epsilon = 1e-6
+        qs[qs == 0] = epsilon
+        ks[ks == 0] = epsilon
         # normalize input, shape not changed
-        qs, ks = map(lambda t: t / torch.norm(t, p=2, dim=-1, keepdim=True),
-                     (qs, ks))
+        qs, ks = map(
+            lambda t: t / torch.linalg.norm(t, ord=2, dim=-1, keepdim=True),
+            (qs, ks))
 
         # numerator
         kvs = torch.einsum("blhm,blhd->bhmd", ks, vs)
