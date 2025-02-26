@@ -103,6 +103,7 @@ def create_loader(
     samples_dir,
     stage_name,
     shuffle=False,
+    disjoint=False,
 ):
     directory = osp.join(samples_dir, stage_name)
     os.mkdir(directory)
@@ -114,6 +115,7 @@ def create_loader(
         batch_size=batch_size,
         directory=directory,
         shuffle=shuffle,
+        disjoint=disjoint,
     )
 
 
@@ -121,10 +123,14 @@ def train(model, train_loader):
     model.train()
 
     total_loss = total_correct = total_examples = 0
-    for i, batch in enumerate(train_loader):
+    for batch in train_loader:
         batch = batch.cuda()
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        if args.model == "SGFormer":
+            out = model(batch.x, batch.edge_index,
+                        batch.batch)[:batch.batch_size]
+        else:
+            out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].view(-1).to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
@@ -145,7 +151,11 @@ def test(model, loader):
     total_correct = total_examples = 0
     for batch in loader:
         batch = batch.cuda()
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        if args.model == "SGFormer":
+            out = model(batch.x, batch.edge_index,
+                        batch.batch)[:batch.batch_size]
+        else:
+            out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].view(-1).to(torch.long)
 
         total_correct += out.argmax(dim=-1).eq(y).sum()
@@ -243,18 +253,21 @@ if __name__ == '__main__':
             input_nodes=split_idx['train'],
             stage_name='train',
             shuffle=True,
+            disjoint=args.model == 'SGFormer',
             **loader_kwargs,
         )
 
         val_loader = create_loader(
             input_nodes=split_idx['valid'],
             stage_name='val',
+            disjoint=args.model == 'SGFormer',
             **loader_kwargs,
         )
 
         test_loader = create_loader(
             input_nodes=split_idx['test'],
             stage_name='test',
+            disjoint=args.model == 'SGFormer',
             **loader_kwargs,
         )
         prep_time = round(time.perf_counter() - wall_clock_start, 2)

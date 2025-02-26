@@ -112,12 +112,16 @@ def arg_parse():
 def evaluate(rank, loader, model):
     with torch.no_grad():
         total_correct = total_examples = 0
-        for i, batch in enumerate(loader):
+        for batch in loader:
             batch = batch.to(rank)
             batch_size = batch.batch_size
 
             batch.y = batch.y.to(torch.long)
-            out = model(batch.x, batch.edge_index)[:batch_size]
+            if args.model == 'SGFormer':
+                out = model(batch.x, batch.edge_index,
+                            batch.batch)[:batch_size]
+            else:
+                out = model(batch.x, batch.edge_index)[:batch_size]
 
             pred = out.argmax(dim=-1)
             y = batch.y[:batch_size].view(-1).to(torch.long)
@@ -204,6 +208,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         directory=train_path,
         shuffle=True,
         drop_last=True,
+        disjoint=args.model == 'SGFormer',
         **kwargs,
     )
 
@@ -215,6 +220,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         input_nodes=ix_val,
         directory=val_path,
         drop_last=True,
+        disjoint=args.model == 'SGFormer',
         **kwargs,
     )
 
@@ -227,6 +233,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         directory=test_path,
         drop_last=True,
         local_seeds_per_call=80000,
+        disjoint=args.model == 'SGFormer',
         **kwargs,
     )
 
@@ -260,7 +267,10 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
             batch_size = batch.batch_size
             batch.y = batch.y.to(torch.long)
             optimizer.zero_grad()
-            out = model(batch.x, batch.edge_index)
+            if args.model == 'SGFormer':
+                out = model(batch.x, batch.edge_index, batch.batch)
+            else:
+                out = model(batch.x, batch.edge_index)
             loss = F.cross_entropy(out[:batch_size], batch.y[:batch_size])
             loss.backward()
             optimizer.step()
