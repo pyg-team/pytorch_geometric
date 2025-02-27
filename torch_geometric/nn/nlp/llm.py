@@ -1,7 +1,7 @@
+import os
 import warnings
 from contextlib import nullcontext
 from typing import Any, Dict, List, Optional, Union
-import os
 
 import torch
 from torch import Tensor
@@ -111,7 +111,8 @@ class LLM(torch.nn.Module):
             )
             self.tokenizer.pad_token_id = PAD_TOKEN_ID
             self.tokenizer.padding_side = PADDING_SIDE
-            self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                model_name, **kwargs)
             self.word_embedding = self.llm.model.get_input_embeddings()
 
             if 'max_memory' not in kwargs:  # Pure CPU:
@@ -123,8 +124,9 @@ class LLM(torch.nn.Module):
                 self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
 
         elif self.backend == "openai":
-            from openai import OpenAI
             from functools import partial
+
+            from openai import OpenAI
 
             api_key = openai_api_key or os.environ.get("OPENAI_API_KEY")
             if api_key is None:
@@ -151,7 +153,7 @@ class LLM(torch.nn.Module):
 
         else:
             raise ValueError(f"Unknown backend: {backend}. "
-                              "Must be one of ['huggingface', 'openai']")
+                             "Must be one of ['huggingface', 'openai']")
 
     def _encode_inputs(
         self,
@@ -310,12 +312,9 @@ class LLM(torch.nn.Module):
         self,
         prompt: List[List[Dict[str, str]]],
     ) -> tuple:
-        batch_encoding = self.tokenizer.apply_chat_template(prompt,
-                                                        tokenize=True,
-                                                        add_generation_prompt=True,
-                                                        return_tensors="pt",
-                                                        padding=True,
-                                                        return_dict=True)
+        batch_encoding = self.tokenizer.apply_chat_template(
+            prompt, tokenize=True, add_generation_prompt=True,
+            return_tensors="pt", padding=True, return_dict=True)
         input_ids = batch_encoding.input_ids.to(self.device)
         attention_mask = batch_encoding.attention_mask.to(self.device)
         input_embeds = self.word_embedding(input_ids)
@@ -359,8 +358,7 @@ class LLM(torch.nn.Module):
     @torch.no_grad()
     def inference(
         self,
-        prompt: Union[List[str],
-                      List[List[Dict[str, str]]]],
+        prompt: Union[List[str], List[List[Dict[str, str]]]],
         context: Optional[List[str]] = None,
         embedding: Optional[List[Tensor]] = None,
         max_tokens: Optional[int] = MAX_NEW_TOKENS,
@@ -388,18 +386,15 @@ class LLM(torch.nn.Module):
 
             # Batch processing is not supported by openai api
             for conversation in prompt:
-                outputs = self.llm(
-                    messages=conversation,
-                    stream=stream,
-                    top_p=self.top_p,
-                    max_tokens=max_tokens
-                )
+                outputs = self.llm(messages=conversation, stream=stream,
+                                   top_p=self.top_p, max_tokens=max_tokens)
 
                 if stream:
                     chunked_answer = []
                     for chunk in outputs:
                         if chunk.choices[0].delta.content is not None:
-                            chunked_answer.append(chunk.choices[0].delta.content)
+                            chunked_answer.append(
+                                chunk.choices[0].delta.content)
                     answer = ''.join(chunked_answer)
                 else:
                     answer = outputs.choices[0].message.content
