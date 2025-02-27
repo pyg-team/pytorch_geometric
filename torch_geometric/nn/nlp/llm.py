@@ -403,7 +403,7 @@ class LLM(torch.nn.Module):
 
             return results
 
-        if isinstance(prompt[0], list):
+        if isinstance(prompt[0], List):
             inputs_embeds, attention_mask = self._get_tgi_embeddings(prompt)
             bos_token = self.tokenizer(
                 BOS,
