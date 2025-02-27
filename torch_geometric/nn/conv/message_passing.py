@@ -1009,8 +1009,26 @@ class MessagePassing(torch.nn.Module):
             return_type_repr=update_signature.return_type_repr,
         )
 
-    def __repr__(self) -> str:
-        if hasattr(self, 'in_channels') and hasattr(self, 'out_channels'):
-            return (f'{self.__class__.__name__}({self.in_channels}, '
-                    f'{self.out_channels})')
-        return f'{self.__class__.__name__}()'
+    def _get_edge_updater_signature(self) -> Signature:
+        param_dict = self.inspector.get_params_from_method_call(
+            'edge_updater', exclude=[0, 'edge_index', 'size'])
+        edge_update_signature = self.inspector.get_signature('edge_update')
+
+        return Signature(
+            param_dict=param_dict,
+            return_type=edge_update_signature.return_type,
+            return_type_repr=edge_update_signature.return_type_repr,
+        )
+
+    def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
+        r"""Analyzes the :class:`MessagePassing` instance and produces a new
+        jittable module that can be used in combination with
+        :meth:`torch.jit.script`.
+
+        .. note::
+            :meth:`jittable` is deprecated and a no-op from :pyg:`PyG` 2.5
+            onwards.
+        """
+        warnings.warn(f"'{self.__class__.__name__}.jittable' is deprecated "
+                      f"and a no-op. Please remove its usage.")
+        return self
