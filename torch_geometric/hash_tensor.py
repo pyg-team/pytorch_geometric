@@ -45,13 +45,6 @@ def as_key_tensor(
         key = torch.as_tensor(key, device=device)
     except Exception:
         device = device or torch.get_default_device()
-        # TODO Convert int64 to int32.
-        # On GPU, we default to int32 for faster 'CUDAHashMap' implementation:
-        if torch_geometric.typing.WITH_CUDA_HASH_MAP and device.type == 'cuda':
-            pass
-            # key = torch.tensor(
-            #     [xxhash.xxh32(x).intdigest() & 0x7FFFFFFF for x in key],
-            #     dtype=torch.int32, device=device)
         key = torch.tensor(
             [xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF for x in key],
             dtype=torch.int64, device=device)
@@ -73,7 +66,6 @@ def as_key_tensor(
 
 def get_hash_map(key: Tensor) -> Union[CPUHashMap, CUDAHashMap]:
     if torch_geometric.typing.WITH_CUDA_HASH_MAP and key.is_cuda:
-        # TODO Convert int64 to int32.
         return CUDAHashMap(key, 0.5)
 
     if key.is_cuda:
@@ -94,6 +86,62 @@ def get_hash_map(key: Tensor) -> Union[CPUHashMap, CUDAHashMap]:
 
 
 class HashTensor(Tensor):
+    r"""A :pytorch:`null` :class:`torch.Tensor` that can be referenced by
+    arbitrary keys rather than indices in the first dimension.
+
+    :class:`HashTensor` sub-classes a general :pytorch:`null`
+    :class:`torch.Tensor`, and extends it by CPU- and GPU-accelerated mapping
+    routines. This allow for fast and efficient access to non-contiguous
+    indices/keys while the underlying data is stored in a compact format.
+
+    This representation is ideal for scenarios where one needs a fast mapping
+    routine without relying on CPU-based external packages, and can be used,
+    *e.g.*, to perform mapping of global indices to local indices during
+    subgraph creation, or in data-processing pipelines to map non-contiguous
+    input data into a contiguous space, such as
+
+    * mapping of hashed node IDs to range :obj:`[0, num_nodes - 1]`
+    * mapping of raw input data, *e.g.*, categorical data to range
+      :obj:`[0, num_categories - 1]`
+
+    Specifically, :class:`HashTensor` supports *any* keys of *any* type,
+    *e.g.*, strings, timestamps, etc.
+
+    .. code-block:: python
+
+        from torch_geometric import HashTensor
+
+        key = torch.tensor([1000, 100, 10000])
+        value = torch.randn(3, 4)
+
+        tensor = HashTensor(key, value)
+        assert tensor.size() == (3, 4)
+
+        # Filtering:
+        query = torch.tensor([10000, 1000])
+        out = tensor[query]
+        assert out.equal(value[[2, 0]])
+
+        # Accessing non-existing keys:
+        out = tensor[[10000, 0]]
+        out.isnan()
+        >>> tensor([[False, False, False, False],
+        ...         [True, True, True, True])
+
+        # If `value` is not given, indexing returns the position of `query` in
+        # `key`, and `-1` otherwise:
+        key = ['Animation', 'Comedy', 'Fantasy']
+        tensor = HashTensor(key)
+
+        out = tensor[['Comedy', 'Romance']]
+        >>> tensor([1, -1])
+
+    Args:
+        key: The keys in the first dimension.
+        value: The values to hold.
+        dtype: The desired data type of the values of the returned tensor.
+        device: The device of the returned tensor.
+    """
     _map: Union[Tensor, CPUHashMap, CUDAHashMap]
     _value: Optional[Tensor]
     _min_key: Tensor
@@ -246,7 +294,7 @@ class HashTensor(Tensor):
             import pandas as pd
 
             ser = pd.Series(query.cpu().numpy(), dtype=self._map)
-            index = torch.from_numpy(ser.cat.codes.to_numpy()).to(torch.long)
+            index = torch.from_numpy(ser.cat.codes.to_numpy().copy()).long()
 
         index = index.to(self.device)
 
@@ -299,6 +347,31 @@ class HashTensor(Tensor):
             kwargs = pytree.tree_map_only(HashTensor, lambda x: x.as_tensor(),
                                           kwargs)
         return func(*args, **(kwargs or {}))
+
+    def __tensor_flatten__(self) -> Tuple[List[str], Tuple[Any, ...]]:
+        attrs = ['_map', '_min_key', '_max_key']
+        if self._value is not None:
+            attrs.append('_value')
+
+        ctx = (self.size(0), self.dtype)
+
+        return attrs, ctx
+
+    @staticmethod
+    def __tensor_unflatten__(
+        inner_tensors: Dict[str, Any],
+        ctx: Tuple[Any, ...],
+        outer_size: Tuple[int, ...],
+        outer_stride: Tuple[int, ...],
+    ) -> 'HashTensor':
+        return HashTensor._from_data(
+            inner_tensors['_map'],
+            inner_tensors.get('_value', None),
+            inner_tensors['_min_key'],
+            inner_tensors['_min_key'],
+            num_keys=ctx[0],
+            dtype=ctx[1],
+        )
 
     def __repr__(self) -> str:  # type: ignore
         indent = len(f'{self.__class__.__name__}(')
@@ -368,7 +441,7 @@ class HashTensor(Tensor):
         if isinstance(indices[0], (int, bool)):
             index: Union[int, Tensor] = int(as_key_tensor([indices[0]]))
             indices = (index, ) + indices[1:]
-        elif isinstance(indices[0], Tensor):
+        elif isinstance(indices[0], (Tensor, list, np.ndarray)):
             index = as_key_tensor(indices[0], device=self.device)
             indices = (index, ) + indices[1:]
 
@@ -566,7 +639,7 @@ def _slice(
 ) -> HashTensor:
 
     if dim == 0 or dim == -tensor.dim():
-        copy = start is None or (start == 0 or start <= -tensor.size(0))
+        copy = start is None or start == 0 or start <= -tensor.size(0)
         copy &= end is None or end > tensor.size(0)
         copy &= step == 1
         if copy:
