@@ -14,9 +14,12 @@ import os.path as osp
 import time
 
 import torch
-from torchdata.datapipes.iter import FileLister, FileOpener, IterDataPipe
-
+from torch.utils.data.datapipes.iter import FileLister, FileOpener, IterableWrapper
+from torch.utils.data import IterDataPipe
 from torch_geometric.data import Data, download_url, extract_zip
+
+import csv
+from itertools import chain, tee
 
 
 def molecule_datapipe() -> IterDataPipe:
@@ -25,11 +28,17 @@ def molecule_datapipe() -> IterDataPipe:
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
     path = download_url(f'{url}/HIV.csv', root_dir)
 
-    datapipe = FileOpener([path])
-    datapipe = datapipe.parse_csv_as_dict()
-    datapipe = datapipe.parse_smiles(target_key='HIV_active')
-    datapipe = datapipe.in_memory_cache()  # Cache graph instances in-memory.
+    datapipe = FileOpener([path], mode="rt")
+    # Convert CSV rows into dictionaries, skipping the header row
+    datapipe = datapipe.map(lambda file: (
+        dict(zip(["smiles", "activity", "HIV_active"], row)) for i, row in enumerate(csv.reader(file[1])) if i > 0 and row
+    ))
 
+    datapipe = IterableWrapper(chain.from_iterable(datapipe))
+    datapipe = datapipe.parse_smiles(target_key='HIV_active')
+
+    _, cached_datapipe = tee(datapipe)
+    datapipe = IterableWrapper(cached_datapipe)
     return datapipe
 
 
@@ -37,16 +46,28 @@ def molecule_datapipe() -> IterDataPipe:
 class MeshOpener(IterDataPipe):
     # A custom DataPipe to load and parse mesh data into PyG data objects.
     def __init__(self, dp: IterDataPipe):
+        import importlib.util
+        installed = True
+        for package in ['meshio', 'torch_cluster']:
+            if importlib.util.find_spec(package) is None:
+                installed = False
+                print(f"This example requires the package {package} to be installed.")
+                print(f"Please run: 'pip install {package}'")
+        if not installed:    
+            exit()
+
         super().__init__()
         self.dp = dp
 
     def __iter__(self):
-        import meshio
-
         for path in self.dp:
             category = osp.basename(path).split('_')[0]
+            try:
+                mesh = meshio.read(path)
+            except Exception:
+                #print(f'Problem reading file "{path}", it will be skept') 
+                continue
 
-            mesh = meshio.read(path)
             pos = torch.from_numpy(mesh.points).to(torch.float)
             face = torch.from_numpy(mesh.cells[0].data).t().contiguous()
 
@@ -68,10 +89,10 @@ def mesh_datapipe() -> IterDataPipe:
     datapipe = FileLister([root_dir], masks='*.off', recursive=True)
     datapipe = datapipe.filter(is_train)
     datapipe = datapipe.read_mesh()
-    datapipe = datapipe.in_memory_cache()  # Cache graph instances in-memory.
+    _, cached_datapipe = tee(datapipe)
+    datapipe = IterableWrapper(cached_datapipe)
     datapipe = datapipe.sample_points(1024)  # Use PyG transforms from here.
     datapipe = datapipe.knn_graph(k=8)
-
     return datapipe
 
 
@@ -85,15 +106,18 @@ if __name__ == '__main__':
     parser.add_argument('--task', default='molecule', choices=DATAPIPES.keys())
 
     args = parser.parse_args()
-
+    t = time.perf_counter()
     datapipe = DATAPIPES[args.task]()
 
     print('Example output:')
     print(next(iter(datapipe)))
+    print(f'Input Done! [{time.perf_counter() - t:.2f}s]')
 
     # Shuffling + Batching support:
+    t = time.perf_counter()
     datapipe = datapipe.shuffle()
     datapipe = datapipe.batch_graphs(batch_size=32)
+    print(f'Shuffling Done! [{time.perf_counter() - t:.2f}s]')
 
     # The first epoch will take longer than the remaining ones...
     print('Iterating over all data...')
@@ -107,3 +131,4 @@ if __name__ == '__main__':
     for batch in datapipe:
         pass
     print(f'Done! [{time.perf_counter() - t:.2f}s]')
+    
