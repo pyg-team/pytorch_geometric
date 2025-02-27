@@ -253,7 +253,7 @@ if __name__ == '__main__':
     )
     prep_time = round(time.perf_counter() - wall_clock_start, 2)
     print("Total time before training begins (prep_time) =", prep_time,
-            "seconds")
+          "seconds")
     print("Beginning training...")
     val_accs = []
     times = []
@@ -274,7 +274,7 @@ if __name__ == '__main__':
         inference_times.append(time.perf_counter() - inference_start)
         val_accs.append(val_acc)
         print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train:'
-                f' {train_acc:.4f} Time: {train_end - train_start:.4f}s')
+              f' {train_acc:.4f} Time: {train_end - train_start:.4f}s')
         print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, ')
 
         times.append(time.perf_counter() - train_start)
