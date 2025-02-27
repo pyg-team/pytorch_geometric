@@ -4,8 +4,8 @@
 
 ### Examples with CuGraph
 
-| Example                                                                        | Scalability | Description                                                                              |
-| ------------------------------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------------- |
+| Example                                                                        | Scalability | Description                                                                                                                                       |
+| ------------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`ogbn_train_cugraph.py`](./ogbn_train_cugraph.py)                             | single-node | Single Node Multi GPU Example for `ogbn_train.py` using [CuGraph](https://www.nvidia.com/en-us/on-demand/session/gtc24-s61197/).                  |
 | [`papers100m_gcn_cugraph_multinode.py`](./papers100m_gcn_cugraph_multinode.py) | multi-node  | Example for training GNNs on a homogeneous graph on multiple nodes using [CuGraph](https://www.nvidia.com/en-us/on-demand/session/gtc24-s61197/). |
 
