@@ -1,30 +1,32 @@
-import numpy as np
 import os
-import time
-import torch
-import torch.nn.functional as F
 import re
 import string
+import time
+from collections import defaultdict
 from functools import lru_cache
 
-from collections import defaultdict
-from torch.optim import Adam
-from torch_geometric.loader import DataLoader
-from tqdm import tqdm
-
+import numpy as np
+import torch
+import torch.nn.functional as F
 from dataset import WebQSPDataset
 from retriever_model import SubgraphRAGRetriever
-from torch_geometric import seed_everything
+from torch.optim import Adam
+from tqdm import tqdm
 
+from torch_geometric import seed_everything
+from torch_geometric.loader import DataLoader
 from torch_geometric.nn.nlp import LLM
 
-SYS_PROMPT = ('Based on the triplets from a knowledge graph, '
+SYS_PROMPT = (
+    'Based on the triplets from a knowledge graph, '
     'please answer the given question. '
     'Please keep the answers as simple as possible and return all the '
     'possible answers as a list, each with a prefix "ans:".')
 
+
 def prepare_sample(device, sample):
     return sample.to(device)
+
 
 def train(device, train_loader, model, optimizer):
     model.train()
@@ -34,7 +36,8 @@ def train(device, train_loader, model, optimizer):
             continue
         sample = prepare_sample(device, sample)
         pred_triple_logits = model(sample.edge_index, sample.q_emb, sample.x,
-                                   sample.edge_attr, sample.topic_entity_one_hot)
+                                   sample.edge_attr,
+                                   sample.topic_entity_one_hot)
 
         target_triple_probs = sample.target_triple_scores
         target_triple_probs = target_triple_probs.unsqueeze(-1)
@@ -117,8 +120,7 @@ def test(device, data_loader, model, checkpoint_dir):
         num_non_text_entities = 0
         sample = prepare_sample(device, sample)
 
-        entity_list = sample.entity_list[
-            0]
+        entity_list = sample.entity_list[0]
         relation_list = sample.relation_list[0]
         rel_ids = sample.rel_ids[0]
         top_K_triplets = []
@@ -141,8 +143,8 @@ def test(device, data_loader, model, checkpoint_dir):
                  entity_list[sample.edge_index[1][triple_id].item()],
                  top_K_scores[j]))
 
-        target_relevant_triple_ids = sample.target_triple_scores.nonzero().reshape(
-            -1).tolist()
+        target_relevant_triple_ids = sample.target_triple_scores.nonzero(
+        ).reshape(-1).tolist()
         for triple_id in target_relevant_triple_ids:
             target_relevant_triplets.append((
                 entity_list[sample.edge_index[0][triple_id].item()],
@@ -174,11 +176,13 @@ def test(device, data_loader, model, checkpoint_dir):
     torch.save(pred_dict, os.path.join(checkpoint_dir, 'retrieval_result.pth'))
     return pred_dict
 
+
 def llm_infer(llm, user_query, sys_prompt, max_tokens=4096):
     conversation = [{"role": "system", "content": sys_prompt}]
     conversation.append({"role": "user", "content": user_query})
     output = llm.inference([conversation], max_tokens=max_tokens)[0]
     return output
+
 
 def prepare_prompt(sample, K_triplets, threshold=0.0):
     question_prompt = "Question:\n" + sample['question'][0]
@@ -188,13 +192,15 @@ def prepare_prompt(sample, K_triplets, threshold=0.0):
         input_triplets = sample['scored_triplets']
         if threshold > 0.0:
             input_triplets = [(triplet[0], triplet[1], triplet[2])
-                            for triplet in input_triplets
-                            if triplet[3] >= threshold]
+                              for triplet in input_triplets
+                              if triplet[3] >= threshold]
         # Ensure that triplets are unique
         input_triplets = list(dict.fromkeys(input_triplets))
         input_triplets = input_triplets[:K_triplets]
-        input_triplets = [f"({triplet[0]},{triplet[1]},{triplet[2]})"
-                        for triplet in input_triplets]
+        input_triplets = [
+            f"({triplet[0]},{triplet[1]},{triplet[2]})"
+            for triplet in input_triplets
+        ]
         triplet_prompt = "Triplets:\n" + "\n".join(input_triplets)
     else:
         triplet_prompt = ''
@@ -207,21 +213,21 @@ def prepare_prompt(sample, K_triplets, threshold=0.0):
     return user_query
 
 
-
 def reason(pred_dict, model_name, K_triplets, max_tokens=4096):
     llm = LLM(model_name=model_name, backend='openai')
     llm.llm.generation_config.pad_token_id = llm.tokenizer.eos_token_id
 
     llm_preds = []
     for _, sample in tqdm(pred_dict.items()):
-        user_query = prepare_prompt(sample,
-                                    K_triplets)
+        user_query = prepare_prompt(sample, K_triplets)
         llm_preds.append(llm_infer(llm, user_query, SYS_PROMPT, max_tokens))
     return llm_preds
+
 
 ################################
 ########## Metrics #############
 ################################
+
 
 @lru_cache(maxsize=1000)
 def normalize(s: str) -> str:
@@ -232,6 +238,7 @@ def normalize(s: str) -> str:
     s = re.sub(r"\b(<pad>)\b", " ", s)
     s = " ".join(s.split())
     return s
+
 
 def compute_scores(pred_dict, llm_preds, double_check=False):
     hits_any = 0
@@ -253,14 +260,17 @@ def compute_scores(pred_dict, llm_preds, double_check=False):
             all_f1.append(0)
             continue
 
-        all_predictions = [p.strip() for p in prediction_text.split('ans:')[1:]]
+        all_predictions = [
+            p.strip() for p in prediction_text.split('ans:')[1:]
+        ]
 
         gt_answers = [normalize(answer) for answer in gt_answers]
         all_predictions = [normalize(pred) for pred in all_predictions]
 
         first_pred = all_predictions[0]
         for answer in gt_answers:
-            if (answer in first_pred) or (double_check and first_pred in answer):
+            if (answer in first_pred) or (double_check
+                                          and first_pred in answer):
                 hits_at_1 += 1
                 break
 
@@ -293,15 +303,15 @@ def compute_scores(pred_dict, llm_preds, double_check=False):
     avg_recall = sum(all_recall) / total_samples
     avg_f1 = sum(all_f1) / total_samples
 
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print(f"Evaluation Metrics ({total_samples} samples):")
-    print("-"*50)
+    print("-" * 50)
     print(f"Hit (Any): {hit_rate:.4f} ({hits_any}/{total_samples})")
     print(f"Hit@1:     {hit_at_1:.4f} ({hits_at_1}/{total_samples})")
     print(f"Precision: {avg_precision:.4f}")
     print(f"Recall:    {avg_recall:.4f}")
     print(f"F1 Score:  {avg_f1:.4f}")
-    print("="*50)
+    print("=" * 50)
 
     return {
         'hit_rate': hit_rate,
@@ -312,20 +322,19 @@ def compute_scores(pred_dict, llm_preds, double_check=False):
         'total_samples': total_samples
     }
 
+
 def compute_metrics(pred_dict, llm_preds):
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print(f"Evaluation Metrics Vanilla):")
     compute_scores(pred_dict, llm_preds, False)
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print(f"Evaluation Metrics with Bidirectional Check):")
     compute_scores(pred_dict, llm_preds, True)
 
 
 def main(args):
-    pred_file_path = os.path.join(args.checkpoint_dir,
-                                  'retrieval_result.pth')
-    llm_pred_file = os.path.join(args.checkpoint_dir,
-                                    'llm_pred.pt')
+    pred_file_path = os.path.join(args.checkpoint_dir, 'retrieval_result.pth')
+    llm_pred_file = os.path.join(args.checkpoint_dir, 'llm_pred.pt')
     k_triplets = 0 if args.no_triplets else args.k_triplets
 
     if os.path.exists(pred_file_path):
@@ -366,8 +375,7 @@ def main(args):
     test_loader = DataLoader(test_set, batch_size=1, pin_memory=True)
 
     emb_size = train_set[0]['q_emb'].shape[-1]
-    model = SubgraphRAGRetriever(emb_size, topic_pe=True,
-                                 dde_rounds=2,
+    model = SubgraphRAGRetriever(emb_size, topic_pe=True, dde_rounds=2,
                                  rev_dde_rounds=2).to(device)
 
     if os.path.exists(os.path.join(checkpoint_dir, "model.pt")):
@@ -415,6 +423,7 @@ def main(args):
     torch.save(llm_preds, llm_pred_file)
     compute_metrics(pred_dict, llm_preds)
 
+
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
@@ -433,13 +442,18 @@ if __name__ == '__main__':
                         help='K in top-K triple retrieval')
 
     # Reasoning args
-    parser.add_argument("-m", "--model_name", type=str, default="meta-llama/Meta-Llama-3.1-8B-Instruct", help="Model name")
-    parser.add_argument("--max_tokens", type=int, default=4000, help="Max tokens")
+    parser.add_argument("-m", "--model_name", type=str,
+                        default="meta-llama/Meta-Llama-3.1-8B-Instruct",
+                        help="Model name")
+    parser.add_argument("--max_tokens", type=int, default=4000,
+                        help="Max tokens")
     parser.add_argument("--seed", type=int, default=0, help="Seed")
-    parser.add_argument("--temperature", type=float, default=0, help="Temperature")
+    parser.add_argument("--temperature", type=float, default=0,
+                        help="Temperature")
     parser.add_argument("--k_triplets", type=int, default=100,
                         help="Top K triplets used for reasoning")
-    parser.add_argument("--no_triplets", action="store_true", help="Overrides --k_triplets")
+    parser.add_argument("--no_triplets", action="store_true",
+                        help="Overrides --k_triplets")
     args = parser.parse_args()
 
     main(args)
