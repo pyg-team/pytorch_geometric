@@ -19,7 +19,7 @@
 #          /workspace/papers100m_gcn_cugraph_multinode.py \
 #            --epochs 1 \
 #            --dataset ogbn-papers100M \
-#            --dataset_root /workspace/datasets 
+#            --dataset_root /workspace/datasets
 
 import argparse
 import json
@@ -156,8 +156,7 @@ def load_partitioned_data(rank, edge_path, feature_path, label_path, meta_path,
 
 
 def run(global_rank, data, split_idx, world_size, device, model, epochs,
-        batch_size, fan_out, num_classes, wall_clock_start,
-        num_layers=3):
+        batch_size, fan_out, num_classes, wall_clock_start, num_layers=3):
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
@@ -372,6 +371,6 @@ if __name__ == '__main__':
     ).to(device)
     model = DistributedDataParallel(model, device_ids=[local_rank])
 
-    run(global_rank, data, split_idx, world_size, device, model,
-        args.epochs, args.batch_size, args.fan_out, meta['num_classes'],
-        wall_clock_start, args.num_layers)
+    run(global_rank, data, split_idx, world_size, device, model, args.epochs,
+        args.batch_size, args.fan_out, meta['num_classes'], wall_clock_start,
+        args.num_layers)

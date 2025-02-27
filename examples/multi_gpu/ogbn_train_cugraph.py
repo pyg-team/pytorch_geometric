@@ -375,13 +375,13 @@ if __name__ == '__main__':
         mp.spawn(
             run_train,
             args=(args, data, world_size, cugraph_id, model, split_idx,
-                    dataset.num_classes, wall_clock_start),
+                  dataset.num_classes, wall_clock_start),
             nprocs=world_size,
             join=True,
         )
     else:
         run_train(0, args, data, world_size, cugraph_id, model, split_idx,
-                    dataset.num_classes, wall_clock_start)
+                  dataset.num_classes, wall_clock_start)
 
     total_time = round(time.perf_counter() - wall_clock_start, 2)
     print("Total Program Runtime (total_time) =", total_time, "seconds")
