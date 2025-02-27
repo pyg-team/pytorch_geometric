@@ -39,6 +39,7 @@ dependencies=[
     "requests",
     "tqdm",
     "xxhash",
+    "captum<0.7.0",
 ]
 
 [project.optional-dependencies]
