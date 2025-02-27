@@ -9,6 +9,9 @@ from tqdm import tqdm
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.nn.nlp import SentenceTransformer
 
+################################
+########## Helpers #############
+################################
 
 @no_type_check
 def retrieval_via_pcst(
@@ -116,6 +119,99 @@ def retrieval_via_pcst(
 
     return data, desc
 
+def _new_get_triple_scores(data, h_ids, t_ids):
+    nx_g = nx.DiGraph()
+    num_triplets = len(h_ids)
+    for i in range(num_triplets):
+        h_i = h_ids[i]
+        t_i = t_ids[i]
+        nx_g.add_edge(h_i, t_i, triple_id=i)
+
+    all_sample_paths = []
+    for q_entity_id in data.q_entity_ids:
+        for a_entity_id in data.a_entity_ids:
+            try:
+                forward_paths = list(nx.all_shortest_paths(nx_g, q_entity_id, a_entity_id))
+            except:
+                forward_paths = []
+            try:
+                backward_paths = list(nx.all_shortest_paths(nx_g, a_entity_id, q_entity_id))
+            except:
+                backward_paths = []
+
+            full_paths = forward_paths + backward_paths
+            if len(forward_paths) == 0 or len(backward_paths) == 0:
+                all_sample_paths.extend(full_paths)
+            else:
+                min_path_len = min(len(path) for path in full_paths)
+                all_sample_paths.extend([p for p in full_paths if len(p) == min_path_len])
+
+    if len(all_sample_paths) == 0:
+        max_path_length = -1
+    else:
+        max_path_length = 0
+
+    path_list = []
+
+    for path in all_sample_paths:
+        num_triplets_path = len(path) - 1
+        max_path_length = max(max_path_length, num_triplets_path)
+
+        triplets_path = []
+        for i in range(num_triplets_path):
+            triple_id_i_list = [nx_g[path[i]][path[i+1]]['triple_id']]
+            triplets_path.append(triple_id_i_list)
+        path_list.append(triplets_path)
+
+    # Score triplets
+    # TODO check if it is the best way to obtain the num_edges
+    triple_scores = torch.zeros(data.edge_index.shape[1])
+    for path in path_list:
+        for triple_id_list in path:
+            triple_scores[triple_id_list] = 1.
+
+    return triple_scores,  max_path_length
+
+
+class GTELargeEN:
+    def __init__(self,
+                 device,
+                 normalize=True):
+        self.device = device
+        model_path = 'Alibaba-NLP/gte-large-en-v1.5'
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        self.model = AutoModel.from_pretrained(
+            model_path,
+            trust_remote_code=True,
+            unpad_inputs=True,
+            use_memory_efficient_attention=False).to(device)
+           # TODO enable `xformers` below`
+           # use_memory_efficient_attention=True).to(device)
+        self.model.eval()
+
+        self.normalize = normalize
+
+    @torch.no_grad()
+    def encode(self, text_list):
+        if len(text_list) == 0:
+            return torch.zeros(0, 1024)
+
+        batch_dict = self.tokenizer(
+            text_list, max_length=8192, padding=True,
+            truncation=True, return_tensors='pt').to(self.device)
+
+        outputs = self.model(**batch_dict).last_hidden_state
+        emb = outputs[:, 0]
+
+        if self.normalize:
+            emb = F.normalize(emb, p=2, dim=1)
+
+        return emb.cpu()
+
+
+################################
+########## Datasets ############
+################################
 
 class KGQABaseDataset(InMemoryDataset):
     r"""Base class for the 2 KGQA datasets used in `"Reasoning on Graphs:
@@ -132,6 +228,10 @@ class KGQABaseDataset(InMemoryDataset):
             (default: :obj:`False`)
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        subgraphrag (bool, optional): Whether to preprocess the dataset
+            into the format expected by SubgraphRAG. The dataset the full
+            subgraphs with embeddings and target triplets labels.
+            (default: :obj:`False`)
     """
     def __init__(
         self,
@@ -140,10 +240,11 @@ class KGQABaseDataset(InMemoryDataset):
         split: str = "train",
         force_reload: bool = False,
         use_pcst: bool = True,
-        use_cwq: bool = True,
+        subgraphrag: bool = True,
     ) -> None:
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
+        self.subgraphrag = subgraphrag
         super().__init__(root, force_reload=force_reload)
 
         if split not in {'train', 'val', 'test'}:
@@ -157,6 +258,12 @@ class KGQABaseDataset(InMemoryDataset):
         return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
     def process(self) -> None:
+        if not self.subgraphrag:
+            self._process_gretriever()
+        else:
+            self._process_subgraphrag()
+
+    def _process_gretriever(self) -> None:
         import datasets
         import pandas as pd
 
@@ -249,6 +356,131 @@ class KGQABaseDataset(InMemoryDataset):
 
             self.save(data_list, path)
 
+    def _process_subgraphrag(self) -> None:
+        import datasets
+        import pandas as pd
+
+        datasets = datasets.load_dataset(self.dataset_name)
+
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model = GTELargeEN(device)
+
+        splits = ['train', 'validation', 'test']
+        for split, path in zip(
+                splits,
+                self.processed_paths,
+        ):
+            dataset = datasets[split]
+            skip_no_answer = split != 'test'
+
+            questions = [example["question"] for example in dataset]
+            question_embs = model.encode(questions)
+
+            data_list = []
+
+            for i, example in enumerate(tqdm(dataset)):
+                raw_nodes: Dict[str, int] = {}
+                raw_edge_to_id: Dict[str, int] = {}
+                raw_edges = []
+                rel_ids = []
+                for tri in example["graph"]:
+                    h, r, t = tri
+                    h = h.lower()
+                    t = t.lower()
+                    if h not in raw_nodes:
+                        raw_nodes[h] = len(raw_nodes)
+                    if t not in raw_nodes:
+                        raw_nodes[t] = len(raw_nodes)
+                    raw_edges.append({
+                        "src": raw_nodes[h],
+                        "edge_attr": r,
+                        "dst": raw_nodes[t]
+                    })
+                    if r not in raw_edge_to_id:
+                        raw_edge_to_id[r] = len(raw_edge_to_id)
+                    rel_ids.append(raw_edge_to_id[r])
+                nodes = pd.DataFrame([{
+                    "node_id": v,
+                    "node_attr": k,
+                } for k, v in raw_nodes.items()],
+                                     columns=["node_id", "node_attr"])
+                edges = pd.DataFrame(raw_edges,
+                                     columns=["src", "edge_attr", "dst"])
+
+                nodes.node_attr = nodes.node_attr.fillna("")
+
+                q_entity_ids = []
+                q_entity = []
+                for q_e in example['q_entity']:
+                    q_e = q_e.lower()
+                    q_entity.append(q_e)
+                    q_entity_ids.append(
+                      nodes[nodes['node_attr'] == q_e]['node_id'].values[0]
+                    )
+
+                a_entity_ids = []
+                a_entity = []
+                for a_e in example['a_entity']:
+                    a_e = a_e.lower()
+                    a_entity.append(a_e)
+                    a_entity_matched_id = nodes[nodes['node_attr'] == a_e]['node_id'].values
+                    if len(a_entity_matched_id) > 0:
+                        a_entity_ids.append(a_entity_matched_id[0])
+
+                if skip_no_answer and len(a_entity_ids) == 0:
+                    print(f"skip_no_answer: skipping sample {example['id']}")
+                    continue
+
+                x = model.encode(
+                    nodes.node_attr.tolist(),
+                )
+                edge_attr = model.encode(
+                    edges.edge_attr.tolist(),
+                )
+                edge_index = torch.tensor([
+                    edges.src.tolist(),
+                    edges.dst.tolist(),
+                ], dtype=torch.long)
+
+                question = example['question']
+                data = Data(
+                    x=x,
+                    edge_index=edge_index,
+                    edge_attr=edge_attr,
+                )
+
+
+                data.id = example["id"]
+                data.question = question
+
+                data.q_entity = q_entity
+                data.a_entity = a_entity
+                data.q_entity_ids = q_entity_ids
+                data.a_entity_ids = a_entity_ids
+                data.q_emb = question_embs[i]
+
+                data.entity_list = nodes.node_attr.values.tolist()
+                data.relation_list = list(raw_edge_to_id.keys())
+                data.rel_ids = rel_ids
+
+                # Creating the retriever labels
+                triple_scores, max_path_length = _new_get_triple_scores(data,
+                                                    edges.src.tolist(),
+                                                    edges.dst.tolist())
+
+                data.target_triple_scores = triple_scores
+                data.max_path_length = max_path_length
+
+                # Setting up one-hot for PE
+                topic_entity_mask = torch.zeros(x.shape[0])
+                topic_entity_mask[q_entity_ids] = 1.
+                topic_entity_one_hot = F.one_hot(topic_entity_mask.long(), num_classes=2)
+
+                data.topic_entity_one_hot = topic_entity_one_hot.float()
+
+                data_list.append(data)
+
+            self.save(data_list, path)
 
 class WebQSPDataset(KGQABaseDataset):
     r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
@@ -264,11 +496,17 @@ class WebQSPDataset(KGQABaseDataset):
             (default: :obj:`False`)
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        subgraphrag (bool, optional): Whether to preprocess the dataset
+            into the format expected by SubgraphRAG. The dataset the full
+            subgraphs with embeddings and target triplets labels.
+            (default: :obj:`False`)
     """
     def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True) -> None:
+                 force_reload: bool = False, use_pcst: bool = True,
+                 subgraphrag: bool = False) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+        super().__init__(dataset_name, root, split,
+                         force_reload, use_pcst, subgraphrag)
 
 
 class CWQDataset(KGQABaseDataset):
@@ -285,8 +523,14 @@ class CWQDataset(KGQABaseDataset):
             (default: :obj:`False`)
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        subgraphrag (bool, optional): Whether to preprocess the dataset
+            into the format expected by SubgraphRAG. The dataset the full
+            subgraphs with embeddings and target triplets labels.
+            (default: :obj:`False`)
     """
     def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True) -> None:
+                 force_reload: bool = False, use_pcst: bool = True,
+                 subgraphrag: bool = False) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+        super().__init__(dataset_name, root, split,
+                         force_reload, use_pcst, subgraphrag)

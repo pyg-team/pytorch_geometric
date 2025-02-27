@@ -57,7 +57,6 @@ class Retriever(nn.Module):
     def __init__(self, emb_size, topic_pe, DDE_kwargs):
         super().__init__()
 
-        self.non_text_entity_emb = nn.Embedding(1, emb_size)
         self.topic_pe = topic_pe
         self.dde = DDE(**DDE_kwargs)
 
@@ -72,12 +71,8 @@ class Retriever(nn.Module):
 
     def forward(self, edge_index, q_emb, entity_embs, relation_embs,
                 num_non_text_entities, topic_entity_one_hot):
-        device = entity_embs.device
-
         h_e = torch.cat([
             entity_embs,
-            self.non_text_entity_emb(torch.LongTensor([0]).to(device)).expand(
-                num_non_text_entities, -1)
         ], dim=0)
         h_e_list = [h_e]
         if self.topic_pe:
