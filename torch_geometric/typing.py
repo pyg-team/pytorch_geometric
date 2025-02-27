@@ -408,6 +408,10 @@ FeatureTensorType = Union[Tensor, np.ndarray]
 EdgeTensorType = Tuple[Tensor, Tensor]
 
 # Types for message passing ###################################################
+class ProxyTensor:
+    pass
+    def __init__():
+        return super()
 
 Adj = Union[Tensor, SparseTensor]
 OptTensor = Optional[Tensor]

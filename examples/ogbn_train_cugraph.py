@@ -1,7 +1,5 @@
 import argparse
-import os
 import os.path as osp
-import tempfile
 import time
 
 import cupy
