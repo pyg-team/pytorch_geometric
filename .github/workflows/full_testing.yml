@@ -72,7 +72,7 @@ jobs:
 
       - name: Install main package
         run: |
-          pip install -e .[full,test]
+          pip install -e .[full,test] --constraint "torch==${{ matrix.torch-version }}"
 
       - name: Run tests
         timeout-minutes: 20

@@ -73,6 +73,7 @@ full = [
     "scipy",
     "scikit-learn",
     "ase",
+    "captum<0.7.0",
     "graphviz",
     "h5py",
     "matplotlib",
