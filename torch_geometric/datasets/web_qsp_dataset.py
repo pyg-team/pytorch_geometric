@@ -13,6 +13,7 @@ from torch_geometric.nn.nlp import SentenceTransformer
 ########## Helpers #############
 ################################
 
+
 @no_type_check
 def retrieval_via_pcst(
     data: Data,
@@ -119,6 +120,7 @@ def retrieval_via_pcst(
 
     return data, desc
 
+
 def _new_get_triple_scores(data, h_ids, t_ids):
     nx_g = nx.DiGraph()
     num_triplets = len(h_ids)
@@ -131,11 +133,13 @@ def _new_get_triple_scores(data, h_ids, t_ids):
     for q_entity_id in data.q_entity_ids:
         for a_entity_id in data.a_entity_ids:
             try:
-                forward_paths = list(nx.all_shortest_paths(nx_g, q_entity_id, a_entity_id))
+                forward_paths = list(
+                    nx.all_shortest_paths(nx_g, q_entity_id, a_entity_id))
             except:
                 forward_paths = []
             try:
-                backward_paths = list(nx.all_shortest_paths(nx_g, a_entity_id, q_entity_id))
+                backward_paths = list(
+                    nx.all_shortest_paths(nx_g, a_entity_id, q_entity_id))
             except:
                 backward_paths = []
 
@@ -144,7 +148,8 @@ def _new_get_triple_scores(data, h_ids, t_ids):
                 all_sample_paths.extend(full_paths)
             else:
                 min_path_len = min(len(path) for path in full_paths)
-                all_sample_paths.extend([p for p in full_paths if len(p) == min_path_len])
+                all_sample_paths.extend(
+                    [p for p in full_paths if len(p) == min_path_len])
 
     if len(all_sample_paths) == 0:
         max_path_length = -1
@@ -159,7 +164,7 @@ def _new_get_triple_scores(data, h_ids, t_ids):
 
         triplets_path = []
         for i in range(num_triplets_path):
-            triple_id_i_list = [nx_g[path[i]][path[i+1]]['triple_id']]
+            triple_id_i_list = [nx_g[path[i]][path[i + 1]]['triple_id']]
             triplets_path.append(triple_id_i_list)
         path_list.append(triplets_path)
 
@@ -170,23 +175,19 @@ def _new_get_triple_scores(data, h_ids, t_ids):
         for triple_id_list in path:
             triple_scores[triple_id_list] = 1.
 
-    return triple_scores,  max_path_length
+    return triple_scores, max_path_length
 
 
 class GTELargeEN:
-    def __init__(self,
-                 device,
-                 normalize=True):
+    def __init__(self, device, normalize=True):
         self.device = device
         model_path = 'Alibaba-NLP/gte-large-en-v1.5'
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.model = AutoModel.from_pretrained(
-            model_path,
-            trust_remote_code=True,
-            unpad_inputs=True,
+            model_path, trust_remote_code=True, unpad_inputs=True,
             use_memory_efficient_attention=False).to(device)
-           # TODO enable `xformers` below`
-           # use_memory_efficient_attention=True).to(device)
+        # TODO enable `xformers` below`
+        # use_memory_efficient_attention=True).to(device)
         self.model.eval()
 
         self.normalize = normalize
@@ -196,9 +197,9 @@ class GTELargeEN:
         if len(text_list) == 0:
             return torch.zeros(0, 1024)
 
-        batch_dict = self.tokenizer(
-            text_list, max_length=8192, padding=True,
-            truncation=True, return_tensors='pt').to(self.device)
+        batch_dict = self.tokenizer(text_list, max_length=8192, padding=True,
+                                    truncation=True,
+                                    return_tensors='pt').to(self.device)
 
         outputs = self.model(**batch_dict).last_hidden_state
         emb = outputs[:, 0]
@@ -212,6 +213,7 @@ class GTELargeEN:
 ################################
 ########## Datasets ############
 ################################
+
 
 class KGQABaseDataset(InMemoryDataset):
     r"""Base class for the 2 KGQA datasets used in `"Reasoning on Graphs:
@@ -415,15 +417,15 @@ class KGQABaseDataset(InMemoryDataset):
                     q_e = q_e.lower()
                     q_entity.append(q_e)
                     q_entity_ids.append(
-                      nodes[nodes['node_attr'] == q_e]['node_id'].values[0]
-                    )
+                        nodes[nodes['node_attr'] == q_e]['node_id'].values[0])
 
                 a_entity_ids = []
                 a_entity = []
                 for a_e in example['a_entity']:
                     a_e = a_e.lower()
                     a_entity.append(a_e)
-                    a_entity_matched_id = nodes[nodes['node_attr'] == a_e]['node_id'].values
+                    a_entity_matched_id = nodes[nodes['node_attr'] ==
+                                                a_e]['node_id'].values
                     if len(a_entity_matched_id) > 0:
                         a_entity_ids.append(a_entity_matched_id[0])
 
@@ -431,12 +433,8 @@ class KGQABaseDataset(InMemoryDataset):
                     print(f"skip_no_answer: skipping sample {example['id']}")
                     continue
 
-                x = model.encode(
-                    nodes.node_attr.tolist(),
-                )
-                edge_attr = model.encode(
-                    edges.edge_attr.tolist(),
-                )
+                x = model.encode(nodes.node_attr.tolist(), )
+                edge_attr = model.encode(edges.edge_attr.tolist(), )
                 edge_index = torch.tensor([
                     edges.src.tolist(),
                     edges.dst.tolist(),
@@ -448,7 +446,6 @@ class KGQABaseDataset(InMemoryDataset):
                     edge_index=edge_index,
                     edge_attr=edge_attr,
                 )
-
 
                 data.id = example["id"]
                 data.question = question
@@ -464,9 +461,8 @@ class KGQABaseDataset(InMemoryDataset):
                 data.rel_ids = rel_ids
 
                 # Creating the retriever labels
-                triple_scores, max_path_length = _new_get_triple_scores(data,
-                                                    edges.src.tolist(),
-                                                    edges.dst.tolist())
+                triple_scores, max_path_length = _new_get_triple_scores(
+                    data, edges.src.tolist(), edges.dst.tolist())
 
                 data.target_triple_scores = triple_scores
                 data.max_path_length = max_path_length
@@ -474,13 +470,15 @@ class KGQABaseDataset(InMemoryDataset):
                 # Setting up one-hot for PE
                 topic_entity_mask = torch.zeros(x.shape[0])
                 topic_entity_mask[q_entity_ids] = 1.
-                topic_entity_one_hot = F.one_hot(topic_entity_mask.long(), num_classes=2)
+                topic_entity_one_hot = F.one_hot(topic_entity_mask.long(),
+                                                 num_classes=2)
 
                 data.topic_entity_one_hot = topic_entity_one_hot.float()
 
                 data_list.append(data)
 
             self.save(data_list, path)
+
 
 class WebQSPDataset(KGQABaseDataset):
     r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
@@ -505,8 +503,8 @@ class WebQSPDataset(KGQABaseDataset):
                  force_reload: bool = False, use_pcst: bool = True,
                  subgraphrag: bool = False) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
-        super().__init__(dataset_name, root, split,
-                         force_reload, use_pcst, subgraphrag)
+        super().__init__(dataset_name, root, split, force_reload, use_pcst,
+                         subgraphrag)
 
 
 class CWQDataset(KGQABaseDataset):
@@ -532,5 +530,5 @@ class CWQDataset(KGQABaseDataset):
                  force_reload: bool = False, use_pcst: bool = True,
                  subgraphrag: bool = False) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
-        super().__init__(dataset_name, root, split,
-                         force_reload, use_pcst, subgraphrag)
+        super().__init__(dataset_name, root, split, force_reload, use_pcst,
+                         subgraphrag)
