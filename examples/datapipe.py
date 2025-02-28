@@ -10,16 +10,20 @@
 # DataPipe (i.e. for loading and parsing mesh data into PyG data objects).
 
 import argparse
+import csv
 import os.path as osp
 import time
+from itertools import chain, tee
 
 import torch
-from torch.utils.data.datapipes.iter import FileLister, FileOpener, IterableWrapper
 from torch.utils.data import IterDataPipe
-from torch_geometric.data import Data, download_url, extract_zip
+from torch.utils.data.datapipes.iter import (
+    FileLister,
+    FileOpener,
+    IterableWrapper,
+)
 
-import csv
-from itertools import chain, tee
+from torch_geometric.data import Data, download_url, extract_zip
 
 
 def molecule_datapipe() -> IterDataPipe:
@@ -31,8 +35,8 @@ def molecule_datapipe() -> IterDataPipe:
     datapipe = FileOpener([path], mode="rt")
     # Convert CSV rows into dictionaries, skipping the header row
     datapipe = datapipe.map(lambda file: (
-        dict(zip(["smiles", "activity", "HIV_active"], row)) for i, row in enumerate(csv.reader(file[1])) if i > 0 and row
-    ))
+        dict(zip(["smiles", "activity", "HIV_active"], row))
+        for i, row in enumerate(csv.reader(file[1])) if i > 0 and row))
 
     datapipe = IterableWrapper(chain.from_iterable(datapipe))
     datapipe = datapipe.parse_smiles(target_key='HIV_active')
@@ -51,7 +55,9 @@ class MeshOpener(IterDataPipe):
         for package in ['meshio', 'torch_cluster']:
             if importlib.util.find_spec(package) is None:
                 installed = False
-                print(f"This example requires the package {package} to be installed.")
+                print(
+                    f"This example requires the package {package} to be installed."
+                )
                 print(f"Please run: 'pip install {package}'")
         if not installed:
             exit()
@@ -67,7 +73,7 @@ class MeshOpener(IterDataPipe):
             try:
                 mesh = meshio.read(path)
             except Exception:
-                #print(f'Problem reading file "{path}", it will be skept') 
+                #print(f'Problem reading file "{path}", it will be skept')
                 continue
 
             pos = torch.from_numpy(mesh.points).to(torch.float)
