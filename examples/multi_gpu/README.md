@@ -2,6 +2,9 @@
 
 ## Examples with NVIDIA GPUs
 
+Note: We recommend the [NVIDIA PyG Container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags) for best results and easiest setup with NVIDIA GPUs
+
+
 ### Examples with CuGraph
 
 | Example                                                                        | Scalability | Description                                                                                                                                       |
@@ -21,7 +24,7 @@
 | [`papers100m_gcn_multinode.py`](./papers100m_gcn_multinode.py)                     | multi-node  | Example for training GNNs on a homogeneous graph on multiple nodes. (deprecated in favor of [`papers100m_gcn_cugraph_multinode.py`](./papers100m_gcn_cugraph_multinode.py))                                                                                                                     |
 | [`pcqm4m_ogb.py`](./pcqm4m_ogb.py)                                                 | single-node | Example for training GNNs for a graph-level regression task.                                                                                                                                                                                                                                    |
 | [`mag240m_graphsage.py`](./mag240m_graphsage.py)                                   | single-node | Example for training GNNs on a large heterogeneous graph.                                                                                                                                                                                                                                       |
-| [`taobao.py`](./taobao.py)                                                         | single-node | Example for training link prediction GNNs on a heterogeneous graph.                                                                                                                                                                                                                             |
+| [`taobao.py`](./taobao.py)                                                         | single-node | Example for training link prediction GNNs on a heterogeneous graph. We recommend scaling this up with [CuGraph](https://www.nvidia.com/en-us/on-demand/session/gtc24-s61197/), this CuGraph example shows how [taobao_mnmg.py](https://github.com/rapidsai/cugraph-gnn/blob/branch-25.04/python/cugraph-pyg/cugraph_pyg/examples/taobao_mnmg.py).                                                                                                                                                                        |
 | [`model_parallel.py`](./model_parallel.py)                                         | single-node | Example for model parallelism by manually placing layers on each GPU.                                                                                                                                                                                                                           |
 | [`data_parallel.py`](./data_parallel.py)                                           | single-node | Example for training GNNs on multiple graphs. Note that [`torch_geometric.nn.DataParallel`](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.data_parallel.DataParallel) is deprecated and [discouraged](https://github.com/pytorch/pytorch/issues/65936). |
 
