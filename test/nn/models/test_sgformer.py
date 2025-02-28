@@ -9,7 +9,7 @@ def test_sgformer():
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         [1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
     ])
-    batch = torch.tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
+    batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
 
     model = SGFormer(
         in_channels=16,
