@@ -53,13 +53,15 @@ class MeshOpener(IterDataPipe):
                 installed = False
                 print(f"This example requires the package {package} to be installed.")
                 print(f"Please run: 'pip install {package}'")
-        if not installed:    
+        if not installed:
             exit()
 
         super().__init__()
         self.dp = dp
 
     def __iter__(self):
+        import meshio
+
         for path in self.dp:
             category = osp.basename(path).split('_')[0]
             try:
@@ -106,18 +108,15 @@ if __name__ == '__main__':
     parser.add_argument('--task', default='molecule', choices=DATAPIPES.keys())
 
     args = parser.parse_args()
-    t = time.perf_counter()
+
     datapipe = DATAPIPES[args.task]()
 
     print('Example output:')
     print(next(iter(datapipe)))
-    print(f'Input Done! [{time.perf_counter() - t:.2f}s]')
 
     # Shuffling + Batching support:
-    t = time.perf_counter()
     datapipe = datapipe.shuffle()
     datapipe = datapipe.batch_graphs(batch_size=32)
-    print(f'Shuffling Done! [{time.perf_counter() - t:.2f}s]')
 
     # The first epoch will take longer than the remaining ones...
     print('Iterating over all data...')
@@ -131,4 +130,3 @@ if __name__ == '__main__':
     for batch in datapipe:
         pass
     print(f'Done! [{time.perf_counter() - t:.2f}s]')
-    
