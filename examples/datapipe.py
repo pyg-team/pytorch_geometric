@@ -73,7 +73,6 @@ class MeshOpener(IterDataPipe):
             try:
                 mesh = meshio.read(path)
             except Exception:
-                #print(f'Problem reading file "{path}", it will be skept')
                 continue
 
             pos = torch.from_numpy(mesh.points).to(torch.float)
