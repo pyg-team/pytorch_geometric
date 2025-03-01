@@ -1,9 +1,12 @@
 import argparse
 import os.path as osp
+import sys
 import time
 
+import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
+from sklearn.manifold import TSNE
 from torch.utils.tensorboard import SummaryWriter
 
 import torch_geometric.transforms as T
@@ -22,6 +25,7 @@ from torch_geometric.nn import (
     GraphUNet,
     Linear,
     MixHopConv,
+    Node2Vec,
     SGConv,
     SplineConv,
     SuperGATConv,
@@ -55,7 +59,7 @@ parser.add_argument(
     default='arma',
     choices=[
         'agnn', 'arma', 'mixhop', 'sgc', 'tagcn', 'graphunet', 'pmlp',
-        'splinegnn', 'gcn2', 'super_gat', 'dna', 'gat', 'gcn'
+        'splinegnn', 'gcn2', 'super_gat', 'dna', 'gat', 'gcn', 'node2vec'
     ],
     help='Model name.',
 )
@@ -436,14 +440,70 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             args.hidden_channels,
             dataset.num_classes,
         )
+    elif gnn_choice == 'node2vec':
+        model = Node2Vec(
+            data.edge_index,
+            embedding_dim=args.hidden_channels,
+            walk_length=20,
+            context_size=10,
+            walks_per_node=10,
+            num_negative_samples=1,
+            p=1.0,
+            q=1.0,
+            sparse=True,
+        )
     else:
         raise ValueError(f'Unsupported model type: {gnn_choice}')
     return model
 
 
+def get_optimizer(
+    gnn_choice: str,
+    model: torch.nn.Module,
+) -> torch.optim.Optimizer:
+    if gnn_choice == 'node2vec':
+        optimizer = torch.optim.SparseAdam(model.parameters(), lr=args.lr)
+    else:
+        optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
+                                     weight_decay=args.wd)
+    return optimizer
+
+
 model = get_model(args.gnn_choice).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
-                             weight_decay=args.wd)
+optimizer = get_optimizer(args.gnn_choice, model)
+if args.gnn_choice == 'node2vec':
+    num_workers = 4 if sys.platform == 'linux' else 0
+    loader = model.loader(batch_size=128, shuffle=True,
+                          num_workers=num_workers)
+
+
+def train_node2vec():
+    model.train()
+    total_loss = 0
+    for pos_rw, neg_rw in loader:
+        optimizer.zero_grad()
+        loss = model.loss(pos_rw.to(device), neg_rw.to(device))
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+    return total_loss / len(loader)
+
+
+@torch.no_grad()
+def test_node2vec():
+    model.eval()
+    z = model()
+    accs = []
+    for _, mask in data('train_mask', 'val_mask', 'test_mask'):
+        acc = model.test(
+            train_z=z[data.train_mask],
+            train_y=data.y[data.train_mask],
+            test_z=z[mask],
+            test_y=data.y[mask],
+            max_iter=150,
+        )
+        accs.append(acc)
+    return accs
 
 
 def train():
@@ -496,8 +556,12 @@ times = []
 best_val_acc = test_acc = 0
 for epoch in range(args.epochs):
     start = time.time()
-    train_loss = train()
-    train_acc, val_acc, tmp_test_acc = test()
+    if args.gnn_choice == 'node2vec':
+        train_loss = train_node2vec()
+        train_acc, val_acc, tmp_test_acc = test_node2vec()
+    else:
+        train_loss = train()
+        train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
@@ -511,3 +575,25 @@ for epoch in range(args.epochs):
     writer.add_scalar('Accuracy/test', test_acc, epoch)
 
 print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
+
+
+@torch.no_grad()
+def plot_points(colors):
+    model.eval()
+    z = model().cpu().numpy()
+    z = TSNE(n_components=2).fit_transform(z)
+    y = data.y.cpu().numpy()
+
+    plt.figure(figsize=(8, 8))
+    for i in range(dataset.num_classes):
+        plt.scatter(z[y == i, 0], z[y == i, 1], s=20, color=colors[i])
+    plt.axis('off')
+    plt.show()
+
+
+if args.gnn_choice == 'node2vec':
+    colors = [
+        '#ffc0cb', '#bada55', '#008080', '#420420', '#7fe5f0', '#065535',
+        '#ffd700'
+    ]
+    plot_points(colors)
