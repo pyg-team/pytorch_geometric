@@ -13,12 +13,14 @@ from torch_geometric.nn import (
     AGNNConv,
     ARMAConv,
     BatchNorm,
+    DNAConv,
     GCN2Conv,
     GraphUNet,
     Linear,
     MixHopConv,
     SGConv,
     SplineConv,
+    SuperGATConv,
     TAGConv,
 )
 from torch_geometric.typing import WITH_TORCH_SPLINE_CONV
@@ -49,7 +51,7 @@ parser.add_argument(
     default='arma',
     choices=[
         'agnn', 'arma', 'mixhop', 'sgc', 'tagcn', 'graphunet', 'pmlp',
-        'splinegnn', 'gcn2'
+        'splinegnn', 'gcn2', 'super_gat', 'dna'
     ],
     help='Model name.',
 )
@@ -236,6 +238,59 @@ class GCN2(torch.nn.Module):
         return x.log_softmax(dim=-1)
 
 
+class SuperGAT(torch.nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+
+        self.conv1 = SuperGATConv(in_channels, 8, heads=8, dropout=0.6,
+                                  attention_type='MX', edge_sample_ratio=0.8,
+                                  is_undirected=True)
+        self.conv2 = SuperGATConv(8 * 8, out_channels, heads=8, concat=False,
+                                  dropout=0.6, attention_type='MX',
+                                  edge_sample_ratio=0.8, is_undirected=True)
+
+    def forward(self, x, edge_index):
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = F.elu(self.conv1(x, edge_index))
+        att_loss = self.conv1.get_attention_loss()
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = self.conv2(x, data.edge_index)
+        att_loss += self.conv2.get_attention_loss()
+        return F.log_softmax(x, dim=-1), att_loss
+
+
+class DNA(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
+                 heads=1, groups=1):
+        super().__init__()
+        self.hidden_channels = hidden_channels
+        self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
+        self.convs = torch.nn.ModuleList()
+        for i in range(num_layers):
+            self.convs.append(
+                DNAConv(hidden_channels, heads, groups, dropout=0.8))
+        self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
+
+    def reset_parameters(self):
+        self.lin1.reset_parameters()
+        for conv in self.convs:
+            conv.reset_parameters()
+        self.lin2.reset_parameters()
+
+    def forward(self, x, edge_index):
+        x = F.relu(self.lin1(x))
+        x = F.dropout(x, p=0.5, training=self.training)
+        x_all = x.view(-1, 1, self.hidden_channels)
+        for conv in self.convs:
+            x = F.relu(conv(x_all, edge_index))
+            x = x.view(-1, 1, self.hidden_channels)
+            x_all = torch.cat([x_all, x], dim=1)
+        x = x_all[:, -1]
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = self.lin2(x)
+        return torch.log_softmax(x, dim=1)
+
+
 def get_model(gnn_choice: str) -> torch.nn.Module:
     if gnn_choice == 'agnn':
         model = AGNN(
@@ -299,6 +354,20 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             shared_weights=True,
             dropout=0.6,
         )
+    elif gnn_choice == 'super_gat':
+        model = SuperGAT(
+            dataset.num_features,
+            dataset.num_classes,
+        )
+    elif gnn_choice == 'dna':
+        model = DNA(
+            dataset.num_features,
+            args.hidden_channels,
+            dataset.num_classes,
+            num_layers=5,
+            heads=8,
+            groups=16,
+        )
     else:
         raise ValueError(f'Unsupported model type: {gnn_choice}')
     return model
@@ -312,13 +381,20 @@ optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
 def train():
     model.train()
     optimizer.zero_grad()
+    # forward
     if args.gnn_choice == 'splinegnn':
         out = model(data.x, data.edge_index, data.edge_attr)
-    if args.gnn_choice == 'gcn2':
+    elif args.gnn_choice == 'gcn2':
         out = model(data.x, data.adj_t)
+    elif args.gnn_choice == 'super_gat':
+        out, att_loss = model(data.x, data.edge_index)
     else:
         out = model(data.x, data.edge_index)
+    # loss
     loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
+    if args.gnn_choice == 'super_gat':
+        loss += 4.0 * att_loss
+    # backward
     loss.backward()
     optimizer.step()
     return loss
@@ -328,12 +404,16 @@ def train():
 def test():
     model.eval()
     accs = []
+    # forward
     if args.gnn_choice == 'splinegnn':
         out = model(data.x, data.edge_index, data.edge_attr)
-    if args.gnn_choice == 'gcn2':
+    elif args.gnn_choice == 'gcn2':
         out = model(data.x, data.adj_t)
+    elif args.gnn_choice == 'super_gat':
+        out, _ = model(data.x, data.edge_index)
     else:
         out = model(data.x, data.edge_index)
+    # accuracy
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
         pred = out[mask].argmax(1)
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
