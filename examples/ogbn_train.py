@@ -38,7 +38,7 @@ parser.add_argument(
     type=str.lower,
     default='SGFormer',
     choices=['sage', 'gat', 'sgformer'],
-    help="Model used for training, default SGFormer",
+    help="Model used for training",
 )
 
 parser.add_argument('-e', '--epochs', type=int, default=50)
