@@ -20,9 +20,9 @@ class Node2Vec(torch.nn.Module):
 
     .. note::
 
-        For an example of using Node2Vec, see `examples/node2vec.py
+        For an example of using Node2Vec, see `examples/planetoid_train.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        node2vec.py>`_.
+        planetoid_train.py>`_.
 
     Args:
         edge_index (torch.Tensor): The edge indices.

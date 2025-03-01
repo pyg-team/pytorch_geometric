@@ -44,7 +44,7 @@ parser.add_argument(
     '--dataset',
     type=str,
     default='Cora',
-    choices=['Cora'],
+    choices=['Cora', 'CiteSeer', 'PubMed'],
     help='Dataset name.',
 )
 parser.add_argument(
@@ -72,6 +72,8 @@ parser.add_argument('--wd', type=float, default=5e-5)
 parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
+
+wall_clock_start = time.perf_counter()
 seed_everything(123)
 
 # detect device
@@ -111,6 +113,7 @@ if args.gnn_choice == 'gcn2':
     transform_lst.extend([T.GCNNorm(), T.ToSparseTensor()])
 
 root = osp.join(args.dataset_dir, args.dataset)
+print(f'The root is: {root}')
 dataset = Planetoid(root, args.dataset, transform=T.Compose(transform_lst))
 data = dataset[0].to(device)
 
@@ -549,11 +552,15 @@ def test():
     return accs
 
 
+print(f'Total time before training begins took '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
+print('Training...')
+
 # add tensorboard
 writer = SummaryWriter()
 
 times = []
-best_val_acc = test_acc = 0
+best_val_acc = test_acc = 0.
 for epoch in range(args.epochs):
     start = time.time()
     if args.gnn_choice == 'node2vec':
@@ -574,7 +581,12 @@ for epoch in range(args.epochs):
     writer.add_scalar('Accuracy/val', val_acc, epoch)
     writer.add_scalar('Accuracy/test', test_acc, epoch)
 
-print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
+print(f'Average Epoch Time: {torch.tensor(times).mean():.4f}s')
+print(f'Median Epoch Time: {torch.tensor(times).median():.4f}s')
+print(f'Best Validation Accuracy: {100.0 * best_val_acc:.2f}%')
+print(f'Test Accuracy: {100.0 * test_acc:.2f}%')
+print(f'Total Program Runtime: '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
 
 
 @torch.no_grad()
