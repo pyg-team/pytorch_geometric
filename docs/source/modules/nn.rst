@@ -157,6 +157,13 @@ Finally, we added full support for customization of aggregations into the :class
      {{ name }}
    {% endfor %}
 
+Attention
+---------
+
+.. automodule:: torch_geometric.nn.attention
+   :members:
+   :undoc-members:
+
 Normalization Layers
 --------------------
 
