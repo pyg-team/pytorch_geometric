@@ -44,6 +44,8 @@ parser.add_argument(
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
+parser.add_argument('-le', '--local_epochs', type=int, default=50,
+                    help='warmup epochs for polynormer')
 parser.add_argument('--num_layers', type=int, default=7)
 parser.add_argument('--num_heads', type=int, default=1,
                     help='number of heads for GAT or Graph Transformer model.')
@@ -80,6 +82,8 @@ print(f'Training {args.dataset} with {args.gnn_choice} model.')
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = args.epochs
+if 'polynormer' in args.gnn_choice:
+    num_epochs += args.local_epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
 num_hidden_channels = args.hidden_channels
@@ -128,6 +132,9 @@ def train(epoch: int) -> tuple[Tensor, float]:
     for batch in train_loader:
         optimizer.zero_grad()
         if 'graph_transformer' in args.gnn_choice:
+            if 'polynormer' in args.gnn_choice and epoch == args.local_epochs:
+                print('start global attention')
+                model._global = True
             out = model(batch.x, batch.edge_index.to(device),
                         batch.batch.to(device))[:batch.batch_size]
         else:
