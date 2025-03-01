@@ -14,7 +14,7 @@ from torch_geometric.data import (
 class CityNetwork(InMemoryDataset):
     r"""The City-Networks are introduced in 
     `"Towards quantifying long-range interactions in graph machine learning"
-    <https://arxiv.org/abs/1811.05868>`_ paper.
+    <https://arxiv.org/abs/>`_ paper.
     The dataset contains four city networks: `paris`, `shanghai`, `la`, and 'london', 
     where nodes represent junctions and edges represent directed road segments.
     The task is to predict each node's eccentricity score, which is approximated 
