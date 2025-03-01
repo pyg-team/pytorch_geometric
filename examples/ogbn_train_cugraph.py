@@ -157,6 +157,10 @@ def test(model, loader):
 if __name__ == '__main__':
     args = arg_parse()
     torch_geometric.seed_everything(123)
+    # TODO: Add support for disjoint sampling
+    if args.model in ['SGFormer', 'Polynormer']:
+        raise ValueError(
+            "Disjoint sampling is currently unsupported in cugraph_pyg")
     if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
                                           (1024**3)) < 390:
         print("Warning: may not have enough RAM to use this many GPUs.")

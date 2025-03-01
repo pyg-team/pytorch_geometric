@@ -323,6 +323,10 @@ if __name__ == '__main__':
 
     args = arg_parse()
     seed_everything(123)
+    # TODO: Add support for disjoint sampling
+    if args.model in ['SGFormer', 'Polynormer']:
+        raise ValueError(
+            "Disjoint sampling is currently unsupported in cugraph_pyg")
     wall_clock_start = time.perf_counter()
 
     root = osp.join(args.dataset_dir, args.dataset_subdir)

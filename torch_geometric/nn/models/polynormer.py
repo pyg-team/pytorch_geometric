@@ -57,7 +57,7 @@ class Polynormer(torch.nn.Module):
         local_attn: bool = False,
     ) -> None:
         super().__init__()
-        self._global = True
+        self._global = False
         self.in_drop = in_dropout
         self.dropout = dropout
         self.pre_ln = pre_ln
@@ -133,6 +133,8 @@ class Polynormer(torch.nn.Module):
     def reset_parameters(self) -> None:
         for local_conv in self.local_convs:
             local_conv.reset_parameters()
+        for attn in self.global_attn:
+            attn.reset_parameters()
         for lin in self.lins:
             lin.reset_parameters()
         for h_lin in self.h_lins:

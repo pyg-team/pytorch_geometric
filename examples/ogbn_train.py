@@ -37,13 +37,16 @@ parser.add_argument(
     '--gnn_choice',
     type=str,
     default='sgformer',
-    choices=['gat', 'graphsage', 'sgformer', 'polynormer'],
+    choices=[
+        'gat', 'graphsage', 'graph_transformer_sgformer',
+        'graph_transformer_polynormer'
+    ],
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('--num_layers', type=int, default=7)
 parser.add_argument('--num_heads', type=int, default=1,
-                    help='number of heads for GAT ot GT model.')
+                    help='number of heads for GAT or Graph Transformer model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
@@ -96,36 +99,23 @@ if args.add_self_loop:
 
 data.to(device, 'x', 'y')
 
-train_loader = NeighborLoader(
-    data,
-    input_nodes=split_idx['train'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
-    disjoint=args.gnn_choice == "polynormer",
-)
-val_loader = NeighborLoader(
-    data,
-    input_nodes=split_idx['valid'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
-    disjoint=args.gnn_choice == "polynormer",
-)
-test_loader = NeighborLoader(
-    data,
-    input_nodes=split_idx['test'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
-    disjoint=args.gnn_choice == "polynormer",
-)
+
+def get_loader(input_nodes: dict[str, Tensor]) -> NeighborLoader:
+    return NeighborLoader(
+        data,
+        input_nodes=input_nodes,
+        num_neighbors=[args.fan_out] * num_layers,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        persistent_workers=True,
+        disjoint='graph_transformer' in args.gnn_choice,
+    )
+
+
+train_loader = get_loader(split_idx['train'])
+val_loader = get_loader(split_idx['valid'])
+test_loader = get_loader(split_idx['test'])
 
 
 def train(epoch: int) -> tuple[Tensor, float]:
@@ -137,7 +127,7 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        if args.gnn_choice == 'polynormer':
+        if 'graph_transformer' in args.gnn_choice:
             out = model(batch.x, batch.edge_index.to(device),
                         batch.batch.to(device))[:batch.batch_size]
         else:
@@ -166,7 +156,7 @@ def test(loader: NeighborLoader) -> float:
     for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
-        if args.gnn_choice == 'polynormer':
+        if 'graph_transformer' in args.gnn_choice:
             out = model(batch.x, batch.edge_index,
                         batch.batch)[:batch.batch_size]
         else:
@@ -198,7 +188,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             out_channels=dataset.num_classes,
             dropout=args.dropout,
         )
-    elif gnn_choice == 'sgformer':
+    elif gnn_choice == 'graph_transformer_sgformer':
         model = SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -208,7 +198,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             gnn_num_layers=num_layers,
             gnn_dropout=args.dropout,
         )
-    elif gnn_choice == 'polynormer':
+    elif gnn_choice == 'graph_transformer_polynormer':
         model = Polynormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
