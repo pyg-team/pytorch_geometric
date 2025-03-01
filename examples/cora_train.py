@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -8,13 +9,16 @@ from torch.utils.tensorboard import SummaryWriter
 import torch_geometric.transforms as T
 from torch_geometric import seed_everything
 from torch_geometric.datasets import Planetoid
+from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import (
     PMLP,
     AGNNConv,
     ARMAConv,
     BatchNorm,
     DNAConv,
+    GATConv,
     GCN2Conv,
+    GCNConv,
     GraphUNet,
     Linear,
     MixHopConv,
@@ -51,7 +55,7 @@ parser.add_argument(
     default='arma',
     choices=[
         'agnn', 'arma', 'mixhop', 'sgc', 'tagcn', 'graphunet', 'pmlp',
-        'splinegnn', 'gcn2', 'super_gat', 'dna'
+        'splinegnn', 'gcn2', 'super_gat', 'dna', 'gat', 'gcn'
     ],
     help='Model name.',
 )
@@ -61,6 +65,8 @@ parser.add_argument('--num_test', type=int, default=500)
 parser.add_argument('--hidden_channels', type=int, default=128)
 parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--wd', type=float, default=5e-5)
+parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
+parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 seed_everything(123)
 
@@ -72,14 +78,31 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
 else:
     device = torch.device('cpu')
 
+# init wandb
+init_wandb(name=f'{args.gnn_choice}-{args.dataset}', epochs=args.epochs,
+           hidden_channels=args.hidden_channels, lr=args.lr, device=device)
+
 # define dataset, default train=140, val=500, test=1000
 print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 transform_lst = [
     T.RandomNodeSplit(num_val=args.num_val, num_test=args.num_test),
-    T.TargetIndegree(),
     T.NormalizeFeatures(),
 ]
+
+if args.use_gdc:
+    transform_lst.append(
+        T.GDC(
+            self_loop_weight=1,
+            normalization_in='sym',
+            normalization_out='col',
+            diffusion_kwargs=dict(method='ppr', alpha=0.05),
+            sparsification_kwargs=dict(method='topk', k=128, dim=0),
+            exact=True,
+        ))
+else:
+    transform_lst.append(T.TargetIndegree())
+
 if args.gnn_choice == 'gcn2':
     transform_lst.extend([T.GCNNorm(), T.ToSparseTensor()])
 
@@ -291,6 +314,38 @@ class DNA(torch.nn.Module):
         return torch.log_softmax(x, dim=1)
 
 
+class GAT(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, heads):
+        super().__init__()
+        self.conv1 = GATConv(in_channels, hidden_channels, heads, dropout=0.6)
+        # On the Pubmed dataset, use `heads` output heads in `conv2`.
+        self.conv2 = GATConv(hidden_channels * heads, out_channels, heads=1,
+                             concat=False, dropout=0.6)
+
+    def forward(self, x, edge_index):
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = F.elu(self.conv1(x, edge_index))
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = self.conv2(x, edge_index)
+        return x
+
+
+class GCN(torch.nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels):
+        super().__init__()
+        self.conv1 = GCNConv(in_channels, hidden_channels,
+                             normalize=not args.use_gdc)
+        self.conv2 = GCNConv(hidden_channels, out_channels,
+                             normalize=not args.use_gdc)
+
+    def forward(self, x, edge_index, edge_weight=None):
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = self.conv1(x, edge_index, edge_weight).relu()
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = self.conv2(x, edge_index, edge_weight)
+        return x
+
+
 def get_model(gnn_choice: str) -> torch.nn.Module:
     if gnn_choice == 'agnn':
         model = AGNN(
@@ -368,6 +423,19 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             heads=8,
             groups=16,
         )
+    elif gnn_choice == 'gat':
+        model = GAT(
+            dataset.num_features,
+            args.hidden_channels,
+            dataset.num_classes,
+            heads=8,
+        )
+    elif gnn_choice == 'gcn':
+        model = GCN(
+            dataset.num_features,
+            args.hidden_channels,
+            dataset.num_classes,
+        )
     else:
         raise ValueError(f'Unsupported model type: {gnn_choice}')
     return model
@@ -382,7 +450,7 @@ def train():
     model.train()
     optimizer.zero_grad()
     # forward
-    if args.gnn_choice == 'splinegnn':
+    if args.gnn_choice in ['splinegnn', 'gcn']:
         out = model(data.x, data.edge_index, data.edge_attr)
     elif args.gnn_choice == 'gcn2':
         out = model(data.x, data.adj_t)
@@ -405,7 +473,7 @@ def test():
     model.eval()
     accs = []
     # forward
-    if args.gnn_choice == 'splinegnn':
+    if args.gnn_choice in ['splinegnn', 'gcn']:
         out = model(data.x, data.edge_index, data.edge_attr)
     elif args.gnn_choice == 'gcn2':
         out = model(data.x, data.adj_t)
@@ -421,20 +489,25 @@ def test():
     return accs
 
 
+# add tensorboard
 writer = SummaryWriter()
 
+times = []
 best_val_acc = test_acc = 0
 for epoch in range(args.epochs):
+    start = time.time()
     train_loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
-    print(
-        f'Epoch: {epoch:03d}, Loss: {train_loss:.4f}, Train: {train_acc:.4f}, '
-        f'Val: {best_val_acc:.4f}, Test: {test_acc:.4f}')
+    log(Epoch=epoch, Loss=f'{train_loss:.4f}', Train=f'{train_acc:.4f}',
+        Val=f'{best_val_acc:.4f}', Test=f'{test_acc:.4f}')
+    times.append(time.time() - start)
 
     writer.add_scalar('Loss/train', train_loss, epoch)
     writer.add_scalar('Accuracy/train', train_acc, epoch)
     writer.add_scalar('Accuracy/val', val_acc, epoch)
     writer.add_scalar('Accuracy/test', test_acc, epoch)
+
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
