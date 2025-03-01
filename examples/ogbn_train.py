@@ -34,12 +34,13 @@ parser.add_argument(
     help='Root directory of dataset.',
 )
 parser.add_argument(
-    '--gnn_choice',
-    type=str,
-    default='sgformer',
-    choices=['gat', 'graphsage', 'sgformer'],
-    help='Model name.',
+    "--model",
+    type=str.lower,
+    default='SGFormer',
+    choices=['sage', 'gat', 'sgformer'],
+    help="Model used for training, default SGFormer",
 )
+
 parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=1,
@@ -72,7 +73,7 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-print(f'Training {args.dataset} with {args.gnn_choice} model.')
+print(f'Training {args.dataset} with {args.model} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -104,7 +105,7 @@ train_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
-    disjoint=args.gnn_choice == "sgformer",
+    disjoint=args.model == "sgformer",
 )
 val_loader = NeighborLoader(
     data,
@@ -114,7 +115,7 @@ val_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
-    disjoint=args.gnn_choice == "sgformer",
+    disjoint=args.model == "sgformer",
 )
 test_loader = NeighborLoader(
     data,
@@ -124,7 +125,7 @@ test_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
-    disjoint=args.gnn_choice == "sgformer",
+    disjoint=args.model == "sgformer",
 )
 
 
@@ -137,7 +138,7 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        if args.gnn_choice == "sgformer":
+        if args.model == "sgformer":
             out = model(batch.x, batch.edge_index.to(device),
                         batch.batch.to(device))[:batch.batch_size]
         else:
@@ -166,7 +167,7 @@ def test(loader: NeighborLoader) -> float:
     for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
-        if args.gnn_choice == "sgformer":
+        if args.model == "sgformer":
             out = model(batch.x, batch.edge_index,
                         batch.batch)[:batch.batch_size]
         else:
@@ -180,8 +181,8 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-def get_model(gnn_choice: str) -> torch.nn.Module:
-    if gnn_choice == 'gat':
+def get_model(model_name: str) -> torch.nn.Module:
+    if model_name == 'gat':
         model = GAT(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -190,7 +191,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             dropout=args.dropout,
             heads=args.num_heads,
         )
-    elif gnn_choice == 'graphsage':
+    elif model_name == 'sage':
         model = GraphSAGE(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -198,7 +199,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             out_channels=dataset.num_classes,
             dropout=args.dropout,
         )
-    elif gnn_choice == 'sgformer':
+    elif model_name == 'sgformer':
         model = SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -209,12 +210,12 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             gnn_dropout=args.dropout,
         )
     else:
-        raise ValueError(f'Unsupported model type: {gnn_choice}')
+        raise ValueError(f'Unsupported model type: {model_name}')
 
     return model
 
 
-model = get_model(args.gnn_choice).to(device)
+model = get_model(args.model).to(device)
 model.reset_parameters()
 optimizer = torch.optim.Adam(
     model.parameters(),
