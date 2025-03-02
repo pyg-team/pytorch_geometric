@@ -104,6 +104,7 @@ if args.add_self_loop:
 
 data.to(device, 'x', 'y')
 
+
 def get_loader(input_nodes: dict[str, Tensor]) -> NeighborLoader:
     return NeighborLoader(
         data,
