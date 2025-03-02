@@ -79,7 +79,7 @@ def main(args):
 
     dataset = PygNodePropPredDataset(f'ogbn-{dataset_name}', root=root)
     split_idx = dataset.get_idx_split()
-    data = dataset[0]
+    data = dataset._data
 
     tag_dataset = TAGDataset(root, dataset, hf_model,
                              token_on_disk=token_on_disk)
