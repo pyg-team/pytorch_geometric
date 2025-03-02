@@ -32,6 +32,7 @@ from .g_retriever import GRetriever
 from .git_mol import GITMol
 from .molecule_gpt import MoleculeGPT
 from .glem import GLEM
+from .sgformer import SGFormer
 from .token_gt import TokenGT
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
@@ -83,5 +84,6 @@ __all__ = classes = [
     'GITMol',
     'MoleculeGPT',
     'GLEM',
+    'SGFormer',
     'TokenGT',
 ]
