@@ -73,6 +73,7 @@ class MeshOpener(IterDataPipe):
             try:
                 mesh = meshio.read(path)
             except Exception:
+                # Failed to read the file because it is not in the expected OFF format
                 continue
 
             pos = torch.from_numpy(mesh.points).to(torch.float)
