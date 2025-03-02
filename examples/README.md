@@ -25,6 +25,10 @@ For examples on co-training LLMs with GNNs, see the examples under [`examples/ll
 
 # Results
 
+```
+python examples/planetoid_train.py --gnn_choice {model} --dataset {dataset}
+```
+
 | Model     | Cora       | CiteSeer   | PubMed     |
 | --------- | ---------- | ---------- | ---------- |
 | GCN       | 83.80%     | 72.40%     | 87.20%     |
