@@ -35,14 +35,15 @@ parser.add_argument(
 )
 parser.add_argument(
     '--gnn_choice',
-    type=str,
+    type=str.lower,
     default='sgformer',
     choices=[
-        'gat', 'graphsage', 'graph_transformer_sgformer',
+        'gat', 'sage', 'graph_transformer_sgformer',
         'graph_transformer_polynormer'
     ],
-    help='Model name.',
+    help='Model used for training.',
 )
+
 parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('-le', '--local_epochs', type=int, default=50,
                     help='warmup epochs for polynormer')
@@ -77,7 +78,7 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-print(f'Training {args.dataset} with {args.gnn_choice} model.')
+print(f'Training {args.dataset} with {args.model} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -102,7 +103,6 @@ if args.add_self_loop:
                                         num_nodes=data.num_nodes)
 
 data.to(device, 'x', 'y')
-
 
 def get_loader(input_nodes: dict[str, Tensor]) -> NeighborLoader:
     return NeighborLoader(
@@ -177,8 +177,8 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-def get_model(gnn_choice: str) -> torch.nn.Module:
-    if gnn_choice == 'gat':
+def get_model(model_name: str) -> torch.nn.Module:
+    if model_name == 'gat':
         model = GAT(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -187,7 +187,7 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             dropout=args.dropout,
             heads=args.num_heads,
         )
-    elif gnn_choice == 'graphsage':
+    elif model_name == 'sage':
         model = GraphSAGE(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -213,12 +213,12 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             local_layers=num_layers,
         )
     else:
-        raise ValueError(f'Unsupported model type: {gnn_choice}')
+        raise ValueError(f'Unsupported model type: {model_name}')
 
     return model
 
 
-model = get_model(args.gnn_choice).to(device)
+model = get_model(args.model).to(device)
 model.reset_parameters()
 optimizer = torch.optim.Adam(
     model.parameters(),
