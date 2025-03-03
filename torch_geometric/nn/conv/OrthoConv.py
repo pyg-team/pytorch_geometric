@@ -208,8 +208,9 @@ class HermitianGCNConv(MessagePassing):
                              f"out_channels = {out_channels}")
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=False)
         # below is used for counting the number of parameters
-        self.lin.weight.upper_triangular_params=in_channels*(in_channels-1)//2
-
+        self.lin.weight.upper_triangular_params = (
+            in_channels * (in_channels - 1) // 2
+        )
         if bias:
             self.bias = torch.nn.Parameter(torch.zeros(out_channels))
         else:
