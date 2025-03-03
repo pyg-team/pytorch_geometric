@@ -41,7 +41,7 @@ def molecule_datapipe() -> IterDataPipe:
     datapipe = IterableWrapper(chain.from_iterable(datapipe))
     datapipe = datapipe.parse_smiles(target_key='HIV_active')
 
-    _, cached_datapipe = tee(datapipe)
+    cached_datapipe, = tee(datapipe, 1)
     datapipe = IterableWrapper(cached_datapipe)
     return datapipe
 
@@ -97,7 +97,7 @@ def mesh_datapipe() -> IterDataPipe:
     datapipe = FileLister([root_dir], masks='*.off', recursive=True)
     datapipe = datapipe.filter(is_train)
     datapipe = datapipe.read_mesh()
-    _, cached_datapipe = tee(datapipe)
+    cached_datapipe, = tee(datapipe, 1)
     datapipe = IterableWrapper(cached_datapipe)
     datapipe = datapipe.sample_points(1024)  # Use PyG transforms from here.
     datapipe = datapipe.knn_graph(k=8)
