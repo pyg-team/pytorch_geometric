@@ -122,10 +122,10 @@ class OrthoConv(nn.Module):
             Runs the forward pass of the module.
     """
     def __init__(self, dim_in,
-                 dim_out = None,
-                 bias = True,
-                 T = 12,
-                 use_lie = False,
+                 dim_out=None,
+                 bias=True,
+                 T=12,
+                 use_lie=False,
                  **kwargs):
         super().__init__()
         self.dim_in = dim_in
@@ -155,7 +155,7 @@ class OrthoConv(nn.Module):
                              f"Got dim_out={dim_out}.")
 
 
-        self.model = TaylorGCNConv(base_conv(dim_in, dim_out, **kwargs), T = T)
+        self.model = TaylorGCNConv(base_conv(dim_in, dim_out, **kwargs), T=T)
 
     def forward(self, x, edge_index):
         x = self.model(x, edge_index)
