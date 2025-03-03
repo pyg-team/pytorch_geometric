@@ -61,11 +61,11 @@ class OrthoConv(nn.Module):
     There are two variants:
 
     * **OrthoConv** (`use_lie=False`):
-      An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and 
+      An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and
       a feature matrix
-      :math:`X \in \mathbb{R}^{n \times d}` are used along with a trainable 
+      :math:`X \in \mathbb{R}^{n \times d}` are used along with a trainable
       weight matrix
-      :math:`W \in \mathbb{R}^{d \times d'}` and 
+      :math:`W \in \mathbb{R}^{d \times d'}` and
       bias :math:`b \in \mathbb{R}^{d'}`. The operator is defined as
 
       .. math::
@@ -82,23 +82,31 @@ class OrthoConv(nn.Module):
       must match and the weight matrix is skew-symmetric:
 
       .. math::
-         f_{Uconv}(X) = \exp(g_{conv}(X)) + b, \quad \text{with} \quad g_{conv}(X) = AXW,
+         f_{Uconv}(X) = \exp(g_{conv}(X)) + b,
+         \quad \text{with} \quad g_{conv}(X) = AXW,
          \quad \text{and} \quad W + W^\top = 0.
 
-      **Important:** In this variant, the input dimension must equal the output dimension.
+      **Important:** In this variant, the input dimension must equal
+      the output dimension.
 
     Args:
-        dim_in (int): Size of each input sample (number of input channels).
-        dim_out (int, optional): Size of each output sample (number of output channels).
-            For OrthoConv (i.e. `use_lie=False`), this must be even. If not specified,
-            defaults to `dim_in`.
-        bias (bool, optional): If False, the layer will not learn an additive bias.
+        dim_in (int): Size of each input sample
+        (number of input channels).
+        dim_out (int, optional): Size of each output sample
+        (number of output channels).
+            For OrthoConv (i.e. `use_lie=False`), this must be even.
+            If not specified, defaults to `dim_in`.
+        bias (bool, optional): If False, the layer will not
+        learn an additive bias.
             (default: True)
-        T (int, optional): Number of Taylor series terms used to approximate the matrix
+        T (int, optional): Number of Taylor series terms used
+        to approximate the matrix
             exponential. (default: 12)
-        use_lie (bool, optional): If True, implements Lie OrthoConv; otherwise, it implements
+        use_lie (bool, optional): If True,
+        implements Lie OrthoConv; otherwise, it implements
             OrthoConv. (default: False)
-        **kwargs: Additional arguments passed to the underlying MessagePassing layer.
+        **kwargs: Additional arguments passed to the
+        underlying MessagePassing layer.
 
     Shapes:
         - **Input:** node features of shape :math:`(|\mathcal{V}|, F_{\text{in}})` and edge
