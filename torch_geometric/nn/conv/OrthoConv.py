@@ -48,7 +48,6 @@ def block_diagonal_init(weight_matrix, block_size=2, bound=0.5):
     return weight_matrix
 
 
-
 class OrthoConv(nn.Module):
     r"""OrthoConv Layer.
 
