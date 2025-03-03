@@ -55,10 +55,8 @@ class MeshOpener(IterDataPipe):
         for package in ['meshio', 'torch_cluster']:
             if importlib.util.find_spec(package) is None:
                 installed = False
-                print(
-                    f"This example requires the package {package} "
-                    f"to be installed."
-                )
+                print(f"This example requires the package {package} "
+                      f"to be installed.")
                 print(f"Please run: 'pip install {package}'")
         if not installed:
             exit()
