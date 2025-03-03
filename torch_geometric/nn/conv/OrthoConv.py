@@ -335,7 +335,6 @@ class ComplexToRealGCNConv(MessagePassing):
         if self.bias is not None:
             zeros(self.bias)
 
-
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None,
                 apply_feature_lin: bool = True,
@@ -347,7 +346,6 @@ class ComplexToRealGCNConv(MessagePassing):
                              f"does not support bipartite message passing. "
                              f"Please try other layers such as 'SAGEConv' or "
                              f"'GraphConv' instead")
-
 
         if apply_feature_lin:
             x = self.lin(x)
@@ -406,12 +404,12 @@ class TaylorGCNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None, **kwargs) -> Tensor:
         x = self.conv(x, edge_index, edge_weight,
-                      apply_feature_lin = True,
-                      return_feature_only = True)
+                      apply_feature_lin=True,
+                      return_feature_only=True)
         x_k = x.clone()  # Create a copy of the input tensor
 
         for k in range(self.T):
-            x_k = self.conv(x_k, edge_index, edge_weight, apply_feature_lin = False, **kwargs) / (k+1)
+            x_k = self.conv(x_k, edge_index, edge_weight, apply_feature_lin=False, **kwargs) / (k+1)
             x += x_k
         return x
 
