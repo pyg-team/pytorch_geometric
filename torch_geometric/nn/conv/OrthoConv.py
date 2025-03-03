@@ -17,6 +17,7 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
     torch_sparse,
+    Adj,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import set_sparse_value
