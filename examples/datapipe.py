@@ -56,7 +56,8 @@ class MeshOpener(IterDataPipe):
             if importlib.util.find_spec(package) is None:
                 installed = False
                 print(
-                    f"This example requires the package {package} to be installed."
+                    f"This example requires the package {package} "
+                    f"to be installed."
                 )
                 print(f"Please run: 'pip install {package}'")
         if not installed:
@@ -73,7 +74,8 @@ class MeshOpener(IterDataPipe):
             try:
                 mesh = meshio.read(path)
             except Exception:
-                # Failed to read the file because it is not in the expected OFF format
+                # Failed to read the file because it is not in
+                # the expected OFF format
                 continue
 
             pos = torch.from_numpy(mesh.points).to(torch.float)
