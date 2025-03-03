@@ -407,7 +407,6 @@ class TaylorGCNConv(MessagePassing):
         self.T = T
 
     def forward(self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None, **kwargs) -> Tensor:
-        c = 1.
         x = self.conv(x, edge_index, edge_weight,
                       apply_feature_lin = True,
                       return_feature_only = True)
