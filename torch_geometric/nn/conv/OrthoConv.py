@@ -51,32 +51,34 @@ def block_diagonal_init(weight_matrix, block_size=2, bound=0.5):
 class OrthoConv(nn.Module):
     r"""OrthoConv Layer.
 
-    The **OrthoConv Layer** implements an equivariant graph convolution 
+    The **OrthoConv Layer** implements an equivariant graph convolution
     that is orthogonal (i.e., norm preserving and invertible) as described
     in the [“Unitary Convolutions for Learning on Graphs and Groups”]
-    (https://arxiv.org/abs/2410.05499) paper. The layer is designed to 
-    work entirely with real numbers by pairing components to represent 
+    (https://arxiv.org/abs/2410.05499) paper. The layer is designed to
+    work entirely with real numbers by pairing components to represent
     complex values.
 
     There are two variants:
 
-    * **OrthoConv** (`use_lie=False`):  
-      An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and a feature matrix
-      :math:`X \in \mathbb{R}^{n \times d}` are used along with a trainable weight matrix
-      :math:`W \in \mathbb{R}^{d \times d'}` and bias :math:`b \in \mathbb{R}^{d'}`.
-      The operator is defined as
+    * **OrthoConv** (`use_lie=False`):
+      An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and 
+      a feature matrix
+      :math:`X \in \mathbb{R}^{n \times d}` are used along with a trainable 
+      weight matrix
+      :math:`W \in \mathbb{R}^{d \times d'}` and 
+      bias :math:`b \in \mathbb{R}^{d'}`. The operator is defined as
 
       .. math::
          f_{Uconv}(X) = \exp(iA) \, XW + b,
 
-      where the matrix exponential is computed over :math:`iA` and 
-      normalization of :math:`A` is handled internally. 
+      where the matrix exponential is computed over :math:`iA` and
+      normalization of :math:`A` is handled internally.
       **Important:** The output dimension must be even since real
       numbers are paired to represent complex numbers.
 
     * **Lie OrthoConv** (`use_lie=True`):
-      The transformation is constrained to the Lie algebra of 
-      the orthogonal group. Here, the input and output dimensions 
+      The transformation is constrained to the Lie algebra of
+      the orthogonal group. Here, the input and output dimensions
       must match and the weight matrix is skew-symmetric:
 
       .. math::
