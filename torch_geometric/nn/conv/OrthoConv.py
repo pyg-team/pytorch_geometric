@@ -12,10 +12,15 @@ from torch_geometric.utils import (
     spmm,
     to_edge_index,
 )
+from torch_geometric.typing import (
+    OptPairTensor,
+    OptTensor,
+    SparseTensor,
+    torch_sparse,
+)
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import set_sparse_value
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import OptPairTensor, OptTensor, SparseTensor
 
 
 
