@@ -146,12 +146,14 @@ class OrthoConv(nn.Module):
 
         # For Lie OrthoConv, input and output dimensions must be equal.
         if use_lie and (dim_in != dim_out):
-            raise ValueError(f"In Lie OrthoConv (use_lie=True), input_dim (dim_in={dim_in}) "
+            raise ValueError(f"In Lie OrthoConv (use_lie=True), "
+                             f"input_dim (dim_in={dim_in}) "
                              f"must equal output_dim (dim_out={dim_out}).")
 
-        # For OrthoConv, the output dimension must be even since features are paired.
+        # For OrthoConv, output dimension must be even (features are paired).
         if not use_lie and (dim_out % 2 != 0):
-            raise ValueError(f"For OrthoConv (use_lie=False), output dimension must be even. "
+            raise ValueError(f"For OrthoConv (use_lie=False), "
+                             f"output dimension must be even. "
                              f"Got dim_out={dim_out}.")
 
 
