@@ -109,10 +109,13 @@ class OrthoConv(nn.Module):
         underlying MessagePassing layer.
 
     Shapes:
-        - **Input:** node features of shape :math:`(|\mathcal{V}|, F_{\text{in}})` and edge
-          indices of shape :math:`(2, |\mathcal{E}|)` or a sparse matrix of shape
+        - **Input:** node features of shape
+        :math:`(|\mathcal{V}|, F_{\text{in}})` and edge
+          indices of shape :math:`(2, |\mathcal{E}|)`
+          or a sparse matrix of shape
           :math:`(|\mathcal{V}|, |\mathcal{V}|)`.
-        - **Output:** node features of shape :math:`(|\mathcal{V}|, F_{\text{out}})`.
+        - **Output:** node features of shape
+        :math:`(|\mathcal{V}|, F_{\text{out}})`.
 
     Methods:
         forward(x, edge_index) -> Tensor:
@@ -124,7 +127,6 @@ class OrthoConv(nn.Module):
                  T = 12,
                  use_lie = False,
                  **kwargs):
-      
         super().__init__()
         self.dim_in = dim_in
         if dim_out is None:
