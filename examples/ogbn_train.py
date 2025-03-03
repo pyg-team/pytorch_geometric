@@ -35,8 +35,8 @@ parser.add_argument(
 )
 parser.add_argument(
     '--gnn_choice',
-    type=str.lower,
-    default='sgformer',
+    type=str,
+    default='graph_transformer_sgformer',
     choices=[
         'gat', 'sage', 'graph_transformer_sgformer',
         'graph_transformer_polynormer'
@@ -78,7 +78,7 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-print(f'Training {args.dataset} with {args.model} model.')
+print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -196,7 +196,7 @@ def get_model(model_name: str) -> torch.nn.Module:
             out_channels=dataset.num_classes,
             dropout=args.dropout,
         )
-    elif gnn_choice == 'graph_transformer_sgformer':
+    elif model_name == 'graph_transformer_sgformer':
         model = SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -206,7 +206,7 @@ def get_model(model_name: str) -> torch.nn.Module:
             gnn_num_layers=num_layers,
             gnn_dropout=args.dropout,
         )
-    elif gnn_choice == 'graph_transformer_polynormer':
+    elif model_name == 'graph_transformer_polynormer':
         model = Polynormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -219,7 +219,7 @@ def get_model(model_name: str) -> torch.nn.Module:
     return model
 
 
-model = get_model(args.model).to(device)
+model = get_model(args.gnn_choice).to(device)
 model.reset_parameters()
 optimizer = torch.optim.Adam(
     model.parameters(),
