@@ -393,8 +393,6 @@ class ComplexToRealGCNConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
 
-
-
 class TaylorGCNConv(MessagePassing):
     def __init__(
         self,
@@ -416,6 +414,7 @@ class TaylorGCNConv(MessagePassing):
             x_k = self.conv(x_k, edge_index, edge_weight, apply_feature_lin = False, **kwargs) / (k+1)
             x += x_k
         return x
+
 
 @torch.jit._overload
 def gcn_norm(  # noqa: F811
