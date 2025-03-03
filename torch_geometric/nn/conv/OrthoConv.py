@@ -156,7 +156,6 @@ class OrthoConv(nn.Module):
                              f"output dimension must be even. "
                              f"Got dim_out={dim_out}.")
 
-
         self.model = TaylorGCNConv(base_conv(dim_in, dim_out, **kwargs), T=T)
 
     def forward(self, x, edge_index):
@@ -164,7 +163,6 @@ class OrthoConv(nn.Module):
         if self.bias is not None:
             x = x + self.bias
         return x
-
 
 
 class HermitianGCNConv(MessagePassing):
@@ -204,9 +202,13 @@ class HermitianGCNConv(MessagePassing):
         self._cached_adj_t = None
 
         if in_channels != out_channels:
-            raise ValueError(f"Input and output dimension must be the same for HermitianGCNConv. Got in_channels = {in_channels}, out_channels = {out_channels}")
+            raise ValueError(f"Input and output dimension must be the same"
+                             f"for HermitianGCNConv. "
+                             f"Got in_channels = {in_channels}, "
+                             f"out_channels = {out_channels}")
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=False)
-        self.lin.weight.upper_triangular_params = in_channels*(in_channels-1)//2 # used for counting the number of parameters
+        # below is used for counting the number of parameters
+        self.lin.weight.upper_triangular_params = in_channels*(in_channels-1)//2
 
         if bias:
             self.bias = torch.nn.Parameter(torch.zeros(out_channels))
@@ -222,7 +224,6 @@ class HermitianGCNConv(MessagePassing):
         self._cached_adj_t = None
         if self.bias is not None:
             zeros(self.bias)
-
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None,
@@ -316,7 +317,9 @@ class ComplexToRealGCNConv(MessagePassing):
         self._cached_adj_t = None
 
         if out_channels % 2 != 0:
-            raise ValueError(f"Output dimension must be even for ComplexToRealGCNConv. Got out_channels = {out_channels}")
+            raise ValueError(f"Output dimension must be even "
+                             f"for ComplexToRealGCNConv. Got "
+                             f"out_channels = {out_channels}")
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=False)
 
         multiplier = torch.ones(out_channels)
@@ -404,14 +407,21 @@ class TaylorGCNConv(MessagePassing):
         self.conv = conv
         self.T = T
 
-    def forward(self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None, **kwargs) -> Tensor:
+    def forward(self, x: Tensor,
+                edge_index: Adj,
+                edge_weight: OptTensor = None,
+                **kwargs) -> Tensor:
         x = self.conv(x, edge_index, edge_weight,
                       apply_feature_lin=True,
                       return_feature_only=True)
         x_k = x.clone()  # Create a copy of the input tensor
 
         for k in range(self.T):
-            x_k = self.conv(x_k, edge_index, edge_weight, apply_feature_lin=False, **kwargs) / (k+1)
+            x_k = self.conv(x_k,
+                            edge_index,
+                            edge_weight,
+                            apply_feature_lin=False,
+                            **kwargs) / (k+1)
             x += x_k
         return x
 
