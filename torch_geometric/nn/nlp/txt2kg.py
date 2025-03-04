@@ -1,6 +1,7 @@
 import os
 import time
 from typing import List, Optional, Tuple
+
 import torch
 import torch.multiprocessing as mp
 
@@ -142,9 +143,11 @@ class TXT2KG():
                     self._chunk_to_triples_str_local)
             else:
                 try:
-                    import openai
+                    pass
                 except ImportError:
-                    print("Failed to import `openai` package, please install it and rerun the script")
+                    print(
+                        "Failed to import `openai` package, please install it and rerun the script"
+                    )
                     sys.exit(1)
                 # Process chunks in parallel using multiple processes
                 num_procs = min(len(chunks), _get_num_procs())
