@@ -60,7 +60,7 @@ def arg_parse():
         help="directory of dataset.",
     )
     parser.add_argument('--hidden_channels', type=int, default=256)
-    parser.add_argument('--num_layers', type=int, default=6)
+    parser.add_argument('--num_layers', type=int, default=3)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
     parser.add_argument('-e', '--epochs', type=int, default=50)
