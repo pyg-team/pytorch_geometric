@@ -1,27 +1,28 @@
+from typing import Optional
+
 import torch
 import torch.nn as nn
 from torch import Tensor
-from typing import Optional
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import zeros
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    SparseTensor,
+    torch_sparse,
+)
+from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_self_loops as add_self_loops_fn
 from torch_geometric.utils import (
-    add_remaining_self_loops,
-    add_self_loops as add_self_loops_fn,
     is_torch_sparse_tensor,
     scatter,
     spmm,
     to_edge_index,
 )
-from torch_geometric.typing import (
-    OptPairTensor,
-    OptTensor,
-    SparseTensor,
-    torch_sparse,
-    Adj,
-)
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import set_sparse_value
-from torch_geometric.nn.inits import zeros
 
 
 def block_diagonal_init(weight_matrix, block_size=2, bound=0.5):
@@ -119,11 +120,7 @@ class OrthoConv(nn.Module):
         - **Output:** node features of shape
           :math:`(|\mathcal{V}|, F_{\text{out}})`.
     """
-    def __init__(self, dim_in,
-                 dim_out=None,
-                 bias=True,
-                 T=12,
-                 use_lie=False,
+    def __init__(self, dim_in, dim_out=None, bias=True, T=12, use_lie=False,
                  **kwargs):
         super().__init__()
         self.dim_in = dim_in
@@ -206,9 +203,8 @@ class HermitianGCNConv(MessagePassing):
                              f"out_channels = {out_channels}")
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=False)
         # below is used for counting the number of parameters
-        self.lin.weight.upper_triangular_params = (
-            in_channels * (in_channels - 1) // 2
-        )
+        self.lin.weight.upper_triangular_params = (in_channels *
+                                                   (in_channels - 1) // 2)
         if bias:
             self.bias = torch.nn.Parameter(torch.zeros(out_channels))
         else:
@@ -225,8 +221,7 @@ class HermitianGCNConv(MessagePassing):
             zeros(self.bias)
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None,
-                apply_feature_lin: bool = True,
+                edge_weight: OptTensor = None, apply_feature_lin: bool = True,
                 return_feature_only: bool = False) -> Tensor:
 
         if isinstance(x, (tuple, list)):
@@ -322,11 +317,11 @@ class ComplexToRealGCNConv(MessagePassing):
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=False)
 
         multiplier = torch.ones(out_channels)
-        multiplier[out_channels//2:] = -1
+        multiplier[out_channels // 2:] = -1
         self.register_buffer('multiplier', multiplier.view(1, -1))
 
         if bias:
-            self.bias = torch.nn.Parameter(torch.zeros(out_channels//2))
+            self.bias = torch.nn.Parameter(torch.zeros(out_channels // 2))
         else:
             self.register_parameter('bias', None)
 
@@ -340,8 +335,7 @@ class ComplexToRealGCNConv(MessagePassing):
             zeros(self.bias)
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None,
-                apply_feature_lin: bool = True,
+                edge_weight: OptTensor = None, apply_feature_lin: bool = True,
                 return_feature_only: bool = False) -> Tensor:
 
         if isinstance(x, (tuple, list)):
@@ -383,8 +377,8 @@ class ComplexToRealGCNConv(MessagePassing):
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight)
-        out = out*self.multiplier
-        out = torch.roll(out, self.out_channels//2, -1)
+        out = out * self.multiplier
+        out = torch.roll(out, self.out_channels // 2, -1)
 
         return out
 
@@ -396,31 +390,20 @@ class ComplexToRealGCNConv(MessagePassing):
 
 
 class TaylorGCNConv(MessagePassing):
-    def __init__(
-        self,
-        conv: HermitianGCNConv,
-        T: int = 16,
-        **kwargs
-    ):
+    def __init__(self, conv: HermitianGCNConv, T: int = 16, **kwargs):
         super().__init__(**kwargs)
         self.conv = conv
         self.T = T
 
-    def forward(self, x: Tensor,
-                edge_index: Adj,
-                edge_weight: OptTensor = None,
-                **kwargs) -> Tensor:
-        x = self.conv(x, edge_index, edge_weight,
-                      apply_feature_lin=True,
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None, **kwargs) -> Tensor:
+        x = self.conv(x, edge_index, edge_weight, apply_feature_lin=True,
                       return_feature_only=True)
         x_k = x.clone()  # Create a copy of the input tensor
 
         for k in range(self.T):
-            x_k = self.conv(x_k,
-                            edge_index,
-                            edge_weight,
-                            apply_feature_lin=False,
-                            **kwargs) / (k+1)
+            x_k = self.conv(x_k, edge_index, edge_weight,
+                            apply_feature_lin=False, **kwargs) / (k + 1)
             x += x_k
         return x
 
