@@ -5,7 +5,6 @@ from typing import Any, Dict, Optional, Type, Union
 import torch
 from torch import Tensor
 from torch.nn import Module
-from torchmetrics.functional import pairwise_cosine_similarity
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
@@ -15,84 +14,137 @@ from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
 
 
+def batch_knn(query_enc: Tensor, embeds: Tensor,
+              k: int) -> Iterator[InputNodes]:
+    from torchmetrics.functional import pairwise_cosine_similarity
+    prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
+    topk = min(k, len(embeds))
+    for i, q in enumerate(prizes):
+        _, indices = torch.topk(q, topk, largest=True)
+        yield indices, query_enc[i].unsqueeze(0)
+
+
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
+    """A feature store that uses a KNN-based approach to retrieve seed nodes and edges.
+    """
     def __init__(self, enc_model: Type[Module],
                  model_kwargs: Optional[Dict[str,
                                              Any]] = None, *args, **kwargs):
+        """Initializes the feature store.
+
+        Args:
+        - enc_model: The model to use for encoding queries.
+        - model_kwargs: Additional keyword arguments to pass to the encoding model.
+        - args and kwargs: Additional arguments to pass to the parent class.
+        """
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         self.enc_model = enc_model(*args, **kwargs).to(self.device)
         self.enc_model.eval()
-        self.model_kwargs = \
-            model_kwargs if model_kwargs is not None else dict()
+        self.model_kwargs = model_kwargs if model_kwargs is not None else dict(
+        )
         super().__init__()
 
     @property
     def x(self) -> Tensor:
+        """Returns the node features.
+        """
         return self.get_tensor(group_name=None, attr_name='x')
 
     @property
     def edge_attr(self) -> Tensor:
+        """Returns the edge attributes.
+        """
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
     def retrieve_seed_nodes(self, query: Any, k_nodes: int = 5) -> InputNodes:
-        result = next(self._retrieve_seed_nodes_batch([query], k_nodes))
+        """Retrieves the k_nodes most similar nodes to the given query.
+
+        Args:
+        - query: The query to search for.
+        - k_nodes: The number of nodes to retrieve (default: 5).
+
+        Returns:
+        - The indices of the most similar nodes.
+        """
+        result, query_enc = next(
+            self._retrieve_seed_nodes_batch([query], k_nodes))
         gc.collect()
         torch.cuda.empty_cache()
-        return result
+        return result, query_enc
 
     def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
                                    k_nodes: int) -> Iterator[InputNodes]:
+        """Retrieves the k_nodes most similar nodes to each query in the batch.
+
+        Args:
+        - query: The batch of queries to search for.
+        - k_nodes: The number of nodes to retrieve.
+
+        Yields:
+        - The indices of the most similar nodes for each query.
+        """
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
 
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
-        prizes = pairwise_cosine_similarity(query_enc, self.x.to(self.device))
-        topk = min(k_nodes, len(self.x))
-        for q in prizes:
-            _, indices = torch.topk(q, topk, largest=True)
-            yield indices
+        return batch_knn(query_enc, self.x, k_nodes)
 
     def retrieve_seed_edges(self, query: Any, k_edges: int = 3) -> InputEdges:
-        result = next(self._retrieve_seed_edges_batch([query], k_edges))
+        """Retrieves the k_edges most similar edges to the given query.
+
+        Args:
+        - query: The query to search for.
+        - k_edges: The number of edges to retrieve (default: 3).
+
+        Returns:
+        - The indices of the most similar edges.
+        """
+        result, query_enc = next(
+            self._retrieve_seed_edges_batch([query], k_edges))
         gc.collect()
         torch.cuda.empty_cache()
-        return result
+        return result, query_enc
 
     def _retrieve_seed_edges_batch(self, query: Iterable[Any],
                                    k_edges: int) -> Iterator[InputEdges]:
+        """Retrieves the k_edges most similar edges to each query in the batch.
+
+        Args:
+        - query: The batch of queries to search for.
+        - k_edges: The number of edges to retrieve.
+
+        Yields:
+        - The indices of the most similar edges for each query.
+        """
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
 
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
-
-        prizes = pairwise_cosine_similarity(query_enc,
-                                            self.edge_attr.to(self.device))
-        topk = min(k_edges, len(self.edge_attr))
-        for q in prizes:
-            _, indices = torch.topk(q, topk, largest=True)
-            yield indices
+        return batch_knn(query_enc, self.edge_attr, k_edges)
 
     def load_subgraph(
         self, sample: Union[SamplerOutput, HeteroSamplerOutput]
     ) -> Union[Data, HeteroData]:
+        """Loads a subgraph from the given sample.
 
+        Args:
+        - sample: The sample to load the subgraph from.
+
+        Returns:
+        - The loaded subgraph.
+        """
         if isinstance(sample, HeteroSamplerOutput):
             raise NotImplementedError
 
-        # NOTE: torch_geometric.loader.utils.filter_custom_store can be used
-        # here if it supported edge features
-        node_id = sample.node
+        # NOTE: torch_geometric.loader.utils.filter_custom_store can be used here
+        # if it supported edge features
         edge_id = sample.edge
-        edge_index = torch.stack((sample.row, sample.col), dim=0)
-        x = self.x[node_id]
         edge_attr = self.edge_attr[edge_id]
-
-        return Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
-                    node_idx=node_id, edge_idx=edge_id)
+        return Data(edge_attr=edge_attr, edge_idx=edge_id)
 
 
 # TODO: Refactor because composition >> inheritance
@@ -174,16 +226,17 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         yield from output.index
 
 
-# TODO: These two classes should be refactored
-class SentenceTransformerFeatureStore(KNNRAGFeatureStore):
+# TODO: These two classes should be refactored so they are easier to use
+# custom model with the create_remote_backend/ragqueryloader functionality
+class ModernBertFeatureStore(KNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
-        kwargs['model_name'] = kwargs.get(
-            'model_name', 'sentence-transformers/all-roberta-large-v1')
+        kwargs['model_name'] = kwargs.get('model_name',
+                                          'Alibaba-NLP/gte-modernbert-base')
         super().__init__(SentenceTransformer, *args, **kwargs)
 
 
-class SentenceTransformerApproxFeatureStore(ApproxKNNRAGFeatureStore):
+class ModernBertApproxFeatureStore(ApproxKNNRAGFeatureStore):
     def __init__(self, *args, **kwargs):
-        kwargs['model_name'] = kwargs.get(
-            'model_name', 'sentence-transformers/all-roberta-large-v1')
+        kwargs['model_name'] = kwargs.get('model_name',
+                                          'Alibaba-NLP/gte-modernbert-base')
         super().__init__(SentenceTransformer, *args, **kwargs)

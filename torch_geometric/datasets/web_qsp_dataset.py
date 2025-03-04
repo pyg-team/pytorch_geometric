@@ -27,98 +27,101 @@ def retrieval_via_pcst(
     textual_nodes: Any,
     textual_edges: Any,
     topk: int = 3,
-    topk_e: int = 3,
+    topk_e: int = 5,
     cost_e: float = 0.5,
-    save_idx: bool = False,
-    override: bool = False,
+    num_clusters: int = 1,
 ) -> Tuple[Data, str]:
-    c = 0.01
-    if len(textual_nodes) == 0 or len(textual_edges) == 0 or override:
-        desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
-            index=False,
-            columns=["src", "edge_attr", "dst"],
-        )
-        return data, desc
 
-    from pcst_fast import pcst_fast
+    # skip PCST for bad graphs
+    booly = data.edge_attr is None or data.edge_attr.numel() == 0
+    booly = booly or data.x is None or data.x.numel() == 0
+    booly = booly or data.edge_index is None or data.edge_index.numel() == 0
+    if not booly:
+        c = 0.01
 
-    root = -1
-    num_clusters = 1
-    pruning = 'gw'
-    verbosity_level = 0
-    if topk > 0:
-        n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, data.x)
-        topk = min(topk, data.num_nodes)
-        _, topk_n_indices = torch.topk(n_prizes, topk, largest=True)
+        from pcst_fast import pcst_fast
 
-        n_prizes = torch.zeros_like(n_prizes)
-        n_prizes[topk_n_indices] = torch.arange(topk, 0, -1).float()
-    else:
-        n_prizes = torch.zeros(data.num_nodes)
+        root = -1
+        pruning = 'gw'
+        verbosity_level = 0
+        if topk > 0:
+            n_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, data.x)
+            topk = min(topk, data.num_nodes)
+            _, topk_n_indices = torch.topk(n_prizes, topk, largest=True)
 
-    if topk_e > 0:
-        e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, data.edge_attr)
-        topk_e = min(topk_e, e_prizes.unique().size(0))
-
-        topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e, largest=True)
-        e_prizes[e_prizes < topk_e_values[-1]] = 0.0
-        last_topk_e_value = topk_e
-        for k in range(topk_e):
-            indices = e_prizes == topk_e_values[k]
-            value = min((topk_e - k) / sum(indices), last_topk_e_value - c)
-            e_prizes[indices] = value
-            last_topk_e_value = value * (1 - c)
-        # reduce the cost of the edges such that at least one edge is selected
-        cost_e = min(cost_e, e_prizes.max().item() * (1 - c / 2))
-    else:
-        e_prizes = torch.zeros(data.num_edges)
-
-    costs = []
-    edges = []
-    virtual_n_prizes = []
-    virtual_edges = []
-    virtual_costs = []
-    mapping_n = {}
-    mapping_e = {}
-    for i, (src, dst) in enumerate(data.edge_index.t().numpy()):
-        prize_e = e_prizes[i]
-        if prize_e <= cost_e:
-            mapping_e[len(edges)] = i
-            edges.append((src, dst))
-            costs.append(cost_e - prize_e)
+            n_prizes = torch.zeros_like(n_prizes)
+            n_prizes[topk_n_indices] = torch.arange(topk, 0, -1).float()
         else:
-            virtual_node_id = data.num_nodes + len(virtual_n_prizes)
-            mapping_n[virtual_node_id] = i
-            virtual_edges.append((src, virtual_node_id))
-            virtual_edges.append((virtual_node_id, dst))
-            virtual_costs.append(0)
-            virtual_costs.append(0)
-            virtual_n_prizes.append(prize_e - cost_e)
+            n_prizes = torch.zeros(data.num_nodes)
 
-    prizes = np.concatenate([n_prizes, np.array(virtual_n_prizes)])
-    num_edges = len(edges)
-    if len(virtual_costs) > 0:
-        costs = np.array(costs + virtual_costs)
-        edges = np.array(edges + virtual_edges)
+        if topk_e > 0:
+            e_prizes = torch.nn.CosineSimilarity(dim=-1)(q_emb, data.edge_attr)
+            topk_e = min(topk_e, e_prizes.unique().size(0))
 
-    vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
-                                pruning, verbosity_level)
+            topk_e_values, _ = torch.topk(e_prizes.unique(), topk_e,
+                                          largest=True)
+            e_prizes[e_prizes < topk_e_values[-1]] = 0.0
+            last_topk_e_value = topk_e
+            for k in range(topk_e):
+                indices = e_prizes == topk_e_values[k]
+                value = min((topk_e - k) / sum(indices), last_topk_e_value - c)
+                e_prizes[indices] = value
+                last_topk_e_value = value * (1 - c)
+            # reduce the cost of the edges so that at least one edge is chosen
+            cost_e = min(cost_e, e_prizes.max().item() * (1 - c / 2))
+        else:
+            e_prizes = torch.zeros(data.num_edges)
 
-    selected_nodes = vertices[vertices < data.num_nodes]
-    selected_edges = [mapping_e[e] for e in edges if e < num_edges]
-    virtual_vertices = vertices[vertices >= data.num_nodes]
-    if len(virtual_vertices) > 0:
+        costs = []
+        edges = []
+        virtual_n_prizes = []
+        virtual_edges = []
+        virtual_costs = []
+        mapping_n = {}
+        mapping_e = {}
+        for i, (src, dst) in enumerate(data.edge_index.t().numpy()):
+            prize_e = e_prizes[i]
+            if prize_e <= cost_e:
+                mapping_e[len(edges)] = i
+                edges.append((src, dst))
+                costs.append(cost_e - prize_e)
+            else:
+                virtual_node_id = data.num_nodes + len(virtual_n_prizes)
+                mapping_n[virtual_node_id] = i
+                virtual_edges.append((src, virtual_node_id))
+                virtual_edges.append((virtual_node_id, dst))
+                virtual_costs.append(0)
+                virtual_costs.append(0)
+                virtual_n_prizes.append(prize_e - cost_e)
+
+        prizes = np.concatenate([n_prizes, np.array(virtual_n_prizes)])
+        num_edges = len(edges)
+        if len(virtual_costs) > 0:
+            costs = np.array(costs + virtual_costs)
+            edges = np.array(edges + virtual_edges)
+
+        vertices, edges = pcst_fast(edges, prizes, costs, root, num_clusters,
+                                    pruning, verbosity_level)
+
+        selected_nodes = vertices[vertices < data.num_nodes]
+        selected_edges = [mapping_e[e] for e in edges if e < num_edges]
         virtual_vertices = vertices[vertices >= data.num_nodes]
-        virtual_edges = [mapping_n[i] for i in virtual_vertices]
-        selected_edges = np.array(selected_edges + virtual_edges)
+        if len(virtual_vertices) > 0:
+            virtual_vertices = vertices[vertices >= data.num_nodes]
+            virtual_edges = [mapping_n[i] for i in virtual_vertices]
+            selected_edges = np.array(selected_edges + virtual_edges)
 
-    edge_index = data.edge_index[:, selected_edges]
-    selected_nodes = np.unique(
-        np.concatenate(
-            [selected_nodes, edge_index[0].numpy(), edge_index[1].numpy()]))
+        edge_index = data.edge_index[:, selected_edges]
+        selected_nodes = np.unique(
+            np.concatenate(
+                [selected_nodes, edge_index[0].numpy(),
+                 edge_index[1].numpy()]))
 
-    n = textual_nodes.iloc[selected_nodes]
-    e = textual_edges.iloc[selected_edges]
+        n = textual_nodes.iloc[selected_nodes]
+        e = textual_edges.iloc[selected_edges]
+    else:
+        n = textual_nodes
+        e = textual_edges
     desc = n.to_csv(index=False) + '\n' + e.to_csv(
         index=False, columns=['src', 'edge_attr', 'dst'])
 
@@ -127,18 +130,18 @@ def retrieval_via_pcst(
     dst = [mapping[i] for i in edge_index[1].tolist()]
 
     # HACK Added so that the subset of nodes and edges selected can be tracked
-    if save_idx:
-        node_idx = np.array(data.node_idx)[selected_nodes]
-        edge_idx = np.array(data.edge_idx)[selected_edges]
+    node_idx = np.array(data.node_idx)[selected_nodes]
+    edge_idx = np.array(data.edge_idx)[selected_edges]
 
     data = Data(
         x=data.x[selected_nodes],
-        edge_index=torch.tensor([src, dst]),
+        edge_index=torch.tensor([src, dst]).to(torch.long),
         edge_attr=data.edge_attr[selected_edges],
     )
-    if save_idx:
-        data['node_idx'] = node_idx
-        data['edge_idx'] = edge_idx
+
+    # HACK Added so that the subset of nodes and edges selected can be tracked
+    data['node_idx'] = node_idx
+    data['edge_idx'] = edge_idx
 
     return data, desc
 
@@ -148,37 +151,37 @@ def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     return str(h).lower(), str(r).lower(), str(t).lower()
 
 
-class WebQSPDataset(InMemoryDataset):
-    r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
-    Labeling for Knowledge Base Question Answering"
-    <https://aclanthology.org/P16-2033/>`_ paper.
+class KGQABaseDataset(InMemoryDataset):
+    r"""Base class for the 2 KGQA datasets used in `"Reasoning on Graphs:
+    Faithful and Interpretable Large Language Model Reasoning"
+    <https://arxiv.org/pdf/2310.01061>`_ paper.
 
     Args:
+        dataset_name (str): HuggingFace `dataset` name.
         root (str): Root directory where the dataset should be saved.
         split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
-        limit (int, optional): Construct only the first n samples.
-            Defaults to -1 to construct all samples.
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
     """
     def __init__(
         self,
+        dataset_name: str,
         root: str,
         split: str = "train",
         force_reload: bool = False,
-        limit: int = -1,
         verbose: bool = False,
         use_pcst: bool = True,
+        use_cwq: bool = True,
     ) -> None:
-        self.limit = limit
         self.split = split
+        self.dataset_name = dataset_name
         self.use_pcst = use_pcst
-        # TODO Confirm why the dependency checks and device setting were removed here # noqa
+        # TODO Confirm with @riship why the dependency checks and device setting were removed here # noqa
         '''
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
@@ -189,11 +192,11 @@ class WebQSPDataset(InMemoryDataset):
         super().__init__(root, force_reload=force_reload)
 
         if split not in set(self.raw_file_names):
-            raise ValueError(f"Invalid 'split' argument (got {split})")
+            raise ValueError(f"Invalid 'split' argument (got {split})")        
 
-        self._load_raw_data()
         self.load(self.processed_paths[0] + "_" * (self.limit >= 0))
 
+    # TODO Confirm with @riship why the dependency checks and device setting were removed here # noqa
     '''
     def _check_dependencies(self) -> None:
         missing_str_list = []
@@ -211,51 +214,43 @@ class WebQSPDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ["train", "val", "test"]
+        return ["raw.pt"]
+
+
+    @property
+    def _processed_split_file_names(self) -> List[str]:
+        return ["train_data.pt", "val_data.pt", "test_data.pt"]
 
     @property
     def processed_file_names(self) -> List[str]:
-        file_lst = [
-            "train_data.pt",
-            "val_data.pt",
-            "test_data.pt",
-            "pre_filter.pt",
-            "pre_transform.pt",
-            "large_graph_indexer",
-        ]
-        split_idx = self.raw_file_names.index(self.split)
-        split_file = file_lst.pop(split_idx)
-        file_lst.insert(0, split_file)
-        file_lst[-1] += f"_{self.split}"
-        return file_lst
-
-    def _save_raw_data(self, dataset) -> None:
-        for i, split in enumerate(self.raw_file_names):
-            # edge case
-            if split == "val":
-                split = "validation"
-            dataset[split].save_to_disk(self.raw_paths[i])
-
-    def _load_raw_data(self) -> None:
-        import datasets
-        if not hasattr(self, "raw_dataset"):
-            self.raw_dataset = datasets.load_from_disk(
-                self.raw_paths[self.raw_file_names.index(self.split)])
-
-        if self.limit >= 0:
-            self.raw_dataset = self.raw_dataset.select(
-                range(min(self.limit, len(self.raw_dataset))))
+        return self._processed_split_file_names + ["large_graph_indexer"]
 
     def download(self) -> None:
         import datasets
+        self.raw_dataset = datasets.load_dataset(self.dataset_name)
 
-        dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
-        self._save_raw_data(dataset)
-        self.raw_dataset = dataset[self.split]
+        # TODO: @riship should this be done in the base class?
+        # Assert that the dataset contains the required splits
+        self.required_splits = ['train', 'validation', 'test']
+        assert all(split in self.raw_dataset for split in self.required_splits), \
+            f"Dataset '{self.dataset_name}' is missing required splits: {self.required_splits}"
+
+        datasets.save_to_disk(self.raw_dataset, self.raw_paths[0])
 
     def _get_trips(self) -> Iterator[TripletLike]:
-        return chain.from_iterable(
-            iter(ds["graph"]) for ds in self.raw_dataset)
+        # Iterate over each element's graph in each split of the dataset
+        # Using chain to lazily iterate without storing all trips in memory
+        split_iterators = []
+        
+        for split in self.required_splits:
+            # Create an iterator for each element's graph in the current split
+            # Skip splits that don't exist in the dataset
+            if split in self.raw_dataset:
+                split_graphs = (element['graph'] for element in self.raw_dataset[split])
+                split_iterators.append(chain.from_iterable(split_graphs))
+        
+        # Chain all split iterators together
+        return chain.from_iterable(split_iterators)
 
     def _build_graph(self) -> None:
         trips = self._get_trips()
@@ -285,60 +280,62 @@ class WebQSPDataset(InMemoryDataset):
 
         print("Saving graph...")
         self.indexer.save(self.processed_paths[-1])
-
+    
     def _retrieve_subgraphs(self) -> None:
-        print("Encoding questions...")
-        self.questions = [str(ds["question"]) for ds in self.raw_dataset]
-        q_embs = self.model.encode(self.questions, batch_size=256,
+        for split_name, dataset, path in zip(
+            self.required_splits,
+            [self.raw_dataset[split] for split in self.required_splits],
+            self.processed_paths,
+        ):
+            print(f"Processing {split_name} split...")
+
+            print("Encoding questions...")
+            split_questions = [str(element['question']) for element in dataset]
+            split_q_embs = self.model.encode(split_questions, batch_size=256,
                                    output_device='cpu')
 
-        del self.model
-        gc.collect()
-        torch.cuda.empty_cache()
-        list_of_graphs = []
-        print("Retrieving subgraphs...")
-        textual_nodes = self.textual_nodes
-        textual_edges = self.textual_edges
-        graph_gen = get_features_for_triplets_groups(
-            self.indexer, (ds['graph'] for ds in self.raw_dataset),
-            pre_transform=preprocess_triplet, verbose=self.verbose)
+            print("Retrieving subgraphs...")
+            results_graphs = []
+            graph_gen = get_features_for_triplets_groups(
+                self.indexer, (element['graph'] for element in dataset),
+                pre_transform=preprocess_triplet, verbose=self.verbose)
 
-        for index in tqdm(range(len(self.raw_dataset)),
-                          disable=not self.verbose):
-            data_i = self.raw_dataset[index]
-            graph = next(graph_gen)
-            textual_nodes = self.textual_nodes.iloc[
-                graph["node_idx"]].reset_index()
-            textual_edges = self.textual_edges.iloc[
-                graph["edge_idx"]].reset_index()
-            pcst_subgraph, desc = retrieval_via_pcst(
-                graph,
-                q_embs[index],
-                textual_nodes,
-                textual_edges,
-                topk=3,
-                topk_e=5,
-                cost_e=0.5,
-                override=not self.use_pcst,
-            )
-            question = f"Question: {data_i['question']}\nAnswer: "
-            label = ("|").join(data_i["answer"]).lower()
+            for index in tqdm(range(len(dataset)),
+                            disable=not self.verbose):
+                data_i = dataset[index]
+                graph = next(graph_gen)
+                textual_nodes = self.textual_nodes.iloc[
+                    graph["node_idx"]].reset_index()
+                textual_edges = self.textual_edges.iloc[
+                    graph["edge_idx"]].reset_index()
+                if self.use_pcst and len(textual_nodes) > 0 and len(textual_edges) > 0:
+                    pcst_subgraph, desc = retrieval_via_pcst(
+                        graph,
+                        split_q_embs[index],
+                        textual_nodes,
+                        textual_edges,
+                    )
+                else:
+                    desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
+                        index=False,
+                        columns=["src", "edge_attr", "dst"],
+                    )
+                question = f"Question: {data_i['question']}\nAnswer: "
+                label = ("|").join(data_i["answer"]).lower()
 
-            pcst_subgraph["question"] = question
-            pcst_subgraph["label"] = label
-            pcst_subgraph["desc"] = desc
-            list_of_graphs.append(pcst_subgraph.to("cpu"))
-        print("Saving subgraphs...")
-        self.save(list_of_graphs,
-                  self.processed_paths[0] + "_" * (self.limit >= 0))
+                pcst_subgraph["question"] = question
+                pcst_subgraph["label"] = label
+                pcst_subgraph["desc"] = desc
+                results_graphs.append(pcst_subgraph.to("cpu"))
+            print("Saving subgraphs...")
+            self.save(results_graphs, path)
 
     def process(self) -> None:
         from pandas import DataFrame
-        self._load_raw_data()
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = SentenceTransformer(
-            'sentence-transformers/all-roberta-large-v1').to(device)
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model_name = 'sentence-transformers/all-roberta-large-v1'
+        self.model = SentenceTransformer(model_name).to(device)
         self.model.eval()
         if self.force_reload or not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")
@@ -363,3 +360,43 @@ class WebQSPDataset(InMemoryDataset):
 
         gc.collect()
         torch.cuda.empty_cache()
+class WebQSPDataset(KGQABaseDataset):
+    r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
+    Labeling for Knowledge Base Question Answering"
+    <https://aclanthology.org/P16-2033/>`_ paper.
+
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        use_pcst (bool, optional): Whether to preprocess the dataset's graph
+            with PCST or return the full graphs. (default: :obj:`True`)
+    """
+    def __init__(self, root: str, split: str = "train",
+                 force_reload: bool = False, use_pcst: bool = True) -> None:
+        dataset_name = 'rmanluo/RoG-webqsp'
+        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+
+
+class CWQDataset(KGQABaseDataset):
+    r"""The ComplexWebQuestions (CWQ) dataset of the `"The Web as a
+    Knowledge-base forAnswering Complex Questions"
+    <https://arxiv.org/pdf/1803.06643>`_ paper.
+
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        use_pcst (bool, optional): Whether to preprocess the dataset's graph
+            with PCST or return the full graphs. (default: :obj:`True`)
+    """
+    def __init__(self, root: str, split: str = "train",
+                 force_reload: bool = False, use_pcst: bool = True) -> None:
+        dataset_name = 'rmanluo/RoG-cwq'
+        super().__init__(dataset_name, root, split, force_reload, use_pcst)

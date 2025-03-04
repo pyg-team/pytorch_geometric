@@ -89,7 +89,7 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
-   * :pytorch:`PyTorch` 2.4: :obj:`${TORCH}=2.5.0` and :obj:`${CUDA}=cpu|cu118|cu121|cu124`
+   * :pytorch:`PyTorch` 2.5: :obj:`${TORCH}=2.5.0` and :obj:`${CUDA}=cpu|cu118|cu121|cu124`
    * :pytorch:`PyTorch` 2.4: :obj:`${TORCH}=2.4.0` and :obj:`${CUDA}=cpu|cu118|cu121|cu124`
    * :pytorch:`PyTorch` 2.3: :obj:`${TORCH}=2.3.0` and :obj:`${CUDA}=cpu|cu118|cu121`
    * :pytorch:`PyTorch` 2.2: :obj:`${TORCH}=2.2.0` and :obj:`${CUDA}=cpu|cu118|cu121`
