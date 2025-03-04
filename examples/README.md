@@ -10,7 +10,10 @@ For a simple link prediction example, see [`link_pred.py`](./link_pred.py).
 For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see the `ogbn_*.py` examples:
 
 - [`ogbn_train.py`](./ogbn_train.py) is an example for training a GNN on the large-scale `ogbn-papers100m` dataset, containing approximately ~1.6B edges or the medium scale `ogbn-products` dataset, ~62M edges.
-  - Uses SGFormer (a kind of GraphTransformer) by default.
+  - Uses (fill_in winner) (a kind of GraphTransformer) by default.
+  - Available Graph Transformers:
+    - [SGFormer](https://arxiv.org/pdf/2306.10759)
+    - [Polynormer](https://arxiv.org/pdf/2403.01232)
 - [`ogbn_proteins_deepgcn.py`](./ogbn_proteins_deepgcn.py) is an example to showcase how to train deep GNNs on the `ogbn-proteins` dataset.
 - [`ogbn_train_cugraph.py`](./ogbn_train_cugraph.py) shows how to accelerate the `ogbn_train.py` workflow using [CuGraph](https://github.com/rapidsai/cugraph).
 
@@ -24,5 +27,4 @@ For examples on co-training LLMs with GNNs, see the examples under [`examples/ll
 
 For an example on training a GraphTransformer see [`examples/ogbn_train.py`](examples/ogbn_train.py)
 
-- [SGFormer Paper](https://arxiv.org/pdf/2306.10759)
-- [Polynormer Paper](https://arxiv.org/pdf/2403.01232)
+
