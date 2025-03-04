@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Test Script for Gradformer Submodules
+"""Test Script for Gradformer Submodules.
 
 This script contains separate tests for:
   1. The Attention module with an exponential decay mask (including
