@@ -62,11 +62,10 @@ class OrthoConv(nn.Module):
 
     * **OrthoConv** (`use_lie=False`):
 
-      An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and
-      a feature matrix :math:`X \in \mathbb{R}^{n \times d}`
-      are used along with a trainable
-      weight matrix :math:`W \in \mathbb{R}^{d \times d'}` and
-      bias :math:`b \in \mathbb{R}^{d'}`. The operator is defined as
+      An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and a feature
+      matrix :math:`X \in \mathbb{R}^{n \times d}` are used along with a
+      trainable weight matrix :math:`W \in \mathbb{R}^{d \times d'}` and bias
+      :math:`b \in \mathbb{R}^{d'}`. The operator is defined as
 
       .. math::
          f_{Uconv}(X) = \exp(iA) \, XW + b,
