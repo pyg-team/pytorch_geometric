@@ -192,7 +192,7 @@ class KGQABaseDataset(InMemoryDataset):
         super().__init__(root, force_reload=force_reload)
 
         if split not in set(self.raw_file_names):
-            raise ValueError(f"Invalid 'split' argument (got {split})")        
+            raise ValueError(f"Invalid 'split' argument (got {split})")
 
         self.load(self.processed_paths[0] + "_" * (self.limit >= 0))
 
@@ -215,7 +215,6 @@ class KGQABaseDataset(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         return ["raw.pt"]
-
 
     @property
     def _processed_split_file_names(self) -> List[str]:
@@ -241,14 +240,15 @@ class KGQABaseDataset(InMemoryDataset):
         # Iterate over each element's graph in each split of the dataset
         # Using chain to lazily iterate without storing all trips in memory
         split_iterators = []
-        
+
         for split in self.required_splits:
             # Create an iterator for each element's graph in the current split
             # Skip splits that don't exist in the dataset
             if split in self.raw_dataset:
-                split_graphs = (element['graph'] for element in self.raw_dataset[split])
+                split_graphs = (element['graph']
+                                for element in self.raw_dataset[split])
                 split_iterators.append(chain.from_iterable(split_graphs))
-        
+
         # Chain all split iterators together
         return chain.from_iterable(split_iterators)
 
@@ -280,19 +280,19 @@ class KGQABaseDataset(InMemoryDataset):
 
         print("Saving graph...")
         self.indexer.save(self.processed_paths[-1])
-    
+
     def _retrieve_subgraphs(self) -> None:
         for split_name, dataset, path in zip(
-            self.required_splits,
+                self.required_splits,
             [self.raw_dataset[split] for split in self.required_splits],
-            self.processed_paths,
+                self.processed_paths,
         ):
             print(f"Processing {split_name} split...")
 
             print("Encoding questions...")
             split_questions = [str(element['question']) for element in dataset]
             split_q_embs = self.model.encode(split_questions, batch_size=256,
-                                   output_device='cpu')
+                                             output_device='cpu')
 
             print("Retrieving subgraphs...")
             results_graphs = []
@@ -300,15 +300,15 @@ class KGQABaseDataset(InMemoryDataset):
                 self.indexer, (element['graph'] for element in dataset),
                 pre_transform=preprocess_triplet, verbose=self.verbose)
 
-            for index in tqdm(range(len(dataset)),
-                            disable=not self.verbose):
+            for index in tqdm(range(len(dataset)), disable=not self.verbose):
                 data_i = dataset[index]
                 graph = next(graph_gen)
                 textual_nodes = self.textual_nodes.iloc[
                     graph["node_idx"]].reset_index()
                 textual_edges = self.textual_edges.iloc[
                     graph["edge_idx"]].reset_index()
-                if self.use_pcst and len(textual_nodes) > 0 and len(textual_edges) > 0:
+                if self.use_pcst and len(textual_nodes) > 0 and len(
+                        textual_edges) > 0:
                     pcst_subgraph, desc = retrieval_via_pcst(
                         graph,
                         split_q_embs[index],
@@ -316,10 +316,11 @@ class KGQABaseDataset(InMemoryDataset):
                         textual_edges,
                     )
                 else:
-                    desc = textual_nodes.to_csv(index=False) + "\n" + textual_edges.to_csv(
-                        index=False,
-                        columns=["src", "edge_attr", "dst"],
-                    )
+                    desc = textual_nodes.to_csv(
+                        index=False) + "\n" + textual_edges.to_csv(
+                            index=False,
+                            columns=["src", "edge_attr", "dst"],
+                        )
                 question = f"Question: {data_i['question']}\nAnswer: "
                 label = ("|").join(data_i["answer"]).lower()
 
@@ -360,6 +361,8 @@ class KGQABaseDataset(InMemoryDataset):
 
         gc.collect()
         torch.cuda.empty_cache()
+
+
 class WebQSPDataset(KGQABaseDataset):
     r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
     Labeling for Knowledge Base Question Answering"
