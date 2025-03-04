@@ -5,6 +5,11 @@ from torch import Tensor
 
 
 class VisionTransformer(torch.nn.Module):
+    r"""A wrapper around a Vision-Transformer from HuggingFace.
+
+    Args:
+        model_name (str): The HuggingFace model name, *e.g.*, :obj:`"ViT"`.
+    """
     def __init__(
         self,
         model_name: str,
