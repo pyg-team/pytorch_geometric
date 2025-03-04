@@ -111,12 +111,12 @@ class OrthoConv(nn.Module):
 
     Shapes:
         - **Input:** node features of shape
-        :math:`(|\mathcal{V}|, F_{\text{in}})` and edge
+          :math:`(|\mathcal{V}|, F_{\text{in}})` and edge
           indices of shape :math:`(2, |\mathcal{E}|)`
           or a sparse matrix of shape
           :math:`(|\mathcal{V}|, |\mathcal{V}|)`.
         - **Output:** node features of shape
-        :math:`(|\mathcal{V}|, F_{\text{out}})`.
+          :math:`(|\mathcal{V}|, F_{\text{out}})`.
     """
     def __init__(self, dim_in,
                  dim_out=None,
