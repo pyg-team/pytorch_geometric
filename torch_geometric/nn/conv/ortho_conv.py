@@ -63,10 +63,9 @@ class OrthoConv(nn.Module):
     * **OrthoConv** (`use_lie=False`):
     
       An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and
-      a feature matrix
-      :math:`X \in \mathbb{R}^{n \times d}` are used along with a trainable
-      weight matrix
-      :math:`W \in \mathbb{R}^{d \times d'}` and
+      a feature matrix :math:`X \in \mathbb{R}^{n \times d}`
+      are used along with a trainable
+      weight matrix :math:`W \in \mathbb{R}^{d \times d'}` and
       bias :math:`b \in \mathbb{R}^{d'}`. The operator is defined as
 
       .. math::
@@ -119,10 +118,6 @@ class OrthoConv(nn.Module):
           :math:`(|\mathcal{V}|, |\mathcal{V}|)`.
         - **Output:** node features of shape
         :math:`(|\mathcal{V}|, F_{\text{out}})`.
-
-    Methods:
-        forward(x, edge_index) -> Tensor:
-            Runs the forward pass of the module.
     """
     def __init__(self, dim_in,
                  dim_out=None,
