@@ -59,7 +59,8 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .[test]
+          echo "torch==${{ matrix.torch-version }}" > requirements-constraint.txt
+          pip install -e .[test] --constraint requirements-constraint.txt
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'

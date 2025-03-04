@@ -49,8 +49,7 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
 class LLM(torch.nn.Module):
     r"""A wrapper around a Large Language Model (LLM) from HuggingFace.
 
-    model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"` or
-        :obj:`"gemma"`.
+    model_name (str): The HuggingFace model name
     num_params (float, optional): An integer representing how many params the
         HuggingFace model has, in billions. This is used to automatically
         allocate the correct number of GPUs needed, given the available GPU
