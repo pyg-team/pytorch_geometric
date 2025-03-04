@@ -4,11 +4,18 @@ from typing import List
 import numpy as np
 import pytest
 import torch
+from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import HashTensor
 from torch_geometric.io import fs
-from torch_geometric.testing import onlyCUDA, withCUDA, withHashTensor
+from torch_geometric.testing import (
+    onlyCUDA,
+    onlyLinux,
+    withCUDA,
+    withHashTensor,
+    withPackage,
+)
 
 KEY_DTYPES = [
     pytest.param(torch.bool, id='bool'),
@@ -84,8 +91,9 @@ def test_empty(dtype, device):
 @withCUDA
 @withHashTensor
 def test_string_key(device):
-    # TODO
-    HashTensor(['1', '2', '3'], device=device)
+    tensor = HashTensor(['1', '2', '3'], device=device)
+    out = tensor[['3', '2', '4']]
+    assert out.equal(torch.tensor([2, 1, -1], device=device))
 
 
 @withCUDA
@@ -543,3 +551,26 @@ def test_getitem(dtype, device):
     out = tensor[:2]
     assert isinstance(out, HashTensor)
     assert out.size() == (2, ) + value.size()[1:]
+
+
+@onlyLinux
+@withHashTensor
+@withPackage('torch>=2.3')
+@pytest.mark.skip(reason="Does not work currently")
+def test_compile_basic():
+    import torch._dynamo as dynamo
+
+    class Model(torch.nn.Module):
+        def forward(self, key: Tensor, query: Tensor) -> Tensor:
+            _map = HashTensor(key)
+            return _map[query]
+
+    key = torch.randperm(10)
+    query = key[:5]
+
+    model = Model()
+    expected = model(key, query)
+    assert expected.equal(torch.arange(query.numel()))
+
+    explanation = dynamo.explain(model)(key, query)
+    assert explanation.graph_break_count == 0

@@ -221,8 +221,8 @@ class LinkPredMetric(_LinkPredMetric):
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
-            self.register_buffer('accum', torch.tensor(0.))
-            self.register_buffer('total', torch.tensor(0))
+            self.register_buffer('accum', torch.tensor(0.), persistent=False)
+            self.register_buffer('total', torch.tensor(0), persistent=False)
 
     def update(
         self,
@@ -523,10 +523,11 @@ class LinkPredNDCG(LinkPredMetric):
         discount = torch.arange(2, k + 2, dtype=dtype).log2()
 
         self.discount: Tensor
-        self.register_buffer('discount', discount)
+        self.register_buffer('discount', discount, persistent=False)
 
         if not weighted:
-            self.register_buffer('idcg', cumsum(1.0 / discount))
+            self.register_buffer('idcg', cumsum(1.0 / discount),
+                                 persistent=False)
         else:
             self.idcg = None
 
@@ -617,7 +618,7 @@ class LinkPredCoverage(_LinkPredMetric):
         if WITH_TORCHMETRICS:
             self.add_state('mask', mask, dist_reduce_fx='max')
         else:
-            self.register_buffer('mask', mask)
+            self.register_buffer('mask', mask, persistent=False)
 
     def update(
         self,
@@ -673,11 +674,11 @@ class LinkPredDiversity(_LinkPredMetric):
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
-            self.register_buffer('accum', torch.tensor(0.))
-            self.register_buffer('total', torch.tensor(0))
+            self.register_buffer('accum', torch.tensor(0.), persistent=False)
+            self.register_buffer('total', torch.tensor(0), persistent=False)
 
         self.category: Tensor
-        self.register_buffer('category', category)
+        self.register_buffer('category', category, persistent=False)
 
     def update(
         self,
@@ -740,7 +741,7 @@ class LinkPredPersonalization(_LinkPredMetric):
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
             self.preds: List[Tensor] = []
-            self.register_buffer('total', torch.tensor(0))
+            self.register_buffer('total', torch.tensor(0), persistent=False)
 
     def update(
         self,
@@ -829,11 +830,11 @@ class LinkPredAveragePopularity(_LinkPredMetric):
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
-            self.register_buffer('accum', torch.tensor(0.))
-            self.register_buffer('total', torch.tensor(0))
+            self.register_buffer('accum', torch.tensor(0.), persistent=False)
+            self.register_buffer('total', torch.tensor(0), persistent=False)
 
         self.popularity: Tensor
-        self.register_buffer('popularity', popularity)
+        self.register_buffer('popularity', popularity, persistent=False)
 
     def update(
         self,

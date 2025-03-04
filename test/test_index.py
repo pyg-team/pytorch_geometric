@@ -1,6 +1,7 @@
 import os.path as osp
 from typing import List
 
+import numpy as np
 import pytest
 import torch
 from torch import tensor
@@ -510,15 +511,15 @@ def test_sub(dtype, device):
 
 
 def test_to_list():
-    index = Index([0, 1, 1, 2])
-    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
-        index.tolist()
+    data = torch.tensor([0, 1, 1, 2])
+    index = Index(data)
+    assert index.tolist() == data.tolist()
 
 
 def test_numpy():
-    index = Index([0, 1, 1, 2])
-    with pytest.raises(RuntimeError, match="supported for tensor subclasses"):
-        index.numpy()
+    data = torch.tensor([0, 1, 1, 2])
+    index = Index(data)
+    assert np.array_equal(index.numpy(), data.numpy())
 
 
 @withCUDA
