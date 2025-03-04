@@ -61,7 +61,7 @@ class OrthoConv(nn.Module):
     There are two variants:
 
     * **OrthoConv** (`use_lie=False`):
-    
+
       An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and
       a feature matrix :math:`X \in \mathbb{R}^{n \times d}`
       are used along with a trainable
@@ -73,12 +73,12 @@ class OrthoConv(nn.Module):
 
       where the matrix exponential is computed over :math:`iA` and
       normalization of :math:`A` is handled internally.
-      
+
       **Important:** The output dimension must be even since real
       numbers are paired to represent complex numbers.
 
     * **Lie OrthoConv** (`use_lie=True`):
-    
+
       The transformation is constrained to the Lie algebra of
       the orthogonal group. Here, the input and output dimensions
       must match and the weight matrix is skew-symmetric:
