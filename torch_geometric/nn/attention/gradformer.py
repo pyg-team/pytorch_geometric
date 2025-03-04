@@ -12,22 +12,24 @@ This script contains separate tests for:
 Full paper: <https://arxiv.org/abs/2404.15729>
 """
 
-import os
-import math
 import copy
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
 
-from torch_geometric.nn import global_mean_pool, MessagePassing
-from torch_geometric.data import Data, DataLoader, TUDataset
+from torch_geometric.data import Data
+from torch_geometric.nn import MessagePassing, global_mean_pool
 from torch_geometric.utils import to_dense_batch
+
+# import torch.optim as optim
 
 
 # ===============================
 # 1. Attention Module with Exponential Decay Mask
 # ===============================
+
 
 def clones(module, N):
     """Produce N identical layers."""
@@ -39,13 +41,13 @@ def attention(query, key, value, sph, mask=None, dropout=None):
     Compute scaled dot-product attention with an exponential decay mask.
 
     Args:
-        query (Tensor): Query tensor of shape 
+        query (Tensor): Query tensor of shape
             [batch_size, h, seq_length, d_k].
-        key (Tensor): Key tensor of shape 
+        key (Tensor): Key tensor of shape
             [batch_size, h, seq_length, d_k].
-        value (Tensor): Value tensor of shape 
+        value (Tensor): Value tensor of shape
             [batch_size, h, seq_length, d_k].
-        sph (Tensor): Exponential decay mask of shape 
+        sph (Tensor): Exponential decay mask of shape
             [batch_size, h, seq_length, seq_length].
         mask (Tensor, optional): Mask for padding/invalid positions.
         dropout (nn.Dropout, optional): Dropout module.
@@ -55,14 +57,6 @@ def attention(query, key, value, sph, mask=None, dropout=None):
     """
     d_k = query.size(-1)
     scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
-    print(f"Query shape: {query.shape}")
-    print(f"Key^T shape: {key.transpose(-2, -1).shape}")
-    print(f"Attention scores shape: {scores.shape}")
-    print(f"Exponential decay mask (sph) shape before expansion: {sph.shape}")
-    # Note: In the core paper code, sph is assumed to already have the
-    # proper shape ([B, h, S, S]). Therefore, we do not change it here.
-    print(f"Exponential decay mask (sph) shape after expansion: {sph.shape}")
-
     scores = scores * sph
     if mask is not None:
         scores = scores.masked_fill(mask.unsqueeze(1), float("-inf"))
@@ -84,7 +78,8 @@ class MultiheadAttention(nn.Module):
             dropout (float): Dropout probability.
         """
         super(MultiheadAttention, self).__init__()
-        assert d_model % h == 0, "d_model must be divisible by the number of heads"
+        assert d_model % h == 0, \
+            f"d_model ({d_model}) must be divisible by num of heads ({h})"
         self.d_k = d_model // h
         self.h = h
         self.linears = clones(nn.Linear(d_model, d_model), 4)
@@ -103,7 +98,7 @@ class MultiheadAttention(nn.Module):
             for x in (query, key, value)
         ]
         x, self.attn = attention(query, key, value, sph, mask=mask,
-                                  dropout=self.dropout)
+                                 dropout=self.dropout)
         x = x.transpose(1, 2).contiguous().view(batch_size, -1,
                                                 self.h * self.d_k)
         return self.linears[-1](x)
@@ -129,6 +124,7 @@ def test_attention_module():
 # ===============================
 # 2. GatedGCN Layer (Simplified)
 # ===============================
+
 
 class GatedGCNLayer(MessagePassing):
     def __init__(self, in_dim, out_dim, dropout, residual=True):
@@ -183,11 +179,12 @@ def test_gatedgcn_layer():
 # 3. GPSConv Module (Simplified)
 # ===============================
 
+
 class GPSConv(nn.Module):
     def __init__(self, channels, conv, heads=4, dropout=0.0):
         """
-        GPSConv fuses a local message passing layer with a global self-attention
-        layer.
+        GPSConv fuses a local message passing layer with
+        a global self-attention layer.
 
         Args:
             channels (int): Feature dimension.
@@ -245,6 +242,7 @@ def test_gpsconv_module():
 # 4. Gradformer Model
 # ===============================
 
+
 class Gradformer(nn.Module):
     def __init__(self, num_layers, channels, nhead, dropout, mpnn_type="GCN"):
         """
@@ -261,17 +259,13 @@ class Gradformer(nn.Module):
         self.num_layers = num_layers
         self.convs = nn.ModuleList()
         for _ in range(num_layers):
-            conv = GatedGCNLayer(
-                channels, channels, dropout=dropout, residual=True
-            )
+            conv = GatedGCNLayer(channels, channels, dropout=dropout,
+                                 residual=True)
             gps_conv = GPSConv(channels, conv, heads=nhead, dropout=dropout)
             self.convs.append(gps_conv)
         self.pool = global_mean_pool
-        self.mlp = nn.Sequential(
-            nn.Linear(channels, channels // 2),
-            nn.ReLU(),
-            nn.Linear(channels // 2, 1)
-        )
+        self.mlp = nn.Sequential(nn.Linear(channels, channels // 2), nn.ReLU(),
+                                 nn.Linear(channels // 2, 1))
 
     def forward(self, data):
         x, edge_index, batch = data.x, data.edge_index, data.batch
@@ -296,9 +290,8 @@ def test_gradformer_model():
     batch = torch.zeros(num_nodes, dtype=torch.long)
     y = torch.rand(1)
     data = Data(x=x, edge_index=edge_index, batch=batch, y=y)
-    model = Gradformer(
-        num_layers=2, channels=16, nhead=4, dropout=0.1, mpnn_type="GCN"
-    )
+    model = Gradformer(num_layers=2, channels=16, nhead=4, dropout=0.1,
+                       mpnn_type="GCN")
     out = model(data)
     print(f"Gradformer output shape: {out.shape}")
     print()
@@ -308,24 +301,9 @@ def test_gradformer_model():
 # 5. Dataset and Loss Function Test
 # ===============================
 
-def test_dataset_loss_conversion():
-    print("=== Testing Dataset and Loss Function Conversion ===")
-    dataset = TUDataset(root=os.path.join("/tmp", "MUTAG"), name="MUTAG")
-    dataset = dataset.shuffle()
-    data = dataset[0]
-    print("Sample data from dataset:")
-    print(data)
-    output = torch.rand_like(data.y, dtype=torch.float)
-    loss_fn = nn.L1Loss()
-    loss = loss_fn(output.float(), data.y.float())
-    print(f"Computed L1 loss on dummy sample: {loss.item()}")
-    print()
-
-
 if __name__ == "__main__":
     test_attention_module()
     test_gatedgcn_layer()
     test_gpsconv_module()
     test_gradformer_model()
-    test_dataset_loss_conversion()
     print("All tests passed!")
