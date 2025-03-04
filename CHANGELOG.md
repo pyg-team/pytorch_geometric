@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Adds TXT2KG class with example on HotPotQA ([#9846](https://github.com/pyg-team/pytorch_geometric/pull/9846))
+- Added `HashTensor` ([#10072](https://github.com/pyg-team/pytorch_geometric/pull/10072))
 - Added `SGFormer` model and example ([#9904](https://github.com/pyg-team/pytorch_geometric/pull/9904))
 - Added `AveragePopularity` metric for link prediction ([#10022](https://github.com/pyg-team/pytorch_geometric/pull/10022))
 - Added `Personalization` metric for link prediction ([#10015](https://github.com/pyg-team/pytorch_geometric/pull/10015))

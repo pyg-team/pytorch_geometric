@@ -148,7 +148,7 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         return model(batch.question, batch.label, batch.desc)
     else:  # (GNN+LLM)
         return model(
-            batch.question, # ["list", "of", "questions", "here"]
+            batch.question,  # ["list", "of", "questions", "here"]
             batch.x,  # [num_nodes, num_features]
             batch.edge_index,  # [2, num_edges]
             batch.batch,  # which node belongs to which batch index
@@ -174,14 +174,8 @@ def inference_step(model, batch, model_save_name="gnn+llm"):
         # Perform inference on the question and textual graph description
         return model.inference(batch.question, batch.desc)
     else:  # (GNN+LLM)
-        return model.inference(
-            batch.question,
-            batch.x,
-            batch.edge_index,
-            batch.batch,
-            batch.edge_attr,
-            batch.desc
-        )
+        return model.inference(batch.question, batch.x, batch.edge_index,
+                               batch.batch, batch.edge_attr, batch.desc)
 
 
 def adjust_learning_rate(param_group, LR, epoch, num_epochs):
