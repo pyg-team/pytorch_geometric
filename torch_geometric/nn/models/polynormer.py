@@ -187,11 +187,13 @@ class Polynormer(torch.nn.Module):
         # equivariant global attention
         if self._global:
             batch, indices = batch.sort()
+            rev_perm = torch.empty_like(len(indices))
+            revp_perm[indices] = torch.arange(len(indices))
             x_local = self.ln(x_local[indices])
             x_global, mask = to_dense_batch(x_local, batch)
             for attn in self.global_attn:
                 x_global = attn(x_global, mask)
-            x = x_global[mask][indices.argsort()]
+            x = x_global[mask][rev_perm]
             x = self.pred_global(x)
         else:
             x = self.pred_local(x_local)
