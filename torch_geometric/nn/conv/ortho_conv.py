@@ -61,6 +61,7 @@ class OrthoConv(nn.Module):
     There are two variants:
 
     * **OrthoConv** (`use_lie=False`):
+    
       An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and
       a feature matrix
       :math:`X \in \mathbb{R}^{n \times d}` are used along with a trainable
@@ -73,10 +74,12 @@ class OrthoConv(nn.Module):
 
       where the matrix exponential is computed over :math:`iA` and
       normalization of :math:`A` is handled internally.
+      
       **Important:** The output dimension must be even since real
       numbers are paired to represent complex numbers.
 
     * **Lie OrthoConv** (`use_lie=True`):
+    
       The transformation is constrained to the Lie algebra of
       the orthogonal group. Here, the input and output dimensions
       must match and the weight matrix is skew-symmetric:
@@ -91,22 +94,22 @@ class OrthoConv(nn.Module):
 
     Args:
         dim_in (int): Size of each input sample
-        (number of input channels).
+            (number of input channels).
         dim_out (int, optional): Size of each output sample
-        (number of output channels).
+            (number of output channels).
             For OrthoConv (i.e. `use_lie=False`), this must be even.
             If not specified, defaults to `dim_in`.
         bias (bool, optional): If False, the layer will not
-        learn an additive bias.
+            learn an additive bias.
             (default: True)
         T (int, optional): Number of Taylor series terms used
-        to approximate the matrix
+            to approximate the matrix
             exponential. (default: 12)
         use_lie (bool, optional): If True,
-        implements Lie OrthoConv; otherwise, it implements
+            implements Lie OrthoConv; otherwise, it implements
             OrthoConv. (default: False)
         **kwargs: Additional arguments passed to the
-        underlying MessagePassing layer.
+            underlying MessagePassing layer.
 
     Shapes:
         - **Input:** node features of shape
