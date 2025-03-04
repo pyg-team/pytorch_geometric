@@ -36,12 +36,9 @@ parser.add_argument(
 parser.add_argument(
     '--gnn_choice',
     type=str,
-    default='graph_transformer_sgformer',
-    choices=[
-        'gat', 'sage', 'graph_transformer_sgformer',
-        'graph_transformer_polynormer'
-    ],
-    help='Model used for training.',
+    default='sgformer',
+    choices=['gat', 'sage', 'sgformer', 'polynormer'],
+    help='Model used for training, default sgformer.',
 )
 
 parser.add_argument('-e', '--epochs', type=int, default=50)
@@ -82,6 +79,8 @@ print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if args.gnn_choice in ['sgformer', 'polynormer']:
+    args.gnn_choice = 'graph_transformer_' + args.gnn_choice
 num_epochs = args.epochs
 if 'polynormer' in args.gnn_choice:
     num_epochs += args.local_epochs

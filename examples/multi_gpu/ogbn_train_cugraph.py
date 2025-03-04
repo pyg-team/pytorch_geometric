@@ -64,6 +64,8 @@ def arg_parse():
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
     parser.add_argument('-e', '--epochs', type=int, default=50)
+    parser.add_argument('-le', '--local_epochs', type=int, default=50,
+                        help='warmup epochs for polynormer')
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
     parser.add_argument('--eval_steps', type=int, default=1000)
@@ -80,11 +82,11 @@ def arg_parse():
         help='Whether or not to add self loop',
     )
     parser.add_argument(
-        "--model",
+        "--gnn_choice",
         type=str,
-        default='Polynormer',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer', 'Polynormer'],
-        help="Model used for training, default Polynormer",
+        default='sgformer',
+        choices=['gcn', 'gat', 'sage', 'sgformer', 'polynormer'],
+        help="Model used for training, default sgformer.",
     )
     parser.add_argument(
         "--num_heads",
@@ -109,7 +111,7 @@ def arg_parse():
     return args
 
 
-def evaluate(rank, loader, model):
+def evaluate(args, rank, loader, model):
     with torch.no_grad():
         total_correct = total_examples = 0
         for i, batch in enumerate(loader):
@@ -117,7 +119,11 @@ def evaluate(rank, loader, model):
             batch_size = batch.batch_size
 
             batch.y = batch.y.to(torch.long)
-            out = model(batch.x, batch.edge_index)[:batch_size]
+            if 'graph_transformer' in args.gnn_choice:
+                out = model(batch.x, batch.edge_index,
+                            batch.batch)[:batch_size]
+            else:
+                out = model(batch.x, batch.edge_index)[:batch_size]
 
             pred = out.argmax(dim=-1)
             y = batch.y[:batch_size].view(-1).to(torch.long)
@@ -158,6 +164,8 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
               num_classes, wall_clock_start, tempdir=None):
 
     epochs = args.epochs
+    if 'polynormer' in args.gnn_choice:
+        epochs += args.local_epochs
     batch_size = args.batch_size
     fan_out = args.fan_out
     num_layers = args.num_layers
@@ -177,6 +185,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     kwargs = dict(
         num_neighbors=[fan_out] * num_layers,
         batch_size=batch_size,
+        disjoint='graph_transformer' in args.gnn_choice,
     )
     from cugraph_pyg.data import GraphStore, TensorDictFeatureStore
     from cugraph_pyg.loader import NeighborLoader
@@ -261,7 +270,13 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
             batch_size = batch.batch_size
             batch.y = batch.y.to(torch.long)
             optimizer.zero_grad()
-            out = model(batch.x, batch.edge_index)
+            if 'graph_transformer' in args.gnn_choice:
+                if 'polynormer' in args.gnn_choice and epoch == args.local_epochs:  # noqa: E501
+                    print('start global attention')
+                    model.model._global = True
+                out = model(batch.x, batch.edge_index, batch.batch)
+            else:
+                out = model(batch.x, batch.edge_index)
             loss = F.cross_entropy(out[:batch_size], batch.y[:batch_size])
             loss.backward()
             optimizer.step()
@@ -274,9 +289,9 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         torch.cuda.synchronize()
 
         inference_start = time.perf_counter()
-        train_acc = evaluate(rank, train_loader, model)
+        train_acc = evaluate(args, rank, train_loader, model)
         dist.barrier()
-        val_acc = evaluate(rank, val_loader, model)
+        val_acc = evaluate(args, rank, val_loader, model)
         dist.barrier()
 
         inference_times.append(time.perf_counter() - inference_start)
@@ -306,7 +321,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
 
     if rank == 0:
         print("Testing...")
-    final_test_acc = evaluate(rank, test_loader, model)
+    final_test_acc = evaluate(args, rank, test_loader, model)
     dist.barrier()
     if rank == 0:
         print(f'Test Accuracy: {final_test_acc:.4f} for rank: {rank:02d}')
@@ -323,10 +338,8 @@ if __name__ == '__main__':
 
     args = arg_parse()
     seed_everything(123)
-    # TODO: Add support for disjoint sampling
-    if args.model in ['SGFormer', 'Polynormer']:
-        raise ValueError(
-            "Disjoint sampling is currently unsupported in cugraph_pyg")
+    if args.gnn_choice in ['sgformer', 'polynormer']:
+        args.gnn_choice = 'graph_transformer_' + args.gnn_choice
     wall_clock_start = time.perf_counter()
 
     root = osp.join(args.dataset_dir, args.dataset_subdir)
@@ -341,8 +354,8 @@ if __name__ == '__main__':
                                             num_nodes=data.num_nodes)
     data.y = data.y.reshape(-1)
 
-    print(f"Training {args.dataset} with {args.model} model.")
-    if args.model == "GAT":
+    print(f"Training {args.dataset} with {args.gnn_choice} model.")
+    if args.gnn_choice == "gat":
         model = torch_geometric.nn.models.GAT(
             dataset.num_features,
             args.hidden_channels,
@@ -350,21 +363,21 @@ if __name__ == '__main__':
             dataset.num_classes,
             heads=args.num_heads,
         )
-    elif args.model == "GCN":
+    elif args.gnn_choice == "gcn":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         )
-    elif args.model == "SAGE":
+    elif args.gnn_choice == "sage":
         model = torch_geometric.nn.models.GraphSAGE(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         )
-    elif args.model == 'SGFormer':
+    elif args.gnn_choice == 'graph_transformer_sgformer':
         model = torch_geometric.nn.models.SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
@@ -374,7 +387,7 @@ if __name__ == '__main__':
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
         )
-    elif args.model == 'Polynormer':
+    elif args.gnn_choice == 'graph_transformer_polynormer':
         model = torch_geometric.nn.models.Polynormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
@@ -382,7 +395,7 @@ if __name__ == '__main__':
             local_layers=args.num_layers,
         )
     else:
-        raise ValueError(f'Unsupported model type: {args.model}')
+        raise ValueError(f'Unsupported model type: {args.gnn_choice}')
 
     print("Data =", data)
     if args.num_devices < 1:

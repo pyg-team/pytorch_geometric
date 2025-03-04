@@ -187,7 +187,7 @@ class Polynormer(torch.nn.Module):
         # equivariant global attention
         if self._global:
             batch, indices = batch.sort()
-            rev_perm = torch.empty_like(len(indices))
+            rev_perm = torch.empty_like(indices)
             rev_perm[indices] = torch.arange(len(indices)).to(indices.device)
             x_local = self.ln(x_local[indices])
             x_global, mask = to_dense_batch(x_local, batch)
