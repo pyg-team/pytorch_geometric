@@ -47,7 +47,7 @@ parser.add_argument(
 parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('-le', '--local_epochs', type=int, default=50,
                     help='warmup epochs for polynormer')
-parser.add_argument('--num_layers', type=int, default=7)
+parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=1,
                     help='number of heads for GAT or Graph Transformer model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
