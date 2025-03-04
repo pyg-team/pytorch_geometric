@@ -60,7 +60,7 @@ class OrthoConv(nn.Module):
 
     There are two variants:
 
-    * **OrthoConv** (`use_lie`=False):
+    * **OrthoConv** (`use_lie=False`):
     
       An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and
       a feature matrix
@@ -78,7 +78,7 @@ class OrthoConv(nn.Module):
       **Important:** The output dimension must be even since real
       numbers are paired to represent complex numbers.
 
-    * **Lie OrthoConv** (`use_lie`=True):
+    * **Lie OrthoConv** (`use_lie=True`):
     
       The transformation is constrained to the Lie algebra of
       the orthogonal group. Here, the input and output dimensions
@@ -97,7 +97,7 @@ class OrthoConv(nn.Module):
             (number of input channels).
         dim_out (int, optional): Size of each output sample
             (number of output channels).
-            For OrthoConv (i.e. `use_lie`=False), this must be even.
+            For OrthoConv (i.e. `use_lie=False`), this must be even.
             If not specified, defaults to `dim_in`.
         bias (bool, optional): If False, the layer will not
             learn an additive bias.
