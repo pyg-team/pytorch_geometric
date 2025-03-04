@@ -26,5 +26,3 @@ For examples on working with heterogeneous data, see the examples under [`exampl
 For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
 
 For an example on training a GraphTransformer see [`examples/ogbn_train.py`](examples/ogbn_train.py)
-
-
