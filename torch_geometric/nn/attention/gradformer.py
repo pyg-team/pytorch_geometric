@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""
-Test Script for Gradformer Submodules
+"""Test Script for Gradformer Submodules
 
 This script contains separate tests for:
   1. The Attention module with an exponential decay mask (including
@@ -25,7 +24,6 @@ from torch_geometric.utils import to_dense_batch
 
 # import torch.optim as optim
 
-
 # ===============================
 # 1. Attention Module with Exponential Decay Mask
 # ===============================
@@ -37,8 +35,7 @@ def clones(module, N):
 
 
 def attention(query, key, value, sph, mask=None, dropout=None):
-    """
-    Compute scaled dot-product attention with an exponential decay mask.
+    """Compute scaled dot-product attention with an exponential decay mask.
 
     Args:
         query (Tensor): Query tensor of shape
@@ -69,15 +66,14 @@ def attention(query, key, value, sph, mask=None, dropout=None):
 
 class MultiheadAttention(nn.Module):
     def __init__(self, h, d_model, dropout=0.1):
-        """
-        Multi-head attention module.
+        """Multi-head attention module.
 
         Args:
             h (int): Number of attention heads.
             d_model (int): Dimension of input and output features.
             dropout (float): Dropout probability.
         """
-        super(MultiheadAttention, self).__init__()
+        super().__init__()
         assert d_model % h == 0, \
             f"d_model ({d_model}) must be divisible by num of heads ({h})"
         self.d_k = d_model // h
@@ -90,13 +86,12 @@ class MultiheadAttention(nn.Module):
             mask = mask.unsqueeze(1)
         batch_size = query.size(0)
         # Linear projections for Q, K, V.
-        query, key, value = [
-            linear(x) for linear, x in zip(self.linears, (query, key, value))
-        ]
-        query, key, value = [
-            x.view(batch_size, -1, self.h, self.d_k).transpose(1, 2)
-            for x in (query, key, value)
-        ]
+        query, key, value = (linear(x)
+                             for linear, x in zip(self.linears, (query, key,
+                                                                 value)))
+        query, key, value = (x.view(batch_size, -1, self.h,
+                                    self.d_k).transpose(1, 2)
+                             for x in (query, key, value))
         x, self.attn = attention(query, key, value, sph, mask=mask,
                                  dropout=self.dropout)
         x = x.transpose(1, 2).contiguous().view(batch_size, -1,
@@ -128,8 +123,7 @@ def test_attention_module():
 
 class GatedGCNLayer(MessagePassing):
     def __init__(self, in_dim, out_dim, dropout, residual=True):
-        """
-        A simplified GatedGCN layer.
+        """A simplified GatedGCN layer.
 
         Args:
             in_dim (int): Input feature dimension.
@@ -137,7 +131,7 @@ class GatedGCNLayer(MessagePassing):
             dropout (float): Dropout probability.
             residual (bool): Whether to include a residual connection.
         """
-        super(GatedGCNLayer, self).__init__(aggr="add")
+        super().__init__(aggr="add")
         self.A = nn.Linear(in_dim, out_dim)
         self.B = nn.Linear(in_dim, out_dim)
         self.C = nn.Linear(in_dim, out_dim)
@@ -182,8 +176,7 @@ def test_gatedgcn_layer():
 
 class GPSConv(nn.Module):
     def __init__(self, channels, conv, heads=4, dropout=0.0):
-        """
-        GPSConv fuses a local message passing layer with
+        """GPSConv fuses a local message passing layer with
         a global self-attention layer.
 
         Args:
@@ -192,7 +185,7 @@ class GPSConv(nn.Module):
             heads (int): Number of attention heads.
             dropout (float): Dropout probability.
         """
-        super(GPSConv, self).__init__()
+        super().__init__()
         self.conv = conv
         self.attn = MultiheadAttention(heads, channels, dropout=dropout)
         self.mlp = nn.Sequential(
@@ -245,8 +238,7 @@ def test_gpsconv_module():
 
 class Gradformer(nn.Module):
     def __init__(self, num_layers, channels, nhead, dropout, mpnn_type="GCN"):
-        """
-        Gradformer: A graph transformer stacking multiple GPSConv layers.
+        """Gradformer: A graph transformer stacking multiple GPSConv layers.
 
         Args:
             num_layers (int): Number of GPSConv layers.
@@ -255,7 +247,7 @@ class Gradformer(nn.Module):
             dropout (float): Dropout probability.
             mpnn_type (str): Type of message passing layer.
         """
-        super(Gradformer, self).__init__()
+        super().__init__()
         self.num_layers = num_layers
         self.convs = nn.ModuleList()
         for _ in range(num_layers):
