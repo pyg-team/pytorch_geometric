@@ -60,32 +60,33 @@ class OrthoConv(nn.Module):
 
     There are two variants:
 
-    **OrthoConv** (`use_lie=False`):
+    * **OrthoConv** (`use_lie=False`):
 
-    An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and a feature
-    matrix :math:`X \in \mathbb{R}^{n \times d}` are used along with a
-    trainable weight matrix :math:`W \in \mathbb{R}^{d \times d'}` and bias
-    :math:`b \in \mathbb{R}^{d'}`. The operator is defined as
+      An adjacency matrix :math:`A \in \mathbb{R}^{n \times n}` and
+      a feature matrix :math:`X \in \mathbb{R}^{n \times d}`
+      are used along with a trainable
+      weight matrix :math:`W \in \mathbb{R}^{d \times d'}` and
+      bias :math:`b \in \mathbb{R}^{d'}`. The operator is defined as
 
-    .. math::
-        f_{Uconv}(X) = \exp(iA) \, XW + b,
+      .. math::
+         f_{Uconv}(X) = \exp(iA) \, XW + b,
 
-    where the matrix exponential is computed over :math:`iA` and
-    normalization of :math:`A` is handled internally.
+      where the matrix exponential is computed over :math:`iA` and
+      normalization of :math:`A` is handled internally.
 
-    **Important:** The output dimension must be even since real
-    numbers are paired to represent complex numbers.
+      **Important:** The output dimension must be even since real
+      numbers are paired to represent complex numbers.
 
-    **Lie OrthoConv** (`use_lie=True`):
+    * **Lie OrthoConv** (`use_lie=True`):
 
-    The transformation is constrained to the Lie algebra of
-    the orthogonal group. Here, the input and output dimensions
-    must match and the weight matrix is skew-symmetric:
+      The transformation is constrained to the Lie algebra of
+      the orthogonal group. Here, the input and output dimensions
+      must match and the weight matrix is skew-symmetric:
 
-    .. math::
-        f_{Uconv}(X) = \exp(g_{conv}(X)) + b,
-        \quad \text{with} \quad g_{conv}(X) = AXW,
-        \quad \text{and} \quad W + W^\top = 0.
+      .. math::
+         f_{Uconv}(X) = \exp(g_{conv}(X)) + b,
+         \quad \text{with} \quad g_{conv}(X) = AXW,
+         \quad \text{and} \quad W + W^\top = 0.
 
       **Important:** In this variant, the input dimension must equal
       the output dimension.
