@@ -4,7 +4,7 @@ from torch_geometric.graphgym.logger import Logger, LoggerCallback
 from torch_geometric.testing import withPackage
 
 
-@withPackage('yacs', 'pytorch_lightning')
+@withPackage('yacs', 'lightning')
 def test_logger_callback():
     loaders = create_loader()
     assert len(loaders) == 3
