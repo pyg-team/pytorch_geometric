@@ -10,11 +10,18 @@
 # DataPipe (i.e. for loading and parsing mesh data into PyG data objects).
 
 import argparse
+import csv
 import os.path as osp
 import time
+from itertools import chain, tee
 
 import torch
-from torchdata.datapipes.iter import FileLister, FileOpener, IterDataPipe
+from torch.utils.data import IterDataPipe
+from torch.utils.data.datapipes.iter import (
+    FileLister,
+    FileOpener,
+    IterableWrapper,
+)
 
 from torch_geometric.data import Data, download_url, extract_zip
 
@@ -25,11 +32,17 @@ def molecule_datapipe() -> IterDataPipe:
     root_dir = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
     path = download_url(f'{url}/HIV.csv', root_dir)
 
-    datapipe = FileOpener([path])
-    datapipe = datapipe.parse_csv_as_dict()
-    datapipe = datapipe.parse_smiles(target_key='HIV_active')
-    datapipe = datapipe.in_memory_cache()  # Cache graph instances in-memory.
+    datapipe = FileOpener([path], mode="rt")
+    # Convert CSV rows into dictionaries, skipping the header row
+    datapipe = datapipe.map(lambda file: (
+        dict(zip(["smiles", "activity", "HIV_active"], row))
+        for i, row in enumerate(csv.reader(file[1])) if i > 0 and row))
 
+    datapipe = IterableWrapper(chain.from_iterable(datapipe))
+    datapipe = datapipe.parse_smiles(target_key='HIV_active')
+
+    cached_datapipe, = tee(datapipe, 1)
+    datapipe = IterableWrapper(cached_datapipe)
     return datapipe
 
 
@@ -37,6 +50,17 @@ def molecule_datapipe() -> IterDataPipe:
 class MeshOpener(IterDataPipe):
     # A custom DataPipe to load and parse mesh data into PyG data objects.
     def __init__(self, dp: IterDataPipe):
+        import importlib.util
+        installed = True
+        for package in ['meshio', 'torch_cluster']:
+            if importlib.util.find_spec(package) is None:
+                installed = False
+                print(f"This example requires the package {package} "
+                      f"to be installed.")
+                print(f"Please run: 'pip install {package}'")
+        if not installed:
+            exit()
+
         super().__init__()
         self.dp = dp
 
@@ -45,8 +69,13 @@ class MeshOpener(IterDataPipe):
 
         for path in self.dp:
             category = osp.basename(path).split('_')[0]
+            try:
+                mesh = meshio.read(path)
+            except Exception:
+                # Failed to read the file because it is not in
+                # the expected OFF format
+                continue
 
-            mesh = meshio.read(path)
             pos = torch.from_numpy(mesh.points).to(torch.float)
             face = torch.from_numpy(mesh.cells[0].data).t().contiguous()
 
@@ -68,10 +97,10 @@ def mesh_datapipe() -> IterDataPipe:
     datapipe = FileLister([root_dir], masks='*.off', recursive=True)
     datapipe = datapipe.filter(is_train)
     datapipe = datapipe.read_mesh()
-    datapipe = datapipe.in_memory_cache()  # Cache graph instances in-memory.
+    cached_datapipe, = tee(datapipe, 1)
+    datapipe = IterableWrapper(cached_datapipe)
     datapipe = datapipe.sample_points(1024)  # Use PyG transforms from here.
     datapipe = datapipe.knn_graph(k=8)
-
     return datapipe
 
 
