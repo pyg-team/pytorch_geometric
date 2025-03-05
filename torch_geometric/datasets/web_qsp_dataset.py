@@ -283,7 +283,8 @@ class KGQABaseDataset(InMemoryDataset):
 
         # Edges:
         print("Encoding edges...")
-        edges = self.indexer.get_unique_edge_features(feature_name=EDGE_RELATION)
+        edges = self.indexer.get_unique_edge_features(
+            feature_name=EDGE_RELATION)
         edge_attr = self.model.encode(
             edges,  # type: ignore
             batch_size=256,
@@ -348,14 +349,14 @@ class KGQABaseDataset(InMemoryDataset):
             self.save(results_graphs, path)
 
     def process(self) -> None:
-        from pandas import DataFrame
-
         import datasets
+        from pandas import DataFrame
         self.raw_dataset = datasets.load_from_disk(self.raw_paths[0])
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model_name = 'sentence-transformers/all-roberta-large-v1'
-        self.model: SentenceTransformer = SentenceTransformer(model_name).to(device)
+        self.model: SentenceTransformer = SentenceTransformer(model_name).to(
+            device)
         self.model.eval()
         if self.force_reload or not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")
@@ -405,8 +406,8 @@ class WebQSPDataset(KGQABaseDataset):
         load_dataset_kwargs: Dict[str, Any] = dict()
     ) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
-        super().__init__(dataset_name, root, split, force_reload, verbose, use_pcst,
-                         load_dataset_kwargs=load_dataset_kwargs)
+        super().__init__(dataset_name, root, split, force_reload, verbose,
+                         use_pcst, load_dataset_kwargs=load_dataset_kwargs)
 
 
 class CWQDataset(KGQABaseDataset):
@@ -432,5 +433,5 @@ class CWQDataset(KGQABaseDataset):
         load_dataset_kwargs: Dict[str, Any] = dict()
     ) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
-        super().__init__(dataset_name, root, split, force_reload, verbose, use_pcst,
-                         load_dataset_kwargs=load_dataset_kwargs)
+        super().__init__(dataset_name, root, split, force_reload, verbose,
+                         use_pcst, load_dataset_kwargs=load_dataset_kwargs)
