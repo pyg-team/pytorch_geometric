@@ -2,7 +2,7 @@
 import gc
 import os
 from itertools import chain
-from typing import Any, Iterator, List, Tuple, no_type_check
+from typing import Any, Dict, Iterator, List, Tuple, no_type_check
 
 import numpy as np
 import torch
@@ -167,6 +167,8 @@ class KGQABaseDataset(InMemoryDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        use_cwq (bool, optional): Whether to load the ComplexWebQuestions dataset. (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
     def __init__(
         self,
@@ -177,24 +179,34 @@ class KGQABaseDataset(InMemoryDataset):
         verbose: bool = False,
         use_pcst: bool = True,
         use_cwq: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = dict(),
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
+        self.load_dataset_kwargs = load_dataset_kwargs
+        # Caching custom subsets of the dataset results in unsupported behavior
+        if 'split' in load_dataset_kwargs:
+            print("WARNING: Caching custom subsets of the dataset results in unsupported behavior. Please specify a separate root directory for each split, or set force_reload=True on subsequent instantiations of the dataset.")
         # TODO Confirm with @riship why the dependency checks and device setting were removed here # noqa
         '''
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
         self._check_dependencies()
         '''
+
+        # TODO: @riship should this be done in the base class?
+        self.required_splits = ['train', 'validation', 'test']
+
         self.verbose = verbose
         self.force_reload = force_reload
         super().__init__(root, force_reload=force_reload)
 
-        if split not in set(self.raw_file_names):
+        # NOTE: Current behavior is to process the entire dataset, and only return the split specified by the user
+        if f'{split}_data.pt' not in set(self.processed_file_names):
             raise ValueError(f"Invalid 'split' argument (got {split})")
 
-        self.load(self.processed_paths[0] + "_" * (self.limit >= 0))
+        self.load(self.processed_paths[self.required_splits.index(split)])
 
     # TODO Confirm with @riship why the dependency checks and device setting were removed here # noqa
     '''
@@ -226,15 +238,17 @@ class KGQABaseDataset(InMemoryDataset):
 
     def download(self) -> None:
         import datasets
-        self.raw_dataset = datasets.load_dataset(self.dataset_name)
+
+        # HF Load Dataset by dataset name if no path is specified
+        self.load_dataset_kwargs['path'] = self.load_dataset_kwargs.get('path', self.dataset_name)
+        self.raw_dataset = datasets.load_dataset(**self.load_dataset_kwargs)
 
         # TODO: @riship should this be done in the base class?
         # Assert that the dataset contains the required splits
-        self.required_splits = ['train', 'validation', 'test']
         assert all(split in self.raw_dataset for split in self.required_splits), \
             f"Dataset '{self.dataset_name}' is missing required splits: {self.required_splits}"
 
-        datasets.save_to_disk(self.raw_dataset, self.raw_paths[0])
+        self.raw_dataset.save_to_disk(self.raw_paths[0])
 
     def _get_trips(self) -> Iterator[TripletLike]:
         # Iterate over each element's graph in each split of the dataset
@@ -289,12 +303,12 @@ class KGQABaseDataset(InMemoryDataset):
         ):
             print(f"Processing {split_name} split...")
 
-            print("Encoding questions...")
+            print("\tEncoding questions...")
             split_questions = [str(element['question']) for element in dataset]
             split_q_embs = self.model.encode(split_questions, batch_size=256,
                                              output_device='cpu')
 
-            print("Retrieving subgraphs...")
+            print("\tRetrieving subgraphs...")
             results_graphs = []
             graph_gen = get_features_for_triplets_groups(
                 self.indexer, (element['graph'] for element in dataset),
@@ -328,7 +342,7 @@ class KGQABaseDataset(InMemoryDataset):
                 pcst_subgraph["label"] = label
                 pcst_subgraph["desc"] = desc
                 results_graphs.append(pcst_subgraph.to("cpu"))
-            print("Saving subgraphs...")
+            print("\tSaving subgraphs...")
             self.save(results_graphs, path)
 
     def process(self) -> None:
@@ -377,11 +391,14 @@ class WebQSPDataset(KGQABaseDataset):
             (default: :obj:`False`)
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
     def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True) -> None:
+                 force_reload: bool = False, use_pcst: bool = True,
+                 load_dataset_kwargs: Dict[str, Any] = dict()) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+        super().__init__(dataset_name, root, split, force_reload, use_pcst,
+                         load_dataset_kwargs=load_dataset_kwargs)
 
 
 class CWQDataset(KGQABaseDataset):
@@ -398,8 +415,11 @@ class CWQDataset(KGQABaseDataset):
             (default: :obj:`False`)
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
     def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True) -> None:
+                 force_reload: bool = False, use_pcst: bool = True,
+                 load_dataset_kwargs: Dict[str, Any] = dict()) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+        super().__init__(dataset_name, root, split, force_reload, use_pcst,
+                         load_dataset_kwargs=load_dataset_kwargs)
