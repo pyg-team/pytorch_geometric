@@ -213,6 +213,24 @@ def test_to_heterogeneous_empty_edge_index():
     assert torch.equal(hetero_data['0', 'to', '0'].edge_index, data.edge_index)
 
 
+def test_to_heterogeneous_one_edge_type_multiple_node_types():
+    data = Data(x=torch.tensor([0, 1, 2]), edge_index=torch.tensor([[0, 1, 0],
+                                                                    [1, 0,
+                                                                     2]]))
+    node_type = torch.tensor([0, 1, 1])
+    edge_type = torch.tensor([0, 0, 0])
+    hetero_data = data.to_heterogeneous(node_type, edge_type)
+    assert hetero_data.node_types == ['0', '1']
+    assert hetero_data.edge_types == [('0', '0', '1'), ('1', '0', '0')]
+    assert len(hetero_data) == 2
+    assert torch.equal(hetero_data['0'].x, torch.tensor([0]))
+    assert torch.equal(hetero_data['1'].x, torch.tensor([1, 2]))
+    assert torch.equal(hetero_data['0', '0', '1'].edge_index,
+                       torch.tensor([[0, 0], [0, 1]]))
+    assert torch.equal(hetero_data['1', '0', '0'].edge_index,
+                       torch.tensor([[0], [0]]))
+
+
 def test_data_subgraph():
     x = torch.arange(5)
     y = torch.tensor([0.])

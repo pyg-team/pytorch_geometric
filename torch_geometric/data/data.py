@@ -832,18 +832,32 @@ class Data(BaseData, FeatureStore, GraphStore):
             edge_type_names = store.__dict__.get('_edge_type_names', None)
         if edge_type_names is None:
             edge_type_names = []
+            edge_type_name_to_indexes = {}
             edge_index = self.edge_index
             for i in edge_type.unique().tolist():
-                src, dst = edge_index[:, edge_type == i]
-                src_types = node_type[src].unique().tolist()
-                dst_types = node_type[dst].unique().tolist()
-                if len(src_types) != 1 and len(dst_types) != 1:
-                    raise ValueError(
-                        "Could not construct a 'HeteroData' object from the "
-                        "'Data' object because single edge types span over "
-                        "multiple node types")
-                edge_type_names.append((node_type_names[src_types[0]], str(i),
-                                        node_type_names[dst_types[0]]))
+                adjacent_type = node_type[edge_index.T[edge_type == i]]
+                for src_type, dst_type in adjacent_type.unique(dim=0).tolist():
+                    name = (node_type_names[src_type], str(i),
+                            node_type_names[dst_type])
+                    edge_type_names.append(name)
+                    # We allow single edge types to span over multiple node
+                    # types, so we need to store which edge type index (`i`)
+                    # each edge type name corresponds to:
+                    edge_type_name_to_indexes[name] = (src_type, i, dst_type)
+        else:
+            node_type_name_to_index = {
+                name: i
+                for i, name in enumerate(node_type_names)
+            }
+            # If `edge_type_names` was provided by the user, we expect
+            # `edge_type_names[i]` to be the names of all edges where
+            # `edge_type == i`, so the edge type with index `i` will always
+            # connect the same pair of node types.
+            edge_type_name_to_indexes = {
+                (src, edg, dst):
+                (node_type_name_to_index[src], i, node_type_name_to_index[dst])
+                for i, (src, edg, dst) in enumerate(edge_type_names)
+            }
 
         # We iterate over node types to find the local node indices belonging
         # to each node type. Furthermore, we create a global `index_map` vector
@@ -857,8 +871,15 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         # We iterate over edge types to find the local edge indices:
         edge_ids = {}
+        edge_node_type = node_type[self.edge_index]
         for i, key in enumerate(edge_type_names):
-            edge_ids[i] = (edge_type == i).nonzero(as_tuple=False).view(-1)
+            src_index, edg_index, dst_index = edge_type_name_to_indexes[key]
+            has_edg_type = edge_type == edg_index
+            starts_with_src = edge_node_type[0] == src_index
+            ends_with_dst = edge_node_type[1] == dst_index
+            edge_ids[i] = (has_edg_type.logical_and(
+                starts_with_src).logical_and(ends_with_dst).nonzero(
+                    as_tuple=False).view(-1))
 
         data = HeteroData()
 
@@ -877,7 +898,6 @@ class Data(BaseData, FeatureStore, GraphStore):
                 data[key].num_nodes = node_ids[i].size(0)
 
         for i, key in enumerate(edge_type_names):
-            src, _, dst = key
             for attr, value in self.items():
                 if attr in {'node_type', 'edge_type', 'ptr'}:
                     continue
