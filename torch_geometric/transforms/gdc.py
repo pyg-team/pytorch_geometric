@@ -28,9 +28,9 @@ class GDC(BaseTransform):
 
         The paper offers additional advice on how to choose the
         hyperparameters.
-        For an example of using GCN with GDC, see `examples/gcn.py
+        For an example of using GCN with GDC, see `examples/planetoid_train.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        gcn.py>`_.
+        planetoid_train.py>`_.
 
     Args:
         self_loop_weight (float, optional): Weight of the added self-loop.

@@ -24,13 +24,14 @@ jobs:
 
       - name: Run GCN on Cora
         run: |
-          python examples/gcn.py --wandb
+          python examples/planetoid_train.py --gnn_choice gcn --dataset Cora --wandb
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
       - name: Run GAT on Cora
         run: |
-          python examples/gat.py --wandb
+          python examples/planetoid_train.py --gnn_choice gat --dataset Cora --wandb
+
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 

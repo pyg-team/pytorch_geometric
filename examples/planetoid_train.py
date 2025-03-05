@@ -85,8 +85,9 @@ else:
     device = torch.device('cpu')
 
 # init wandb
-init_wandb(name=f'{args.gnn_choice}-{args.dataset}', epochs=args.epochs,
-           hidden_channels=args.hidden_channels, lr=args.lr, device=device)
+if args.wandb:
+    init_wandb(name=f'{args.gnn_choice}-{args.dataset}', epochs=args.epochs,
+               hidden_channels=args.hidden_channels, lr=args.lr, device=device)
 
 # define dataset, default train=140, val=500, test=1000
 print(f'Training {args.dataset} with {args.gnn_choice} model.')
