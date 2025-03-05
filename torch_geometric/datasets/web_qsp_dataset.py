@@ -244,14 +244,14 @@ class KGQABaseDataset(InMemoryDataset):
         # HF Load Dataset by dataset name if no path is specified
         self.load_dataset_kwargs['path'] = self.load_dataset_kwargs.get(
             'path', self.dataset_name)
-        self.raw_dataset = datasets.load_dataset(**self.load_dataset_kwargs)
+        raw_dataset = datasets.load_dataset(**self.load_dataset_kwargs)
 
         # TODO: @riship should this be done in the base class?
         # Assert that the dataset contains the required splits
-        assert all(split in self.raw_dataset for split in self.required_splits), \
+        assert all(split in raw_dataset for split in self.required_splits), \
             f"Dataset '{self.dataset_name}' is missing required splits: {self.required_splits}"
 
-        self.raw_dataset.save_to_disk(self.raw_paths[0])
+        raw_dataset.save_to_disk(self.raw_paths[0])
 
     def _get_trips(self) -> Iterator[TripletLike]:
         # Iterate over each element's graph in each split of the dataset
@@ -260,11 +260,9 @@ class KGQABaseDataset(InMemoryDataset):
 
         for split in self.required_splits:
             # Create an iterator for each element's graph in the current split
-            # Skip splits that don't exist in the dataset
-            if split in self.raw_dataset:
-                split_graphs = (element['graph']
-                                for element in self.raw_dataset[split])
-                split_iterators.append(chain.from_iterable(split_graphs))
+            split_graphs = (element['graph']
+                            for element in self.raw_dataset[split])
+            split_iterators.append(chain.from_iterable(split_graphs))
 
         # Chain all split iterators together
         return chain.from_iterable(split_iterators)
@@ -275,6 +273,7 @@ class KGQABaseDataset(InMemoryDataset):
             trips, pre_transform=preprocess_triplet)
 
         # Nodes:
+        print("Encoding nodes...")
         nodes = self.indexer.get_unique_node_features()
         x = self.model.encode(
             nodes,  # type: ignore
@@ -283,8 +282,8 @@ class KGQABaseDataset(InMemoryDataset):
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
-        edges = self.indexer.get_unique_edge_features(
-            feature_name=EDGE_RELATION)
+        print("Encoding edges...")
+        edges = self.indexer.get_unique_edge_features(feature_name=EDGE_RELATION)
         edge_attr = self.model.encode(
             edges,  # type: ignore
             batch_size=256,
@@ -351,9 +350,12 @@ class KGQABaseDataset(InMemoryDataset):
     def process(self) -> None:
         from pandas import DataFrame
 
+        import datasets
+        self.raw_dataset = datasets.load_from_disk(self.raw_paths[0])
+
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model_name = 'sentence-transformers/all-roberta-large-v1'
-        self.model = SentenceTransformer(model_name).to(device)
+        self.model: SentenceTransformer = SentenceTransformer(model_name).to(device)
         self.model.eval()
         if self.force_reload or not os.path.exists(self.processed_paths[-1]):
             print("Encoding graph...")
@@ -392,16 +394,18 @@ class WebQSPDataset(KGQABaseDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
-        use_pcst: bool = True, load_dataset_kwargs: Dict[str, Any] = dict()
+        verbose: bool = False, use_pcst: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = dict()
     ) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst,
+        super().__init__(dataset_name, root, split, force_reload, verbose, use_pcst,
                          load_dataset_kwargs=load_dataset_kwargs)
 
 
@@ -417,14 +421,16 @@ class CWQDataset(KGQABaseDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
-        use_pcst: bool = True, load_dataset_kwargs: Dict[str, Any] = dict()
+        verbose: bool = False, use_pcst: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = dict()
     ) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst,
+        super().__init__(dataset_name, root, split, force_reload, verbose, use_pcst,
                          load_dataset_kwargs=load_dataset_kwargs)
