@@ -4,7 +4,12 @@
 
 Note: We recommend the [NVIDIA PyG Container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags) for best results and easiest setup with NVIDIA GPUs
 
-### Examples with CuGraph
+### Examples with cuGraph
+[cuGraph](https://github.com/rapidsai/cugraph) is a collection of packages focused on GPU-accelerated graph analytics including support for property graphs and scaling up to thousands of GPUs. cuGraph supports the creation and manipulation of graphs followed by the execution of scalable fast graph algorithms.  It is part of the [RAPIDS](https://rapids.ai) accelerated data science framework.
+
+[cuGraph GNN](https://github.com/rapidsai/cugraph-gnn) is a collection of GPU-accelerated plugins that support PyTorch and PyG natively through the _cuGraph-PyG_ and _WholeGraph_ subprojects. cuGraph GNN is built on top of cuGraph, leveraging its low-level [pylibcugraph](https://github.com/rapidsai/cugraph/python/pylibcugraph) API and C++ primitives for sampling and other GNN operations ([libcugraph](https://github.com/rapidai/cugraph/python/libcugraph)).  It also includes the `libwholegraph` and `pylibwholegraph` libraries for high-performance distributed edgelist and embedding storage.  Users have the option of working with these lower-level libraries directly, or through the higher-level API in cuGraph-PyG that directly implements the `GraphStore`, `FeatureStore`, `NodeLoader`, and `LinkLoader` interfaces.
+
+Complete documentation on RAPIDS graph packages, including `cugraph`, `cugraph-pyg`, `pylibwholegraph`, and `pylibcugraph` is available on the [RAPIDS docs pages](https://docs.rapids.ai/api/cugraph/nightly/graph_support).
 
 | Example                                                                        | Scalability | Description                                                                                                                                       |
 | ------------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
