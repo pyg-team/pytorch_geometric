@@ -49,21 +49,19 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
 class LLM(torch.nn.Module):
     r"""A wrapper around a Large Language Model (LLM) from HuggingFace.
 
-    Args:
-        model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"`
-            or :obj:`"gemma"`.
-        num_params (int, optional): An integer representing how many parameters
-            the HuggingFace model has, in billions. This is used to
-            automatically allocate the correct number of GPUs needed, given the
-            available GPU memory of your GPUs. If not specified, the number of
-            parameters is determined using the `huggingface_hub` module.
-        dtype (torch.dtype, optional): The data type to use for the LLM.
-            (default :obj: `torch.bfloat16`)
+    model_name (str): The HuggingFace model name
+    num_params (float, optional): An integer representing how many params the
+        HuggingFace model has, in billions. This is used to automatically
+        allocate the correct number of GPUs needed, given the available GPU
+        memory of your GPUs. If not specified, the number of parameters
+        is determined using the `huggingface_hub` module.
+    dtype (torch.dtype, optional): The data type to use for the LLM.
+        (default :obj: `torch.bfloat16`)
     """
     def __init__(
         self,
         model_name: str,
-        num_params: Optional[int] = None,
+        num_params: Optional[float] = None,
         dtype: Optional[torch.dtype] = torch.bfloat16,
     ) -> None:
         super().__init__()
@@ -76,7 +74,7 @@ class LLM(torch.nn.Module):
             from huggingface_hub import get_safetensors_metadata
             safetensors_metadata = get_safetensors_metadata(model_name)
             param_count = safetensors_metadata.parameter_count
-            num_params = list(param_count.values())[0] // 10**9
+            num_params = float(list(param_count.values())[0] // 10**9)
 
         # A rough heuristic on GPU memory requirements, e.g., we found that
         # LLAMA2 (7B parameters) fits on a 85GB GPU.
@@ -99,7 +97,10 @@ class LLM(torch.nn.Module):
             self.autocast_context = nullcontext()
         else:
             self.device = self.llm.device
-            self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+            if dtype == torch.float32:
+                self.autocast_context = nullcontext()
+            else:
+                self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
 
     def _encode_inputs(
         self,
@@ -321,6 +322,7 @@ class LLM(torch.nn.Module):
                 bos_token_id=bos_token,
                 max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
+                pad_token_id=self.tokenizer.eos_token_id,
                 use_cache=True,
             )
 
