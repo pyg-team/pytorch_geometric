@@ -171,15 +171,15 @@ class KGQABaseDataset(InMemoryDataset):
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
     def __init__(
-        self,
-        dataset_name: str,
-        root: str,
-        split: str = "train",
-        force_reload: bool = False,
-        verbose: bool = False,
-        use_pcst: bool = True,
-        use_cwq: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict(),
+            self,
+            dataset_name: str,
+            root: str,
+            split: str = "train",
+            force_reload: bool = False,
+            verbose: bool = False,
+            use_pcst: bool = True,
+            use_cwq: bool = True,
+            load_dataset_kwargs: Dict[str, Any] = dict(),
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
@@ -187,7 +187,9 @@ class KGQABaseDataset(InMemoryDataset):
         self.load_dataset_kwargs = load_dataset_kwargs
         # Caching custom subsets of the dataset results in unsupported behavior
         if 'split' in load_dataset_kwargs:
-            print("WARNING: Caching custom subsets of the dataset results in unsupported behavior. Please specify a separate root directory for each split, or set force_reload=True on subsequent instantiations of the dataset.")
+            print(
+                "WARNING: Caching custom subsets of the dataset results in unsupported behavior. Please specify a separate root directory for each split, or set force_reload=True on subsequent instantiations of the dataset."
+            )
         # TODO Confirm with @riship why the dependency checks and device setting were removed here # noqa
         '''
         self.device = torch.device(
@@ -240,7 +242,8 @@ class KGQABaseDataset(InMemoryDataset):
         import datasets
 
         # HF Load Dataset by dataset name if no path is specified
-        self.load_dataset_kwargs['path'] = self.load_dataset_kwargs.get('path', self.dataset_name)
+        self.load_dataset_kwargs['path'] = self.load_dataset_kwargs.get(
+            'path', self.dataset_name)
         self.raw_dataset = datasets.load_dataset(**self.load_dataset_kwargs)
 
         # TODO: @riship should this be done in the base class?
@@ -393,9 +396,10 @@ class WebQSPDataset(KGQABaseDataset):
             with PCST or return the full graphs. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
-    def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True,
-                 load_dataset_kwargs: Dict[str, Any] = dict()) -> None:
+    def __init__(
+        self, root: str, split: str = "train", force_reload: bool = False,
+        use_pcst: bool = True, load_dataset_kwargs: Dict[str, Any] = dict()
+    ) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
         super().__init__(dataset_name, root, split, force_reload, use_pcst,
                          load_dataset_kwargs=load_dataset_kwargs)
@@ -417,9 +421,10 @@ class CWQDataset(KGQABaseDataset):
             with PCST or return the full graphs. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
     """
-    def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True,
-                 load_dataset_kwargs: Dict[str, Any] = dict()) -> None:
+    def __init__(
+        self, root: str, split: str = "train", force_reload: bool = False,
+        use_pcst: bool = True, load_dataset_kwargs: Dict[str, Any] = dict()
+    ) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
         super().__init__(dataset_name, root, split, force_reload, use_pcst,
                          load_dataset_kwargs=load_dataset_kwargs)
