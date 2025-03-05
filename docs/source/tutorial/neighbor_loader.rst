@@ -3,9 +3,9 @@ Scaling GNNs via Neighbor Sampling
 
 One of the challenges of Graph Neural Networks is to scale them to large graphs, *e.g.*, in industrial and social applications.
 Traditional deep neural networks are known to scale well to large amounts of data by decomposing the training loss into individual samples (called a *mini-batch*) and approximating exact gradients stochastically.
-In contrast, applying stochastic mini-batch training in GNNs is challenging since the embedding of a given node depends recursively on all its neighbor’s embeddings, leading to high inter-dependency between nodes that grows exponentially with respect to the number of layers.
+In contrast, applying stochastic mini-batch training in GNNs is challenging since the embedding of a given node depends recursively on all its neighbor's embeddings, leading to high inter-dependency between nodes that grows exponentially with respect to the number of layers.
 This phenomenon is often referred to as *neighbor explosion*.
-As a simple workaround, GNNs are typically executed in a full-batch fashion (see `here <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn.py>`_ for an example), where the GNN has access to all hidden node representations in all its layers.
+As a simple workaround, GNNs are typically executed in a full-batch fashion (see `here <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/planetoid_train.py>`_ for an example), where the GNN has access to all hidden node representations in all its layers.
 However, this is not feasible in large-scale graphs due to memory limitations and slow convergence.
 
 Scalability techniques are indispensable for applying GNNs to large-scale graphs in order to alleviate the neighbor explosion problem induced by mini-batch training, *i.e.* **node-wise**, **layer-wise** or **subgraph-wise** sampling techniques, or to **decouple propagations from predictions**.
