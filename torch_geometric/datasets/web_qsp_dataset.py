@@ -172,16 +172,16 @@ class KGQABaseDataset(InMemoryDataset):
         retrieval_batch_size (int, optional): Batch size for retrieving subgraphs. (default: :obj:`500`)
     """
     def __init__(
-            self,
-            dataset_name: str,
-            root: str,
-            split: str = "train",
-            force_reload: bool = False,
-            verbose: bool = False,
-            use_pcst: bool = True,
-            use_cwq: bool = True,
-            load_dataset_kwargs: Dict[str, Any] = dict(),
-            retrieval_batch_size: int = 500,
+        self,
+        dataset_name: str,
+        root: str,
+        split: str = "train",
+        force_reload: bool = False,
+        verbose: bool = False,
+        use_pcst: bool = True,
+        use_cwq: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = dict(),
+        retrieval_batch_size: int = 500,
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
@@ -322,7 +322,8 @@ class KGQABaseDataset(InMemoryDataset):
             results_graphs = []
             graph_gen = get_features_for_triplets_groups(
                 self.indexer, (element['graph'] for element in dataset),
-                pre_transform=preprocess_triplet, verbose=self.verbose, batch_size=self.retrieval_batch_size)
+                pre_transform=preprocess_triplet, verbose=self.verbose,
+                batch_size=self.retrieval_batch_size)
 
             for index in tqdm(range(len(dataset)), disable=not self.verbose):
                 data_i = dataset[index]
@@ -408,12 +409,11 @@ class WebQSPDataset(KGQABaseDataset):
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
         retrieval_batch_size (int, optional): Batch size for retrieving subgraphs. (default: :obj:`500`)
     """
-    def __init__(
-        self, root: str, split: str = "train", force_reload: bool = False,
-        verbose: bool = False, use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict(),
-        retrieval_batch_size: int = 500
-    ) -> None:
+    def __init__(self, root: str, split: str = "train",
+                 force_reload: bool = False, verbose: bool = False,
+                 use_pcst: bool = True,
+                 load_dataset_kwargs: Dict[str, Any] = dict(),
+                 retrieval_batch_size: int = 500) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
         super().__init__(dataset_name, root, split, force_reload, verbose,
                          use_pcst, load_dataset_kwargs=load_dataset_kwargs,
