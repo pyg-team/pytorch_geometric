@@ -111,9 +111,10 @@ class TXT2KG():
         Returns:
         - None
         """
-        # Ensure NVIDIA_API_KEY is set before proceeding
-        assert self.NVIDIA_API_KEY != '', \
-            "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm=True"
+        if not self.local_LM:
+            # Ensure NVIDIA_API_KEY is set before proceeding
+            assert self.NVIDIA_API_KEY != '', \
+                "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm=True"
         if QA_pair:
             # QA_pairs should be unique keys, check if already exists in KG
             if QA_pair in self.relevant_triples.keys():
@@ -161,7 +162,7 @@ class TXT2KG():
                 }
                 for retry in range(5):
                     try:
-                        for retry in range(20):
+                        for retry in range(200):
                             try:
                                 # Spawn multiple processes, process chunks in parallel
                                 mp.spawn(
