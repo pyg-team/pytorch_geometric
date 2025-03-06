@@ -162,7 +162,7 @@ class TXT2KG():
                 }
                 for retry in range(5):
                     try:
-                        for retry in range(20):
+                        for retry in range(200):
                             try:
                                 # Spawn multiple processes, process chunks in parallel
                                 mp.spawn(
