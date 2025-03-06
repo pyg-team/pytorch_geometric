@@ -91,6 +91,8 @@ class SGModule(torch.nn.Module):
     def forward(self, x: Tensor, batch: Tensor):
         # to dense batch expects sorted batch
         batch, indices = batch.sort(stable=True)
+        rev_perm = torch.empty_like(indices)
+        rev_perm[indices] = torch.arange(len(indices), device=indices.device)
         x = x[indices]
         x, mask = to_dense_batch(x, batch)
         layer_ = []
@@ -114,7 +116,7 @@ class SGModule(torch.nn.Module):
 
         x_mask = x[mask]
         # reverse the sorting
-        unsorted_x_mask = x_mask[indices.argsort()]
+        unsorted_x_mask = x_mask[rev_perm]
         return unsorted_x_mask
 
 
