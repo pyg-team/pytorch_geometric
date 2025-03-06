@@ -49,11 +49,13 @@ class MeshOpener(IterDataPipe):
     # A custom DataPipe to load and parse mesh data into PyG data objects.
     def __init__(self, dp: IterDataPipe) -> None:
         try:
-            pass
+            import meshio
+            import torch_cluster
         except ImportError as e:
             raise ImportError(
                 "To run this example, please install required packages:\n"
-                "pip install meshio torch-cluster") from e
+                "pip install meshio torch-cluster"
+            ) from e
 
         super().__init__()
         self.dp = dp
