@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package featurestore;
+
+import "common.proto";
+
+message KeysRequest {
+  string type = 1;  // node type
+  repeated int32 idx = 2;  // indices
+}
+
+message BatchedKeysRequest {
+  repeated KeysRequest req = 1;
+}
+
+message KeysResponse {
+  string type = 1;
+  repeated FeatureList features = 2;
+}
+
+message BatchedKeysResponse {
+  repeated KeysResponse res = 1;
+}
+
+message LoadFeaturesRequest {
+  string type = 1;
+  string path = 2;
+}
+
+message EmptyResponse {}
+
+service FeatureStore {
+    rpc LoadFeatures(LoadFeaturesRequest) returns (EmptyResponse) {}
+    rpc GetFeatures(KeysRequest) returns (KeysResponse) {}
+    rpc BatchedGetFeatures(BatchedKeysRequest) returns (BatchedKeysResponse) {}
+}
