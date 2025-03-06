@@ -92,7 +92,7 @@ class SGModule(torch.nn.Module):
         # to dense batch expects sorted batch
         batch, indices = batch.sort(stable=True)
         rev_perm = torch.empty_like(indices)
-        rev_perm[indices] = torch.arange(len(indices), device=device)
+        rev_perm[indices] = torch.arange(len(indices), device=indices.device)
         x = x[indices]
         x, mask = to_dense_batch(x, batch)
         layer_ = []
