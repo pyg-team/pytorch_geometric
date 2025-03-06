@@ -1,4 +1,7 @@
 #include "table_store.h"
+#include "Generated/common.pb.h"
+#include "arrow/chunked_array.h"
+#include "arrow/compute/expression.h"
 #include "arrow/dataset/dataset.h"
 #include "arrow/dataset/discovery.h"
 #include "arrow/dataset/file_parquet.h"
@@ -7,12 +10,9 @@
 #include "arrow/filesystem/localfs.h"
 #include "arrow/io/api.h"
 #include "arrow/table.h"
-#include "Generated/common.pb.h"
+#include "arrow/type.h"
 #include "rocksdb/db.h"
 #include "rocksdb/options.h"
-#include <arrow/chunked_array.h>
-#include <arrow/compute/expression.h>
-#include <arrow/type.h>
 #include <exception>
 #include <filesystem>
 #include <iostream>

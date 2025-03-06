@@ -1,6 +1,6 @@
 #include "encoder.h"
 #include "rocksdb/db.h"
-#include <arrow/type_fwd.h>
+#include "arrow/type_fwd.h"
 #include <memory>
 #include <string>
 #include <vector>
