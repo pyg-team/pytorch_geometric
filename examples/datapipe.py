@@ -40,26 +40,22 @@ def molecule_datapipe() -> IterDataPipe:
 
     datapipe = IterableWrapper(chain.from_iterable(datapipe))
     datapipe = datapipe.parse_smiles(target_key='HIV_active')
-
-    cached_datapipe, = tee(datapipe, 1)
-    datapipe = IterableWrapper(cached_datapipe)
-    return datapipe
+    datapipe, = tee(datapipe, 1)
+    return IterableWrapper(datapipe)
 
 
 @torch.utils.data.functional_datapipe('read_mesh')
 class MeshOpener(IterDataPipe):
     # A custom DataPipe to load and parse mesh data into PyG data objects.
-    def __init__(self, dp: IterDataPipe):
-        import importlib.util
-        installed = True
-        for package in ['meshio', 'torch_cluster']:
-            if importlib.util.find_spec(package) is None:
-                installed = False
-                print(f"This example requires the package {package} "
-                      f"to be installed.")
-                print(f"Please run: 'pip install {package}'")
-        if not installed:
-            exit()
+    def __init__(self, dp: IterDataPipe) -> None:
+        try:
+            import meshio
+            import torch_cluster
+        except ImportError as e:
+            raise ImportError(
+                "To run this example, please install required packages:\n"
+                "pip install meshio torch-cluster"
+            ) from e
 
         super().__init__()
         self.dp = dp
@@ -71,9 +67,9 @@ class MeshOpener(IterDataPipe):
             category = osp.basename(path).split('_')[0]
             try:
                 mesh = meshio.read(path)
-            except Exception:
-                # Failed to read the file because it is not in
-                # the expected OFF format
+            except UnicodeDecodeError:
+                # Failed to read the file because it is not in the expected OFF
+                # format.
                 continue
 
             pos = torch.from_numpy(mesh.points).to(torch.float)
@@ -97,8 +93,8 @@ def mesh_datapipe() -> IterDataPipe:
     datapipe = FileLister([root_dir], masks='*.off', recursive=True)
     datapipe = datapipe.filter(is_train)
     datapipe = datapipe.read_mesh()
-    cached_datapipe, = tee(datapipe, 1)
-    datapipe = IterableWrapper(cached_datapipe)
+    datapipe, = tee(datapipe, 1)
+    datapipe = IterableWrapper(datapipe)
     datapipe = datapipe.sample_points(1024)  # Use PyG transforms from here.
     datapipe = datapipe.knn_graph(k=8)
     return datapipe
