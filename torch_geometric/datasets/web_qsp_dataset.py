@@ -169,6 +169,7 @@ class KGQABaseDataset(InMemoryDataset):
             with PCST or return the full graphs. (default: :obj:`True`)
         use_cwq (bool, optional): Whether to load the ComplexWebQuestions dataset. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
+        retrieval_batch_size (int, optional): Batch size for retrieving subgraphs. (default: :obj:`500`)
     """
     def __init__(
             self,
@@ -180,11 +181,16 @@ class KGQABaseDataset(InMemoryDataset):
             use_pcst: bool = True,
             use_cwq: bool = True,
             load_dataset_kwargs: Dict[str, Any] = dict(),
+            retrieval_batch_size: int = 500,
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
         self.load_dataset_kwargs = load_dataset_kwargs
+
+        # NOTE: If running into memory issues, try reducing this batch size
+        self.retrieval_batch_size = retrieval_batch_size
+
         # Caching custom subsets of the dataset results in unsupported behavior
         if 'split' in load_dataset_kwargs:
             print(
@@ -268,12 +274,13 @@ class KGQABaseDataset(InMemoryDataset):
         return chain.from_iterable(split_iterators)
 
     def _build_graph(self) -> None:
+        print("Encoding graph...")
         trips = self._get_trips()
         self.indexer: LargeGraphIndexer = LargeGraphIndexer.from_triplets(
             trips, pre_transform=preprocess_triplet)
 
         # Nodes:
-        print("Encoding nodes...")
+        print("\tEncoding nodes...")
         nodes = self.indexer.get_unique_node_features()
         x = self.model.encode(
             nodes,  # type: ignore
@@ -282,7 +289,7 @@ class KGQABaseDataset(InMemoryDataset):
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
-        print("Encoding edges...")
+        print("\tEncoding edges...")
         edges = self.indexer.get_unique_edge_features(
             feature_name=EDGE_RELATION)
         edge_attr = self.model.encode(
@@ -295,7 +302,7 @@ class KGQABaseDataset(InMemoryDataset):
             map_from_feature=EDGE_RELATION,
         )
 
-        print("Saving graph...")
+        print("\tSaving graph...")
         self.indexer.save(self.processed_paths[-1])
 
     def _retrieve_subgraphs(self) -> None:
@@ -315,7 +322,7 @@ class KGQABaseDataset(InMemoryDataset):
             results_graphs = []
             graph_gen = get_features_for_triplets_groups(
                 self.indexer, (element['graph'] for element in dataset),
-                pre_transform=preprocess_triplet, verbose=self.verbose)
+                pre_transform=preprocess_triplet, verbose=self.verbose, batch_size=self.retrieval_batch_size)
 
             for index in tqdm(range(len(dataset)), disable=not self.verbose):
                 data_i = dataset[index]
@@ -326,7 +333,7 @@ class KGQABaseDataset(InMemoryDataset):
                     graph["edge_idx"]].reset_index()
                 if self.use_pcst and len(textual_nodes) > 0 and len(
                         textual_edges) > 0:
-                    pcst_subgraph, desc = retrieval_via_pcst(
+                    subgraph, desc = retrieval_via_pcst(
                         graph,
                         split_q_embs[index],
                         textual_nodes,
@@ -338,13 +345,14 @@ class KGQABaseDataset(InMemoryDataset):
                             index=False,
                             columns=["src", "edge_attr", "dst"],
                         )
+                    subgraph = graph
                 question = f"Question: {data_i['question']}\nAnswer: "
                 label = ("|").join(data_i["answer"]).lower()
 
-                pcst_subgraph["question"] = question
-                pcst_subgraph["label"] = label
-                pcst_subgraph["desc"] = desc
-                results_graphs.append(pcst_subgraph.to("cpu"))
+                subgraph["question"] = question
+                subgraph["label"] = label
+                subgraph["desc"] = desc
+                results_graphs.append(subgraph.to("cpu"))
             print("\tSaving subgraphs...")
             self.save(results_graphs, path)
 
@@ -359,7 +367,6 @@ class KGQABaseDataset(InMemoryDataset):
             device)
         self.model.eval()
         if self.force_reload or not os.path.exists(self.processed_paths[-1]):
-            print("Encoding graph...")
             self._build_graph()
         else:
             print("Loading graph...")
@@ -399,15 +406,18 @@ class WebQSPDataset(KGQABaseDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
+        retrieval_batch_size (int, optional): Batch size for retrieving subgraphs. (default: :obj:`500`)
     """
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
         verbose: bool = False, use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict()
+        load_dataset_kwargs: Dict[str, Any] = dict(),
+        retrieval_batch_size: int = 500
     ) -> None:
         dataset_name = 'rmanluo/RoG-webqsp'
         super().__init__(dataset_name, root, split, force_reload, verbose,
-                         use_pcst, load_dataset_kwargs=load_dataset_kwargs)
+                         use_pcst, load_dataset_kwargs=load_dataset_kwargs,
+                         retrieval_batch_size=retrieval_batch_size)
 
 
 class CWQDataset(KGQABaseDataset):
