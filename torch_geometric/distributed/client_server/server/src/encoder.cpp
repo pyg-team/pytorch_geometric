@@ -1,10 +1,12 @@
 #include "encoder.h"
+#include "Generated/common.pb.h"
 #include "arrow/array.h"
 #include "arrow/type_fwd.h"
-#include "Generated/common.pb.h"
 #include <algorithm>
 #include <memory>
 #include <vector>
+
+namespace server {
 
 std::string ByteEncoder::encode(int v) {
   std::string ret(INT_BYTE_LEN, 0x00);
@@ -83,3 +85,5 @@ void ByteEncoder::encode_internal(std::shared_ptr<T> &t, size_t len,
     }
   }
 }
+
+} // namespace server

@@ -15,6 +15,8 @@
 #include "encoder.h"
 #include "table_store.h"
 
+namespace server {
+
 class FeatureStoreService final : public featurestore::FeatureStore::Service {
 public:
   FeatureStoreService(std::string base)
@@ -73,11 +75,14 @@ private:
   ByteEncoder m_enc;
 };
 
+} // namespace server
+
 int main(int argc, char *argv[]) {
   grpc::ServerBuilder builder;
+  // TODO make configurable
   builder.AddListeningPort("0.0.0.0:50051", grpc::InsecureServerCredentials());
 
-  FeatureStoreService my_service("/tmp/feature_store");
+  server::FeatureStoreService my_service("/tmp/feature_store");
   builder.RegisterService(&my_service);
 
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());

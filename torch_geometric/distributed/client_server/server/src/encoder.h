@@ -1,9 +1,11 @@
 #pragma once
 
-#include "arrow/type_fwd.h"
 #include "Generated/common.pb.h"
+#include "arrow/type_fwd.h"
 #include <string>
 #include <vector>
+
+namespace server {
 
 const int INT_BYTE_LEN = 8;
 
@@ -11,17 +13,19 @@ class ByteEncoder {
 public:
   /* Primary keys can either be integers or strings. If
    * they are strings, they are left as-is. If they are
-   * integers, they are encoded. */
+   * integers, they are encoded.*/
   std::string encode(int);
 
   /* Non-primary key columns are encoded via the protobuf
-   * FeatureList representation. */
-  void encode(std::shared_ptr<arrow::Array>&, std::vector<featurestore::FeatureList>*, size_t, size_t);
+   * FeatureList representation.*/
+  void encode(std::shared_ptr<arrow::Array> &,
+              std::vector<featurestore::FeatureList> *, size_t, size_t);
 
 private:
-  template <typename T> void encode_internal(std::shared_ptr<T>&, size_t, std::vector<featurestore::FeatureList>*, size_t);
+  template <typename T>
+  void encode_internal(std::shared_ptr<T> &, size_t,
+                       std::vector<featurestore::FeatureList> *, size_t);
 };
-
 
 template <typename T> constexpr bool IsIntArray() {
   return (std::is_same_v<T, arrow::Int64Array> ||
@@ -41,3 +45,5 @@ template <typename T> constexpr bool IsFloatArray() {
 template <typename T> constexpr bool IsStringArray() {
   return std::is_same_v<T, arrow::StringArray>;
 }
+
+} // namespace server
