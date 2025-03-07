@@ -674,6 +674,7 @@ def get_features_for_triplets_groups(
             yield batch
 
     import multiprocessing as mp
+    import multiprocessing.pool as mpp
     num_workers = num_workers or mp.cpu_count()
     ideal_batch_size = min(max_batch_size,
                            max(1,
@@ -684,7 +685,7 @@ def get_features_for_triplets_groups(
     edge_index_batches = batched(edge_index, ideal_batch_size)
     batches = zip(node_key_batches, edge_key_batches, edge_index_batches)
 
-    with mp.pool.ThreadPool() as pool:
+    with mpp.ThreadPool() as pool:
         result = pool.map(_fetch_feature_batch, batches)
     yield from chain.from_iterable(result)
 
