@@ -327,6 +327,11 @@ if __name__ == '__main__':
 
     args = arg_parse()
     seed_everything(123)
+    if args.gnn_choice == 'polynormer' and args.num_layers != 7:
+        print(
+            "The original polynormer paper recommends 7 layers, you have "
+            "chosen", args.num_layers, "which may effect results. "
+            "See for details")
     if args.gnn_choice in ['sgformer', 'polynormer']:
         args.gnn_choice = 'graph_transformer_' + args.gnn_choice
     wall_clock_start = time.perf_counter()

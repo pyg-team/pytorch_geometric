@@ -73,6 +73,10 @@ class PolynormerAttention(torch.nn.Module):
             q = F.sigmoid(self.q(x)).view(B, N, self.head_channels, self.heads)
         v = self.v(x).view(B, N, self.head_channels, self.heads)
 
+        if mask is not None:
+            mask = mask[:, :, None, None]
+            v.masked_fill_(~mask, 0.)
+
         # numerator
         kv = torch.einsum('bndh, bnmh -> bdmh', k, v)
         num = torch.einsum('bndh, bdmh -> bnmh', q, kv)
@@ -82,7 +86,7 @@ class PolynormerAttention(torch.nn.Module):
         den = torch.einsum('bndh, bdh -> bnh', q, k_sum).unsqueeze(2)
 
         # linear global attention based on kernel trick
-        x = (num / den).reshape(B, N, -1)
+        x = (num / (den + 1e-6)).reshape(B, N, -1)
         x = self.lns(x) * (h + self.beta)
         x = F.relu(self.lin_out(x))
         x = self.dropout(x)

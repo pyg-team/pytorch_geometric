@@ -75,6 +75,10 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
+if args.gnn_choice == 'polynormer' and args.num_layers != 7:
+    print("The original polynormer paper recommends 7 layers, you have chosen",
+          args.num_layers, "which may effect results. See for details")
+
 print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 seed_everything(123)
