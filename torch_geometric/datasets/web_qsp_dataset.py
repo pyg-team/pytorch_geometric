@@ -322,10 +322,13 @@ class KGQABaseDataset(InMemoryDataset):
 
             print("\tRetrieving subgraphs...")
             results_graphs = []
-            retrieval_kwargs = {**self.retrieval_kwargs, **{
-                'pre_transform': preprocess_triplet,
-                'verbose': self.verbose,
-            }}
+            retrieval_kwargs = {
+                **self.retrieval_kwargs,
+                **{
+                    'pre_transform': preprocess_triplet,
+                    'verbose': self.verbose,
+                }
+            }
             graph_gen = get_features_for_triplets_groups(
                 self.indexer, (element['graph'] for element in dataset),
                 **retrieval_kwargs)
