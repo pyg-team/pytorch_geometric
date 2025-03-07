@@ -169,19 +169,19 @@ class KGQABaseDataset(InMemoryDataset):
             with PCST or return the full graphs. (default: :obj:`True`)
         use_cwq (bool, optional): Whether to load the ComplexWebQuestions dataset. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_batch_size (int, optional): Batch size for retrieving subgraphs. (default: :obj:`500`)
+        retrieval_kwargs (dict, optional): Keyword arguments for the the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
     """
     def __init__(
-        self,
-        dataset_name: str,
-        root: str,
-        split: str = "train",
-        force_reload: bool = False,
-        verbose: bool = False,
-        use_pcst: bool = True,
-        use_cwq: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict(),
-        retrieval_batch_size: int = 500,
+            self,
+            dataset_name: str,
+            root: str,
+            split: str = "train",
+            force_reload: bool = False,
+            verbose: bool = False,
+            use_pcst: bool = True,
+            use_cwq: bool = True,
+            load_dataset_kwargs: Dict[str, Any] = dict(),
+            retrieval_kwargs: Dict[str, Any] = dict(),
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
@@ -189,7 +189,7 @@ class KGQABaseDataset(InMemoryDataset):
         self.load_dataset_kwargs = load_dataset_kwargs
 
         # NOTE: If running into memory issues, try reducing this batch size
-        self.retrieval_batch_size = retrieval_batch_size
+        self.retrieval_kwargs = retrieval_kwargs
 
         # Caching custom subsets of the dataset results in unsupported behavior
         if 'split' in load_dataset_kwargs:
@@ -322,10 +322,13 @@ class KGQABaseDataset(InMemoryDataset):
 
             print("\tRetrieving subgraphs...")
             results_graphs = []
+            retrieval_kwargs = {**self.retrieval_kwargs, **{
+                'pre_transform': preprocess_triplet,
+                'verbose': self.verbose,
+            }}
             graph_gen = get_features_for_triplets_groups(
                 self.indexer, (element['graph'] for element in dataset),
-                pre_transform=preprocess_triplet, verbose=self.verbose,
-                batch_size=self.retrieval_batch_size)
+                **retrieval_kwargs)
 
             for index in tqdm(range(len(dataset)), disable=not self.verbose):
                 data_i = dataset[index]
@@ -409,17 +412,23 @@ class WebQSPDataset(KGQABaseDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_batch_size (int, optional): Batch size for retrieving subgraphs. (default: :obj:`500`)
+        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
     """
-    def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, verbose: bool = False,
-                 use_pcst: bool = True,
-                 load_dataset_kwargs: Dict[str, Any] = dict(),
-                 retrieval_batch_size: int = 500) -> None:
+    def __init__(
+        self, root: str, split: str = "train", force_reload: bool = False,
+        verbose: bool = False, use_pcst: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = dict(),
+        retrieval_kwargs: Dict[str, Any] = dict()
+    ) -> None:
+        default_retrieval_kwargs = {
+            'max_batch_size': 250,
+            'num_workers': None,
+        }
+        retrieval_kwargs = {**default_retrieval_kwargs, **retrieval_kwargs}
         dataset_name = 'rmanluo/RoG-webqsp'
         super().__init__(dataset_name, root, split, force_reload, verbose,
                          use_pcst, load_dataset_kwargs=load_dataset_kwargs,
-                         retrieval_batch_size=retrieval_batch_size)
+                         retrieval_kwargs=retrieval_kwargs)
 
 
 class CWQDataset(KGQABaseDataset):
@@ -438,12 +447,15 @@ class CWQDataset(KGQABaseDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
     """
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
         verbose: bool = False, use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict()
+        load_dataset_kwargs: Dict[str, Any] = dict(),
+        retrieval_kwargs: Dict[str, Any] = dict()
     ) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
         super().__init__(dataset_name, root, split, force_reload, verbose,
-                         use_pcst, load_dataset_kwargs=load_dataset_kwargs)
+                         use_pcst, load_dataset_kwargs=load_dataset_kwargs,
+                         retrieval_kwargs=retrieval_kwargs)

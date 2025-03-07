@@ -574,7 +574,8 @@ def get_features_for_triplets_groups(
     edge_feature_name: str = "edge_attr",
     pre_transform: Callable[[TripletLike], TripletLike] = lambda trip: trip,
     verbose: bool = False,
-    batch_size: int = 500,
+    max_batch_size: int = 250,
+    num_workers: Optional[int] = None,
 ) -> Iterator[Data]:
     """Given an indexer and a series of triplet groups (like a dataset),
     retrieve the specified node and edge features for each triplet from the
@@ -592,8 +593,8 @@ def get_features_for_triplets_groups(
             Optional preprocessing to perform on triplets.
             Defaults to None.
         verbose (bool, optional): Whether to print progress. Defaults to False.
-        batch_size (int, optional): Batch size for fetching features. Defaults to 500.
-
+        max_batch_size (int, optional): Maximum batch size for fetching features. Defaults to 250.
+        num_workers (int, optional): Number of workers to use for fetching features. Defaults to None (all available).
     Yields:
         Iterator[Data]: For each triplet group, yield a data object containing
             the unique graph and features from the index.
@@ -630,14 +631,13 @@ def get_features_for_triplets_groups(
     # We get the embeddings for each node and edge key in the KG, but we need to do so in batches.
     # Batches that are too small waste compute time, as each call to get features has an upfront cost.
     # Batches that are too large waste memory, as we need to store all the result embeddings in memory.
-    def _fetch_feature_batch(node_key_batch, edge_key_batch, edge_index_batch):
-        node_feats = indexer.get_node_features(
-            feature_name=node_feature_name,
-            pids=chain.from_iterable(node_key_batch))
-        edge_feats = indexer.get_edge_features(
-            feature_name=edge_feature_name,
-            pids=chain.from_iterable(edge_key_batch))
-
+    def _fetch_feature_batch(batches):
+        node_key_batch, edge_key_batch, edge_index_batch = batches
+        node_feats = indexer.get_node_features(feature_name=node_feature_name,
+                                            pids=chain.from_iterable(node_key_batch))
+        edge_feats = indexer.get_edge_features(feature_name=edge_feature_name,
+                                            pids=chain.from_iterable(edge_key_batch))
+    
         last_node_idx, last_edge_idx = 0, 0
         for (nkeys, ekeys, eidx) in zip(node_key_batch, edge_key_batch,
                                         edge_index_batch):
@@ -669,13 +669,20 @@ def get_features_for_triplets_groups(
             if strict and len(batch) != n:
                 raise ValueError('batched(): incomplete batch')
             yield batch
-
+    
     import multiprocessing as mp
-    import multiprocessing.pool as mpp
     num_workers = num_workers or mp.cpu_count()
-    ideal_batch_size = min(max_batch_size,
-                           max(1,
-                               len(triplet_groups) // num_workers))
+    ideal_batch_size = min(max_batch_size, max(1, len(triplet_groups) // num_workers))
+    
+    node_key_batches = batched(node_keys, ideal_batch_size)
+    edge_key_batches = batched(edge_keys, ideal_batch_size)
+    edge_index_batches = batched(edge_index, ideal_batch_size)
+    batches = zip(node_key_batches, edge_key_batches, edge_index_batches)
+
+    with mp.pool.ThreadPool() as pool:
+        result = pool.map(_fetch_feature_batch, batches)
+    yield from chain.from_iterable(result)
+
 
     node_key_batches = batched(node_keys, ideal_batch_size)
     edge_key_batches = batched(edge_keys, ideal_batch_size)
