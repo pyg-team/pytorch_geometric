@@ -213,6 +213,8 @@ class KGQABaseDataset(InMemoryDataset):
         # NOTE: Current behavior is to process the entire dataset, and only return the split specified by the user
         if f'{split}_data.pt' not in set(self.processed_file_names):
             raise ValueError(f"Invalid 'split' argument (got {split})")
+        if split == 'val':
+            split = 'validation'
 
         self.load(self.processed_paths[self.required_splits.index(split)])
 

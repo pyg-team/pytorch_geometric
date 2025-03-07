@@ -670,14 +670,21 @@ def get_features_for_triplets_groups(
                 raise ValueError('batched(): incomplete batch')
             yield batch
 
-    node_key_batches = batched(node_keys, batch_size)
-    edge_key_batches = batched(edge_keys, batch_size)
-    edge_index_batches = batched(edge_index, batch_size)
+    import multiprocessing as mp
+    import multiprocessing.pool as mpp
+    num_workers = num_workers or mp.cpu_count()
+    ideal_batch_size = min(max_batch_size,
+                           max(1,
+                               len(triplet_groups) // num_workers))
 
-    for node_key_batch, edge_key_batch, edge_index_batch in zip(
-            node_key_batches, edge_key_batches, edge_index_batches):
-        yield from _fetch_feature_batch(node_key_batch, edge_key_batch,
-                                        edge_index_batch)
+    node_key_batches = batched(node_keys, ideal_batch_size)
+    edge_key_batches = batched(edge_keys, ideal_batch_size)
+    edge_index_batches = batched(edge_index, ideal_batch_size)
+    batches = zip(node_key_batches, edge_key_batches, edge_index_batches)
+
+    with mpp.ThreadPool() as pool:
+        result = pool.map(_fetch_feature_batch, batches)
+    yield from chain.from_iterable(result)
 
 
 def get_features_for_triplets(
@@ -709,5 +716,5 @@ def get_features_for_triplets(
     gen = get_features_for_triplets_groups(indexer, [triplets],
                                            node_feature_name,
                                            edge_feature_name, pre_transform,
-                                           verbose, batch_size=1)
+                                           verbose, max_batch_size=1)
     return next(gen)
