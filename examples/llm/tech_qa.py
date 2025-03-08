@@ -187,7 +187,8 @@ def make_dataset(args):
         """
         # encode the raw context docs
         embedded_docs = model.encode(context_docs, output_device=device,
-                                     batch_size=int(sent_trans_batch_size / 4), verbose=True)
+                                     batch_size=int(sent_trans_batch_size / 4),
+                                     verbose=True)
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
