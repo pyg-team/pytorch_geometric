@@ -157,7 +157,8 @@ def make_dataset(args):
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
 
-            for context_doc in tqdm(context_docs, desc="Extracting KG triples"):
+            for context_doc in tqdm(context_docs,
+                                    desc="Extracting KG triples"):
                 kg_maker.add_doc_2_KG(txt=context_doc)
 
             relevant_triples = kg_maker.relevant_triples
