@@ -2,7 +2,7 @@
 # 5-8% diff vs VectorRAG baselines
 import argparse
 import gc
-import glob
+from glob import glob
 import json
 import os
 import random
