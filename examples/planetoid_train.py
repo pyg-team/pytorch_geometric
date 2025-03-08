@@ -267,8 +267,6 @@ class GCN2(torch.nn.Module):
         self.dropout = dropout
 
     def forward(self, x: Tensor, adj_t: SparseTensor) -> Tensor:
-        import pdb
-        pdb.set_trace()
         x = F.dropout(x, self.dropout, training=self.training)
         x = x_0 = self.lins[0](x).relu()
 
