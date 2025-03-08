@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 from sklearn.manifold import TSNE
+from torch import Tensor
 from torch.utils.tensorboard import SummaryWriter
 
 import torch_geometric.transforms as T
@@ -31,13 +32,14 @@ from torch_geometric.nn import (
     SuperGATConv,
     TAGConv,
 )
-from torch_geometric.typing import WITH_TORCH_SPLINE_CONV
+from torch_geometric.typing import (
+    WITH_TORCH_SPLINE_CONV,
+    Adj,
+    OptTensor,
+    SparseTensor,
+)
 from torch_geometric.utils import dropout_edge
 
-if not WITH_TORCH_SPLINE_CONV:
-    quit("This example requires 'torch-spline-conv'")
-
-# define args
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter, )
 parser.add_argument(
@@ -73,10 +75,12 @@ parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
+if args.gnn_choice == 'splinegnn' and not WITH_TORCH_SPLINE_CONV:
+    quit("This example requires 'torch-spline-conv'")
+
 wall_clock_start = time.perf_counter()
 seed_everything(123)
 
-# detect device
 if torch.cuda.is_available():
     device = torch.device('cuda')
 elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
@@ -121,14 +125,15 @@ data = dataset[0].to(device)
 
 # define models
 class AGNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int) -> None:
         super().__init__()
         self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
         self.prop1 = AGNNConv(requires_grad=False)
         self.prop2 = AGNNConv(requires_grad=True)
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, training=self.training)
         x = F.relu(self.lin1(x))
         x = self.prop1(x, edge_index)
@@ -139,7 +144,8 @@ class AGNN(torch.nn.Module):
 
 
 class ARMA(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int) -> None:
         super().__init__()
         self.conv1 = ARMAConv(in_channels, hidden_channels, num_stacks=3,
                               num_layers=2, shared_weights=True, dropout=0.25)
@@ -147,7 +153,7 @@ class ARMA(torch.nn.Module):
                               num_layers=2, shared_weights=True, dropout=0.25,
                               act=lambda x: x)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, training=self.training)
         x = F.relu(self.conv1(x, edge_index))
         x = F.dropout(x, training=self.training)
@@ -156,7 +162,8 @@ class ARMA(torch.nn.Module):
 
 
 class MixHop(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int) -> None:
         super().__init__()
         self.conv1 = MixHopConv(in_channels, hidden_channels, powers=[0, 1, 2])
         self.norm1 = BatchNorm(3 * hidden_channels)
@@ -168,7 +175,7 @@ class MixHop(torch.nn.Module):
         self.norm3 = BatchNorm(3 * hidden_channels)
         self.lin = Linear(3 * hidden_channels, out_channels)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, p=0.7, training=self.training)
         x = self.conv1(x, edge_index)
         x = self.norm1(x)
@@ -183,22 +190,23 @@ class MixHop(torch.nn.Module):
 
 
 class SGC(torch.nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels: int, out_channels: int) -> None:
         super().__init__()
         self.conv1 = SGConv(in_channels, out_channels, K=2, cached=True)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = self.conv1(x, edge_index)
         return F.log_softmax(x, dim=1)
 
 
 class TAGCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int) -> None:
         super().__init__()
         self.conv1 = TAGConv(in_channels, hidden_channels)
         self.conv2 = TAGConv(hidden_channels, out_channels)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.relu(self.conv1(x, edge_index))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index)
@@ -206,13 +214,14 @@ class TAGCN(torch.nn.Module):
 
 
 class GraphUNetModel(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_nodes):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, num_nodes: int) -> None:
         super().__init__()
         pool_ratios = [2000 / num_nodes, 0.5]
         self.unet = GraphUNet(in_channels, hidden_channels, out_channels,
                               depth=3, pool_ratios=pool_ratios)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         edge_index, _ = dropout_edge(edge_index, p=0.2, force_undirected=True,
                                      training=self.training)
         x = F.dropout(x, p=0.92, training=self.training)
@@ -222,14 +231,15 @@ class GraphUNetModel(torch.nn.Module):
 
 
 class SplineGNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int) -> None:
         super().__init__()
         self.conv1 = SplineConv(in_channels, hidden_channels, dim=1,
                                 kernel_size=2)
         self.conv2 = SplineConv(hidden_channels, out_channels, dim=1,
                                 kernel_size=2)
 
-    def forward(self, x, edge_index, edge_attr=None):
+    def forward(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None):
         x = F.dropout(x, training=self.training)
         x = F.elu(self.conv1(x, edge_index, edge_attr))
         x = F.dropout(x, training=self.training)
@@ -238,8 +248,10 @@ class SplineGNN(torch.nn.Module):
 
 
 class GCN2(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 alpha, theta, shared_weights=True, dropout=0.0):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, num_layers: int, alpha: float,
+                 theta: float, shared_weights: bool = True,
+                 dropout: float = 0.0) -> None:
         super().__init__()
 
         self.lins = torch.nn.ModuleList()
@@ -254,7 +266,9 @@ class GCN2(torch.nn.Module):
 
         self.dropout = dropout
 
-    def forward(self, x, adj_t):
+    def forward(self, x: Tensor, adj_t: SparseTensor) -> Tensor:
+        import pdb
+        pdb.set_trace()
         x = F.dropout(x, self.dropout, training=self.training)
         x = x_0 = self.lins[0](x).relu()
 
@@ -270,7 +284,7 @@ class GCN2(torch.nn.Module):
 
 
 class SuperGAT(torch.nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels: int, out_channels: int) -> None:
         super().__init__()
 
         self.conv1 = SuperGATConv(in_channels, 8, heads=8, dropout=0.6,
@@ -280,7 +294,7 @@ class SuperGAT(torch.nn.Module):
                                   dropout=0.6, attention_type='MX',
                                   edge_sample_ratio=0.8, is_undirected=True)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, p=0.6, training=self.training)
         x = F.elu(self.conv1(x, edge_index))
         att_loss = self.conv1.get_attention_loss()
@@ -291,8 +305,9 @@ class SuperGAT(torch.nn.Module):
 
 
 class DNA(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 heads=1, groups=1):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, num_layers: int, heads: int = 1,
+                 groups: int = 1) -> None:
         super().__init__()
         self.hidden_channels = hidden_channels
         self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
@@ -302,13 +317,13 @@ class DNA(torch.nn.Module):
                 DNAConv(hidden_channels, heads, groups, dropout=0.8))
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.lin1.reset_parameters()
         for conv in self.convs:
             conv.reset_parameters()
         self.lin2.reset_parameters()
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         x_all = x.view(-1, 1, self.hidden_channels)
@@ -323,14 +338,15 @@ class DNA(torch.nn.Module):
 
 
 class GAT(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, heads):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, heads: int) -> None:
         super().__init__()
         self.conv1 = GATConv(in_channels, hidden_channels, heads, dropout=0.6)
         # On the Pubmed dataset, use `heads` output heads in `conv2`.
         self.conv2 = GATConv(hidden_channels * heads, out_channels, heads=1,
                              concat=False, dropout=0.6)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, p=0.6, training=self.training)
         x = F.elu(self.conv1(x, edge_index))
         x = F.dropout(x, p=0.6, training=self.training)
@@ -339,14 +355,16 @@ class GAT(torch.nn.Module):
 
 
 class GCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int) -> None:
         super().__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels,
                              normalize=not args.use_gdc)
         self.conv2 = GCNConv(hidden_channels, out_channels,
                              normalize=not args.use_gdc)
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.conv1(x, edge_index, edge_weight).relu()
         x = F.dropout(x, p=0.5, training=self.training)
@@ -483,14 +501,14 @@ if args.gnn_choice == 'node2vec':
 
 def train_node2vec():
     model.train()
-    total_loss = 0
+    total_loss = torch.zeros(1, device=device).squeeze()
     for pos_rw, neg_rw in loader:
         optimizer.zero_grad()
         loss = model.loss(pos_rw.to(device), neg_rw.to(device))
         loss.backward()
         optimizer.step()
-        total_loss += loss.item()
-    return total_loss / len(loader)
+        total_loss += loss
+    return total_loss.item() / len(loader)
 
 
 @torch.no_grad()
@@ -563,7 +581,7 @@ writer = SummaryWriter()
 times = []
 best_val_acc = test_acc = 0.
 for epoch in range(args.epochs):
-    start = time.time()
+    start = time.perf_counter()
     if args.gnn_choice == 'node2vec':
         train_loss = train_node2vec()
         train_acc, val_acc, tmp_test_acc = test_node2vec()
@@ -575,7 +593,7 @@ for epoch in range(args.epochs):
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=f'{train_loss:.4f}', Train=f'{train_acc:.4f}',
         Val=f'{best_val_acc:.4f}', Test=f'{test_acc:.4f}')
-    times.append(time.time() - start)
+    times.append(time.perf_counter() - start)
 
     writer.add_scalar('Loss/train', train_loss, epoch)
     writer.add_scalar('Accuracy/train', train_acc, epoch)
