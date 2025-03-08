@@ -136,7 +136,7 @@ def get_data():
     text_contexts = []
     for file_path in glob(f"corpus/*"):
         with open(file_path, "r+") as f:
-            text_conexts.append(f.read())
+            text_contexts.append(f.read())
 
     return json_obj, text_contexts
 
