@@ -132,7 +132,12 @@ def get_data():
     """
     with open('data.json') as file:
         json_obj = json.load(file)
-    return json_obj
+    text_contexts = []
+    for file_path in glob(f"corpus/*"):
+        with open(file_path, "r+") as f:
+            text_conexts.append(f.read())
+
+    return json_obj, text_contexts
 
 
 def make_dataset(args):
@@ -140,34 +145,21 @@ def make_dataset(args):
         print("Re-using Saved TechQA KG-RAG Dataset...")
         return torch.load("tech_qa.pt", weights_only=False)
     else:
-        rawset = get_data()
+        qa_pairs, context_docs = get_data()
+        print("Number of Docs in our VectorDB =", len(context_docs))
         data_lists = {"train": [], "validation": [], "test": []}
         triples = []
         context_docs = []
         if os.path.exists("tech_qa_just_triples.pt"):
             triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
-            if os.path.exists("tech_qa_just_docs.pt"):
-                context_docs = torch.load("tech_qa_just_docs.pt",
-                                          weights_only=False)
         else:
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
                               chunk_size=args.chunk_size)
-            for data_point in tqdm(rawset, desc="Extracting KG triples"):
-                if data_point["is_impossible"]:
-                    continue
-                q = data_point["question"]
-                a = data_point["answer"]
-                context_doc = ''
-                for i in data_point["contexts"]:
-                    chunk = i["text"]
-                    context_doc += chunk
-                    # store for VectorRAG
-                    context_docs.append(chunk)
 
-                # store for GraphRAG
-                QA_pair = (q, a)
-                kg_maker.add_doc_2_KG(txt=context_doc, QA_pair=QA_pair)
+            for context_doc in tqdm(context_docs, desc="Extracting KG triples"):
+                kg_maker.add_doc_2_KG(txt=context_doc)
+
             relevant_triples = kg_maker.relevant_triples
             triples.extend(
                 list(
@@ -178,15 +170,6 @@ def make_dataset(args):
             torch.save(context_docs, "tech_qa_just_docs.pt")
             torch.save(triples, "tech_qa_just_triples.pt")
         print("Number of triples in our GraphDB =", len(triples))
-        if not os.path.exists("tech_qa_just_docs.pt"):
-            # store docs for VectorRAG in case KG was made seperately
-            for data_point in rawset:
-                if data_point["is_impossible"]:
-                    continue
-                for i in data_point["contexts"]:
-                    chunk = i["text"]
-                    context_docs.append(chunk)
-        print("Number of Docs in our VectorDB =", len(context_docs))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         sent_trans_batch_size = 256
         model = SentenceTransformer(
