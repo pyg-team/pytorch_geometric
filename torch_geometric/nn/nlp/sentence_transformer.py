@@ -100,8 +100,8 @@ class SentenceTransformer(torch.nn.Module):
         loader = range(0, len(text), batch_size)
         if verbose:
             loader = tqdm(
-                loader, desc="Encoding " +
-                str(len(text)) + " strings w/ SentenceTransformer")
+                loader, desc="Encoding " + str(len(text)) +
+                " strings w/ SentenceTransformer")
         for start in loader:
             token = self.tokenizer(
                 text[start:start + batch_size],
