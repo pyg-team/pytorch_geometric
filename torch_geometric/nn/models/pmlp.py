@@ -94,7 +94,7 @@ class PMLP(torch.nn.Module):
                 x = x.relu()
                 x = F.dropout(x, p=self.dropout, training=self.training)
 
-        return x
+        return F.log_softmax(x, dim=1)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

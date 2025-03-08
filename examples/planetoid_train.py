@@ -71,8 +71,14 @@ parser.add_argument('--num_test', type=int, default=500)
 parser.add_argument('--hidden_channels', type=int, default=128)
 parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--wd', type=float, default=5e-5)
+parser.add_argument('--use_normalize_features', action='store_true',
+                    help='Use NormalizeFeatures')
+parser.add_argument('--use_target_indegree', action='store_true',
+                    help='Use TargetIndegree')
 parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
+parser.add_argument('--default_split', action='store_true',
+                    help='Use default split')
 args = parser.parse_args()
 
 if args.gnn_choice == 'splinegnn' and not WITH_TORCH_SPLINE_CONV:
@@ -96,12 +102,18 @@ if args.wandb:
 # define dataset, default train=140, val=500, test=1000
 print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
-transform_lst = [
-    T.RandomNodeSplit(num_val=args.num_val, num_test=args.num_test),
-    T.NormalizeFeatures(),
-]
+transform_lst = []
 
-if args.use_gdc:
+if not args.default_split:
+    transform_lst.append(
+        T.RandomNodeSplit(num_val=args.num_val, num_test=args.num_test))
+
+if args.use_normalize_features:
+    transform_lst.append(T.NormalizeFeatures())
+
+if args.use_target_indegree:
+    transform_lst.append(T.TargetIndegree())
+elif args.use_gdc:
     transform_lst.append(
         T.GDC(
             self_loop_weight=1,
@@ -111,8 +123,6 @@ if args.use_gdc:
             sparsification_kwargs=dict(method='topk', k=128, dim=0),
             exact=True,
         ))
-else:
-    transform_lst.append(T.TargetIndegree())
 
 if args.gnn_choice == 'gcn2':
     transform_lst.extend([T.GCNNorm(), T.ToSparseTensor()])
@@ -349,7 +359,7 @@ class GAT(torch.nn.Module):
         x = F.elu(self.conv1(x, edge_index))
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv2(x, edge_index)
-        return x
+        return F.log_softmax(x, dim=1)
 
 
 class GCN(torch.nn.Module):
@@ -367,7 +377,7 @@ class GCN(torch.nn.Module):
         x = self.conv1(x, edge_index, edge_weight).relu()
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
-        return x
+        return F.log_softmax(x, dim=1)
 
 
 def get_model(gnn_choice: str) -> torch.nn.Module:
@@ -483,6 +493,14 @@ def get_optimizer(
 ) -> torch.optim.Optimizer:
     if gnn_choice == 'node2vec':
         optimizer = torch.optim.SparseAdam(model.parameters(), lr=args.lr)
+    elif gnn_choice == 'gcn':
+        optimizer = torch.optim.Adam([
+            dict(params=model.conv1.parameters(), weight_decay=args.wd),
+            dict(params=model.conv2.parameters(), weight_decay=0),
+        ], lr=args.lr)
+    elif gnn_choice == 'mixhop':
+        optimizer = torch.optim.SGD(model.parameters(), lr=args.lr,
+                                    weight_decay=args.wd)
     else:
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                      weight_decay=args.wd)
@@ -539,7 +557,7 @@ def train():
     else:
         out = model(data.x, data.edge_index)
     # loss
-    loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
+    loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
     if args.gnn_choice == 'super_gat':
         loss += 4.0 * att_loss
     # backward
