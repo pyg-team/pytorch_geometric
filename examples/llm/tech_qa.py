@@ -214,7 +214,7 @@ def make_dataset(args):
             embedded_docs=embedded_docs)
         total_data_list = []
         extracted_triple_sizes = []
-        for data_point in tqdm(rawset, desc="Building un-split dataset"):
+        for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
             if data_point["is_impossible"]:
                 continue
             QA_pair = (data_point["question"], data_point["answer"])
