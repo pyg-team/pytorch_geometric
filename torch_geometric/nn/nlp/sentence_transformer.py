@@ -89,7 +89,7 @@ class SentenceTransformer(torch.nn.Module):
         text: List[str],
         batch_size: Optional[int] = None,
         output_device: Optional[Union[torch.device, str]] = None,
-        verbose=True
+        verbose=False,
     ) -> Tensor:
         is_empty = len(text) == 0
         text = ['dummy'] if is_empty else text
