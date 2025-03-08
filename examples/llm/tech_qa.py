@@ -130,7 +130,7 @@ def get_data():
     df[['id', 'question', 'answer', 'is_impossible', 'contexts']].to_json(f'{output_dir}/techqa/train.json', orient='records', lines=False)
     df[['id', 'question', 'answer', 'is_impossible', 'contexts']]
     """
-    with open('data.json') as file:
+    with open('train.json') as file:
         json_obj = json.load(file)
     text_contexts = []
     for file_path in glob(f"corpus/*"):
