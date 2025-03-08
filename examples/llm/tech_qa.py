@@ -168,7 +168,6 @@ def make_dataset(args):
                         triple_set
                         for triple_set in relevant_triples.values())))
             triples = list(dict.fromkeys(triples))
-            torch.save(context_docs, "tech_qa_just_docs.pt")
             torch.save(triples, "tech_qa_just_triples.pt")
         print("Number of triples in our GraphDB =", len(triples))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
