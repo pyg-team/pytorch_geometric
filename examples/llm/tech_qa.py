@@ -2,10 +2,10 @@
 # 5-8% diff vs VectorRAG baselines
 import argparse
 import gc
-from glob import glob
 import json
 import os
 import random
+from glob import glob
 from itertools import chain
 
 import torch
