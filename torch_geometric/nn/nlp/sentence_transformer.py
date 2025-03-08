@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import List, Optional, Union
-from tqdm import tqdm
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+from tqdm import tqdm
 
 
 class PoolingStrategy(Enum):
@@ -95,7 +96,9 @@ class SentenceTransformer(torch.nn.Module):
         batch_size = len(text) if batch_size is None else batch_size
 
         embs: List[Tensor] = []
-        for start in tqdm(range(0, len(text), batch_size), desc="Encoding " + str(len(text)) + " strings w/ SentenceTransformer"):
+        for start in tqdm(
+                range(0, len(text), batch_size), desc="Encoding " +
+                str(len(text)) + " strings w/ SentenceTransformer"):
             token = self.tokenizer(
                 text[start:start + batch_size],
                 padding=True,
