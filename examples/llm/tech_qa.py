@@ -150,7 +150,6 @@ def make_dataset(args):
         print("Number of Docs in our VectorDB =", len(context_docs))
         data_lists = {"train": [], "validation": [], "test": []}
         triples = []
-        context_docs = []
         if os.path.exists("tech_qa_just_triples.pt"):
             triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
         else:
