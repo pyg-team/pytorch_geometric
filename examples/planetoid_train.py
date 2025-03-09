@@ -261,15 +261,15 @@ class GraphUNetModel(torch.nn.Module):
 
 
 class SplineGNN(torch.nn.Module):
-    def __init__(self, in_channels: int, hidden_channels: int,
-                 out_channels: int) -> None:
+    def __init__(self, in_channels: int, hidden_channels: int) -> None:
         super().__init__()
         self.conv1 = SplineConv(in_channels, hidden_channels, dim=1,
                                 kernel_size=2)
-        self.conv2 = SplineConv(hidden_channels, out_channels, dim=1,
+        self.conv2 = SplineConv(hidden_channels, dataset.num_classes, dim=1,
                                 kernel_size=2)
 
-    def forward(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None):
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_attr: OptTensor = None) -> Tensor:
         x = F.dropout(x, training=self.training)
         x = F.elu(self.conv1(x, edge_index, edge_attr))
         x = F.dropout(x, training=self.training)
@@ -447,11 +447,12 @@ def get_model(gnn_choice: str) -> torch.nn.Module:
             norm=False,
         )
     elif gnn_choice == 'splinegnn':
-        model = SplineGNN(
-            dataset.num_features,
-            args.hidden_channels,
-            dataset.num_classes,
-        )
+        # model = SplineGNN(
+        #     dataset.num_features,
+        #     args.hidden_channels,
+        #     dataset.num_classes,
+        # )
+        model = SplineGNN(dataset.num_features, args.hidden_channels)
     elif gnn_choice == 'gcn2':
         model = GCN2(
             dataset.num_features,
