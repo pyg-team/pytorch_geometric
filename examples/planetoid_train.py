@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 from sklearn.manifold import TSNE
+from sklearn.model_selection import StratifiedKFold
 from torch import Tensor
 from torch.utils.tensorboard import SummaryWriter
 
@@ -66,8 +67,8 @@ parser.add_argument(
     help='Model name.',
 )
 parser.add_argument('-e', '--epochs', type=int, default=200)
-parser.add_argument('--num_val', type=int, default=500)
-parser.add_argument('--num_test', type=int, default=500)
+parser.add_argument('--num_val', type=int, default=-1)
+parser.add_argument('--num_test', type=int, default=-1)
 parser.add_argument('--hidden_channels', type=int, default=128)
 parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--wd', type=float, default=5e-5)
@@ -77,8 +78,6 @@ parser.add_argument('--use_target_indegree', action='store_true',
                     help='Use TargetIndegree')
 parser.add_argument('--use_gdc', action='store_true', help='Use GDC')
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
-parser.add_argument('--default_split', action='store_true',
-                    help='Use default split')
 args = parser.parse_args()
 
 if args.gnn_choice == 'splinegnn' and not WITH_TORCH_SPLINE_CONV:
@@ -99,14 +98,16 @@ if args.wandb:
     init_wandb(name=f'{args.gnn_choice}-{args.dataset}', epochs=args.epochs,
                hidden_channels=args.hidden_channels, lr=args.lr, device=device)
 
-# define dataset, default train=140, val=500, test=1000
+# define dataset
 print(f'Training {args.dataset} with {args.gnn_choice} model.')
 
 transform_lst = []
 
-if not args.default_split:
+if args.num_val > 0 and args.num_test > 0:
     transform_lst.append(
         T.RandomNodeSplit(num_val=args.num_val, num_test=args.num_test))
+else:
+    print('Use default data split. (train/val/test=140/500/1400)')
 
 if args.use_normalize_features:
     transform_lst.append(T.NormalizeFeatures())
@@ -130,7 +131,26 @@ if args.gnn_choice == 'gcn2':
 root = osp.join(args.dataset_dir, args.dataset)
 print(f'The root is: {root}')
 dataset = Planetoid(root, args.dataset, transform=T.Compose(transform_lst))
-data = dataset[0].to(device)
+data = dataset[0]
+
+# align with dna.py, delete when merge =====
+
+
+def gen_uniform_20_20_60_split(data):
+    skf = StratifiedKFold(5, shuffle=True, random_state=55)
+    idx = [torch.from_numpy(i) for _, i in skf.split(data.y, data.y)]
+    data.train_mask = idx[0].to(torch.long)
+    data.val_mask = idx[1].to(torch.long)
+    data.test_mask = torch.cat(idx[2:], dim=0).to(torch.long)
+    return data
+
+
+if args.gnn_choice == 'dna':
+    data = gen_uniform_20_20_60_split(data)
+
+# ====================
+
+data = data.to(device)
 
 
 # define models
@@ -582,7 +602,10 @@ def test():
     # accuracy
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
         pred = out[mask].argmax(1)
-        acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
+        if args.gnn_choice == 'dna':
+            acc = pred.eq(data.y[mask]).sum().item() / mask.numel()
+        else:
+            acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
         accs.append(acc)
     return accs
 
