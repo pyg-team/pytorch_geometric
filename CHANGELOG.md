@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.7.0] - 2025-MM-DD
 
 ### Added
-
 - Added `ARLinkPredictor` for implementing Attract-Repel embeddings for link prediction ([#10105](https://github.com/pyg-team/pytorch_geometric/pull/10105))
 - Improving documentation for [cuGraph](https://github.com/rapidsai/cugraph) ([#10083](https://github.com/pyg-team/pytorch_geometric/pull/10083))
 - Added `HashTensor` ([#10072](https://github.com/pyg-team/pytorch_geometric/pull/10072))
