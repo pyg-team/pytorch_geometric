@@ -133,9 +133,8 @@ print(f'The root is: {root}')
 dataset = Planetoid(root, args.dataset, transform=T.Compose(transform_lst))
 data = dataset[0]
 
-# align with dna.py, delete when merge =====
 
-
+# align with dna.py, delete when ready to merge =====
 def gen_uniform_20_20_60_split(data):
     skf = StratifiedKFold(5, shuffle=True, random_state=55)
     idx = [torch.from_numpy(i) for _, i in skf.split(data.y, data.y)]
@@ -147,9 +146,7 @@ def gen_uniform_20_20_60_split(data):
 
 if args.gnn_choice == 'dna':
     data = gen_uniform_20_20_60_split(data)
-
-# ====================
-
+# ===================================================
 data = data.to(device)
 
 
@@ -162,6 +159,12 @@ class AGNN(torch.nn.Module):
         self.prop1 = AGNNConv(requires_grad=False)
         self.prop2 = AGNNConv(requires_grad=True)
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
+
+    def reset_parameters(self) -> None:
+        self.lin1.reset_parameters()
+        self.prop1.reset_parameters()
+        self.prop2.reset_parameters()
+        self.lin1.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, training=self.training)
@@ -182,6 +185,10 @@ class ARMA(torch.nn.Module):
         self.conv2 = ARMAConv(hidden_channels, out_channels, num_stacks=3,
                               num_layers=2, shared_weights=True, dropout=0.25,
                               act=lambda x: x)
+
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, training=self.training)
@@ -205,6 +212,15 @@ class MixHop(torch.nn.Module):
         self.norm3 = BatchNorm(3 * hidden_channels)
         self.lin = Linear(3 * hidden_channels, out_channels)
 
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+        self.norm1.reset_parameters()
+        self.conv2.reset_parameters()
+        self.norm2.reset_parameters()
+        self.conv3.reset_parameters()
+        self.norm3.reset_parameters()
+        self.lin.reset_parameters()
+
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, p=0.7, training=self.training)
         x = self.conv1(x, edge_index)
@@ -224,6 +240,9 @@ class SGC(torch.nn.Module):
         super().__init__()
         self.conv1 = SGConv(in_channels, out_channels, K=2, cached=True)
 
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = self.conv1(x, edge_index)
         return F.log_softmax(x, dim=1)
@@ -235,6 +254,10 @@ class TAGCN(torch.nn.Module):
         super().__init__()
         self.conv1 = TAGConv(in_channels, hidden_channels)
         self.conv2 = TAGConv(hidden_channels, out_channels)
+
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.relu(self.conv1(x, edge_index))
@@ -250,6 +273,9 @@ class GraphUNetModel(torch.nn.Module):
         pool_ratios = [2000 / num_nodes, 0.5]
         self.unet = GraphUNet(in_channels, hidden_channels, out_channels,
                               depth=3, pool_ratios=pool_ratios)
+
+    def reset_parameters(self) -> None:
+        self.unet.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         edge_index, _ = dropout_edge(edge_index, p=0.2, force_undirected=True,
@@ -268,6 +294,10 @@ class SplineGNN(torch.nn.Module):
                                 kernel_size=2)
         self.conv2 = SplineConv(hidden_channels, out_channels, dim=1,
                                 kernel_size=2)
+
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
@@ -297,6 +327,12 @@ class GCN2(torch.nn.Module):
 
         self.dropout = dropout
 
+    def reset_parameters(self) -> None:
+        for lin in self.lins:
+            lin.reset_parameters()
+        for conv in self.convs:
+            conv.reset_parameters()
+
     def forward(self, x: Tensor, adj_t: SparseTensor) -> Tensor:
         x = F.dropout(x, self.dropout, training=self.training)
         x = x_0 = self.lins[0](x).relu()
@@ -323,6 +359,10 @@ class SuperGAT(torch.nn.Module):
                                   dropout=0.6, attention_type='MX',
                                   edge_sample_ratio=0.8, is_undirected=True)
 
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
+
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, p=0.6, training=self.training)
         x = F.elu(self.conv1(x, edge_index))
@@ -341,7 +381,7 @@ class DNA(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers):
+        for _ in range(num_layers):
             self.convs.append(
                 DNAConv(hidden_channels, heads, groups, dropout=0.8))
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
@@ -375,6 +415,10 @@ class GAT(torch.nn.Module):
         self.conv2 = GATConv(hidden_channels * heads, out_channels, heads=1,
                              concat=False, dropout=0.6)
 
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
+
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, p=0.6, training=self.training)
         x = F.elu(self.conv1(x, edge_index))
@@ -391,6 +435,10 @@ class GCN(torch.nn.Module):
                              normalize=not args.use_gdc)
         self.conv2 = GCNConv(hidden_channels, out_channels,
                              normalize=not args.use_gdc)
+
+    def reset_parameters(self) -> None:
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
@@ -529,6 +577,8 @@ def get_optimizer(
 
 
 model = get_model(args.gnn_choice).to(device)
+# old file did not reset parameters
+# model.reset_parameters()
 optimizer = get_optimizer(args.gnn_choice, model)
 if args.gnn_choice == 'node2vec':
     num_workers = 4 if sys.platform == 'linux' else 0
