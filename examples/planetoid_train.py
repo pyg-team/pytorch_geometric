@@ -164,7 +164,7 @@ class AGNN(torch.nn.Module):
         self.lin1.reset_parameters()
         self.prop1.reset_parameters()
         self.prop2.reset_parameters()
-        self.lin1.reset_parameters()
+        self.lin2.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         x = F.dropout(x, training=self.training)
@@ -578,12 +578,16 @@ def get_optimizer(
 
 model = get_model(args.gnn_choice).to(device)
 # old file did not reset parameters
-# model.reset_parameters()
+model.reset_parameters()
 optimizer = get_optimizer(args.gnn_choice, model)
 if args.gnn_choice == 'node2vec':
     num_workers = 4 if sys.platform == 'linux' else 0
     loader = model.loader(batch_size=128, shuffle=True,
                           num_workers=num_workers)
+
+if args.gnn_choice == 'mixhop':
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40,
+                                                gamma=0.01)
 
 
 def train_node2vec():
@@ -634,6 +638,8 @@ def train():
     # backward
     loss.backward()
     optimizer.step()
+    if args.gnn_choice == 'mixhop':
+        scheduler.step()
     return loss
 
 
