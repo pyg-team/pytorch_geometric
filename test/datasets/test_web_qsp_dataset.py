@@ -150,8 +150,16 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
     return mock_load_dataset, ds
 
 
-@withPackage("datasets")
+@withPackage("datasets", "pandas")
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
+    # Workaround for HF datasets import matching the name of the parent directory
+    try:
+        import datasets
+        # this import will fail
+        from datasets import Dataset, DatasetDict, load_from_disk
+    except ImportError:
+        pytest.skip("datasets package not found")
+
     num_nodes = 500
     num_edge_types = 25
     num_trips = 5000
