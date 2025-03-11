@@ -7,9 +7,9 @@ import pytest
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
 from torch_geometric.testing import (
-    onlyRAG,
     onlyFullTest,
     onlyOnline,
+    onlyRAG,
     withPackage,
 )
 
