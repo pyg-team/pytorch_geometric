@@ -1,12 +1,7 @@
 import pytest
 
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.testing import (
-    onlyFullTest,
-    withCUDA,
-    withPackage,
-    isRAG,
-)
+from torch_geometric.testing import isRAG, onlyFullTest, withCUDA, withPackage
 
 
 @withCUDA
