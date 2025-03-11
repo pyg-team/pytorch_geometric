@@ -169,7 +169,6 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
         tmp_path, train_size=10, val_size=5, test_size=5, num_nodes=num_nodes,
         num_edge_types=num_edge_types, num_trips=num_trips)
 
-    import datasets
     monkeypatch.setattr(datasets, "load_dataset", mock_load_dataset_func)
 
     # Mock the SentenceTransformer
