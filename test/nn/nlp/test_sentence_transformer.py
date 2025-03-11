@@ -1,12 +1,12 @@
 import pytest
 
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.testing import isRAG, onlyFullTest, withCUDA, withPackage
+from torch_geometric.testing import onlyRAG, onlyFullTest, withCUDA, withPackage
 
 
 @withCUDA
 @onlyFullTest
-@isRAG
+@onlyRAG
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
 @pytest.mark.parametrize('pooling_strategy', ['mean', 'last', 'cls'])

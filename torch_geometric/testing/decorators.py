@@ -209,7 +209,7 @@ def withPackage(*args: str) -> Callable:
     return decorator
 
 
-def isRAG(func: Callable) -> Callable:
+def onlyRAG(func: Callable) -> Callable:
     r""""""
     import pytest
     func = pytest.mark.rag(func)

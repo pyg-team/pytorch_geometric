@@ -17,6 +17,7 @@ from .decorators import (
     onlyOnline,
     onlyGraphviz,
     onlyNeighborSampler,
+    onlyRAG,
     has_package,
     withPackage,
     withDevice,
@@ -25,7 +26,6 @@ from .decorators import (
     withHashTensor,
     disableExtensions,
     withoutExtensions,
-    isRAG,
 )
 from .asserts import assert_module
 from .feature_store import MyFeatureStore
@@ -50,6 +50,7 @@ __all__ = [
     'onlyOnline',
     'onlyGraphviz',
     'onlyNeighborSampler',
+    'onlyRAG',
     'has_package',
     'withPackage',
     'withDevice',
@@ -64,5 +65,4 @@ __all__ = [
     'get_random_edge_index',
     'get_random_tensor_frame',
     'FakeHeteroDataset',
-    'isRAG',
 ]

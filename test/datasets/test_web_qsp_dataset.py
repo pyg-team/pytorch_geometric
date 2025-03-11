@@ -7,7 +7,7 @@ import pytest
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
 from torch_geometric.testing import (
-    isRAG,
+    onlyRAG,
     onlyFullTest,
     onlyOnline,
     withPackage,
@@ -130,11 +130,7 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
         "answer": test_answers
     }
 
-    # Workaround for HF datasets import matching the name of the parent directory
-    try:
-        from datasets import Dataset, DatasetDict, load_from_disk
-    except ImportError:
-        pytest.skip("datasets package not found")
+    from datasets import Dataset, DatasetDict, load_from_disk
 
     ds_train = Dataset.from_dict(train_graphs, split="train")
     ds_val = Dataset.from_dict(val_graphs, split="validation")
@@ -159,16 +155,9 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
     return mock_load_dataset, ds
 
 
-@isRAG
+@onlyRAG
 @withPackage("datasets", "pandas")
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
-    # Workaround for HF datasets import matching the name of the parent directory
-    try:
-        # this will fail
-        import datasets
-        from datasets import load_dataset  # noqa: F401
-    except ImportError:
-        pytest.skip("datasets package not found")
 
     num_nodes = 500
     num_edge_types = 25
@@ -178,6 +167,8 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
     mock_load_dataset_func, expected_result = create_mock_graphs(
         tmp_path, train_size=10, val_size=5, test_size=5, num_nodes=num_nodes,
         num_edge_types=num_edge_types, num_trips=num_trips)
+
+    import datasets
 
     monkeypatch.setattr(datasets, "load_dataset", mock_load_dataset_func)
 
