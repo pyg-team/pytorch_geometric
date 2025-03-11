@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added Unit Tests Runner for RAG ([#10108](https://github.com/pyg-team/pytorch_geometric/pull/10108))
+- Added Unit Tests for WebQSP Dataset ([#10108](https://github.com/pyg-team/pytorch_geometric/pull/10108))
 - Improving documentation for [cuGraph](https://github.com/rapidsai/cugraph) ([#10083](https://github.com/pyg-team/pytorch_geometric/pull/10083))
 - Added `HashTensor` ([#10072](https://github.com/pyg-team/pytorch_geometric/pull/10072))
 - Added `SGFormer` model and example ([#9904](https://github.com/pyg-team/pytorch_geometric/pull/9904))
