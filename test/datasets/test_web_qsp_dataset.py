@@ -157,6 +157,7 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
         import datasets
 
         # this import will fail
+        from datasets import Dataset, DatasetDict, load_from_disk
     except ImportError:
         pytest.skip("datasets package not found")
 
