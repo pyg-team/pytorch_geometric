@@ -210,7 +210,9 @@ def withPackage(*args: str) -> Callable:
 
 
 def onlyRAG(func: Callable) -> Callable:
-    r""""""
+    r"""A decorator to specify that this function belongs to the RAG test
+    suite.
+    """
     import pytest
     func = pytest.mark.rag(func)
     return pytest.mark.skipif(
