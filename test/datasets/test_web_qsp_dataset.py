@@ -159,8 +159,8 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
     # Workaround for HF datasets import matching the name of the parent directory
     try:
         # this will fail
-        from datasets import load_dataset  # noqa: F401
         import datasets
+        from datasets import load_dataset  # noqa: F401
     except ImportError:
         pytest.skip("datasets package not found")
 
