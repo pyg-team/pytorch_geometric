@@ -5,13 +5,13 @@ from torch_geometric.testing import (
     onlyFullTest,
     withCUDA,
     withPackage,
-    withRAG,
+    isRAG,
 )
 
 
 @withCUDA
 @onlyFullTest
-@withRAG
+@isRAG
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
 @pytest.mark.parametrize('pooling_strategy', ['mean', 'last', 'cls'])

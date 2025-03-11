@@ -25,7 +25,7 @@ from .decorators import (
     withHashTensor,
     disableExtensions,
     withoutExtensions,
-    withRAG,
+    isRAG,
 )
 from .asserts import assert_module
 from .feature_store import MyFeatureStore
@@ -58,11 +58,11 @@ __all__ = [
     'withHashTensor',
     'disableExtensions',
     'withoutExtensions',
-    'withRAG',
     'assert_module',
     'MyFeatureStore',
     'MyGraphStore',
     'get_random_edge_index',
     'get_random_tensor_frame',
     'FakeHeteroDataset',
+    'isRAG',
 ]

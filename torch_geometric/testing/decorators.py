@@ -14,11 +14,9 @@ import torch_geometric.typing
 from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
-
 def is_rag_test() -> bool:
     r"""Whether to run the RAG test suite."""
-    return os.getenv('RAG_TEST', '0') == '1'
-
+    return os.getenv('RAG_TEST', '0') == '1' or is_full_test()
 
 def is_full_test() -> bool:
     r"""Whether to run the full but time-consuming test suite."""
@@ -209,22 +207,14 @@ def withPackage(*args: str) -> Callable:
     return decorator
 
 
-# CRITICAL: Default here likely needs to be switched to False before merging to
-# master.
-def withRAG(func: Callable, force_install: bool = True) -> Callable:
-    r"""A decorator install rag dependendcies and run RAG tests. If force_install is False, results in no-op."""
+def isRAG(func: Callable) -> Callable:
+    r""""""
     import pytest
-    if force_install and not is_rag_test():
-        try:
-            import pip
-            pip.main(['install', '-e', '.[rag]'])
-            os.environ['RAG_TEST'] = '1'
-            return func
-        except Exception as e:
-            return pytest.mark.skip(
-                f"Failed to install RAG dependencies: {str(e)}")(func)
-    else:
-        return func
+    func = pytest.mark.rag(func)
+    return pytest.mark.skipif(
+        not is_rag_test(),
+        reason="RAG tests are disabled",
+    )(func)
 
 
 def withCUDA(func: Callable) -> Callable:
