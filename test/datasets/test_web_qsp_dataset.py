@@ -125,7 +125,11 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
         "answer": test_answers
     }
 
-    from datasets import Dataset, DatasetDict, load_from_disk
+    # Workaround for HF datasets import matching the name of the parent directory
+    try:
+        from datasets import Dataset, DatasetDict, load_from_disk
+    except ImportError:
+        pytest.skip("datasets package not found")
 
     ds_train = Dataset.from_dict(train_graphs, split="train")
     ds_val = Dataset.from_dict(val_graphs, split="validation")
@@ -154,9 +158,9 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
     # Workaround for HF datasets import matching the name of the parent directory
     try:
+        # this will fail
+        from datasets import load_dataset  # noqa: F401
         import datasets
-        # this import will fail
-        from datasets import Dataset, DatasetDict, load_from_disk  # noqa: F401
     except ImportError:
         pytest.skip("datasets package not found")
 
