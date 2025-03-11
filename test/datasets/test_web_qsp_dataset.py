@@ -3,6 +3,7 @@ import string
 import random
 import os
 
+from torch_geometric.testing import withPackage
 from torch_geometric.datasets import WebQSPDataset, CWQDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
 from torch_geometric.testing import onlyFullTest, onlyOnline
@@ -104,6 +105,7 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int, test_size:
     return mock_load_dataset, ds
 
  
+@withPackage("datasets")
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
     num_nodes = 500
     num_edge_types = 25
