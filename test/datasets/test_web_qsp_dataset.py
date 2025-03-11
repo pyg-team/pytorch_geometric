@@ -6,7 +6,7 @@ import pytest
 
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
-from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage, withRAG
 
 
 @pytest.mark.skip(reason="Times out")
@@ -153,7 +153,7 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
 
     return mock_load_dataset, ds
 
-
+@withRAG
 @withPackage("datasets", "pandas")
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
     # Workaround for HF datasets import matching the name of the parent directory

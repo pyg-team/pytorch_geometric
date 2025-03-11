@@ -25,6 +25,7 @@ from .decorators import (
     withHashTensor,
     disableExtensions,
     withoutExtensions,
+    withRAG,
 )
 from .asserts import assert_module
 from .feature_store import MyFeatureStore
@@ -57,6 +58,7 @@ __all__ = [
     'withHashTensor',
     'disableExtensions',
     'withoutExtensions',
+    'withRAG',
     'assert_module',
     'MyFeatureStore',
     'MyGraphStore',

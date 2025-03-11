@@ -57,6 +57,12 @@ benchmark=[
     "protobuf<4.21",
     "wandb",
 ]
+rag=[
+    "pcst_fast",
+    "datasets",
+    "transformers",
+    "pandas"
+]
 test=[
     "onnx",
     "onnxruntime",
@@ -93,6 +99,7 @@ full = [
     "torch_geometric[graphgym, modelhub]",
     "torchmetrics",
     "trimesh",
+    "pcst_fast",
 ]
 
 [project.urls]
