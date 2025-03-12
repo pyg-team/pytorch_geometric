@@ -171,7 +171,8 @@ def make_dataset(args):
                 for you're liking using the public NIM,\
                 consider deploying yourself using local_lm flag of TXT2KG or\
                 using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct?snippet_tab=Docker\
-                to deploy to a private endpoint, which you can pass to this script w/ --ENDPOINT_URL flag.")
+                to deploy to a private endpoint, which you can pass to this script w/ --ENDPOINT_URL flag."
+                  )
             for context_doc in tqdm(context_docs,
                                     desc="Extracting KG triples"):
                 kg_maker.add_doc_2_KG(txt=context_doc)
