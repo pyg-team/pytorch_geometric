@@ -61,7 +61,9 @@ rag=[
     "pcst_fast",
     "datasets",
     "transformers",
-    "pandas"
+    "pandas",
+    "sentencepiece",
+    "accelerate",
 ]
 test=[
     "onnx",
