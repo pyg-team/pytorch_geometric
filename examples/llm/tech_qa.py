@@ -54,7 +54,7 @@ EPOCHS_DEFAULT = 2
 BATCH_SIZE_DEFAULT = 1
 EVAL_BATCH_SIZE_DEFAULT = 2
 LLM_GEN_MODE_DEFAULT = "full"
-
+DEFAULT_ENDPOINT_URL="https://integrate.api.nvidia.com/v1"
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -63,6 +63,8 @@ def parse_args():
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, default="",
                         help="NVIDIA API key")
+    parser.add_argument('--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL,
+                        help="The URL hosting your model, in case you are not using the public NIM.")
     parser.add_argument(
         '--chunk_size', type=int, default=512,
         help="When splitting context documents for txt2kg,\
