@@ -34,6 +34,10 @@ class TXT2KG():
             (default: "nvidia/llama-3.1-nemotron-70b-instruct").
         NVIDIA_API_KEY : str, optional
             The API key for accessing NVIDIA's NIM models (default: "").
+        ENDPOINT_URL : str, optional
+            The URL hosting your model, in case you are not using
+            the public NIM.
+            (default: "https://integrate.api.nvidia.com/v1").
         local_LM : bool, optional
             A flag indicating whether a local Language Model (LM)
             should be used (default: False).
@@ -46,6 +50,7 @@ class TXT2KG():
         NVIDIA_NIM_MODEL: Optional[
             str] = "nvidia/llama-3.1-nemotron-70b-instruct",
         NVIDIA_API_KEY: Optional[str] = "",
+        ENDPOINT_URL: Optional[str] = "https://integrate.api.nvidia.com/v1",
         local_LM: bool = False,
         chunk_size: int = 512,
     ) -> None:
@@ -58,6 +63,7 @@ class TXT2KG():
             # If not using a local LM, store the provided NIM model info
             self.NVIDIA_API_KEY = NVIDIA_API_KEY
             self.NIM_MODEL = NVIDIA_NIM_MODEL
+            self.ENDPOINT_URL = ENDPOINT_URL
 
         # Set the chunk size for processing text data
         self.chunk_size = 512
@@ -193,13 +199,14 @@ class TXT2KG():
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
         NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+        ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
         post_text=SYSTEM_PROMPT) -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
         global CLIENT
-        CLIENT = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
+        CLIENT = OpenAI(base_url=ENDPOINT_URL,
                         api_key=GLOBAL_NIM_KEY)
         CLIENT_INITD = True
     txt_input = txt
