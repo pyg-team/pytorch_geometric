@@ -1,16 +1,10 @@
 import pytest
 
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.testing import (
-    onlyFullTest,
-    onlyRAG,
-    withCUDA,
-    withPackage,
-)
+from torch_geometric.testing import onlyRAG, withCUDA, withPackage
 
 
 @withCUDA
-@onlyFullTest
 @onlyRAG
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
