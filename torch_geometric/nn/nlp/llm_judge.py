@@ -60,15 +60,21 @@ class LLMJudge():
             (default: "nvidia/llama-3.1-nemotron-70b-instruct").
         NVIDIA_API_KEY : str, optional
             The API key for accessing NVIDIA's NIM models (default: "").
+        ENDPOINT_URL : str, optional
+            The URL hosting your model, in case you are not using
+            the public NIM.
+            (default: "https://integrate.api.nvidia.com/v1").
     """
     def __init__(
         self,
         NVIDIA_NIM_MODEL: Optional[
             str] = "nvidia/llama-3.1-nemotron-70b-instruct",
         NVIDIA_API_KEY: Optional[str] = "",
+        ENDPOINT_URL: Optional[str] = "https://integrate.api.nvidia.com/v1",
     ) -> None:
         self.NVIDIA_API_KEY = NVIDIA_API_KEY
         self.NIM_MODEL = NVIDIA_NIM_MODEL
+        self.ENDPOINT_URL = ENDPOINT_URL
 
     def _process_score(self, response: str) -> float:
         """Uses 3 and 1 even though prompt says only 0, 2, 4.
@@ -129,6 +135,7 @@ class LLMJudge():
             try:
                 score1 = self._process_score(
                     call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL,
+                             self.ENDPOINT_URL,
                              post_text=""))
                 if not isnan(score1):
                     break
@@ -138,6 +145,7 @@ class LLMJudge():
             try:
                 score2 = self._process_score(
                     call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL,
+                             self.ENDPOINT_URL,
                              post_text=""))
                 if not isnan(score2):
                     break
