@@ -166,6 +166,7 @@ def make_dataset(args):
         else:
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
+                              ENDPOINT_URL=args.ENDPOINT_URL,
                               chunk_size=args.chunk_size)
             print(
                 "Note that if the TXT2KG process is too slow for you're liking using the public NIM, consider deploying yourself using local_lm flag of TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct?snippet_tab=Docker to deploy to a private endpoint, which you can pass to this script w/ --ENDPOINT_URL flag."
