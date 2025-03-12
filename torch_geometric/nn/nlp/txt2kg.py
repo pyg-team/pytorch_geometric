@@ -176,8 +176,8 @@ class TXT2KG():
                                     args=(in_chunks_per_proc,
                                           _parse_n_check_triples,
                                           _chunk_to_triples_str_cloud,
-                                          self.NVIDIA_API_KEY, self.NIM_MODEL, self.ENDPOINT_URL),
-                                    nprocs=num_procs)
+                                          self.NVIDIA_API_KEY, self.NIM_MODEL,
+                                          self.ENDPOINT_URL), nprocs=num_procs)
                                 break
                             except:  # noqa
                                 # keep retrying, txt2kg is costly -> stoppage is costly
