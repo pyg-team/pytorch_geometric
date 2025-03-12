@@ -268,7 +268,7 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
 
 
 def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
-                      NIM_MODEL):
+                      NIM_MODEL, ENDPOINT_URL):
     out = _llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
                                  GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL,
                                  ENDPOINT_URL=ENDPOINT_URL)
