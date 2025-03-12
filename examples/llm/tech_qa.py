@@ -343,7 +343,7 @@ def train(args, data_lists):
 
 
 def test(model, test_loader, args):
-    llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY)
+    llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
         # calculate the score based on pred and correct answer
