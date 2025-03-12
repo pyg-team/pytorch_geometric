@@ -206,8 +206,7 @@ def _chunk_to_triples_str_cloud(
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
         global CLIENT
-        CLIENT = OpenAI(base_url=ENDPOINT_URL,
-                        api_key=GLOBAL_NIM_KEY)
+        CLIENT = OpenAI(base_url=ENDPOINT_URL, api_key=GLOBAL_NIM_KEY)
         CLIENT_INITD = True
     txt_input = txt
     if post_text != "":
