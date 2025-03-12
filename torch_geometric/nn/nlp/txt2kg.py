@@ -176,7 +176,7 @@ class TXT2KG():
                                     args=(in_chunks_per_proc,
                                           _parse_n_check_triples,
                                           _chunk_to_triples_str_cloud,
-                                          self.NVIDIA_API_KEY, self.NIM_MODEL),
+                                          self.NVIDIA_API_KEY, self.NIM_MODEL, self.ENDPOINT_URL),
                                     nprocs=num_procs)
                                 break
                             except:  # noqa
@@ -270,7 +270,8 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
 def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
                       NIM_MODEL):
     out = _llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
-                                 GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL)
+                                 GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL,
+                                 ENDPOINT_URL=ENDPOINT_URL)
     torch.save(out, "/tmp/outs_for_proc_" + str(rank))
 
 
