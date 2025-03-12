@@ -202,10 +202,13 @@ def _chunk_to_triples_str_cloud(
         CLIENT = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
                         api_key=GLOBAL_NIM_KEY)
         CLIENT_INITD = True
+    txt_input = txt
+    if post_text != ""
+            txt_input += '\n' + post_text
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
             "role": "user",
-            "content": txt + '\n' + post_text
+            "content": txt_input
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
