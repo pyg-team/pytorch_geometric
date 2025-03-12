@@ -1,11 +1,11 @@
 import os.path as osp
 from typing import Dict, List, Tuple
 
-import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-from pytorch_lightning import LightningModule, Trainer
-from pytorch_lightning.callbacks import ModelCheckpoint
+from lightning import LightningModule, Trainer
+from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.strategies import SingleDeviceStrategy
 from torch import Tensor
 from torchmetrics import Accuracy
 
@@ -116,7 +116,7 @@ def main():
         batch = next(iter(loader))
         model.common_step(batch)
 
-    strategy = pl.strategies.SingleDeviceStrategy('cuda:0')
+    strategy = SingleDeviceStrategy('cuda:0')
     checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1, mode='max')
     trainer = Trainer(strategy=strategy, devices=1, max_epochs=20,
                       log_every_n_steps=5, callbacks=[checkpoint])
