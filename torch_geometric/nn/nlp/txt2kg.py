@@ -204,7 +204,7 @@ def _chunk_to_triples_str_cloud(
         CLIENT_INITD = True
     txt_input = txt
     if post_text != "":
-            txt_input += '\n' + post_text
+        txt_input += '\n' + post_text
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
             "role": "user",
