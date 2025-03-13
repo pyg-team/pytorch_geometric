@@ -161,6 +161,7 @@ class RAGQueryLoader:
             if self.local_filter:
                 data.desc = ""
                 data.triples = []
+                data = data.to("cpu")
 
         if self.raw_docs:
             selected_doc_idxs, _ = next(
