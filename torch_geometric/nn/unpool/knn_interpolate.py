@@ -10,12 +10,13 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
                     k: int = 3, num_workers: int = 1, alpha: float = 2.0):
     r"""k-NN interpolation.
 
-    When :math:`alpha=1`, this is equivalent to the interpolation from the `"MAgNet: Mesh Agnostic Neural PDE Solver"
+    When :math:`alpha=1`, this is equivalent to the interpolation from the
+    `"MAgNet: Mesh Agnostic Neural PDE Solver"
     <http://arxiv.org/abs/2210.05495>`_ paper.
 
-    When :math:`alpha=2`, this is equivalent to the k-NN interpolation from the `"PointNet++: Deep Hierarchical
-    Feature Learning on Point Sets in a Metric Space"
-    <https://arxiv.org/abs/1706.02413>`_ paper.
+    When :math:`alpha=2`, this is equivalent to the k-NN interpolation from
+    the `"PointNet++: Deep Hierarchical Feature Learning on Point Sets in
+    a Metric Space" <https://arxiv.org/abs/1706.02413>`_ paper.
 
     For each point :math:`y` with position :math:`\mathbf{p}(y)`, its
     interpolated features :math:`\mathbf{f}(y)` are given by
