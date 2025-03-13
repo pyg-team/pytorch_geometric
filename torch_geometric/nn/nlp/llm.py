@@ -81,7 +81,7 @@ class LLM(torch.nn.Module):
                 safetensors_metadata = get_safetensors_metadata(model_name)
                 param_count = safetensors_metadata.parameter_count
                 num_params = float(list(param_count.values())[0] // 10**9)
-    
+
             # A rough heuristic on GPU memory requirements, e.g., we found that
             # LLAMA2 (7B parameters) fits on a 85GB GPU.
             required_memory = 85 * num_params / 7
