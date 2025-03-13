@@ -104,17 +104,17 @@ class SentenceTransformer(torch.nn.Module):
                 " strings w/ SentenceTransformer")
         for start in loader:
             token = self.tokenizer(
-                    text[start:start + batch_size],
-                    padding=True,
-                    truncation=True,
-                    return_tensors='pt',
-                )
+                text[start:start + batch_size],
+                padding=True,
+                truncation=True,
+                return_tensors='pt',
+            )
             try:
                 emb = self(
                     input_ids=token.input_ids.to(self.device),
                     attention_mask=token.attention_mask.to(self.device),
                 ).to(output_device)
-    
+
                 embs.append(emb)
             except:
                 # fallback to using CPU for huge strings that cause OOMs
@@ -125,7 +125,7 @@ class SentenceTransformer(torch.nn.Module):
                     input_ids=token.input_ids.to(self.device),
                     attention_mask=token.attention_mask.to(self.device),
                 ).to(output_device)
-    
+
                 embs.append(emb)
                 self = self.to(previous_device)
 
