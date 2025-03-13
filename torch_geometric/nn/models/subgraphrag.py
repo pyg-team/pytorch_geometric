@@ -75,6 +75,7 @@ class DDE(nn.Module):
 
         return result_list
 
+
 class SubgraphRAGRetriever(nn.Module):
     r"""The SubgraphRAG retriever model from the `"Simple Is Effective: The
     Roles of Graphs and Large Language Models in Knowledge-Graph-Based
@@ -99,11 +100,11 @@ class SubgraphRAGRetriever(nn.Module):
             pred_in_size += 2 * 2
         pred_in_size += 2 * 2 * (dde_rounds + rev_dde_rounds)
 
-        self.pred = nn.Sequential(nn.Linear(pred_in_size, emb_size),
-                                  nn.ReLU(),
+        self.pred = nn.Sequential(nn.Linear(pred_in_size, emb_size), nn.ReLU(),
                                   nn.Linear(emb_size, 1))
 
-    def forward(self, edge_index, q_emb, entity_embs, relation_embs, topic_entity_one_hot):
+    def forward(self, edge_index, q_emb, entity_embs, relation_embs,
+                topic_entity_one_hot):
         h_e = torch.cat([
             entity_embs,
         ], dim=0)

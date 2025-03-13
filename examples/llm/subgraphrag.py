@@ -8,13 +8,13 @@ from functools import lru_cache
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch_geometric.datasets import WebQSPDataset
-from torch_geometric.nn.models import SubgraphRAGRetriever
 from torch.optim import Adam
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
+from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn.models import SubgraphRAGRetriever
 from torch_geometric.nn.nlp import LLM
 
 SYS_PROMPT = (
@@ -35,8 +35,7 @@ def train(device, train_loader, model, optimizer):
         sample = sample.to(device)
         rel_embeds = rel_emb_table[sample.edge_attr[0]]
         pred_triple_logits = model(sample.edge_index, sample.q_emb, sample.x,
-                                   rel_embeds,
-                                   sample.topic_entity_one_hot)
+                                   rel_embeds, sample.topic_entity_one_hot)
 
         target_triple_probs = sample.target_triple_scores
         target_triple_probs = target_triple_probs.unsqueeze(-1)
@@ -129,8 +128,7 @@ def test(device, data_loader, model, checkpoint_dir):
 
         rel_embeds = rel_emb_table[sample.edge_attr[0]]
         pred_triple_logits = model(sample.edge_index, sample.q_emb, sample.x,
-                                   rel_embeds,
-                                   sample.topic_entity_one_hot)
+                                   rel_embeds, sample.topic_entity_one_hot)
 
         pred_triple_scores = torch.sigmoid(pred_triple_logits).reshape(-1)
         top_K_results = torch.topk(pred_triple_scores,
