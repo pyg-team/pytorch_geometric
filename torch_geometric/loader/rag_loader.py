@@ -133,7 +133,7 @@ class RAGQueryLoader:
             data.node_idx = torch.tensor(
                 list(
                     dict.fromkeys(seed_nodes.tolist() +
-                                total_e_idx_t.reshape(-1).tolist())))
+                                  total_e_idx_t.reshape(-1).tolist())))
             data.num_nodes = len(data.node_idx)
 
             # use node idx to get data.x
@@ -151,7 +151,8 @@ class RAGQueryLoader:
             data.edge_index = torch.tensor(list_edge_index).t()
             # apply local filter
             if self.local_filter:
-                data = self.local_filter(data, query, **self.local_filter_kwargs)
+                data = self.local_filter(data, query,
+                                         **self.local_filter_kwargs)
         else:
             # rare case where directional neighborsampling returns empty set of edges
             # this happens because every node KNN returns is a dst node in our triples
@@ -159,7 +160,7 @@ class RAGQueryLoader:
             # for now will just return empty subgraph, very rare edge case
             if self.local_filter:
                 data.desc = ""
-        
+
         if self.raw_docs:
             selected_doc_idxs, _ = next(
                 batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
