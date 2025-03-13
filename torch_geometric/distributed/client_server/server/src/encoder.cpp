@@ -4,6 +4,7 @@
 #include "arrow/type_fwd.h"
 #include <algorithm>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace server {
@@ -56,33 +57,24 @@ void ByteEncoder::encode(std::shared_ptr<arrow::Array> &a,
     auto t_a = std::static_pointer_cast<arrow::StringArray>(a);
     ByteEncoder::encode_internal(t_a, a->length(), out, start);
   }
+  else {
+    throw new std::runtime_error("Unsupported type");
+  }
 }
 
 template <typename T>
 void ByteEncoder::encode_internal(std::shared_ptr<T> &t, size_t len,
-                                  std::vector<featurestore::FeatureList> *out,
+                                  std::vector<featurestore::Tensor> *out,
                                   size_t start) {
   for (size_t i = start; i < start + len; i++) {
-    if (t->IsNull(i)) {
-      featurestore::Feature *f = (*out)[i - start].add_feature();
-      f->set_is_na(true);
-      if constexpr (IsIntArray<T>()) {
-        f->mutable_int64_list()->add_value(0);
-      } else if constexpr (IsFloatArray<T>()) {
-        f->mutable_float_list()->add_value(0);
-      } else if constexpr (IsStringArray<T>()) {
-        f->mutable_bytes_list()->add_value("");
-      }
-    } else {
-      featurestore::Feature *f = (*out)[i - start].add_feature();
-      if constexpr (IsIntArray<T>()) {
-        f->mutable_int64_list()->add_value(t->Value(i));
-      } else if constexpr (IsFloatArray<T>()) {
-        f->mutable_float_list()->add_value(t->Value(i));
-      } else if constexpr (IsStringArray<T>()) {
-        f->mutable_bytes_list()->add_value(t->GetString(i));
-      }
+    featurestore::Feature *f = (*out)[i - start].add_feature();
+    float val;
+    if constexpr (IsIntArray<T>()) {
+      val = static_cast<float>(t->Value(i));
+    } else if constexpr (IsFloatArray<T>()) {
+      val = static_cast<float>(t->Value(i));
     }
+    f->mutable_value_list()->add_value(val);
   }
 }
 

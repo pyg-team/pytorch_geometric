@@ -144,7 +144,7 @@ void RocksDBTableStore::SerializeArrowTable(
 
 void RocksDBTableStore::SerializeArrowArray(
     std::shared_ptr<arrow::Array> chunk,
-    std::vector<featurestore::FeatureList> *out, size_t start) {
+    std::vector<featurestore::Tensor> *out, size_t start) {
   m_enc.encode(chunk, out, start, (size_t)chunk->length());
 }
 

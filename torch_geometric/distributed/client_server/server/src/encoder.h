@@ -17,14 +17,14 @@ public:
   std::string encode(int);
 
   /* Non-primary key columns are encoded via the protobuf
-   * FeatureList representation.*/
+   * Tensor representation.*/
   void encode(std::shared_ptr<arrow::Array> &,
-              std::vector<featurestore::FeatureList> *, size_t, size_t);
+              std::vector<featurestore::Tensor> *, size_t, size_t);
 
 private:
   template <typename T>
   void encode_internal(std::shared_ptr<T> &, size_t,
-                       std::vector<featurestore::FeatureList> *, size_t);
+                       std::vector<featurestore::Tensor> *, size_t);
 };
 
 template <typename T> constexpr bool IsIntArray() {
@@ -40,10 +40,6 @@ template <typename T> constexpr bool IsIntArray() {
 template <typename T> constexpr bool IsFloatArray() {
   return (std::is_same_v<T, arrow::FloatArray> ||
           std::is_same_v<T, arrow::DoubleArray>);
-}
-
-template <typename T> constexpr bool IsStringArray() {
-  return std::is_same_v<T, arrow::StringArray>;
 }
 
 } // namespace server

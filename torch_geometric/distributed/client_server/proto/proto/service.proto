@@ -6,7 +6,7 @@ import "common.proto";
 
 message KeysRequest {
   string type = 1;  // node type
-  repeated int32 idx = 2;  // indices
+  repeated int32 idx = 2;  // indices, assume int
 }
 
 message BatchedKeysRequest {
@@ -14,12 +14,12 @@ message BatchedKeysRequest {
 }
 
 message KeysResponse {
-  string type = 1;
-  repeated FeatureList features = 2;
+  repeated Tensor features = 2;
 }
 
 message BatchedKeysResponse {
-  repeated KeysResponse res = 1;
+  repeated string type = 1;
+  repeated KeysResponse res = 2;
 }
 
 message LoadFeaturesRequest {

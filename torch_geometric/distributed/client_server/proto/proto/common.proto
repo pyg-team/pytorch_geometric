@@ -2,32 +2,8 @@ syntax = "proto3";
 
 package featurestore;
 
-// Features can either be bytes, float, or int64. We support lists and raw
-// values:
-message BytesList {
-  repeated bytes value = 1;
+message Tensor {
+  // We assume tensors are 1-dimensional and float32.
+  // Many extensions are possible.
+  repeated float value = 1;  // 4-bytes (float32)
 }
-
-message FloatList {
-  repeated float value = 1 [packed = true];
-}
-
-message Int64List {
-  repeated int64 value = 1 [packed = true];
-}
-
-// A union of the above types, along with a flag for a null value:
-message Feature {
-  oneof kind {
-    BytesList bytes_list = 1;
-    FloatList float_list = 2;
-    Int64List int64_list = 3;
-    bool is_na = 4;
-  }
-}
-
-// Every key is associated with a list of features (one feature per column):
-message FeatureList {
-  repeated Feature feature = 1;
-}
-
