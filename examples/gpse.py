@@ -71,6 +71,17 @@ class IdentityNodeEncoder(torch.nn.Module):
         return batch
 
 
+class LinearNodeEncoder(torch.nn.Module):
+    def __init__(self, emb_dim, emb_pe_out, bias=True):
+        super().__init__()
+        self.encoder = Linear(emb_dim - emb_pe_out, emb_dim, bias=bias)
+
+    def forward(self, batch):
+        batch.x = self.encoder(batch.x)
+
+        return batch
+
+
 class TypeDictNodeEncoder(torch.nn.Module):
     def __init__(self, emb_dim, num_types=28):
         super().__init__()
@@ -174,9 +185,8 @@ class GPSEPlusGNN(torch.nn.Module):
 
         self.encoder1 = encoder_dict[encoder](dim_emb - dim_pe_out)
         self.encoder2 = GPSENodeEncoder(dim_emb, dim_pe_in, dim_pe_out,
-                                        expand_x=False) if gpse else (Linear(
-                                            dim_emb -
-                                            dim_pe_out, dim_emb, bias=True))
+                                        expand_x=False) if gpse else (
+            LinearNodeEncoder(dim_emb, dim_pe_out, bias=True))
         self.premp = MLP([dim_emb, dim_emb, dim_conv])
         self.gnn = GNNStackStage(dim_conv, dim_conv, num_layers, conv_type)
         self.postmp = MLP([dim_conv, 1])
