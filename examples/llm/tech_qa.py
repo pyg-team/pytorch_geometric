@@ -48,6 +48,7 @@ EPOCHS_DEFAULT = 2
 BATCH_SIZE_DEFAULT = 1
 EVAL_BATCH_SIZE_DEFAULT = 2
 LLM_GEN_MODE_DEFAULT = "full"
+DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
 
 
 def parse_args():
@@ -57,6 +58,10 @@ def parse_args():
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, default="",
                         help="NVIDIA API key")
+    parser.add_argument(
+        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL, help=
+        "The URL hosting your model, in case you are not using the public NIM."
+    )
     parser.add_argument(
         '--chunk_size', type=int, default=512,
         help="When splitting context documents for txt2kg,\
@@ -155,8 +160,11 @@ def make_dataset(args):
         else:
             kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
                               NVIDIA_API_KEY=args.NV_NIM_KEY,
+                              ENDPOINT_URL=args.ENDPOINT_URL,
                               chunk_size=args.chunk_size)
-
+            print(
+                "Note that if the TXT2KG process is too slow for you're liking using the public NIM, consider deploying yourself using local_lm flag of TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct?snippet_tab=Docker to deploy to a private endpoint, which you can pass to this script w/ --ENDPOINT_URL flag."
+            )  # noqa
             for context_doc in tqdm(context_docs,
                                     desc="Extracting KG triples"):
                 kg_maker.add_doc_2_KG(txt=context_doc)
@@ -331,7 +339,7 @@ def train(args, data_lists):
 
 
 def test(model, test_loader, args):
-    llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY)
+    llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
         # calculate the score based on pred and correct answer
