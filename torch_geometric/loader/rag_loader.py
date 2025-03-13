@@ -159,6 +159,7 @@ class RAGQueryLoader:
             # for now will just return empty subgraph, very rare edge case
             if self.local_filter:
                 data.desc = ""
+                data.triples = []
         
         if self.raw_docs:
             selected_doc_idxs, _ = next(
