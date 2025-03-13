@@ -103,14 +103,13 @@ class SentenceTransformer(torch.nn.Module):
                 loader, desc="Encoding " + str(len(text)) +
                 " strings w/ SentenceTransformer")
         for start in loader:
-            try:
-                token = self.tokenizer(
+            token = self.tokenizer(
                     text[start:start + batch_size],
                     padding=True,
                     truncation=True,
                     return_tensors='pt',
                 )
-    
+            try:
                 emb = self(
                     input_ids=token.input_ids.to(self.device),
                     attention_mask=token.attention_mask.to(self.device),
@@ -120,12 +119,6 @@ class SentenceTransformer(torch.nn.Module):
             except:
                 # fallback to using CPU for huge strings that cause OOMs
                 print("Sentence Transformer failed on cuda, trying w/ cpu...")
-                token = self.tokenizer(
-                    text[start:start + batch_size],
-                    padding=True,
-                    truncation=True,
-                    return_tensors='pt',
-                )
                 previous_device = self.device
                 self = self.to("cpu")
                 emb = self(
