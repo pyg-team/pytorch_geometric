@@ -155,7 +155,7 @@ class RAGQueryLoader:
                                          **self.local_filter_kwargs)
         else:
             # rare case where directional neighborsampling returns empty set of edges
-            # this happens because every node KNN returns is a dst node in our triples
+            # this happens in the rare case that every node KNN returns is a dst node in our triples
             # (TODO Zack) set up bidirectional neighborsampling.
             # for now will just return empty subgraph, very rare edge case
             if self.local_filter:
