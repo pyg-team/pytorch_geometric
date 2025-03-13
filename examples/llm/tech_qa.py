@@ -348,6 +348,8 @@ def train(args, data_lists):
                         then comeback to multigpu since most inputs dont trigger this.
                         Just skipping for now.
                         """
+                        gc.collect()
+                        torch.cuda.empty_cache()
                         continue
                 val_loss = val_loss / len(val_loader)
                 print(epoch_str + f", Val Loss: {val_loss:4f}")
