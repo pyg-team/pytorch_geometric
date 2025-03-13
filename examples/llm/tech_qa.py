@@ -295,7 +295,6 @@ def train(args, data_lists):
             'lr': lr,
             'weight_decay': 0.05
         }], betas=(0.9, 0.95))
-        float('inf')
         for epoch in range(args.epochs):
             model.train()
             epoch_loss = 0
