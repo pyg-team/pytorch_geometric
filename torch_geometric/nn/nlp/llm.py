@@ -75,7 +75,7 @@ class LLM(torch.nn.Module):
         self.model_name = model_name
 
         from transformers import AutoModelForCausalLM, AutoTokenizer
-        if n_gpus is not None:
+        if n_gpus is None:
             if num_params is None:
                 from huggingface_hub import get_safetensors_metadata
                 safetensors_metadata = get_safetensors_metadata(model_name)
