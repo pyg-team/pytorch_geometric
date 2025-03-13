@@ -8,8 +8,8 @@ from functools import lru_cache
 import numpy as np
 import torch
 import torch.nn.functional as F
-from dataset import WebQSPDataset
-from retriever_model import SubgraphRAGRetriever
+from torch_geometric.datasets import WebQSPDataset
+from torch_geometric.nn.models import SubgraphRAGRetriever
 from torch.optim import Adam
 from tqdm import tqdm
 
@@ -24,19 +24,18 @@ SYS_PROMPT = (
     'possible answers as a list, each with a prefix "ans:".')
 
 
-def prepare_sample(device, sample):
-    return sample.to(device)
-
-
 def train(device, train_loader, model, optimizer):
     model.train()
     epoch_loss = 0
+    rel_emb_table = train_loader.dataset.get_relation_embedding_table()
+    rel_emb_table = rel_emb_table.to(device)
     for sample in tqdm(train_loader):
         if len(sample.x) == 0:
             continue
-        sample = prepare_sample(device, sample)
+        sample = sample.to(device)
+        rel_embeds = rel_emb_table[sample.edge_attr[0]]
         pred_triple_logits = model(sample.edge_index, sample.q_emb, sample.x,
-                                   sample.edge_attr,
+                                   rel_embeds,
                                    sample.topic_entity_one_hot)
 
         target_triple_probs = sample.target_triple_scores
@@ -61,12 +60,13 @@ def eval(device, data_loader, model):
     model.eval()
 
     metric_dict = defaultdict(list)
-
+    rel_emb_table = data_loader.dataset.get_relation_embedding_table()
+    rel_emb_table = rel_emb_table.to(device)
     for sample in tqdm(data_loader):
-        sample = prepare_sample(device, sample)
-
+        sample = sample.to(device)
+        rel_embeds = rel_emb_table[sample.edge_attr[0]]
         pred_triple_logits = model(sample.edge_index, sample.q_emb, sample.x,
-                                   sample.edge_attr,
+                                   rel_embeds,
                                    sample.topic_entity_one_hot).reshape(-1)
 
         target_triple_probs = sample.target_triple_scores
@@ -114,11 +114,12 @@ def test(device, data_loader, model, checkpoint_dir):
     model.eval()
 
     pred_dict = dict()
+    rel_emb_table = data_loader.dataset.get_relation_embedding_table()
+    rel_emb_table = rel_emb_table.to(device)
     for sample in tqdm(data_loader):
         if len(sample.x) == 0:
             continue
-        num_non_text_entities = 0
-        sample = prepare_sample(device, sample)
+        sample = sample.to(device)
 
         entity_list = sample.entity_list[0]
         relation_list = sample.relation_list[0]
@@ -126,8 +127,9 @@ def test(device, data_loader, model, checkpoint_dir):
         top_K_triplets = []
         target_relevant_triplets = []
 
+        rel_embeds = rel_emb_table[sample.edge_attr[0]]
         pred_triple_logits = model(sample.edge_index, sample.q_emb, sample.x,
-                                   sample.edge_attr, num_non_text_entities,
+                                   rel_embeds,
                                    sample.topic_entity_one_hot)
 
         pred_triple_scores = torch.sigmoid(pred_triple_logits).reshape(-1)

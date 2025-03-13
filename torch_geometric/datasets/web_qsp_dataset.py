@@ -1,13 +1,19 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
 from typing import Any, Dict, List, Tuple, no_type_check
-
+import os
 import numpy as np
 import torch
 from torch import Tensor
+import torch.nn.functional as F
 from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.nn.nlp import SentenceTransformer
+
+
+from transformers import AutoModel, AutoTokenizer
+
+import networkx as nx
 
 ################################
 ########## Helpers #############
@@ -231,8 +237,8 @@ class KGQABaseDataset(InMemoryDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         subgraphrag (bool, optional): Whether to preprocess the dataset
-            into the format expected by SubgraphRAG. The dataset the full
-            subgraphs with embeddings and target triplets labels.
+            into the format expected by SubgraphRAG. Will return full graphs 
+            with embeddings and target triplets labels.
             (default: :obj:`False`)
     """
     def __init__(
@@ -247,6 +253,7 @@ class KGQABaseDataset(InMemoryDataset):
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
         self.subgraphrag = subgraphrag
+        self.split = split
         super().__init__(root, force_reload=force_reload)
 
         if split not in {'train', 'val', 'test'}:
@@ -255,9 +262,15 @@ class KGQABaseDataset(InMemoryDataset):
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
         self.load(path)
 
+        # Load relation embedding table if it exists
+        self.global_relation_embeddings = None
+        if self.subgraphrag:
+            self._load_relation_embedding_table()
+
     @property
     def processed_file_names(self) -> List[str]:
         return ['train_data.pt', 'val_data.pt', 'test_data.pt']
+
 
     def process(self) -> None:
         if not self.subgraphrag:
@@ -367,6 +380,29 @@ class KGQABaseDataset(InMemoryDataset):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model = GTELargeEN(device)
 
+        node_attr_cache = {}
+        relation_to_id = {}
+
+        print("First pass: collecting unique relation types...")
+        for split in ['train', 'validation', 'test']:
+            dataset = datasets[split]
+            for example in tqdm(dataset):
+                for tri in example["graph"]:
+                    _, r, _ = tri
+                    if r not in relation_to_id:
+                        relation_to_id[r] = len(relation_to_id)
+
+        print(f"Encoding {len(relation_to_id)} unique relation types...")
+        unique_relations = list(relation_to_id.keys())
+        relation_embeddings = model.encode(unique_relations)
+
+
+        global_relation_embeddings = relation_embeddings
+
+
+        # Create a mapping from relation string to global ID
+        relation_string_to_global_id = {rel: idx for idx, rel in enumerate(unique_relations)}
+
         splits = ['train', 'validation', 'test']
         for split, path in zip(
                 splits,
@@ -433,8 +469,20 @@ class KGQABaseDataset(InMemoryDataset):
                     print(f"skip_no_answer: skipping sample {example['id']}")
                     continue
 
-                x = model.encode(nodes.node_attr.tolist(), )
-                edge_attr = model.encode(edges.edge_attr.tolist(), )
+                node_attrs = nodes.node_attr.tolist()
+                uncached_node_attrs = [attr for attr in node_attrs if attr not in node_attr_cache]
+
+                if uncached_node_attrs:
+                    new_encodings = model.encode(uncached_node_attrs)
+                    for attr, encoding in zip(uncached_node_attrs, new_encodings):
+                        node_attr_cache[attr] = encoding
+
+                x = torch.stack([node_attr_cache[attr] for attr in node_attrs])
+
+                # For each edge, map the relation string to a global ID
+                edge_attrs = edges.edge_attr.tolist()
+                edge_global_relation_ids = [relation_string_to_global_id[attr] for attr in edge_attrs]
+
                 edge_index = torch.tensor([
                     edges.src.tolist(),
                     edges.dst.tolist(),
@@ -444,7 +492,7 @@ class KGQABaseDataset(InMemoryDataset):
                 data = Data(
                     x=x,
                     edge_index=edge_index,
-                    edge_attr=edge_attr,
+                    edge_attr=edge_global_relation_ids,
                 )
 
                 data.id = example["id"]
@@ -477,7 +525,29 @@ class KGQABaseDataset(InMemoryDataset):
 
                 data_list.append(data)
 
+
             self.save(data_list, path)
+        path = self.processed_paths[0]
+        processed_dir = os.path.dirname(path)
+        torch.save(global_relation_embeddings, os.path.join(processed_dir,
+                                             "global_relation_embeddings.pt"))
+
+    def _load_relation_embedding_table(self) -> None:
+        path = self.processed_paths[['train', 'val', 'test'].index(self.split)]
+        processed_dir = os.path.dirname(path)
+
+        embedding_tensor_path = os.path.join(processed_dir,
+                                             "global_relation_embeddings.pt")
+        try:
+            self.global_relation_embeddings = torch.load(embedding_tensor_path)
+            print(f"Loaded global relation embeddings from {embedding_tensor_path}")
+        except FileNotFoundError:
+            print(f"Global relation embeddings not found at {embedding_tensor_path}")
+
+    def get_relation_embedding_table(self) -> Tensor:
+        if not hasattr(self, 'global_relation_embeddings') or self.global_relation_embeddings is None:
+            self._load_relation_embedding_table()
+        return self.global_relation_embeddings
 
 
 class WebQSPDataset(KGQABaseDataset):
@@ -495,8 +565,8 @@ class WebQSPDataset(KGQABaseDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         subgraphrag (bool, optional): Whether to preprocess the dataset
-            into the format expected by SubgraphRAG. The dataset the full
-            subgraphs with embeddings and target triplets labels.
+            into the format expected by SubgraphRAG. Will return full graphs 
+            with embeddings and target triplets labels.
             (default: :obj:`False`)
     """
     def __init__(self, root: str, split: str = "train",
@@ -522,8 +592,8 @@ class CWQDataset(KGQABaseDataset):
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
         subgraphrag (bool, optional): Whether to preprocess the dataset
-            into the format expected by SubgraphRAG. The dataset the full
-            subgraphs with embeddings and target triplets labels.
+            into the format expected by SubgraphRAG. Will return full graphs 
+            with embeddings and target triplets labels.
             (default: :obj:`False`)
     """
     def __init__(self, root: str, split: str = "train",

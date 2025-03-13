@@ -5,6 +5,11 @@ from torch_geometric.nn import MessagePassing
 
 
 class PEConv(MessagePassing):
+    """Positional Encoding Convolution layer.
+
+    Simple message passing layer that propagates node features
+    through the graph without any transformation.
+    """
     def __init__(self):
         super().__init__(aggr='mean')
 
@@ -16,6 +21,18 @@ class PEConv(MessagePassing):
 
 
 class DDE(nn.Module):
+    """Directional Distance Encoding module.
+
+    DEE computes positional encodings based on the directional distance
+    of nodes from topic entities in the graph. It performs message passing in both
+    forward and reverse directions to capture the structural information of the graph
+    relative to the topic entities.
+
+
+    Args:
+        num_rounds (int): Number of forward propagation rounds.
+        num_reverse_rounds (int): Number of reverse propagation rounds.
+    """
     def __init__(self, num_rounds, num_reverse_rounds):
         super().__init__()
 
@@ -28,6 +45,22 @@ class DDE(nn.Module):
             self.reverse_layers.append(PEConv())
 
     def forward(self, topic_entity_one_hot, edge_index, reverse_edge_index):
+        """Forward pass of the DDE module.
+
+        Computes directional distance encodings by propagating the topic entity
+        indicators through the graph in both forward and reverse directions.
+
+        Args:
+            topic_entity_one_hot (Tensor): One-hot encoding indicating topic entities
+                with shape [num_nodes, num_classes].
+            edge_index (Tensor): The graph connectivity in COO format with shape [2, num_edges].
+            reverse_edge_index (Tensor): The reversed graph connectivity in COO format
+                with shape [2, num_edges].
+
+        Returns:
+            List[Tensor]: A list of node encodings from each layer of propagation,
+                capturing the directional distance information at different hops.
+        """
         result_list = []
 
         h_pe = topic_entity_one_hot
@@ -42,8 +75,7 @@ class DDE(nn.Module):
 
         return result_list
 
-
-class Retriever(nn.Module):
+class SubgraphRAGRetriever(nn.Module):
     r"""The SubgraphRAG retriever model from the `"Simple Is Effective: The
     Roles of Graphs and Large Language Models in Knowledge-Graph-Based
     Retrieval-Augmented Generation"
@@ -51,26 +83,27 @@ class Retriever(nn.Module):
 
     Args:
         emb_size (int): The dimension of the embeddings.
-        gnn (torch.nn.Module): The GNN to use.
-        mlp_out_channels (dict, optional):
+        topic_pe (bool): Whether to include the topic_pe in the embeddings.
+        dde_rounds (int, optional): The number of DDE passes to apply.
+        rev_dde_rounds (int, optional): The number of reverse DDE passes to apply.
     """
-    def __init__(self, emb_size, topic_pe, DDE_kwargs):
+    def __init__(self, emb_size, topic_pe, dde_rounds, rev_dde_rounds):
         super().__init__()
 
+        self.non_text_entity_emb = nn.Embedding(1, emb_size)
         self.topic_pe = topic_pe
-        self.dde = DDE(**DDE_kwargs)
+        self.dde = DDE(dde_rounds, rev_dde_rounds)
 
         pred_in_size = 4 * emb_size
         if topic_pe:
             pred_in_size += 2 * 2
-        pred_in_size += 2 * 2 * (DDE_kwargs['num_rounds'] +
-                                 DDE_kwargs['num_reverse_rounds'])
+        pred_in_size += 2 * 2 * (dde_rounds + rev_dde_rounds)
 
-        self.pred = nn.Sequential(nn.Linear(pred_in_size, emb_size), nn.ReLU(),
+        self.pred = nn.Sequential(nn.Linear(pred_in_size, emb_size),
+                                  nn.ReLU(),
                                   nn.Linear(emb_size, 1))
 
-    def forward(self, edge_index, q_emb, entity_embs, relation_embs,
-                num_non_text_entities, topic_entity_one_hot):
+    def forward(self, edge_index, q_emb, entity_embs, relation_embs, topic_entity_one_hot):
         h_e = torch.cat([
             entity_embs,
         ], dim=0)
@@ -88,8 +121,10 @@ class Retriever(nn.Module):
         h_q = q_emb
 
         h_triple = torch.cat([
-            h_q.expand(len(relation_embs), -1), h_e[edge_index[0]],
-            relation_embs, h_e[edge_index[1]]
+            h_q.expand(len(relation_embs), -1),
+            h_e[edge_index[0]],
+            relation_embs,
+            h_e[edge_index[1]],
         ], dim=1)
 
         return self.pred(h_triple)
