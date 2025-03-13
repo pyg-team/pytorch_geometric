@@ -326,6 +326,8 @@ def train(args, data_lists):
                     then comeback to multigpu since most inputs dont trigger this.
                     Just skipping for now.
                     """
+                    gc.collect()
+                    torch.cuda.empty_cache()
                     continue
 
             train_loss = epoch_loss / len(train_loader)
@@ -382,13 +384,15 @@ def test(model, test_loader, args):
             preds = (inference_step(model, test_batch))
         except torch.OutOfMemoryError as e:
             """
-                (TODO Zack) handle inputs with too many tokens
-                do this by doing a fallback to CPU
-                its complicated since we have Huggingface `accelerate`
-                doing multigpu setup but we wana fall back to cpu and
-                then comeback to multigpu since most inputs dont trigger this.
-                Just skipping for now.
-                """
+            (TODO Zack) handle inputs with too many tokens
+            do this by doing a fallback to CPU
+            its complicated since we have Huggingface `accelerate`
+            doing multigpu setup but we wana fall back to cpu and
+            then comeback to multigpu since most inputs dont trigger this.
+            Just skipping for now.
+            """
+            gc.collect()
+            torch.cuda.empty_cache()
             continue
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
