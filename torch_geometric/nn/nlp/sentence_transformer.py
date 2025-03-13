@@ -103,19 +103,38 @@ class SentenceTransformer(torch.nn.Module):
                 loader, desc="Encoding " + str(len(text)) +
                 " strings w/ SentenceTransformer")
         for start in loader:
-            token = self.tokenizer(
-                text[start:start + batch_size],
-                padding=True,
-                truncation=True,
-                return_tensors='pt',
-            )
-
-            emb = self(
-                input_ids=token.input_ids.to(self.device),
-                attention_mask=token.attention_mask.to(self.device),
-            ).to(output_device)
-
-            embs.append(emb)
+            try:
+                token = self.tokenizer(
+                    text[start:start + batch_size],
+                    padding=True,
+                    truncation=True,
+                    return_tensors='pt',
+                )
+    
+                emb = self(
+                    input_ids=token.input_ids.to(self.device),
+                    attention_mask=token.attention_mask.to(self.device),
+                ).to(output_device)
+    
+                embs.append(emb)
+            except:
+                # fallback to using CPU for huge strings that cause OOMs
+                print("Sentence Transformer failed on cuda, trying w/ cpu...")
+                token = self.tokenizer(
+                    text[start:start + batch_size],
+                    padding=True,
+                    truncation=True,
+                    return_tensors='pt',
+                )
+                previous_device = self.device
+                self = self.to("cpu")
+                emb = self(
+                    input_ids=token.input_ids.to(self.device),
+                    attention_mask=token.attention_mask.to(self.device),
+                ).to(output_device)
+    
+                embs.append(emb)
+                self = self.to(previous_device)
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out
