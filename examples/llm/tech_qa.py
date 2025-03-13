@@ -323,13 +323,12 @@ def train(args, data_lists):
                     (TODO Zack) handle inputs with too many tokens
                     do this by doing a fallback to CPU
                     its complicated since we have Huggingface `accelerate`
-                    doing multigpu setup but we wana fall back to cpu and 
+                    doing multigpu setup but we wana fall back to cpu and
                     then comeback to multigpu since most inputs dont trigger this.
                     Just skipping for now.
                     """
                     continue
-                
-                
+
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
 
@@ -346,7 +345,7 @@ def train(args, data_lists):
                         (TODO Zack) handle inputs with too many tokens
                         do this by doing a fallback to CPU
                         its complicated since we have Huggingface `accelerate`
-                        doing multigpu setup but we wana fall back to cpu and 
+                        doing multigpu setup but we wana fall back to cpu and
                         then comeback to multigpu since most inputs dont trigger this.
                         Just skipping for now.
                         """
@@ -381,15 +380,15 @@ def test(model, test_loader, args):
         try:
             preds = (inference_step(model, test_batch))
         except torch.OutOfMemoryError as e:
-                """
+            """
                 (TODO Zack) handle inputs with too many tokens
                 do this by doing a fallback to CPU
                 its complicated since we have Huggingface `accelerate`
-                doing multigpu setup but we wana fall back to cpu and 
+                doing multigpu setup but we wana fall back to cpu and
                 then comeback to multigpu since most inputs dont trigger this.
                 Just skipping for now.
                 """
-                continue
+            continue
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
             eval_tuples.append((question, pred, label))
