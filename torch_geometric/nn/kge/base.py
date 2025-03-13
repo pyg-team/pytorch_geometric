@@ -125,7 +125,7 @@ class KGEModel(torch.nn.Module):
                 scores.append(self(h.expand_as(ts), r.expand_as(ts), ts))
             rank = int((torch.cat(scores).argsort(
                 descending=True) == t).nonzero().view(-1))
-            mean_ranks.append(rank)
+            mean_ranks.append(rank + 1)
             reciprocal_ranks.append(1 / (rank + 1))
             hits_at_k.append(rank < k)
 
