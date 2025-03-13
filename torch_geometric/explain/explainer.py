@@ -7,6 +7,7 @@ from torch import Tensor
 from torch_geometric.explain import (
     ExplainerAlgorithm,
     Explanation,
+    GenerativeExplanation,
     HeteroExplanation,
 )
 from torch_geometric.explain.algorithm.utils import (
@@ -142,17 +143,18 @@ class Explainer:
 
         out = self.get_prediction(x, edge_index, **kwargs)
         clear_masks(self.model)
+
         return out
 
     def __call__(
         self,
-        x: Union[Tensor, Dict[NodeType, Tensor]],
-        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        x: Optional[Union[Tensor, Dict[NodeType, Tensor]]],
+        edge_index: Optional[Union[Tensor, Dict[EdgeType, Tensor]]],
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Union[Explanation, HeteroExplanation]:
+    ) -> Union[Explanation, HeteroExplanation, GenerativeExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
         target.
 
@@ -195,6 +197,8 @@ class Explainer:
                     f"type '{self.explanation_type.value}'")
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
+        elif self.explanation_type == ExplanationType.generative:
+            pass
 
         if isinstance(index, int):
             index = torch.tensor([index])
@@ -212,6 +216,9 @@ class Explainer:
         )
 
         self.model.train(training)
+
+        if isinstance(explanation, GenerativeExplanation):
+            return explanation
 
         # Add explainer objectives to the `Explanation` object:
         explanation._model_config = self.model_config
