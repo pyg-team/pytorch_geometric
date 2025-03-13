@@ -120,14 +120,14 @@ class SentenceTransformer(torch.nn.Module):
                 # fallback to using CPU for huge strings that cause OOMs
                 print("Sentence Transformer failed on cuda, trying w/ cpu...")
                 previous_device = self.device
-                self = self.to("cpu")
+                self = self.model.to("cpu")
                 emb = self(
                     input_ids=token.input_ids.to(self.device),
                     attention_mask=token.attention_mask.to(self.device),
                 ).to(output_device)
 
                 embs.append(emb)
-                self = self.to(previous_device)
+                self = self.model.to(previous_device)
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out
