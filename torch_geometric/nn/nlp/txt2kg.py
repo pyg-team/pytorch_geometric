@@ -34,6 +34,10 @@ class TXT2KG():
             (default: "nvidia/llama-3.1-nemotron-70b-instruct").
         NVIDIA_API_KEY : str, optional
             The API key for accessing NVIDIA's NIM models (default: "").
+        ENDPOINT_URL : str, optional
+            The URL hosting your model, in case you are not using
+            the public NIM.
+            (default: "https://integrate.api.nvidia.com/v1").
         local_LM : bool, optional
             A flag indicating whether a local Language Model (LM)
             should be used (default: False).
@@ -46,6 +50,7 @@ class TXT2KG():
         NVIDIA_NIM_MODEL: Optional[
             str] = "nvidia/llama-3.1-nemotron-70b-instruct",
         NVIDIA_API_KEY: Optional[str] = "",
+        ENDPOINT_URL: Optional[str] = "https://integrate.api.nvidia.com/v1",
         local_LM: bool = False,
         chunk_size: int = 512,
     ) -> None:
@@ -58,6 +63,7 @@ class TXT2KG():
             # If not using a local LM, store the provided NIM model info
             self.NVIDIA_API_KEY = NVIDIA_API_KEY
             self.NIM_MODEL = NVIDIA_NIM_MODEL
+            self.ENDPOINT_URL = ENDPOINT_URL
 
         # Set the chunk size for processing text data
         self.chunk_size = 512
@@ -162,7 +168,7 @@ class TXT2KG():
                 }
                 for retry in range(5):
                     try:
-                        for retry in range(20):
+                        for retry in range(200):
                             try:
                                 # Spawn multiple processes, process chunks in parallel
                                 mp.spawn(
@@ -170,8 +176,8 @@ class TXT2KG():
                                     args=(in_chunks_per_proc,
                                           _parse_n_check_triples,
                                           _chunk_to_triples_str_cloud,
-                                          self.NVIDIA_API_KEY, self.NIM_MODEL),
-                                    nprocs=num_procs)
+                                          self.NVIDIA_API_KEY, self.NIM_MODEL,
+                                          self.ENDPOINT_URL), nprocs=num_procs)
                                 break
                             except:  # noqa
                                 # keep retrying, txt2kg is costly -> stoppage is costly
@@ -193,19 +199,22 @@ class TXT2KG():
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
         NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+        ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
         post_text=SYSTEM_PROMPT) -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
         from openai import OpenAI
         global CLIENT
-        CLIENT = OpenAI(base_url="https://integrate.api.nvidia.com/v1",
-                        api_key=GLOBAL_NIM_KEY)
+        CLIENT = OpenAI(base_url=ENDPOINT_URL, api_key=GLOBAL_NIM_KEY)
         CLIENT_INITD = True
+    txt_input = txt
+    if post_text != "":
+        txt_input += '\n' + post_text
     completion = CLIENT.chat.completions.create(
         model=NIM_MODEL, messages=[{
             "role": "user",
-            "content": txt + '\n' + post_text
+            "content": txt_input
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
@@ -259,9 +268,10 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
 
 
 def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
-                      NIM_MODEL):
+                      NIM_MODEL, ENDPOINT_URL):
     out = _llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
-                                 GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL)
+                                 GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL,
+                                 ENDPOINT_URL=ENDPOINT_URL)
     torch.save(out, "/tmp/outs_for_proc_" + str(rank))
 
 
