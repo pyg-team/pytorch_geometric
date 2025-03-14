@@ -126,7 +126,7 @@ class GNNStackStage(torch.nn.Module):
             else:
                 d_in = dim_in if i == 0 else dim_out
             layer = conv_dict[conv_type](d_in, dim_out)
-            self.add_module('layer{}'.format(i), layer)
+            self.add_module(f'layer{i}', layer)
 
     def forward(self, batch):
         for i, layer in enumerate(self.children()):
@@ -184,9 +184,9 @@ class GPSEPlusGNN(torch.nn.Module):
         }
 
         self.encoder1 = encoder_dict[encoder](dim_emb - dim_pe_out)
-        self.encoder2 = GPSENodeEncoder(dim_emb, dim_pe_in, dim_pe_out,
-                                        expand_x=False) if gpse else (
-            LinearNodeEncoder(dim_emb, dim_pe_out, bias=True))
+        self.encoder2 = GPSENodeEncoder(
+            dim_emb, dim_pe_in, dim_pe_out, expand_x=False) if gpse else (
+                LinearNodeEncoder(dim_emb, dim_pe_out, bias=True))
         self.premp = MLP([dim_emb, dim_emb, dim_conv])
         self.gnn = GNNStackStage(dim_conv, dim_conv, num_layers, conv_type)
         self.postmp = MLP([dim_conv, 1])
