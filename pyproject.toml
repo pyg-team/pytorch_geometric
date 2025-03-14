@@ -57,6 +57,14 @@ benchmark=[
     "protobuf<4.21",
     "wandb",
 ]
+rag=[
+    "pcst_fast",
+    "datasets",
+    "transformers",
+    "pandas",
+    "sentencepiece",
+    "accelerate",
+]
 test=[
     "onnx",
     "onnxruntime",
@@ -74,6 +82,7 @@ full = [
     "scikit-learn",
     "ase",
     "captum<0.7.0",
+    "datasets",
     "graphviz",
     "h5py",
     "matplotlib",
@@ -81,6 +90,7 @@ full = [
     "numba<0.60.0",
     "opt_einsum",
     "pandas",
+    "pcst_fast",
     "pgmpy",
     "pynndescent",
     "pytorch-memlab",
@@ -92,6 +102,7 @@ full = [
     "tabulate",
     "torch_geometric[graphgym, modelhub]",
     "torchmetrics",
+    "transformers",
     "trimesh",
 ]
 
@@ -190,6 +201,9 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+]
+markers = [
+    "rag: mark test as RAG test",
 ]
 
 [tool.coverage.run]
