@@ -21,9 +21,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, python-version: '3.9' }
-          - { os: windows-latest, python-version: '3.9' }
-          - { os: macos-14, python-version: '3.10' }
+          - {os: ubuntu-latest, python-version: '3.9'}
+          - {os: windows-latest, python-version: '3.9'}
+          - {os: macos-14, python-version: '3.10'}
 
     steps:
       - name: Checkout repository
