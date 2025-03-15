@@ -4,14 +4,20 @@ import pytest
 import torch
 
 from torch_geometric.metrics import (
+    LinkPredAveragePopularity,
+    LinkPredCoverage,
+    LinkPredDiversity,
     LinkPredF1,
+    LinkPredHitRatio,
     LinkPredMAP,
     LinkPredMetricCollection,
     LinkPredMRR,
     LinkPredNDCG,
+    LinkPredPersonalization,
     LinkPredPrecision,
     LinkPredRecall,
 )
+from torch_geometric.testing import withCUDA
 
 
 @pytest.mark.parametrize('num_src_nodes', [100])
@@ -178,10 +184,100 @@ def test_mrr():
     metric.reset()
 
 
+def test_hit_ratio():
+    pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2], [0, 1]])
+    edge_label_index = torch.tensor([[0, 0, 2, 2, 3], [0, 1, 2, 1, 2]])
+
+    metric = LinkPredHitRatio(k=2)
+    assert str(metric) == 'LinkPredHitRatio(k=2)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+
+    assert float(result) == pytest.approx(2 / 3)
+
+    # Test with `k > pred_index_mat.size(1)`:
+    metric.update(pred_index_mat[:, :1], edge_label_index)
+    metric.compute()
+    metric.reset()
+
+
+def test_coverage():
+    pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2], [0, 1]])
+    edge_label_index = torch.empty(2, 0, dtype=torch.long)
+
+    metric = LinkPredCoverage(k=2, num_dst_nodes=3)
+    assert str(metric) == 'LinkPredCoverage(k=2, num_dst_nodes=3)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+    assert metric.mask.sum() == 0
+
+    assert float(result) == 1.0
+
+    metric = LinkPredCoverage(k=1, num_dst_nodes=4)
+    assert str(metric) == 'LinkPredCoverage(k=1, num_dst_nodes=4)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+    assert metric.mask.sum() == 0
+
+    assert float(result) == 2 / 4
+
+
+def test_diversity():
+    pred_index_mat = torch.tensor([[0, 1, 2], [3, 1, 0]])
+    category = torch.tensor([0, 1, 2, 0])
+    edge_label_index = torch.empty(2, 0, dtype=torch.long)
+
+    metric = LinkPredDiversity(k=3, category=category)
+    assert str(metric) == 'LinkPredDiversity(k=3)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+
+    assert pytest.approx(float(result)) == (1 + 2 / 3) / 2
+
+
+@withCUDA
+def test_personalization(device):
+    pred_index_mat = torch.tensor([[0, 1, 2, 3], [2, 1, 0, 4], [1, 0, 2, 5]],
+                                  device=device)
+    edge_label_index = torch.empty(2, 0, dtype=torch.long, device=device)
+
+    metric = LinkPredPersonalization(k=4).to(device)
+    assert str(metric) == 'LinkPredPersonalization(k=4)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    assert result.device == device
+    assert float(result) == 0.25
+    metric.reset()
+    assert metric.preds == []
+
+    metric.update(pred_index_mat[:0], edge_label_index)
+    result = metric.compute()
+    assert result.device == device
+    assert float(result) == 0.0
+    metric.reset()
+
+
+def test_average_popularity():
+    pred_index_mat = torch.tensor([[0, 1, 2], [3, 1, 0]])
+    popularity = torch.tensor([10, 5, 2, 1])
+    edge_label_index = torch.empty(2, 0, dtype=torch.long)
+
+    metric = LinkPredAveragePopularity(k=3, popularity=popularity)
+    assert str(metric) == 'LinkPredAveragePopularity(k=3)'
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    metric.reset()
+
+    assert pytest.approx(float(result)) == (10 + 5 + 2 + 1 + 5 + 10) / 6
+
+
 @pytest.mark.parametrize('num_src_nodes', [10])
 @pytest.mark.parametrize('num_dst_nodes', [50])
 @pytest.mark.parametrize('num_edges', [200])
-def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
+def test_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
     metrics = [
         LinkPredMAP(k=10),
         LinkPredPrecision(k=100),
@@ -189,6 +285,7 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         LinkPredF1(k=20),
         LinkPredMRR(k=40),
         LinkPredNDCG(k=80),
+        LinkPredCoverage(k=5, num_dst_nodes=num_dst_nodes),
     ]
 
     row = torch.randint(0, num_src_nodes, (num_edges, ))
@@ -208,6 +305,7 @@ def test_link_pred_metric_collection(num_src_nodes, num_dst_nodes, num_edges):
         '  LinkPredF1@20: LinkPredF1(k=20),\n'
         '  LinkPredMRR@40: LinkPredMRR(k=40),\n'
         '  LinkPredNDCG@80: LinkPredNDCG(k=80),\n'
+        '  LinkPredCoverage@5: LinkPredCoverage(k=5, num_dst_nodes=50),\n'
         '])')
     assert metric_collection.max_k == 100
 

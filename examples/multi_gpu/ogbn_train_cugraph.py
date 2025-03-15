@@ -3,7 +3,6 @@
 import argparse
 import os
 import os.path as osp
-import tempfile
 import time
 
 import cupy
@@ -21,7 +20,12 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric
-from torch_geometric.utils import to_undirected
+from torch_geometric import seed_everything
+from torch_geometric.utils import (
+    add_self_loops,
+    remove_self_loops,
+    to_undirected,
+)
 
 # Allow computation on objects that are larger than GPU memory
 # https://docs.rapids.ai/api/cudf/stable/developer_guide/library_design/#spilling-to-host-memory
@@ -38,7 +42,7 @@ def arg_parse():
     parser.add_argument(
         '--dataset',
         type=str,
-        default='ogbn-papers100M',
+        default='ogbn-arxiv',
         choices=['ogbn-papers100M', 'ogbn-products', 'ogbn-arxiv'],
         help='Dataset name.',
     )
@@ -51,37 +55,42 @@ def arg_parse():
     parser.add_argument(
         "--dataset_subdir",
         type=str,
-        default="ogb-papers100M",
+        default="ogbn-arxiv",
         help="directory of dataset.",
     )
     parser.add_argument('--hidden_channels', type=int, default=256)
-    parser.add_argument('--num_layers', type=int, default=2)
+    parser.add_argument('--num_layers', type=int, default=3)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
-    parser.add_argument('-e', '--epochs', type=int, default=10)
+    parser.add_argument('-e', '--epochs', type=int, default=50)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
     parser.add_argument('--eval_steps', type=int, default=1000)
     parser.add_argument('--warmup_steps', type=int, default=20)
+    parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument(
         '--use_directed_graph',
         action='store_true',
         help='Whether or not to use directed graph',
     )
     parser.add_argument(
+        '--add_self_loop',
+        action='store_true',
+        help='Whether or not to add self loop',
+    )
+    parser.add_argument(
         "--model",
         type=str,
         default='GCN',
-        choices=['SAGE', 'GAT', 'GCN'],
-        help="Model used for training, default GraphSAGE",
+        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
+        help="Model used for training, default GCN",
     )
     parser.add_argument(
-        "--num_gat_conv_heads",
+        "--num_heads",
         type=int,
-        default=4,
-        help="If using GATConv, number of attention heads to use",
+        default=1,
+        help="If using GATConv or GT, number of attention heads to use",
     )
-    parser.add_argument('--tempdir_root', type=str, default=None)
     parser.add_argument(
         '--num_devices',
         type=int,
@@ -144,7 +153,7 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
 
 
 def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
-              num_classes, wall_clock_start, tempdir=None):
+              num_classes, wall_clock_start):
 
     epochs = args.epochs
     batch_size = args.batch_size
@@ -179,41 +188,32 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     )] = ixr
 
     feature_store = TensorDictFeatureStore()
-    feature_store['node', 'x'] = data.x
-    feature_store['node', 'y'] = data.y
+    feature_store['node', 'x', None] = data.x
+    feature_store['node', 'y', None] = data.y
 
     dist.barrier()
 
     ix_train = torch.tensor_split(split_idx['train'], world_size)[rank].cuda()
-    train_path = osp.join(tempdir, f'train_{rank}')
-    os.mkdir(train_path)
     train_loader = NeighborLoader(
         (feature_store, graph_store),
         input_nodes=ix_train,
-        directory=train_path,
         shuffle=True,
         drop_last=True,
         **kwargs,
     )
 
     ix_val = torch.tensor_split(split_idx['valid'], world_size)[rank].cuda()
-    val_path = osp.join(tempdir, f'val_{rank}')
-    os.mkdir(val_path)
     val_loader = NeighborLoader(
         (feature_store, graph_store),
         input_nodes=ix_val,
-        directory=val_path,
         drop_last=True,
         **kwargs,
     )
 
     ix_test = torch.tensor_split(split_idx['test'], world_size)[rank].cuda()
-    test_path = osp.join(tempdir, f'test_{rank}')
-    os.mkdir(test_path)
     test_loader = NeighborLoader(
         (feature_store, graph_store),
         input_nodes=ix_test,
-        directory=test_path,
         drop_last=True,
         local_seeds_per_call=80000,
         **kwargs,
@@ -310,7 +310,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
 if __name__ == '__main__':
 
     args = arg_parse()
-
+    seed_everything(123)
     wall_clock_start = time.perf_counter()
 
     root = osp.join(args.dataset_dir, args.dataset_subdir)
@@ -319,17 +319,20 @@ if __name__ == '__main__':
     data = dataset[0]
     if not args.use_directed_graph:
         data.edge_index = to_undirected(data.edge_index, reduce="mean")
+    if args.add_self_loop:
+        data.edge_index, _ = remove_self_loops(data.edge_index)
+        data.edge_index, _ = add_self_loops(data.edge_index,
+                                            num_nodes=data.num_nodes)
     data.y = data.y.reshape(-1)
 
+    print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        print(f"Training {args.dataset} with GAT model.")
         model = torch_geometric.nn.models.GAT(dataset.num_features,
                                               args.hidden_channels,
                                               args.num_layers,
                                               dataset.num_classes,
-                                              heads=args.num_gat_conv_heads)
+                                              heads=args.num_heads)
     elif args.model == "GCN":
-        print(f"Training {args.dataset} with GCN model.")
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
             args.hidden_channels,
@@ -337,15 +340,24 @@ if __name__ == '__main__':
             dataset.num_classes,
         )
     elif args.model == "SAGE":
-        print(f"Training {args.dataset} with GraphSAGE model.")
         model = torch_geometric.nn.models.GraphSAGE(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         )
+    elif args.model == 'SGFormer':
+        model = torch_geometric.nn.models.SGFormer(
+            in_channels=dataset.num_features,
+            hidden_channels=args.hidden_channels,
+            out_channels=dataset.num_classes,
+            trans_num_heads=args.num_heads,
+            trans_dropout=args.dropout,
+            gnn_num_layers=args.num_layers,
+            gnn_dropout=args.dropout,
+        )
     else:
-        raise ValueError('Unsupported model type: {args.model}')
+        raise ValueError(f'Unsupported model type: {args.model}')
 
     print("Data =", data)
     if args.num_devices < 1:
@@ -359,18 +371,17 @@ if __name__ == '__main__':
     # Create the uid needed for cuGraph comms
     cugraph_id = cugraph_comms_create_unique_id()
 
-    with tempfile.TemporaryDirectory(dir=args.tempdir_root) as tempdir:
-        if world_size > 1:
-            mp.spawn(
-                run_train,
-                args=(args, data, world_size, cugraph_id, model, split_idx,
-                      dataset.num_classes, wall_clock_start, tempdir),
-                nprocs=world_size,
-                join=True,
-            )
-        else:
-            run_train(0, args, data, world_size, cugraph_id, model, split_idx,
-                      dataset.num_classes, wall_clock_start, tempdir)
+    if world_size > 1:
+        mp.spawn(
+            run_train,
+            args=(args, data, world_size, cugraph_id, model, split_idx,
+                  dataset.num_classes, wall_clock_start),
+            nprocs=world_size,
+            join=True,
+        )
+    else:
+        run_train(0, args, data, world_size, cugraph_id, model, split_idx,
+                  dataset.num_classes, wall_clock_start)
 
     total_time = round(time.perf_counter() - wall_clock_start, 2)
     print("Total Program Runtime (total_time) =", total_time, "seconds")
