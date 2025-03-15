@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 from sklearn.manifold import TSNE
-from sklearn.model_selection import StratifiedKFold
 from torch import Tensor
 from torch.utils.tensorboard import SummaryWriter
 
@@ -93,7 +92,6 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
 else:
     device = torch.device('cpu')
 
-# init wandb
 if args.wandb:
     init_wandb(name=f'{args.gnn_choice}-{args.dataset}', epochs=args.epochs,
                hidden_channels=args.hidden_channels, lr=args.lr, device=device)
@@ -131,23 +129,7 @@ if args.gnn_choice == 'gcn2':
 root = osp.join(args.dataset_dir, args.dataset)
 print(f'The root is: {root}')
 dataset = Planetoid(root, args.dataset, transform=T.Compose(transform_lst))
-data = dataset[0]
-
-
-# align with dna.py, delete when ready to merge =====
-def gen_uniform_20_20_60_split(data):
-    skf = StratifiedKFold(5, shuffle=True, random_state=55)
-    idx = [torch.from_numpy(i) for _, i in skf.split(data.y, data.y)]
-    data.train_mask = idx[0].to(torch.long)
-    data.val_mask = idx[1].to(torch.long)
-    data.test_mask = torch.cat(idx[2:], dim=0).to(torch.long)
-    return data
-
-
-if args.gnn_choice == 'dna':
-    data = gen_uniform_20_20_60_split(data)
-# ===================================================
-data = data.to(device)
+data = dataset[0].to(device)
 
 
 # define models
@@ -577,7 +559,6 @@ def get_optimizer(
 
 
 model = get_model(args.gnn_choice).to(device)
-# old file did not reset parameters
 model.reset_parameters()
 optimizer = get_optimizer(args.gnn_choice, model)
 if args.gnn_choice == 'node2vec':
@@ -622,7 +603,6 @@ def test_node2vec():
 def train():
     model.train()
     optimizer.zero_grad()
-    # forward
     if args.gnn_choice in ['splinegnn', 'gcn']:
         out = model(data.x, data.edge_index, data.edge_attr)
     elif args.gnn_choice == 'gcn2':
@@ -631,11 +611,11 @@ def train():
         out, att_loss = model(data.x, data.edge_index)
     else:
         out = model(data.x, data.edge_index)
-    # loss
+
     loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
     if args.gnn_choice == 'super_gat':
         loss += 4.0 * att_loss
-    # backward
+
     loss.backward()
     optimizer.step()
     if args.gnn_choice == 'mixhop':
@@ -647,7 +627,6 @@ def train():
 def test():
     model.eval()
     accs = []
-    # forward
     if args.gnn_choice in ['splinegnn', 'gcn']:
         out = model(data.x, data.edge_index, data.edge_attr)
     elif args.gnn_choice == 'gcn2':
@@ -656,7 +635,7 @@ def test():
         out, _ = model(data.x, data.edge_index)
     else:
         out = model(data.x, data.edge_index)
-    # accuracy
+
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
         pred = out[mask].argmax(1)
         if args.gnn_choice == 'dna':
@@ -670,8 +649,6 @@ def test():
 print(f'Total time before training begins took '
       f'{time.perf_counter() - wall_clock_start:.4f}s')
 print('Training...')
-
-# add tensorboard
 writer = SummaryWriter()
 
 times = []
