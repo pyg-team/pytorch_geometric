@@ -23,15 +23,20 @@ def index(edge_index: torch.Tensor) -> torch.Tensor:
 
 def test_ssma_verify_pre_hook(x: torch.Tensor, index: torch.Tensor):
     ssma_agg = SSMAAggregation(in_dim=x.size(1), num_neighbors=4,
-                               mlp_compression=1.0, use_attention=False)
+                               mlp_compression=1.0, use_attention=True)
     with pytest.raises(AssertionError):
         ssma_agg(x=x, index=index)
+
+    ssma_agg = SSMAAggregation(in_dim=x.size(1), num_neighbors=4,
+                               mlp_compression=1.0, use_attention=False)
+    ssma_agg(x=x, index=index)
 
 
 def test_ssma_pre_hook_reset(x: torch.Tensor, index: torch.Tensor):
     ssma_agg = SSMAAggregation(in_dim=x.size(1), num_neighbors=4,
-                               mlp_compression=1.0, use_attention=False)
+                               mlp_compression=1.0, use_attention=True)
     ssma_agg._pre_hook_run = True
+    ssma_agg._edge_attention_ste = torch.ones(len(index), 1, 4)
     ssma_agg(x=x, index=index)
 
     with pytest.raises(AssertionError):

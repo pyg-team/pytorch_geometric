@@ -15,6 +15,12 @@ class SSMAAggregation(Aggregation):
     `"Sequential Signal Mixing Aggregation for Message Passing Graph
     Neural Networks" <https://arxiv.org/abs/2409.19414>`_ paper.
 
+    .. math::
+            \mathrm{SSMA}(\mathcal{X}) = C* \mathcal{FFT}^{-1}
+            \left( \prod_{\mathbf{x}_i \in \mathcal{X}}\mathcal{FFT}
+            \left(A*\mathbf{x}_i+b \right) \right) + d
+
+
     Args:
         in_dim (int): The input dimension of the node features
         num_neighbors (int): Maximal number of neighbors to aggregate per node
@@ -112,6 +118,11 @@ class SSMAAggregation(Aggregation):
         return edge_attention_ste
 
     def pre_aggregation_hook(self, module, inputs):
+        """Hook to run before the forward pass of the layer.
+        This hook is needed only if we use attention mechanism in SSMA.
+        The hook computes the attention weights given the source and target
+        nodes.
+        """
         if self._use_attention:
             edge_index, size, kwargs = inputs
             x = kwargs[self._att_feature]
@@ -132,10 +143,11 @@ class SSMAAggregation(Aggregation):
         dim: int = -2,
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
-        assert self._pre_hook_run, \
+        assert (not self._use_attention) or self._pre_hook_run, \
             (
-                "Have to run pre hook first, please make sure you register "
-                "'pre_aggregation_hook' to the layer: "
+                "Have to run pre hook first when using attention, "
+                "please make sure you register "
+                "'pre_aggregation_hook' to the message passing layer: "
                 "layer.register_propagate_forward_pre_hook("
                 "ssma.pre_aggregation_hook)")
 
