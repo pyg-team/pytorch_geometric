@@ -15,7 +15,8 @@ jobs:
 
   minimal_pytest:
     runs-on: ubuntu-latest
-
+    env:
+      COREDUMPY_DUMP_DIR: ${{ github.workspace }}/coredumpy_data
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,7 +26,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v46
         with:
           files: |
             benchmark/**
@@ -53,3 +54,12 @@ jobs:
         timeout-minutes: 10
         run: |
           pytest
+
+      - name: Upload coredumpy data if applicable
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: coredumpy_data_ubuntu-latest_3.9
+          path: ${{ env.COREDUMPY_DUMP_DIR }}
+          if-no-files-found: ignore
+          retention-days: 7
