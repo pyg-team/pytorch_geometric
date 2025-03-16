@@ -56,10 +56,9 @@ jobs:
           pytest
 
       - name: Upload coredumpy data if applicable
-        uses: actions/upload-artifact@v4
+        uses: gaogaotiantian/upload-coredumpy@v0.1
         if: failure()
         with:
           name: coredumpy_data_ubuntu-latest_3.9
           path: ${{ env.COREDUMPY_DUMP_DIR }}
-          if-no-files-found: ignore
           retention-days: 7
