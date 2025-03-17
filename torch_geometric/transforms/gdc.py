@@ -1,6 +1,7 @@
 from typing import Any, Dict, Tuple
 
 import numpy as np
+import scipy.sparse as sp
 import torch
 from torch import Tensor
 
@@ -16,7 +17,7 @@ from torch_geometric.utils import (
     sort_edge_index,
     to_dense_adj,
 )
-import scipy.sparse as sp 
+
 
 @functional_transform('gdc')
 class GDC(BaseTransform):
@@ -73,7 +74,6 @@ class GDC(BaseTransform):
 
     :rtype: :class:`torch_geometric.data.Data`
     """
-
     def __init__(
         self,
         self_loop_weight: float = 1.0,
@@ -104,9 +104,8 @@ class GDC(BaseTransform):
         assert N is not None
 
         if data.edge_attr is None:
-            edge_weight = torch.ones(
-                edge_index.size(1), device=edge_index.device
-            )
+            edge_weight = torch.ones(edge_index.size(1),
+                                     device=edge_index.device)
         else:
             edge_weight = data.edge_attr
             assert self.exact
@@ -124,14 +123,11 @@ class GDC(BaseTransform):
 
         if self.exact:
             edge_index, edge_weight = self.transition_matrix(
-                edge_index, edge_weight, N, self.normalization_in
-            )
-            diff_mat = self.diffusion_matrix_exact(
-                edge_index, edge_weight, N, **self.diffusion_kwargs
-            )
+                edge_index, edge_weight, N, self.normalization_in)
+            diff_mat = self.diffusion_matrix_exact(edge_index, edge_weight, N,
+                                                   **self.diffusion_kwargs)
             edge_index, edge_weight = self.sparsify_dense(
-                diff_mat, **self.sparsification_kwargs
-            )
+                diff_mat, **self.sparsification_kwargs)
         else:
             edge_index, edge_weight = self.diffusion_matrix_approx(
                 edge_index,
@@ -141,13 +137,11 @@ class GDC(BaseTransform):
                 **self.diffusion_kwargs,
             )
             edge_index, edge_weight = self.sparsify_sparse(
-                edge_index, edge_weight, N, **self.sparsification_kwargs
-            )
+                edge_index, edge_weight, N, **self.sparsification_kwargs)
 
         edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
         edge_index, edge_weight = self.transition_matrix(
-            edge_index, edge_weight, N, self.normalization_out
-        )
+            edge_index, edge_weight, N, self.normalization_out)
 
         data.edge_index = edge_index
         data.edge_attr = edge_weight
@@ -203,8 +197,7 @@ class GDC(BaseTransform):
             pass
         else:
             raise ValueError(
-                f"Transition matrix normalization '{normalization}' unknown"
-            )
+                f"Transition matrix normalization '{normalization}' unknown")
 
         return edge_index, edge_weight
 
@@ -251,26 +244,25 @@ class GDC(BaseTransform):
         if method == 'ppr':
             # α (I_n + (α - 1) A)^-1
             edge_weight = (kwargs['alpha'] - 1) * edge_weight
-            edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=1, num_nodes=num_nodes
-            )
+            edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
+                                                     fill_value=1,
+                                                     num_nodes=num_nodes)
             mat = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
             diff_matrix = kwargs['alpha'] * torch.inverse(mat)
 
         elif method == 'heat':
             # exp(t (A - I_n))
-            edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=-1, num_nodes=num_nodes
-            )
+            edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
+                                                     fill_value=-1,
+                                                     num_nodes=num_nodes)
             edge_weight = kwargs['t'] * edge_weight
             mat = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
             undirected = is_undirected(edge_index, edge_weight, num_nodes)
             diff_matrix = self.__expm__(mat, undirected)
 
         elif method == 'coeff':
-            adj_matrix = to_dense_adj(
-                edge_index, edge_attr=edge_weight
-            ).squeeze()
+            adj_matrix = to_dense_adj(edge_index,
+                                      edge_attr=edge_weight).squeeze()
             mat = torch.eye(num_nodes, device=edge_index.device)
 
             diff_matrix = kwargs['coeffs'][0] * mat
@@ -330,8 +322,7 @@ class GDC(BaseTransform):
 
             if normalization == 'col':
                 edge_index, edge_weight = sort_edge_index(
-                    edge_index.flip([0]), edge_weight, num_nodes
-                )
+                    edge_index.flip([0]), edge_weight, num_nodes)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to
@@ -350,35 +341,36 @@ class GDC(BaseTransform):
             else:
                 raise ValueError(
                     f"Transition matrix normalization '{normalization}' not "
-                    f'implemented for non-exact GDC computation'
-                )
+                    f'implemented for non-exact GDC computation')
 
         elif method == 'heat':
             # For heat kernel, we use a Taylor expansion approximation
             # exp(-t(I-A)) ≈ sum_{k=0}^K (t^k/k!) * A^k * exp(-t)
 
             # Initialize with identity matrix (scaled by exp(-t))
-            edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=-1, num_nodes=num_nodes
-            )
-            edge_weight = kwargs['t'] * edge_weight 
+            edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
+                                                     fill_value=-1,
+                                                     num_nodes=num_nodes)
+            edge_weight = kwargs['t'] * edge_weight
 
-             # Convert to SciPy sparse matrix:
+            # Convert to SciPy sparse matrix:
             row, col = edge_index
             row_np = row.cpu().numpy()
             col_np = col.cpu().numpy()
             edge_weight_np = edge_weight.cpu().numpy()
-            adj = sp.csr_matrix((edge_weight_np, (row_np, col_np)), shape=(num_nodes, num_nodes))
+            adj = sp.csr_matrix((edge_weight_np, (row_np, col_np)),
+                                shape=(num_nodes, num_nodes))
 
             diff_matrix = self._heat_diffusion_approx(adj)
 
             # Convert back to torch tensors:
             diff_matrix_coo = diff_matrix.tocoo()
             device = edge_index.device
-            edge_index = torch.tensor([diff_matrix_coo.row, diff_matrix_coo.col],
-                                        dtype=torch.long, device=device)
-            edge_weight = torch.tensor(diff_matrix_coo.data,
-                                        dtype=torch.float, device=device)
+            edge_index = torch.tensor(
+                [diff_matrix_coo.row, diff_matrix_coo.col], dtype=torch.long,
+                device=device)
+            edge_weight = torch.tensor(diff_matrix_coo.data, dtype=torch.float,
+                                       device=device)
 
         else:
             raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
@@ -423,9 +415,8 @@ class GDC(BaseTransform):
 
         if method == 'threshold':
             if 'eps' not in kwargs.keys():
-                kwargs['eps'] = self.__calculate_eps__(
-                    matrix, N, kwargs['avg_degree']
-                )
+                kwargs['eps'] = self.__calculate_eps__(matrix, N,
+                                                       kwargs['avg_degree'])
 
             edge_index = (matrix >= kwargs['eps']).nonzero(as_tuple=False).t()
             edge_index_flat = edge_index[0] * N + edge_index[1]
@@ -437,21 +428,18 @@ class GDC(BaseTransform):
             sort_idx = torch.argsort(matrix, dim=dim, descending=True)
             if dim == 0:
                 top_idx = sort_idx[:k]
-                edge_weight = torch.gather(
-                    matrix, dim=dim, index=top_idx
-                ).flatten()
+                edge_weight = torch.gather(matrix, dim=dim,
+                                           index=top_idx).flatten()
 
                 row_idx = torch.arange(0, N, device=matrix.device).repeat(k)
                 edge_index = torch.stack([top_idx.flatten(), row_idx], dim=0)
             else:
                 top_idx = sort_idx[:, :k]
-                edge_weight = torch.gather(
-                    matrix, dim=dim, index=top_idx
-                ).flatten()
+                edge_weight = torch.gather(matrix, dim=dim,
+                                           index=top_idx).flatten()
 
                 col_idx = torch.arange(
-                    0, N, device=matrix.device
-                ).repeat_interleave(k)
+                    0, N, device=matrix.device).repeat_interleave(k)
                 edge_index = torch.stack([col_idx, top_idx.flatten()], dim=0)
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
@@ -494,15 +482,13 @@ class GDC(BaseTransform):
                     kwargs['avg_degree'],
                 )
 
-            remaining_edge_idx = (
-                (edge_weight >= kwargs['eps']).nonzero(as_tuple=False).flatten()
-            )
+            remaining_edge_idx = ((edge_weight >= kwargs['eps']).nonzero(
+                as_tuple=False).flatten())
             edge_index = edge_index[:, remaining_edge_idx]
             edge_weight = edge_weight[remaining_edge_idx]
         elif method == 'topk':
             raise NotImplementedError(
-                'Sparse topk sparsification not implemented'
-            )
+                'Sparse topk sparsification not implemented')
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
 
@@ -553,24 +539,26 @@ class GDC(BaseTransform):
     def _heat_diffusion_approx(self, adj: sp.csr_matrix) -> sp.csr_matrix:
         """Computes an approximation of the heat diffusion on a graph.
 
-        This method approximates the matrix exponential exp(-t(I-A)) using a Taylor polynomial
-        expansion, where A is the adjacency matrix and t is the diffusion time parameter.
+        This method approximates the matrix exponential exp(-t(I-A)) using a
+        Taylor polynomialexpansion, where A is the adjacency matrix and t is
+        the diffusion time parameter.
 
         Args:
-            adj (scipy.sparse.csr_matrix): Input adjacency matrix in CSR format.
+            adj (scipy.sparse.csr_matrix): Input adjacency matrix
 
         Returns:
-            scipy.sparse.csr_matrix: Approximated heat diffusion matrix in CSR format.
+            scipy.sparse.csr_matrix: Approximated heat diffusion matrix
 
         Note:
             The approximation is computed using the formula:
             exp(-t(I-A)) = exp(-t)sum_{k=0}^{max_iter} (t^k/k!)A^k
 
-            The implementation uses an iterative approach to compute the series terms,
-            accumulating the result in diff_matrix.
+            The implementation uses an iterative approach to
+            compute series terms, accumulating the result in diff_matrix.
         """
-          # Initialize with the identity scaled by exp(-t)
-        diff_matrix = sp.identity(adj.shape[0], format="csr") * np.exp(-self.diffusion_kwargs['t'])
+        # Initialize with the identity scaled by exp(-t)
+        diff_matrix = sp.identity(
+            adj.shape[0], format="csr") * np.exp(-self.diffusion_kwargs['t'])
         a_power = adj.copy()
         coef = self.diffusion_kwargs['t']
         for k in range(1, self.sparsification_kwargs['max_iter'] + 1):
