@@ -372,9 +372,6 @@ class GDC(BaseTransform):
 
             diff_matrix = self._heat_diffusion_approx(adj)
 
-            row, col = edge_index
-            adj = sp.csr_matrix((edge_weight.cpu().numpy()))
-
             # Convert back to torch tensors:
             diff_matrix_coo = diff_matrix.tocoo()
             device = edge_index.device
@@ -554,6 +551,24 @@ class GDC(BaseTransform):
         return float(left + right) / 2.0
 
     def _heat_diffusion_approx(self, adj: sp.csr_matrix) -> sp.csr_matrix:
+        """Computes an approximation of the heat diffusion on a graph.
+
+        This method approximates the matrix exponential exp(-t(I-A)) using a Taylor polynomial
+        expansion, where A is the adjacency matrix and t is the diffusion time parameter.
+
+        Args:
+            adj (scipy.sparse.csr_matrix): Input adjacency matrix in CSR format.
+
+        Returns:
+            scipy.sparse.csr_matrix: Approximated heat diffusion matrix in CSR format.
+
+        Note:
+            The approximation is computed using the formula:
+            exp(-t(I-A)) = exp(-t)sum_{k=0}^{max_iter} (t^k/k!)A^k
+
+            The implementation uses an iterative approach to compute the series terms,
+            accumulating the result in diff_matrix.
+        """
           # Initialize with the identity scaled by exp(-t)
         diff_matrix = sp.identity(adj.shape[0], format="csr") * np.exp(-self.diffusion_kwargs['t'])
         a_power = adj.copy()
