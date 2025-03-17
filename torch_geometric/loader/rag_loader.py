@@ -166,7 +166,6 @@ class RAGQueryLoader:
                 data.x = torch.zeros((0, query_enc.numel()))
                 data.edge_index = torch.randint((2, 0))
                 data.edge_attr = torch.zeros((0, query_enc.numel()))
-                
 
         if self.raw_docs:
             selected_doc_idxs, _ = next(
