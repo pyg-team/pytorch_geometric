@@ -326,6 +326,8 @@ def train(args, data_lists):
                     then comeback to multigpu since most inputs dont trigger this.
                     Just skipping for now.
                     """
+                    # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes. 
+                    # but we wana fix the underlying issue, this skip is just a workaround for now.
                     gc.collect()
                     torch.cuda.empty_cache()
                     continue
@@ -350,6 +352,8 @@ def train(args, data_lists):
                         then comeback to multigpu since most inputs dont trigger this.
                         Just skipping for now.
                         """
+                        # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes. 
+                        # but we wana fix the underlying issue, this skip is just a workaround for now.
                         gc.collect()
                         torch.cuda.empty_cache()
                         continue
@@ -391,6 +395,8 @@ def test(model, test_loader, args):
             then comeback to multigpu since most inputs dont trigger this.
             Just skipping for now.
             """
+            # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes. 
+            # but we wana fix the underlying issue, this skip is just a workaround for now.
             gc.collect()
             torch.cuda.empty_cache()
             continue
