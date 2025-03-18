@@ -306,7 +306,11 @@ def train(args, data_lists):
 
                 optimizer.zero_grad()
                 try:
-                    loss = get_loss(model, batch)
+                    try:
+                        loss = get_loss(model, batch)
+                    except:
+                        # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
+                        # but we wana fix the underlying issue, this skip is just a workaround for now.
                     loss.backward()
                     clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
                     if (step + 1) % 2 == 0:
@@ -326,8 +330,6 @@ def train(args, data_lists):
                     then comeback to multigpu since most inputs dont trigger this.
                     Just skipping for now.
                     """
-                    # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
-                    # but we wana fix the underlying issue, this skip is just a workaround for now.
                     gc.collect()
                     torch.cuda.empty_cache()
                     continue
@@ -341,7 +343,11 @@ def train(args, data_lists):
             with torch.no_grad():
                 for step, batch in enumerate(val_loader):
                     try:
-                        loss = get_loss(model, batch)
+                        try:
+                            loss = get_loss(model, batch)
+                        except:
+                            # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
+                            # but we wana fix the underlying issue, this skip is just a workaround for now.
                         val_loss += loss.item()
                     except torch.OutOfMemoryError as e:
                         """
@@ -385,8 +391,9 @@ def test(model, test_loader, args):
                                        context=test_batch.text_context[i]))
         test_batch.question = new_qs
         try:
+            
             preds = (inference_step(model, test_batch))
-        except torch.OutOfMemoryError as e:
+        except:
             """
             (TODO Zack) handle inputs with too many tokens
             do this by doing a fallback to CPU
