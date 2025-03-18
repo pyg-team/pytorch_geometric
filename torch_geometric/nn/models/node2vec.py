@@ -20,7 +20,9 @@ class Node2Vec(torch.nn.Module):
 
     .. note::
 
-        For an example of using Node2Vec, see `examples/planetoid_train.py
+        For an example of using Node2Vec, see `examples/node2vec.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        node2vec.py>`_ and `examples/planetoid_train.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         planetoid_train.py>`_.
 

@@ -80,7 +80,9 @@ class SuperGATConv(MessagePassing):
 
     .. note::
 
-        For an example of using SuperGAT, see `examples/planetoid_train.py
+        For an example of using SuperGAT, see `examples/super_gat.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        super_gat.py>`_ and `examples/planetoid_train.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         planetoid_train.py>`_.
 

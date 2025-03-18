@@ -28,7 +28,9 @@ class GDC(BaseTransform):
 
         The paper offers additional advice on how to choose the
         hyperparameters.
-        For an example of using GCN with GDC, see `examples/planetoid_train.py
+        For an example of using GCN with GDC, see `examples/gcn.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        gcn.py>`_ and `examples/planetoid_train.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         planetoid_train.py>`_.
 

@@ -13,8 +13,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 wall_clock_start = time.perf_counter()
 seed_everything(123)
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora', transform=T.NormalizeFeatures())
 data = dataset[0].to(device)
 

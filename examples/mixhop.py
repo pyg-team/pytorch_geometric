@@ -1,8 +1,11 @@
 import os.path as osp
+import time
+
 
 import torch
 import torch.nn.functional as F
 
+from torch_geometric import seed_everything
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import BatchNorm, Linear, MixHopConv
 
@@ -13,15 +16,11 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
 else:
     device = torch.device('cpu')
 
-import time
-
-from torch_geometric import seed_everything
 
 wall_clock_start = time.perf_counter()
 seed_everything(123)
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora')
 data = dataset[0]
 

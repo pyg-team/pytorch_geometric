@@ -13,8 +13,7 @@ from torch_geometric.nn import Node2Vec
 wall_clock_start = time.perf_counter()
 seed_everything(123)
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora')
 data = dataset[0]
 

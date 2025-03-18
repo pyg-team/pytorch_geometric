@@ -44,7 +44,7 @@ To build the container, run
 then wait. Once finished, you can run the GAT example in the folder you built the image in by calling
 
 ```
-wget https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/examples/planetoid_train.py
+wget https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/examples/gat.py
 ```
 
 (to download the sample),
@@ -52,13 +52,13 @@ wget https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/example
 then
 
 ```
-singularity exec geometric.sif python3 planetoid_train.py --gnn_choice gat
+singularity exec geometric.sif python3 gat.py
 ```
 
 to run on the CPU, or
 
 ```
-singularity exec --nv geometric.sif python3 planetoid_train.py --gnn_choice gat
+singularity exec --nv geometric.sif python3 gat.py
 ```
 
 to run on the GPU.
