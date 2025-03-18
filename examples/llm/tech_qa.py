@@ -229,6 +229,9 @@ def make_dataset(args):
             QA_pair = (data_point["question"], data_point["answer"])
             q = QA_pair[0]
             subgraph = query_loader.query(q)
+            if subgraph.question == "skip this iteration!!":
+                # skipping empty batches until zack adds bidirectional sampling
+                continue
             subgraph.label = QA_pair[1]
             total_data_list.append(subgraph)
             extracted_triple_sizes.append(len(subgraph.triples))
