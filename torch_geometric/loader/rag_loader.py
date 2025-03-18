@@ -162,7 +162,7 @@ class RAGQueryLoader:
                 data.desc = ""
                 data.triples = []
                 data = data.to("cpu")
-                data.question = query
+                data.question = "skip this iteration!!"
                 data.x = torch.zeros((0, query_enc.numel()))
                 data.edge_index = torch.randint(high=1, size=(2, 0)).long()
                 data.edge_idx = torch.zeros(size=(0, )).long()
