@@ -311,6 +311,7 @@ def train(args, data_lists):
                     except:
                         # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
                         # but we wana fix the underlying issue, this skip is just a workaround for now.
+                        continue
                     loss.backward()
                     clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
                     if (step + 1) % 2 == 0:
@@ -348,6 +349,7 @@ def train(args, data_lists):
                         except:
                             # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
                             # but we wana fix the underlying issue, this skip is just a workaround for now.
+                            continue
                         val_loss += loss.item()
                     except torch.OutOfMemoryError as e:
                         """
