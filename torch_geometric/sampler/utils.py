@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.index import index2ptr
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.typing import EdgeType, NodeType, OptTensor, SparseTensor
 from torch_geometric.utils import coalesce, index_sort, lexsort
 
 # Edge Layout Conversion ######################################################
@@ -41,6 +41,7 @@ def to_csc(
     is_sorted: bool = False,
     src_node_time: Optional[Tensor] = None,
     edge_time: Optional[Tensor] = None,
+    to_transpose: bool = False,
 ) -> Tuple[Tensor, Tensor, OptTensor]:
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
@@ -53,7 +54,10 @@ def to_csc(
         if src_node_time is not None:
             raise NotImplementedError("Temporal sampling via 'SparseTensor' "
                                       "format not yet supported")
-        colptr, row, _ = data.adj.csc()
+        if to_transpose:
+            colptr, row, _ = data.adj.csr()
+        else:
+            colptr, row, _ = data.adj.csc()
 
     elif hasattr(data, 'adj_t'):
         if src_node_time is not None:
@@ -65,10 +69,17 @@ def to_csc(
             # raise NotImplementedError("Temporal sampling via 'SparseTensor' "
             #                           "format not yet supported")
             pass
-        colptr, row, _ = data.adj_t.csr()
+        if to_transpose:
+            colptr, row, _ = data.adj_t.csc()
+        else:
+            colptr, row, _ = data.adj_t.csr()
 
     elif data.edge_index is not None:
-        row, col = data.edge_index
+        if to_transpose:
+            col, row = data.edge_index
+        else:
+            row, col = data.edge_index
+
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time, edge_time)
         colptr = index2ptr(col, data.size(1))
@@ -89,7 +100,6 @@ def to_csc(
 
     return colptr, row, perm
 
-
 def to_hetero_csc(
     data: HeteroData,
     device: Optional[torch.device] = None,
@@ -97,6 +107,7 @@ def to_hetero_csc(
     is_sorted: bool = False,
     node_time_dict: Optional[Dict[NodeType, Tensor]] = None,
     edge_time_dict: Optional[Dict[EdgeType, Tensor]] = None,
+    to_transpose: bool = False,
 ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, OptTensor]]:
     # Convert the heterogeneous graph data into a suitable format for sampling
     # (CSC format).
@@ -108,7 +119,7 @@ def to_hetero_csc(
         src_node_time = (node_time_dict or {}).get(edge_type[0], None)
         edge_time = (edge_time_dict or {}).get(edge_type, None)
         out = to_csc(store, device, share_memory, is_sorted, src_node_time,
-                     edge_time)
+                     edge_time, to_transpose)
         colptr_dict[edge_type], row_dict[edge_type], perm_dict[edge_type] = out
 
     return colptr_dict, row_dict, perm_dict
