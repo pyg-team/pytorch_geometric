@@ -164,7 +164,7 @@ class RAGQueryLoader:
                 data = data.to("cpu")
                 data.question = query
                 data.x = torch.zeros((0, query_enc.numel()))
-                data.edge_index = torch.randint((2, 0))
+                data.edge_index = torch.randint((2, 0)).long()
                 data.edge_attr = torch.zeros((0, query_enc.numel()))
 
         if self.raw_docs:
