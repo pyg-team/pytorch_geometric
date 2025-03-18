@@ -1,7 +1,6 @@
 import os.path as osp
 import time
 
-
 import torch
 import torch.nn.functional as F
 
@@ -15,7 +14,6 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
-
 
 wall_clock_start = time.perf_counter()
 seed_everything(123)
