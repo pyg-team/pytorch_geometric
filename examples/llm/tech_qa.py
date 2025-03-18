@@ -393,7 +393,7 @@ def test(model, test_loader, args):
                                        context=test_batch.text_context[i]))
         test_batch.question = new_qs
         try:
-            
+
             preds = (inference_step(model, test_batch))
         except:
             """
