@@ -223,11 +223,7 @@ class NeighborSampler(BaseSampler):
                 if sample_direction == 'forward':
                     self.row, self.colptr, self.perm = graph_store.csc()
                 elif sample_direction == 'backward':
-                    # HACK
-                    row, col, _ = graph_store.coo()
-                    transpose_edge_index = torch.stack([col, row], dim=0)
-                    temp_data = Data(edge_index=transpose_edge_index, num_nodes=self.num_nodes)
-                    self.row, self.colptr, self.perm = to_csc(temp_data, device='cpu', share_memory=share_memory, is_sorted=is_sorted, src_node_time=self.node_time, edge_time=self.edge_time, to_transpose=sample_direction == 'forward')
+                    self.colptr, self.row, self.perm = graph_store.csr()
 
             else:
                 node_types = [
@@ -270,8 +266,7 @@ class NeighborSampler(BaseSampler):
                 if sample_direction == 'forward':
                     row_dict, colptr_dict, self.perm = graph_store.csc()
                 elif sample_direction == 'backward':
-                    # TODO(zaristei): Fix for Heterogeneous graph stores
-                    raise NotImplementedError
+                    colptr_dict, row_dict, self.perm = graph_store.csr()
                 self.row_dict = remap_keys(row_dict, self.to_rel_type)
                 self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
@@ -597,14 +592,7 @@ class BidirectionalNeighborSampler(BaseSampler):
         forward_out = self.forward_sampler.sample_from_nodes(inputs)
         backward_out = self.backward_sampler.sample_from_nodes(inputs)
 
-        if self.is_hetero:
-            # TODO(zaristei): Implement heterogeneous bidirectional sampling
-            raise NotImplementedError
-        else:
-            # Homogeneous bidirectional sampling
-            pass
-        
-        return forward_out
+        return self._merge_outputs(forward_out, backward_out)
     
     def sample_from_edges(
         self,
@@ -614,14 +602,42 @@ class BidirectionalNeighborSampler(BaseSampler):
         forward_out = self.forward_sampler.sample_from_edges(inputs, neg_sampling)
         backward_out = self.backward_sampler.sample_from_edges(inputs, neg_sampling)
 
+        return self._merge_outputs(forward_out, backward_out)
+
+    def _merge_outputs(self, forward_out, backward_out):
+        """Merges the outputs of the forward and backward samplers.
+        """
+        # TODO(zaristei): Write generalized collate function for arbitrary
+        # sampler outputs
+
         if self.is_hetero:
             # TODO(zaristei): Implement heterogeneous bidirectional sampling
             raise NotImplementedError
         else:
             # Homogeneous bidirectional sampling
-            pass
-        
-        return forward_out
+
+            # Note backward sampler's row and col are reversed so they need to flipped back
+            backward_row, backward_col, backward_orig_row, backward_orig_col = backward_out.col, backward_out.row, backward_out.orig_col, backward_out.orig_row
+            backward_out.row, backward_out.col = backward_row, backward_col
+            backward_out.orig_row, backward_out.orig_col = backward_orig_row, backward_orig_col
+
+            if self.forward_sampler.replace:
+
+                node = torch.cat([forward_out.node, backward_out.node], dim=0)
+                row = torch.cat([forward_out.row, backward_out.row], dim=0)
+                col = torch.cat([forward_out.col, backward_out.col], dim=0)
+                edge = torch.cat([forward_out.edge, backward_out.edge], dim=0)
+                batch = torch.cat([forward_out.batch, backward_out.batch], dim=0) if forward_out.batch is not None and backward_out.batch is not None else None
+                num_sampled_nodes = forward_out.num_sampled_nodes + backward_out.num_sampled_nodes if forward_out.num_sampled_nodes is not None and backward_out.num_sampled_nodes is not None else None
+                num_sampled_edges = forward_out.num_sampled_edges + backward_out.num_sampled_edges if forward_out.num_sampled_edges is not None and backward_out.num_sampled_edges is not None else None
+                orig_row = torch.cat([forward_out.orig_row, backward_out.orig_row], dim=0) if forward_out.orig_row is not None and backward_out.orig_row is not None else None
+                orig_col = torch.cat([forward_out.orig_col, backward_out.orig_col], dim=0) if forward_out.orig_col is not None and backward_out.orig_col is not None else None
+                metadata = [forward_out.metadata, backward_out.metadata]
+
+                return SamplerOutput(node, row, col, edge, batch, num_sampled_nodes, num_sampled_edges, orig_row, orig_col, metadata)
+            else:
+                # TODO(zaristei): Implement generic sampling without replacement
+                raise NotImplementedError
 
         
     @property
