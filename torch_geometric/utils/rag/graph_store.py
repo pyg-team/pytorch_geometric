@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, Dict, Any
 
 from torch import Tensor
 
@@ -7,6 +7,7 @@ from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.sampler import (
     HeteroSamplerOutput,
     NeighborSampler,
+    BidirectionalNeighborSampler,
     NodeSamplerInput,
     SamplerOutput,
 )
@@ -36,8 +37,9 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
-        self.sampler = NeighborSampler(data=(self.feature_store, self),
-                                       num_neighbors=self._num_neighbors,
+        self.sample_kwargs = self.sample_kwargs or {}
+        self.sample_kwargs['num_neighbors'] = self.sample_kwargs.get('num_neighbors', self._num_neighbors)
+        self.sampler = BidirectionalNeighborSampler(data=(self.feature_store, self),
                                        **self.sample_kwargs)
         self._sampler_is_initialized = True
 
@@ -118,7 +120,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     def sample_subgraph(
         self, seed_nodes: InputNodes, seed_edges: Optional[InputEdges] = None,
-        num_neighbors: Optional[NumNeighborsType] = None
+        num_neighbors: Optional[NumNeighborsType] = None, sampler_kwargs: Optional[Dict[str, Any]] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         """Sample the graph starting from the given nodes and edges using the
         in-built NeighborSampler.
@@ -130,15 +132,22 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             num_neighbors (Optional[NumNeighborsType], optional): Parameters
                 to determine how many hops and number of neighbors per hop.
                 Defaults to None.
+            sampler_kwargs (Optional[Dict[str, Any]], optional): Parameters
+                to pass into the NeighborSampler. Defaults to None.
 
         Returns:
             Union[SamplerOutput, HeteroSamplerOutput]: NeighborSamplerOutput
                 for the input.
         """
+        if num_neighbors is not None and num_neighbors != self.num_neighbors:
+            self.num_neighbors = num_neighbors
+            self._sampler_is_initialized = False
+        if sampler_kwargs is not None and sampler_kwargs != self.sample_kwargs:
+            self.sample_kwargs = sampler_kwargs
+            self._sampler_is_initialized = False
+
         if not self._sampler_is_initialized:
             self._init_sampler()
-        if num_neighbors is not None:
-            self.num_neighbors = num_neighbors
 
         # FIXME: Right now, only input nodes/edges as tensors are be supported
         if not isinstance(seed_nodes, Tensor):
@@ -154,3 +163,4 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         out = self.sampler.sample_from_nodes(node_sample_input)
 
         return out
+
