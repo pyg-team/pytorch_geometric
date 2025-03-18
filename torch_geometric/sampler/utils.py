@@ -6,8 +6,9 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.index import index2ptr
-from torch_geometric.typing import EdgeType, NodeType, OptTensor, SparseTensor
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import coalesce, index_sort, lexsort
+from torch_geometric.sampler import SamplerOutput
 
 # Edge Layout Conversion ######################################################
 
@@ -55,7 +56,7 @@ def to_csc(
             raise NotImplementedError("Temporal sampling via 'SparseTensor' "
                                       "format not yet supported")
         if to_transpose:
-            colptr, row, _ = data.adj.csr()
+            row, colptr, _ = data.adj.csr()
         else:
             colptr, row, _ = data.adj.csc()
 
@@ -70,7 +71,7 @@ def to_csc(
             #                           "format not yet supported")
             pass
         if to_transpose:
-            colptr, row, _ = data.adj_t.csc()
+            row, colptr, _ = data.adj_t.csc()
         else:
             colptr, row, _ = data.adj_t.csr()
 
