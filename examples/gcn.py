@@ -7,6 +7,7 @@ import torch.nn.functional as F
 
 import torch_geometric
 import torch_geometric.transforms as T
+from torch_geometric import seed_everything
 from torch_geometric.datasets import Planetoid
 from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import GCNConv
@@ -30,7 +31,11 @@ init_wandb(
     device=device,
 )
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+wall_clock_start = time.perf_counter()
+seed_everything(123)
+
+dataset = 'Cora'
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 data = dataset[0].to(device)
 
@@ -54,6 +59,10 @@ class GCN(torch.nn.Module):
         self.conv2 = GCNConv(hidden_channels, out_channels,
                              normalize=not args.use_gdc)
 
+    def reset_parameters(self):
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
+
     def forward(self, x, edge_index, edge_weight=None):
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.conv1(x, edge_index, edge_weight).relu()
@@ -67,6 +76,7 @@ model = GCN(
     hidden_channels=args.hidden_channels,
     out_channels=dataset.num_classes,
 ).to(device)
+model.reset_parameters()
 
 optimizer = torch.optim.Adam([
     dict(params=model.conv1.parameters(), weight_decay=5e-4),
@@ -96,14 +106,23 @@ def test():
 
 
 best_val_acc = test_acc = 0
+print(f'Total time before training begins took '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
+print('Training...')
 times = []
 for epoch in range(1, args.epochs + 1):
-    start = time.time()
+    start = time.perf_counter()
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
-    times.append(time.time() - start)
-print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')
+    times.append(time.perf_counter() - start)
+
+print(f'Average Epoch Time: {torch.tensor(times).mean():.4f}s')
+print(f'Median Epoch Time: {torch.tensor(times).median():.4f}s')
+print(f'Best Validation Accuracy: {100.0 * best_val_acc:.2f}%')
+print(f'Test Accuracy: {100.0 * test_acc:.2f}%')
+print(f'Total Program Runtime: '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
