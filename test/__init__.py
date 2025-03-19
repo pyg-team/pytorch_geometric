@@ -5,7 +5,6 @@ import os
 if os.getenv("GITHUB_ACTIONS") or os.getenv("ENABLE_COREDUMPY"):
     try:
         import coredumpy
-        coredumpy.patch_unittest(
-            directory=os.getenv("COREDUMPY_DUMP_DIR", "./"))
+        coredumpy.patch_pytest(directory=os.getenv("COREDUMPY_DUMP_DIR", "./"))
     except ImportError:
         pass
