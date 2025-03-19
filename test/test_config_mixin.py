@@ -39,7 +39,7 @@ def test_config_mixin() -> None:
     assert isinstance(cfg.data, Dataclass)
     assert cfg.data.x == 1
     assert cfg.data.y == 2
-    assert cfg._target_ == 'test_config_mixin.Module'
+    assert cfg._target_ == 'test.test_config_mixin.Module'
 
     model = Module.from_config(cfg)
     assert isinstance(model, Module)
