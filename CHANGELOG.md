@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added llm generated explanations to `TAGDataset` ([#10122](https://github.com/pyg-team/pytorch_geometric/pull/10122))
+- Added llm generated explanations to `TAGDataset` ([#10123](https://github.com/pyg-team/pytorch_geometric/pull/10123))
 - Improving documentation for [cuGraph](https://github.com/rapidsai/cugraph) ([#10083](https://github.com/pyg-team/pytorch_geometric/pull/10083))
 - Added `HashTensor` ([#10072](https://github.com/pyg-team/pytorch_geometric/pull/10072))
 - Added `SGFormer` model and example ([#9904](https://github.com/pyg-team/pytorch_geometric/pull/9904))
