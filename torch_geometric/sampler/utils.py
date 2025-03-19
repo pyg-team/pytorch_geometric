@@ -8,7 +8,6 @@ from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.index import index2ptr
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import coalesce, index_sort, lexsort
-from torch_geometric.sampler import SamplerOutput
 
 # Edge Layout Conversion ######################################################
 
