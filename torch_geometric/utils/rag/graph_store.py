@@ -1,13 +1,12 @@
-from typing import Optional, Union, Dict, Any
+from typing import Any, Dict, Optional, Union
 
 from torch import Tensor
 
 from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.sampler import (
-    HeteroSamplerOutput,
-    NeighborSampler,
     BidirectionalNeighborSampler,
+    HeteroSamplerOutput,
     NodeSamplerInput,
     SamplerOutput,
 )
@@ -38,9 +37,10 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
         self.sample_kwargs = self.sample_kwargs or {}
-        self.sample_kwargs['num_neighbors'] = self.sample_kwargs.get('num_neighbors', self._num_neighbors)
-        self.sampler = BidirectionalNeighborSampler(data=(self.feature_store, self),
-                                       **self.sample_kwargs)
+        self.sample_kwargs['num_neighbors'] = self.sample_kwargs.get(
+            'num_neighbors', self._num_neighbors)
+        self.sampler = BidirectionalNeighborSampler(
+            data=(self.feature_store, self), **self.sample_kwargs)
         self._sampler_is_initialized = True
 
     def register_feature_store(self, feature_store: FeatureStore):
@@ -120,7 +120,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     def sample_subgraph(
         self, seed_nodes: InputNodes, seed_edges: Optional[InputEdges] = None,
-        num_neighbors: Optional[NumNeighborsType] = None, sampler_kwargs: Optional[Dict[str, Any]] = None
+        num_neighbors: Optional[NumNeighborsType] = None,
+        sampler_kwargs: Optional[Dict[str, Any]] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         """Sample the graph starting from the given nodes and edges using the
         in-built NeighborSampler.
@@ -163,4 +164,3 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         out = self.sampler.sample_from_nodes(node_sample_input)
 
         return out
-
