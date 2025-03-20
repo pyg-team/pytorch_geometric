@@ -151,3 +151,22 @@ def test_heterogeneous_neighbor_sampler_basic(input_type):
     assert sampler_output.col[('person', 'leads', 'person')].numel() == 0
     assert sampler_output.edge[('person', 'works_with', 'person')].numel() == 0
     assert sampler_output.edge[('person', 'leads', 'person')].numel() == 0
+
+@onlyNeighborSampler
+@pytest.mark.parametrize('input_type', ['data', 'remote'])
+def test_homogeneous_neighbor_sampler_backwards(input_type):
+    
+    # 1) old graph: Sample forward from Carol
+    # 2) old graph: Sample backwards from Carol
+    # 3) Reinitialize with reverse edge indices
+    # 4) new graph: Sample forward from Carol
+    # 5) new graph: Sample backwards from Carol
+    # 6) assert that old_graph forward == new_graph backward
+    # 7) assert that old_graph backward == new_graph forward
+    pass
+ 
+
+@onlyNeighborSampler
+@pytest.mark.parametrize('input_type', ['data', 'remote'])
+def test_heterogeneous_neighbor_sampler_backwards(input_type):
+    pass
