@@ -81,6 +81,7 @@ from .git_mol_dataset import GitMolDataset
 from .molecule_gpt_dataset import MoleculeGPTDataset
 from .instruct_mol_dataset import InstructMolDataset
 from .tag_dataset import TAGDataset
+from .oscillator_dataset import oscillatorDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
