@@ -1,8 +1,12 @@
+from typing import Optional
+
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 
 from torch_geometric.nn.attention import SGFormerAttention
 from torch_geometric.nn.conv import GCNConv
+from torch_geometric.utils import to_dense_batch
 
 
 class GraphModule(torch.nn.Module):
@@ -84,7 +88,13 @@ class SGModule(torch.nn.Module):
         for fc in self.fcs:
             fc.reset_parameters()
 
-    def forward(self, x):
+    def forward(self, x: Tensor, batch: Tensor):
+        # to dense batch expects sorted batch
+        batch, indices = batch.sort(stable=True)
+        rev_perm = torch.empty_like(indices)
+        rev_perm[indices] = torch.arange(len(indices), device=indices.device)
+        x = x[indices]
+        x, mask = to_dense_batch(x, batch)
         layer_ = []
 
         # input MLP layer
@@ -97,14 +107,17 @@ class SGModule(torch.nn.Module):
         layer_.append(x)
 
         for i, attn in enumerate(self.attns):
-            x = attn(x)
+            x = attn(x, mask)
             x = (x + layer_[i]) / 2.
             x = self.bns[i + 1](x)
             x = self.activation(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             layer_.append(x)
 
-        return x
+        x_mask = x[mask]
+        # reverse the sorting
+        unsorted_x_mask = x_mask[rev_perm]
+        return unsorted_x_mask
 
 
 class SGFormer(torch.nn.Module):
@@ -179,8 +192,22 @@ class SGFormer(torch.nn.Module):
         self.graph_conv.reset_parameters()
         self.fc.reset_parameters()
 
-    def forward(self, x, edge_index):
-        x1 = self.trans_conv(x)
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        batch: Optional[Tensor],
+    ) -> Tensor:
+        r"""Forward pass.
+
+        Args:
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+        """
+        x1 = self.trans_conv(x, batch)
         x2 = self.graph_conv(x, edge_index)
         if self.aggregate == 'add':
             x = self.graph_weight * x2 + (1 - self.graph_weight) * x1
