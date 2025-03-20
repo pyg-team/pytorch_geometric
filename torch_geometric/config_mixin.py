@@ -3,6 +3,8 @@ from dataclasses import fields, is_dataclass
 from importlib import import_module
 from typing import Any, Dict
 
+from torch.nn import ModuleDict, ModuleList
+
 from torch_geometric.config_store import (
     class_from_dataclass,
     dataclass_from_class,
@@ -71,9 +73,9 @@ def _recursive_config(value: Any) -> Any:
         return value.config()
     if is_torch_instance(value, ConfigMixin):
         return value.config()
-    if isinstance(value, (tuple, list)):
+    if isinstance(value, (tuple, list, ModuleList)):
         return [_recursive_config(v) for v in value]
-    if isinstance(value, dict):
+    if isinstance(value, (dict, ModuleDict)):
         return {k: _recursive_config(v) for k, v in value.items()}
     return value
 
