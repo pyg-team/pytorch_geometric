@@ -10,6 +10,7 @@ from packaging.requirements import Requirement
 from packaging.version import Version
 
 import torch_geometric
+import torch_geometric.typing
 from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
@@ -262,6 +263,17 @@ def withMETIS(func: Callable) -> Callable:
     return pytest.mark.skipif(
         not with_metis,
         reason="METIS not enabled",
+    )(func)
+
+
+def withHashTensor(func: Callable) -> Callable:
+    r"""A decorator to only test in case :class:`HashTensor` is available."""
+    import pytest
+
+    return pytest.mark.skipif(
+        not torch_geometric.typing.WITH_CPU_HASH_MAP
+        and not has_package('pandas'),
+        reason="HashTensor dependencies not available",
     )(func)
 
 
