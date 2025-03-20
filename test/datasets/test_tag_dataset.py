@@ -1,7 +1,10 @@
+import gc
+
+import torch
+
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.testing import onlyFullTest, withPackage
-import gc
-import torch
+
 
 @onlyFullTest
 @withPackage('ogb')
