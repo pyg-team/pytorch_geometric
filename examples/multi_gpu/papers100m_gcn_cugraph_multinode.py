@@ -19,14 +19,12 @@
 #          /workspace/papers100m_gcn_cugraph_multinode.py \
 #            --epochs 1 \
 #            --dataset ogbn-papers100M \
-#            --dataset_root /workspace/datasets \
-#            --tempdir_root /raid/scratch
+#            --dataset_root /workspace/datasets
 
 import argparse
 import json
 import os
 import os.path as osp
-import tempfile
 import time
 from datetime import timedelta
 
@@ -158,8 +156,7 @@ def load_partitioned_data(rank, edge_path, feature_path, label_path, meta_path,
 
 
 def run(global_rank, data, split_idx, world_size, device, model, epochs,
-        batch_size, fan_out, num_classes, wall_clock_start, tempdir=None,
-        num_layers=3):
+        batch_size, fan_out, num_classes, wall_clock_start, num_layers=3):
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
@@ -171,36 +168,27 @@ def run(global_rank, data, split_idx, world_size, device, model, epochs,
     from cugraph_pyg.loader import NeighborLoader
 
     ix_train = split_idx['train'].cuda()
-    train_path = osp.join(tempdir, f'train_{global_rank}')
-    os.mkdir(train_path)
     train_loader = NeighborLoader(
         data,
         input_nodes=ix_train,
-        directory=train_path,
         shuffle=True,
         drop_last=True,
         **kwargs,
     )
 
     ix_val = split_idx['valid'].cuda()
-    val_path = osp.join(tempdir, f'val_{global_rank}')
-    os.mkdir(val_path)
     val_loader = NeighborLoader(
         data,
         input_nodes=ix_val,
-        directory=val_path,
         shuffle=True,
         drop_last=True,
         **kwargs,
     )
 
     ix_test = split_idx['test'].cuda()
-    test_path = osp.join(tempdir, f'test_{global_rank}')
-    os.mkdir(test_path)
     test_loader = NeighborLoader(
         data,
         input_nodes=ix_test,
-        directory=test_path,
         shuffle=True,
         drop_last=True,
         local_seeds_per_call=80000,
@@ -303,7 +291,6 @@ def parse_args():
     parser.add_argument('--fan_out', type=int, default=30)
     parser.add_argument('--dataset', type=str, default='ogbn-papers100M')
     parser.add_argument('--root', type=str, default='dataset')
-    parser.add_argument('--tempdir_root', type=str, default=None)
     parser.add_argument('--skip_partition', action='store_true')
     parser.add_argument('--wg_mem_type', type=str, default='distributed')
 
@@ -384,7 +371,6 @@ if __name__ == '__main__':
     ).to(device)
     model = DistributedDataParallel(model, device_ids=[local_rank])
 
-    with tempfile.TemporaryDirectory(dir=args.tempdir_root) as tempdir:
-        run(global_rank, data, split_idx, world_size, device, model,
-            args.epochs, args.batch_size, args.fan_out, meta['num_classes'],
-            wall_clock_start, tempdir, args.num_layers)
+    run(global_rank, data, split_idx, world_size, device, model, args.epochs,
+        args.batch_size, args.fan_out, meta['num_classes'], wall_clock_start,
+        args.num_layers)

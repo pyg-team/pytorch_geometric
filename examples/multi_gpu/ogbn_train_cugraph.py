@@ -3,7 +3,6 @@
 import argparse
 import os
 import os.path as osp
-import tempfile
 import time
 
 import cupy
@@ -92,7 +91,6 @@ def arg_parse():
         default=1,
         help="If using GATConv or GT, number of attention heads to use",
     )
-    parser.add_argument('--tempdir_root', type=str, default=None)
     parser.add_argument(
         '--num_devices',
         type=int,
@@ -155,7 +153,7 @@ def init_pytorch_worker(rank, world_size, cugraph_id):
 
 
 def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
-              num_classes, wall_clock_start, tempdir=None):
+              num_classes, wall_clock_start):
 
     epochs = args.epochs
     batch_size = args.batch_size
@@ -196,35 +194,26 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     dist.barrier()
 
     ix_train = torch.tensor_split(split_idx['train'], world_size)[rank].cuda()
-    train_path = osp.join(tempdir, f'train_{rank}')
-    os.mkdir(train_path)
     train_loader = NeighborLoader(
         (feature_store, graph_store),
         input_nodes=ix_train,
-        directory=train_path,
         shuffle=True,
         drop_last=True,
         **kwargs,
     )
 
     ix_val = torch.tensor_split(split_idx['valid'], world_size)[rank].cuda()
-    val_path = osp.join(tempdir, f'val_{rank}')
-    os.mkdir(val_path)
     val_loader = NeighborLoader(
         (feature_store, graph_store),
         input_nodes=ix_val,
-        directory=val_path,
         drop_last=True,
         **kwargs,
     )
 
     ix_test = torch.tensor_split(split_idx['test'], world_size)[rank].cuda()
-    test_path = osp.join(tempdir, f'test_{rank}')
-    os.mkdir(test_path)
     test_loader = NeighborLoader(
         (feature_store, graph_store),
         input_nodes=ix_test,
-        directory=test_path,
         drop_last=True,
         local_seeds_per_call=80000,
         **kwargs,
@@ -382,18 +371,17 @@ if __name__ == '__main__':
     # Create the uid needed for cuGraph comms
     cugraph_id = cugraph_comms_create_unique_id()
 
-    with tempfile.TemporaryDirectory(dir=args.tempdir_root) as tempdir:
-        if world_size > 1:
-            mp.spawn(
-                run_train,
-                args=(args, data, world_size, cugraph_id, model, split_idx,
-                      dataset.num_classes, wall_clock_start, tempdir),
-                nprocs=world_size,
-                join=True,
-            )
-        else:
-            run_train(0, args, data, world_size, cugraph_id, model, split_idx,
-                      dataset.num_classes, wall_clock_start, tempdir)
+    if world_size > 1:
+        mp.spawn(
+            run_train,
+            args=(args, data, world_size, cugraph_id, model, split_idx,
+                  dataset.num_classes, wall_clock_start),
+            nprocs=world_size,
+            join=True,
+        )
+    else:
+        run_train(0, args, data, world_size, cugraph_id, model, split_idx,
+                  dataset.num_classes, wall_clock_start)
 
     total_time = round(time.perf_counter() - wall_clock_start, 2)
     print("Total Program Runtime (total_time) =", total_time, "seconds")
