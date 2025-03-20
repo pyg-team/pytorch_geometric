@@ -23,11 +23,3 @@ def is_torch_instance(obj: Any, cls: Union[Type, Tuple[Type]]) -> bool:
             and isinstance(obj, torch._dynamo.OptimizedModule)):
         return isinstance(obj._orig_mod, cls)
     return isinstance(obj, cls)
-
-
-def is_torch_module_dict(obj: Any) -> bool:
-    return isinstance(obj, torch.nn.ModuleDict)
-
-
-def is_torch_module_list(obj: Any) -> bool:
-    return isinstance(obj, torch.nn.ModuleList)
