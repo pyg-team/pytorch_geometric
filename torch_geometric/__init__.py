@@ -11,7 +11,11 @@ from .hash_tensor import HashTensor
 from .seed import seed_everything
 from .home import get_home_dir, set_home_dir
 from .device import is_mps_available, is_xpu_available, device
-from .isinstance import is_torch_instance
+from .isinstance import (
+    is_torch_instance,
+    is_torch_module_dict,
+    is_torch_module_list,
+)
 from .debug import is_debug_enabled, debug, set_debug
 
 import torch_geometric.utils
@@ -47,6 +51,8 @@ __all__ = [
     'is_xpu_available',
     'device',
     'is_torch_instance',
+    'is_torch_module_dict',
+    'is_torch_module_list',
     'is_debug_enabled',
     'debug',
     'set_debug',

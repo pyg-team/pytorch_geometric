@@ -1,13 +1,17 @@
 import inspect
 from dataclasses import fields, is_dataclass
 from importlib import import_module
-from typing import Any, Dict, Iterable
+from typing import Any, Dict
 
 from torch_geometric.config_store import (
     class_from_dataclass,
     dataclass_from_class,
 )
-from torch_geometric.isinstance import is_torch_instance
+from torch_geometric.isinstance import (
+    is_torch_instance,
+    is_torch_module_dict,
+    is_torch_module_list,
+)
 
 
 class ConfigMixin:
@@ -71,9 +75,9 @@ def _recursive_config(value: Any) -> Any:
         return value.config()
     if is_torch_instance(value, ConfigMixin):
         return value.config()
-    if isinstance(value, (tuple, list, Iterable)):
+    if isinstance(value, (tuple, list)) or is_torch_module_list(value):
         return [_recursive_config(v) for v in value]
-    if isinstance(value, dict):
+    if isinstance(value, dict) or is_torch_module_dict(value):
         return {k: _recursive_config(v) for k, v in value.items()}
     return value
 
