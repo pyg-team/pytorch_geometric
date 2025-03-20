@@ -1,8 +1,8 @@
 import os
-import numpy as np
-import h5py
 import zipfile
 
+import h5py
+import numpy as np
 import torch
 
 from torch_geometric.data import Data as gData
@@ -18,23 +18,23 @@ datasettexas_url = zenodo_url + 'texas.zip'
 class oscillatorDataset(InMemoryDataset):
     r"""Oscillator networks from
     <https://doi.org/10.1063/5.0160915>`_
-    
+
     The data has been published in the following papers:
     Toward dynamic stability assessment of power grid topologies using graph neural networks
     <https://doi.org/10.1063/5.0160915>
     Towards dynamic stability analysis of sustainable power grids using graph neural networks
     <https://www.climatechange.ai/papers/neurips2022/16>
-    
+
     The data is available on Zenodo: <https://zenodo.org/records/8204334>
-    
+
     There are three datasets: osc20, osc100, and osctexas. osc20 consists of 10,000 grids with 20 nodes per grid, osc100 consists of 10,000 grids with 100 nodes each. osc20 and osc100 are split 70:15:15.
-    
+
     The task involves nodal regression, where the goal is to predict the probabilistic measure of single-node basin stability for each node. This measure represents the likelihood that the entire grid will return to a synchronized state after being perturbed.
-    
+
     Besides considering osc20 or osc100 individually, training on osc20 and evaluating on osc100 is an interesting out-of-distribution generalization task. For evaluation purposes only, osctexas is a single grid with 1,910 nodes inspired by Birchfield et al. <https://electricgrids.engr.tamu.edu/electric-grid-test-cases/activsg2000/> to further test the out-of-distribution generalization.
-    
+
     Synchronization of non-linear oscillators is a crucial phenomenon in many real-world systems, including cognitive functions of brains, pacemaker cells in a beating heart, and the stable operation of power grids. However, exact numerical simulations of large systems of coupled oscillators are exceedingly expensive.
-    
+
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (one of :obj:`"osc20"`,
