@@ -73,9 +73,9 @@ def _recursive_config(value: Any) -> Any:
         return value.config()
     if is_torch_instance(value, ConfigMixin):
         return value.config()
-    if isinstance(value, (tuple, list)) or isinstance(value, ModuleList):
+    if isinstance(value, (tuple, list, ModuleList)):
         return [_recursive_config(v) for v in value]
-    if isinstance(value, dict) or isinstance(value, ModuleDict):
+    if isinstance(value, (dict, ModuleDict)):
         return {k: _recursive_config(v) for k, v in value.items()}
     return value
 
