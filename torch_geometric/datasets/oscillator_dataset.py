@@ -99,9 +99,8 @@ class oscillatorDataset(InMemoryDataset):
         self.split = split
         self.normalize_targets = normalize_targets
         self.task_name = "snbs"
-        super().__init__(
-            root, transform, pre_transform, pre_filter, force_reload=force_reload
-        )
+        super().__init__(root, transform, pre_transform, pre_filter,
+            force_reload=force_reload)
         path = os.path.join(self.processed_dir, f"{split}.pt")
         if not os.path.exists(path) or force_reload:
             self.process()
