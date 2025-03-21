@@ -53,6 +53,50 @@ Results:
 
 '''
 
+
+
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter, )
+parser.add_argument(
+    '--dataset',
+    type=str,
+    default='ogbn-papers100M',
+    choices=['ogbn-papers100M', 'ogbn-products'],
+    help='Dataset name.',
+)
+parser.add_argument(
+    '--dataset_dir',
+    type=str,
+    default='./data',
+    help='Root directory of dataset.',
+)
+
+parser.add_argument('--num_layers', type=int, default=3)
+parser.add_argument('--num_heads', type=int, default=2,
+                    help='number of heads for GAT model.')
+parser.add_argument('-b', '--batch_size', type=int, default=1024)
+parser.add_argument('--num_workers', type=int, default=12)
+parser.add_argument('--max_dendrites', type=int, default=4)
+parser.add_argument('--max_dendrite_tries', type=int, default=2)
+parser.add_argument('--fan_out', type=int, default=10,
+                    help='number of neighbors in each layer')
+parser.add_argument('--hidden_channels', type=int, default=256)
+parser.add_argument('--lr', type=float, default=0.003)
+parser.add_argument('--wd', type=float, default=0.0)
+parser.add_argument('--dropout', type=float, default=0.5)
+'''
+How to name the PAI output files, must be changed to run more than
+one test at the same time
+'''
+parser.add_argument('--saveName', type=str)
+parser.add_argument(
+    '--use_directed_graph',
+    action='store_true',
+    help='Whether or not to use directed graph',
+)
+args = parser.parse_args()
+
+
 # Set Perforated Backpropagation settings for this training run
 '''
 # When to switch between Dendrite learning and neuron learning is determined
@@ -77,9 +121,9 @@ neuron training cycle.
 '''
 PBG.capAtN = False
 # Stop the run after 4 dendrites are created
-PBG.maxDendrites = 4
+PBG.maxDendrites = args.max_dendrites
 # If a set of Dendrites does not improve try 2 times before giving up
-PBG.maxDendriteTries = 2
+PBG.maxDendriteTries = args.max_dendrite_tries
 '''
 Make sure correlation scores improve from epoch to epoch by at least 25% and
 a raw value of 1e-4 to conclude that the correlation scores have gone up.
@@ -87,51 +131,7 @@ a raw value of 1e-4 to conclude that the correlation scores have gone up.
 PBG.pbImprovementThreshold = 0.25
 PBG.pbImprovementThresholdRaw = 1e-4
 
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter, )
-parser.add_argument(
-    '--dataset',
-    type=str,
-    default='ogbn-papers100M',
-    choices=['ogbn-papers100M', 'ogbn-products'],
-    help='Dataset name.',
-)
-parser.add_argument(
-    '--dataset_dir',
-    type=str,
-    default='./data',
-    help='Root directory of dataset.',
-)
-parser.add_argument(
-    '--use_gat',
-    action='store_true',
-    help='Whether or not to use GAT model',
-)
-parser.add_argument('-e', '--epochs', type=int, default=50000)
-parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=2,
-                    help='number of heads for GAT model.')
-parser.add_argument('-b', '--batch_size', type=int, default=1024)
-parser.add_argument('--num_workers', type=int, default=12)
-parser.add_argument('--fan_out', type=int, default=10,
-                    help='number of neighbors in each layer')
-parser.add_argument('--hidden_channels', type=int, default=256)
-# Set to 0 to run this code without Perforated Backpropagation happening.
-parser.add_argument('--doingPB', type=int, default=1, help='doing PB')
-parser.add_argument('--lr', type=float, default=0.003)
-parser.add_argument('--wd', type=float, default=0.0)
-parser.add_argument('--dropout', type=float, default=0.5)
-'''
-How to name the PAI output files, must be changed to run more than
-one test at the same time
-'''
-parser.add_argument('--saveName', type=str)
-parser.add_argument(
-    '--use_directed_graph',
-    action='store_true',
-    help='Whether or not to use directed graph',
-)
-args = parser.parse_args()
+
 
 wall_clock_start = time.perf_counter()
 
@@ -141,13 +141,9 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-if args.use_gat:
-    print(f'Training {args.dataset} with GAT model.')
-else:
-    print(f'Training {args.dataset} with GraphSage model.')
+print(f'Training {args.dataset} with GraphSage model.')
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-num_epochs = args.epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
 num_hidden_channels = args.hidden_channels
@@ -235,23 +231,13 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-if args.use_gat:
-    model = GAT(
-        in_channels=dataset.num_features,
-        hidden_channels=num_hidden_channels,
-        num_layers=num_layers,
-        out_channels=dataset.num_classes,
-        dropout=args.dropout,
-        heads=args.num_heads,
-    )
-else:
-    model = GraphSAGE(
-        in_channels=dataset.num_features,
-        hidden_channels=num_hidden_channels,
-        num_layers=num_layers,
-        out_channels=dataset.num_classes,
-        dropout=args.dropout,
-    )
+model = GraphSAGE(
+in_channels=dataset.num_features,
+hidden_channels=num_hidden_channels,
+num_layers=num_layers,
+out_channels=dataset.num_classes,
+dropout=args.dropout,
+)
 
 # Set SAGEConv to be a module to create Dendrite versions of
 PBG.moduleNamesToConvert.append('SAGEConv')
@@ -269,8 +255,7 @@ module within a full network
 '''
 
 PBG.pbTracker.initialize(
-    doingPB=args.
-    doingPB,  # Can set to False if you want to do just normal training
+    doingPB=True,  # Can set to False if you want to do just normal training
     saveName=args.
     saveName,  # Change the save name for different parameter runs
     maximizingScore=True,  # True for max score, False for min loss
@@ -315,7 +300,8 @@ model = PBU.loadSystem(model, args.saveName,'best_model')
 # My result: Test Accuracy: 78.01%
 '''
 
-for epoch in range(1, num_epochs + 1):
+epoch = 0
+while True:
     train_start = time.perf_counter()
     # Retain the train_acc so that it can be graphed
     loss, train_acc = train(epoch)
@@ -369,6 +355,7 @@ for epoch in range(1, num_epochs + 1):
         }
         optimizer, scheduler = PBG.pbTracker.setupOptimizer(
             model, optimArgs, schedArgs)
+    epoch += 1
 
 print(f'Average Epoch Time on training: '
       f'{torch.tensor(train_times).mean():.4f}s')
