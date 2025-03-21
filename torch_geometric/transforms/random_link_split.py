@@ -274,8 +274,8 @@ class RandomLinkSplit(BaseTransform):
                 out=test_store,
             )
         
-        keep_attrs = ['edge_label', 'edge_label_index']
         if not self.keep_attrs:
+            keep_attrs = ['edge_label', 'edge_label_index']
             if isinstance(data, HeteroData):
                 for split_data in [train_data, val_data, test_data]:
                     # Remove all node attributes
