@@ -12,7 +12,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 def negative_sampling(
     edge_index: Tensor,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-    num_neg_samples: Optional[int] = None,
+    num_neg_samples: Optional[Union[int, float]] = None,
     method: str = "sparse",
     force_undirected: bool = False,
 ) -> Tensor:
@@ -25,10 +25,12 @@ def negative_sampling(
             If given as a tuple, then :obj:`edge_index` is interpreted as a
             bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
             (default: :obj:`None`)
-        num_neg_samples (int, optional): The (approximate) number of negative
-            samples to return.
-            If set to :obj:`None`, will try to return a negative edge for every
-            positive edge. (default: :obj:`None`)
+        num_neg_samples (int or float, optional): The (approximate) number of
+            negative samples to return. If set to a floating-point value, it
+            represents the ratio of negative samples to generate based on the
+            number of positive edges. If set to :obj:`None`, will try to
+            return a negative edge for every positive edge.
+            (default: :obj:`None`)
         method (str, optional): The method to use for negative sampling,
             *i.e.* :obj:`"sparse"` or :obj:`"dense"`.
             This is a memory/runtime trade-off.
@@ -47,6 +49,12 @@ def negative_sampling(
         >>> negative_sampling(edge_index)
         tensor([[3, 0, 0, 3],
                 [2, 3, 2, 1]])
+
+        >>> # With float multiplier
+        >>> negative_sampling(edge_index, num_nodes=(3, 4),
+                num_neg_samples=0.5)  # 50% of positive edges
+        tensor([[0, 3],
+                [3, 0]])
 
         >>> # For bipartite graph
         >>> negative_sampling(edge_index, num_nodes=(3, 4))
@@ -74,6 +82,8 @@ def negative_sampling(
 
     if num_neg_samples is None:
         num_neg_samples = edge_index.size(1)
+    elif isinstance(num_neg_samples, float):
+        num_neg_samples = int(num_neg_samples * edge_index.size(1))
     if force_undirected:
         num_neg_samples = num_neg_samples // 2
 
