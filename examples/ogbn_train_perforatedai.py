@@ -12,9 +12,14 @@ from perforatedai import pb_utils as PBU
 from torch import Tensor
 from tqdm import tqdm
 
+from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE
-from torch_geometric.utils import to_undirected
+from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer
+from torch_geometric.utils import (
+    add_self_loops,
+    remove_self_loops,
+    to_undirected,
+)
 
 # PAI README:
 '''
@@ -36,20 +41,20 @@ Within Docker
 Run original with:
 
     CUDA_VISIBLE_DEVICES=0 python ogbn_train.py --dataset ogbn-products
-    --batch_size 128
+    --batch_size 128 --model sage
 
 Results:
 
-    Test Accuracy: 77.19%
+    Test Accuracy: NEED THE NEW NUMBER
 
 Run PAI with:
 
     CUDA_VISIBLE_DEVICES=0 python ogbn_train_perforatedai.py --dataset
-    ogbn-products --batch_size 128 --saveName ogbnPAI
+    ogbn-products --batch_size 128 --saveName ogbnPAI --model sage
 
 Results:
 
-    Test Accuracy: 78.37%
+    Test Accuracy: NEED THE NEW NUMBER
 
 '''
 
@@ -60,8 +65,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--dataset',
     type=str,
-    default='ogbn-papers100M',
-    choices=['ogbn-papers100M', 'ogbn-products'],
+    default='ogbn-arxiv',
+    choices=['ogbn-papers100M', 'ogbn-products', 'ogbn-arxiv'],
     help='Dataset name.',
 )
 parser.add_argument(
@@ -70,9 +75,16 @@ parser.add_argument(
     default='./data',
     help='Root directory of dataset.',
 )
+parser.add_argument(
+    "--model",
+    type=str.lower,
+    default='SGFormer',
+    choices=['sage', 'gat', 'sgformer'],
+    help="Model used for training",
+)
 
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=2,
+parser.add_argument('--num_heads', type=int, default=1,
                     help='number of heads for GAT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
@@ -93,6 +105,11 @@ parser.add_argument(
     '--use_directed_graph',
     action='store_true',
     help='Whether or not to use directed graph',
+)
+parser.add_argument(
+    '--add_self_loop',
+    action='store_true',
+    help='Whether or not to add self loop',
 )
 args = parser.parse_args()
 
@@ -141,8 +158,9 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-print(f'Training {args.dataset} with GraphSage model.')
+print(f'Training {args.dataset} with {args.model} model.')
 
+seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_layers = args.num_layers
 num_workers = args.num_workers
@@ -156,6 +174,10 @@ data = dataset[0]
 
 if not args.use_directed_graph:
     data.edge_index = to_undirected(data.edge_index, reduce='mean')
+if args.add_self_loop:
+    data.edge_index, _ = remove_self_loops(data.edge_index)
+    data.edge_index, _ = add_self_loops(data.edge_index,
+                                        num_nodes=data.num_nodes)
 
 data.to(device, 'x', 'y')
 
@@ -167,6 +189,7 @@ train_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.model == "sgformer",
 )
 val_loader = NeighborLoader(
     data,
@@ -176,6 +199,7 @@ val_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.model == "sgformer",
 )
 test_loader = NeighborLoader(
     data,
@@ -185,6 +209,7 @@ test_loader = NeighborLoader(
     shuffle=True,
     num_workers=num_workers,
     persistent_workers=True,
+    disjoint=args.model == "sgformer",
 )
 
 
@@ -197,7 +222,12 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
+        if args.model == "sgformer":
+            out = model(batch.x, batch.edge_index.to(device),
+                        batch.batch.to(device))[:batch.batch_size]
+        else:
+            out = model(batch.x,
+                        batch.edge_index.to(device))[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze().to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
@@ -221,7 +251,11 @@ def test(loader: NeighborLoader) -> float:
     for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
-        out = model(batch.x, batch.edge_index)[:batch_size]
+        if args.model == "sgformer":
+            out = model(batch.x, batch.edge_index,
+                        batch.batch)[:batch.batch_size]
+        else:
+            out = model(batch.x, batch.edge_index)[:batch_size]
         pred = out.argmax(dim=-1)
         y = batch.y[:batch_size].view(-1).to(torch.long)
 
@@ -231,13 +265,42 @@ def test(loader: NeighborLoader) -> float:
     return total_correct / total_examples
 
 
-model = GraphSAGE(
-in_channels=dataset.num_features,
-hidden_channels=num_hidden_channels,
-num_layers=num_layers,
-out_channels=dataset.num_classes,
-dropout=args.dropout,
-)
+def get_model(model_name: str) -> torch.nn.Module:
+    if model_name == 'gat':
+        model = GAT(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            num_layers=num_layers,
+            out_channels=dataset.num_classes,
+            dropout=args.dropout,
+            heads=args.num_heads,
+        )
+    elif model_name == 'sage':
+        model = GraphSAGE(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            num_layers=num_layers,
+            out_channels=dataset.num_classes,
+            dropout=args.dropout,
+        )
+    elif model_name == 'sgformer':
+        model = SGFormer(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            out_channels=dataset.num_classes,
+            trans_num_heads=args.num_heads,
+            trans_dropout=args.dropout,
+            gnn_num_layers=num_layers,
+            gnn_dropout=args.dropout,
+        )
+    else:
+        raise ValueError(f'Unsupported model type: {model_name}')
+
+    return model
+
+
+model = get_model(args.model).to(device)
+model.reset_parameters()
 
 # Set SAGEConv to be a module to create Dendrite versions of
 PBG.moduleNamesToConvert.append('SAGEConv')
@@ -253,6 +316,7 @@ This initializes the Perforated Backpropagation Tracker object which
 organizes communication between each individual Dendrite convereted
 module within a full network
 '''
+
 
 PBG.pbTracker.initialize(
     doingPB=True,  # Can set to False if you want to do just normal training
@@ -290,7 +354,6 @@ inference_times = []
 best_val = 0.
 '''
 # These lines can be used to run full test with a final model file
-num_epochs = 0
 # Test trained architechture from before adding the first set of dendrites
 #model = PBU.loadSystem(model, args.saveName,'best_model_beforeSwitch_0')
 # My result: Test Accuracy: 76.93%
