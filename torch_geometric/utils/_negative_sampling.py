@@ -69,13 +69,13 @@ def negative_sampling(
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
                                            force_undirected)
 
-    if idx.numel() >= population:
-        return edge_index.new_empty((2, 0))
-
     if num_neg_samples is None:
         num_neg_samples = edge_index.size(1)
     if force_undirected:
         num_neg_samples = num_neg_samples // 2
+
+    if idx.numel() >= population or num_neg_samples == 0:
+        return edge_index.new_empty((2, 0))
 
     prob = 1. - idx.numel() / population  # Probability to sample a negative.
     sample_size = int(1.1 * num_neg_samples / prob)  # (Over)-sample size.
