@@ -82,7 +82,9 @@ class SuperGATConv(MessagePassing):
 
         For an example of using SuperGAT, see `examples/super_gat.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        super_gat.py>`_.
+        super_gat.py>`_ and `examples/planetoid_train.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        planetoid_train.py>`_.
 
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive

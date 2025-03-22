@@ -1,11 +1,16 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
 
 import torch_geometric.transforms as T
+from torch_geometric import seed_everything
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import AGNNConv
+
+wall_clock_start = time.perf_counter()
+seed_everything(123)
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -21,6 +26,12 @@ class Net(torch.nn.Module):
         self.prop2 = AGNNConv(requires_grad=True)
         self.lin2 = torch.nn.Linear(16, dataset.num_classes)
 
+    def reset_parameters(self):
+        self.lin1.reset_parameters()
+        self.prop1.reset_parameters()
+        self.prop2.reset_parameters()
+        self.lin2.reset_parameters()
+
     def forward(self):
         x = F.dropout(data.x, training=self.training)
         x = F.relu(self.lin1(x))
@@ -33,6 +44,7 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, data = Net().to(device), data.to(device)
+model.reset_parameters()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 
@@ -54,8 +66,13 @@ def test():
     return accs
 
 
+print(f'Total time before training begins took '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
+print('Training...')
+times = []
 best_val_acc = test_acc = 0
 for epoch in range(1, 201):
+    start = time.perf_counter()
     train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
@@ -63,3 +80,11 @@ for epoch in range(1, 201):
         test_acc = tmp_test_acc
     print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, '
           f'Val: {best_val_acc:.4f}, Test: {test_acc:.4f}')
+    times.append(time.perf_counter() - start)
+
+print(f'Average Epoch Time: {torch.tensor(times).mean():.4f}s')
+print(f'Median Epoch Time: {torch.tensor(times).median():.4f}s')
+print(f'Best Validation Accuracy: {100.0 * best_val_acc:.2f}%')
+print(f'Test Accuracy: {100.0 * test_acc:.2f}%')
+print(f'Total Program Runtime: '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')

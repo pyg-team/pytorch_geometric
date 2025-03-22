@@ -1,8 +1,10 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
 
+from torch_geometric import seed_everything
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import BatchNorm, Linear, MixHopConv
 
@@ -12,6 +14,9 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
+
+wall_clock_start = time.perf_counter()
+seed_everything(123)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora')
@@ -32,6 +37,15 @@ class MixHop(torch.nn.Module):
 
         self.lin = Linear(3 * 60, dataset.num_classes)
 
+    def reset_parameters(self):
+        self.conv1.reset_parameters()
+        self.norm1.reset_parameters()
+        self.conv2.reset_parameters()
+        self.norm2.reset_parameters()
+        self.conv3.reset_parameters()
+        self.norm3.reset_parameters()
+        self.lin.reset_parameters()
+
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.7, training=self.training)
 
@@ -51,6 +65,7 @@ class MixHop(torch.nn.Module):
 
 
 model, data = MixHop().to(device), data.to(device)
+model.reset_parameters()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.5, weight_decay=0.005)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40,
                                             gamma=0.01)
@@ -78,8 +93,13 @@ def test():
     return accs
 
 
+print(f'Total time before training begins took '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
+print('Training...')
+times = []
 best_val_acc = test_acc = 0
 for epoch in range(1, 101):
+    start = time.perf_counter()
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
@@ -87,3 +107,11 @@ for epoch in range(1, 101):
         test_acc = tmp_test_acc
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
           f'Val: {best_val_acc:.4f}, Test: {test_acc:.4f}')
+    times.append(time.perf_counter() - start)
+
+print(f'Average Epoch Time: {torch.tensor(times).mean():.4f}s')
+print(f'Median Epoch Time: {torch.tensor(times).median():.4f}s')
+print(f'Best Validation Accuracy: {100.0 * best_val_acc:.2f}%')
+print(f'Test Accuracy: {100.0 * test_acc:.2f}%')
+print(f'Total Program Runtime: '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')

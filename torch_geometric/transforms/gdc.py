@@ -30,7 +30,9 @@ class GDC(BaseTransform):
         hyperparameters.
         For an example of using GCN with GDC, see `examples/gcn.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        gcn.py>`_.
+        gcn.py>`_ and `examples/planetoid_train.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        planetoid_train.py>`_.
 
     Args:
         self_loop_weight (float, optional): Weight of the added self-loop.
