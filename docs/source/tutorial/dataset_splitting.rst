@@ -13,7 +13,7 @@ Node Prediction
 .. note::
 
     In this section, we'll learn how to use :class:`~torch_geometric.transforms.RandomNodeSplit` of :pyg:`PyG` to randomly divide nodes into training, validation, and test sets.
-    A fully working example on dataset :class:`~torch_geometric.datasets.Planetoid` is available in `examples/planetoid_train.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/planetoid_train.py>`_.
+    A fully working example on dataset :class:`~torch_geometric.datasets.Planetoid` is available in `examples/spline_gnn.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/spline_gnn.py>`_ and `examples/planetoid_train.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/planetoid_train.py>`_.
 
 The :class:`~torch_geometric.transforms.RandomNodeSplit` is initialized to split nodes for both a :pyg:`PyG` :class:`~torch_geometric.data.Data` and :class:`~torch_geometric.data.HeteroData` object.
 

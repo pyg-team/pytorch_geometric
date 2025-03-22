@@ -39,7 +39,7 @@ Node2Vec
 .. note::
 
     In this section of the tutorial, we will learn node embeddings for **homogenous graphs** using the :class:`~torch_geometric.nn.models.Node2Vec` module of :pyg:`PyG`.
-    The code is available in `examples/planetoid_train.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/planetoid_train.py>`_ and as a `Google Colab tutorial notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial11/Tutorial11.ipynb>`_.
+    The code is available in `examples/node2vec.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/node2vec.py>`_ and `examples/planetoid_train.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/planetoid_train.py>`_ and as a `Google Colab tutorial notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial11/Tutorial11.ipynb>`_.
 
 :class:`~torch_geometric.nn.models.Node2Vec` is a method for learning shallow node embeddings, which allows for flexible
 control of random walk procedures based on breadth-first or depth-first samplers.
