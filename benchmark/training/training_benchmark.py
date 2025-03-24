@@ -17,6 +17,8 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+from torch_geometric.data.data import DataEdgeAttr, DataTensorAttr
+from torch_geometric.data.storage import GlobalStorage
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import (
@@ -25,6 +27,12 @@ from torch_geometric.profile import (
     torch_profile,
     xpu_profile,
 )
+
+torch.serialization.add_safe_globals([
+    DataEdgeAttr,
+    DataTensorAttr,
+    GlobalStorage,
+])
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -48,7 +56,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
                trim=False):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
-    for batch in loader:
+    for idx, batch in enumerate(loader):
         optimizer.zero_grad()
         batch = batch.to(device)
         if 'adj_t' in batch:
@@ -70,6 +78,8 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
         loss = F.cross_entropy(out, target)
         loss.backward()
         optimizer.step()
+        if "Warmup" in desc and idx % 20 == 0:
+            break
 
 
 def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
