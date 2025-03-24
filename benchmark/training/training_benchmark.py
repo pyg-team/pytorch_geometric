@@ -17,7 +17,6 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
-from torch_geometric import compile
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import (
@@ -41,6 +40,8 @@ device_conditions = {
      (hasattr(torch.backends, 'mps') and torch.backends.mps.is_available())),
     'xpu': (lambda: torch.xpu.is_available()),
 }
+
+torch.set_float32_matmul_precision('high')
 
 
 def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
@@ -85,7 +86,12 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
             edge_index_dict = batch.adj_t_dict
         else:
             edge_index_dict = batch.edge_index_dict
-        out = model(batch.x_dict, edge_index_dict)
+        out = model(
+            batch.x_dict,
+            edge_index_dict,
+            num_sampled_nodes_per_hop=batch.num_sampled_nodes_dict,
+            num_sampled_edges_per_hop=batch.num_sampled_edges_dict,
+        )
         batch_size = batch['paper'].batch_size
         out = out['paper'][:batch_size]
         target = batch['paper'].y[:batch_size]
@@ -94,7 +100,7 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
         optimizer.step()
 
 
-def run(args: argparse.ArgumentParser):
+def run(args: argparse.Namespace) -> None:
     csv_data = defaultdict(list)
 
     if args.write_csv == 'prof' and not args.profile:
@@ -130,17 +136,14 @@ def run(args: argparse.ArgumentParser):
         degree = None
 
         if args.device == 'cpu':
-            amp = torch.cpu.amp.autocast(enabled=args.bf16)
+            amp = torch.amp.autocast('cpu', enabled=args.bf16)
         elif args.device == 'cuda':
             amp = torch.amp.autocast('cuda', enabled=False)
         elif args.device == 'xpu':
             amp = torch.xpu.amp.autocast(enabled=False)
+            assert args.warmup >= 1, 'XPU device requires warmup to be enabled'
         else:
             amp = nullcontext()
-
-        if args.device == 'xpu' and args.warmup < 1:
-            print('XPU device requires warmup - setting warmup=1')
-            args.warmup = 1
 
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
@@ -161,16 +164,14 @@ def run(args: argparse.ArgumentParser):
 
                 for layers in args.num_layers:
                     num_neighbors = args.num_neighbors
-                    if type(num_neighbors) is list:
+                    if isinstance(num_neighbors, list):
                         if len(num_neighbors) == 1:
                             num_neighbors = num_neighbors * layers
-                    elif type(num_neighbors) is int:
+                    elif isinstance(num_neighbors, int):
                         num_neighbors = [num_neighbors] * layers
 
-                    assert len(
-                        num_neighbors) == layers, \
-                        f'''num_neighbors={num_neighbors} lenght
-                        != num of layers={layers}'''
+                    assert len(num_neighbors) == layers, \
+                        f'{num_neighbors=} length != {layers=}'
 
                     kwargs = {
                         'num_neighbors': num_neighbors,
@@ -199,11 +200,11 @@ def run(args: argparse.ArgumentParser):
                         )
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
-                        print(f'Batch size={batch_size}, '
-                              f'Layers amount={layers}, '
-                              f'Num_neighbors={num_neighbors}, '
-                              f'Hidden features size={hidden_channels}, '
-                              f'Sparse tensor={args.use_sparse_tensor}')
+                        print(f'{batch_size=}, '
+                              f'{layers=}, '
+                              f'{num_neighbors=}, '
+                              f'{hidden_channels=}, '
+                              f'{args.use_sparse_tensor=}')
 
                         params = {
                             'inputs_channels': inputs_channels,
@@ -227,7 +228,7 @@ def run(args: argparse.ArgumentParser):
                         model.train()
 
                         if args.compile:
-                            model = compile(model, dynamic=True)
+                            model = torch.compile(model, dynamic=True)
 
                         optimizer = torch.optim.Adam(model.parameters(),
                                                      lr=0.001)

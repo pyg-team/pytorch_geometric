@@ -12,8 +12,8 @@ class HeteroGAT(torch.nn.Module):
             GAT((-1, -1), hidden_channels, num_layers, output_channels,
                 add_self_loops=False, heads=num_heads), metadata)
 
-    def forward(self, x_dict, edge_index_dict):
-        return self.model(x_dict, edge_index_dict)
+    def forward(self, x_dict, edge_index_dict, num_sampled_nodes_per_hop, num_sampled_edges_per_hop):
+        return self.model(x_dict, edge_index_dict, num_sampled_nodes_per_hop, num_sampled_edges_per_hop)
 
     @torch.no_grad()
     def inference(self, loader, device, progress_bar=False, **kwargs):
