@@ -224,6 +224,7 @@ def test_homogeneous_neighbor_sampler_backwards(input_type):
     assert torch.equal(backward_sampler_output.edge, reverse_sampler_output.edge)
 
 
+@onlyNeighborSampler
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
 def test_heterogeneous_neighbor_sampler_backwards(input_type):
     graph_to_sample = _init_graph_to_sample(input_type, hetero=True)
