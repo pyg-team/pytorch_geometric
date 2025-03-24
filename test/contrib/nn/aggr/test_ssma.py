@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.nn.aggr import SSMAAggregation
+from torch_geometric.contrib.nn.aggr import SSMAAggregation
 from torch_geometric.nn.conv import GATConv, GCNConv
 
 
