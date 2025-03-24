@@ -79,7 +79,7 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
 
     if progress_bar:
         loader = tqdm(loader, desc=desc)
-    for batch in loader:
+    for idx, batch in enumerate(loader):
         optimizer.zero_grad()
         batch = batch.to(device)
         if 'adj_t' in batch:
@@ -98,6 +98,8 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
         loss = F.cross_entropy(out, target)
         loss.backward()
         optimizer.step()
+        if "Warmup" in desc and idx % 20 == 0:
+            break
 
 
 def run(args: argparse.Namespace) -> None:
@@ -127,8 +129,7 @@ def run(args: argparse.Namespace) -> None:
         assert dataset_name in supported_sets.keys(
         ), f"Dataset {dataset_name} isn't supported."
         print(f'Dataset: {dataset_name}')
-        load_time = timeit() if args.measure_load_time else nullcontext()
-        with load_time:
+        with timeit():
             data, num_classes = get_dataset(dataset_name, args.root,
                                             args.use_sparse_tensor, args.bf16)
         hetero = True if dataset_name == 'ogbn-mag' else False
@@ -256,28 +257,24 @@ def run(args: argparse.Namespace) -> None:
                                     desc="Warmup",
                                     trim=args.trim,
                                 )
-                            with timeit(avg_time_divisor=args.num_epochs) as t:
-                                # becomes a no-op if vtune_profile == False
-                                with emit_itt(args.vtune_profile):
-                                    for epoch in range(args.num_epochs):
-                                        train(
-                                            model,
-                                            subgraph_loader,
-                                            optimizer,
-                                            device,
-                                            progress_bar=progress_bar,
-                                            desc=f"Epoch={epoch}",
-                                            trim=args.trim,
-                                        )
-                                        if args.evaluate:
-                                            # In evaluate, throughput and
-                                            # latency are not accurate.
-                                            val_acc = test(
-                                                model, val_loader, device,
-                                                hetero,
-                                                progress_bar=progress_bar)
-                                            print(
-                                                f'Val Accuracy: {val_acc:.4f}')
+                            with timeit(avg_time_divisor=args.num_epochs
+                                        ) as t, emit_itt(
+                                            enabled=args.vtune_profile):
+                                for epoch in range(args.num_epochs):
+                                    train(
+                                        model,
+                                        subgraph_loader,
+                                        optimizer,
+                                        device,
+                                        progress_bar=progress_bar,
+                                        desc=f"Epoch={epoch}",
+                                        trim=args.trim,
+                                    )
+                                    if args.evaluate:
+                                        val_acc = test(
+                                            model, val_loader, device, hetero,
+                                            progress_bar=progress_bar)
+                                        print(f'Val Accuracy: {val_acc:.4f}')
 
                             if args.evaluate:
                                 test_acc = test(model, test_loader, device,
@@ -372,7 +369,6 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
-    add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
     add('--write-csv', choices=[None, 'bench', 'prof'], default=None,
         help='Write benchmark or PyTorch profile data to CSV')

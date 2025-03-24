@@ -7,7 +7,7 @@ from typing import Any, List, Tuple, Union
 
 import torch
 from torch.autograd.profiler import EventList
-from torch.profiler import ProfilerActivity, profile
+from torch.profiler import profile
 
 from torch_geometric.profile.utils import (
     byte_to_megabyte,
@@ -272,24 +272,20 @@ def rename_profile_file(*args):
 
 @contextmanager
 def torch_profile(export_chrome_trace=True, csv_data=None, write_csv=None):
-    use_cuda = torch.cuda.is_available()
-
-    activities = [ProfilerActivity.CPU]
-    if use_cuda:
-        activities.append(ProfilerActivity.CUDA)
-
     if export_chrome_trace:
         p_trace_handler = trace_handler
     else:
         p_trace_handler = print_time_total
 
-    p = profile(activities=activities, on_trace_ready=p_trace_handler)
+    p = profile(on_trace_ready=p_trace_handler)
 
     with p:
         yield
         p.step()
 
     if csv_data is not None and write_csv == 'prof':
+        use_cuda = torch.cuda.is_available()
+
         if use_cuda:
             profile_sort = 'self_cuda_time_total'
         else:
