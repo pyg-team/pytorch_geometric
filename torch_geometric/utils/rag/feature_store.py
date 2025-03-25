@@ -21,7 +21,7 @@ def batch_knn(query_enc: Tensor, embeds: Tensor,
     topk = min(k, len(embeds))
     for i, q in enumerate(prizes):
         _, indices = torch.topk(q, topk, largest=True)
-        yield indices, query_enc[i].unsqueeze(0)
+        yield indices, query_enc[i].unsqueeze(0), torch.argsort(q)
 
 
 # NOTE: Only compatible with Homogeneous graphs for now
@@ -68,7 +68,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         Returns:
         - The indices of the most similar nodes.
         """
-        result, query_enc = next(
+        result, query_enc, _ = next(
             self._retrieve_seed_nodes_batch([query], k_nodes))
         gc.collect()
         torch.cuda.empty_cache()
@@ -102,7 +102,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         Returns:
         - The indices of the most similar edges.
         """
-        result, query_enc = next(
+        result, query_enc, _ = next(
             self._retrieve_seed_edges_batch([query], k_edges))
         gc.collect()
         torch.cuda.empty_cache()
