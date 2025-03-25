@@ -139,9 +139,22 @@ def get_data():
     with open('train.json') as file:
         json_obj = json.load(file)
     text_contexts = []
-    for file_path in glob(f"corpus/*"):
-        with open(file_path, "r+") as f:
-            text_contexts.append(f.read())
+
+    # Read corpus data. Prefer *.json files, fall back to txt files.
+    file_paths = glob(f"corpus/*.json")
+    if len(file_paths) > 0:
+        for file_path in file_paths:
+            with open(file_path, "r+") as f:
+                data = json.load(f)
+            doc_type = data[0]["document_type"]
+            if doc_type != "text":
+                raise ValueError(f"Bad extraction for {file_path}, expecting "
+                                 f"text only but got {doc_type}")
+            text_contexts.append(data[0]["metadata"]["content"])
+    else:
+        for file_path in glob(f"corpus/*"):
+            with open(file_path, "r+") as f:
+                text_contexts.append(f.read())
 
     return json_obj, text_contexts
 
