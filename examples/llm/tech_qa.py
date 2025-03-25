@@ -229,6 +229,9 @@ def make_dataset(args):
             QA_pair = (data_point["question"], data_point["answer"])
             q = QA_pair[0]
             subgraph = query_loader.query(q)
+            if subgraph.question == "skip this iteration!!":
+                # skipping empty batches until zack adds bidirectional sampling
+                continue
             subgraph.label = QA_pair[1]
             total_data_list.append(subgraph)
             extracted_triple_sizes.append(len(subgraph.triples))
@@ -305,17 +308,36 @@ def train(args, data_lists):
                 batch.question = new_qs
 
                 optimizer.zero_grad()
-                loss = get_loss(model, batch)
-                loss.backward()
-                clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
-                if (step + 1) % 2 == 0:
-                    adjust_learning_rate(optimizer.param_groups[0], lr,
-                                         step / len(train_loader) + epoch,
-                                         args.epochs)
-                optimizer.step()
-                epoch_loss += float(loss)
-                if (step + 1) % 2 == 0:
-                    lr = optimizer.param_groups[0]['lr']
+                try:
+                    try:
+                        loss = get_loss(model, batch)
+                    except:
+                        # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
+                        # but we wana fix the underlying issue, this skip is just a workaround for now.
+                        continue
+                    loss.backward()
+                    clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+                    if (step + 1) % 2 == 0:
+                        adjust_learning_rate(optimizer.param_groups[0], lr,
+                                             step / len(train_loader) + epoch,
+                                             args.epochs)
+                    optimizer.step()
+                    epoch_loss += float(loss)
+                    if (step + 1) % 2 == 0:
+                        lr = optimizer.param_groups[0]['lr']
+                except torch.OutOfMemoryError as e:
+                    """
+                    (TODO Zack) handle inputs with too many tokens
+                    do this by doing a fallback to CPU
+                    its complicated since we have Huggingface `accelerate`
+                    doing multigpu setup but we wana fall back to cpu and
+                    then comeback to multigpu since most inputs dont trigger this.
+                    Just skipping for now.
+                    """
+                    gc.collect()
+                    torch.cuda.empty_cache()
+                    continue
+
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
 
@@ -324,8 +346,28 @@ def train(args, data_lists):
             model.eval()
             with torch.no_grad():
                 for step, batch in enumerate(val_loader):
-                    loss = get_loss(model, batch)
-                    val_loss += loss.item()
+                    try:
+                        try:
+                            loss = get_loss(model, batch)
+                        except:
+                            # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
+                            # but we wana fix the underlying issue, this skip is just a workaround for now.
+                            continue
+                        val_loss += loss.item()
+                    except torch.OutOfMemoryError as e:
+                        """
+                        (TODO Zack) handle inputs with too many tokens
+                        do this by doing a fallback to CPU
+                        its complicated since we have Huggingface `accelerate`
+                        doing multigpu setup but we wana fall back to cpu and
+                        then comeback to multigpu since most inputs dont trigger this.
+                        Just skipping for now.
+                        """
+                        # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
+                        # but we wana fix the underlying issue, this skip is just a workaround for now.
+                        gc.collect()
+                        torch.cuda.empty_cache()
+                        continue
                 val_loss = val_loss / len(val_loader)
                 print(epoch_str + f", Val Loss: {val_loss:4f}")
         torch.cuda.empty_cache()
@@ -353,7 +395,23 @@ def test(model, test_loader, args):
                 prompt_template.format(question=q,
                                        context=test_batch.text_context[i]))
         test_batch.question = new_qs
-        preds = (inference_step(model, test_batch))
+        try:
+
+            preds = (inference_step(model, test_batch))
+        except:
+            """
+            (TODO Zack) handle inputs with too many tokens
+            do this by doing a fallback to CPU
+            its complicated since we have Huggingface `accelerate`
+            doing multigpu setup but we wana fall back to cpu and
+            then comeback to multigpu since most inputs dont trigger this.
+            Just skipping for now.
+            """
+            # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
+            # but we wana fix the underlying issue, this skip is just a workaround for now.
+            gc.collect()
+            torch.cuda.empty_cache()
+            continue
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
             eval_tuples.append((question, pred, label))
