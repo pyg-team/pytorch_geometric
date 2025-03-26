@@ -273,7 +273,7 @@ class RandomLinkSplit(BaseTransform):
                 neg_edge_index[:, num_neg_val:num_neg_val + num_neg_test],
                 out=test_store,
             )
-        
+
         if not self.keep_attrs:
             keep_attrs = ['edge_label', 'edge_label_index']
             if isinstance(data, HeteroData):
@@ -281,7 +281,7 @@ class RandomLinkSplit(BaseTransform):
                     # Remove all node attributes
                     for node_type in split_data.node_types:
                         del split_data[node_type]
-                
+
                     # For each edge type, keep only label-related attributes
                     for edge_type in split_data.edge_types:
                         edge_store = split_data[edge_type]
