@@ -22,6 +22,7 @@ from .pan_pool import PANPooling
 from .mem_pool import MemPooling
 from .voxel_grid import voxel_grid
 from .approx_knn import approx_knn, approx_knn_graph
+from .gm_pool import GMPooling
 
 
 def fps(
@@ -349,6 +350,7 @@ __all__ = [
     'ASAPooling',
     'PANPooling',
     'MemPooling',
+    'GMPooling',
     'max_pool',
     'avg_pool',
     'max_pool_x',
