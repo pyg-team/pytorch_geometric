@@ -37,6 +37,7 @@ dependencies=[
     "psutil>=5.8.0",
     "pyparsing",
     "requests",
+    "scipy>=1.13.1",
     "tqdm",
     "xxhash",
 ]
