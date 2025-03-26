@@ -5,7 +5,7 @@ This readme highlights some key examples.
 
 A great and simple example to start with is [`gcn.py`](./gcn.py), showing a user how to train a [`GCN`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.GCN.html) model for node-level prediction on small-scale homogeneous data.
 
-For an unified and extendable example for node classification, see [`planetoid_train.py`](./planetoid_train.py).
+For an unified and extendable example for node classification on small planetoid style datasets, see [`planetoid_train.py`](./planetoid_train.py).
 
 For a simple link prediction example, see [`link_pred.py`](./link_pred.py).
 
