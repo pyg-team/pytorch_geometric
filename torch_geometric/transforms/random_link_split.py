@@ -284,7 +284,7 @@ class RandomLinkSplit(BaseTransform):
 
                     # For each edge type, keep only label-related attributes
                     for edge_type in split_data.edge_types:
-                        edge_store = split_data[edge_type]
+                        edge_store = split_data[edge_type]  # type: ignore
                         for key in list(edge_store.keys()):
                             if key not in keep_attrs:
                                 del edge_store[key]
