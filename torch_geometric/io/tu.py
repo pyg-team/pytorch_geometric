@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Data
 from torch_geometric.io import fs, read_txt_array
 from torch_geometric.utils import coalesce, cumsum, one_hot, remove_self_loops
@@ -75,7 +76,11 @@ def read_tu_data(
     num_nodes = int(edge_index.max()) + 1 if x is None else x.size(0)
     edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
     edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
-
+    edge_index = EdgeIndex(
+        edge_index,
+        is_undirected=True,
+        sparse_size=(num_nodes, num_nodes),
+    )
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)
 
