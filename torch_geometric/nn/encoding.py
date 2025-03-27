@@ -3,6 +3,11 @@ import math
 import torch
 from torch import Tensor
 
+__all__ = classes = [
+    'PositionalEncoding',
+    'TemporalEncoding',
+]
+
 
 class PositionalEncoding(torch.nn.Module):
     r"""The positional encoding scheme from the `"Attention Is All You Need"
