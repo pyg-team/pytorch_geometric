@@ -11,11 +11,15 @@ from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 
 try:
-    from pytorch_lightning import LightningDataModule as PLLightningDataModule
+    from lightning.pytorch import LightningDataModule as PLLightningDataModule
     no_pytorch_lightning = False
 except ImportError:
-    PLLightningDataModule = object  # type: ignore
-    no_pytorch_lightning = True
+    try:
+        from pytorch_lightning import LightningModule as PLLightningDataModule
+        no_pytorch_lightning = False
+    except ImportError:
+        PLLightningDataModule = object  # type: ignore
+        no_pytorch_lightning = True
 
 
 class LightningDataModule(PLLightningDataModule):
