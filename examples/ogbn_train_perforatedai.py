@@ -45,7 +45,7 @@ Run original with:
 
 Results:
 
-    Test Accuracy: NEED THE NEW NUMBER
+    Test Accuracy: 77.06%
 
 Run PAI with:
 
@@ -54,7 +54,7 @@ Run PAI with:
 
 Results:
 
-    Test Accuracy: NEED THE NEW NUMBER
+    Test Accuracy: 78.05%
 
 '''
 
@@ -304,6 +304,10 @@ model.reset_parameters()
 
 # Set SAGEConv to be a module to create Dendrite versions of
 PBG.moduleNamesToConvert.append('SAGEConv')
+# And the modules for SGFormer
+PBG.moduleNamesToConvert.append('SGModule')
+PBG.moduleNamesToConvert.append('GraphModule')
+
 model = model.to(device)
 # Moing this to be called before convertnetwork since it changes pointers
 model.reset_parameters()
