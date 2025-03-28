@@ -137,7 +137,11 @@ def coalesce(  # noqa: F811
     idx = edge_index[0].new_empty(num_edges + 1)
     idx[0] = -1
     idx[1:] = edge_index[1 - int(sort_by_row)]
-    idx[1:].mul_(num_nodes).add_(edge_index[int(sort_by_row)])
+    idx[1:].mul_(num_nodes)
+
+    # Note: torch.tensor(...) is needed to transform Index to Tensor when
+    # edge_index is an EdgeIndex object.
+    idx[1:] += torch.tensor(edge_index[int(sort_by_row)])
 
     is_undirected = False
     if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
@@ -145,12 +149,7 @@ def coalesce(  # noqa: F811
 
     if not is_sorted:
         idx[1:], perm = index_sort(idx[1:], max_value=num_nodes * num_nodes)
-        if isinstance(edge_index, Tensor):
-            edge_index = edge_index[:, perm]
-        elif isinstance(edge_index, tuple):
-            edge_index = (edge_index[0][perm], edge_index[1][perm])
-        else:
-            raise NotImplementedError
+        edge_index = edge_index[:, perm]
         if isinstance(edge_attr, Tensor):
             edge_attr = edge_attr[perm]
         elif isinstance(edge_attr, (list, tuple)):
@@ -170,14 +169,9 @@ def coalesce(  # noqa: F811
             return edge_index, edge_attr
         return edge_index
 
-    if isinstance(edge_index, Tensor):
-        edge_index = edge_index[:, mask]
-        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-            edge_index._is_undirected = is_undirected
-    elif isinstance(edge_index, tuple):
-        edge_index = (edge_index[0][mask], edge_index[1][mask])
-    else:
-        raise NotImplementedError
+    edge_index = edge_index[:, mask]
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        edge_index._is_undirected = is_undirected
 
     dim_size: Optional[int] = None
     if isinstance(edge_attr, (Tensor, list, tuple)) and len(edge_attr) > 0:

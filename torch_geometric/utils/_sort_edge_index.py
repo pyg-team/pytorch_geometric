@@ -115,7 +115,10 @@ def sort_edge_index(  # noqa: F811
         ])
     else:
         idx = edge_index[1 - int(sort_by_row)] * num_nodes
-        idx += edge_index[int(sort_by_row)]
+
+        # Note: torch.tensor(...) is needed to transform Index to Tensor when
+        # edge_index is an EdgeIndex object.
+        idx += torch.tensor(edge_index[int(sort_by_row)])
         _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
 
     if isinstance(edge_index, Tensor):
