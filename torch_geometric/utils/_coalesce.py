@@ -139,9 +139,11 @@ def coalesce(  # noqa: F811
     idx[1:] = edge_index[1 - int(sort_by_row)]
     idx[1:].mul_(num_nodes)
 
-    # Note: torch.tensor(...) is needed to transform Index to Tensor when
-    # edge_index is an EdgeIndex object.
-    idx[1:] += torch.tensor(edge_index[int(sort_by_row)])
+    # idx[1:] += torch.tensor(edge_index[int(sort_by_row)])
+    edge_index_sort_by_row = edge_index[int(sort_by_row)]
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        edge_index_sort_by_row = edge_index_sort_by_row._data
+    idx[1:] += edge_index_sort_by_row
 
     is_undirected = False
     if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
