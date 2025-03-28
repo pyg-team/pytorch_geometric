@@ -149,7 +149,12 @@ def coalesce(  # noqa: F811
 
     if not is_sorted:
         idx[1:], perm = index_sort(idx[1:], max_value=num_nodes * num_nodes)
-        edge_index = edge_index[:, perm]
+        if isinstance(edge_index, Tensor):
+            edge_index = edge_index[:, perm]
+        elif isinstance(edge_index, tuple):
+            edge_index = (edge_index[0][perm], edge_index[1][perm])
+        else:
+            raise NotImplementedError
         if isinstance(edge_attr, Tensor):
             edge_attr = edge_attr[perm]
         elif isinstance(edge_attr, (list, tuple)):
@@ -169,9 +174,14 @@ def coalesce(  # noqa: F811
             return edge_index, edge_attr
         return edge_index
 
-    edge_index = edge_index[:, mask]
-    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
-        edge_index._is_undirected = is_undirected
+    if isinstance(edge_index, Tensor):
+        edge_index = edge_index[:, mask]
+        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            edge_index._is_undirected = is_undirected
+    elif isinstance(edge_index, tuple):
+        edge_index = (edge_index[0][mask], edge_index[1][mask])
+    else:
+        raise NotImplementedError
 
     dim_size: Optional[int] = None
     if isinstance(edge_attr, (Tensor, list, tuple)) and len(edge_attr) > 0:
