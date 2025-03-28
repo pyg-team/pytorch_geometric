@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Data
 from torch_geometric.io import parse_txt_array
 from torch_geometric.utils import coalesce, one_hot
@@ -19,10 +20,18 @@ def parse_sdf(src: str) -> Data:
     bond_block = lines[1 + num_atoms:1 + num_atoms + num_bonds]
     row, col = parse_txt_array(bond_block, end=2, dtype=torch.long).t() - 1
     row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)
-    edge_index = torch.stack([row, col], dim=0)
+    edge_index = EdgeIndex(
+        torch.stack([row, col], dim=0),
+        is_undirected=True,
+        sparse_size=(num_atoms, num_atoms),
+    )
     edge_attr = parse_txt_array(bond_block, start=2, end=3) - 1
     edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
-    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_atoms)
+    edge_index, edge_attr = coalesce(  # type: ignore
+        edge_index,
+        edge_attr,
+        num_atoms,
+    )
 
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, pos=pos)
 
