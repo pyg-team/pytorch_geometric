@@ -27,8 +27,8 @@ def parse_sdf(src: str) -> Data:
     )
     edge_attr = parse_txt_array(bond_block, start=2, end=3) - 1
     edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
-    edge_index, edge_attr = coalesce(
-        edge_index,  # type: ignore
+    edge_index, edge_attr = coalesce(  # type: ignore
+        edge_index,
         edge_attr,
         num_atoms,
     )
