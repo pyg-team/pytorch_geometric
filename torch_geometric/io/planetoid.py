@@ -126,7 +126,6 @@ def edge_index_from_dict(
         cols += value
     row = torch.tensor(rows)
     col = torch.tensor(cols)
-    edge_index = torch.stack([row, col], dim=0)
     edge_index: Union[EdgeIndex, Tensor] = EdgeIndex(
         torch.stack([row, col], dim=0),
         is_undirected=True,

@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, lexsort
@@ -118,6 +118,7 @@ def sort_edge_index(  # noqa: F811
 
         edge_index_sort_by_row = edge_index[int(sort_by_row)]
         if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            assert isinstance(edge_index_sort_by_row, Index)
             edge_index_sort_by_row = edge_index_sort_by_row._data
         idx += edge_index_sort_by_row
         _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
