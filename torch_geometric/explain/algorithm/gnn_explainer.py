@@ -114,6 +114,8 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ):
+        # Initialize the node and edge masks based on the node mask
+        # type and edge mask type defined in the explainer config.
         self._initialize_masks(x, edge_index)
 
         parameters = []
@@ -158,6 +160,13 @@ class GNNExplainer(ExplainerAlgorithm):
                 self.hard_edge_mask = self.edge_mask.grad != 0.0
 
     def _initialize_masks(self, x: Tensor, edge_index: Tensor):
+        r"""Initialize the node and edge masks based on the node mask
+        type and edge mask type defined in the explainer config.
+
+        Args:
+            x (Tensor): The input node features.
+            edge_index (Tensor): The edge index.
+        """
         node_mask_type = self.explainer_config.node_mask_type
         edge_mask_type = self.explainer_config.edge_mask_type
 
@@ -174,7 +183,7 @@ class GNNExplainer(ExplainerAlgorithm):
         elif node_mask_type == MaskType.common_attributes:
             self.node_mask = Parameter(torch.randn(1, F, device=device) * std)
         else:
-            assert False
+            raise ValueError(f"Unsupported node mask type: {node_mask_type}")
 
         if edge_mask_type is None:
             self.edge_mask = None
@@ -182,7 +191,7 @@ class GNNExplainer(ExplainerAlgorithm):
             std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
         else:
-            assert False
+            raise ValueError(f"Unsupported edge mask type: {edge_mask_type}")
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:
@@ -192,7 +201,8 @@ class GNNExplainer(ExplainerAlgorithm):
         elif self.model_config.mode == ModelMode.regression:
             loss = self._loss_regression(y_hat, y)
         else:
-            assert False
+            raise ValueError(f"Unsupported model mode: "
+                             f"{self.model_config.mode}")
 
         if self.hard_edge_mask is not None:
             assert self.edge_mask is not None
@@ -317,7 +327,8 @@ class GNNExplainer_:
         return self._convert_output(explanation, edge_index, index=node_idx,
                                     x=x)
 
-    def _convert_output(self, explanation, edge_index, index=None, x=None):
+    def _convert_output(self, explanation, edge_index, index=None,
+                        x=None) -> Tuple[Tensor, Tensor]:
         node_mask = explanation.get('node_mask')
         edge_mask = explanation.get('edge_mask')
 
