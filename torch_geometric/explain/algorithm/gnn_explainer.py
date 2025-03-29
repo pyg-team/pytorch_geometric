@@ -172,6 +172,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         device = x.device
         (N, F), E = x.size(), edge_index.size(1)
+        assert N > 0 and F > 0
 
         std = 0.1
         if node_mask_type is None:
