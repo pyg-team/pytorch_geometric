@@ -25,6 +25,7 @@ transform = T.Compose([
 ])
 dataset = Planetoid(path, dataset, transform=transform)
 train_data, val_data, test_data = dataset[0]
+epochs = 200
 
 
 class GCN(torch.nn.Module):
@@ -70,7 +71,7 @@ def test(data):
     return roc_auc_score(data.edge_label.cpu().numpy(), out.cpu().numpy())
 
 
-for epoch in range(1, 201):
+for epoch in range(1, epochs + 1):
     loss = train()
     if epoch % 20 == 0:
         val_auc = test(val_data)
@@ -90,7 +91,7 @@ edge_label_index = val_data.edge_label_index[:, 0]
 explainer = Explainer(
     model=model,
     explanation_type='model',
-    algorithm=GNNExplainer(epochs=200),
+    algorithm=GNNExplainer(epochs=epochs),
     node_mask_type='attributes',
     edge_mask_type='object',
     model_config=model_config,
@@ -109,7 +110,7 @@ target = val_data.edge_label[0].unsqueeze(dim=0).long()
 explainer = Explainer(
     model=model,
     explanation_type='phenomenon',
-    algorithm=GNNExplainer(epochs=200),
+    algorithm=GNNExplainer(epochs=epochs),
     node_mask_type='attributes',
     edge_mask_type='object',
     model_config=model_config,

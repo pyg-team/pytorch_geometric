@@ -26,12 +26,18 @@ class GCN(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = GCN().to(device)
 data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+epochs = 200
 
-for epoch in range(1, 201):
+for epoch in range(1, epochs + 1):
     model.train()
     optimizer.zero_grad()
     out = model(data.x, data.edge_index)
@@ -41,7 +47,7 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=GNNExplainer(epochs=200),
+    algorithm=GNNExplainer(epochs=epochs),
     explanation_type='model',
     node_mask_type='attributes',
     edge_mask_type='object',
