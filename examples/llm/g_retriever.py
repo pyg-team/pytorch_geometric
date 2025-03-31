@@ -415,5 +415,6 @@ if __name__ == '__main__':
         args.llm_model_name,
         checkpointing=args.checkpointing,
         tiny_llama=args.tiny_llama,
+        cwq=args.cwq,
     )
     print(f"Total Time: {time.time() - start_time:2f}s")
