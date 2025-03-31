@@ -195,8 +195,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 torch.randn(1, num_feat, device=device) * std)
 
     def _set_trainable(self, i_dims: List[int], j_dims: List[int],
-                       h_dims: List[int],
-                       device: torch.device):
+                       h_dims: List[int], device: torch.device):
         baselines, self.gates, full_biases = [], torch.nn.ModuleList(), []
         zipped = zip(i_dims, j_dims, h_dims)
 
@@ -410,10 +409,12 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                             partial = self.gates[i * 4][j](input)
                         except Exception:
                             try:
-                                self._set_trainable(output_dims, output_dims, output_dims, x.device)
+                                self._set_trainable(output_dims, output_dims,
+                                                    output_dims, x.device)
                                 partial = self.gates[i * 4][j](input)
                             except Exception:
-                                self._set_trainable(input_dims, input_dims, output_dims, x.device)
+                                self._set_trainable(input_dims, input_dims,
+                                                    output_dims, x.device)
                                 partial = self.gates[i * 4][j](input)
                         result = self.gates[(i * 4) + 1][j](partial)
                         output = output + result
