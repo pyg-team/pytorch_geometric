@@ -7,9 +7,8 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import CaptumExplainer, Explainer
 from torch_geometric.nn import GCNConv
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-dataset = Planetoid(path, dataset)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Cora')
+dataset = Planetoid(path, 'Cora')
 data = dataset[0]
 
 

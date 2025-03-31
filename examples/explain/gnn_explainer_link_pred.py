@@ -16,14 +16,13 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
 else:
     device = torch.device('cpu')
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Cora')
 transform = T.Compose([
     T.NormalizeFeatures(),
     T.ToDevice(device),
     T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True),
 ])
-dataset = Planetoid(path, dataset, transform=transform)
+dataset = Planetoid(path, 'Cora', transform=transform)
 train_data, val_data, test_data = dataset[0]
 epochs = 200
 

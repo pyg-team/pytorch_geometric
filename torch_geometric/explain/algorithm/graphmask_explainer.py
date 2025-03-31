@@ -179,13 +179,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return clipped_s, penalty
 
-    def _set_masks(
-        self,
-        i_dim: List[int],
-        j_dim: List[int],
-        h_dim: List[int],
-        x: Tensor,
-    ):
+    def _set_masks(self, x: Tensor):
         r"""Sets the node masks and edge masks."""
         (num_nodes, num_feat), std, device = x.size(), 0.1, x.device
         self.feat_mask_type = self.explainer_config.node_mask_type
@@ -200,12 +194,17 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             self.node_feat_mask = torch.nn.Parameter(
                 torch.randn(1, num_feat, device=device) * std)
 
+    def _set_trainable(self, i_dims: List[int], j_dims: List[int],
+                       h_dims: List[int],
+                       device: torch.device):
         baselines, self.gates, full_biases = [], torch.nn.ModuleList(), []
+        zipped = zip(i_dims, j_dims, h_dims)
 
-        for v_dim, m_dim, h_dim in zip(i_dim, j_dim, h_dim):
+        for items in zipped:
+            v_dim, m_dim, h_dim = items
             self.transform, self.layer_norm = [], []
             input_dims = [v_dim, m_dim, v_dim]
-            for _, input_dim in enumerate(input_dims):
+            for input_dim in input_dims:
                 self.transform.append(
                     Linear(input_dim, h_dim, bias=False).to(device))
                 self.layer_norm.append(LayerNorm(h_dim).to(device))
@@ -365,7 +364,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 input_dims.append(module.in_channels)
                 output_dims.append(module.out_channels)
 
-        self._set_masks(input_dims, output_dims, output_dims, x)
+        self._set_masks(x)
+        self._set_trainable(input_dims, output_dims, output_dims, x.device)
 
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
@@ -385,7 +385,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                         f'Train explainer for graph {index} with layer '
                         f'{layer}')
             self._enable_layer(layer)
-            for epoch in range(self.epochs):
+            for _ in range(self.epochs):
                 with torch.no_grad():
                     model(x, edge_index, **kwargs)
                 gates, total_penalty = [], 0
@@ -405,19 +405,16 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 for i in range(self.num_layers):
                     output = self.full_biases[i]
                     for j in range(len(gate_input)):
+                        input = gate_input[j][i]
                         try:
-                            partial = self.gates[i * 4][j](gate_input[j][i])
+                            partial = self.gates[i * 4][j](input)
                         except Exception:
                             try:
-                                self._set_masks(output_dims, output_dims,
-                                                output_dims, x)
-                                partial = self.gates[i * 4][j](
-                                    gate_input[j][i])
+                                self._set_trainable(output_dims, output_dims, output_dims, x.device)
+                                partial = self.gates[i * 4][j](input)
                             except Exception:
-                                self._set_masks(input_dims, input_dims,
-                                                output_dims, x)
-                                partial = self.gates[i * 4][j](
-                                    gate_input[j][i])
+                                self._set_trainable(input_dims, input_dims, output_dims, x.device)
+                                partial = self.gates[i * 4][j](input)
                         result = self.gates[(i * 4) + 1][j](partial)
                         output = output + result
                     relu_output = self.gates[(i * 4) + 2](output /
@@ -511,7 +508,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 pbar = tqdm(total=self.num_layers)
             for i in range(self.num_layers):
                 if self.log:
-                    pbar.set_description("Explain")
+                    pbar.set_description(f"Explain layer {i}")
                 output = self.full_biases[i]
                 for j in range(len(gate_input)):
                     partial = self.gates[i * 4][j](gate_input[j][i])
@@ -522,6 +519,10 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                                               3](relu_output).squeeze(dim=-1)
                 sampling_weights, _ = self._hard_concrete(
                     sampling_weights, training=False)
+                # TODO: This is a hack to make the explainer work for
+                # GAT where the weights here have three dimensions
+                if sampling_weights.ndim == 2:
+                    sampling_weights = sampling_weights.mean(dim=-1)
                 if i == 0:
                     edge_weight = sampling_weights
                 else:
