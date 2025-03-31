@@ -281,13 +281,14 @@ def train(
         llm = LLM(model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1', )
     else:
         llm = LLM(model_name=llm_model_name)
-    model = GRetriever(llm=llm, gnn=gnn,
-                       mlp_out_channels=llm.word_embedding.embedding_dim)
 
     # Set model save name
     model_save_name = 'gnn_llm' if num_gnn_layers != 0 else 'llm'
     if model_save_name == 'llm':
         model = llm
+    else:
+        model = GRetriever(llm=llm, gnn=gnn,
+                       mlp_out_channels=llm.word_embedding.embedding_dim)
 
     # Create optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
