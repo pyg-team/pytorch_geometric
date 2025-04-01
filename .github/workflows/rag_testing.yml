@@ -24,21 +24,17 @@ jobs:
 
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
-        id: changed-files-specific
+        id: changed-files-specific-rag
         uses: tj-actions/changed-files@v41
         with:
           files: |
-            benchmark/**
-            conda/**
-            docker/**
-            docs/**
-            examples/**
-            graphgym/**
-            README.md
-            CHANGELOG.md
+            torch_geometric/datasets/web_qsp_dataset.py
+            torch_geometric/nn/nlp/**
+            torch_geometric/nn/models/g_retriever.py
+            torch_geometric/loader/rag_loader.py
 
       - name: Setup packages
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific-rag.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
           full_install: false
