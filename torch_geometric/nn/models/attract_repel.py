@@ -70,7 +70,7 @@ class ARLinkPredictor(torch.nn.Module):
 
         Args:
             x (torch.Tensor): Node feature matrix of shape
-            :obj:`[num_nodes, in_channels]`.
+                :obj:`[num_nodes, in_channels]`.
             *args: Variable length argument list
             **kwargs: Arbitrary keyword arguments
 
