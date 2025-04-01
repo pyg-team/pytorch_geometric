@@ -16,14 +16,15 @@ class ARLinkPredictor(torch.nn.Module):
         in_channels (int): Size of each input sample.
         hidden_channels (int): Size of hidden embeddings.
         out_channels (int, optional): Size of output embeddings.
-        If set to :obj:`None`, will default to :obj:`hidden_channels`.
-        (default: :obj:`None`)
+            If set to :obj:`None`, will default to :obj:`hidden_channels`.
+            (default: :obj:`None`) 
         num_layers (int): Number of message passing layers.
-        (default: :obj:`2`)
+            (default: :obj:`2`)
         dropout (float): Dropout probability. (default: :obj:`0.0`)
         attract_ratio (float): Ratio to use for attract component.
             Must be between 0 and 1. (default: :obj:`0.5`)
     """
+
     def __init__(self, in_channels, hidden_channels, out_channels=None,
                  num_layers=2, dropout=0.0, attract_ratio=0.5):
         super().__init__()
