@@ -165,7 +165,7 @@ def main():
     if args.use_ar:
         predictor = ARLinkPredictor(in_channels=args.out_channels).to(device)
         print(
-            f"Running link prediction on {args.dataset} 
+            f"Running link prediction on {args.dataset}
             with Attract-Repel embeddings"
         )
     else:
@@ -173,7 +173,7 @@ def main():
             in_channels=args.out_channels,
             hidden_channels=args.hidden_channels).to(device)
         print(
-            f"Running link prediction on {args.dataset} 
+            f"Running link prediction on {args.dataset}
             with Traditional embeddings"
         )
 
