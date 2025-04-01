@@ -7,7 +7,7 @@ class ARLinkPredictor(torch.nn.Module):
     `"Pseudo-Euclidean Attract-Repel Embeddings for Undirected Graphs"
     <https://arxiv.org/abs/2106.09671>`_.
 
-    This model splits node embeddings into: attract and 
+    This model splits node embeddings into: attract and
     repel.
     The edge prediction score is computed as the dot product of attract
     components minus the dot product of repel components.
@@ -69,10 +69,10 @@ class ARLinkPredictor(torch.nn.Module):
         """Encode node features into attract-repel embeddings.
 
         Args:
-            x (torch.Tensor): Node feature matrix of shape 
+            x (torch.Tensor): Node feature matrix of shape
             :obj:`[num_nodes, in_channels]`.
-            *args: Variable length argument list 
-            **kwargs: Arbitrary keyword arguments 
+            *args: Variable length argument list
+            **kwargs: Arbitrary keyword arguments
         """
         for lin in self.lins:
             x = lin(x)
@@ -89,11 +89,11 @@ class ARLinkPredictor(torch.nn.Module):
         """Decode edge scores from attract-repel embeddings.
 
         Args:
-            attract_z (torch.Tensor): Attract embeddings of shape 
+            attract_z (torch.Tensor): Attract embeddings of shape
                 :obj:`[num_nodes, attract_dim]`.
-            repel_z (torch.Tensor): Repel embeddings of shape 
+            repel_z (torch.Tensor): Repel embeddings of shape
                 :obj:`[num_nodes, repel_dim]`.
-            edge_index (torch.Tensor): Edge indices of shape 
+            edge_index (torch.Tensor): Edge indices of shape
                 :obj:`[2, num_edges]`.
 
         Returns:
