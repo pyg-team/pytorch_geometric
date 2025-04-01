@@ -425,8 +425,9 @@ class WebQSPDataset(KGQABaseDataset):
     ) -> None:
         # Modify these paramters if running into memory/compute issues
         default_retrieval_kwargs = {
-            'max_batch_size': 250, # Lower batch size to reduce memory usage
-            'num_workers': None, # Use all available workers, or set to number of threads
+            'max_batch_size': 250,  # Lower batch size to reduce memory usage
+            'num_workers':
+            None,  # Use all available workers, or set to number of threads
         }
         retrieval_kwargs = {**default_retrieval_kwargs, **retrieval_kwargs}
         dataset_name = 'rmanluo/RoG-webqsp'
