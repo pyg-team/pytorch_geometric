@@ -675,7 +675,7 @@ def get_features_for_triplets_groups(
 
     import multiprocessing as mp
     import multiprocessing.pool as mpp
-    num_workers = num_workers or mp.cpu_count()
+    num_workers = num_workers if num_workers is not None else mp.cpu_count()
     ideal_batch_size = min(max_batch_size,
                            max(1,
                                len(triplet_groups) // num_workers))
