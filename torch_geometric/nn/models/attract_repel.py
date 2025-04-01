@@ -74,6 +74,7 @@ class ARLinkPredictor(torch.nn.Module):
             :obj:`[num_nodes, in_channels]`.
             *args: Variable length argument list
             **kwargs: Arbitrary keyword arguments
+            
         """
         for lin in self.lins:
             x = lin(x)
