@@ -18,6 +18,7 @@ from torch_geometric.data import (
 )
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
+from torch_geometric.utils.rag.backend_utils import preprocess_triplet
 
 
 @no_type_check
@@ -146,11 +147,6 @@ def retrieval_via_pcst(
     return data, desc
 
 
-def preprocess_triplet(triplet: TripletLike) -> TripletLike:
-    h, r, t = triplet
-    return str(h).lower(), str(r).lower(), str(t).lower()
-
-
 class KGQABaseDataset(InMemoryDataset):
     r"""Base class for the 2 KGQA datasets used in `"Reasoning on Graphs:
     Faithful and Interpretable Large Language Model Reasoning"
@@ -196,14 +192,7 @@ class KGQABaseDataset(InMemoryDataset):
             print(
                 "WARNING: Caching custom subsets of the dataset results in unsupported behavior. Please specify a separate root directory for each split, or set force_reload=True on subsequent instantiations of the dataset."
             )
-        # TODO Confirm with @riship why the dependency checks and device setting were removed here # noqa
-        '''
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
-        self._check_dependencies()
-        '''
 
-        # TODO: @riship should this be done in the base class?
         self.required_splits = ['train', 'validation', 'test']
 
         self.verbose = verbose
@@ -218,21 +207,6 @@ class KGQABaseDataset(InMemoryDataset):
 
         self.load(self.processed_paths[self.required_splits.index(split)])
 
-    # TODO Confirm with @riship why the dependency checks and device setting were removed here # noqa
-    '''
-    def _check_dependencies(self) -> None:
-        missing_str_list = []
-        if not WITH_PCST:
-            missing_str_list.append('pcst_fast')
-        if not WITH_DATASETS:
-            missing_str_list.append('datasets')
-        if not WITH_PANDAS:
-            missing_str_list.append('pandas')
-        if len(missing_str_list) > 0:
-            missing_str = ' '.join(missing_str_list)
-            error_out = f"`pip install {missing_str}` to use this dataset."
-            raise ImportError(error_out)
-    '''
 
     @property
     def raw_file_names(self) -> List[str]:
