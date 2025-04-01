@@ -207,7 +207,6 @@ class KGQABaseDataset(InMemoryDataset):
 
         self.load(self.processed_paths[self.required_splits.index(split)])
 
-
     @property
     def raw_file_names(self) -> List[str]:
         return ["raw.pt"]
