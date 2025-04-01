@@ -138,11 +138,10 @@ def retrieval_via_pcst(
         x=data.x[selected_nodes],
         edge_index=torch.tensor([src, dst]).to(torch.long),
         edge_attr=data.edge_attr[selected_edges],
+        # HACK Added so that the subset of nodes and edges selected can be tracked
+        node_idx=node_idx,
+        edge_idx=edge_idx,
     )
-
-    # HACK Added so that the subset of nodes and edges selected can be tracked
-    data['node_idx'] = node_idx
-    data['edge_idx'] = edge_idx
 
     return data, desc
 
@@ -227,7 +226,6 @@ class KGQABaseDataset(InMemoryDataset):
             'path', self.dataset_name)
         raw_dataset = datasets.load_dataset(**self.load_dataset_kwargs)
 
-        # TODO: @riship should this be done in the base class?
         # Assert that the dataset contains the required splits
         assert all(split in raw_dataset for split in self.required_splits), \
             f"Dataset '{self.dataset_name}' is missing required splits: {self.required_splits}"
