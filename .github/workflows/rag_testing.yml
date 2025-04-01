@@ -34,18 +34,18 @@ jobs:
             torch_geometric/loader/rag_loader.py
 
       - name: Setup packages
-        if: steps.changed-files-specific-rag.outputs.only_changed != 'true'
+        if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         uses: ./.github/actions/setup
         with:
           full_install: false
 
       - name: Install main package
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         run: |
           pip install -e .[test,rag]
 
       - name: Run tests
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         timeout-minutes: 10
         run: |
           RAG_TEST=1 pytest -m rag
