@@ -7,7 +7,7 @@ class ARLinkPredictor(torch.nn.Module):
     `"Pseudo-Euclidean Attract-Repel Embeddings for Undirected Graphs"
     <https://arxiv.org/abs/2106.09671>`_.
 
-    This model splits node embeddings into two components: attract and 
+    This model splits node embeddings into: attract and 
     repel.
     The edge prediction score is computed as the dot product of attract
     components minus the dot product of repel components.
@@ -21,7 +21,7 @@ class ARLinkPredictor(torch.nn.Module):
         num_layers (int): Number of message passing layers. 
         (default: :obj:`2`)
         dropout (float): Dropout probability. (default: :obj:`0.0`)
-        attract_ratio (float): Ratio of dimensions to use for attract component.
+        attract_ratio (float): Ratio to use for attract component.
             Must be between 0 and 1. (default: :obj:`0.5`)
     """
     def __init__(self, in_channels, hidden_channels, out_channels=None,
@@ -69,9 +69,10 @@ class ARLinkPredictor(torch.nn.Module):
         """Encode node features into attract-repel embeddings.
 
         Args:
-            x (torch.Tensor): Node feature matrix of shape :obj:`[num_nodes, in_channels]`.
-            *args: Variable length argument list passed to underlying layers
-            **kwargs: Arbitrary keyword arguments passed to underlying layers
+            x (torch.Tensor): Node feature matrix of shape 
+            :obj:`[num_nodes, in_channels]`.
+            *args: Variable length argument list 
+            **kwargs: Arbitrary keyword arguments 
         """
         for lin in self.lins:
             x = lin(x)
@@ -88,9 +89,12 @@ class ARLinkPredictor(torch.nn.Module):
         """Decode edge scores from attract-repel embeddings.
 
         Args:
-            attract_z (torch.Tensor): Attract embeddings of shape :obj:`[num_nodes, attract_dim]`.
-            repel_z (torch.Tensor): Repel embeddings of shape :obj:`[num_nodes, repel_dim]`.
-            edge_index (torch.Tensor): Edge indices of shape :obj:`[2, num_edges]`.
+            attract_z (torch.Tensor): Attract embeddings of shape 
+                :obj:`[num_nodes, attract_dim]`.
+            repel_z (torch.Tensor): Repel embeddings of shape 
+                :obj:`[num_nodes, repel_dim]`.
+            edge_index (torch.Tensor): Edge indices of shape 
+                :obj:`[2, num_edges]`.
 
         Returns:
             torch.Tensor: Edge prediction scores.
