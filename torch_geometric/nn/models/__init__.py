@@ -85,4 +85,5 @@ __all__ = classes = [
     'MoleculeGPT',
     'GLEM',
     'SGFormer',
+    'ARLinkPredictor',
 ]

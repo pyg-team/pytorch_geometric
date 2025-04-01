@@ -7,16 +7,19 @@ class ARLinkPredictor(torch.nn.Module):
     `"Pseudo-Euclidean Attract-Repel Embeddings for Undirected Graphs"
     <https://arxiv.org/abs/2106.09671>`_.
 
-    This model splits node embeddings into two components: attract and repel.
-    The edge prediction score is computed as the dot product of attract components
-    minus the dot product of repel components.
+    This model splits node embeddings into two components: attract and 
+    repel.
+    The edge prediction score is computed as the dot product of attract
+    components minus the dot product of repel components.
 
     Args:
         in_channels (int): Size of each input sample.
         hidden_channels (int): Size of hidden embeddings.
-        out_channels (int, optional): Size of output embeddings. If set to
-            :obj:`None`, will default to :obj:`hidden_channels`. (default: :obj:`None`)
-        num_layers (int): Number of message passing layers. (default: :obj:`2`)
+        out_channels (int, optional): Size of output embeddings. 
+        If set to :obj:`None`, will default to :obj:`hidden_channels`. 
+        (default: :obj:`None`)
+        num_layers (int): Number of message passing layers. 
+        (default: :obj:`2`)
         dropout (float): Dropout probability. (default: :obj:`0.0`)
         attract_ratio (float): Ratio of dimensions to use for attract component.
             Must be between 0 and 1. (default: :obj:`0.5`)
@@ -67,9 +70,8 @@ class ARLinkPredictor(torch.nn.Module):
 
         Args:
             x (torch.Tensor): Node feature matrix of shape :obj:`[num_nodes, in_channels]`.
-
-        Returns:
-            tuple[torch.Tensor, torch.Tensor]: Attract and repel embeddings.
+            *args: Variable length argument list passed to underlying layers
+            **kwargs: Arbitrary keyword arguments passed to underlying layers
         """
         for lin in self.lins:
             x = lin(x)
@@ -95,8 +97,10 @@ class ARLinkPredictor(torch.nn.Module):
         """
         # Get node embeddings for edges
         row, col = edge_index
-        attract_z_row, attract_z_col = attract_z[row], attract_z[col]
-        repel_z_row, repel_z_col = repel_z[row], repel_z[col]
+        attract_z_row = attract_z[row]
+        attract_z_col = attract_z[col]
+        repel_z_row = repel_z[row]
+        repel_z_col = repel_z[col]
 
         # Compute attract-repel scores
         attract_score = torch.sum(attract_z_row * attract_z_col, dim=1)
