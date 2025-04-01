@@ -82,7 +82,6 @@ full = [
     "scikit-learn",
     "ase",
     "captum<0.7.0",
-    "datasets",
     "graphviz",
     "h5py",
     "matplotlib",
@@ -90,7 +89,6 @@ full = [
     "numba<0.60.0",
     "opt_einsum",
     "pandas",
-    "pcst_fast",
     "pgmpy",
     "pynndescent",
     "pytorch-memlab",
@@ -102,7 +100,6 @@ full = [
     "tabulate",
     "torch_geometric[graphgym, modelhub]",
     "torchmetrics",
-    "transformers",
     "trimesh",
 ]
 

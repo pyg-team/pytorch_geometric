@@ -17,7 +17,7 @@ from torch_geometric.visualization.graph import has_graphviz
 
 def is_rag_test() -> bool:
     r"""Whether to run the RAG test suite."""
-    return os.getenv('RAG_TEST', '0') == '1' or is_full_test()
+    return os.getenv('RAG_TEST', '0') == '1'
 
 
 def is_full_test() -> bool:
