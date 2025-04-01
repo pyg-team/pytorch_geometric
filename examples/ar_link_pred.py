@@ -165,16 +165,16 @@ def main():
     if args.use_ar:
         predictor = ARLinkPredictor(in_channels=args.out_channels).to(device)
         print(
-            f"Running link prediction on {args.dataset} 
-            with Attract-Repel embeddings"
+            f"Running link prediction on {args.dataset}" 
+            f"with Attract-Repel embeddings"
         )
     else:
         predictor = LinkPredictor(
             in_channels=args.out_channels,
             hidden_channels=args.hidden_channels).to(device)
         print(
-            f"Running link prediction on {args.dataset} 
-            with Traditional embeddings"
+            f"Running link prediction on {args.dataset}" 
+            f"with Traditional embeddings"
         )
 
     optimizer = torch.optim.Adam(
@@ -193,11 +193,14 @@ def main():
 
         if epoch % 10 == 0:
             print(
-                f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Val AUC: {val_auc:.4f}, '
-                f'Test AUC: {test_auc:.4f}')
+                f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
+                f'Val AUC: {val_auc:.4f}, '
+                f'Test AUC: {test_auc:.4f}'
+            )
 
     print(
-        f'Final results - Val AUC: {best_val_auc:.4f}, Test AUC: {final_test_auc:.4f}'
+        f'Final results - Val AUC: {best_val_auc:.4f}, '
+        f'Test AUC: {final_test_auc:.4f}'
     )
 
     # Calculate R-fraction if using AR
