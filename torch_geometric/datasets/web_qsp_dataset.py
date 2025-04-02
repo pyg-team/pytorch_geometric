@@ -18,7 +18,6 @@ from torch_geometric.data import (
 )
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.utils.rag.backend_utils import preprocess_triplet
 
 
 @no_type_check
@@ -144,6 +143,11 @@ def retrieval_via_pcst(
     )
 
     return data, desc
+
+
+def preprocess_triplet(triplet: TripletLike) -> TripletLike:
+    h, r, t = triplet
+    return str(h).lower(), str(r).lower(), str(t).lower()
 
 
 class KGQABaseDataset(InMemoryDataset):
