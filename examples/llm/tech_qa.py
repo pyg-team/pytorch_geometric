@@ -327,7 +327,7 @@ def train(args, data_lists):
                         lr = optimizer.param_groups[0]['lr']
                 except torch.OutOfMemoryError as e:
                     """
-                    (TODO Zack) handle inputs with too many tokens
+                    (TODO Serge) handle inputs with too many tokens
                     do this by doing a fallback to CPU
                     its complicated since we have Huggingface `accelerate`
                     doing multigpu setup but we wana fall back to cpu and
@@ -356,12 +356,12 @@ def train(args, data_lists):
                         val_loss += loss.item()
                     except torch.OutOfMemoryError as e:
                         """
-                        (TODO Zack) handle inputs with too many tokens
+                        (TODO Serge) handle inputs with too many tokens
                         do this by doing a fallback to CPU
                         its complicated since we have Huggingface `accelerate`
                         doing multigpu setup but we wana fall back to cpu and
                         then comeback to multigpu since most inputs dont trigger this.
-                        Just skipping for now.
+                        Just skipping for now. 
                         """
                         # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
                         # but we wana fix the underlying issue, this skip is just a workaround for now.
@@ -400,7 +400,7 @@ def test(model, test_loader, args):
             preds = (inference_step(model, test_batch))
         except:
             """
-            (TODO Zack) handle inputs with too many tokens
+            (TODO Serge) handle inputs with too many tokens
             do this by doing a fallback to CPU
             its complicated since we have Huggingface `accelerate`
             doing multigpu setup but we wana fall back to cpu and
