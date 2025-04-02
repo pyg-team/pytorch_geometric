@@ -2,7 +2,7 @@ import os
 import pickle as pkl
 import shutil
 from dataclasses import dataclass
-from itertools import chain
+from itertools import chain, islice, tee
 from typing import (
     Any,
     Callable,
@@ -37,15 +37,15 @@ def ordered_set(values: Iterable[str]) -> List[str]:
 
 # TODO: Refactor Node and Edge funcs and attrs to be accessible via an Enum?
 
-NODE_PID = "pid"
+NODE_PID = "pid"  # Encodes node id
 
 NODE_KEYS = {NODE_PID}
 
-EDGE_PID = "e_pid"
-EDGE_HEAD = "h"
-EDGE_RELATION = "r"
-EDGE_TAIL = "t"
-EDGE_INDEX = "edge_idx"
+EDGE_PID = "e_pid"  # Encodes source node, relation, destination node
+EDGE_HEAD = "h"  # Encodes source node
+EDGE_RELATION = "r"  # Encodes relation
+EDGE_TAIL = "t"  # Encodes destination node
+EDGE_INDEX = "edge_idx"  # Encodes source node, destination node
 
 EDGE_KEYS = {EDGE_PID, EDGE_HEAD, EDGE_RELATION, EDGE_TAIL, EDGE_INDEX}
 
@@ -573,8 +573,10 @@ def get_features_for_triplets_groups(
     triplet_groups: Iterable[KnowledgeGraphLike],
     node_feature_name: str = "x",
     edge_feature_name: str = "edge_attr",
-    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+    pre_transform: Callable[[TripletLike], TripletLike] = lambda trip: trip,
     verbose: bool = False,
+    max_batch_size: int = 250,
+    num_workers: Optional[int] = None,
 ) -> Iterator[Data]:
     """Given an indexer and a series of triplet groups (like a dataset),
     retrieve the specified node and edge features for each triplet from the
@@ -588,62 +590,105 @@ def get_features_for_triplets_groups(
             Defaults to "x".
         edge_feature_name (str, optional): edge feature to fetch.
             Defaults to "edge_attr".
-        pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
+        pre_transform (Callable[[TripletLike], TripletLike]):
             Optional preprocessing to perform on triplets.
             Defaults to None.
         verbose (bool, optional): Whether to print progress. Defaults to False.
+        max_batch_size (int, optional): Maximum batch size for fetching features. Defaults to 250.
+        num_workers (int, optional): Number of workers to use for fetching features. Defaults to None (all available).
 
     Yields:
         Iterator[Data]: For each triplet group, yield a data object containing
             the unique graph and features from the index.
     """
-    if pre_transform is not None:
+    def apply_transform(trips: Iterable[TripletLike]) -> Iterator[TripletLike]:
+        for trip in trips:
+            yield pre_transform(tuple(trip))
 
-        def apply_transform(trips):
-            for trip in trips:
-                yield pre_transform(tuple(trip))
-
-        # TODO: Make this safe for large amounts of triplets?
-        triplet_groups = (list(apply_transform(triplets))
-                          for triplets in triplet_groups)
+    # Carefully trying to avoid loading all triplets into memory at once
+    # While also still tracking the number of elements for tqdm
+    triplet_groups: List[Iterator[TripletLike]] = [
+        apply_transform(triplets) for triplets in triplet_groups
+    ]
 
     node_keys = []
     edge_keys = []
     edge_index = []
 
-    for triplets in tqdm(triplet_groups, disable=not verbose):
+    # For each KG, we gather the node_indices, edge_keys, and edge_indices needed to construct each Data object
+    for kg_triplets in tqdm(triplet_groups, disable=not verbose):
+        kg_triplets_nodes, kg_triplets_edge_keys, kg_triplets_edge_index = tee(
+            kg_triplets, 3)
+        # Don't apply pre_transform here, because it has already been applied on the triplet groups
         small_graph_indexer = LargeGraphIndexer.from_triplets(
-            triplets, pre_transform=pre_transform)
+            kg_triplets_nodes)
 
         node_keys.append(small_graph_indexer.get_node_features())
-        edge_keys.append(small_graph_indexer.get_edge_features(pids=triplets))
+        edge_keys.append(
+            small_graph_indexer.get_edge_features(pids=kg_triplets_edge_keys))
         edge_index.append(
-            small_graph_indexer.get_edge_features(EDGE_INDEX, triplets))
+            small_graph_indexer.get_edge_features(EDGE_INDEX,
+                                                  kg_triplets_edge_index))
 
-    node_feats = indexer.get_node_features(feature_name=node_feature_name,
-                                           pids=chain.from_iterable(node_keys))
-    edge_feats = indexer.get_edge_features(feature_name=edge_feature_name,
-                                           pids=chain.from_iterable(edge_keys))
+    # We get the embeddings for each node and edge key in the KG, but we need to do so in batches.
+    # Batches that are too small waste compute time, as each call to get features has an upfront cost.
+    # Batches that are too large waste memory, as we need to store all the result embeddings in memory.
+    def _fetch_feature_batch(batches):
+        node_key_batch, edge_key_batch, edge_index_batch = batches
+        node_feats = indexer.get_node_features(
+            feature_name=node_feature_name,
+            pids=chain.from_iterable(node_key_batch))
+        edge_feats = indexer.get_edge_features(
+            feature_name=edge_feature_name,
+            pids=chain.from_iterable(edge_key_batch))
 
-    last_node_idx, last_edge_idx = 0, 0
-    for (nkeys, ekeys, eidx) in zip(node_keys, edge_keys, edge_index):
-        nlen, elen = len(nkeys), len(ekeys)
-        x = torch.Tensor(node_feats[last_node_idx:last_node_idx + nlen])
-        last_node_idx += len(nkeys)
+        last_node_idx, last_edge_idx = 0, 0
+        for (nkeys, ekeys, eidx) in zip(node_key_batch, edge_key_batch,
+                                        edge_index_batch):
+            nlen, elen = len(nkeys), len(ekeys)
+            x = torch.Tensor(node_feats[last_node_idx:last_node_idx + nlen])
+            last_node_idx += len(nkeys)
 
-        edge_attr = torch.Tensor(edge_feats[last_edge_idx:last_edge_idx +
-                                            elen])
-        last_edge_idx += len(ekeys)
+            edge_attr = torch.Tensor(edge_feats[last_edge_idx:last_edge_idx +
+                                                elen])
+            last_edge_idx += len(ekeys)
 
-        edge_idx = torch.LongTensor(eidx).T
+            edge_idx = torch.LongTensor(eidx).T
 
-        data_obj = Data(x=x, edge_attr=edge_attr, edge_index=edge_idx)
-        data_obj[NODE_PID] = node_keys
-        data_obj[EDGE_PID] = edge_keys
-        data_obj["node_idx"] = [indexer._nodes[k] for k in nkeys]
-        data_obj["edge_idx"] = [indexer._edges[e] for e in ekeys]
+            data_obj = Data(x=x, edge_attr=edge_attr, edge_index=edge_idx)
+            data_obj[NODE_PID] = node_keys
+            data_obj[EDGE_PID] = edge_keys
+            data_obj["node_idx"] = [indexer._nodes[k] for k in nkeys]
+            data_obj["edge_idx"] = [indexer._edges[e] for e in ekeys]
 
-        yield data_obj
+            yield data_obj
+
+    # NOTE: Backport of itertools.batched from Python 3.12
+    def batched(iterable, n, *, strict=False):
+        # batched('ABCDEFG', 3) → ABC DEF G
+        if n < 1:
+            raise ValueError('n must be at least one')
+        iterator = iter(iterable)
+        while batch := tuple(islice(iterator, n)):
+            if strict and len(batch) != n:
+                raise ValueError('batched(): incomplete batch')
+            yield batch
+
+    import multiprocessing as mp
+    import multiprocessing.pool as mpp
+    num_workers = num_workers if num_workers is not None else mp.cpu_count()
+    ideal_batch_size = min(max_batch_size,
+                           max(1,
+                               len(triplet_groups) // num_workers))
+
+    node_key_batches = batched(node_keys, ideal_batch_size)
+    edge_key_batches = batched(edge_keys, ideal_batch_size)
+    edge_index_batches = batched(edge_index, ideal_batch_size)
+    batches = zip(node_key_batches, edge_key_batches, edge_index_batches)
+
+    with mpp.ThreadPool() as pool:
+        result = pool.map(_fetch_feature_batch, batches)
+    yield from chain.from_iterable(result)
 
 
 def get_features_for_triplets(
@@ -651,7 +696,7 @@ def get_features_for_triplets(
     triplets: KnowledgeGraphLike,
     node_feature_name: str = "x",
     edge_feature_name: str = "edge_attr",
-    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+    pre_transform: Callable[[TripletLike], TripletLike] = lambda trip: trip,
     verbose: bool = False,
 ) -> Data:
     """For a given set of triplets retrieve a Data object containing the
@@ -664,7 +709,7 @@ def get_features_for_triplets(
             Defaults to "x".
         edge_feature_name (str, optional): Feature to use for edge features.
             Defaults to "edge_attr".
-        pre_transform (Optional[Callable[[TripletLike], TripletLike]]):
+        pre_transform (Callable[[TripletLike], TripletLike]):
             Optional preprocessing function for triplets. Defaults to None.
         verbose (bool, optional): Whether to print progress. Defaults to False.
 
@@ -675,5 +720,5 @@ def get_features_for_triplets(
     gen = get_features_for_triplets_groups(indexer, [triplets],
                                            node_feature_name,
                                            edge_feature_name, pre_transform,
-                                           verbose)
+                                           verbose, max_batch_size=1)
     return next(gen)

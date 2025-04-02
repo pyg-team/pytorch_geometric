@@ -1,12 +1,22 @@
 # Code adapted from the G-Retriever paper: https://arxiv.org/abs/2402.07630
-from typing import Any, Dict, List, Tuple, no_type_check
+import gc
+import os
+from itertools import chain
+from typing import Any, Dict, Iterator, List, Tuple, no_type_check
 
 import numpy as np
 import torch
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    LargeGraphIndexer,
+    TripletLike,
+    get_features_for_triplets_groups,
+)
+from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
 
 
@@ -21,6 +31,7 @@ def retrieval_via_pcst(
     cost_e: float = 0.5,
     num_clusters: int = 1,
 ) -> Tuple[Data, str]:
+
     # skip PCST for bad graphs
     booly = data.edge_attr is None or data.edge_attr.numel() == 0
     booly = booly or data.x is None or data.x.numel() == 0
@@ -118,13 +129,25 @@ def retrieval_via_pcst(
     src = [mapping[i] for i in edge_index[0].tolist()]
     dst = [mapping[i] for i in edge_index[1].tolist()]
 
+    # HACK Added so that the subset of nodes and edges selected can be tracked
+    node_idx = np.array(data.node_idx)[selected_nodes]
+    edge_idx = np.array(data.edge_idx)[selected_edges]
+
     data = Data(
         x=data.x[selected_nodes],
         edge_index=torch.tensor([src, dst]).to(torch.long),
         edge_attr=data.edge_attr[selected_edges],
+        # HACK Added so that the subset of nodes and edges selected can be tracked
+        node_idx=node_idx,
+        edge_idx=edge_idx,
     )
 
     return data, desc
+
+
+def preprocess_triplet(triplet: TripletLike) -> TripletLike:
+    h, r, t = triplet
+    return str(h).lower(), str(r).lower(), str(t).lower()
 
 
 class KGQABaseDataset(InMemoryDataset):
@@ -140,121 +163,215 @@ class KGQABaseDataset(InMemoryDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        use_cwq (bool, optional): Whether to load the ComplexWebQuestions dataset. (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional): Keyword arguments for the the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
     """
     def __init__(
-        self,
-        dataset_name: str,
-        root: str,
-        split: str = "train",
-        force_reload: bool = False,
-        use_pcst: bool = True,
-        use_cwq: bool = True,
+            self,
+            dataset_name: str,
+            root: str,
+            split: str = "train",
+            force_reload: bool = False,
+            verbose: bool = False,
+            use_pcst: bool = True,
+            use_cwq: bool = True,
+            load_dataset_kwargs: Dict[str, Any] = dict(),
+            retrieval_kwargs: Dict[str, Any] = dict(),
     ) -> None:
+        self.split = split
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
+        self.load_dataset_kwargs = load_dataset_kwargs
+
+        # NOTE: If running into memory issues, try reducing this batch size
+        self.retrieval_kwargs = retrieval_kwargs
+
+        # Caching custom subsets of the dataset results in unsupported behavior
+        if 'split' in load_dataset_kwargs:
+            print(
+                "WARNING: Caching custom subsets of the dataset results in unsupported behavior. Please specify a separate root directory for each split, or set force_reload=True on subsequent instantiations of the dataset."
+            )
+
+        self.required_splits = ['train', 'validation', 'test']
+
+        self.verbose = verbose
+        self.force_reload = force_reload
         super().__init__(root, force_reload=force_reload)
 
-        if split not in {'train', 'val', 'test'}:
+        # NOTE: Current behavior is to process the entire dataset, and only return the split specified by the user
+        if f'{split}_data.pt' not in set(self.processed_file_names):
             raise ValueError(f"Invalid 'split' argument (got {split})")
+        if split == 'val':
+            split = 'validation'
 
-        path = self.processed_paths[['train', 'val', 'test'].index(split)]
-        self.load(path)
+        self.load(self.processed_paths[self.required_splits.index(split)])
+
+    @property
+    def raw_file_names(self) -> List[str]:
+        return ["raw.pt"]
+
+    @property
+    def _processed_split_file_names(self) -> List[str]:
+        return ["train_data.pt", "val_data.pt", "test_data.pt"]
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ['train_data.pt', 'val_data.pt', 'test_data.pt']
+        return self._processed_split_file_names + ["large_graph_indexer"]
+
+    def download(self) -> None:
+        import datasets
+
+        # HF Load Dataset by dataset name if no path is specified
+        self.load_dataset_kwargs['path'] = self.load_dataset_kwargs.get(
+            'path', self.dataset_name)
+        raw_dataset = datasets.load_dataset(**self.load_dataset_kwargs)
+
+        # Assert that the dataset contains the required splits
+        assert all(split in raw_dataset for split in self.required_splits), \
+            f"Dataset '{self.dataset_name}' is missing required splits: {self.required_splits}"
+
+        raw_dataset.save_to_disk(self.raw_paths[0])
+
+    def _get_trips(self) -> Iterator[TripletLike]:
+        # Iterate over each element's graph in each split of the dataset
+        # Using chain to lazily iterate without storing all trips in memory
+        split_iterators = []
+
+        for split in self.required_splits:
+            # Create an iterator for each element's graph in the current split
+            split_graphs = (element['graph']
+                            for element in self.raw_dataset[split])
+            split_iterators.append(chain.from_iterable(split_graphs))
+
+        # Chain all split iterators together
+        return chain.from_iterable(split_iterators)
+
+    def _build_graph(self) -> None:
+        print("Encoding graph...")
+        trips = self._get_trips()
+        self.indexer: LargeGraphIndexer = LargeGraphIndexer.from_triplets(
+            trips, pre_transform=preprocess_triplet)
+
+        # Nodes:
+        print("\tEncoding nodes...")
+        nodes = self.indexer.get_unique_node_features()
+        x = self.model.encode(
+            nodes,  # type: ignore
+            batch_size=256,
+            output_device='cpu')
+        self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
+
+        # Edges:
+        print("\tEncoding edges...")
+        edges = self.indexer.get_unique_edge_features(
+            feature_name=EDGE_RELATION)
+        edge_attr = self.model.encode(
+            edges,  # type: ignore
+            batch_size=256,
+            output_device='cpu')
+        self.indexer.add_edge_feature(
+            new_feature_name="edge_attr",
+            new_feature_vals=edge_attr,
+            map_from_feature=EDGE_RELATION,
+        )
+
+        print("\tSaving graph...")
+        self.indexer.save(self.processed_paths[-1])
+
+    def _retrieve_subgraphs(self) -> None:
+        for split_name, dataset, path in zip(
+                self.required_splits,
+            [self.raw_dataset[split] for split in self.required_splits],
+                self.processed_paths,
+        ):
+            print(f"Processing {split_name} split...")
+
+            print("\tEncoding questions...")
+            split_questions = [str(element['question']) for element in dataset]
+            split_q_embs = self.model.encode(split_questions, batch_size=256,
+                                             output_device='cpu')
+
+            print("\tRetrieving subgraphs...")
+            results_graphs = []
+            retrieval_kwargs = {
+                **self.retrieval_kwargs,
+                **{
+                    'pre_transform': preprocess_triplet,
+                    'verbose': self.verbose,
+                }
+            }
+            graph_gen = get_features_for_triplets_groups(
+                self.indexer, (element['graph'] for element in dataset),
+                **retrieval_kwargs)
+
+            for index in tqdm(range(len(dataset)), disable=not self.verbose):
+                data_i = dataset[index]
+                graph = next(graph_gen)
+                textual_nodes = self.textual_nodes.iloc[
+                    graph["node_idx"]].reset_index()
+                textual_edges = self.textual_edges.iloc[
+                    graph["edge_idx"]].reset_index()
+                if self.use_pcst and len(textual_nodes) > 0 and len(
+                        textual_edges) > 0:
+                    subgraph, desc = retrieval_via_pcst(
+                        graph,
+                        split_q_embs[index],
+                        textual_nodes,
+                        textual_edges,
+                    )
+                else:
+                    desc = textual_nodes.to_csv(
+                        index=False) + "\n" + textual_edges.to_csv(
+                            index=False,
+                            columns=["src", "edge_attr", "dst"],
+                        )
+                    subgraph = graph
+                question = f"Question: {data_i['question']}\nAnswer: "
+                label = ("|").join(data_i["answer"]).lower()
+
+                subgraph["question"] = question
+                subgraph["label"] = label
+                subgraph["desc"] = desc
+                results_graphs.append(subgraph.to("cpu"))
+            print("\tSaving subgraphs...")
+            self.save(results_graphs, path)
 
     def process(self) -> None:
         import datasets
-        import pandas as pd
-
-        datasets = datasets.load_dataset(self.dataset_name)
+        from pandas import DataFrame
+        self.raw_dataset = datasets.load_from_disk(self.raw_paths[0])
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model_name = 'sentence-transformers/all-roberta-large-v1'
-        model = SentenceTransformer(model_name).to(device)
-        model.eval()
+        self.model: SentenceTransformer = SentenceTransformer(model_name).to(
+            device)
+        self.model.eval()
+        if self.force_reload or not os.path.exists(self.processed_paths[-1]):
+            self._build_graph()
+        else:
+            print("Loading graph...")
+            self.indexer = LargeGraphIndexer.from_disk(
+                self.processed_paths[-1])
+        self.textual_nodes = DataFrame.from_dict(
+            {"node_attr": self.indexer.get_node_features()})
+        self.textual_nodes["node_id"] = self.textual_nodes.index
+        self.textual_nodes = self.textual_nodes[["node_id", "node_attr"]]
+        self.textual_edges = DataFrame(self.indexer.get_edge_features(),
+                                       columns=["src", "edge_attr", "dst"])
+        self.textual_edges["src"] = [
+            self.indexer._nodes[h] for h in self.textual_edges["src"]
+        ]
+        self.textual_edges["dst"] = [
+            self.indexer._nodes[h] for h in self.textual_edges["dst"]
+        ]
+        self._retrieve_subgraphs()
 
-        for dataset, path in zip(
-            [datasets['train'], datasets['validation'], datasets['test']],
-                self.processed_paths,
-        ):
-            questions = [example["question"] for example in dataset]
-            question_embs = model.encode(
-                questions,
-                batch_size=256,
-                output_device='cpu',
-            )
-
-            data_list = []
-            for i, example in enumerate(tqdm(dataset)):
-                raw_nodes: Dict[str, int] = {}
-                raw_edges = []
-                for tri in example["graph"]:
-                    h, r, t = tri
-                    h = h.lower()
-                    t = t.lower()
-                    if h not in raw_nodes:
-                        raw_nodes[h] = len(raw_nodes)
-                    if t not in raw_nodes:
-                        raw_nodes[t] = len(raw_nodes)
-                    raw_edges.append({
-                        "src": raw_nodes[h],
-                        "edge_attr": r,
-                        "dst": raw_nodes[t]
-                    })
-                nodes = pd.DataFrame([{
-                    "node_id": v,
-                    "node_attr": k,
-                } for k, v in raw_nodes.items()],
-                                     columns=["node_id", "node_attr"])
-                edges = pd.DataFrame(raw_edges,
-                                     columns=["src", "edge_attr", "dst"])
-
-                nodes.node_attr = nodes.node_attr.fillna("")
-                x = model.encode(
-                    nodes.node_attr.tolist(),
-                    batch_size=256,
-                    output_device='cpu',
-                )
-                edge_attr = model.encode(
-                    edges.edge_attr.tolist(),
-                    batch_size=256,
-                    output_device='cpu',
-                )
-                edge_index = torch.tensor([
-                    edges.src.tolist(),
-                    edges.dst.tolist(),
-                ], dtype=torch.long)
-
-                question = f"Question: {example['question']}\nAnswer: "
-                label = ('|').join(example['answer']).lower()
-                data = Data(
-                    x=x,
-                    edge_index=edge_index,
-                    edge_attr=edge_attr,
-                )
-                if self.use_pcst and len(nodes) > 0 and len(edges) > 0:
-                    data, desc = retrieval_via_pcst(
-                        data,
-                        question_embs[i],
-                        nodes,
-                        edges,
-                    )
-                else:
-                    desc = nodes.to_csv(index=False) + "\n" + edges.to_csv(
-                        index=False,
-                        columns=["src", "edge_attr", "dst"],
-                    )
-
-                data.question = question
-                data.label = label
-                data.desc = desc
-                data_list.append(data)
-
-            self.save(data_list, path)
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
 class WebQSPDataset(KGQABaseDataset):
@@ -269,13 +386,29 @@ class WebQSPDataset(KGQABaseDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
     """
-    def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True) -> None:
+    def __init__(
+        self, root: str, split: str = "train", force_reload: bool = False,
+        verbose: bool = False, use_pcst: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = dict(),
+        retrieval_kwargs: Dict[str, Any] = dict()
+    ) -> None:
+        # Modify these paramters if running into memory/compute issues
+        default_retrieval_kwargs = {
+            'max_batch_size': 250,  # Lower batch size to reduce memory usage
+            'num_workers':
+            None,  # Use all available workers, or set to number of threads
+        }
+        retrieval_kwargs = {**default_retrieval_kwargs, **retrieval_kwargs}
         dataset_name = 'rmanluo/RoG-webqsp'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+        super().__init__(dataset_name, root, split, force_reload, verbose,
+                         use_pcst, load_dataset_kwargs=load_dataset_kwargs,
+                         retrieval_kwargs=retrieval_kwargs)
 
 
 class CWQDataset(KGQABaseDataset):
@@ -290,10 +423,19 @@ class CWQDataset(KGQABaseDataset):
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
+        verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
     """
-    def __init__(self, root: str, split: str = "train",
-                 force_reload: bool = False, use_pcst: bool = True) -> None:
+    def __init__(
+        self, root: str, split: str = "train", force_reload: bool = False,
+        verbose: bool = False, use_pcst: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = dict(),
+        retrieval_kwargs: Dict[str, Any] = dict()
+    ) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
-        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+        super().__init__(dataset_name, root, split, force_reload, verbose,
+                         use_pcst, load_dataset_kwargs=load_dataset_kwargs,
+                         retrieval_kwargs=retrieval_kwargs)
