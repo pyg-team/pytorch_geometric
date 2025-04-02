@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, Dict, Tuple
 
 import torch
 from torch import Tensor
@@ -9,6 +9,8 @@ from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
+from torch_geometric.typing import NodeType, EdgeType
+from torch_geometric.explain import Explanation, HeteroExplanation
 
 
 class GNNExplainer(ExplainerAlgorithm):
@@ -73,16 +75,16 @@ class GNNExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Explanation:
-        if isinstance(x, dict) or isinstance(edge_index, dict):
-            raise ValueError(f"Heterogeneous graphs not yet supported in "
-                             f"'{self.__class__.__name__}'")
+    ) -> Union[Explanation, HeteroExplanation]:
+        if isinstance(x, dict):  # Heterogeneous GNN:
+            assert isinstance(edge_index, dict)
+            return self._forward_hetero(model, x, edge_index, target=target, index=index, **kwargs)
 
         self._train(model, x, edge_index, target=target, index=index, **kwargs)
 
@@ -100,9 +102,45 @@ class GNNExplainer(ExplainerAlgorithm):
         self._clean_model(model)
 
         return Explanation(node_mask=node_mask, edge_mask=edge_mask)
-
+    
     def supports(self) -> bool:
         return True
+
+    def _forward_hetero(
+        self,
+        model: torch.nn.Module,
+        x_dict: Dict[str, Tensor],
+        edge_index_dict: Dict[Tuple[str, str, str], Tensor],
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> HeteroExplanation:
+        self._train_hetero(model, x_dict, edge_index_dict, target=target, index=index, **kwargs)
+
+        node_mask_dict = {}
+        edge_mask_dict = {}
+
+        for node_type, mask in self.node_mask.items():
+            node_mask_dict[node_type] = self._post_process_mask(
+                mask,
+                self.hard_node_mask[node_type],
+                apply_sigmoid=True,
+            )
+
+        for edge_type, mask in self.edge_mask.items():
+            edge_mask_dict[edge_type] = self._post_process_mask(
+                mask,
+                self.hard_edge_mask[edge_type],
+                apply_sigmoid=True,
+            )
+
+        self._clean_model(model)
+
+        explanation = HeteroExplanation()
+        explanation.set_value_dict('node_mask', node_mask_dict)
+        explanation.set_value_dict('edge_mask', edge_mask_dict)
+        return explanation
 
     def _train(
         self,
@@ -157,7 +195,68 @@ class GNNExplainer(ExplainerAlgorithm):
                                      "disable it via `edge_mask_type=None`.")
                 self.hard_edge_mask = self.edge_mask.grad != 0.0
 
-    def _initialize_masks(self, x: Tensor, edge_index: Tensor):
+    def _train_hetero(
+        self,
+        model: torch.nn.Module,
+        x_dict: Dict[str, Tensor],
+        edge_index_dict: Dict[Tuple[str, str, str], Tensor],
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ):
+        self._initialize_masks_hetero(x_dict, edge_index_dict)
+
+        parameters = []
+        for mask in self.node_mask.values():
+            if mask is not None:
+                parameters.append(mask)
+        for mask in self.edge_mask.values():
+            if mask is not None:
+                parameters.append(mask)
+
+        optimizer = torch.optim.Adam(parameters, lr=self.lr)
+
+        for i in range(self.epochs):
+            optimizer.zero_grad()
+
+            h_dict = {}
+            for node_type, x in x_dict.items():
+                if node_type in self.node_mask and self.node_mask[node_type] is not None:
+                    h_dict[node_type] = x * self.node_mask[node_type].sigmoid()
+                else:
+                    h_dict[node_type] = x
+
+            y_hat, y = model(h_dict, edge_index_dict, **kwargs), target
+
+            if index is not None:
+                y_hat, y = y_hat[index], y[index]
+
+            loss = self._loss_hetero(y_hat, y)
+
+            loss.backward()
+            optimizer.step()
+
+            # In the first iteration, we collect the nodes and edges that are
+            # involved into making the prediction.
+            if i == 0:
+                for node_type, mask in self.node_mask.items():
+                    if mask is not None and mask.grad is not None:
+                        self.hard_node_mask[node_type] = mask.grad != 0.0
+                    else:
+                        self.hard_node_mask[node_type] = None
+
+                for edge_type, mask in self.edge_mask.items():
+                    if mask is not None and mask.grad is not None:
+                        self.hard_edge_mask[edge_type] = mask.grad != 0.0
+                    else:
+                        self.hard_edge_mask[edge_type] = None
+
+    def _initialize_masks(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+    ):
         node_mask_type = self.explainer_config.node_mask_type
         edge_mask_type = self.explainer_config.edge_mask_type
 
@@ -183,6 +282,54 @@ class GNNExplainer(ExplainerAlgorithm):
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
         else:
             assert False
+
+    def _initialize_masks_hetero(
+        self,
+        x_dict: Dict[str, Tensor],
+        edge_index_dict: Dict[Tuple[str, str, str], Tensor],
+    ):
+        node_mask_type = self.explainer_config.node_mask_type
+        edge_mask_type = self.explainer_config.edge_mask_type
+
+        self.node_mask = {}
+        self.hard_node_mask = {}
+        self.edge_mask = {}
+        self.hard_edge_mask = {}
+
+        for node_type, x in x_dict.items():
+            device = x.device
+            N, F = x.size()
+
+            std = 0.1
+            if node_mask_type is None:
+                self.node_mask[node_type] = None
+                self.hard_node_mask[node_type] = None
+            elif node_mask_type == MaskType.object:
+                self.node_mask[node_type] = Parameter(torch.randn(N, 1, device=device) * std)
+                self.hard_node_mask[node_type] = None
+            elif node_mask_type == MaskType.attributes:
+                self.node_mask[node_type] = Parameter(torch.randn(N, F, device=device) * std)
+                self.hard_node_mask[node_type] = None
+            elif node_mask_type == MaskType.common_attributes:
+                self.node_mask[node_type] = Parameter(torch.randn(1, F, device=device) * std)
+                self.hard_node_mask[node_type] = None
+            else:
+                assert False
+
+        for edge_type, edge_index in edge_index_dict.items():
+            device = edge_index.device
+            E = edge_index.size(1)
+            N = max(edge_index.max().item() + 1, max(x.size(0) for x in x_dict.values()))
+
+            if edge_mask_type is None:
+                self.edge_mask[edge_type] = None
+                self.hard_edge_mask[edge_type] = None
+            elif edge_mask_type == MaskType.object:
+                std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
+                self.edge_mask[edge_type] = Parameter(torch.randn(E, device=device) * std)
+                self.hard_edge_mask[edge_type] = None
+            else:
+                assert False
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:
@@ -211,6 +358,40 @@ class GNNExplainer(ExplainerAlgorithm):
             ent = -m * torch.log(m + self.coeffs['EPS']) - (
                 1 - m) * torch.log(1 - m + self.coeffs['EPS'])
             loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
+
+        return loss
+
+    def _loss_hetero(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        if self.model_config.mode == ModelMode.binary_classification:
+            loss = self._loss_binary_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.multiclass_classification:
+            loss = self._loss_multiclass_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.regression:
+            loss = self._loss_regression(y_hat, y)
+        else:
+            assert False
+
+        # Handle edge masks for each edge type
+        for edge_type in self.edge_mask:
+            if (self.hard_edge_mask is not None and self.hard_edge_mask[edge_type] is not None 
+                and self.edge_mask[edge_type] is not None):
+                m = self.edge_mask[edge_type][self.hard_edge_mask[edge_type]].sigmoid()
+                edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
+                loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
+                ent = -m * torch.log(m + self.coeffs['EPS']) - (
+                    1 - m) * torch.log(1 - m + self.coeffs['EPS'])
+                loss = loss + self.coeffs['edge_ent'] * ent.mean()
+
+        # Handle node masks for each node type
+        for node_type in self.node_mask:
+            if (self.hard_node_mask is not None and self.hard_node_mask[node_type] is not None 
+                and self.node_mask[node_type] is not None):
+                m = self.node_mask[node_type][self.hard_node_mask[node_type]].sigmoid()
+                node_reduce = getattr(torch, self.coeffs['node_feat_reduction'])
+                loss = loss + self.coeffs['node_feat_size'] * node_reduce(m)
+                ent = -m * torch.log(m + self.coeffs['EPS']) - (
+                    1 - m) * torch.log(1 - m + self.coeffs['EPS'])
+                loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
 
         return loss
 
