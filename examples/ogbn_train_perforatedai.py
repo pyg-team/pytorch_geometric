@@ -148,6 +148,17 @@ a raw value of 1e-4 to conclude that the correlation scores have gone up.
 PBG.pbImprovementThreshold = 0.25
 PBG.pbImprovementThresholdRaw = 1e-4
 
+'''
+This setting defaults to True to ensure that adding dendrites has been
+tested before starting a full training run.
+'''
+PBG.testingDendriteCapacity = False
+
+'''
+Weight decay tends to negatively impact Dendrite learning.  This turns off
+the warning to consider trying an optimizer without it.
+'''
+PBG.weightDecayAccepted = True
 
 
 wall_clock_start = time.perf_counter()
@@ -314,20 +325,8 @@ model.reset_parameters()
 
 # This is the main PAI function that converts everything under the hood
 # to allow for the addition of dendrites
-model = PBU.convertNetwork(model)
-'''
-This initializes the Perforated Backpropagation Tracker object which
-organizes communication between each individual Dendrite convereted
-module within a full network
-'''
+model = PBU.initializePB(model)
 
-
-PBG.pbTracker.initialize(
-    doingPB=True,  # Can set to False if you want to do just normal training
-    saveName=args.
-    saveName,  # Change the save name for different parameter runs
-    maximizingScore=True,  # True for max score, False for min loss
-    makingGraphs=True)  # True if you want graphs to be saved
 '''
 # This can be added to pick up where it left off if something crashes.
 print('pre loading')
@@ -399,8 +398,8 @@ while True:
     trainingComplete - if the tracker has determined that this is the final
     model to use
     '''
-    outputs = PBG.pbTracker.addValidationScore(val_acc, model, args.saveName)
-    model, improved, restructured, trainingComplete = outputs
+    outputs = PBG.pbTracker.addValidationScore(val_acc, model)
+    model, restructured, trainingComplete = outputs
     # Need to setup GPU settings of the new model
     model = model.to(device)
     # When training is complete break the loop of epochs
