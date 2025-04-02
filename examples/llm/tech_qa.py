@@ -361,7 +361,7 @@ def train(args, data_lists):
                         its complicated since we have Huggingface `accelerate`
                         doing multigpu setup but we wana fall back to cpu and
                         then comeback to multigpu since most inputs dont trigger this.
-                        Just skipping for now. 
+                        Just skipping for now.
                         """
                         # note for Zack: this will also handle the case where we need bidirectional sampling since KNN only returned DST nodes.
                         # but we wana fix the underlying issue, this skip is just a workaround for now.
