@@ -47,9 +47,9 @@ class NeighborSampler(BaseSampler):
         weight_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
-        sample_direction: Literal['forward', 'backward'] = 'forward',
         # Deprecated:
         directed: bool = True,
+        sample_direction: Literal['forward', 'backward'] = 'forward',
     ):
         if not directed:
             subgraph_type = SubgraphType.induced
@@ -65,6 +65,7 @@ class NeighborSampler(BaseSampler):
                           f"accelerated neighborhood sampling")
 
         self.data_type = DataType.from_data(data)
+        self.sample_direction = sample_direction
 
         if self.data_type == DataType.homogeneous:
             self.num_nodes = data.num_nodes
@@ -87,7 +88,7 @@ class NeighborSampler(BaseSampler):
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, src_node_time=self.node_time,
                 edge_time=self.edge_time,
-                to_transpose=sample_direction == 'backward')
+                to_transpose=self.sample_direction == 'backward')
 
             if self.edge_time is not None and self.perm is not None:
                 self.edge_time = self.edge_time[self.perm]
@@ -222,9 +223,9 @@ class NeighborSampler(BaseSampler):
                     else:
                         self.edge_time = time_tensor
 
-                if sample_direction == 'forward':
+                if self.sample_direction == 'forward':
                     self.row, self.colptr, self.perm = graph_store.csc()
-                elif sample_direction == 'backward':
+                elif self.sample_direction == 'backward':
                     self.colptr, self.row, self.perm = graph_store.csr()
 
             else:
@@ -265,9 +266,9 @@ class NeighborSampler(BaseSampler):
                 # Conversion to/from C++ string type (see above):
                 self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
                 self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
-                if sample_direction == 'forward':
+                if self.sample_direction == 'forward':
                     row_dict, colptr_dict, self.perm = graph_store.csc()
-                elif sample_direction == 'backward':
+                elif self.sample_direction == 'backward':
                     colptr_dict, row_dict, self.perm = graph_store.csr()
                 self.row_dict = remap_keys(row_dict, self.to_rel_type)
                 self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
