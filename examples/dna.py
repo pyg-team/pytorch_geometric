@@ -1,11 +1,16 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
 from sklearn.model_selection import StratifiedKFold
 
+from torch_geometric import seed_everything
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import DNAConv
+
+wall_clock_start = time.perf_counter()
+seed_everything(123)
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -68,6 +73,7 @@ else:
 model = Net(in_channels=dataset.num_features, hidden_channels=128,
             out_channels=dataset.num_classes, num_layers=5, heads=8, groups=16)
 model, data = model.to(device), data.to(device)
+model.reset_parameters()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.0005)
 
 
@@ -91,8 +97,13 @@ def test():
     return accs
 
 
+print(f'Total time before training begins took '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')
+print('Training...')
+times = []
 best_val_acc = test_acc = 0
 for epoch in range(1, 201):
+    start = time.perf_counter()
     train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
@@ -100,3 +111,11 @@ for epoch in range(1, 201):
         test_acc = tmp_test_acc
     print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, '
           f'Val: {best_val_acc:.4f}, Test: {test_acc:.4f}')
+    times.append(time.perf_counter() - start)
+
+print(f'Average Epoch Time: {torch.tensor(times).mean():.4f}s')
+print(f'Median Epoch Time: {torch.tensor(times).median():.4f}s')
+print(f'Best Validation Accuracy: {100.0 * best_val_acc:.2f}%')
+print(f'Test Accuracy: {100.0 * test_acc:.2f}%')
+print(f'Total Program Runtime: '
+      f'{time.perf_counter() - wall_clock_start:.4f}s')

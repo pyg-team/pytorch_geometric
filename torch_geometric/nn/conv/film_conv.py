@@ -34,7 +34,7 @@ class FiLMConv(MessagePassing):
 
     .. note::
 
-        For an example of using FiLM, see `examples/gcn.py
+        For an example of using FiLM, see `examples/film.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         film.py>`_.
 
