@@ -4,6 +4,7 @@ from typing import List, Optional, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+from tqdm import tqdm
 
 
 class PoolingStrategy(Enum):
@@ -88,6 +89,7 @@ class SentenceTransformer(torch.nn.Module):
         text: List[str],
         batch_size: Optional[int] = None,
         output_device: Optional[Union[torch.device, str]] = None,
+        verbose=False,
     ) -> Tensor:
         is_empty = len(text) == 0
         text = ['dummy'] if is_empty else text
@@ -95,20 +97,37 @@ class SentenceTransformer(torch.nn.Module):
         batch_size = len(text) if batch_size is None else batch_size
 
         embs: List[Tensor] = []
-        for start in range(0, len(text), batch_size):
+        loader = range(0, len(text), batch_size)
+        if verbose:
+            loader = tqdm(
+                loader, desc="Encoding " + str(len(text)) +
+                " strings w/ SentenceTransformer")
+        for start in loader:
             token = self.tokenizer(
                 text[start:start + batch_size],
                 padding=True,
                 truncation=True,
                 return_tensors='pt',
             )
+            try:
+                emb = self(
+                    input_ids=token.input_ids.to(self.device),
+                    attention_mask=token.attention_mask.to(self.device),
+                ).to(output_device)
 
-            emb = self(
-                input_ids=token.input_ids.to(self.device),
-                attention_mask=token.attention_mask.to(self.device),
-            ).to(output_device)
+                embs.append(emb)
+            except:
+                # fallback to using CPU for huge strings that cause OOMs
+                print("Sentence Transformer failed on cuda, trying w/ cpu...")
+                previous_device = self.device
+                self.model = self.model.to("cpu")
+                emb = self(
+                    input_ids=token.input_ids.to(self.device),
+                    attention_mask=token.attention_mask.to(self.device),
+                ).to(output_device)
 
-            embs.append(emb)
+                embs.append(emb)
+                self.model = self.model.to(previous_device)
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out
