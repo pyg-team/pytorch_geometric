@@ -93,10 +93,11 @@ def parse_args():
     parser.add_argument(
         '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
         choices=["frozen", "lora",
-                 "full"], help="Wether to freeze the Generator LLM,\
+                 "full"], help="Whether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
     parser.add_argument('--dont_save_model', action="store_true",
-                        help="Wether to skip model saving.")
+                        help="Whether to skip model saving.")
+    parser.add_argument('--checkpointing', action="store_true")
     return parser.parse_args()
 
 
@@ -171,11 +172,32 @@ def make_dataset(args):
             print(
                 "Note that if the TXT2KG process is too slow for you're liking using the public NIM, consider deploying yourself using local_lm flag of TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct?snippet_tab=Docker to deploy to a private endpoint, which you can pass to this script w/ --ENDPOINT_URL flag."
             )  # noqa
-            for context_doc in tqdm(context_docs,
+            total_tqdm_count = len(context_docs)
+            initial_tqdm_count = 0
+            if os.path.exists("checkpoint_kg.pt"):
+                print("Restoring KG from checkpoint...")
+                saved_relevant_triples = torch.load("checkpoint_kg.pt",
+                                                    weights_only=False)
+                kg_maker.relevant_triples = saved_relevant_triples
+                kg_maker.doc_id_counter = len(saved_relevant_triples)
+                initial_tqdm_count = kg_maker.doc_id_counter
+                context_docs = context_docs[(kg_maker.doc_id_counter - 1):]
+
+            if args.checkpointing:
+                interval = 10
+                count = 0
+            for context_doc in tqdm(context_docs, total=total_tqdm_count,
+                                    initial=initial_tqdm_count,
                                     desc="Extracting KG triples"):
                 kg_maker.add_doc_2_KG(txt=context_doc)
-
+                if args.checkpointing:
+                    count += 1
+                    if count == interval:
+                        print(" checkpointing KG...")
+                        count = 0
+                        kg_maker.save_kg("checkpoint_kg.pt")
             relevant_triples = kg_maker.relevant_triples
+
             triples.extend(
                 list(
                     chain.from_iterable(
@@ -183,6 +205,9 @@ def make_dataset(args):
                         for triple_set in relevant_triples.values())))
             triples = list(dict.fromkeys(triples))
             torch.save(triples, "tech_qa_just_triples.pt")
+            if args.checkpointing and os.path.exists("checkpoint_kg.pt"):
+                os.remove("checkpoint_kg.pt")
+
         print("Number of triples in our GraphDB =", len(triples))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         sent_trans_batch_size = 256
