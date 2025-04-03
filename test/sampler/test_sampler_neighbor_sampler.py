@@ -100,10 +100,17 @@ def test_homogeneous_neighbor_sampler_basic(input_type):
     node_sampler_input = NodeSamplerInput(input_id=None,
                                           node=torch.tensor([1]))
     expected_output = SamplerOutput(
-        node=torch.tensor([1, 0]), row=torch.tensor([1]),
-        col=torch.tensor([0]), edge=torch.tensor([0]), batch=None,
-        num_sampled_nodes=[1, 1], num_sampled_edges=[1], orig_row=None,
-        orig_col=None, metadata=(None, None))
+        node=torch.tensor([1, 0]),
+        row=torch.tensor([0]),
+        col=torch.tensor([1]),
+        edge=torch.tensor([0]),
+        batch=None,
+        num_sampled_nodes=[1, 1],
+        num_sampled_edges=[1],
+        orig_row=None,
+        orig_col=None,
+        metadata=(None, None)
+    )
     sampler = NeighborSampler(**sampler_kwargs)
     sampler_output = sampler.sample_from_nodes(node_sampler_input)
     assert str(sampler_output) == str(expected_output)
@@ -141,12 +148,10 @@ def test_heterogeneous_neighbor_sampler_basic(input_type):
                                           input_type="person")
     sampler = NeighborSampler(**sampler_kwargs)
     sampler_output = sampler.sample_from_nodes(node_sampler_input)
-    assert set(sampler_output.node['person'].tolist()) == {1, 0}
-    assert sampler_output.row[('person', 'works_with',
-                               'person')] == torch.tensor([1])
+    assert set(sampler_output.node['person'].tolist()) == set([1, 0])
+    assert sampler_output.row[('person', 'works_with', 'person')] == torch.tensor([0])
     assert sampler_output.row[('person', 'leads', 'person')].numel() == 0
-    assert sampler_output.col[('person', 'works_with',
-                               'person')] == torch.tensor([0])
+    assert sampler_output.col[('person', 'works_with', 'person')] == torch.tensor([1])
     assert sampler_output.col[('person', 'leads', 'person')].numel() == 0
     assert sampler_output.edge[('person', 'works_with',
                                 'person')] == torch.tensor([0])
@@ -219,19 +224,15 @@ def test_homogeneous_neighbor_sampler_backwards(input_type):
     reverse_backward_sampler_output = reverse_backward_sampler.sample_from_nodes(
         node_sampler_input)
 
-    assert torch.equal(sampler_output.node,
-                       reverse_backward_sampler_output.node)
-    assert torch.equal(sampler_output.row, reverse_backward_sampler_output.row)
-    assert torch.equal(sampler_output.col, reverse_backward_sampler_output.col)
-    assert torch.equal(sampler_output.edge,
-                       reverse_backward_sampler_output.edge)
+    assert torch.equal(sampler_output.node, reverse_backward_sampler_output.node)
+    assert torch.equal(sampler_output.row, reverse_backward_sampler_output.col)
+    assert torch.equal(sampler_output.col, reverse_backward_sampler_output.row)
+    assert torch.equal(sampler_output.edge, reverse_backward_sampler_output.edge)
 
-    assert torch.equal(backward_sampler_output.node,
-                       reverse_sampler_output.node)
-    assert torch.equal(backward_sampler_output.row, reverse_sampler_output.row)
-    assert torch.equal(backward_sampler_output.col, reverse_sampler_output.col)
-    assert torch.equal(backward_sampler_output.edge,
-                       reverse_sampler_output.edge)
+    assert torch.equal(backward_sampler_output.node, reverse_sampler_output.node)
+    assert torch.equal(backward_sampler_output.row, reverse_sampler_output.col)
+    assert torch.equal(backward_sampler_output.col, reverse_sampler_output.row)
+    assert torch.equal(backward_sampler_output.edge, reverse_sampler_output.edge)
 
 
 @onlyNeighborSampler
@@ -303,21 +304,14 @@ def test_heterogeneous_neighbor_sampler_backwards(input_type):
     assert reverse_sampler_output.row.keys(
     ) == backward_sampler_output.row.keys()
     for key in sampler_output.row.keys():
-        assert torch.equal(sampler_output.row[key],
-                           reverse_backward_sampler_output.row[key])
-        assert torch.equal(sampler_output.col[key],
-                           reverse_backward_sampler_output.col[key])
-        assert torch.equal(sampler_output.edge[key],
-                           reverse_backward_sampler_output.edge[key])
+        assert torch.equal(sampler_output.row[key], reverse_backward_sampler_output.col[key])
+        assert torch.equal(sampler_output.col[key], reverse_backward_sampler_output.row[key])
+        assert torch.equal(sampler_output.edge[key], reverse_backward_sampler_output.edge[key])
     for key in reverse_sampler_output.row.keys():
-        assert torch.equal(reverse_sampler_output.row[key],
-                           backward_sampler_output.row[key])
-        assert torch.equal(reverse_sampler_output.col[key],
-                           backward_sampler_output.col[key])
-        assert torch.equal(reverse_sampler_output.edge[key],
-                           backward_sampler_output.edge[key])
-
-
+        assert torch.equal(reverse_sampler_output.row[key], backward_sampler_output.col[key])
+        assert torch.equal(reverse_sampler_output.col[key], backward_sampler_output.row[key])
+        assert torch.equal(reverse_sampler_output.edge[key], backward_sampler_output.edge[key])
+    
 @onlyNeighborSampler
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
 def test_bidirectional_neighbor_sampler(input_type):
