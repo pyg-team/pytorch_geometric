@@ -86,7 +86,8 @@ class NeighborSampler(BaseSampler):
             self.colptr, self.row, self.perm = to_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, src_node_time=self.node_time,
-                edge_time=self.edge_time, to_transpose=sample_direction == 'backward')
+                edge_time=self.edge_time,
+                to_transpose=sample_direction == 'backward')
 
             if self.edge_time is not None and self.perm is not None:
                 self.edge_time = self.edge_time[self.perm]
@@ -140,7 +141,8 @@ class NeighborSampler(BaseSampler):
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time,
-                edge_time_dict=self.edge_time, to_transpose=sample_direction == 'backward')
+                edge_time_dict=self.edge_time,
+                to_transpose=sample_direction == 'backward')
 
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
@@ -326,6 +328,10 @@ class NeighborSampler(BaseSampler):
         inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = node_sample(inputs, self._sample)
+        if self.sample_direction == 'backward':
+            row, col = out.row, out.col
+            out.row = col
+            out.col = row
         if self.subgraph_type == SubgraphType.bidirectional:
             out = out.to_bidirectional()
         return out
@@ -339,6 +345,10 @@ class NeighborSampler(BaseSampler):
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
                           self.node_time, neg_sampling)
+        if self.sample_direction == 'backward':
+            row, col = out.row, out.col
+            out.row = col
+            out.col = row
         if self.subgraph_type == SubgraphType.bidirectional:
             out = out.to_bidirectional()
         return out
@@ -524,8 +534,10 @@ class NeighborSampler(BaseSampler):
                 num_sampled_edges=num_sampled_edges,
             )
 
+
 class BidirectionalNeighborSampler(BaseSampler):
     """A sampler that allows for both upstream and downstream sampling."""
+
     # NOTE: Designed to have the same interface as `NeighborSampler`
     def __init__(
         self,
@@ -547,19 +559,25 @@ class BidirectionalNeighborSampler(BaseSampler):
         if num_backward_neighbors is None:
             num_backward_neighbors = num_neighbors
 
-        self.forward_sampler = NeighborSampler(data, num_neighbors, subgraph_type, replace, disjoint, temporal_strategy, time_attr, weight_attr, is_sorted, share_memory, sample_direction='forward', directed=directed)
-        self.backward_sampler = NeighborSampler(data, num_backward_neighbors, subgraph_type, replace, disjoint, temporal_strategy, time_attr, weight_attr, is_sorted, share_memory, sample_direction='backward', directed=directed)
-    
+        self.forward_sampler = NeighborSampler(
+            data, num_neighbors, subgraph_type, replace, disjoint,
+            temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
+            sample_direction='forward', directed=directed)
+        self.backward_sampler = NeighborSampler(
+            data, num_backward_neighbors, subgraph_type, replace, disjoint,
+            temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
+            sample_direction='backward', directed=directed)
+
     @property
     def num_neighbors(self) -> NumNeighbors:
         return self.forward_sampler.num_neighbors
-    
+
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
         self.forward_sampler.num_neighbors = num_neighbors
         if not self.backward_neighbors_explicitly_set:
             self.backward_sampler.num_neighbors = num_neighbors
-    
+
     @property
     def num_backward_neighbors(self) -> NumNeighbors:
         return self.backward_sampler.num_neighbors
@@ -568,23 +586,24 @@ class BidirectionalNeighborSampler(BaseSampler):
     def num_backward_neighbors(self, num_neighbors: NumNeighborsType):
         self.backward_sampler.num_neighbors = num_neighbors
         self.backward_neighbors_explicitly_set = True
+
     @property
     def is_hetero(self) -> bool:
         return self.forward_sampler.is_hetero
-    
+
     @property
     def is_temporal(self) -> bool:
         return self.forward_sampler.is_temporal
-    
+
     @property
     def disjoint(self) -> bool:
         return self.forward_sampler.disjoint
-        
+
     @disjoint.setter
     def disjoint(self, disjoint: bool):
         self.forward_sampler.disjoint = disjoint
         self.backward_sampler.disjoint = disjoint
-        
+
     def sample_from_nodes(
         self,
         inputs: NodeSamplerInput,
@@ -593,25 +612,24 @@ class BidirectionalNeighborSampler(BaseSampler):
         backward_out = self.backward_sampler.sample_from_nodes(inputs)
         out = forward_out.merge_with(backward_out)
         return out
-    
+
     def sample_from_edges(
         self,
         inputs: EdgeSamplerInput,
         neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        forward_out = self.forward_sampler.sample_from_edges(inputs, neg_sampling)
-        backward_out = self.backward_sampler.sample_from_edges(inputs, neg_sampling)
+        forward_out = self.forward_sampler.sample_from_edges(
+            inputs, neg_sampling)
+        backward_out = self.backward_sampler.sample_from_edges(
+            inputs, neg_sampling)
 
         return forward_out.merge_with(backward_out)
- 
+
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
         return self.forward_sampler.edge_permutation
-        
-        
-        
-        
-        
+
+
 # Sampling Utilities ##########################################################
 
 
