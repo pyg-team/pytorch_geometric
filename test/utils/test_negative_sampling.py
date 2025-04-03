@@ -77,6 +77,16 @@ def test_negative_sampling():
     assert neg_edge_index.size(1) == 2
     assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
 
+    # Test with float multiplier less than 1
+    neg_edge_index = negative_sampling(edge_index, num_neg_samples=0.5)
+    assert neg_edge_index.size(1) == 2  # 50% of 4 edges = 2 edges
+    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
+
+    # Test with float multiplier greater than 1
+    neg_edge_index = negative_sampling(edge_index, num_neg_samples=1.5)
+    assert neg_edge_index.size(1) == 6  # 150% of 4 edges = 6 edges
+    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
+
     edge_index = to_undirected(edge_index)
     neg_edge_index = negative_sampling(edge_index, force_undirected=True)
     assert neg_edge_index.size(1) == edge_index.size(1) - 1
@@ -104,6 +114,16 @@ def test_batched_negative_sampling():
 
     neg_edge_index = batched_negative_sampling(edge_index, batch)
     assert neg_edge_index.size(1) <= edge_index.size(1)
+
+    # Test with float multiplier less than 1
+    neg_edge_index = batched_negative_sampling(edge_index, batch,
+                                               num_neg_samples=0.5)
+    assert neg_edge_index.size(1) <= 4  # 50% of 8 edges = 4 edges
+
+    # Test with float multiplier greater than 1
+    neg_edge_index = batched_negative_sampling(edge_index, batch,
+                                               num_neg_samples=1.5)
+    assert neg_edge_index.size(1) <= 12  # 150% of 8 edges = 12 edges
 
     adj = torch.zeros(8, 8, dtype=torch.bool)
     adj[edge_index[0], edge_index[1]] = True
