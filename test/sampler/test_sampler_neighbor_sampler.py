@@ -305,8 +305,8 @@ def test_bidirectional_neighbor_sampler(input_type):
 
     expected_output = SamplerOutput(
         node=torch.tensor([0, 2, 3]),           # Union between forward and backward nodes
-        row=torch.tensor([1, 1]),               # Union between forward and backward edges
-        col=torch.tensor([0, 0]),               # Union between forward and backward edges
+        row=torch.tensor([0, 2]),               # Union between forward and backward edges
+        col=torch.tensor([2, 3]),               # Union between forward and backward edges
         edge=torch.tensor([1, 2]),              # Union between forward and backward edges
         batch=None,                             # Will be part of node uid if disjoint=True
         num_sampled_nodes=[1,1,0,1],            # nodes are only counted on their first sample
