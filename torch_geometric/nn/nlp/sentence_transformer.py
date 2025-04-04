@@ -32,6 +32,8 @@ class SentenceTransformer(torch.nn.Module):
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
+        # Maximum sequence length from the model configuration (e.g. 8192 for
+        # models like ModernBERT)
         self.max_seq_length = self.model.config.max_position_embeddings
 
     def forward(self, input_ids: Tensor, attention_mask: Tensor) -> Tensor:
