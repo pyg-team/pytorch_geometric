@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.explain import Explainer, GNNExplainer
+from torch_geometric.explain import Explainer, GNNExplainer, HeteroExplanation
 from torch_geometric.explain.config import (
     ExplanationType,
     MaskType,
@@ -312,7 +312,7 @@ def test_gnn_explainer_hetero(
     index,
     hetero_data,
     hetero_model,
-    check_explanation,
+    check_explanation_hetero,
 ):
     if node_mask_type is None and edge_mask_type is None:
         return
@@ -324,12 +324,13 @@ def test_gnn_explainer_hetero(
     )
 
     metadata = hetero_data.metadata()
-    model = hetero_model(metadata)
+    model = hetero_model(metadata, model_config)
 
     target = None
     if explanation_type == ExplanationType.phenomenon:
         with torch.no_grad():
-            target = model(hetero_data.x_dict, hetero_data.edge_index_dict).argmax(-1)
+            target = model(hetero_data.x_dict,
+                           hetero_data.edge_index_dict).argmax(-1)
 
     explainer = Explainer(
         model=model,
@@ -347,4 +348,6 @@ def test_gnn_explainer_hetero(
         index=index,
     )
 
-    explanation.validate(raise_on_error=True)
+    assert isinstance(explanation, HeteroExplanation)
+    check_explanation_hetero(explanation, node_mask_type, edge_mask_type,
+                             hetero_data)

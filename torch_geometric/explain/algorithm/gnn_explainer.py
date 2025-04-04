@@ -337,10 +337,8 @@ class GNNExplainer(ExplainerAlgorithm):
 
     def _collect_gradients(self):
         if self.is_hetero:
-            # Collect gradients for heterogeneous graph
             self._collect_hetero_gradients()
         else:
-            # Collect gradients for homogeneous graph
             self._collect_homo_gradients()
 
     def _collect_hetero_gradients(self):
