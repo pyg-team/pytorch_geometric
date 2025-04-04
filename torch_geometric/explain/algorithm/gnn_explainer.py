@@ -528,7 +528,6 @@ class GNNExplainer(ExplainerAlgorithm):
         clear_masks(model)
         self.node_mask = self.hard_node_mask = None
         self.edge_mask = self.hard_edge_mask = None
-        self.is_hetero = False
 
 
 class GNNExplainer_:
