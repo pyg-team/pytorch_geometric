@@ -101,10 +101,14 @@ def from_rdmol(mol: Any) -> 'torch_geometric.data.Data':
         row.append(x_map['num_radical_electrons'].index(
             atom.GetNumRadicalElectrons()))
         if str(atom.GetHybridization()) in x_map['hybridization']:
-            row.append(x_map['hybridization'].index(str(atom.GetHybridization())))
+            row.append(x_map['hybridization'].index(
+                str(atom.GetHybridization())))
         else:
-            print('atom of hybridization type '+str(atom.GetHybridization())+' being classified as UNSPECIFIED')  #avoid errors with hybridizations not definied by x_map but still identified by rdkit (at least SP2D is an example)
-            row.append(x_map['hybridization'].index(str('UNSPECIFIED')))
+            print(
+                'atom of hybridization type ' + str(atom.GetHybridization()) +
+                ' being classified as UNSPECIFIED'
+            )  #avoid errors with hybridizations not definied by x_map but still identified by rdkit (at least SP2D is an example)
+            row.append(x_map['hybridization'].index('UNSPECIFIED'))
         row.append(x_map['is_aromatic'].index(atom.GetIsAromatic()))
         row.append(x_map['is_in_ring'].index(atom.IsInRing()))
         xs.append(row)
