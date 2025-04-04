@@ -1,17 +1,13 @@
 import logging
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 import torch
 from torch import Tensor
 from torch.nn import ReLU, Sequential
 
-from torch_geometric.explain import Explanation, HeteroExplanation
+from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.algorithm.utils import (
-    clear_masks,
-    set_hetero_masks,
-    set_masks,
-)
+from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import (
     ExplanationType,
     ModelMode,
@@ -19,9 +15,7 @@ from torch_geometric.explain.config import (
 )
 from torch_geometric.nn import Linear
 from torch_geometric.nn.inits import reset
-from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import get_embeddings
-from torch_geometric.utils.embedding import get_hetero_embeddings
 
 
 class PGExplainer(ExplainerAlgorithm):
@@ -81,9 +75,6 @@ class PGExplainer(ExplainerAlgorithm):
         )
         self.optimizer = torch.optim.Adam(self.mlp.parameters(), lr=lr)
         self._curr_epoch = -1
-        self.is_hetero = False
-        self.edge_mask_dict = None
-        self.hard_edge_mask_dict = None
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -93,8 +84,8 @@ class PGExplainer(ExplainerAlgorithm):
         self,
         epoch: int,
         model: torch.nn.Module,
-        x: Union[Tensor, Dict[NodeType, Tensor]],
-        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        x: Tensor,
+        edge_index: Tensor,
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
@@ -106,10 +97,10 @@ class PGExplainer(ExplainerAlgorithm):
         Args:
             epoch (int): The current epoch of the training phase.
             model (torch.nn.Module): The model to explain.
-            x (torch.Tensor or dict): The input node features of a
-                homogeneous or heterogeneous graph.
-            edge_index (torch.Tensor or dict): The input edge indices of a
-                homogeneous or heterogeneous graph.
+            x (torch.Tensor): The input node features of a
+                homogeneous graph.
+            edge_index (torch.Tensor): The input edge indices of a homogeneous
+                graph.
             target (torch.Tensor): The target of the model.
             index (int or torch.Tensor, optional): The index of the model
                 output to explain. Needs to be a single index.
@@ -117,9 +108,9 @@ class PGExplainer(ExplainerAlgorithm):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
-        if isinstance(x, dict):
-            assert isinstance(edge_index, dict)
-            self.is_hetero = True
+        if isinstance(x, dict) or isinstance(edge_index, dict):
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
 
         if self.model_config.task_level == ModelTaskLevel.node:
             if index is None:
@@ -130,112 +121,30 @@ class PGExplainer(ExplainerAlgorithm):
                 raise ValueError(f"Only scalars are supported for the 'index' "
                                  f"argument in '{self.__class__.__name__}'")
 
-        # Get embeddings
-        if self.is_hetero:
-            # For heterogeneous graphs, use get_hetero_embeddings to get embeddings by node type
-            # import pdb; pdb.set_trace()
-            z_dict = get_hetero_embeddings(model, x, edge_index, **kwargs)
-            # Use the last layer embeddings for each node type
-            # import pdb; pdb.set_trace()
-            z_last_dict = {
-                node_type: embs[-1]
-                for node_type, embs in z_dict.items() if embs
-            }
-        else:
-            # For homogeneous graphs, use the original get_embeddings
-            z = get_embeddings(model, x, edge_index, **kwargs)[-1]
+        z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
         self.optimizer.zero_grad()
         temperature = self._get_temperature(epoch)
 
-        if self.is_hetero:
-            # Process each edge type separately
-            self.edge_mask_dict = {}
+        inputs = self._get_inputs(z, edge_index, index)
+        logits = self.mlp(inputs).view(-1)
+        edge_mask = self._concrete_sample(logits, temperature)
+        set_masks(model, edge_mask, edge_index, apply_sigmoid=True)
 
-            # Apply masks for each edge type
-            for edge_type, indices in edge_index.items():
-                # Generate inputs for each edge type using node embeddings
-                src_type, _, dst_type = edge_type
+        if self.model_config.task_level == ModelTaskLevel.node:
+            _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
+                                                     num_nodes=x.size(0))
+            edge_mask = edge_mask[hard_edge_mask]
 
-                # Get node embeddings for this edge type
-                src_emb = z_last_dict[src_type]
-                dst_emb = z_last_dict[dst_type]
+        y_hat, y = model(x, edge_index, **kwargs), target
 
-                zs = [src_emb[indices[0]], dst_emb[indices[1]]]
-
-                # If this is a node-level explanation, include target node embedding
-                if self.model_config.task_level == ModelTaskLevel.node:
-                    # For node-level tasks in heterogeneous graphs, we need to know which node type
-                    # the index refers to. There are several ways to determine this:
-                    if not hasattr(self, 'target_node_type'):
-                        # First, check if any destination node type has the target index
-                        potential_types = []
-                        for node_type, features in x.items():
-                            if index < features.size(0):
-                                potential_types.append(node_type)
-
-                        # If we found possible types, use the first one
-                        if potential_types:
-                            self.target_node_type = potential_types[0]
-                        # Otherwise, use the first node type as fallback
-                        else:
-                            self.target_node_type = list(x.keys())[0]
-
-                    # Get embedding for the target node (with safety check)
-                    target_emb_tensor = z_last_dict[self.target_node_type]
-                    safe_index = min(index, target_emb_tensor.size(0) - 1)
-                    target_emb = target_emb_tensor[safe_index]
-                    zs.append(
-                        target_emb.view(1, -1).expand(indices.size(1), -1))
-
-                # Concatenate the embeddings
-                inputs = torch.cat(zs, dim=-1)
-
-                # Get edge mask logits
-                logits = self.mlp(inputs).view(-1)
-                edge_mask = self._concrete_sample(logits, temperature)
-
-                # Set masks for current edge type
-                self.edge_mask_dict[edge_type] = edge_mask
-
-            # Apply all masks at once using set_hetero_masks
-            set_hetero_masks(model, self.edge_mask_dict, edge_index,
-                             apply_sigmoid=True)
-
-            # Forward pass with all masks applied
-            y_hat = model(x, edge_index, **kwargs)
-        else:
-            # Process homogeneous graph
-            inputs = self._get_inputs(z, edge_index, index)
-            logits = self.mlp(inputs).view(-1)
-            edge_mask = self._concrete_sample(logits, temperature)
-            set_masks(model, edge_mask, edge_index, apply_sigmoid=True)
-
-            if self.model_config.task_level == ModelTaskLevel.node:
-                _, hard_edge_mask = self._get_hard_masks(
-                    model, index, edge_index, num_nodes=x.size(0))
-                edge_mask = edge_mask[hard_edge_mask]
-
-            y_hat = model(x, edge_index, **kwargs)
-
-        # Get loss
-        y = target
         if index is not None:
             y_hat, y = y_hat[index], y[index]
 
-        # Calculate loss
-        if self.is_hetero:
-            # Calculate combined loss for all edge types
-            loss = self._loss_hetero(y_hat, y)
-        else:
-            # Calculate loss for homogeneous graph
-            loss = self._loss(y_hat, y, edge_mask)
-
-        # Backward pass
+        loss = self._loss(y_hat, y, edge_mask)
         loss.backward()
         self.optimizer.step()
 
-        # Clear masks
         clear_masks(model)
         self._curr_epoch = epoch
 
@@ -244,14 +153,16 @@ class PGExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Union[Tensor, Dict[NodeType, Tensor]],
-        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        x: Tensor,
+        edge_index: Tensor,
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Union[Explanation, HeteroExplanation]:
-        self.is_hetero = isinstance(x, dict) and isinstance(edge_index, dict)
+    ) -> Explanation:
+        if isinstance(x, dict) or isinstance(edge_index, dict):
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
 
         if self._curr_epoch < self.epochs - 1:  # Safety check:
             raise ValueError(f"'{self.__class__.__name__}' is not yet fully "
@@ -260,6 +171,7 @@ class PGExplainer(ExplainerAlgorithm):
                              f"the underlying explainer model by running "
                              f"`explainer.algorithm.train(...)`.")
 
+        hard_edge_mask = None
         if self.model_config.task_level == ModelTaskLevel.node:
             if index is None:
                 raise ValueError(f"The 'index' argument needs to be provided "
@@ -269,97 +181,20 @@ class PGExplainer(ExplainerAlgorithm):
                 raise ValueError(f"Only scalars are supported for the 'index' "
                                  f"argument in '{self.__class__.__name__}'")
 
-        # Get embeddings
-        if self.is_hetero:
-            # For heterogeneous graphs, use get_hetero_embeddings to get embeddings by node type
-            z_dict = get_hetero_embeddings(model, x, edge_index, **kwargs)
-            # Use the last layer embeddings for each node type
-            z_last_dict = {
-                node_type: embs[-1]
-                for node_type, embs in z_dict.items() if embs
-            }
-        else:
-            # For homogeneous graphs, use the original get_embeddings
-            z = get_embeddings(model, x, edge_index, **kwargs)[-1]
+            # We need to compute hard masks to properly clean up edges and
+            # nodes attributions not involved during message passing:
+            _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
+                                                     num_nodes=x.size(0))
 
-        if self.is_hetero:
-            # Process each edge type separately
-            edge_mask_dict = {}
+        z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
-            # Process each edge type
-            for edge_type, indices in edge_index.items():
-                # Generate inputs for each edge type using node embeddings
-                src_type, _, dst_type = edge_type
+        inputs = self._get_inputs(z, edge_index, index)
+        logits = self.mlp(inputs).view(-1)
 
-                # Get node embeddings for this edge type
-                src_emb = z_last_dict[src_type]
-                dst_emb = z_last_dict[dst_type]
+        edge_mask = self._post_process_mask(logits, hard_edge_mask,
+                                            apply_sigmoid=True)
 
-                # Create model inputs: concatenate source and destination node embeddings
-                # Add safety check for index bounds
-                safe_src_indices = torch.clamp(indices[0], 0,
-                                               src_emb.size(0) - 1)
-                safe_dst_indices = torch.clamp(indices[1], 0,
-                                               dst_emb.size(0) - 1)
-
-                zs = [src_emb[safe_src_indices], dst_emb[safe_dst_indices]]
-
-                # If this is a node-level explanation, include target node embedding
-                if self.model_config.task_level == ModelTaskLevel.node:
-                    # For node-level tasks in heterogeneous graphs, we need to know which node type
-                    # the index refers to. There are several ways to determine this:
-                    if not hasattr(self, 'target_node_type'):
-                        # First, check if any destination node type has the target index
-                        potential_types = []
-                        for node_type, features in x.items():
-                            if index < features.size(0):
-                                potential_types.append(node_type)
-
-                        # If we found possible types, use the first one
-                        if potential_types:
-                            self.target_node_type = potential_types[0]
-                        # Otherwise, use the first node type as fallback
-                        else:
-                            self.target_node_type = list(x.keys())[0]
-
-                    # Get embedding for the target node (with safety check)
-                    target_emb_tensor = z_last_dict[self.target_node_type]
-                    safe_index = min(index, target_emb_tensor.size(0) - 1)
-                    target_emb = target_emb_tensor[safe_index]
-                    zs.append(
-                        target_emb.view(1, -1).expand(indices.size(1), -1))
-
-                # Concatenate the embeddings
-                inputs = torch.cat(zs, dim=-1)
-
-                # Get edge mask logits and process them
-                logits = self.mlp(inputs).view(-1)
-
-                # Apply sigmoid to get final mask
-                edge_mask = torch.sigmoid(logits)
-                edge_mask_dict[edge_type] = edge_mask
-
-            # Create heterogeneous explanation
-            explanation = HeteroExplanation()
-            explanation.set_value_dict('edge_mask', edge_mask_dict)
-            return explanation
-
-        else:
-            # Homogeneous graph processing
-            hard_edge_mask = None
-            if self.model_config.task_level == ModelTaskLevel.node:
-                # We need to compute hard masks to properly clean up edges and
-                # nodes attributions not involved during message passing:
-                _, hard_edge_mask = self._get_hard_masks(
-                    model, index, edge_index, num_nodes=x.size(0))
-
-            inputs = self._get_inputs(z, edge_index, index)
-            logits = self.mlp(inputs).view(-1)
-
-            edge_mask = self._post_process_mask(logits, hard_edge_mask,
-                                                apply_sigmoid=True)
-
-            return Explanation(edge_mask=edge_mask)
+        return Explanation(edge_mask=edge_mask)
 
     def supports(self) -> bool:
         explanation_type = self.explainer_config.explanation_type
@@ -404,31 +239,6 @@ class PGExplainer(ExplainerAlgorithm):
         bias = self.coeffs['bias']
         eps = (1 - 2 * bias) * torch.rand_like(logits) + bias
         return (eps.log() - (1 - eps).log() + logits) / temperature
-
-    def _loss_hetero(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        """Calculate loss for heterogeneous graphs combining all edge types."""
-        # Calculate base loss based on task
-        if self.model_config.mode == ModelMode.binary_classification:
-            loss = self._loss_binary_classification(y_hat, y)
-        elif self.model_config.mode == ModelMode.multiclass_classification:
-            loss = self._loss_multiclass_classification(y_hat, y)
-        elif self.model_config.mode == ModelMode.regression:
-            loss = self._loss_regression(y_hat, y)
-
-        # Add regularization for each edge type
-        for edge_type, edge_mask in self.edge_mask_dict.items():
-            # Size regularization
-            mask = edge_mask.sigmoid()
-            size_loss = mask.sum() * self.coeffs['edge_size']
-
-            # Entropy regularization
-            mask = 0.99 * mask + 0.005
-            mask_ent = -mask * mask.log() - (1 - mask) * (1 - mask).log()
-            mask_ent_loss = mask_ent.mean() * self.coeffs['edge_ent']
-
-            loss = loss + size_loss + mask_ent_loss
-
-        return loss
 
     def _loss(self, y_hat: Tensor, y: Tensor, edge_mask: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:
