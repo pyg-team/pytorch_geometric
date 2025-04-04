@@ -58,8 +58,6 @@ Results:
 
 '''
 
-
-
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter, )
 parser.add_argument(
@@ -84,13 +82,17 @@ parser.add_argument(
 )
 
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=1,
+parser.add_argument('--num_heads',
+                    type=int,
+                    default=1,
                     help='number of heads for GAT model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--max_dendrites', type=int, default=4)
 parser.add_argument('--max_dendrite_tries', type=int, default=2)
-parser.add_argument('--fan_out', type=int, default=10,
+parser.add_argument('--fan_out',
+                    type=int,
+                    default=10,
                     help='number of neighbors in each layer')
 parser.add_argument('--hidden_channels', type=int, default=256)
 parser.add_argument('--lr', type=float, default=0.003)
@@ -112,7 +114,6 @@ parser.add_argument(
     help='Whether or not to add self loop',
 )
 args = parser.parse_args()
-
 
 # Set Perforated Backpropagation settings for this training run
 '''
@@ -147,19 +148,16 @@ a raw value of 1e-4 to conclude that the correlation scores have gone up.
 '''
 PBG.pbImprovementThreshold = 0.25
 PBG.pbImprovementThresholdRaw = 1e-4
-
 '''
 This setting defaults to True to ensure that adding dendrites has been
 tested before starting a full training run.
 '''
 PBG.testingDendriteCapacity = False
-
 '''
 Weight decay tends to negatively impact Dendrite learning.  This turns off
 the warning to consider trying an optimizer without it.
 '''
 PBG.weightDecayAccepted = True
-
 
 wall_clock_start = time.perf_counter()
 
@@ -326,7 +324,6 @@ model.reset_parameters()
 # This is the main PAI function that converts everything under the hood
 # to allow for the addition of dendrites
 model = PBU.initializePB(model)
-
 '''
 # This can be added to pick up where it left off if something crashes.
 print('pre loading')
