@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union, overload
 
 import torch
 from torch import Tensor
@@ -77,6 +77,32 @@ class GNNExplainer(ExplainerAlgorithm):
         self.edge_mask = self.hard_edge_mask = None
         self.is_hetero = False
 
+    @overload
+    def forward(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> Explanation:
+        pass
+
+    @overload
+    def forward(
+        self,
+        model: torch.nn.Module,
+        x: Dict[NodeType, Tensor],
+        edge_index: Dict[EdgeType, Tensor],
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> HeteroExplanation:
+        pass
+
     def forward(
         self,
         model: torch.nn.Module,
@@ -149,6 +175,32 @@ class GNNExplainer(ExplainerAlgorithm):
     def supports(self) -> bool:
         return True
 
+    @overload
+    def _train(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> None:
+        pass
+
+    @overload
+    def _train(
+        self,
+        model: torch.nn.Module,
+        x: Dict[NodeType, Tensor],
+        edge_index: Dict[EdgeType, Tensor],
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> None:
+        pass
+
     def _train(
         self,
         model: torch.nn.Module,
@@ -215,7 +267,22 @@ class GNNExplainer(ExplainerAlgorithm):
 
         return parameters
 
-    def _forward_with_masks(self, model, x, edge_index, **kwargs):
+    @overload
+    def _forward_with_masks(self, model: torch.nn.Module, x: Tensor,
+                            edge_index: Tensor, **kwargs) -> Tensor:
+        pass
+
+    @overload
+    def _forward_with_masks(self, model: torch.nn.Module, x: Dict[NodeType,
+                                                                  Tensor],
+                            edge_index: Dict[EdgeType,
+                                             Tensor], **kwargs) -> Tensor:
+        pass
+
+    def _forward_with_masks(self, model: torch.nn.Module,
+                            x: Union[Tensor, Dict[NodeType, Tensor]],
+                            edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+                            **kwargs) -> Tensor:
         """Forward pass with masked inputs."""
         if self.is_hetero:
             # Apply masks to heterogeneous inputs
