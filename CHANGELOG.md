@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.7.0] - 2025-MM-DD
 
 ### Added
+
 - Added hetero graph support for GNN Explainer ([#10158](https://github.com/pyg-team/pytorch_geometric/pull/10158))
 - Added attract-repel link prediction example ([#10107](https://github.com/pyg-team/pytorch_geometric/pull/10107))
 - Added `ARLinkPredictor` for implementing Attract-Repel embeddings for link prediction ([#10105](https://github.com/pyg-team/pytorch_geometric/pull/10105))
