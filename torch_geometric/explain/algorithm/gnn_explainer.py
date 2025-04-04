@@ -88,7 +88,7 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-        pass
+        ...
 
     @overload
     def forward(
@@ -101,7 +101,7 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> HeteroExplanation:
-        pass
+        ...
 
     def forward(
         self,
@@ -114,16 +114,9 @@ class GNNExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         self.is_hetero = isinstance(x, dict)
-
-        # Train the explainer
         self._train(model, x, edge_index, target=target, index=index, **kwargs)
-
-        # Create explanation from masks
         explanation = self._create_explanation()
-
-        # Clean up
         self._clean_model(model)
-
         return explanation
 
     def _create_explanation(self) -> Union[Explanation, HeteroExplanation]:
@@ -186,7 +179,7 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> None:
-        pass
+        ...
 
     @overload
     def _train(
@@ -199,7 +192,7 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> None:
-        pass
+        ...
 
     def _train(
         self,
@@ -210,7 +203,7 @@ class GNNExplainer(ExplainerAlgorithm):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ):
+    ) -> None:
         # Initialize masks based on input type
         self._initialize_masks(x, edge_index)
 
@@ -268,21 +261,32 @@ class GNNExplainer(ExplainerAlgorithm):
         return parameters
 
     @overload
-    def _forward_with_masks(self, model: torch.nn.Module, x: Tensor,
-                            edge_index: Tensor, **kwargs) -> Tensor:
-        pass
+    def _forward_with_masks(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        **kwargs,
+    ) -> Tensor:
+        ...
 
     @overload
-    def _forward_with_masks(self, model: torch.nn.Module, x: Dict[NodeType,
-                                                                  Tensor],
-                            edge_index: Dict[EdgeType,
-                                             Tensor], **kwargs) -> Tensor:
-        pass
+    def _forward_with_masks(
+        self,
+        model: torch.nn.Module,
+        x: Dict[NodeType, Tensor],
+        edge_index: Dict[EdgeType, Tensor],
+        **kwargs,
+    ) -> Tensor:
+        ...
 
-    def _forward_with_masks(self, model: torch.nn.Module,
-                            x: Union[Tensor, Dict[NodeType, Tensor]],
-                            edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
-                            **kwargs) -> Tensor:
+    def _forward_with_masks(
+        self,
+        model: torch.nn.Module,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        **kwargs,
+    ) -> Tensor:
         """Forward pass with masked inputs."""
         if self.is_hetero:
             # Apply masks to heterogeneous inputs
@@ -308,7 +312,7 @@ class GNNExplainer(ExplainerAlgorithm):
         self,
         x: Union[Tensor, Dict[NodeType, Tensor]],
         edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
-    ):
+    ) -> None:
         node_mask_type = self.explainer_config.node_mask_type
         edge_mask_type = self.explainer_config.edge_mask_type
 
@@ -343,7 +347,14 @@ class GNNExplainer(ExplainerAlgorithm):
             self._initialize_homogeneous_masks(node_mask_type, edge_mask_type,
                                                N, F, E, device)
 
-    def _initialize_node_mask(self, node_mask_type, node_type, N, F, device):
+    def _initialize_node_mask(
+        self,
+        node_mask_type,
+        node_type,
+        N,
+        F,
+        device,
+    ) -> None:
         """Initialize node mask for a specific node type."""
         std = 0.1
         if node_mask_type is None:
@@ -362,7 +373,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 torch.randn(1, F, device=device) * std)
             self.hard_node_mask[node_type] = None
         else:
-            assert False
+            raise ValueError(f"Invalid node mask type: {node_mask_type}")
 
     def _initialize_edge_mask(self, edge_mask_type, edge_type, E, N, device):
         """Initialize edge mask for a specific edge type."""
@@ -375,7 +386,7 @@ class GNNExplainer(ExplainerAlgorithm):
                 torch.randn(E, device=device) * std)
             self.hard_edge_mask[edge_type] = None
         else:
-            assert False
+            raise ValueError(f"Invalid edge mask type: {edge_mask_type}")
 
     def _initialize_homogeneous_masks(self, node_mask_type, edge_mask_type, N,
                                       F, E, device):
@@ -391,7 +402,7 @@ class GNNExplainer(ExplainerAlgorithm):
         elif node_mask_type == MaskType.common_attributes:
             self.node_mask = Parameter(torch.randn(1, F, device=device) * std)
         else:
-            assert False
+            raise ValueError(f"Invalid node mask type: {node_mask_type}")
 
         # Initialize edge mask
         if edge_mask_type is None:
@@ -400,9 +411,9 @@ class GNNExplainer(ExplainerAlgorithm):
             std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
         else:
-            assert False
+            raise ValueError(f"Invalid edge mask type: {edge_mask_type}")
 
-    def _collect_gradients(self):
+    def _collect_gradients(self) -> None:
         if self.is_hetero:
             self._collect_hetero_gradients()
         else:
@@ -463,7 +474,7 @@ class GNNExplainer(ExplainerAlgorithm):
         elif self.model_config.mode == ModelMode.regression:
             return self._loss_regression(y_hat, y)
         else:
-            assert False
+            raise ValueError(f"Invalid model mode: {self.model_config.mode}")
 
     def _apply_hetero_regularization(self, loss):
         """Apply regularization for heterogeneous graph."""

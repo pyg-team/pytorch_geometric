@@ -5,7 +5,12 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.explain import Explanation, HeteroExplanation
-from torch_geometric.explain.config import MaskType, ModelMode, ModelReturnType
+from torch_geometric.explain.config import (
+    MaskType,
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+)
 from torch_geometric.nn import SAGEConv, to_hetero
 from torch_geometric.testing import get_random_edge_index
 
@@ -52,7 +57,7 @@ class GraphSAGE(torch.nn.Module):
 
 
 class HeteroSAGE(torch.nn.Module):
-    def __init__(self, metadata, model_config=None):
+    def __init__(self, metadata, model_config: Optional[ModelConfig] = None):
         super().__init__()
         self.model_config = model_config
         self.graph_sage = to_hetero(GraphSAGE(), metadata, debug=False)
