@@ -75,7 +75,7 @@ class HeteroSAGE(torch.nn.Module):
         x = self.lin(self.graph_sage(x_dict, edge_index_dict)['paper'])
 
         # Apply transformations based on model_config if available
-        if hasattr(self, 'model_config') and self.model_config:
+        if self.model_config:
             if self.model_config.mode == ModelMode.binary_classification:
                 if self.model_config.return_type == ModelReturnType.probs:
                     x = x.sigmoid()
