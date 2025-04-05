@@ -83,7 +83,7 @@ def get_embeddings_hetero(
     node_embeddings_dict: Dict[NodeType, List[Tensor]] = {}
 
     # Hook function to capture node embeddings
-    def hook(module, inputs, outputs):
+    def hook(model: torch.nn.Module, inputs: Any, outputs: Any) -> None:
         # Check if the outputs is a dictionary mapping node types to embeddings
         if isinstance(outputs, dict) and outputs:
             # Store embeddings for each node type
