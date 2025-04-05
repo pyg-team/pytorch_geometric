@@ -2,10 +2,10 @@ import torch
 
 from torch_geometric.nn import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
-from torch_geometric.testing import onlyFullTest, withPackage
+from torch_geometric.testing import onlyRAG, withPackage
 
 
-@onlyFullTest
+@onlyRAG
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever() -> None:
     llm = LLM(
@@ -53,7 +53,7 @@ def test_g_retriever() -> None:
     assert len(pred) == 1
 
 
-@onlyFullTest
+@onlyRAG
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever_many_tokens() -> None:
     llm = LLM(
