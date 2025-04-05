@@ -7,7 +7,11 @@ from torch.nn import ReLU, Sequential
 
 from torch_geometric.explain import Explanation, HeteroExplanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
 from torch_geometric.explain.config import (
     ExplanationType,
     ModelMode,
@@ -165,13 +169,7 @@ class PGExplainer(ExplainerAlgorithm):
 
         # Apply masks to the model
         if self.is_hetero:
-            # Apply each mask separately for heterogeneous graphs
-            # This avoids trying to apply the entire dictionary of masks at
-            # once
-            for edge_type, mask in edge_mask.items():
-                # Set mask for this specific edge type
-                set_masks(model, mask, edge_index[edge_type],
-                          apply_sigmoid=True)
+            set_hetero_masks(model, edge_mask, edge_index, apply_sigmoid=True)
 
             # For node-level tasks, we can compute hard masks
             if self.model_config.task_level == ModelTaskLevel.node:
