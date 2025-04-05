@@ -12,7 +12,11 @@ from torch_geometric.explain import (
     ModelConfig,
 )
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 from torch_geometric.typing import EdgeType, NodeType
 
@@ -246,6 +250,8 @@ class GNNExplainer(ExplainerAlgorithm):
             for mask in self.node_mask.values():
                 if mask is not None:
                     parameters.append(mask)
+            if any(v is not None for v in self.edge_mask.values()):
+                set_hetero_masks(model, self.edge_mask, edge_index)
             for mask in self.edge_mask.values():
                 if mask is not None:
                     parameters.append(mask)
@@ -422,16 +428,25 @@ class GNNExplainer(ExplainerAlgorithm):
     def _collect_hetero_gradients(self):
         """Collect gradients for heterogeneous graph."""
         for node_type, mask in self.node_mask.items():
-            if mask is not None and mask.grad is not None:
+            if mask is not None:
+                if mask.grad is None:
+                    raise ValueError(
+                        f"Could not compute gradients for node masks of type "
+                        f"'{node_type}'. Please make sure that node masks are "
+                        f"used inside the model or disable it via "
+                        f"`node_mask_type=None`.")
+
                 self.hard_node_mask[node_type] = mask.grad != 0.0
-            else:
-                self.hard_node_mask[node_type] = None
 
         for edge_type, mask in self.edge_mask.items():
-            if mask is not None and mask.grad is not None:
+            if mask is not None:
+                if mask.grad is None:
+                    raise ValueError(
+                        f"Could not compute gradients for edge masks of type "
+                        f"'{edge_type}'. Please make sure that edge masks are "
+                        f"used inside the model or disable it via "
+                        f"`edge_mask_type=None`.")
                 self.hard_edge_mask[edge_type] = mask.grad != 0.0
-            else:
-                self.hard_edge_mask[edge_type] = None
 
     def _collect_homo_gradients(self):
         """Collect gradients for homogeneous graph."""
