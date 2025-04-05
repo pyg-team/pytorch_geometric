@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 40
 
-      # Skip workflow if only certain files have been changed.
+      # Run workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific-rag
         uses: tj-actions/changed-files@v41
