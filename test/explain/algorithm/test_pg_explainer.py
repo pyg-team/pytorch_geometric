@@ -141,34 +141,10 @@ def test_pg_explainer_graph(device, check_explanation, mode):
 def test_pg_explainer_hetero(device, hetero_data, hetero_model,
                              check_explanation_hetero, mode, task_level):
     # Move data to device
-    # for key, value in hetero_data.x_dict.items():
-    #     hetero_data.x_dict[key] = value.to(device)
-    # for key, value in hetero_data.edge_index_dict.items():
-    #     hetero_data.edge_index_dict[key] = value.to(device)
     hetero_data = hetero_data.to(device)
 
     # Prepare target based on mode and task level
-    if task_level == ModelTaskLevel.node:
-        # num_nodes = hetero_data['paper'].x.size(0)
-        # if mode == ModelMode.binary_classification:
-        #     target = torch.randint(2, (num_nodes,), device=device)
-        # elif mode == ModelMode.multiclass_classification:
-        #     target = torch.randint(7, (num_nodes,), device=device)
-        # elif mode == ModelMode.regression:
-        #     target = torch.randn((num_nodes, 1), device=device)
-        index = 0  # For node-level explanation
-    else:  # graph-level
-        # if mode == ModelMode.binary_classification:
-        #     target = torch.randint(2, (1,), device=device)
-        # elif mode == ModelMode.multiclass_classification:
-        #     target = torch.randint(7, (1,), device=device)
-        # elif mode == ModelMode.regression:
-        #     target = torch.randn((1, 1), device=device)
-        index = None  # For graph-level explanation
-
-    # with torch.no_grad():
-    #     target = model(hetero_data.x_dict,
-    #                     hetero_data.edge_index_dict).argmax(-1)
+    index = 0 if task_level == ModelTaskLevel.node else None
 
     # Create model config
     model_config = ModelConfig(
