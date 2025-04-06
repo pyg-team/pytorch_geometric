@@ -40,23 +40,26 @@ class AttentionExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
-        is_hetero = isinstance(x, dict)
+        """Generate explanations based on attention coefficients."""
+        self.is_hetero = isinstance(x, dict)
 
-        if is_hetero:
-            return self._forward_hetero(model, x, edge_index, target=target, 
-                                       index=index, **kwargs)
+        # Collect attention coefficients
+        alphas_dict = self._collect_attention_coefficients(
+            model, x, edge_index, **kwargs)
+
+        # Process attention coefficients
+        if self.is_hetero:
+            return self._create_hetero_explanation(model, alphas_dict,
+                                                   edge_index, index, x)
         else:
-            return self._forward_homo(model, x, edge_index, target=target,
-                                     index=index, **kwargs)
+            return self._create_homo_explanation(model, alphas_dict,
+                                                 edge_index, index, x)
 
-    def _forward_homo(
+    def _collect_attention_coefficients(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
-        *,
-        target: Tensor,
-        index: Optional[Union[int, Tensor]] = None,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         **kwargs,
     ) -> Explanation:
         pass
