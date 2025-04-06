@@ -33,6 +33,25 @@ class AttentionExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> Union[Explanation, HeteroExplanation]:
+        is_hetero = isinstance(x, dict)
+
+        if is_hetero:
+            return self._forward_hetero(model, x, edge_index, target=target, 
+                                       index=index, **kwargs)
+        else:
+            return self._forward_homo(model, x, edge_index, target=target,
+                                     index=index, **kwargs)
+
+    def _forward_homo(
+        self,
+        model: torch.nn.Module,
         x: Tensor,
         edge_index: Tensor,
         *,
