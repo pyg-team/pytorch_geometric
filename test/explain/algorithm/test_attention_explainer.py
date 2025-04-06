@@ -39,6 +39,7 @@ class HeteroAttentionGNN(torch.nn.Module):
     def __init__(self, metadata, model_config=None):
         super().__init__()
         self.model_config = model_config
+
         # Create a single BaseGNN that uses all three attention mechanisms
         class BaseGNN(torch.nn.Module):
             def __init__(self):
