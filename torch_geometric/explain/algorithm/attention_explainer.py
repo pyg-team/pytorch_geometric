@@ -164,14 +164,14 @@ class AttentionExplainer(ExplainerAlgorithm):
 
                 hook_handles.append(module.register_message_forward_hook(hook))
 
-        # Forward pass to collect attention coefficients
+        # Forward pass to collect attention coefficients.
         model(x, edge_index, **kwargs)
 
         # Remove hooks
         for handle in hook_handles:
             handle.remove()
 
-        # Check if we collected any attention coefficients
+        # Check if we collected any attention coefficients.
         if self.is_hetero:
             if not alphas_dict:
                 raise ValueError(
