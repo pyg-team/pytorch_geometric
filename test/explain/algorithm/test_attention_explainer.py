@@ -1,9 +1,24 @@
 import pytest
 import torch
 
-from torch_geometric.explain import AttentionExplainer, Explainer, HeteroExplanation
-from torch_geometric.explain.config import ExplanationType, MaskType, ModelConfig, ModelMode
-from torch_geometric.nn import AttentiveFP, GATConv, GATv2Conv, TransformerConv, to_hetero
+from torch_geometric.explain import (
+    AttentionExplainer,
+    Explainer,
+    HeteroExplanation,
+)
+from torch_geometric.explain.config import (
+    ExplanationType,
+    MaskType,
+    ModelConfig,
+    ModelMode,
+)
+from torch_geometric.nn import (
+    AttentiveFP,
+    GATConv,
+    GATv2Conv,
+    TransformerConv,
+    to_hetero,
+)
 
 
 class AttentionGNN(torch.nn.Module):
@@ -24,37 +39,39 @@ class HeteroAttentionGNN(torch.nn.Module):
     def __init__(self, metadata, model_config=None):
         super().__init__()
         self.model_config = model_config
-        
+
         # Create a single BaseGNN that uses all three attention mechanisms
         class BaseGNN(torch.nn.Module):
             def __init__(self):
                 super().__init__()
                 # Use different attention mechanisms in sequence
-                self.conv1 = GATConv((-1, -1), 16, heads=2, add_self_loops=False)
-                self.conv2 = GATv2Conv((-1, -1), 16, heads=2, add_self_loops=False)
+                self.conv1 = GATConv((-1, -1), 16, heads=2,
+                                     add_self_loops=False)
+                self.conv2 = GATv2Conv((-1, -1), 16, heads=2,
+                                       add_self_loops=False)
                 self.conv3 = TransformerConv((-1, -1), 32, heads=1)
-                
+
             def forward(self, x, edge_index):
                 x = self.conv1(x, edge_index).relu()
                 x = self.conv2(x, edge_index).relu()
                 x = self.conv3(x, edge_index)
                 return x
-        
+
         # Convert to heterogeneous model with a single to_hetero call
         self.gnn = to_hetero(BaseGNN(), metadata, debug=False)
-        
+
         # Output dimension based on model config
-        out_channels = 7 if (model_config and 
-                            model_config.mode == ModelMode.multiclass_classification) else 1
+        out_channels = 7 if (model_config and model_config.mode
+                             == ModelMode.multiclass_classification) else 1
         self.lin = torch.nn.Linear(32, out_channels)
-    
+
     def forward(self, x_dict, edge_index_dict, **kwargs):
         # Process through the heterogeneous GNN
         out_dict = self.gnn(x_dict, edge_index_dict)
-        
+
         # Project paper node embeddings for classification/regression
         x = self.lin(out_dict['paper'])
-        
+
         # Apply appropriate output transformation based on model config
         if self.model_config:
             if self.model_config.mode == ModelMode.binary_classification:
@@ -65,7 +82,7 @@ class HeteroAttentionGNN(torch.nn.Module):
                     x = x.softmax(dim=-1)
                 elif self.model_config.return_type == 'log_probs':
                     x = x.log_softmax(dim=-1)
-        
+
         return x
 
 
@@ -134,20 +151,21 @@ def test_attention_explainer_attentive_fp(check_explanation):
 
 
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-def test_attention_explainer_hetero(index, hetero_data, check_explanation_hetero):
+def test_attention_explainer_hetero(index, hetero_data,
+                                    check_explanation_hetero):
     # Create model configuration
     model_config = ModelConfig(
         mode='multiclass_classification',
         task_level='node',
         return_type='raw',
     )
-    
+
     # Get metadata from hetero_data
     metadata = hetero_data.metadata()
-    
+
     # Create the hetero attention model
     model = HeteroAttentionGNN(metadata, model_config)
-    
+
     # Create the explainer
     explainer = Explainer(
         model=model,
@@ -156,14 +174,15 @@ def test_attention_explainer_hetero(index, hetero_data, check_explanation_hetero
         edge_mask_type='object',
         model_config=model_config,
     )
-    
+
     # Generate the explanation
     explanation = explainer(
         hetero_data.x_dict,
         hetero_data.edge_index_dict,
         index=index,
     )
-    
+
     # Check that the explanation is correct
     assert isinstance(explanation, HeteroExplanation)
-    check_explanation_hetero(explanation, None, explainer.edge_mask_type, hetero_data)
+    check_explanation_hetero(explanation, None, explainer.edge_mask_type,
+                             hetero_data)
