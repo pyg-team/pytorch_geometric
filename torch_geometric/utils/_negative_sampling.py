@@ -109,10 +109,9 @@ def negative_sampling(
         idx = idx.to('cpu')
         for _ in range(3):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, device='cpu')
-            mask = np.isin(rnd.numpy(), idx.numpy())  # type: ignore
+            mask = torch.from_numpy(np.isin(rnd.numpy(), idx.numpy())).bool()
             if neg_idx is not None:
-                mask |= np.isin(rnd, neg_idx.to('cpu'))
-            mask = torch.from_numpy(mask).to(torch.bool)
+                mask |= torch.from_numpy(np.isin(rnd, neg_idx.cpu())).bool()
             rnd = rnd[~mask].to(edge_index.device)
             neg_idx = rnd if neg_idx is None else torch.cat([neg_idx, rnd])
             if neg_idx.numel() >= num_neg_samples:
