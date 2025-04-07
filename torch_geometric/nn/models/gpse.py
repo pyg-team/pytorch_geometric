@@ -379,7 +379,7 @@ class GPSE(torch.nn.Module):
 
     .. code-block:: python
 
-        from torch_geometric.nn import GPSE, GPSENodeEncoder,
+        from torch_geometric.nn import GPSE, GPSENodeEncoder
         from torch_geometric.transforms import AddGPSE
         from torch_geometric.nn.models.gpse import precompute_GPSE
 
@@ -417,13 +417,11 @@ class GPSE(torch.nn.Module):
 
         encoder = GPSENodeEncoder(dim_emb=128, dim_pe_in=32, dim_pe_out=64,
                                   expand_x=False)
-        gnn = GNN(dim_in=128, dim_out=128, num_layers=4)
+        gnn = GNN(...)
 
         for batch in loader:
-            batch = encoder(batch)
-            batch = gnn(batch)
-            # Do something with the batch, which now includes 128-dimensional
-            # node representations
+            x = encoder(batch.x, batch.pestat_GPSE)
+            out = gnn(x, batch.edge_index)
 
 
     Args:
@@ -571,8 +569,7 @@ class GPSE(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        from torch_geometric.graphgym.init import init_weights
-        self.apply(init_weights)
+        pass
 
     @classmethod
     def from_pretrained(cls, name: str, root: str = 'GPSE_pretrained'):
@@ -596,6 +593,7 @@ class GPSE(torch.nn.Module):
         model.load_state_dict(model_state_new)
 
         # Set the final linear layer to identity if we use hidden reprs
+        print(model.use_repr, model.repr_type)
         if model.use_repr:
             if model.repr_type == 'one_layer_before':
                 model.post_mp.layer_post_mp.model[-1] = torch.nn.Identity()
@@ -608,6 +606,7 @@ class GPSE(torch.nn.Module):
         return model
 
     def forward(self, batch):
+        batch = batch.clone()
         for module in self.children():
             batch = module(batch)
         return batch
@@ -635,13 +634,11 @@ class GPSENodeEncoder(torch.nn.Module):
 
         encoder = GPSENodeEncoder(dim_emb=128, dim_pe_in=32, dim_pe_out=64,
                                   expand_x=False)
-        gnn = GNN(dim_in=128, dim_out=128, num_layers=4)
+        gnn = GNN(...)
 
         for batch in loader:
-            batch = encoder(batch)
-            batch = gnn(batch)
-            # Do something with the batch, which now includes 128-dimensional
-            # node representations
+            x = encoder(batch.x, batch.pestat_GPSE)
+            batch = gnn(x, batch.edge_index)
 
     Args:
         dim_emb (int): Size of final node embedding.
@@ -705,28 +702,17 @@ class GPSENodeEncoder(torch.nn.Module):
             raise ValueError(f"{self.__class__.__name__}: Does not support "
                              f"'{model_type}' encoder model.")
 
-    def forward(self, batch):
-        if not hasattr(batch, 'pestat_GPSE'):
-            raise ValueError('Precomputed "pestat_GPSE" variable is required '
-                             'for GNNNodeEncoder; either run '
-                             '`precompute_GPSE(gpse_model, dataset)` on your '
-                             'dataset or add `AddGPSE(gpse_model)` as a (pre) '
-                             'transform.')
-
-        pos_enc = batch.pestat_GPSE
-
+    def forward(self, x, pos_enc):
         pos_enc = self.dropout_be(pos_enc)
         pos_enc = self.raw_norm(pos_enc) if self.raw_norm else pos_enc
         pos_enc = self.pe_encoder(pos_enc)  # (Num nodes) x dim_pe
         pos_enc = self.dropout_ae(pos_enc)
 
         # Expand node features if needed
-        h = self.linear_x(batch.x) if self.expand_x else batch.x
+        h = self.linear_x(x) if self.expand_x else x
 
         # Concatenate final PEs to input embedding
-        batch.x = torch.cat((h, pos_enc), 1)
-
-        return batch
+        return torch.cat((h, pos_enc), 1)
 
 
 @torch.no_grad()
