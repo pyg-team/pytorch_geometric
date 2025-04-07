@@ -12,6 +12,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
+from .gpse import GPSE, GPSENodeEncoder
 from .captum import to_captum_model
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
@@ -36,6 +37,7 @@ from .sgformer import SGFormer
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
                                                       captum_output_to_dicts)
+from .attract_repel import ARLinkPredictor
 
 __all__ = classes = [
     'MLP',
@@ -61,6 +63,8 @@ __all__ = classes = [
     'SchNet',
     'DimeNet',
     'DimeNetPlusPlus',
+    'GPSE',
+    'GPSENodeEncoder',
     'to_captum_model',
     'to_captum_input',
     'captum_output_to_dicts',
@@ -84,4 +88,5 @@ __all__ = classes = [
     'MoleculeGPT',
     'GLEM',
     'SGFormer',
+    'ARLinkPredictor',
 ]
