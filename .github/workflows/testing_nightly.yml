@@ -1,4 +1,4 @@
-name: Testing PyTorch nightly
+name: Testing nightly PyTorch
 
 on:  # yamllint disable-line rule:truthy
   push:
