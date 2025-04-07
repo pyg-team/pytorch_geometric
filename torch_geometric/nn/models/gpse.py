@@ -593,7 +593,6 @@ class GPSE(torch.nn.Module):
         model.load_state_dict(model_state_new)
 
         # Set the final linear layer to identity if we use hidden reprs
-        print(model.use_repr, model.repr_type)
         if model.use_repr:
             if model.repr_type == 'one_layer_before':
                 model.post_mp.layer_post_mp.model[-1] = torch.nn.Identity()
