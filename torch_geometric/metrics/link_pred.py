@@ -670,6 +670,9 @@ class LinkPredDiversity(_LinkPredMetric):
     def __init__(self, k: int, category: Tensor) -> None:
         super().__init__(k)
 
+        self.accum: Tensor
+        self.total: Tensor
+
         if WITH_TORCHMETRICS:
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
@@ -736,11 +739,14 @@ class LinkPredPersonalization(_LinkPredMetric):
         self.max_src_nodes = max_src_nodes
         self.batch_size = batch_size
 
+        self.preds: List[Tensor]
+        self.total: Tensor
+
         if WITH_TORCHMETRICS:
             self.add_state('preds', default=[], dist_reduce_fx='cat')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
-            self.preds: List[Tensor] = []
+            self.preds = []
             self.register_buffer('total', torch.tensor(0), persistent=False)
 
     def update(
@@ -825,6 +831,9 @@ class LinkPredAveragePopularity(_LinkPredMetric):
 
     def __init__(self, k: int, popularity: Tensor) -> None:
         super().__init__(k)
+
+        self.accum: Tensor
+        self.total: Tensor
 
         if WITH_TORCHMETRICS:
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
