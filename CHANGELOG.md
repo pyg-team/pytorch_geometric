@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Added llm generated explanations to `TAGDataset` ([#9918](https://github.com/pyg-team/pytorch_geometric/pull/9918))
+- Added support for heterogenous graphs in `GNNExplainer` ([#10158](https://github.com/pyg-team/pytorch_geometric/pull/10158))
+- Added Graph Positional and Structural Encoder (GPSE) ([#9018](https://github.com/pyg-team/pytorch_geometric/pull/9018))
 - Added attract-repel link prediction example ([#10107](https://github.com/pyg-team/pytorch_geometric/pull/10107))
 - Added `ARLinkPredictor` for implementing Attract-Repel embeddings for link prediction ([#10105](https://github.com/pyg-team/pytorch_geometric/pull/10105))
 - Improving documentation for [cuGraph](https://github.com/rapidsai/cugraph) ([#10083](https://github.com/pyg-team/pytorch_geometric/pull/10083))
