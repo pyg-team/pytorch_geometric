@@ -179,9 +179,6 @@ Given that you have :pytorch:`PyTorch` installed, run
 
    conda install pyg -c pyg
 
-.. warning::
-   Conda packages are not available for Windows and M1/M2/M3 macs.
-
 If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:`PyG`, you can enforce it as follows:
 
 .. code-block:: none
