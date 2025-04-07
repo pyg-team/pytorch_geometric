@@ -1,4 +1,4 @@
-name: Testing PyTorch 2.5
+name: Testing latest PyTorch
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -67,7 +67,7 @@ jobs:
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
           pytest --cov --cov-report=xml --durations 10
 

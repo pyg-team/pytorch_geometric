@@ -1,4 +1,4 @@
-name: Testing minimal PyTorch 2.5
+name: Testing previous PyTorch
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -13,10 +13,21 @@ concurrency:
 
 jobs:
 
-  minimal_pytest:
+  prev_pytest:
     runs-on: ubuntu-latest
-    env:
-      COREDUMPY_DUMP_DIR: ${{ github.workspace }}/coredumpy_data
+
+    strategy:
+      fail-fast: false
+      matrix:
+        torch-version: [1.13.0, 2.1.0, 2.5.0]
+        include:
+          - torch-version: 1.13.0
+            torchvision-version: 0.14.0
+          - torch-version: 2.1.0
+            torchvision-version: 0.16.0
+          - torch-version: 2.5.0
+            torchvision-version: 0.21.0
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,23 +53,17 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
-          full_install: false
+          torch-version: ${{ matrix.torch-version }}
+          torchvision-version: ${{ matrix.torchvision-version }}
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .[test]
+          echo "torch==${{ matrix.torch-version }}" > requirements-constraint.txt
+          pip install -e .[test] --constraint requirements-constraint.txt
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
           pytest
-
-      - name: Upload coredumpy data if applicable
-        uses: gaogaotiantian/upload-coredumpy@v0.1
-        if: failure()
-        with:
-          name: coredumpy_data_ubuntu-latest_3.9
-          path: ${{ env.COREDUMPY_DUMP_DIR }}
-          retention-days: 7

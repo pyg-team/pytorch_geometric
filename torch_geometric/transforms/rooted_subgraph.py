@@ -94,7 +94,7 @@ class RootedSubgraph(BaseTransform, ABC):
         arange = torch.arange(n_id.size(0), device=data.edge_index.device)
         node_map = data.edge_index.new_ones(num_nodes, num_nodes)
         node_map[n_sub_batch, n_id] = arange
-        sub_edge_index += (arange * data.num_nodes)[e_sub_batch]
+        sub_edge_index += (arange * num_nodes)[e_sub_batch]
         sub_edge_index = node_map.view(-1)[sub_edge_index]
 
         return sub_edge_index, n_id, e_id, n_sub_batch, e_sub_batch
