@@ -1,4 +1,4 @@
-name: Testing PyTorch nightly
+name: Testing nightly PyTorch
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
 
-  latest_pytest:
+  nightly_pytest:
     runs-on: ubuntu-latest
 
     steps:
