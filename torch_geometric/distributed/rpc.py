@@ -144,7 +144,7 @@ _rpc_call_pool: Dict[int, RPCCallBase] = {}
 @rpc_require_initialized
 def rpc_register(call: RPCCallBase) -> int:
     r"""Registers a call for RPC requests."""
-    global _rpc_call_id, _rpc_call_pool
+    global _rpc_call_id
 
     with _rpc_call_lock:
         call_id = _rpc_call_id
