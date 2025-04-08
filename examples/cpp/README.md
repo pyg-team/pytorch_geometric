@@ -4,7 +4,7 @@ This is a minimal example of getting PyG to work in C++ with CMake.
 
 In order to successfully compile this example, make sure you have both the C++ APIs of [`TorchScatter`](https://github.com/rusty1s/pytorch_scatter#c-api) and [`TorchSparse`](https://github.com/rusty1s/pytorch_sparse/#c-api) installed.
 
-For this, we need to add `TorchLib` to the `-DCMAKE_PREFIX_PATH` (*e.g.*, it may exists in `{CONDA}/lib/python{X.X}/site-packages/torch` if installed via `conda`).
+For this, we need to add `TorchLib` to the `-DCMAKE_PREFIX_PATH` (run `import torch, print(torch.utils.cmake_prefix_path)` to obtain it).
 Then, *e.g.*, to install `TorchScatter`, run:
 
 ```
