@@ -19,7 +19,6 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
 DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
 
-
 if __name__ == '__main__':
     seed_everything(50)
     parser = argparse.ArgumentParser()
