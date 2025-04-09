@@ -303,17 +303,28 @@ def train(args, data_lists):
                 batch.question = new_qs
 
                 optimizer.zero_grad()
-                loss = get_loss(model, batch)
-                loss.backward()
-                clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
-                if (step + 1) % 2 == 0:
-                    adjust_learning_rate(optimizer.param_groups[0], lr,
-                                         step / len(train_loader) + epoch,
-                                         args.epochs)
-                optimizer.step()
-                epoch_loss += float(loss)
-                if (step + 1) % 2 == 0:
-                    lr = optimizer.param_groups[0]['lr']
+                try:
+                    loss = get_loss(model, batch)
+                    loss.backward()
+                    clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+                    if (step + 1) % 2 == 0:
+                        adjust_learning_rate(optimizer.param_groups[0], lr,
+                                            step / len(train_loader) + epoch,
+                                            args.epochs)
+                    optimizer.step()
+                    epoch_loss += float(loss)
+                    if (step + 1) % 2 == 0:
+                        lr = optimizer.param_groups[0]['lr']
+                except torch.OutOfMemoryError as e:
+                    torch.cuda.empty_cache()
+                    print("Sequence length of last batch: ",
+                          model.llm_generator.seq_length_stats[-1])
+                    # TODO: Implement CPU fallback (WIP)
+            print("Sequence length stats: ")
+            print("seq_len avg: ", sum(model.llm_generator.seq_length_stats) / len(model.llm_generator.seq_length_stats))
+            print("seq_len min: ", min(model.llm_generator.seq_length_stats))
+            print("seq_len max: ", max(model.llm_generator.seq_length_stats))
+
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
 
