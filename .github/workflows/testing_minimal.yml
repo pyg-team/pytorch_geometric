@@ -46,7 +46,7 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .[test]
+          pip install --no-build-isolation -e ".[test]"
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'

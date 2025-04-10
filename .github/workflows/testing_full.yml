@@ -71,8 +71,7 @@ jobs:
 
       - name: Install main package
         run: |
-          echo "torch==${{ matrix.torch-version }}" > requirements-constraint.txt
-          pip install -e .[full,test] --constraint requirements-constraint.txt
+          pip install --no-build-isolation -e ".[full,test]"
         shell: bash
 
       - name: Run tests

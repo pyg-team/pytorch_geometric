@@ -26,7 +26,7 @@ jobs:
 
       - name: Install main package
         run: |
-          pip install -e .[full,test]
+          pip install --no-build-isolation -e ".[full,test]"
 
       - name: Run tests
         timeout-minutes: 20
