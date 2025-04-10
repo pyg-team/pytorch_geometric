@@ -58,6 +58,14 @@ benchmark=[
     "protobuf<4.21",
     "wandb",
 ]
+rag=[
+    "pcst_fast",
+    "datasets",
+    "transformers",
+    "pandas",
+    "sentencepiece",
+    "accelerate",
+]
 test=[
     "onnx",
     "onnxruntime",
@@ -191,6 +199,9 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+]
+markers = [
+    "rag: mark test as RAG test",
 ]
 
 [tool.coverage.run]
