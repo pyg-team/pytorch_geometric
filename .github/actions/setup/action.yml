@@ -30,6 +30,12 @@ runs:
         cache-dependency-path: |
           pyproject.toml
 
+    - name: Install build packages
+      run: |
+        pip install build
+        pip install "flit_core >=3.2,<4"
+      shell: bash
+
     - name: Install numpy
       run: |
         pip install "numpy<2"
