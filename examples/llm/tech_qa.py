@@ -318,12 +318,12 @@ def train(args, data_lists):
                 except torch.OutOfMemoryError as e:
                     torch.cuda.empty_cache()
                     print("Sequence length of last batch: ",
-                          model.llm_generator.seq_length_stats[-1])
+                          model.seq_length_stats[-1])
                     # TODO: Implement CPU fallback (WIP)
             print("Sequence length stats: ")
-            print("seq_len avg: ", sum(model.llm_generator.seq_length_stats) / len(model.llm_generator.seq_length_stats))
-            print("seq_len min: ", min(model.llm_generator.seq_length_stats))
-            print("seq_len max: ", max(model.llm_generator.seq_length_stats))
+            print("seq_len avg: ", sum(model.seq_length_stats) / len(model.seq_length_stats))
+            print("seq_len min: ", min(model.seq_length_stats))
+            print("seq_len max: ", max(model.seq_length_stats))
 
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
