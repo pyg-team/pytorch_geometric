@@ -334,7 +334,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
-PyG is available for Python 3.9 to Python 3.12.
+PyG is available for Python 3.9 to Python 3.13.
 
 From **PyG 2.3** onwards, you can install and use PyG **without any external library** required except for PyTorch.
 For this, simply run
