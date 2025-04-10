@@ -39,7 +39,7 @@ jobs:
 
       - name: Build package
         run: |
-          pip install --upgrade build
+          pip install build
           python -m build
 
       - name: Publish package
