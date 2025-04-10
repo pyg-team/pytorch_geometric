@@ -5,8 +5,8 @@ from torch import Tensor
 from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.sampler import (
+    BidirectionalNeighborSampler,
     HeteroSamplerOutput,
-    NeighborSampler,
     NodeSamplerInput,
     SamplerOutput,
 )
@@ -36,9 +36,9 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
-        self.sampler = NeighborSampler(data=(self.feature_store, self),
-                                       num_neighbors=self._num_neighbors,
-                                       **self.sample_kwargs)
+        self.sampler = BidirectionalNeighborSampler(
+            data=(self.feature_store, self), num_neighbors=self._num_neighbors,
+            **self.sample_kwargs)
         self._sampler_is_initialized = True
 
     def register_feature_store(self, feature_store: FeatureStore):

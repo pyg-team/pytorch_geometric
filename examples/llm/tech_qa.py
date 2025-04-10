@@ -288,6 +288,8 @@ def train(args, data_lists):
             'lr': lr,
             'weight_decay': 0.05
         }], betas=(0.9, 0.95))
+
+        num_oom_errors = 0
         for epoch in range(args.epochs):
             model.train()
             epoch_loss = 0
@@ -303,17 +305,31 @@ def train(args, data_lists):
                 batch.question = new_qs
 
                 optimizer.zero_grad()
-                loss = get_loss(model, batch)
-                loss.backward()
-                clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
-                if (step + 1) % 2 == 0:
-                    adjust_learning_rate(optimizer.param_groups[0], lr,
-                                         step / len(train_loader) + epoch,
-                                         args.epochs)
-                optimizer.step()
-                epoch_loss += float(loss)
-                if (step + 1) % 2 == 0:
-                    lr = optimizer.param_groups[0]['lr']
+                try:
+                    loss = get_loss(model, batch)
+                    loss.backward()
+                    clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+                    if (step + 1) % 2 == 0:
+                        adjust_learning_rate(optimizer.param_groups[0], lr,
+                                             step / len(train_loader) + epoch,
+                                             args.epochs)
+                    optimizer.step()
+                    epoch_loss += float(loss)
+                    if (step + 1) % 2 == 0:
+                        lr = optimizer.param_groups[0]['lr']
+                except torch.OutOfMemoryError as e:
+                    torch.cuda.empty_cache()
+                    print("Sequence length of last batch: ",
+                          model.seq_length_stats[-1])
+                    # TODO: Implement CPU fallback (WIP)
+                    num_oom_errors += 1
+            print("Sequence length stats: ")
+            print("seq_len avg: ",
+                  sum(model.seq_length_stats) / len(model.seq_length_stats))
+            print("seq_len min: ", min(model.seq_length_stats))
+            print("seq_len max: ", max(model.seq_length_stats))
+            print("Percent of OOM errors: ",
+                  num_oom_errors / len(train_loader))
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
 
