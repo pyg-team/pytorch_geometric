@@ -47,7 +47,7 @@ jobs:
         run: |
           pip install nbsphinx
           pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
-          pip install --no-build-isolation -e .
+          pip install -e .
 
       - name: Build documentation
         if: steps.changed-files-specific.outputs.only_changed != 'true'
