@@ -20,7 +20,7 @@ jobs:
 
       - name: Install main package
         run: |
-          pip install .[benchmark]
+          pip install --no-build-isolation ".[benchmark]"
 
       - name: Run GCN on Cora
         run: |
