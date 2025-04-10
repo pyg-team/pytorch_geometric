@@ -1,4 +1,4 @@
-name: Documentation
+name: Testing minimal PyTorch
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
 
-  make_html:
+  minimal_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +31,7 @@ jobs:
             benchmark/**
             conda/**
             docker/**
+            docs/**
             examples/**
             graphgym/**
             README.md
@@ -45,11 +46,10 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install nbsphinx
-          pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
-          pip install -e .
+          pip install -e .[test]
 
-      - name: Build documentation
+      - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        timeout-minutes: 15
         run: |
-          cd docs && make clean && make html SPHINXOPTS="-W"  # Fail on warning.
+          pytest
