@@ -96,8 +96,8 @@ def test_homogeneous_neighbor_sampler_basic(input_type):
     node_sampler_input = NodeSamplerInput(input_id=None, node=torch.tensor([1]))
     expected_output = SamplerOutput(
         node=torch.tensor([1, 0]),
-        row=torch.tensor([0]),
-        col=torch.tensor([1]),
+        row=torch.tensor([1]),
+        col=torch.tensor([0]),
         edge=torch.tensor([0]),
         batch=None,
         num_sampled_nodes=[1, 1],
@@ -147,9 +147,9 @@ def test_heterogeneous_neighbor_sampler_basic(input_type):
     sampler = NeighborSampler(**sampler_kwargs)
     sampler_output = sampler.sample_from_nodes(node_sampler_input)
     assert set(sampler_output.node['person'].tolist()) == set([1, 0])
-    assert sampler_output.row[('person', 'works_with', 'person')] == torch.tensor([0])
+    assert sampler_output.row[('person', 'works_with', 'person')] == torch.tensor([1])
     assert sampler_output.row[('person', 'leads', 'person')].numel() == 0
-    assert sampler_output.col[('person', 'works_with', 'person')] == torch.tensor([1])
+    assert sampler_output.col[('person', 'works_with', 'person')] == torch.tensor([0])
     assert sampler_output.col[('person', 'leads', 'person')].numel() == 0
     assert sampler_output.edge[('person', 'works_with', 'person')] == torch.tensor([0])
     assert sampler_output.edge[('person', 'leads', 'person')].numel() == 0
@@ -304,16 +304,26 @@ def test_bidirectional_neighbor_sampler(input_type):
     sampler_output = sampler.sample_from_nodes(node_sampler_input)
 
     expected_output = SamplerOutput(
-        node=torch.tensor([0, 2, 3]),           # Union between forward and backward nodes
-        row=torch.tensor([0, 2]),               # Union between forward and backward edges
-        col=torch.tensor([2, 3]),               # Union between forward and backward edges
-        edge=torch.tensor([1, 2]),              # Union between forward and backward edges
-        batch=None,                             # Will be part of node uid if disjoint=True
-        num_sampled_nodes=[1,1,0,1],            # nodes are only counted on their first sample
-        num_sampled_edges=[1,1],                # edges are only counted on their first sample
-        orig_row=None,                          # Will be used as edge uid if bidirectional=True with keep_orig_edges=True
-        orig_col=None,                          # Will be used as edge uid if bidirectional=True with keep_orig_edges=True
-        metadata=[(None, None), (None, None)]   # simple concat of forward and backward metadata
+        # Union between forward and backward nodes
+        node=torch.tensor([0, 2, 3]),           
+        # Reindexed to be relative to new nodes field
+        row=torch.tensor([0, 1]),               
+        # Reindexed to be relative to new nodes field
+        col=torch.tensor([1, 2]),               
+        # Union between forward and backward edges
+        edge=torch.tensor([1, 2]),              
+        # Will be part of node uid if disjoint=True
+        batch=None,                             
+        # nodes are only counted on their first sample
+        num_sampled_nodes=[1,1,0,1],            
+        # edges are only counted on their first sample
+        num_sampled_edges=[1,1],                
+        # Will be used as edge uid if bidirectional=True with keep_orig_edges=True
+        orig_row=None,                          
+        # Will be used as edge uid if bidirectional=True with keep_orig_edges=True
+        orig_col=None,                          
+        # simple concat of forward and backward metadata
+        metadata=[(None, None), (None, None)]   
     )
     assert str(sampler_output) == str(expected_output)
 

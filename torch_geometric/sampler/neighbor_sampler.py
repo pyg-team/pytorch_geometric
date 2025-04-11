@@ -47,8 +47,7 @@ class NeighborSampler(BaseSampler):
         weight_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
-        # Deprecated:
-        directed: bool = True,
+        directed: bool = True,  # Deprecated
         sample_direction: Literal['forward', 'backward'] = 'forward',
     ):
         if not directed:
