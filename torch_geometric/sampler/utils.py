@@ -100,6 +100,7 @@ def to_csc(
 
     return colptr, row, perm
 
+
 def to_hetero_csc(
     data: HeteroData,
     device: Optional[torch.device] = None,
