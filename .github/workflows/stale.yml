@@ -1,0 +1,32 @@
+# This workflow warns and then closes issues and PRs that have had no activity for a specified amount of time.
+#
+# You can adjust the behavior by modifying this file.
+# For more information, see:
+# https://github.com/actions/stale
+name: 'Close stale issues and PRs'
+
+on:  # yamllint disable-line rule:truthy
+  schedule:
+    - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
+
+jobs:
+  stale:
+
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-issue-stale: 30
+          days-before-issue-close: 7
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-message: 'This issue has been automatically marked as stale due to lack of activity. It will be closed if no further activity occurs. Thank you'
+          close-issue-message: 'This issue is closed due to lack of activity. Feel free to reopen it if you still have questions.'
+          stale-issue-label: 'stale-issue'
+          only-issue-labels: 'bug'
+          exempt-all-issue-milestones: true
