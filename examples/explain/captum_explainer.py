@@ -7,9 +7,8 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import CaptumExplainer, Explainer
 from torch_geometric.nn import GCNConv
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-dataset = Planetoid(path, dataset)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Cora')
+dataset = Planetoid(path, 'Cora')
 data = dataset[0]
 
 
@@ -26,7 +25,13 @@ class GCN(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 model = GCN().to(device)
 data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
