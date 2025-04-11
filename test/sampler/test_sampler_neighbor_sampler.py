@@ -29,7 +29,8 @@ def _init_sample_graph(hetero=False):
     # Carol (2) # -> "works with" -> # Dave (3) #
     #############                    ############
     """
-    # node attributes dont matter much, they are just necessary for heterogeneous graphs to work
+    # node attributes dont matter much, they are just necessary for
+    # heterogeneous graphs to work
     sample_x = torch.tensor([[0], [1], [2], [3]])
 
     if not hetero:
@@ -216,8 +217,8 @@ def test_homogeneous_neighbor_sampler_backwards(input_type):
     reverse_backward_sampler = NeighborSampler(
         **reverse_backward_sampler_kwargs)
     # This output should have Carol and Alice
-    reverse_backward_sampler_output = reverse_backward_sampler.sample_from_nodes(
-        node_sampler_input)
+    reverse_backward_sampler_output = \
+        reverse_backward_sampler.sample_from_nodes(node_sampler_input)
 
     assert torch.equal(sampler_output.node,
                        reverse_backward_sampler_output.node)
@@ -284,8 +285,8 @@ def test_heterogeneous_neighbor_sampler_backwards(input_type):
     reverse_backward_sampler = NeighborSampler(
         **reverse_backward_sampler_kwargs)
     # This output should have Carol and Alice
-    reverse_backward_sampler_output = reverse_backward_sampler.sample_from_nodes(
-        node_sampler_input)
+    reverse_backward_sampler_output = \
+        reverse_backward_sampler.sample_from_nodes(node_sampler_input)
 
     assert sampler_output.node.keys(
     ) == reverse_backward_sampler_output.node.keys()
@@ -348,9 +349,11 @@ def test_bidirectional_neighbor_sampler(input_type):
         num_sampled_nodes=[1, 1, 0, 1],
         # edges are only counted on their first sample
         num_sampled_edges=[1, 1],
-        # Will be used as edge uid if bidirectional=True with keep_orig_edges=True
+        # Will be used as edge uid if bidirectional=True with
+        # keep_orig_edges=True
         orig_row=None,
-        # Will be used as edge uid if bidirectional=True with keep_orig_edges=True
+        # Will be used as edge uid if bidirectional=True with
+        # keep_orig_edges=True
         orig_col=None,
         # simple concat of forward and backward metadata
         metadata=[(None, None), (None, None)])
@@ -358,8 +361,8 @@ def test_bidirectional_neighbor_sampler(input_type):
 
 
 @pytest.mark.skip(
-    reason=
-    "BidirectionalSampler is not implemented yet for heterogeneous graphs.")
+    reason="BidirectionalSampler not implemented yet for heterogeneous graphs."
+)
 @onlyNeighborSampler
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
 def test_bidirectional_neighbor_sampler_hetero(input_type):

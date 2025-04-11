@@ -555,7 +555,8 @@ class BidirectionalNeighborSampler(BaseSampler):
         # Deprecated:
         directed: bool = True,
     ):
-        self.backward_neighbors_explicitly_set = num_backward_neighbors is not None
+        self.backward_neighbors_explicitly_set = (num_backward_neighbors
+                                                  is not None)
         if num_backward_neighbors is None:
             num_backward_neighbors = num_neighbors
 

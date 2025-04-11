@@ -253,12 +253,14 @@ class SamplerOutput(CastMixin):
 
         try:
             for i, out in enumerate(outputs):
-                assert out.edge is not None == has_edge
-                assert out.orig_row is not None == has_orig_row
-                assert out.orig_col is not None == has_orig_col
-                assert out.batch is not None == has_batch
-                assert out.num_sampled_nodes is not None == has_num_sampled_nodes
-                assert out.num_sampled_edges is not None == has_num_sampled_edges
+                assert not has_edge == (out.edge is None)
+                assert not has_orig_row == (out.orig_row is None)
+                assert not has_orig_col == (out.orig_col is None)
+                assert not has_batch == (out.batch is None)
+                assert not has_num_sampled_nodes == (out.num_sampled_nodes
+                                                     is None)
+                assert not has_num_sampled_edges == (out.num_sampled_edges
+                                                     is None)
         except AssertionError:
             raise ValueError(
                 f"Output {i} has a different field than the first output")
@@ -269,7 +271,8 @@ class SamplerOutput(CastMixin):
 
     def merge_with(self, other: 'SamplerOutput',
                    replace: bool = False) -> 'SamplerOutput':
-        """Merges two SamplerOutputs. If replace is False, self's nodes and edges take precedence.
+        """Merges two SamplerOutputs.
+        If replace is False, self's nodes and edges take precedence.
         """
         if replace:
             return SamplerOutput(
@@ -309,7 +312,8 @@ class SamplerOutput(CastMixin):
                 old_node_uid.append(self.batch)
                 new_node_uid.append(other.batch)
 
-            # NOTE: if any new node fields are added, they need to be merged here
+            # NOTE: if any new node fields are added,
+            # they need to be merged here
 
             old_node_uid = torch.stack(old_node_uid, dim=1)
             new_node_uid = torch.stack(new_node_uid, dim=1)
@@ -318,13 +322,16 @@ class SamplerOutput(CastMixin):
                                         dim=0).unique(dim=0)
             num_old_nodes = old_node_uid.shape[0]
 
-            # Recompute num sampled nodes for second output, subtracting out nodes already seen in first output
+            # Recompute num sampled nodes for second output,
+            # subtracting out nodes already seen in first output
             merged_node_num_sampled_nodes = None
-            if self.num_sampled_nodes is not None and other.num_sampled_nodes is not None:
+            if (self.num_sampled_nodes is not None
+                    and other.num_sampled_nodes is not None):
                 merged_node_num_sampled_nodes = copy.copy(
                     self.num_sampled_nodes)
                 curr_index = 0
-                # NOTE: There's an assumption here that no two nodes will be sampled twice in the same SampleOutput object
+                # NOTE: There's an assumption here that no two nodes will be
+                # sampled twice in the same SampleOutput object
                 for minibatch in other.num_sampled_nodes:
                     size_of_intersect = torch.cat([
                         old_node_uid,
@@ -334,11 +341,14 @@ class SamplerOutput(CastMixin):
                     curr_index += minibatch
 
             merged_nodes = merged_node_uid[:, 0]
-            merged_batch = merged_node_uid[:,
-                                           1] if self.batch is not None and other.batch is not None else None
+            merged_batch = merged_node_uid[:, 1] \
+                if self.batch is not None and other.batch is not None else None
 
             # EDGES
-            is_bidirectional = self.orig_row is not None and self.orig_col is not None and other.orig_row is not None and other.orig_col is not None
+            is_bidirectional = self.orig_row is not None \
+                and self.orig_col is not None \
+                and other.orig_row is not None \
+                and other.orig_col is not None
             if is_bidirectional:
                 old_row, old_col = self.orig_row, self.orig_col
                 new_row, new_col = other.orig_row, other.orig_col
@@ -346,7 +356,8 @@ class SamplerOutput(CastMixin):
                 old_row, old_col = self.row, self.col
                 new_row, new_col = other.row, other.col
 
-            # Transform the row and col indices to be global node ids instead of relative indices to nodes field
+            # Transform the row and col indices to be global node ids
+            # instead of relative indices to nodes field
             old_row, old_col = torch.index_select(old_nodes, 0,
                                                   old_row), torch.index_select(
                                                       old_nodes, 0, old_col)
@@ -368,11 +379,13 @@ class SamplerOutput(CastMixin):
             num_old_edges = old_edge_uid.shape[0]
 
             merged_edge_num_sampled_edges = None
-            if self.num_sampled_edges is not None and other.num_sampled_edges is not None:
+            if (self.num_sampled_edges is not None
+                    and other.num_sampled_edges is not None):
                 merged_edge_num_sampled_edges = copy.copy(
                     self.num_sampled_edges)
                 curr_index = 0
-                # NOTE: There's an assumption here that no two edges will be sampled twice in the same SampleOutput object
+                # NOTE: There's an assumption here that no two edges will be
+                # sampled twice in the same SampleOutput object
                 for minibatch in other.num_sampled_edges:
                     size_of_intersect = torch.cat([
                         old_edge_uid,
@@ -383,8 +396,8 @@ class SamplerOutput(CastMixin):
 
             merged_row = merged_edge_uid[:, 0]
             merged_col = merged_edge_uid[:, 1]
-            merged_edge = merged_edge_uid[:,
-                                          2] if self.edge is not None and other.edge is not None else None
+            merged_edge = merged_edge_uid[:, 2] \
+                if self.edge is not None and other.edge is not None else None
 
             # restore to row and col indices relative to nodes field
             merged_node_size = merged_nodes.numel()
@@ -559,16 +572,18 @@ class HeteroSamplerOutput(CastMixin):
     @classmethod
     def collate(cls,
                 outputs: List['HeteroSamplerOutput']) -> 'HeteroSamplerOutput':
-        r"""Collate a list of :class:`~torch_geometric.sampler.HeteroSamplerOutput`
-        objects into a single :class:`~torch_geometric.sampler.HeteroSamplerOutput`
-        object. Requires that they all have the same fields.
+        r"""Collate a list of
+        :class:`~torch_geometric.sampler.HeteroSamplerOutput`objects into a
+        single :class:`~torch_geometric.sampler.HeteroSamplerOutput` object.
+        Requires that they all have the same fields.
         """
         # TODO(zaristei)
         raise NotImplementedError
 
     def merge_with(self, other: 'HeteroSamplerOutput',
                    replace: bool = False) -> 'HeteroSamplerOutput':
-        """Merges two HeteroSamplerOutputs. If replace is False, self's nodes and edges take precedence.
+        """Merges two HeteroSamplerOutputs.
+        If replace is False, self's nodes and edges take precedence.
         """
         # TODO(zaristei)
         raise NotImplementedError
