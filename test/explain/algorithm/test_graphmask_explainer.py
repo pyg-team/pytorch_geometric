@@ -9,10 +9,10 @@ from torch_geometric.explain.config import (
     ModelReturnType,
     ModelTaskLevel,
 )
-from torch_geometric.nn import GCNConv, global_add_pool
+from torch_geometric.nn import GATConv, global_add_pool
 
 
-class GCN(torch.nn.Module):
+class GAT(torch.nn.Module):
     def __init__(self, model_config: ModelConfig):
         super().__init__()
         self.model_config = model_config
@@ -22,8 +22,8 @@ class GCN(torch.nn.Module):
         else:
             out_channels = 1
 
-        self.conv1 = GCNConv(3, 16)
-        self.conv2 = GCNConv(16, out_channels)
+        self.conv1 = GATConv(3, 16, heads=2)
+        self.conv2 = GATConv(16 * 2, out_channels, heads=1)
 
     def forward(self, x, edge_index, batch=None, edge_label_index=None):
         x = self.conv1(x, edge_index).relu()
@@ -110,7 +110,7 @@ def test_graph_mask_explainer_binary_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config)
+    model = GAT(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
@@ -162,7 +162,7 @@ def test_graph_mask_explainer_multiclass_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config)
+    model = GAT(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
@@ -207,7 +207,7 @@ def test_graph_mask_explainer_regression(
         task_level=task_level,
     )
 
-    model = GCN(model_config)
+    model = GAT(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
