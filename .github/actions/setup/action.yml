@@ -21,6 +21,16 @@ runs:
   using: composite
 
   steps:
+    - name: Clear JIT cache
+      run: rm -rf ~/.cache/torch_extensions
+      shell: bash
+
+    - name: Remove Python cache
+      run: |
+        rm -rf ~/.cache/pip
+        rm -rf ~/.cache/torch_extensions
+      shell: bash
+
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v5
       with:
