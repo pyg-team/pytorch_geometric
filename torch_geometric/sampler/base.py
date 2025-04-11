@@ -272,20 +272,21 @@ class SamplerOutput(CastMixin):
         if replace:
             return SamplerOutput(
                 node=torch.cat([self.node, other.node], dim=0),
-                row=torch.cat([self.row, other.row], dim=0),
-                col=torch.cat([self.col, other.col], dim=0),
+                row=torch.cat([self.row, len(self.node) + other.row], dim=0),
+                col=torch.cat([self.col, len(self.node) + other.col], dim=0),
                 edge=torch.cat([self.edge, other.edge], dim=0) if self.edge is not None and other.edge is not None else None,
                 batch=torch.cat([self.batch, other.batch], dim=0) if self.batch is not None and other.batch is not None else None,
                 num_sampled_nodes=self.num_sampled_nodes + other.num_sampled_nodes if self.num_sampled_nodes is not None and other.num_sampled_nodes is not None else None,
                 num_sampled_edges=self.num_sampled_edges + other.num_sampled_edges if self.num_sampled_edges is not None and other.num_sampled_edges is not None else None,
-                orig_row=torch.cat([self.orig_row, other.orig_row], dim=0) if self.orig_row is not None and other.orig_row is not None else None,
-                orig_col=torch.cat([self.orig_col, other.orig_col], dim=0) if self.orig_col is not None and other.orig_col is not None else None,
+                orig_row=torch.cat([self.orig_row, len(self.node) + other.orig_row], dim=0) if self.orig_row is not None and other.orig_row is not None else None,
+                orig_col=torch.cat([self.orig_col, len(self.node) + other.orig_col], dim=0) if self.orig_col is not None and other.orig_col is not None else None,
                 metadata=[self.metadata, other.metadata],
             )
         else:
             
             # NODES
-            old_node_uid, new_node_uid = [self.node], [other.node]
+            old_nodes, new_nodes = self.node, other.node
+            old_node_uid, new_node_uid = [old_nodes], [new_nodes]
 
             # batch tracks disjoint subgraph samplings
             if self.batch is not None and other.batch is not None:
@@ -323,6 +324,10 @@ class SamplerOutput(CastMixin):
                 old_row, old_col = self.row, self.col
                 new_row, new_col = other.row, other.col
             
+            # Transform the row and col indices to be global node ids instead of relative indices to nodes field
+            old_row, old_col = torch.index_select(old_nodes, 0, old_row), torch.index_select(old_nodes, 0, old_col)
+            new_row, new_col = torch.index_select(new_nodes, 0, new_row), torch.index_select(new_nodes, 0, new_col)
+            
             old_edge_uid, new_edge_uid = [old_row, old_col], [new_row, new_col]
 
             if self.edge is not None and other.edge is not None:
@@ -348,6 +353,18 @@ class SamplerOutput(CastMixin):
             merged_row = merged_edge_uid[:,0]
             merged_col = merged_edge_uid[:,1]
             merged_edge = merged_edge_uid[:,2] if self.edge is not None and other.edge is not None else None
+
+            # restore to row and col indices relative to nodes field
+            merged_node_size = merged_nodes.numel()
+            merged_edge_size = merged_row.numel()
+
+            merged_node_expand = merged_nodes.unsqueeze(1).expand(merged_node_size, merged_edge_size)
+
+            merged_row_expand = merged_row.unsqueeze(0).expand(merged_node_size, merged_edge_size)
+            merged_row = (merged_row_expand == merged_node_expand).nonzero()[:,0]
+
+            merged_col_expand = merged_col.unsqueeze(0).expand(merged_node_size, merged_edge_size)
+            merged_col = (merged_col_expand == merged_node_expand).nonzero()[:,0]
 
             out = SamplerOutput(
                 node=merged_nodes,
