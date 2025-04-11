@@ -14,6 +14,13 @@ from torch_geometric.nn import MessagePassing
 
 
 def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
+    orig_size = out.size()
+    if out.ndim == 3:
+        out = out.view(out.size(0), -1)
+    if x_i.ndim == 3:
+        x_i = x_i.view(x_i.size(0), -1)
+    if x_j.ndim == 3:
+        x_j = x_j.view(x_j.size(0), -1)
     basis_messages = F.layer_norm(out, (out.size(-1), )).relu()
 
     if getattr(self, 'message_scale', None) is not None:
@@ -33,6 +40,8 @@ def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
     self.latest_source_embeddings = x_j
     self.latest_target_embeddings = x_i
 
+    if len(orig_size) == 3:
+        basis_messages = basis_messages.view(orig_size[0], orig_size[1], -1)
     return basis_messages
 
 
@@ -194,8 +203,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             self.node_feat_mask = torch.nn.Parameter(
                 torch.randn(1, num_feat, device=device) * std)
 
-    def _set_trainable(self, i_dims: List[int], j_dims: List[int],
-                       h_dims: List[int], device: torch.device):
+    def _set_trainable(
+        self,
+        i_dims: List[int],
+        j_dims: List[int],
+        h_dims: List[int],
+        device: torch.device,
+    ):
         baselines, self.gates, full_biases = [], torch.nn.ModuleList(), []
         zipped = zip(i_dims, j_dims, h_dims)
 
@@ -361,7 +375,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 input_dims.append(module.in_channels)
-                output_dims.append(module.out_channels)
+                if hasattr(module, 'heads'):
+                    heads = module.heads
+                else:
+                    heads = 1
+                # If multihead attention is used, the output channels are
+                # multiplied by the number of heads
+                output_dims.append(module.out_channels * heads)
 
         self._set_masks(x)
         self._set_trainable(input_dims, output_dims, output_dims, x.device)
@@ -405,6 +425,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     output = self.full_biases[i]
                     for j in range(len(gate_input)):
                         input = gate_input[j][i]
+                        if input.ndim == 3:
+                            input = input.view(input.size(0), -1)
                         try:
                             partial = self.gates[i * 4][j](input)
                         except Exception:
