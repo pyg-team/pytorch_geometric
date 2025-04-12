@@ -112,12 +112,8 @@ class AttentionExplainer(ExplainerAlgorithm):
             # For heterogeneous graphs, store alphas by edge type
             alphas_dict: Dict[EdgeType, List[Tensor]] = {}
 
-            # Create mapping from string format to edge type tuple
-            str_to_edge_type = {}
-            for edge_type in edge_index.keys():
-                src, rel, dst = edge_type
-                str_format = f"{src}__{rel}__{dst}"
-                str_to_edge_type[str_format] = edge_type
+            # Get list of edge types
+            edge_types = list(edge_index.keys())
 
             # Hook function to capture attention coefficients by edge type
             def hook(module, msg_kwargs, out):
@@ -127,10 +123,19 @@ class AttentionExplainer(ExplainerAlgorithm):
                     return
 
                 edge_type = None
-                for str_format, edge_tuple in str_to_edge_type.items():
-                    if str_format in module_name:
-                        edge_type = edge_tuple
-                        break
+                for edge_tuple in edge_types:
+                    src_type, edge_name, dst_type = edge_tuple
+                    # Check if all components appear in the module name in
+                    # order
+                    try:
+                        src_idx = module_name.index(src_type)
+                        edge_idx = module_name.index(edge_name, src_idx)
+                        dst_idx = module_name.index(dst_type, edge_idx)
+                        if src_idx < edge_idx < dst_idx:
+                            edge_type = edge_tuple
+                            break
+                    except ValueError:  # Component not found
+                        continue
 
                 if edge_type is None:
                     return
