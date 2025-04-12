@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
 
 import torch
 from torch import Tensor
@@ -58,10 +58,10 @@ def get_embeddings(
 
 def get_embeddings_hetero(
     model: torch.nn.Module,
-    supported_models: Optional[List[torch.nn.Module]] = None,
+    supported_models: Optional[List[Type[torch.nn.Module]]] = None,
     *args: Any,
     **kwargs: Any,
-) -> Dict[str, List[Tensor]]:
+) -> Dict[NodeType, List[Tensor]]:
     """Returns the output embeddings of all
     :class:`~torch_geometric.nn.conv.MessagePassing` layers in a heterogeneous
     :obj:`model`, organized by edge type.
@@ -73,8 +73,9 @@ def get_embeddings_hetero(
 
     Args:
         model (torch.nn.Module): The heterogeneous GNN model.
-        supported_models (Optional[List[torch.nn.Module]]): A list of supported
-            heterogenous models. (default: :obj:`None`)
+        supported_models (List[Type[torch.nn.Module]], optional): A list of
+            supported model classes. If not provided, defaults to
+            [HGTConv, HANConv, HeteroConv].
         *args: Arguments passed to the model.
         **kwargs (optional): Additional keyword arguments passed to the model.
 
