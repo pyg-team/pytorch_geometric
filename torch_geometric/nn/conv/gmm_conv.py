@@ -7,7 +7,7 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import Adj, OptPairTensor, Size
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 
 
 class GMMConv(MessagePassing):
@@ -128,12 +128,16 @@ class GMMConv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                edge_attr: Tensor, size: Size = None):
-
+                edge_attr: OptTensor = None, size: Size = None):
         if isinstance(x, Tensor):
             x = (x, x)
 
-        # propagate_type: (x: OptPairTensor, edge_attr: Tensor)
+        if isinstance(
+                edge_index, Tensor
+        ) and edge_index.layout == torch.strided and edge_attr is None:
+            raise ValueError('Strided edge indices require edge attributes')
+
+        # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         if not self.separate_gaussians:
             out: OptPairTensor = (torch.matmul(x[0], self.g), x[1])
             out = self.propagate(edge_index, x=out, edge_attr=edge_attr,
