@@ -33,36 +33,14 @@ class AttentionExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Union[Tensor, Dict[NodeType, Tensor]],
-        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        x: Tensor,
+        edge_index: Tensor,
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Union[Explanation, HeteroExplanation]:
-        """Generate explanations based on attention coefficients."""
-        self.is_hetero = isinstance(x, dict)
-
-        # Collect attention coefficients
-        alphas_dict = self._collect_attention_coefficients(
-            model, x, edge_index, **kwargs)
-
-        # Process attention coefficients
-        if self.is_hetero:
-            return self._create_hetero_explanation(model, alphas_dict,
-                                                   edge_index, index, x)
-        else:
-            return self._create_homo_explanation(model, alphas_dict,
-                                                 edge_index, index, x)
-
-    def _collect_attention_coefficients(
-        self,
-        model: torch.nn.Module,
-        x: Union[Tensor, Dict[NodeType, Tensor]],
-        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
-        **kwargs,
     ) -> Explanation:
-        pass
+        ...
 
     @overload
     def forward(
@@ -75,7 +53,7 @@ class AttentionExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> HeteroExplanation:
-        pass
+        ...
 
     def forward(
         self,
@@ -101,6 +79,26 @@ class AttentionExplainer(ExplainerAlgorithm):
         else:
             return self._create_homo_explanation(model, alphas_dict,
                                                  edge_index, index, x)
+
+    @overload
+    def _collect_attention_coefficients(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        **kwargs,
+    ) -> List[Tensor]:
+        ...
+
+    @overload
+    def _collect_attention_coefficients(
+        self,
+        model: torch.nn.Module,
+        x: Dict[NodeType, Tensor],
+        edge_index: Dict[EdgeType, Tensor],
+        **kwargs,
+    ) -> Dict[EdgeType, List[Tensor]]:
+        ...
 
     def _collect_attention_coefficients(
         self,
