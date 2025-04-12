@@ -238,7 +238,9 @@ class SamplerOutput(CastMixin):
         return out
 
     @classmethod
-    def collate(cls, outputs: List['SamplerOutput']) -> 'SamplerOutput':
+    def collate(cls,
+                outputs: List['SamplerOutput'],
+                replace: bool = False) -> 'SamplerOutput':
         r"""Collate a list of :class:`~torch_geometric.sampler.SamplerOutput`
         objects into a single :class:`~torch_geometric.sampler.SamplerOutput`
         object. Requires that they all have the same fields.
@@ -266,7 +268,7 @@ class SamplerOutput(CastMixin):
                 f"Output {i} has a different field than the first output")
 
         for other in outputs[1:]:
-            out = out.merge_with(other)
+            out = out.merge_with(other, replace=replace)
         return out
 
     def merge_with(self, other: 'SamplerOutput',
@@ -358,21 +360,26 @@ class SamplerOutput(CastMixin):
 
             # Transform the row and col indices to be global node ids
             # instead of relative indices to nodes field
-            old_row, old_col = torch.index_select(old_nodes, 0,
+            # Edge uids build off of node uids
+            old_row, old_col = torch.index_select(old_node_uid, 0,
                                                   old_row), torch.index_select(
-                                                      old_nodes, 0, old_col)
-            new_row, new_col = torch.index_select(new_nodes, 0,
+                                                      old_node_uid, 0, old_col)
+            new_row, new_col = torch.index_select(new_node_uid, 0,
                                                   new_row), torch.index_select(
-                                                      new_nodes, 0, new_col)
+                                                      new_node_uid, 0, new_col)
 
             old_edge_uid, new_edge_uid = [old_row, old_col], [new_row, new_col]
 
-            if self.edge is not None and other.edge is not None:
-                old_edge_uid.append(self.edge)
-                new_edge_uid.append(other.edge)
+            row_idx = 0
+            col_idx = old_row.shape[1]
+            edge_idx = old_row.shape[1] + old_col.shape[1]
 
-            old_edge_uid = torch.stack(old_edge_uid, dim=1)
-            new_edge_uid = torch.stack(new_edge_uid, dim=1)
+            if self.edge is not None and other.edge is not None:
+                old_edge_uid.append(self.edge.unsqueeze(-1))
+                new_edge_uid.append(other.edge.unsqueeze(-1))
+
+            old_edge_uid = torch.cat(old_edge_uid, dim=1)
+            new_edge_uid = torch.cat(new_edge_uid, dim=1)
 
             merged_edge_uid = torch.cat([old_edge_uid, new_edge_uid],
                                         dim=0).unique(dim=0)
@@ -394,25 +401,24 @@ class SamplerOutput(CastMixin):
                     merged_edge_num_sampled_edges.append(size_of_intersect)
                     curr_index += minibatch
 
-            merged_row = merged_edge_uid[:, 0]
-            merged_col = merged_edge_uid[:, 1]
-            merged_edge = merged_edge_uid[:, 2] \
+            merged_row = merged_edge_uid[:, row_idx]
+            merged_col = merged_edge_uid[:, col_idx]
+            merged_edge = merged_edge_uid[:, edge_idx] \
                 if self.edge is not None and other.edge is not None else None
 
             # restore to row and col indices relative to nodes field
-            merged_node_size = merged_nodes.numel()
-            merged_edge_size = merged_row.numel()
+            merged_edge_size = merged_edge.numel()
 
-            merged_node_expand = merged_nodes.unsqueeze(1).expand(
-                merged_node_size, merged_edge_size)
+            merged_node_expand = merged_node_uid.unsqueeze(-1).expand(
+                *merged_node_uid.shape, merged_edge_size)
 
-            merged_row_expand = merged_row.unsqueeze(0).expand(
-                merged_node_size, merged_edge_size)
+            merged_row_expand = merged_row.unsqueeze(0).unsqueeze(0).expand(
+                *merged_node_uid.shape, merged_edge_size)
             merged_row = (merged_row_expand == merged_node_expand).nonzero()[:,
                                                                              0]
 
-            merged_col_expand = merged_col.unsqueeze(0).expand(
-                merged_node_size, merged_edge_size)
+            merged_col_expand = merged_col.unsqueeze(0).unsqueeze(0).expand(
+                *merged_node_uid.shape, merged_edge_size)
             merged_col = (merged_col_expand == merged_node_expand).nonzero()[:,
                                                                              0]
 
