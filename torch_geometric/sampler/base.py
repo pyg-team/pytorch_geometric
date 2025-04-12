@@ -238,8 +238,7 @@ class SamplerOutput(CastMixin):
         return out
 
     @classmethod
-    def collate(cls,
-                outputs: List['SamplerOutput'],
+    def collate(cls, outputs: List['SamplerOutput'],
                 replace: bool = False) -> 'SamplerOutput':
         r"""Collate a list of :class:`~torch_geometric.sampler.SamplerOutput`
         objects into a single :class:`~torch_geometric.sampler.SamplerOutput`
