@@ -272,3 +272,200 @@ def test_pg_explainer_supports():
             edge_mask_type='object',
             model_config=model_config,
         )
+
+
+@withCUDA
+@pytest.mark.parametrize('conv_type', ['HGTConv', 'HANConv'])
+@pytest.mark.parametrize('mode', [
+    ModelMode.binary_classification,
+    ModelMode.multiclass_classification,
+])
+@pytest.mark.parametrize('task_level', [
+    ModelTaskLevel.node,
+    ModelTaskLevel.graph,
+])
+def test_pg_explainer_native_hetero(device, hetero_data, hetero_model_native,
+                                    check_explanation_hetero, conv_type, mode,
+                                    task_level):
+    """Test PGExplainer with native heterogeneous GNNs
+    (not created by to_hetero).
+    """
+    # Move data to device
+    hetero_data = hetero_data.to(device)
+
+    # Create model config
+    model_config = ModelConfig(
+        mode=mode,
+        task_level=task_level,
+        return_type=ModelReturnType.raw,
+    )
+
+    # Create and initialize model
+    metadata = hetero_data.metadata()
+    model = hetero_model_native(metadata, model_config,
+                                conv_type=conv_type).to(device)
+
+    # Generate target
+    with torch.no_grad():
+        raw_output = model(hetero_data.x_dict, hetero_data.edge_index_dict)
+        if mode == ModelMode.multiclass_classification:
+            # For multiclass, use class indices (long tensor)
+            target = raw_output.argmax(dim=-1)
+        else:  # binary classification
+            # For binary, convert to binary targets (long tensor)
+            target = (raw_output > 0).long()
+
+    # Setup index for node-level tasks
+    index = 0 if task_level == ModelTaskLevel.node else None
+
+    # Create explainer
+    explainer = Explainer(
+        model=model,
+        algorithm=PGExplainer(epochs=2).to(device),
+        explanation_type=ExplanationType.phenomenon,
+        edge_mask_type='object',
+        model_config=model_config,
+    )
+
+    # Should raise error when not fully trained
+    with pytest.raises(ValueError, match="not yet fully trained"):
+        explainer(
+            hetero_data.x_dict,
+            hetero_data.edge_index_dict,
+            target=target,
+            index=index if task_level == ModelTaskLevel.node else None,
+        )
+
+    # Train the explainer
+    explainer.algorithm.reset_parameters()
+    for epoch in range(2):
+        if task_level == ModelTaskLevel.node:
+            # For node-level, train on a single node
+            loss = explainer.algorithm.train(
+                epoch,
+                model,
+                hetero_data.x_dict,
+                hetero_data.edge_index_dict,
+                target=target,
+                index=index,
+            )
+        else:
+            # For graph-level, train on the whole graph
+            loss = explainer.algorithm.train(
+                epoch,
+                model,
+                hetero_data.x_dict,
+                hetero_data.edge_index_dict,
+                target=target,
+            )
+        assert isinstance(loss, float)
+
+    # Get explanation
+    explanation = explainer(
+        hetero_data.x_dict,
+        hetero_data.edge_index_dict,
+        target=target,
+        index=index if task_level == ModelTaskLevel.node else None,
+    )
+
+    # Check if the explanation is valid
+    assert isinstance(explanation, HeteroExplanation)
+    # Run through the standard explanation checker
+    check_explanation_hetero(explanation, None, explainer.edge_mask_type,
+                             hetero_data)
+
+
+@withCUDA
+@pytest.mark.parametrize('mode', [
+    ModelMode.binary_classification,
+    ModelMode.multiclass_classification,
+])
+@pytest.mark.parametrize('task_level', [
+    ModelTaskLevel.node,
+    ModelTaskLevel.graph,
+])
+def test_pg_explainer_hetero_conv(device, hetero_data, hetero_model_custom,
+                                  check_explanation_hetero, mode, task_level):
+    """Test PGExplainer with the built-in HeteroConv model."""
+    # Move data to device
+    hetero_data = hetero_data.to(device)
+
+    # Create model config
+    model_config = ModelConfig(
+        mode=mode,
+        task_level=task_level,
+        return_type=ModelReturnType.raw,
+    )
+
+    # Create and initialize model
+    metadata = hetero_data.metadata()
+    model = hetero_model_custom(metadata, model_config).to(device)
+
+    # Generate target
+    with torch.no_grad():
+        raw_output = model(hetero_data.x_dict, hetero_data.edge_index_dict)
+        if mode == ModelMode.multiclass_classification:
+            # For multiclass, use class indices (long tensor)
+            target = raw_output.argmax(dim=-1)
+        else:  # binary classification
+            # For binary, convert to binary targets (long tensor)
+            target = (raw_output > 0).long()
+
+    # Setup index for node-level tasks
+    index = 0 if task_level == ModelTaskLevel.node else None
+
+    # Create explainer
+    explainer = Explainer(
+        model=model,
+        algorithm=PGExplainer(epochs=2).to(device),
+        explanation_type=ExplanationType.phenomenon,
+        edge_mask_type='object',
+        model_config=model_config,
+    )
+
+    # Should raise error when not fully trained
+    with pytest.raises(ValueError, match="not yet fully trained"):
+        explainer(
+            hetero_data.x_dict,
+            hetero_data.edge_index_dict,
+            target=target,
+            index=index if task_level == ModelTaskLevel.node else None,
+        )
+
+    # Train the explainer
+    explainer.algorithm.reset_parameters()
+    for epoch in range(2):
+        if task_level == ModelTaskLevel.node:
+            # For node-level, train on a single node
+            loss = explainer.algorithm.train(
+                epoch,
+                model,
+                hetero_data.x_dict,
+                hetero_data.edge_index_dict,
+                target=target,
+                index=index,
+            )
+        else:
+            # For graph-level, train on the whole graph
+            loss = explainer.algorithm.train(
+                epoch,
+                model,
+                hetero_data.x_dict,
+                hetero_data.edge_index_dict,
+                target=target,
+            )
+        assert isinstance(loss, float)
+
+    # Get explanation
+    explanation = explainer(
+        hetero_data.x_dict,
+        hetero_data.edge_index_dict,
+        target=target,
+        index=index if task_level == ModelTaskLevel.node else None,
+    )
+
+    # Check if the explanation is valid
+    assert isinstance(explanation, HeteroExplanation)
+    # Run through the standard explanation checker
+    check_explanation_hetero(explanation, None, explainer.edge_mask_type,
+                             hetero_data)

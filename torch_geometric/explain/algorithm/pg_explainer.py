@@ -17,7 +17,7 @@ from torch_geometric.explain.config import (
     ModelMode,
     ModelTaskLevel,
 )
-from torch_geometric.nn import Linear
+from torch_geometric.nn import HANConv, HeteroConv, HGTConv, Linear
 from torch_geometric.nn.inits import reset
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import get_embeddings, get_embeddings_hetero
@@ -66,6 +66,13 @@ class PGExplainer(ExplainerAlgorithm):
         'temp': [5.0, 2.0],
         'bias': 0.01,
     }
+
+    # NOTE: Add more in the future as needed.
+    SUPPORTED_HETERO_MODELS = [
+        HGTConv,
+        HANConv,
+        HeteroConv,
+    ]
 
     def __init__(self, epochs: int, lr: float = 0.003, **kwargs):
         super().__init__()
@@ -354,8 +361,13 @@ class PGExplainer(ExplainerAlgorithm):
         """Get embeddings from the model based on input type."""
         if self.is_hetero:
             # For heterogeneous graphs, get embeddings for each node type
-            embeddings_dict = get_embeddings_hetero(model, x, edge_index,
-                                                    **kwargs)
+            embeddings_dict = get_embeddings_hetero(
+                model,
+                self.SUPPORTED_HETERO_MODELS,
+                x,
+                edge_index,
+                **kwargs,
+            )
 
             # Use the last layer's embeddings for each node type
             last_embedding_dict = {
