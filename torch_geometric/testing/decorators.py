@@ -33,8 +33,8 @@ def onlyFullTest(func: Callable) -> Callable:
 
 def is_distributed_test() -> bool:
     r"""Whether to run the distributed test suite."""
-    return ((is_full_test() or os.getenv('DIST_TEST', '0') == '1')
-            and sys.platform == 'linux' and has_package('pyg_lib'))
+    return (os.getenv('DIST_TEST', '0') == '1' and sys.platform == 'linux'
+            and has_package('pyg_lib'))
 
 
 def onlyDistributedTest(func: Callable) -> Callable:
