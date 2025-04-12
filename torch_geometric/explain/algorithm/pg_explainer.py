@@ -105,7 +105,7 @@ class PGExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> float:
-        pass
+        ...
 
     @overload
     def train(
@@ -119,7 +119,7 @@ class PGExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> float:
-        pass
+        ...
 
     def train(
         self,
@@ -234,7 +234,7 @@ class PGExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-        pass
+        ...
 
     @overload
     def forward(
@@ -247,7 +247,7 @@ class PGExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> HeteroExplanation:
-        pass
+        ...
 
     def forward(
         self,
