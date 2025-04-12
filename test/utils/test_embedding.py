@@ -41,7 +41,7 @@ def test_get_embeddings_hetero(hetero_data, hetero_model):
     model = hetero_model(metadata)
 
     # Get heterogeneous embeddings
-    embeddings_dict = get_embeddings_hetero(model, hetero_data.x_dict,
+    embeddings_dict = get_embeddings_hetero(model, None, hetero_data.x_dict,
                                             hetero_data.edge_index_dict)
 
     # Verify the structure of the returned embeddings
