@@ -87,10 +87,10 @@ def parse_args():
     parser.add_argument(
         '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
         choices=["frozen", "lora",
-                 "full"], help="Wether to freeze the Generator LLM,\
+                 "full"], help="Whether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
     parser.add_argument('--dont_save_model', action="store_true",
-                        help="Wether to skip model saving.")
+                        help="Whether to skip model saving.")
     return parser.parse_args()
 
 
@@ -107,40 +107,13 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
 
 
 def get_data():
-    # need the data formatted as a JSON
-    """Example preproc:
-    # Load train and dev sets. 910 records in total.
-    df = pd.concat([
-        pd.read_json(f'{input_dir}/techqa/training_and_dev/training_Q_A.json', lines=False),
-        pd.read_json(f'{input_dir}/techqa/training_and_dev/dev_Q_A.json', lines=False),
-    ])
-
-    # Add the `contexts` by looking up the DOCUMENT id in the corpus, and fetch the `text` field.
-    # Put an empty list if no matches (not answerable cases)
-    df["contexts"] = df["DOCUMENT"].apply(
-        lambda doc_id: [{"filename": doc_id + '.txt', "text": 'Title: '+corpus.get(doc_id, {}).get("title", "No Title")+'\n\nText:\n'+corpus.get(doc_id, {}).get("text", "No Text")}]
-        if doc_id in corpus
-        else []
-    )
-
-    # Set is_impossible to be reverse of ANSWERABLE
-    df["is_impossible"] = df["ANSWERABLE"].apply(lambda x: x == "N")
-
-    df['question'] = df['QUESTION_TITLE'] + '\n\n' + df['QUESTION_TEXT']
-    df = df.rename(columns={"QUESTION_ID": "id", "ANSWER":"answer"})
-    df = cleanup(df, ['question', 'answer'])
-    df = df.loc[ df['is_impossible']==False ].reset_index(drop=True)
-    df = df.loc[ df['contexts'].apply(lambda x: len(x)) >= 1].reset_index(drop=True)
-    df = df.loc[ df['contexts'].apply(lambda x: len(x[0]['text'])) >= 1].reset_index(drop=True)
-
-    df[['id', 'question', 'answer', 'is_impossible', 'contexts']].to_json(f'{output_dir}/techqa/train.json', orient='records', lines=False)
-    df[['id', 'question', 'answer', 'is_impossible', 'contexts']]
-    """
+    # need a JSON dict of Questions and answers, see below for how its used
     with open('train.json') as file:
         json_obj = json.load(file)
     text_contexts = []
 
-    # Read corpus data. Prefer *.json files, fall back to txt files.
+    # Read corpus data to create the KG. Prefer *.json files, fall back to txt
+    # files.
     # TODO: add support for additional corpus file formats: PDF, CSV, XML,
     # HTML, possibly others.
     file_paths = glob(f"corpus/*.json")
@@ -180,11 +153,29 @@ def make_dataset(args):
             print(
                 "Note that if the TXT2KG process is too slow for you're liking using the public NIM, consider deploying yourself using local_lm flag of TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct?snippet_tab=Docker to deploy to a private endpoint, which you can pass to this script w/ --ENDPOINT_URL flag."
             )  # noqa
-            for context_doc in tqdm(context_docs,
+            total_tqdm_count = len(context_docs)
+            initial_tqdm_count = 0
+            if os.path.exists("checkpoint_kg.pt"):
+                print("Restoring KG from checkpoint...")
+                saved_relevant_triples = torch.load("checkpoint_kg.pt",
+                                                    weights_only=False)
+                kg_maker.relevant_triples = saved_relevant_triples
+                kg_maker.doc_id_counter = len(saved_relevant_triples)
+                initial_tqdm_count = kg_maker.doc_id_counter
+                context_docs = context_docs[kg_maker.doc_id_counter:]
+
+            chkpt_interval = 10
+            chkpt_count = 0
+            for context_doc in tqdm(context_docs, total=total_tqdm_count,
+                                    initial=initial_tqdm_count,
                                     desc="Extracting KG triples"):
                 kg_maker.add_doc_2_KG(txt=context_doc)
-
+                chkpt_count += 1
+                if chkpt_count == chkpt_interval:
+                    chkpt_count = 0
+                    kg_maker.save_kg("checkpoint_kg.pt")
             relevant_triples = kg_maker.relevant_triples
+
             triples.extend(
                 list(
                     chain.from_iterable(
@@ -192,6 +183,9 @@ def make_dataset(args):
                         for triple_set in relevant_triples.values())))
             triples = list(dict.fromkeys(triples))
             torch.save(triples, "tech_qa_just_triples.pt")
+            if os.path.exists("checkpoint_kg.pt"):
+                os.remove("checkpoint_kg.pt")
+
         print("Number of triples in our GraphDB =", len(triples))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         sent_trans_batch_size = 256
