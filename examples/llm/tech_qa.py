@@ -97,7 +97,6 @@ def parse_args():
                         use LORA, or fully finetune")
     parser.add_argument('--dont_save_model', action="store_true",
                         help="Whether to skip model saving.")
-    parser.add_argument('--checkpointing', action="store_true")
     return parser.parse_args()
 
 
@@ -154,21 +153,18 @@ def make_dataset(args):
                 kg_maker.relevant_triples = saved_relevant_triples
                 kg_maker.doc_id_counter = len(saved_relevant_triples)
                 initial_tqdm_count = kg_maker.doc_id_counter
-                context_docs = context_docs[(kg_maker.doc_id_counter - 1):]
+                context_docs = context_docs[kg_maker.doc_id_counter:]
 
-            if args.checkpointing:
-                interval = 10
-                count = 0
+            chkpt_interval = 10
+            chkpt_count = 0
             for context_doc in tqdm(context_docs, total=total_tqdm_count,
                                     initial=initial_tqdm_count,
                                     desc="Extracting KG triples"):
                 kg_maker.add_doc_2_KG(txt=context_doc)
-                if args.checkpointing:
-                    count += 1
-                    if count == interval:
-                        print(" checkpointing KG...")
-                        count = 0
-                        kg_maker.save_kg("checkpoint_kg.pt")
+                chkpt_count += 1
+                if chkpt_count == chkpt_interval:
+                    chkpt_count = 0
+                    kg_maker.save_kg("checkpoint_kg.pt")
             relevant_triples = kg_maker.relevant_triples
 
             triples.extend(
@@ -178,7 +174,7 @@ def make_dataset(args):
                         for triple_set in relevant_triples.values())))
             triples = list(dict.fromkeys(triples))
             torch.save(triples, "tech_qa_just_triples.pt")
-            if args.checkpointing and os.path.exists("checkpoint_kg.pt"):
+            if os.path.exists("checkpoint_kg.pt"):
                 os.remove("checkpoint_kg.pt")
 
         print("Number of triples in our GraphDB =", len(triples))

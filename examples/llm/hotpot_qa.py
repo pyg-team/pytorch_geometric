@@ -17,19 +17,24 @@ from torch_geometric.utils.rag.backend_utils import (
 from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 
+DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
+
 if __name__ == '__main__':
     seed_everything(50)
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_MODEL', type=str,
                         default="nvidia/llama-3.1-nemotron-70b-instruct")
     parser.add_argument('--NV_NIM_KEY', type=str, default="")
+    parser.add_argument(
+        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL, help=
+        "The URL hosting your model, in case you are not using the public NIM."
+    )
     parser.add_argument('--local_lm', action="store_true")
     parser.add_argument('--percent_data', type=float, default=1.0)
     parser.add_argument(
         '--chunk_size', type=int, default=512,
         help="When splitting context documents for txt2kg,\
         the maximum number of characters per chunk.")
-    parser.add_argument('--checkpointing', action="store_true")
     parser.add_argument('--verbose', action="store_true")
     args = parser.parse_args()
     assert args.percent_data <= 100 and args.percent_data > 0
@@ -42,14 +47,12 @@ if __name__ == '__main__':
         kg_maker = TXT2KG(
             NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
             NVIDIA_API_KEY=args.NV_NIM_KEY,
+            ENDPOINT_URL=args.ENDPOINT_URL,
             chunk_size=args.chunk_size,
         )
     if os.path.exists("hotpot_kg.pt"):
         print("Re-using existing KG...")
         relevant_triples = torch.load("hotpot_kg.pt", weights_only=False)
-    elif os.path.exists("checkpoint_kg.pt"):
-        print("Re-using existing checkpoint...")
-        relevant_triples = torch.load("checkpoint_kg.pt", weights_only=False)
     else:
         # training set for simplicity since naive retrieval is nonparametric
         raw_dataset = datasets.load_dataset('hotpotqa/hotpot_qa', 'fullwiki',
@@ -59,10 +62,23 @@ if __name__ == '__main__':
         data_idxs = torch.randperm(num_data_pts)[0:int(num_data_pts *
                                                        args.percent_data /
                                                        100.0)]
-        if args.checkpointing:
-            five_percent = int(len(data_idxs) / 20)
-            count = 0
-        for idx in tqdm(data_idxs, desc="Building KG"):
+        total_tqdm_count = len(data_idxs)
+        initial_tqdm_count = 0
+        if os.path.exists("checkpoint_kg.pt"):
+            print("Restoring KG from checkpoint...")
+            saved_relevant_triples = torch.load("checkpoint_kg.pt",
+                                                weights_only=False)
+            kg_maker.relevant_triples = saved_relevant_triples
+            kg_maker.doc_id_counter = len(saved_relevant_triples)
+            initial_tqdm_count = kg_maker.doc_id_counter
+            data_idxs = data_idxs[kg_maker.doc_id_counter:]
+
+        chkpt_interval = 10
+        chkpt_count = 0
+
+        for idx in tqdm(data_idxs, total=total_tqdm_count,
+                        initial=initial_tqdm_count,
+                        desc="Extracting KG triples"):
             data_point = raw_dataset[int(idx)]
             q = data_point["question"]
             a = data_point["answer"]
@@ -76,15 +92,13 @@ if __name__ == '__main__':
                 txt=context_doc,
                 QA_pair=QA_pair,
             )
-            if args.checkpointing:
-                count += 1
-                if count == five_percent:
-                    print("checkpointing...")
-                    count = 0
-                    kg_maker.save_kg("checkpoint_kg.pt")
+            chkpt_count += 1
+            if chkpt_count == chkpt_interval:
+                chkpt_count = 0
+                kg_maker.save_kg("checkpoint_kg.pt")
+
         kg_maker.save_kg("hotpot_kg.pt")
-        if args.checkpointing:
-            # delete checkpoint
+        if os.path.exists("checkpoint_kg.pt"):
             os.remove("checkpoint_kg.pt")
 
         relevant_triples = kg_maker.relevant_triples
