@@ -1,3 +1,4 @@
+import os
 import subprocess
 from time import sleep
 
@@ -11,6 +12,8 @@ from torch_geometric.testing import onlyLinux, onlyNeighborSampler
 
 @onlyLinux
 @onlyNeighborSampler
+@pytest.mark.skipif(os.cpu_count() == 1,
+                    reason="Not suitable for single-CPU systems")
 @pytest.mark.parametrize('loader_cores', [None, [1, 2]])
 def test_cpu_affinity_neighbor_loader(loader_cores, spawn_context):
     data = Data(x=torch.randn(1, 1))
@@ -40,6 +43,8 @@ def init_fn(worker_id):
 
 @onlyLinux
 @onlyNeighborSampler
+@pytest.mark.skipif(os.cpu_count() == 1,
+                    reason="Not suitable for single-CPU systems")
 def test_multithreading_neighbor_loader(spawn_context):
     loader = NeighborLoader(
         data=Data(x=torch.randn(1, 1)),
