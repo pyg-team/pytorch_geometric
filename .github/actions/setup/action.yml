@@ -59,8 +59,7 @@ runs:
     - name: Install pyg-lib
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
-        uv pip uninstall -y pyg-lib
-        uv pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        uv pip install --no-index --upgrade pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
 
     - name: Install faiss-cpu
