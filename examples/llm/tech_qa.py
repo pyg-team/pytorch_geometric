@@ -141,6 +141,8 @@ def get_data():
     text_contexts = []
 
     # Read corpus data. Prefer *.json files, fall back to txt files.
+    # TODO: add support for additional corpus file formats: PDF, CSV, XML,
+    # HTML, possibly others.
     file_paths = glob(f"corpus/*.json")
     if len(file_paths) > 0:
         for file_path in file_paths:
