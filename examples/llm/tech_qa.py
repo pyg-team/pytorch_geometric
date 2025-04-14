@@ -226,10 +226,11 @@ def make_dataset(args):
         # TODO add reranking NIM to VectorRAG
         query_loader = RAGQueryLoader(
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
-            sampler_kwargs={"num_neighbors": [fanout] * num_hops},
-            local_filter=make_pcst_filter(triples, model),
+            sampler_kwargs={"num_neighbors": [fanout] * num_hops
+                            }, local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
-            embedded_docs=embedded_docs)
+            embedded_docs=embedded_docs, use_nvidia_rerank=True,
+            NIM_KEY_FOR_RERANK=args.NV_NIM_KEY)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):

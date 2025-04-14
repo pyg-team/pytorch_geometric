@@ -179,9 +179,10 @@ class TXT2KG():
                                           self.NVIDIA_API_KEY, self.NIM_MODEL,
                                           self.ENDPOINT_URL), nprocs=num_procs)
                                 break
-                            except:  # noqa
+                            except Exception as e:  # noqa
                                 # keep retrying, txt2kg is costly -> stoppage is costly
-                                pass
+                                print("Retrying after", e)
+                                print("...")
 
                         # Collect the results from each process
                         self.relevant_triples[key] = []
@@ -190,8 +191,9 @@ class TXT2KG():
                                 "/tmp/outs_for_proc_" + str(rank))
                             os.remove("/tmp/outs_for_proc_" + str(rank))
                         break
-                    except:
-                        pass
+                    except Exception as e:  # noqa
+                        print("Retrying after", e)
+                        print("...")
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
