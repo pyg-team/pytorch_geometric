@@ -26,13 +26,17 @@ jobs:
 
       - name: Install main package
         run: |
-          pip install -e ".[full,test]"
-          python -c "import torch; print('PyTorch:', torch.__version__)"
-          python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-          python -c "import torch; print('CUDA:', torch.version.cuda)"
+          uv pip install -e ".[full,test]"
+
+      - name: Check installation
+        run: |
+          uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
+          uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+          uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
+        shell: bash
 
       - name: Run tests
         timeout-minutes: 20
         run: |
-          FULL_TEST=1 pytest
+          FULL_TEST=1 uv run --no-project pytest
         shell: bash

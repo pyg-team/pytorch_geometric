@@ -43,20 +43,20 @@ jobs:
         with:
           torch-version: nightly
 
-      - name: Install mpmath
-        run: |
-          pip install mpmath==1.3.0
-
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e ".[test]"
-          python -c "import torch; print('PyTorch:', torch.__version__)"
-          python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-          python -c "import torch; print('CUDA:', torch.version.cuda)"
+          uv pip install -e ".[test]"
+
+      - name: Check installation
+        run: |
+          uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
+          uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+          uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
+        shell: bash
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 15
         run: |
-          pytest
+          uv run --no-project pytest
