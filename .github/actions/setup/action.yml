@@ -28,6 +28,7 @@ runs:
       run: |
         uv python install ${{ inputs.python-version }}
         uv venv
+        source .venv/bin/activate
         uv pip install --upgrade pip
       shell: bash
 
