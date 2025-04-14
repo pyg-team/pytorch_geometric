@@ -22,6 +22,7 @@ from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import Data
+from torch_geometric.io import fs
 from torch_geometric.typing import WITH_PT24
 
 # Could be any hashable type
@@ -505,13 +506,13 @@ class LargeGraphIndexer:
         for fname in os.listdir(node_attr_path):
             full_fname = f"{node_attr_path}/{fname}"
             key = fname.split(".")[0]
-            indexer.node_attr[key] = torch.load(full_fname)
+            indexer.node_attr[key] = fs.torch_load(full_fname)
 
         edge_attr_path = path + "/edge_attr"
         for fname in os.listdir(edge_attr_path):
             full_fname = f"{edge_attr_path}/{fname}"
             key = fname.split(".")[0]
-            indexer.edge_attr[key] = torch.load(full_fname)
+            indexer.edge_attr[key] = fs.torch_load(full_fname)
 
         return indexer
 
