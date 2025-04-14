@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.explain import Explainer, GNNExplainer
+from torch_geometric.explain import Explainer, GNNExplainer, HeteroExplanation
 from torch_geometric.explain.config import (
     ExplanationType,
     MaskType,
@@ -291,3 +291,63 @@ def test_gnn_explainer_attentive_fp(check_explanation):
     assert explainer.algorithm.edge_mask is None
 
     check_explanation(explanation, MaskType.object, MaskType.object)
+
+
+@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
+@pytest.mark.parametrize('explanation_type', explanation_types)
+@pytest.mark.parametrize('task_level', task_levels)
+@pytest.mark.parametrize('return_type', [
+    ModelReturnType.log_probs,
+    ModelReturnType.probs,
+    ModelReturnType.raw,
+])
+@pytest.mark.parametrize('index', indices)
+def test_gnn_explainer_hetero(
+    node_mask_type,
+    edge_mask_type,
+    explanation_type,
+    task_level,
+    return_type,
+    index,
+    hetero_data,
+    hetero_model,
+    check_explanation_hetero,
+):
+    if node_mask_type is None and edge_mask_type is None:
+        return
+
+    model_config = ModelConfig(
+        mode='multiclass_classification',
+        task_level=task_level,
+        return_type=return_type,
+    )
+
+    metadata = hetero_data.metadata()
+    model = hetero_model(metadata, model_config)
+
+    target = None
+    if explanation_type == ExplanationType.phenomenon:
+        with torch.no_grad():
+            target = model(hetero_data.x_dict,
+                           hetero_data.edge_index_dict).argmax(-1)
+
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=2),
+        explanation_type=explanation_type,
+        node_mask_type=node_mask_type,
+        edge_mask_type=edge_mask_type,
+        model_config=model_config,
+    )
+
+    explanation = explainer(
+        hetero_data.x_dict,
+        hetero_data.edge_index_dict,
+        target=target,
+        index=index,
+    )
+
+    assert isinstance(explanation, HeteroExplanation)
+    check_explanation_hetero(explanation, node_mask_type, edge_mask_type,
+                             hetero_data)

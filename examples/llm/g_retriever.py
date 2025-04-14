@@ -9,6 +9,8 @@ Requirements:
 
 Example repo for integration with Neo4j Graph DB:
 https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
+Example blog showing 2x accuracy over LLM on real medical data:
+https://developer.nvidia.com/blog/boosting-qa-accuracy-with-graphrag-using-pyg-and-graph-databases/
 """
 import argparse
 import gc
