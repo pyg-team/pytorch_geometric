@@ -5,9 +5,9 @@ import gc
 import json
 import os
 import random
+import re
 from glob import glob
 from itertools import chain
-import re
 
 import torch
 from g_retriever import (
@@ -30,6 +30,7 @@ from torch_geometric.nn import (
     LLMJudge,
     SentenceTransformer,
 )
+from torch_geometric.nn.nlp.txt2kg import _chunk_text
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
@@ -37,8 +38,6 @@ from torch_geometric.utils.rag.backend_utils import (
 )
 from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
-
-from torch_geometric.nn.nlp.txt2kg import _chunk_text
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
@@ -243,8 +242,7 @@ def make_dataset(args):
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
-            embedded_docs=embedded_docs,
-            k_for_docs=args.k_for_docs)
+            embedded_docs=embedded_docs, k_for_docs=args.k_for_docs)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
