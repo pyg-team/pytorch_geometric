@@ -55,6 +55,10 @@ Explanations
    :show-inheritance:
    :members:
 
+.. autoclass:: torch_geometric.explain.GenerativeExplanation
+   :show-inheritance:
+   :members:
+
 Explainer Algorithms
 --------------------
 
