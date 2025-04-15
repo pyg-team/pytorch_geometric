@@ -143,7 +143,6 @@ def test_large_graph_index():
             return nx.weisfeiler_lehman_graph_hash(nx.Graph(
                 tensor1.T)) == nx.weisfeiler_lehman_graph_hash(
                     nx.Graph(tensor2.T))
-            return True
         return _sorted_tensors_are_close(
             ground_truth.x, new_method.x) \
             and _sorted_tensors_are_close(

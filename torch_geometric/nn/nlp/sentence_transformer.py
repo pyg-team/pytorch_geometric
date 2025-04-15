@@ -4,6 +4,7 @@ from typing import List, Optional, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+from tqdm import tqdm
 
 
 class PoolingStrategy(Enum):
@@ -30,6 +31,10 @@ class SentenceTransformer(torch.nn.Module):
         self.model = AutoModel.from_pretrained(model_name)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
+
+        # Maximum sequence length from the model configuration (e.g. 8192 for
+        # models like ModernBERT)
+        self.max_seq_length = self.model.config.max_position_embeddings
 
     def forward(self, input_ids: Tensor, attention_mask: Tensor) -> Tensor:
         out = self.model(input_ids=input_ids, attention_mask=attention_mask)
@@ -67,6 +72,7 @@ class SentenceTransformer(torch.nn.Module):
                 padding=True,
                 truncation=True,
                 return_tensors='pt',
+                max_length=self.max_seq_length,
             )
             input_ids.append(token.input_ids.to(self.device))
             attention_masks.append(token.attention_mask.to(self.device))
@@ -88,6 +94,7 @@ class SentenceTransformer(torch.nn.Module):
         text: List[str],
         batch_size: Optional[int] = None,
         output_device: Optional[Union[torch.device, str]] = None,
+        verbose=False,
     ) -> Tensor:
         is_empty = len(text) == 0
         text = ['dummy'] if is_empty else text
@@ -95,20 +102,38 @@ class SentenceTransformer(torch.nn.Module):
         batch_size = len(text) if batch_size is None else batch_size
 
         embs: List[Tensor] = []
-        for start in range(0, len(text), batch_size):
+        loader = range(0, len(text), batch_size)
+        if verbose:
+            loader = tqdm(
+                loader, desc="Encoding " + str(len(text)) +
+                " strings w/ SentenceTransformer")
+        for start in loader:
             token = self.tokenizer(
                 text[start:start + batch_size],
                 padding=True,
                 truncation=True,
                 return_tensors='pt',
+                max_length=self.max_seq_length,
             )
+            try:
+                emb = self(
+                    input_ids=token.input_ids.to(self.device),
+                    attention_mask=token.attention_mask.to(self.device),
+                ).to(output_device)
 
-            emb = self(
-                input_ids=token.input_ids.to(self.device),
-                attention_mask=token.attention_mask.to(self.device),
-            ).to(output_device)
+                embs.append(emb)
+            except:
+                # fallback to using CPU for huge strings that cause OOMs
+                print("Sentence Transformer failed on cuda, trying w/ cpu...")
+                previous_device = self.device
+                self.model = self.model.to("cpu")
+                emb = self(
+                    input_ids=token.input_ids.to(self.device),
+                    attention_mask=token.attention_mask.to(self.device),
+                ).to(output_device)
 
-            embs.append(emb)
+                embs.append(emb)
+                self.model = self.model.to(previous_device)
 
         out = torch.cat(embs, dim=0) if len(embs) > 1 else embs[0]
         out = out[:0] if is_empty else out

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Adds TXT2KG class with example on HotPotQA ([#9846](https://github.com/pyg-team/pytorch_geometric/pull/9846))
 - Added PyTorch 2.6 support ([#10170](https://github.com/pyg-team/pytorch_geometric/pull/10170))
 - Added support for heterogenous graphs in `GNNExplainer` ([#10158](https://github.com/pyg-team/pytorch_geometric/pull/10158))
 - Added Graph Positional and Structural Encoder (GPSE) ([#9018](https://github.com/pyg-team/pytorch_geometric/pull/9018))
