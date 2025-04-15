@@ -9,6 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.nn import Module
 from tqdm import trange
 
 import torch_geometric.transforms as T
@@ -715,8 +716,9 @@ class GPSENodeEncoder(torch.nn.Module):
 
 
 @torch.no_grad()
-def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
-                 bernoulli_thresh: float = 0.5, neighbor_loader: bool = False,
+def gpse_process(model: Module, data: Data, rand_type: str,
+                 use_vn: bool = True, bernoulli_thresh: float = 0.5,
+                 neighbor_loader: bool = False,
                  num_neighbors: List[int] = [30, 20, 10], fillval: int = 5,
                  layers_mp: int = None, **kwargs) -> torch.Tensor:
     r"""Processes the data using the :class:`GPSE` model to generate and append
@@ -731,7 +733,7 @@ def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
     :obj:`precompute_GPSE` on your whole dataset is advised instead.
 
     Args:
-        model (GPSE): The :class:`GPSE` model.
+        model (Module): The :class:`GPSE` model.
         data (torch_geometric.data.Data): A :class:`~torch_geometric.data.Data`
             object.
         rand_type (str, optional): Type of random features to use. Options are
