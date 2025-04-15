@@ -14,7 +14,7 @@ class AddGPSE(BaseTransform):
     the actual encodings.
 
     Args:
-        model (GPSE): The pre-trained GPSE model.
+        model (Module): The pre-trained GPSE model.
         use_vn (bool, optional): Whether to use virtual nodes.
             (default: :obj:`True`)
         rand_type (str, optional): Type of random features to use. Options are
