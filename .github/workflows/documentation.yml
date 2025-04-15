@@ -51,5 +51,6 @@ jobs:
 
       - name: Build documentation
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        working-directory: ./docs
         run: |
-          cd docs && uv run --no-project sphinx-build -M html "source" "build" -W  # Fail on warning.
+          uv run --no-project sphinx-build -M html "source" "build" -W  # Fail on warning.
