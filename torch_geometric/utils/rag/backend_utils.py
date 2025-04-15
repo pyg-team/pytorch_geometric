@@ -15,6 +15,7 @@ from typing import (
     runtime_checkable,
 )
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import Module
