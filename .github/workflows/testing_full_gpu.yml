@@ -38,5 +38,5 @@ jobs:
       - name: Run tests
         timeout-minutes: 20
         run: |
-          FULL_TEST=1 uv run --no-project pytest
+          FULL_TEST=1 uv run --no-project pytest --durations 10
         shell: bash
