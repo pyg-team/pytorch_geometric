@@ -49,6 +49,12 @@ runs:
         uv pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
       shell: bash
 
+    - name: Install compatible networkx
+      if: ${{ inputs.python-version == '3.9' }}
+      run: |
+        uv pip install "networkx<3.2"
+      shell: bash
+
     - name: Check installation
       run: |
         uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
