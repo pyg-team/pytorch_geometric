@@ -39,8 +39,8 @@ jobs:
 
       - name: Build package
         run: |
-          uv pip install build
-          uv run --no-project python -m build
+          pip install build
+          python -m build
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1

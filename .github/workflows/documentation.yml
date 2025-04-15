@@ -52,4 +52,4 @@ jobs:
       - name: Build documentation
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          cd docs && make clean && make html SPHINXOPTS="-W"  # Fail on warning.
+          cd docs && uv run --no-project sphinx-build -M html "source" "build" -W  # Fail on warning.

@@ -29,7 +29,7 @@ runs:
         uv python install ${{ inputs.python-version }}
         uv venv
         source .venv/bin/activate
-        uv pip install --upgrade pip
+        uv pip install --upgrade pip setuptools
       shell: bash
 
     - name: Install numpy
