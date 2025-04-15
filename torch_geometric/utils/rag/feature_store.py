@@ -12,7 +12,7 @@ from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
-
+from torch_geometric.utils.rag.backend_utils import batch_knn
 
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
