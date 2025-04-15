@@ -160,3 +160,37 @@ def remap_keys(
         k if k in exclude else mapping.get(k, k): v
         for k, v in inputs.items()
     }
+
+
+def local_to_global_node_idx(node_values: Tensor, local_indices: Tensor) -> Tensor:
+    """Convert a tensor of indices referring to elements in the node_values tensor to their values.
+
+    Args:
+        node_values (Tensor): The node values. (num_nodes, feature_dim)
+        local_indices (Tensor): The local indices. (num_indices)
+
+    Returns:
+        Tensor: The values of the node_values tensor at the local indices. (num_indices, feature_dim)
+    """
+    return torch.index_select(node_values, dim=0, index=local_indices)
+
+def global_to_local_node_idx(node_values: Tensor, local_values: Tensor) -> Tensor:
+    """Converts a tensor of values that are contained in the node_values tensor to their indices in that tensor.
+
+    Args:
+        node_values (Tensor): The node values. (num_nodes, feature_dim)
+        local_values (Tensor): The local values. (num_indices, feature_dim)
+
+    Returns:
+        Tensor: The indices of the local values in the node_values tensor. (num_indices)
+    """
+    if node_values.dim() == 1:
+        node_values = node_values.unsqueeze(1)
+    if local_values.dim() == 1:
+        local_values = local_values.unsqueeze(1)
+    node_values_expand = node_values.unsqueeze(-1).expand(*node_values.shape, local_values.shape[0]) # (num_nodes, feature_dim, num_indices)
+    local_values_expand = local_values.transpose(0, 1).unsqueeze(0).expand(*node_values_expand.shape) # (num_nodes, feature_dim, num_indices)
+    idx_match = torch.all(node_values_expand == local_values_expand, dim=1).nonzero() # (num_indices, 2)
+    sort_idx = torch.argsort(idx_match[:, 1])
+
+    return idx_match[:, 0][sort_idx]

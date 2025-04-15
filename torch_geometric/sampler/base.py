@@ -11,7 +11,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
-from torch_geometric.sampler.utils import to_bidirectional
+from torch_geometric.sampler.utils import to_bidirectional, local_to_global_node_idx
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
@@ -207,6 +207,26 @@ class SamplerOutput(CastMixin):
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
+    @property
+    def global_row(self) -> Tensor:
+        return local_to_global_node_idx(self.node, self.row)
+
+    @property
+    def global_col(self) -> Tensor:
+        return local_to_global_node_idx(self.node, self.col)
+    
+    @property
+    def seed_node(self) -> Tensor:
+        return local_to_global_node_idx(self.node, self.batch) if self.batch is not None else None
+    
+    @property
+    def global_orig_row(self) -> Tensor:
+        return local_to_global_node_idx(self.node, self.orig_row) if self.orig_row is not None else None
+    
+    @property
+    def global_orig_col(self) -> Tensor:
+        return local_to_global_node_idx(self.node, self.orig_col) if self.orig_col is not None else None
+    
     def to_bidirectional(
         self,
         keep_orig_edges: bool = False,
