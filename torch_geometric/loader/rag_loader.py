@@ -7,7 +7,7 @@ from torch import Tensor
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
-from torch_geometric.utils.rag.feature_store import batch_knn
+from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
 class RAGFeatureStore(Protocol):
