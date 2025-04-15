@@ -10,8 +10,8 @@ from typing import (
     Protocol,
     Tuple,
     Type,
+    no_type_check,
     runtime_checkable,
-    no_type_check
 )
 
 import torch
