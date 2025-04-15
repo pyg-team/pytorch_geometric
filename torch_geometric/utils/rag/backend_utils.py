@@ -12,6 +12,7 @@ from typing import (
     Type,
     no_type_check,
     runtime_checkable,
+    Iterator
 )
 
 import torch
