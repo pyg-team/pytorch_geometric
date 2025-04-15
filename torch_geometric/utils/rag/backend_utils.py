@@ -33,7 +33,7 @@ from torch_geometric.distributed import (
     Partitioner,
 )
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.typing import EdgeType, NodeType, InputNodes
 
 try:
     from pandas import DataFrame
