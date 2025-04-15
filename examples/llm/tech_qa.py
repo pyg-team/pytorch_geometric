@@ -5,6 +5,7 @@ import gc
 import json
 import os
 import random
+import re
 from glob import glob
 from itertools import chain
 
@@ -35,6 +36,7 @@ from torch_geometric.nn import (
     LLMJudge,
     SentenceTransformer,
 )
+from torch_geometric.nn.nlp.txt2kg import _chunk_text
 from torch_geometric.utils.rag.backend_utils import (
     create_remote_backend_from_triplets,
     make_pcst_filter,
@@ -97,6 +99,8 @@ def parse_args():
                         use LORA, or fully finetune")
     parser.add_argument('--dont_save_model', action="store_true",
                         help="Whether to skip model saving.")
+    parser.add_argument('--k_for_docs', type=int, default=2,
+                        help="Number of docs to retrieve for each question.")
     return parser.parse_args()
 
 
@@ -135,7 +139,16 @@ def get_data():
     else:
         for file_path in glob(f"corpus/*"):
             with open(file_path, "r+") as f:
-                text_contexts.append(f.read())
+                text_context = f.read()
+            # Some corpora of docs are grouped into chunked files, typically by paragraph.
+            # Only split into individual documents if many paragraphs are detected
+            paragraphs = re.split(r'\n{2,}', text_context)
+            if len(paragraphs) < 16:
+                paragraphs = [text_context]
+
+            for paragraph in paragraphs:
+                chunks = _chunk_text(paragraph, 8192)
+                text_contexts.extend(chunks)
 
     return json_obj, text_contexts
 
@@ -235,7 +248,7 @@ def make_dataset(args):
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
             local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
-            embedded_docs=embedded_docs)
+            embedded_docs=embedded_docs, k_for_docs=args.k_for_docs)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
