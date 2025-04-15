@@ -5,6 +5,7 @@ from typing import (
     Callable,
     Dict,
     Iterable,
+    Iterator,
     List,
     Optional,
     Protocol,
@@ -12,7 +13,6 @@ from typing import (
     Type,
     no_type_check,
     runtime_checkable,
-    Iterator
 )
 
 import torch
