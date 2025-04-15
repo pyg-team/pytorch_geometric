@@ -2,15 +2,12 @@
 import gc
 import os
 from itertools import chain
-from typing import Any, Dict, Iterator, List, Tuple, no_type_check
+from typing import Any, Dict, Iterator, List
 
-import numpy as np
 import torch
-from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import (
-    Data,
     InMemoryDataset,
     LargeGraphIndexer,
     TripletLike,

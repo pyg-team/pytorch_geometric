@@ -49,6 +49,7 @@ def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     h, r, t = triplet
     return str(h).lower(), str(r).lower(), str(t).lower()
 
+
 @no_type_check
 def retrieval_via_pcst(
     data: Data,
@@ -172,6 +173,7 @@ def retrieval_via_pcst(
     )
 
     return data, desc
+
 
 def batch_knn(query_enc: Tensor, embeds: Tensor,
               k: int) -> Iterator[InputNodes]:
