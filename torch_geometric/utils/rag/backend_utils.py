@@ -50,6 +50,14 @@ def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     h, r, t = triplet
     return str(h).lower(), str(r).lower(), str(t).lower()
 
+def batch_knn(query_enc: Tensor, embeds: Tensor,
+              k: int) -> Iterator[InputNodes]:
+    from torchmetrics.functional import pairwise_cosine_similarity
+    prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
+    topk = min(k, len(embeds))
+    for i, q in enumerate(prizes):
+        _, indices = torch.topk(q, topk, largest=True)
+        yield indices, query_enc[i].unsqueeze(0)
 
 # Adapted from LocalGraphStore
 @runtime_checkable
