@@ -21,18 +21,18 @@ runs:
   using: composite
 
   steps:
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-
     - name: Clear JIT cache
-      run: uv rm -rf ~/.cache/torch_extensions
+      run: rm -rf ~/.cache/torch_extensions
       shell: bash
 
     - name: Remove Python cache
       run: |
-        uv rm -rf ~/.cache/pip
-        uv rm -rf ~/.cache/torch_extensions
+        rm -rf ~/.cache/pip
+        rm -rf ~/.cache/torch_extensions
       shell: bash
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
 
     - name: Set up Python ${{ inputs.python-version }}
       run: |
