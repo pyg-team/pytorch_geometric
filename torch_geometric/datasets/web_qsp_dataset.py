@@ -15,7 +15,9 @@ from torch_geometric.data import (
 )
 from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
-
+from torch_geometric.utils.rag.backend_utils import (
+    retrieval_via_pcst,
+)
 
 def preprocess_triplet(triplet: TripletLike) -> TripletLike:
     h, r, t = triplet

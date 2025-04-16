@@ -36,6 +36,14 @@ class SentenceTransformer(torch.nn.Module):
         # models like ModernBERT)
         self.max_seq_length = self.model.config.max_position_embeddings
 
+        # Some models define a max sequence length in their configuration, others
+        # only in the tokenizer. This is a hacky heuristic to find the max
+        # sequence length that works for the model.
+        probe_tokens = self.tokenizer("hacky heuristic", padding='max_length',
+                                      return_tensors='pt')
+        self.max_seq_length = min(
+            self.max_seq_length, probe_tokens.input_ids.shape[1])
+
     def forward(self, input_ids: Tensor, attention_mask: Tensor) -> Tensor:
         out = self.model(input_ids=input_ids, attention_mask=attention_mask)
 
