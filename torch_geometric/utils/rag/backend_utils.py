@@ -290,7 +290,7 @@ def create_remote_backend_from_triplets(
     graph_db: Type[ConvertableGraphStore] = LocalGraphStore,
     feature_db: Type[ConvertableFeatureStore] = LocalFeatureStore,
     node_method_to_call: str = "forward",
-    edge_method_to_call: str | None = None,
+    edge_method_to_call: Optional[str] = None,
     pre_transform: Callable[[TripletLike], TripletLike] | None = None,
     path: str = '',
     n_parts: int = 1,
@@ -304,7 +304,7 @@ def create_remote_backend_from_triplets(
             Backend.
         node_embedding_model (Module): Model to embed nodes into a feature
             space.
-        edge_embedding_model (Module | None, optional): Model to embed edges
+        edge_embedding_model (Module, optional): Model to embed edges
             into a feature space. Defaults to the node model.
         graph_db (Type[ConvertableGraphStore], optional): GraphStore class to
             use. Defaults to LocalGraphStore.
@@ -312,7 +312,7 @@ def create_remote_backend_from_triplets(
             class to use. Defaults to LocalFeatureStore.
         node_method_to_call (str, optional): method to call for embeddings on
             the node model. Defaults to "forward".
-        edge_method_to_call (str | None, optional): method to call for
+        edge_method_to_call (str, optional): method to call for
             embeddings on the edge model. Defaults to the node method.
         pre_transform (Callable[[TripletLike], TripletLike] | None, optional):
             optional preprocessing function for triplets. Defaults to None.
