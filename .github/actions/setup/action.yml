@@ -23,7 +23,7 @@ runs:
   steps:
     - name: Install uv
       uses: astral-sh/setup-uv@v5
-      
+
     - name: Clear JIT cache
       run: uv rm -rf ~/.cache/torch_extensions
       shell: bash
