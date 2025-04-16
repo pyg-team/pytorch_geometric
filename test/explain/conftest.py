@@ -10,8 +10,16 @@ from torch_geometric.explain.config import (
     ModelConfig,
     ModelMode,
     ModelReturnType,
+    ModelTaskLevel,
 )
-from torch_geometric.nn import SAGEConv, to_hetero
+from torch_geometric.nn import (
+    HANConv,
+    HGTConv,
+    SAGEConv,
+    global_add_pool,
+    to_hetero,
+)
+from torch_geometric.nn.conv import GCNConv, HeteroConv
 from torch_geometric.testing import get_random_edge_index
 
 
@@ -43,6 +51,11 @@ def hetero_data():
 @pytest.fixture()
 def hetero_model():
     return HeteroSAGE
+
+
+@pytest.fixture()
+def hetero_model_custom():
+    return HeteroConvModel
 
 
 class GraphSAGE(torch.nn.Module):
@@ -160,3 +173,136 @@ def check_explanation_hetero():
                 assert explanation[edge_type].get('edge_mask').max() <= 1
 
     return _check_explanation_hetero
+
+
+class NativeHeteroGNN(torch.nn.Module):
+    def __init__(self, metadata, model_config: Optional[ModelConfig] = None,
+                 conv_type: str = 'HGTConv', hidden_channels: int = 32):
+        super().__init__()
+        self.model_config = model_config
+        self.conv_type = conv_type
+        self.hidden_channels = hidden_channels
+        self.metadata = metadata
+
+        # Determine output size based on model_config
+        self.out_channels = 1
+        if (model_config
+                and model_config.mode == ModelMode.multiclass_classification):
+            self.out_channels = 7
+
+        # Initialize dictionaries to store the layers
+        self.lin_dict = torch.nn.ModuleDict()
+        self.initialized = False
+
+        # Heterogeneous convolution layer
+        if conv_type == 'HGTConv':
+            self.conv = HGTConv(hidden_channels, hidden_channels, metadata,
+                                heads=2)
+        elif conv_type == 'HANConv':
+            self.conv = HANConv(hidden_channels, hidden_channels, metadata,
+                                heads=2)
+        else:
+            raise ValueError(f"Unsupported conv_type: {conv_type}")
+
+        # Output projection will be initialized in forward pass
+        self.out_lin = None
+
+    def _initialize_layers(self, x_dict):
+        """Initialize layers with correct dimensions when we first see
+        the data.
+        """
+        if not self.initialized:
+            # Initialize input projections
+            for node_type, x in x_dict.items():
+                in_channels = x.size(-1)
+                self.lin_dict[node_type] = torch.nn.Linear(
+                    in_channels, self.hidden_channels).to(x.device)
+
+            # Initialize output projection
+            self.out_lin = torch.nn.Linear(self.hidden_channels,
+                                           self.out_channels).to(x.device)
+
+            self.initialized = True
+
+    def forward(self, x_dict, edge_index_dict):
+        # Initialize layers if not done yet
+        self._initialize_layers(x_dict)
+
+        # Apply input projections
+        x_dict = {
+            node_type: self.lin_dict[node_type](x).relu_()
+            for node_type, x in x_dict.items()
+        }
+
+        # Apply heterogeneous convolution
+        x_dict = self.conv(x_dict, edge_index_dict)
+
+        # Get paper node features for prediction
+        x = x_dict['paper']
+
+        # Apply output projection
+        out = self.out_lin(x)
+
+        # For graph-level tasks, perform global pooling
+        if (self.model_config
+                and self.model_config.task_level == ModelTaskLevel.graph):
+            # Since we don't have batch information in the fixture,
+            # we'll treat the whole graph as a single graph
+            batch_size = x.size(0)
+            batch = torch.zeros(batch_size, dtype=torch.long, device=x.device)
+            out = global_add_pool(out, batch)
+
+        return out
+
+
+@pytest.fixture()
+def hetero_model_native():
+    return NativeHeteroGNN
+
+
+class HeteroConvModel(torch.nn.Module):
+    def __init__(self, metadata, model_config: Optional[ModelConfig] = None):
+        super().__init__()
+        self.model_config = model_config
+
+        # Create a HeteroConv model
+        conv_dict = {}
+        for edge_type in metadata[1]:  # metadata[1] contains edge types
+            src_type, _, dst_type = edge_type
+            if src_type == dst_type:
+                conv_dict[edge_type] = GCNConv(-1, 32)
+            else:
+                # For different node types, use SAGEConv
+                conv_dict[edge_type] = SAGEConv((-1, -1), 32)
+
+        self.conv = HeteroConv(conv_dict, aggr='sum')
+
+        # Determine output channels based on model_config
+        out_channels = 1
+        if (model_config
+                and model_config.mode == ModelMode.multiclass_classification):
+            out_channels = 7
+
+        # Output layer
+        self.out_lin = torch.nn.Linear(32, out_channels)
+
+    def forward(self, x_dict, edge_index_dict):
+        # Apply heterogeneous convolution
+        out_dict = self.conv(x_dict, edge_index_dict)
+
+        # Final transformation for paper nodes
+        out = self.out_lin(out_dict['paper'])
+
+        # Apply transformations based on model_config if available
+        if self.model_config:
+            if self.model_config.mode == ModelMode.binary_classification:
+                if self.model_config.return_type == ModelReturnType.probs:
+                    out = out.sigmoid()
+            elif self.model_config.mode == ModelMode.multiclass_classification:
+                if self.model_config.return_type == ModelReturnType.probs:
+                    out = out.softmax(dim=-1)
+                elif (self.model_config.return_type ==
+                      ModelReturnType.log_probs):
+                    out = out.log_softmax(dim=-1)
+
+        return out
