@@ -271,6 +271,8 @@ class SamplerOutput(CastMixin):
         objects into a single :class:`~torch_geometric.sampler.SamplerOutput`
         object. Requires that they all have the same fields.
         """
+        if len(outputs) == 0:
+            raise ValueError("Cannot collate an empty list of SamplerOutputs")
         out = outputs[0]
         has_edge = out.edge is not None
         has_orig_row = out.orig_row is not None
@@ -280,18 +282,18 @@ class SamplerOutput(CastMixin):
         has_num_sampled_edges = out.num_sampled_edges is not None
 
         try:
-            for i, out in enumerate(outputs):
-                assert not has_edge == (out.edge is None)
-                assert not has_orig_row == (out.orig_row is None)
-                assert not has_orig_col == (out.orig_col is None)
-                assert not has_batch == (out.batch is None)
-                assert not has_num_sampled_nodes == (out.num_sampled_nodes
+            for i, sample_output in enumerate(outputs):
+                assert not has_edge == (sample_output.edge is None)
+                assert not has_orig_row == (sample_output.orig_row is None)
+                assert not has_orig_col == (sample_output.orig_col is None)
+                assert not has_batch == (sample_output.batch is None)
+                assert not has_num_sampled_nodes == (sample_output.num_sampled_nodes
                                                      is None)
-                assert not has_num_sampled_edges == (out.num_sampled_edges
+                assert not has_num_sampled_edges == (sample_output.num_sampled_edges
                                                      is None)
         except AssertionError:
             raise ValueError(
-                f"Output {i} has a different field than the first output")
+                f"Output {i+1} has a different field than the first output")
 
         for other in outputs[1:]:
             out = out.merge_with(other, replace=replace)
