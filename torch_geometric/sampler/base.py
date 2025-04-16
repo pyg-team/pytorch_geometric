@@ -309,7 +309,8 @@ class SamplerOutput(CastMixin):
                 col=torch.cat([self.col, len(self.node) + other.col], dim=0),
                 edge=torch.cat([self.edge, other.edge], dim=0)
                 if self.edge is not None and other.edge is not None else None,
-                batch=torch.cat([self.batch, len(self.node) + other.batch], dim=0) if
+                batch=torch.cat(
+                    [self.batch, len(self.node) + other.batch], dim=0) if
                 self.batch is not None and other.batch is not None else None,
                 num_sampled_nodes=self.num_sampled_nodes +
                 other.num_sampled_nodes if self.num_sampled_nodes is not None
@@ -375,10 +376,10 @@ class SamplerOutput(CastMixin):
             merged_batch = None
             if self.batch is not None and other.batch is not None:
                 # Restore the batch indices to be relative to the nodes field
-                ref_merged_batch_nodes = merged_node_uid[:, 1].unsqueeze(-1).expand(-1, 2) # num_nodes x 2
-                merged_batch = global_to_local_node_idx(merged_node_uid, ref_merged_batch_nodes)
-
-            
+                ref_merged_batch_nodes = merged_node_uid[:, 1].unsqueeze(
+                    -1).expand(-1, 2)  # num_nodes x 2
+                merged_batch = global_to_local_node_idx(
+                    merged_node_uid, ref_merged_batch_nodes)
 
             # EDGES
             is_bidirectional = self.orig_row is not None \
@@ -395,10 +396,15 @@ class SamplerOutput(CastMixin):
             # Transform the row and col indices to be global node ids
             # instead of relative indices to nodes field
             # Edge uids build off of node uids
-            old_row_idx, old_col_idx = local_to_global_node_idx(old_node_uid, old_row), local_to_global_node_idx(old_node_uid, old_col)
-            new_row_idx, new_col_idx = local_to_global_node_idx(new_node_uid, new_row), local_to_global_node_idx(new_node_uid, new_col)
+            old_row_idx, old_col_idx = local_to_global_node_idx(
+                old_node_uid,
+                old_row), local_to_global_node_idx(old_node_uid, old_col)
+            new_row_idx, new_col_idx = local_to_global_node_idx(
+                new_node_uid,
+                new_row), local_to_global_node_idx(new_node_uid, new_col)
 
-            old_edge_uid, new_edge_uid = [old_row_idx, old_col_idx], [new_row_idx, new_col_idx]
+            old_edge_uid, new_edge_uid = [old_row_idx, old_col_idx
+                                          ], [new_row_idx, new_col_idx]
 
             row_idx = 0
             col_idx = old_row_idx.shape[1]
@@ -407,16 +413,24 @@ class SamplerOutput(CastMixin):
             if self.edge is not None and other.edge is not None:
                 if is_bidirectional:
                     # bidirectional duplicates edge ids
-                    old_edge_uid_ref = torch.stack([self.row, self.col], dim=1) # num_edges x 2
-                    old_orig_edge_uid_ref = torch.stack([self.orig_row, self.orig_col], dim=1) # num_orig_edges x 2
+                    old_edge_uid_ref = torch.stack([self.row, self.col],
+                                                   dim=1)  # num_edges x 2
+                    old_orig_edge_uid_ref = torch.stack(
+                        [self.orig_row, self.orig_col],
+                        dim=1)  # num_orig_edges x 2
 
-                    old_edge_idx = global_to_local_node_idx(old_edge_uid_ref, old_orig_edge_uid_ref)
+                    old_edge_idx = global_to_local_node_idx(
+                        old_edge_uid_ref, old_orig_edge_uid_ref)
                     old_edge = self.edge[old_edge_idx]
 
-                    new_edge_uid_ref = torch.stack([other.row, other.col], dim=1) # num_edges x 2
-                    new_orig_edge_uid_ref = torch.stack([other.orig_row, other.orig_col], dim=1) # num_orig_edges x 2
+                    new_edge_uid_ref = torch.stack([other.row, other.col],
+                                                   dim=1)  # num_edges x 2
+                    new_orig_edge_uid_ref = torch.stack(
+                        [other.orig_row, other.orig_col],
+                        dim=1)  # num_orig_edges x 2
 
-                    new_edge_idx = global_to_local_node_idx(new_edge_uid_ref, new_orig_edge_uid_ref)
+                    new_edge_idx = global_to_local_node_idx(
+                        new_edge_uid_ref, new_orig_edge_uid_ref)
                     new_edge = other.edge[new_edge_idx]
 
                 else:
