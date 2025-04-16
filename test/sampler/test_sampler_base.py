@@ -141,21 +141,46 @@ def test_homogeneous_merge_replace(disjoint, bidirectional):
 
     assert str(merged_output) == str(expected_output)
 
+def _init_collate_sampler_outputs(disjoint=False):
+    output1, output2 = _init_merge_sampler_outputs(disjoint=disjoint)
+    # new edge not present in graph above
+    output3 = SamplerOutput(
+        node=torch.tensor([3,4]),
+        row=torch.tensor([0]),
+        col=torch.tensor([1]),
+        edge=torch.tensor([3]),
+        batch=torch.tensor([0, 0]) if disjoint else None,
+        num_sampled_nodes=list([1, 1]),
+        num_sampled_edges=list([1]),
+        orig_row=None,
+        orig_col=None,
+        metadata=(None, None),
+    )
+    return [output1, output2, output3]
 
-def test_homogeneous_collate():
-    pass
-
-
+@pytest.mark.parametrize("replace", [True, False])
+@pytest.mark.parametrize("disjoint", [True, False])
+def test_homogeneous_collate(disjoint, replace):
+    output1, output2, output3 = _init_collate_sampler_outputs(disjoint)
+    collated = SamplerOutput.collate([output1, output2, output3], replace=replace)
+    assert str(collated) == str((output1.merge_with(output2, replace=replace)).merge_with(output3, replace=replace))
+    
 def test_homogeneous_collate_empty():
-    pass
+    with pytest.raises(ValueError, match="Cannot collate an empty list of SamplerOutputs"):
+        SamplerOutput.collate([])
 
 
 def test_homogeneous_collate_single():
-    pass
+    output, _ = _init_merge_sampler_outputs()
+    collated = SamplerOutput.collate([output])
+    assert str(collated) == str(output)
 
 
 def test_homogeneous_collate_missing_fields():
-    pass
+    output1, output2, output3 = _init_collate_sampler_outputs()
+    output3.edge = None
+    with pytest.raises(ValueError, match="Output 3 has a different field than the first output"):
+        SamplerOutput.collate([output1, output2, output3])
 
 
 def test_heterogeneous_num_neighbors_list():
