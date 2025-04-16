@@ -287,10 +287,10 @@ class SamplerOutput(CastMixin):
                 assert not has_orig_row == (sample_output.orig_row is None)
                 assert not has_orig_col == (sample_output.orig_col is None)
                 assert not has_batch == (sample_output.batch is None)
-                assert not has_num_sampled_nodes == (sample_output.num_sampled_nodes
-                                                     is None)
-                assert not has_num_sampled_edges == (sample_output.num_sampled_edges
-                                                     is None)
+                assert not has_num_sampled_nodes == (
+                    sample_output.num_sampled_nodes is None)
+                assert not has_num_sampled_edges == (
+                    sample_output.num_sampled_edges is None)
         except AssertionError:
             raise ValueError(
                 f"Output {i+1} has a different field than the first output")
