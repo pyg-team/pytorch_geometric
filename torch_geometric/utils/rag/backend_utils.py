@@ -286,7 +286,7 @@ class RemoteGraphBackendLoader:
 def create_remote_backend_from_triplets(
     triplets: Iterable[TripletLike],
     node_embedding_model: Module,
-    edge_embedding_model: Module | None = None,
+    edge_embedding_model: Optional[Module] = None,
     graph_db: Type[ConvertableGraphStore] = LocalGraphStore,
     feature_db: Type[ConvertableFeatureStore] = LocalFeatureStore,
     node_method_to_call: str = "forward",
