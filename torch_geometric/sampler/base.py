@@ -339,7 +339,7 @@ class HeteroSamplerOutput(CastMixin):
         return {
             node_type: local_to_global_node_idx(self.node[node_type], batch)
             for node_type, batch in self.batch.items()
-        }
+        } if self.batch is not None else None
 
     @property
     def global_orig_row(self) -> Tensor:
@@ -347,7 +347,7 @@ class HeteroSamplerOutput(CastMixin):
             edge_type: local_to_global_node_idx(self.node[edge_type[0]],
                                                 orig_row)
             for edge_type, orig_row in self.orig_row.items()
-        }
+        } if self.orig_row is not None else None
 
     @property
     def global_orig_col(self) -> Tensor:
@@ -355,7 +355,7 @@ class HeteroSamplerOutput(CastMixin):
             edge_type: local_to_global_node_idx(self.node[edge_type[2]],
                                                 orig_col)
             for edge_type, orig_col in self.orig_col.items()
-        }
+        } if self.orig_col is not None else None
 
     def to_bidirectional(
         self,
