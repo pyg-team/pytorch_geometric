@@ -10,23 +10,6 @@ from torch_geometric.sampler.utils import global_to_local_node_idx
 from torch_geometric.testing import get_random_edge_index
 from torch_geometric.utils import is_undirected
 
-'''
-Merge and collate tests use the following graph:
-
-    #############                    ###########
-    # Alice (0) # -> "works with" -> # Bob (1) #
-    #############                    ###########
-         |
-         v
-      "leads"
-         |
-         v
-    #############                    ############
-    # Carol (2) # -> "works with" -> # Dave (3) #
-    #############                    ############
-
-'''
-
 
 def test_homogeneous_num_neighbors():
     with pytest.raises(ValueError, match="'default' must be set to 'None'"):
@@ -46,6 +29,24 @@ def test_homogeneous_num_neighbors():
     assert num_neighbors.num_hops == 2
     assert num_neighbors.__dict__['_num_hops'] == 2
     assert num_neighbors.num_hops == 2  # Test caching.
+
+
+'''
+Merge and collate tests use the following graph:
+
+    #############                    ###########
+    # Alice (0) # -> "works with" -> # Bob (1) #
+    #############                    ###########
+         |
+         v
+      "leads"
+         |
+         v
+    #############                    ############
+    # Carol (2) # -> "works with" -> # Dave (3) #
+    #############                    ############
+
+'''
 
 
 def _init_merge_sampler_outputs(hetero=False, disjoint=False):
