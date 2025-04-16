@@ -11,7 +11,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
-from torch_geometric.sampler.utils import to_bidirectional, local_to_global_node_idx
+from torch_geometric.sampler.utils import (
+    local_to_global_node_idx,
+    to_bidirectional,
+)
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
@@ -214,19 +217,22 @@ class SamplerOutput(CastMixin):
     @property
     def global_col(self) -> Tensor:
         return local_to_global_node_idx(self.node, self.col)
-    
+
     @property
     def seed_node(self) -> Tensor:
-        return local_to_global_node_idx(self.node, self.batch) if self.batch is not None else None
-    
+        return local_to_global_node_idx(
+            self.node, self.batch) if self.batch is not None else None
+
     @property
     def global_orig_row(self) -> Tensor:
-        return local_to_global_node_idx(self.node, self.orig_row) if self.orig_row is not None else None
-    
+        return local_to_global_node_idx(
+            self.node, self.orig_row) if self.orig_row is not None else None
+
     @property
     def global_orig_col(self) -> Tensor:
-        return local_to_global_node_idx(self.node, self.orig_col) if self.orig_col is not None else None
-    
+        return local_to_global_node_idx(
+            self.node, self.orig_col) if self.orig_col is not None else None
+
     def to_bidirectional(
         self,
         keep_orig_edges: bool = False,
@@ -316,23 +322,40 @@ class HeteroSamplerOutput(CastMixin):
 
     @property
     def global_row(self) -> Tensor:
-        return {edge_type: local_to_global_node_idx(self.node[edge_type[0]], row) for edge_type, row in self.row.items()}
+        return {
+            edge_type: local_to_global_node_idx(self.node[edge_type[0]], row)
+            for edge_type, row in self.row.items()
+        }
 
     @property
     def global_col(self) -> Tensor:
-        return {edge_type: local_to_global_node_idx(self.node[edge_type[2]], col) for edge_type, col in self.col.items()}
-    
+        return {
+            edge_type: local_to_global_node_idx(self.node[edge_type[2]], col)
+            for edge_type, col in self.col.items()
+        }
+
     @property
     def seed_node(self) -> Tensor:
-        return {node_type: local_to_global_node_idx(self.node[node_type], batch) for node_type, batch in self.batch.items()}
-    
+        return {
+            node_type: local_to_global_node_idx(self.node[node_type], batch)
+            for node_type, batch in self.batch.items()
+        }
+
     @property
     def global_orig_row(self) -> Tensor:
-        return {edge_type: local_to_global_node_idx(self.node[edge_type[0]], orig_row) for edge_type, orig_row in self.orig_row.items()}
-    
+        return {
+            edge_type: local_to_global_node_idx(self.node[edge_type[0]],
+                                                orig_row)
+            for edge_type, orig_row in self.orig_row.items()
+        }
+
     @property
     def global_orig_col(self) -> Tensor:
-        return {edge_type: local_to_global_node_idx(self.node[edge_type[2]], orig_col) for edge_type, orig_col in self.orig_col.items()}
+        return {
+            edge_type: local_to_global_node_idx(self.node[edge_type[2]],
+                                                orig_col)
+            for edge_type, orig_col in self.orig_col.items()
+        }
 
     def to_bidirectional(
         self,
