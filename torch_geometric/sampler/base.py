@@ -314,6 +314,26 @@ class HeteroSamplerOutput(CastMixin):
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
+    @property
+    def global_row(self) -> Tensor:
+        return {edge_type: local_to_global_node_idx(self.node[edge_type[0]], row) for edge_type, row in self.row.items()}
+
+    @property
+    def global_col(self) -> Tensor:
+        return {edge_type: local_to_global_node_idx(self.node[edge_type[2]], col) for edge_type, col in self.col.items()}
+    
+    @property
+    def seed_node(self) -> Tensor:
+        return {node_type: local_to_global_node_idx(self.node[node_type], batch) for node_type, batch in self.batch.items()}
+    
+    @property
+    def global_orig_row(self) -> Tensor:
+        return {edge_type: local_to_global_node_idx(self.node[edge_type[0]], orig_row) for edge_type, orig_row in self.orig_row.items()}
+    
+    @property
+    def global_orig_col(self) -> Tensor:
+        return {edge_type: local_to_global_node_idx(self.node[edge_type[2]], orig_col) for edge_type, orig_col in self.orig_col.items()}
+
     def to_bidirectional(
         self,
         keep_orig_edges: bool = False,
