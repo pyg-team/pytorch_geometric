@@ -291,7 +291,7 @@ def create_remote_backend_from_triplets(
     feature_db: Type[ConvertableFeatureStore] = LocalFeatureStore,
     node_method_to_call: str = "forward",
     edge_method_to_call: Optional[str] = None,
-    pre_transform: Callable[[TripletLike], TripletLike] | None = None,
+    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
     path: str = '',
     n_parts: int = 1,
     node_method_kwargs: Optional[Dict[str, Any]] = None,
@@ -314,7 +314,7 @@ def create_remote_backend_from_triplets(
             the node model. Defaults to "forward".
         edge_method_to_call (str, optional): method to call for
             embeddings on the edge model. Defaults to the node method.
-        pre_transform (Callable[[TripletLike], TripletLike] | None, optional):
+        pre_transform (Callable[[TripletLike], TripletLike], optional):
             optional preprocessing function for triplets. Defaults to None.
         path (str, optional): path to save resulting stores. Defaults to ''.
         n_parts (int, optional): Number of partitons to store in.
