@@ -27,6 +27,7 @@ Merge and collate tests use the following graph:
 
 '''
 
+
 def test_homogeneous_num_neighbors():
     with pytest.raises(ValueError, match="'default' must be set to 'None'"):
         num_neighbors = NumNeighbors([25, 10], default=[-1, -1])
@@ -45,6 +46,7 @@ def test_homogeneous_num_neighbors():
     assert num_neighbors.num_hops == 2
     assert num_neighbors.__dict__['_num_hops'] == 2
     assert num_neighbors.num_hops == 2  # Test caching.
+
 
 def _init_merge_sampler_outputs(hetero=False, disjoint=False):
     if not hetero:
@@ -82,17 +84,17 @@ def _init_merge_sampler_outputs(hetero=False, disjoint=False):
 @pytest.mark.parametrize("disjoint", [True, False])
 @pytest.mark.parametrize("bidirectional", [True, False])
 def test_homogeneous_merge(disjoint, bidirectional):
-    """Merge an output representing 1<-0->2 with one representing 0->2->3"""
+    """Merge an output representing 1<-0->2 with one representing 0->2->3."""
     output1, output2 = _init_merge_sampler_outputs(disjoint=disjoint)
     if bidirectional:
         output1 = output1.to_bidirectional(keep_orig_edges=True)
         output2 = output2.to_bidirectional(keep_orig_edges=True)
 
     expected_output = SamplerOutput(
-        node=torch.tensor([0,1,2,3]),
-        row=torch.tensor([0,0,2]),
-        col=torch.tensor([1,2,3]),
-        edge=torch.tensor([0,1,2]),
+        node=torch.tensor([0, 1, 2, 3]),
+        row=torch.tensor([0, 0, 2]),
+        col=torch.tensor([1, 2, 3]),
+        edge=torch.tensor([0, 1, 2]),
         batch=torch.tensor([0, 0, 0, 0]) if disjoint else None,
         num_sampled_nodes=[1, 2, 0, 0, 1],
         num_sampled_edges=[2, 0, 1],
@@ -101,47 +103,56 @@ def test_homogeneous_merge(disjoint, bidirectional):
         metadata=[(None, None), (None, None)],
     )
     if bidirectional:
-        expected_output = expected_output.to_bidirectional(keep_orig_edges=True)
+        expected_output = expected_output.to_bidirectional(
+            keep_orig_edges=True)
     merged_output = output1.merge_with(output2)
 
     assert str(merged_output) == str(expected_output)
+
 
 @pytest.mark.parametrize("disjoint", [True, False])
 @pytest.mark.parametrize("bidirectional", [True, False])
 def test_homogeneous_merge_replace(disjoint, bidirectional):
     """Merge an output representing 1<-0->2 with one representing 0->2->3.
-    replace=True makes it so that merged output is a simple concatenation instead removing already sampled nodes/edges"""
+    replace=True makes it so that merged output is a simple concatenation
+    instead of removing already sampled nodes/edges.
+    """
     output1, output2 = _init_merge_sampler_outputs(disjoint=disjoint)
     if bidirectional:
         output1 = output1.to_bidirectional(keep_orig_edges=True)
         output2 = output2.to_bidirectional(keep_orig_edges=True)
 
     expected_output = SamplerOutput(
-        node=torch.tensor([0,1,2,0,2,3]),
-        row=torch.tensor([0,0,3,4]),
-        col=torch.tensor([1,2,4,5]),
-        edge=torch.tensor([0,1,1,2]),
+        node=torch.tensor([0, 1, 2, 0, 2, 3]),
+        row=torch.tensor([0, 0, 3, 4]),
+        col=torch.tensor([1, 2, 4, 5]),
+        edge=torch.tensor([0, 1, 1, 2]),
         batch=torch.tensor([0, 0, 0, 3, 3, 3]) if disjoint else None,
-        num_sampled_nodes=[1,2,1,1,1],
-        num_sampled_edges=[2,1,1],
+        num_sampled_nodes=[1, 2, 1, 1, 1],
+        num_sampled_edges=[2, 1, 1],
         orig_row=None,
         orig_col=None,
         metadata=[(None, None), (None, None)],
     )
     if bidirectional:
-        expected_output = expected_output.to_bidirectional(keep_orig_edges=True)
+        expected_output = expected_output.to_bidirectional(
+            keep_orig_edges=True)
     merged_output = output1.merge_with(output2, replace=True)
 
     assert str(merged_output) == str(expected_output)
 
+
 def test_homogeneous_collate():
     pass
+
 
 def test_homogeneous_collate_empty():
     pass
 
+
 def test_homogeneous_collate_single():
     pass
+
 
 def test_homogeneous_collate_missing_fields():
     pass
