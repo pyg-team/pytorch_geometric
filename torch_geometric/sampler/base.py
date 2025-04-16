@@ -12,6 +12,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.sampler.utils import (
+    global_to_local_node_idx,
     local_to_global_node_idx,
     to_bidirectional,
 )
@@ -337,8 +338,8 @@ class SamplerOutput(CastMixin):
             # batch tracks disjoint subgraph samplings
             if self.batch is not None and other.batch is not None:
                 # Transform the batch indices to be global node ids
-                old_batch_nodes = torch.index_select(old_nodes, 0, self.batch)
-                new_batch_nodes = torch.index_select(new_nodes, 0, other.batch)
+                old_batch_nodes = self.seed_node
+                new_batch_nodes = other.seed_node
                 old_node_uid.append(old_batch_nodes)
                 new_node_uid.append(new_batch_nodes)
 
@@ -374,23 +375,8 @@ class SamplerOutput(CastMixin):
             merged_batch = None
             if self.batch is not None and other.batch is not None:
                 # Restore the batch indices to be relative to the nodes field
-                # In order to do so, we want to find the index of all the places
-                # where the merged node id matches the batch node id
-
                 ref_merged_batch_nodes = merged_node_uid[:, 1].unsqueeze(-1).expand(-1, 2) # num_nodes x 2
-
-                # Broadcast the set of merged node uids on dimension 2
-                merged_node_expand = merged_node_uid.unsqueeze(-1).expand(
-                    *merged_node_uid.shape, ref_merged_batch_nodes.shape[0]) # num_nodes x 2 x num_batch_ids
-                
-                # Broadcast the set of batch node uids on dimension 0
-                ref_merged_batch_nodes_expand = ref_merged_batch_nodes.transpose(0, 1).unsqueeze(0).expand(
-                    *merged_node_expand.shape) # num_nodes x 2 x num_batch_ids
-
-                # find the indices of all locations where two expanded tensors are equal along dim 1
-                eq_indices = torch.all(ref_merged_batch_nodes_expand == merged_node_expand, dim=1).nonzero() # num_batch_ids x 2
-                # dim 0 of these indices represents the mapping for the correct root node for the batch
-                merged_batch = eq_indices[:, 0] # num_batch_ids
+                merged_batch = global_to_local_node_idx(merged_node_uid, ref_merged_batch_nodes)
 
             
 
@@ -409,12 +395,8 @@ class SamplerOutput(CastMixin):
             # Transform the row and col indices to be global node ids
             # instead of relative indices to nodes field
             # Edge uids build off of node uids
-            old_row_idx, old_col_idx = torch.index_select(old_node_uid, 0,
-                                                  old_row), torch.index_select(
-                                                      old_node_uid, 0, old_col)
-            new_row_idx, new_col_idx = torch.index_select(new_node_uid, 0,
-                                                  new_row), torch.index_select(
-                                                      new_node_uid, 0, new_col)
+            old_row_idx, old_col_idx = local_to_global_node_idx(old_node_uid, old_row), local_to_global_node_idx(old_node_uid, old_col)
+            new_row_idx, new_col_idx = local_to_global_node_idx(new_node_uid, new_row), local_to_global_node_idx(new_node_uid, new_col)
 
             old_edge_uid, new_edge_uid = [old_row_idx, old_col_idx], [new_row_idx, new_col_idx]
 
@@ -425,25 +407,16 @@ class SamplerOutput(CastMixin):
             if self.edge is not None and other.edge is not None:
                 if is_bidirectional:
                     # bidirectional duplicates edge ids
-                    # to get original edge ids, we must match the indices of the orig row and col
                     old_edge_uid_ref = torch.stack([self.row, self.col], dim=1) # num_edges x 2
                     old_orig_edge_uid_ref = torch.stack([self.orig_row, self.orig_col], dim=1) # num_orig_edges x 2
 
-                    old_edge_uid_ref_expand = old_edge_uid_ref.unsqueeze(-1).expand(*old_edge_uid_ref.shape, old_orig_edge_uid_ref.shape[0]) # num_edges x 2 x num_orig_edges
-                    old_orig_edge_uid_ref_expand = old_orig_edge_uid_ref.transpose(0, 1).unsqueeze(0).expand(*old_edge_uid_ref_expand.shape) # num_edges x 2 x num_orig_edges
-
-                    old_eq_indices = torch.all(old_edge_uid_ref_expand == old_orig_edge_uid_ref_expand, dim=1).nonzero() # num_orig_edges x 2
-                    old_edge_idx = old_eq_indices[:, 0] # num_orig_edges
+                    old_edge_idx = global_to_local_node_idx(old_edge_uid_ref, old_orig_edge_uid_ref)
                     old_edge = self.edge[old_edge_idx]
 
                     new_edge_uid_ref = torch.stack([other.row, other.col], dim=1) # num_edges x 2
                     new_orig_edge_uid_ref = torch.stack([other.orig_row, other.orig_col], dim=1) # num_orig_edges x 2
 
-                    new_edge_uid_ref_expand = new_edge_uid_ref.unsqueeze(-1).expand(*new_edge_uid_ref.shape, new_orig_edge_uid_ref.shape[0]) # num_edges x 2 x num_orig_edges
-                    new_orig_edge_uid_ref_expand = new_orig_edge_uid_ref.transpose(0, 1).unsqueeze(0).expand(*new_edge_uid_ref_expand.shape) # num_edges x 2 x num_orig_edges
-
-                    new_eq_indices = torch.all(new_edge_uid_ref_expand == new_orig_edge_uid_ref_expand, dim=1).nonzero() # num_orig_edges x 2
-                    new_edge_idx = new_eq_indices[:, 0] # num_orig_edges
+                    new_edge_idx = global_to_local_node_idx(new_edge_uid_ref, new_orig_edge_uid_ref)
                     new_edge = other.edge[new_edge_idx]
 
                 else:
@@ -481,16 +454,8 @@ class SamplerOutput(CastMixin):
                 if self.edge is not None and other.edge is not None else None
 
             # restore to row and col indices relative to nodes field
-            merged_edge_size = merged_edge.numel()
-
-            merged_node_expand = merged_node_uid.unsqueeze(-1).expand(
-                *merged_node_uid.shape, merged_edge_size) # num_nodes x num_node_id_fields x num_edges
-
-            merged_row_expand = merged_row.transpose(0, 1).unsqueeze(0).expand(*merged_node_expand.shape) # num_nodes x num_node_id_fields x num_edges
-            merged_row = torch.all(merged_row_expand == merged_node_expand, dim=1).nonzero()[:, 0]
-
-            merged_col_expand = merged_col.transpose(0, 1).unsqueeze(0).expand(*merged_node_expand.shape) # num_nodes x num_node_id_fields x num_edges
-            merged_col = torch.all(merged_col_expand == merged_node_expand, dim=1).nonzero()[:, 0]
+            merged_row = global_to_local_node_idx(merged_node_uid, merged_row)
+            merged_col = global_to_local_node_idx(merged_node_uid, merged_col)
 
             out = SamplerOutput(
                 node=merged_nodes,
