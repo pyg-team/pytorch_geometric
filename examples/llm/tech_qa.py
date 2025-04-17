@@ -290,7 +290,7 @@ def make_dataset(args):
 
 def train(args, data_lists):
     if args.wandb:
-        wandb.init(project=args.wandb_project, entity="pytorch-geometric",
+        wandb.init(project=args.wandb_project,
                    name=f"run_{datetime.now().strftime('%Y-%m-%d_%H:%M')}",
                    config=vars(args))
 
