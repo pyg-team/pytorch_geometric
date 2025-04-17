@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import Any, List, Optional, Dict, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -153,23 +153,23 @@ def _visualize_graph_via_networkx(
 
 
 def visualize_hetero_graph(
-    edge_index_dict: Dict[Tuple[str, str, str], Tensor],
-    edge_weight_dict: Dict[Tuple[str, str, str], Tensor],
-    path: Optional[str] = None,
-    backend: Optional[str] = None,
-    node_labels_dict: Optional[Dict[str, List[str]]] = None,
-    node_weight_dict: Optional[Dict[str, Tensor]] = None,
-    node_size_range: Tuple[float, float] = (50, 500),
-    node_opacity_range: Tuple[float, float] = (0.2, 1.0),
-    edge_width_range: Tuple[float, float] = (0.1, 2.0),
-    edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        edge_index_dict: Dict[Tuple[str, str, str], Tensor],
+        edge_weight_dict: Dict[Tuple[str, str, str], Tensor],
+        path: Optional[str] = None,
+        backend: Optional[str] = None,
+        node_labels_dict: Optional[Dict[str, List[str]]] = None,
+        node_weight_dict: Optional[Dict[str, Tensor]] = None,
+        node_size_range: Tuple[float, float] = (50, 500),
+        node_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        edge_width_range: Tuple[float, float] = (0.1, 2.0),
+        edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
 ) -> Any:
     """Visualizes a heterogeneous graph using networkx.
 
     Args:
-        edge_index_dict (Dict[Tuple[str, str, str], Tensor]): 
+        edge_index_dict (Dict[Tuple[str, str, str], Tensor]):
             The edge indices for each edge type.
-        edge_weight_dict (Dict[Tuple[str, str, str], Tensor]): 
+        edge_weight_dict (Dict[Tuple[str, str, str], Tensor]):
             The edge weights for each edge type.
         path (str, optional): The path to where the plot is saved.
             If set to :obj:`None`, will visualize the plot on-the-fly.
@@ -177,23 +177,23 @@ def visualize_hetero_graph(
         backend (str, optional): Currently only supports "networkx".
             This parameter is kept for API consistency.
             (default: :obj:`None`)
-        node_labels_dict (Dict[str, List[str]], optional): 
+        node_labels_dict (Dict[str, List[str]], optional):
             The labels/IDs of nodes for each node type.
             (default: :obj:`None`)
-        node_weight_dict (Dict[str, Tensor], optional): 
-            The node weights for each node type. 
+        node_weight_dict (Dict[str, Tensor], optional):
+            The node weights for each node type.
             Controls node size and opacity. (default: :obj:`None`)
-        node_size_range (Tuple[float, float], optional): 
-            The minimum and maximum node size in the visualization. 
+        node_size_range (Tuple[float, float], optional):
+            The minimum and maximum node size in the visualization.
             (default: :obj:`(50, 500)`)
-        node_opacity_range (Tuple[float, float], optional): 
-            The minimum and maximum node opacity in the visualization. 
+        node_opacity_range (Tuple[float, float], optional):
+            The minimum and maximum node opacity in the visualization.
             (default: :obj:`(0.2, 1.0)`)
-        edge_width_range (Tuple[float, float], optional): 
-            The minimum and maximum edge width in the visualization. 
+        edge_width_range (Tuple[float, float], optional):
+            The minimum and maximum edge width in the visualization.
             (default: :obj:`(0.1, 2.0)`)
-        edge_opacity_range (Tuple[float, float], optional): 
-            The minimum and maximum edge opacity in the visualization. 
+        edge_opacity_range (Tuple[float, float], optional):
+            The minimum and maximum edge opacity in the visualization.
             edge opacity in the visualization. (default: :obj:`(0.2, 1.0)`)
     """
     if backend is not None and backend != "networkx":
@@ -205,9 +205,10 @@ def visualize_hetero_graph(
     for edge_type in edge_index_dict.keys():
         mask = edge_weight_dict[edge_type] > 0
         if mask.sum() > 0:
-            filtered_edge_index_dict[edge_type] = edge_index_dict[edge_type][:, mask]
-            filtered_edge_weight_dict[edge_type] = edge_weight_dict[edge_type][mask]
-
+            filtered_edge_index_dict[edge_type] = edge_index_dict[
+                edge_type][:, mask]
+            filtered_edge_weight_dict[edge_type] = edge_weight_dict[edge_type][
+                mask]
 
     # Get all unique nodes that are still in the filtered edges
     remaining_nodes = {}
@@ -241,8 +242,6 @@ def visualize_hetero_graph(
                 ]
         node_labels_dict = filtered_node_labels_dict
 
-
-
     return _visualize_hetero_graph_via_networkx(
         filtered_edge_index_dict,
         filtered_edge_weight_dict,
@@ -257,15 +256,15 @@ def visualize_hetero_graph(
 
 
 def _visualize_hetero_graph_via_networkx(
-    edge_index_dict: Dict[Tuple[str, str, str], Tensor],
-    edge_weight_dict: Dict[Tuple[str, str, str], Tensor],
-    path: Optional[str] = None,
-    node_labels_dict: Optional[Dict[str, List[str]]] = None,
-    node_weight_dict: Optional[Dict[str, Tensor]] = None,
-    node_size_range: Tuple[float, float] = (50, 500),
-    node_opacity_range: Tuple[float, float] = (0.2, 1.0),
-    edge_width_range: Tuple[float, float] = (0.1, 2.0),
-    edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        edge_index_dict: Dict[Tuple[str, str, str], Tensor],
+        edge_weight_dict: Dict[Tuple[str, str, str], Tensor],
+        path: Optional[str] = None,
+        node_labels_dict: Optional[Dict[str, List[str]]] = None,
+        node_weight_dict: Optional[Dict[str, Tensor]] = None,
+        node_size_range: Tuple[float, float] = (50, 500),
+        node_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        edge_width_range: Tuple[float, float] = (0.1, 2.0),
+        edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
 ) -> Any:
     import matplotlib.pyplot as plt
     import networkx as nx
@@ -284,12 +283,12 @@ def _visualize_hetero_graph_via_networkx(
         src_type, _, dst_type = edge_type
         node_types.add(src_type)
         node_types.add(dst_type)
-        
+
         if src_type not in remaining_nodes:
             remaining_nodes[src_type] = set()
         if dst_type not in remaining_nodes:
             remaining_nodes[dst_type] = set()
-            
+
         remaining_nodes[src_type].update(
             edge_index_dict[edge_type][0].tolist())
         remaining_nodes[dst_type].update(
@@ -303,7 +302,7 @@ def _visualize_hetero_graph_via_networkx(
     for node_type in node_types:
         num_nodes = node_counts[node_type]
         node_offsets[node_type] = current_offset
-        
+
         # Get node weights if provided
         weights = None
         if node_weight_dict is not None and node_type in node_weight_dict:
@@ -312,18 +311,20 @@ def _visualize_hetero_graph_via_networkx(
                 raise ValueError(f"Number of weights for node type "
                                  f"{node_type} ({len(weights)}) does not "
                                  f"match number of nodes ({num_nodes})")
-        
+
         # Create a mapping from original node indices to new sequential indices
-        node_mapping = {old_idx: new_idx for new_idx, old_idx in 
-                        enumerate(sorted(remaining_nodes[node_type]))}
-        
+        node_mapping = {
+            old_idx: new_idx
+            for new_idx, old_idx in enumerate(
+                sorted(remaining_nodes[node_type]))
+        }
+
         for i in range(num_nodes):
             node_id = current_offset + i
-            label = (node_labels_dict[node_type][i] 
-                    if node_labels_dict is not None and 
-                       node_type in node_labels_dict
-                    else f"{node_type}_{i}")
-            
+            label = (node_labels_dict[node_type][i]
+                     if node_labels_dict is not None
+                     and node_type in node_labels_dict else f"{node_type}_{i}")
+
             # Calculate node size and opacity if weights provided
             size = node_size_range[1]
             opacity = node_opacity_range[1]
@@ -333,10 +334,10 @@ def _visualize_hetero_graph_via_networkx(
                     (node_size_range[1] - node_size_range[0])
                 opacity = node_opacity_range[0] + w * \
                     (node_opacity_range[1] - node_opacity_range[0])
-            
-            g.add_node(node_id, label=label, type=node_type, 
-                      size=size, alpha=opacity)
-        
+
+            g.add_node(node_id, label=label, type=node_type, size=size,
+                       alpha=opacity)
+
         current_offset += num_nodes
 
     # Add edges with remapped node indices
@@ -347,24 +348,29 @@ def _visualize_hetero_graph_via_networkx(
         dst_offset = node_offsets[dst_type]
 
         # Create mappings for source and target nodes
-        src_mapping = {old_idx: new_idx for new_idx, old_idx 
-                       in enumerate(sorted(remaining_nodes[src_type]))}
-        dst_mapping = {old_idx: new_idx for new_idx, old_idx 
-                       in enumerate(sorted(remaining_nodes[dst_type]))}
+        src_mapping = {
+            old_idx: new_idx
+            for new_idx, old_idx in enumerate(sorted(
+                remaining_nodes[src_type]))
+        }
+        dst_mapping = {
+            old_idx: new_idx
+            for new_idx, old_idx in enumerate(sorted(
+                remaining_nodes[dst_type]))
+        }
 
         for (src, dst), w in zip(edge_index.t().tolist(),
-                                edge_weight.tolist()):
+                                 edge_weight.tolist()):
             # Remap node indices
             new_src = src_mapping[src] + src_offset
             new_dst = dst_mapping[dst] + dst_offset
-            
+
             # Calculate edge width and opacity based on weight
             width = edge_width_range[0] + w * \
                 (edge_width_range[1] - edge_width_range[0])
             opacity = edge_opacity_range[0] + w * \
                 (edge_opacity_range[1] - edge_opacity_range[0])
-            g.add_edge(new_src, new_dst, 
-                      width=width, alpha=opacity)
+            g.add_edge(new_src, new_dst, width=width, alpha=opacity)
 
     # Draw the graph
     ax = plt.gca()
@@ -390,7 +396,7 @@ def _visualize_hetero_graph_via_networkx(
     node_colors = []
     node_sizes = []
     node_alphas = []
-    
+
     # Use matplotlib tab20 colormap for consistent coloring
     tab20_cmap = plt.cm.tab10
     node_type_colors = {}  # Store color for each node type
@@ -398,15 +404,15 @@ def _visualize_hetero_graph_via_networkx(
         node_type = g.nodes[node]['type']
         # Assign a consistent color for each node type
         if node_type not in node_type_colors:
-            color_idx = len(node_type_colors) % 10  # Cycle through colors 
+            color_idx = len(node_type_colors) % 10  # Cycle through colors
             node_type_colors[node_type] = tab20_cmap(color_idx)
         node_colors.append(node_type_colors[node_type])
         node_sizes.append(g.nodes[node]['size'])
         node_alphas.append(g.nodes[node]['alpha'])
 
     nx.draw_networkx_nodes(g, pos, node_size=node_sizes,
-                          node_color=node_colors, margins=0.1,
-                          alpha=node_alphas)
+                           node_color=node_colors, margins=0.1,
+                           alpha=node_alphas)
 
     # Draw labels
     labels = nx.get_node_attributes(g, 'label')
@@ -415,10 +421,11 @@ def _visualize_hetero_graph_via_networkx(
     # Add legend
     legend_elements = []
     for node_type, color in node_type_colors.items():
-        legend_elements.append(plt.Line2D([0], [0], marker='o', color='w', 
-                                        label=node_type,
-                                        markerfacecolor=color, markersize=10))
-    ax.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(0.9, 1))
+        legend_elements.append(
+            plt.Line2D([0], [0], marker='o', color='w', label=node_type,
+                       markerfacecolor=color, markersize=10))
+    ax.legend(handles=legend_elements, loc='upper right',
+              bbox_to_anchor=(0.9, 1))
 
     if path is not None:
         plt.savefig(path, bbox_inches='tight')

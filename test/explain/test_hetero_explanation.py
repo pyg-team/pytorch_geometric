@@ -147,11 +147,9 @@ def test_visualize_feature_importance(
 @withPackage('matplotlib', 'networkx')
 def test_visualize_explanation_graph(tmp_path, hetero_data):
     # Create explanation with both node and edge masks
-    explanation = create_random_explanation(
-        hetero_data,
-        node_mask_type='object',
-        edge_mask_type='object'
-    )
+    explanation = create_random_explanation(hetero_data,
+                                            node_mask_type='object',
+                                            edge_mask_type='object')
 
     path = osp.join(tmp_path, 'explanation_graph.png')
 
@@ -160,19 +158,18 @@ def test_visualize_explanation_graph(tmp_path, hetero_data):
     assert osp.exists(path)
 
     # Test with custom visualization parameters
-    explanation.visualize_explanation_graph(
-        path=path,
-        node_size_range=(20, 400),
-        node_opacity_range=(0.3, 0.9),
-        edge_width_range=(0.2, 3.0),
-        edge_opacity_range=(0.3, 0.9)
-    )
+    explanation.visualize_explanation_graph(path=path,
+                                            node_size_range=(20, 400),
+                                            node_opacity_range=(0.3, 0.9),
+                                            edge_width_range=(0.2, 3.0),
+                                            edge_opacity_range=(0.3, 0.9))
     assert osp.exists(path)
 
     # Test with node labels
     node_labels = {
         'paper': [f'Paper {i}' for i in range(hetero_data['paper'].num_nodes)],
-        'author': [f'Author {i}' for i in range(hetero_data['author'].num_nodes)],
+        'author':
+        [f'Author {i}' for i in range(hetero_data['author'].num_nodes)],
     }
     explanation.visualize_explanation_graph(path=path, node_labels=node_labels)
     assert osp.exists(path)
@@ -188,7 +185,8 @@ def test_visualize_explanation_graph(tmp_path, hetero_data):
     # Test with invalid node type in labels
     invalid_labels = {
         'paper': [f'Paper {i}' for i in range(hetero_data['paper'].num_nodes)],
-        'author': [f'Author {i}' for i in range(hetero_data['author'].num_nodes)],
+        'author':
+        [f'Author {i}' for i in range(hetero_data['author'].num_nodes)],
         'invalid_type': ['Invalid 0', 'Invalid 1'],  # Invalid node type
     }
     with pytest.raises(ValueError, match="Node type"):

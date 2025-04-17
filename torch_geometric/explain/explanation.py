@@ -1,5 +1,5 @@
 import copy
-from typing import Dict, List, Optional, Union, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -8,7 +8,10 @@ from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
 from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
-from torch_geometric.visualization import visualize_graph, visualize_hetero_graph
+from torch_geometric.visualization import (
+    visualize_graph,
+    visualize_hetero_graph,
+)
 
 
 class ExplanationMixin:
@@ -363,49 +366,50 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         return _visualize_score(score, all_feat_labels, path, top_k)
 
     def visualize_explanation_graph(
-        self,
-        path: Optional[str] = None,
-        node_labels: Optional[Dict[NodeType, List[str]]] = None,
-        node_size_range: Tuple[float, float] = (50, 500),
-        node_opacity_range: Tuple[float, float] = (0.2, 1.0),
-        edge_width_range: Tuple[float, float] = (0.1, 2.0),
-        edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
+            self,
+            path: Optional[str] = None,
+            node_labels: Optional[Dict[NodeType, List[str]]] = None,
+            node_size_range: Tuple[float, float] = (50, 500),
+            node_opacity_range: Tuple[float, float] = (0.2, 1.0),
+            edge_width_range: Tuple[float, float] = (0.1, 2.0),
+            edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
     ) -> None:
-        r"""Visualizes the explanation subgraph using networkx, with edge 
-        opacity corresponding to edge importance and node colors 
+        r"""Visualizes the explanation subgraph using networkx, with edge
+        opacity corresponding to edge importance and node colors
         corresponding to node types.
 
         Args:
             path (str, optional): The path to where the plot is saved.
                 If set to :obj:`None`, will visualize the plot on-the-fly.
                 (default: :obj:`None`)
-            node_labels (Dict[NodeType, List[str]], optional): The display 
-                names of nodes for each node type that will be shown in the 
+            node_labels (Dict[NodeType, List[str]], optional): The display
+                names of nodes for each node type that will be shown in the
                 visualization. (default: :obj:`None`)
-            node_size_range (Tuple[float, float], optional): The minimum and   
-                maximum node size in the visualization. 
+            node_size_range (Tuple[float, float], optional): The minimum and
+                maximum node size in the visualization.
                 (default: :obj:`(50, 500)`)
-            node_opacity_range (Tuple[float, float], optional): The minimum and 
-                maximum node opacity in the visualization. 
+            node_opacity_range (Tuple[float, float], optional): The minimum and
+                maximum node opacity in the visualization.
                 (default: :obj:`(0.2, 1.0)`)
-            edge_width_range (Tuple[float, float], optional): The minimum and 
-                maximum edge width in the visualization. 
+            edge_width_range (Tuple[float, float], optional): The minimum and
+                maximum edge width in the visualization.
                 (default: :obj:`(0.1, 2.0)`)
-            edge_opacity_range (Tuple[float, float], optional): The minimum and 
-                maximum edge opacity in the visualization. 
+            edge_opacity_range (Tuple[float, float], optional): The minimum and
+                maximum edge opacity in the visualization.
                 (default: :obj:`(0.2, 1.0)`)
-        """ 
+        """
         # Validate node labels if provided
         if node_labels is not None:
             for node_type, labels in node_labels.items():
                 if node_type not in self.node_types:
-                    raise ValueError(f"Node type '{node_type}' in node_labels "
-                                   f"does not exist in the explanation graph")
+                    raise ValueError(
+                        f"Node type '{node_type}' in node_labels "
+                        f"does not exist in the explanation graph")
                 if len(labels) != self[node_type].num_nodes:
                     raise ValueError(f"Number of labels for node type "
-                                   f"'{node_type}' (got {len(labels)}) does "
-                                   f"not match the number of nodes "
-                                   f"(got {self[node_type].num_nodes})")
+                                     f"'{node_type}' (got {len(labels)}) does "
+                                     f"not match the number of nodes "
+                                     f"(got {self[node_type].num_nodes})")
         # Get the explanation subgraph
         subgraph = self.get_explanation_subgraph()
 
@@ -413,12 +417,12 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         edge_index_dict = {}
         edge_weight_dict = {}
         for edge_type in subgraph.edge_types:
-            if edge_type[0] == 'x' or edge_type[-1] == 'x':  # Skip edges 
+            if edge_type[0] == 'x' or edge_type[-1] == 'x':  # Skip edges
                 continue
             edge_index_dict[edge_type] = subgraph[edge_type].edge_index
-            edge_weight_dict[edge_type] = subgraph[edge_type].get('edge_mask', 
-                                        torch.ones(subgraph[edge_type]
-                                                   .edge_index.size(1)))
+            edge_weight_dict[edge_type] = subgraph[edge_type].get(
+                'edge_mask',
+                torch.ones(subgraph[edge_type].edge_index.size(1)))
 
         # Prepare node weights for each node type
         node_weight_dict = {}
