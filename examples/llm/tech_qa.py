@@ -290,12 +290,9 @@ def make_dataset(args):
 
 def train(args, data_lists):
     if args.wandb:
-        wandb.init(
-            project=args.wandb_project,
-            entity="pytorch-geometric",
-            name=f"run_{datetime.now().strftime('%Y-%m-%d_%H:%M')}",
-            config=vars(args)
-        )
+        wandb.init(project=args.wandb_project, entity="pytorch-geometric",
+                   name=f"run_{datetime.now().strftime('%Y-%m-%d_%H:%M')}",
+                   config=vars(args))
 
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
