@@ -6,8 +6,16 @@ import json
 import os
 import random
 import re
+import sys
+from datetime import datetime
 from glob import glob
 from itertools import chain
+
+try:
+    import wandb
+    wandb_available = True
+except ImportError:
+    wandb_available = False
 
 import torch
 from g_retriever import (
@@ -95,6 +103,12 @@ def parse_args():
                         help="Whether to skip model saving.")
     parser.add_argument('--k_for_docs', type=int, default=2,
                         help="Number of docs to retrieve for each question.")
+    parser.add_argument('--log_steps', type=int, default=30,
+                        help="Log to wandb every N steps")
+    parser.add_argument('--wandb_project', type=str, default="tech-qa",
+                        help="Weights & Biases project name")
+    parser.add_argument('--wandb', action="store_true",
+                        help="Enable wandb logging")
     return parser.parse_args()
 
 
@@ -208,7 +222,8 @@ def make_dataset(args):
             triplets=triples, node_embedding_model=model,
             node_method_to_call="encode", path="backend",
             pre_transform=preprocess_triplet, node_method_kwargs={
-                "batch_size": min(len(triples), sent_trans_batch_size)
+                "batch_size": min(len(triples), sent_trans_batch_size),
+                "verbose": True,
             }, graph_db=NeighborSamplingRAGGraphStore,
             feature_db=ModernBertFeatureStore).load()
         """
@@ -274,6 +289,11 @@ def make_dataset(args):
 
 
 def train(args, data_lists):
+    if args.wandb:
+        wandb.init(project=args.wandb_project,
+                   name=f"run_{datetime.now().strftime('%Y-%m-%d_%H:%M')}",
+                   config=vars(args))
+
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
     hidden_channels = args.gnn_hidden_channels
@@ -336,6 +356,13 @@ def train(args, data_lists):
                                          args.epochs)
                 optimizer.step()
                 epoch_loss += float(loss)
+
+                if args.wandb and (step + 1) % args.log_steps == 0:
+                    wandb.log({
+                        "train/loss": float(loss),
+                        "train/lr": optimizer.param_groups[0]['lr'],
+                    })
+
                 if (step + 1) % 2 == 0:
                     lr = optimizer.param_groups[0]['lr']
             train_loss = epoch_loss / len(train_loader)
@@ -350,6 +377,17 @@ def train(args, data_lists):
                     val_loss += loss.item()
                 val_loss = val_loss / len(val_loader)
                 print(epoch_str + f", Val Loss: {val_loss:4f}")
+
+                if args.wandb:
+                    wandb.log({
+                        "val/loss": val_loss,
+                        "train/epoch_loss": train_loss,
+                        "epoch": epoch + 1
+                    })
+
+        if args.wandb:
+            wandb.finish()
+
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated()
         model.eval()
@@ -390,6 +428,10 @@ if __name__ == '__main__':
     seed_everything(50)
 
     args = parse_args()
+    if args.wandb and not wandb_available:
+        print("Error: wandb package not found but --wandb flag was used.")
+        print("Please install wandb and rerun the script.")
+        sys.exit(1)
     data_lists = make_dataset(args)
     model, test_loader = train(args, data_lists)
     test(model, test_loader, args)
