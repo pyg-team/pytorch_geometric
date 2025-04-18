@@ -58,7 +58,7 @@ The :meth:`torch.compile` method provides two important arguments to be aware of
   By default, :obj:`dynamic` is set to :obj:`None` in :pytorch:`PyTorch` :obj:`>= 2.1.0`, and :pytorch:`PyTorch` will automatically detect if dynamism has occurred.
   Note that support for dynamic shape tracing requires :pytorch:`PyTorch` :obj:`>= 2.1.0` to be installed.
 
-* In order to maximize speedup, computational graph breaks in the compiled model should be limited.
+* In order to maximize speedup, graph breaks in the compiled model should be limited.
   We can force compilation to raise an error upon the first graph break encountered by using the :obj:`fullgraph=True` argument:
 
   .. code-block:: python
