@@ -71,6 +71,7 @@ test=[
     "onnxruntime",
     "pytest",
     "pytest-cov",
+    "coredumpy",
 ]
 dev=[
     "ipython",
