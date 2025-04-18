@@ -4,11 +4,11 @@ from typing import Any, Literal
 import torch_geometric
 
 
-def warn(message: str) -> None:
+def warn(message: str, **kwargs: Any) -> None:
     if torch_geometric.is_compiling():
         return
 
-    warnings.warn(message)
+    warnings.warn(message, **kwargs)
 
 
 def filterwarnings(
