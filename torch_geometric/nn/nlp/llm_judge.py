@@ -138,6 +138,8 @@ class LLMJudge():
                              self.ENDPOINT_URL, post_text=""))
                 if not isnan(score1):
                     break
+            except ImportError:
+                raise
             except:  # noqa
                 pass
         for retry in range(20):
@@ -147,6 +149,8 @@ class LLMJudge():
                              self.ENDPOINT_URL, post_text=""))
                 if not isnan(score2):
                     break
+            except ImportError:
+                raise
             except:  # noqa
                 pass
 
