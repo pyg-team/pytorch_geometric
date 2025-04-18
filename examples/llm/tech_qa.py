@@ -355,8 +355,8 @@ def train(args, data_lists):
                     clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
                     if (step + 1) % 2 == 0:
                         adjust_learning_rate(optimizer.param_groups[0], lr,
-                                            step / len(train_loader) + epoch,
-                                            args.epochs)
+                                             step / len(train_loader) + epoch,
+                                             args.epochs)
                     optimizer.step()
                     epoch_loss += float(loss)
 
