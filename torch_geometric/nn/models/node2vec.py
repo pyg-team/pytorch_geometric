@@ -64,23 +64,22 @@ class Node2Vec(torch.nn.Module):
             The default (:obj:`True`) matches the strategy of older Node2Vec
             versions. (default: :obj:`True`)
     """
-
     def __init__(
-            self,
-            edge_index: Tensor,
-            embedding_dim: int,
-            walk_length: int,
-            context_size: Optional[int] = None,
-            walks_per_node: int = 1,
-            p: float = 1.0,
-            q: float = 1.0,
-            num_negative_samples: int = 1,
-            num_nodes: Optional[int] = None,
-            sparse: bool = False,
-            num_negative_power: float = 0.75,
-            max_norm: Optional[float] = None,
-            window_size: Optional[int] = None,
-            restrict_to_forward_context: bool = True,
+        self,
+        edge_index: Tensor,
+        embedding_dim: int,
+        walk_length: int,
+        context_size: Optional[int] = None,
+        walks_per_node: int = 1,
+        p: float = 1.0,
+        q: float = 1.0,
+        num_negative_samples: int = 1,
+        num_nodes: Optional[int] = None,
+        sparse: bool = False,
+        num_negative_power: float = 0.75,
+        max_norm: Optional[float] = None,
+        window_size: Optional[int] = None,
+        restrict_to_forward_context: bool = True,
     ):
         super().__init__()
 
@@ -118,10 +117,9 @@ class Node2Vec(torch.nn.Module):
                 f"Please ensure: "
                 f"1. At least one of context_size or window_size is not None."
                 f"2. If both are specified, "
-                f"window_size must equal context_size - 1."
-            )
+                f"window_size must equal context_size - 1.")
             raise ValueError(error_message)
-        assert walk_length >= self.window_size+1
+        assert walk_length >= self.window_size + 1
 
         self.embedding_dim = embedding_dim
         self.walk_length = walk_length - 1
@@ -147,11 +145,9 @@ class Node2Vec(torch.nn.Module):
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        uniform_(self.output_embedding.weight,
-                 - 0.5 / self.embedding_dim,
+        uniform_(self.output_embedding.weight, -0.5 / self.embedding_dim,
                  0.5 / self.embedding_dim)
-        uniform_(self.context_embedding.weight,
-                 - 0.5 / self.embedding_dim,
+        uniform_(self.context_embedding.weight, -0.5 / self.embedding_dim,
                  0.5 / self.embedding_dim)
 
     def forward(self, batch: Optional[Tensor] = None) -> Tensor:
@@ -189,18 +185,14 @@ class Node2Vec(torch.nn.Module):
         pos_sample = torch.cat([pos_sample_cores, walks], dim=1)
 
         neg_sample_cores = pos_sample_cores.repeat_interleave(
-            self.num_negative_samples,
-            dim=0
-        )
+            self.num_negative_samples, dim=0)
         neg_sample = torch.multinomial(
             self.sampling_weights,
             neg_sample_cores.size(0) * self.window_size,
-            replacement=True
-        ).view(neg_sample_cores.size(0), -1).to(batch.device)
-        neg_sample = torch.cat(
-            [neg_sample_cores.view(-1, 1), neg_sample],
-            dim=-1
-        )
+            replacement=True).view(neg_sample_cores.size(0),
+                                   -1).to(batch.device)
+        neg_sample = torch.cat([neg_sample_cores.view(-1, 1), neg_sample],
+                               dim=-1)
         return pos_sample, neg_sample
 
     @torch.jit.export
@@ -211,8 +203,8 @@ class Node2Vec(torch.nn.Module):
 
         h_start = self.output_embedding(start).view(pos_rw.size(0), 1,
                                                     self.embedding_dim)
-        h_rest = self.context_embedding(rest.view(-1)).view(pos_rw.size(0), -1,
-                                                            self.embedding_dim)
+        h_rest = self.context_embedding(rest.view(-1)).view(
+            pos_rw.size(0), -1, self.embedding_dim)
         out = (h_start * h_rest).sum(dim=-1).view(-1)
         pos_loss = -torch.log(torch.sigmoid(out) + self.EPS).mean()
 
@@ -220,22 +212,22 @@ class Node2Vec(torch.nn.Module):
         start, rest = neg_rw[:, 0], neg_rw[:, 1:].contiguous()
         h_start = self.output_embedding(start).view(neg_rw.size(0), 1,
                                                     self.embedding_dim)
-        h_rest = self.context_embedding(rest.view(-1)).view(neg_rw.size(0), -1,
-                                                            self.embedding_dim)
+        h_rest = self.context_embedding(rest.view(-1)).view(
+            neg_rw.size(0), -1, self.embedding_dim)
         out = (h_start * h_rest).sum(dim=-1).view(-1)
         neg_loss = -torch.log(1 - torch.sigmoid(out) + self.EPS).mean()
 
         return pos_loss + neg_loss
 
     def test(
-            self,
-            train_z: Tensor,
-            train_y: Tensor,
-            test_z: Tensor,
-            test_y: Tensor,
-            solver: str = 'lbfgs',
-            *args,
-            **kwargs,
+        self,
+        train_z: Tensor,
+        train_y: Tensor,
+        test_z: Tensor,
+        test_y: Tensor,
+        solver: str = 'lbfgs',
+        *args,
+        **kwargs,
     ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task.
