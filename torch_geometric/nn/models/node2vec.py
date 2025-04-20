@@ -134,12 +134,9 @@ class Node2Vec(torch.nn.Module):
         self.context_embedding = Embedding(self.num_nodes, self.embedding_dim,
                                            sparse=sparse, max_norm=max_norm)
         degrees = self.rowptr[1:] - self.rowptr[:-1]
-        # 计算带失真因子的采样权重
         self.num_negative_power = num_negative_power
         sampling_weights = degrees.pow(self.num_negative_power)
-        # 归一化成概率分布
         sampling_weights /= sampling_weights.sum()
-        # 注册为 buffer，它随模型移动 (CPU/GPU)，但不是可训练参数
         self.register_buffer("sampling_weights", sampling_weights)
         self.reset_parameters()
 
