@@ -418,15 +418,10 @@ class LLM(torch.nn.Module):
         inputs_embeds, attention_mask, _ = self._get_embeds(
             question, context, embedding)
 
-        bos_token = self.tokenizer(
-            BOS,
-            add_special_tokens=False,
-        ).input_ids[0]
-
         with self.autocast_context:
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
-                bos_token_id=bos_token,
+                bos_token_id=self.tokenizer.bos_token_id,
                 max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
                 pad_token_id=self.tokenizer.eos_token_id,

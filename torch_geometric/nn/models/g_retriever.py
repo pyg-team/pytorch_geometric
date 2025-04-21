@@ -3,7 +3,7 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.nn.nlp.llm import BOS, LLM, MAX_NEW_TOKENS
+from torch_geometric.nn.nlp.llm import LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
 
@@ -207,17 +207,18 @@ class GRetriever(torch.nn.Module):
         inputs_embeds, attention_mask, _ = self.llm._get_embeds(
             question, additional_text_context, xs)
 
-        bos_token = self.llm.tokenizer(
-            BOS,
-            add_special_tokens=False,
-        ).input_ids[0]
+       # bos_token = self.llm.tokenizer(
+       #     self.llm.tokenizer.bos_token_id,
+       #     add_special_tokens=False,
+       # ).input_ids[0]
 
         with self.llm.autocast_context:
             outputs = self.llm_generator.generate(
                 inputs_embeds=inputs_embeds,
                 max_new_tokens=max_out_tokens,
                 attention_mask=attention_mask,
-                bos_token_id=bos_token,
+                bos_token_id=self.llm.tokenizer.bos_token_id,
+                pad_token_id=self.llm.tokenizer.eos_token_id,
                 use_cache=True  # Important to set!
             )
 
