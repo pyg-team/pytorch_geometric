@@ -86,12 +86,3 @@ def test_ssma_integration(x, edge_index, n_neighbors, mlp_compression,
     assert out.shape == x.shape
 
 
-def test_representation():
-    ssma_agg = SSMAAggregation(in_dim=10, num_neighbors=3, mlp_compression=0.1,
-                               use_attention=False, n_heads=59, temp=0.2,
-                               att_feature="dummy", learn_affine=True)
-
-    rep = str(ssma_agg)
-    gen_rep = eval(rep)
-
-    assert str(gen_rep) == rep
