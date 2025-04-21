@@ -1,4 +1,4 @@
-name: Testing minimal PyTorch 2.5
+name: Testing nightly PyTorch
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
 
-  minimal_pytest:
+  nightly_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v46
         with:
           files: |
             benchmark/**
@@ -41,15 +41,23 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
-          full_install: false
+          torch-version: nightly
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .[test]
+          uv pip install -e ".[test]"
+
+      - name: Check installation
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        run: |
+          uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
+          uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+          uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
+        shell: bash
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
-          pytest
+          uv run --no-project pytest --durations 10

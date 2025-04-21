@@ -1,9 +1,8 @@
-import os.path as osp
-
 import torch
 
 from torch_geometric.data import Data
 from torch_geometric.nn import GPSE
+from torch_geometric.nn.models.gpse import IdentityHead
 from torch_geometric.transforms import AddGPSE
 
 num_nodes = 6
@@ -16,10 +15,10 @@ def test_gpse():
                                [1, 0, 4, 0, 4, 1, 3, 2, 5, 3]])
     data = Data(x=x, edge_index=edge_index)
 
-    model = GPSE.from_pretrained(
-        name='molpcba', root=osp.join(osp.dirname(osp.realpath(__file__)),
-                                      '..', 'data', 'GPSE_pretrained'))
+    model = GPSE()
+    model.post_mp = IdentityHead()
     transform = AddGPSE(model)
+
     assert str(transform) == 'AddGPSE()'
     out = transform(data)
     assert out.pestat_GPSE.size() == (num_nodes, gpse_inner_dim)
