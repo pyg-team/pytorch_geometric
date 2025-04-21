@@ -357,6 +357,7 @@ def train(args, data_lists):
         # frozen
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt, dtype=torch.float32,
                   n_gpus=args.num_gpus).eval()
+
         for _, p in llm.named_parameters():
             p.requires_grad = False
         model = GRetriever(llm=llm, gnn=gnn)
