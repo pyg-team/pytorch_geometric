@@ -84,5 +84,3 @@ def test_ssma_integration(x, edge_index, n_neighbors, mlp_compression,
     out = layer(x, edge_index)
 
     assert out.shape == x.shape
-
-
