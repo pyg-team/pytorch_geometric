@@ -131,6 +131,10 @@ def parse_args():
 
 # Answer this question based on retrieved contexts. Just give the answer without explanation.
 
+sys_prompt = ("You are an expert assistant that can answer "
+              "any question from its knowledge, given a knowledge graph embedding and "
+              "it's textualized context. Just give the answer, without explanation.")
+
 prompt_template = """
     [QUESTION]
     {question}
@@ -343,19 +347,20 @@ def train(args, data_lists):
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     if args.llm_generator_mode == "full":
-        llm = LLM(model_name=args.llm_generator_name, n_gpus=args.num_gpus)
+        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt, n_gpus=args.num_gpus)
         model = GRetriever(llm=llm, gnn=gnn)
     elif args.llm_generator_mode == "lora":
-        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32,
+        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt, dtype=torch.float32,
                   n_gpus=args.num_gpus)
         model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     else:
         # frozen
-        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32,
+        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt, dtype=torch.float32,
                   n_gpus=args.num_gpus).eval()
         for _, p in llm.named_parameters():
             p.requires_grad = False
         model = GRetriever(llm=llm, gnn=gnn)
+
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name) and not args.regenerate_dataset:
         print("Re-using saved G-retriever model for testing...")

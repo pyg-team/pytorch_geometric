@@ -61,6 +61,8 @@ class LLM(torch.nn.Module):
         automatic set up mechanism.
     dtype (torch.dtype, optional): The data type to use for the LLM.
         (default :obj: `torch.bfloat16`)
+    sys_prompt (str, optional): A system prompt to use for the LLM.
+        (default: :obj: `None`)
     """
     def __init__(
         self,
@@ -68,6 +70,7 @@ class LLM(torch.nn.Module):
         num_params: Optional[float] = None,
         n_gpus: Optional[int] = None,
         dtype: Optional[torch.dtype] = torch.bfloat16,
+        sys_prompt: Optional[str] = None,
     ) -> None:
         super().__init__()
 
@@ -107,7 +110,8 @@ class LLM(torch.nn.Module):
         self.tokenizer.padding_side = PADDING_SIDE
         self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
         self.word_embedding = self.llm.model.get_input_embeddings()
-
+        if sys_prompt is not None:
+            self.sys_prompt = sys_prompt
         if hasattr(self.tokenizer, 'chat_template'):
             dummy_message = [{
                 "role": "system",
@@ -316,13 +320,8 @@ class LLM(torch.nn.Module):
         for i in range(len(question)):
             messages = [
                 {
-                    "role":
-                    "system",
-                    "content":
-                    ("You are an expert assistant that can answer "
-                     "any question from its knowledge, given a knowledge graph embedding and "
-                     "it's textualized context. Just give the answer, without explanation."
-                     )
+                    "role": "system",
+                    "content": self.sys_prompt
                 },
                 {
                     "role": "user",
@@ -354,7 +353,10 @@ class LLM(torch.nn.Module):
             inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids, device=self.device))
 
-            to_cat = [bos_embeds, embedding[i], inputs_embeds]
+            to_cat = [bos_embeds]
+            if embedding is not None and embedding[i] is not None:
+                to_cat.append(embedding[i])
+            to_cat.append(inputs_embeds)
             inputs_embeds = torch.cat(to_cat, dim=0).to(self.device)
 
             (
