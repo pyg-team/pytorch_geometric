@@ -128,8 +128,9 @@ def parse_args():
         "one document")
     return parser.parse_args()
 
+# Answer this question based on retrieved contexts. Just give the answer without explanation.
 
-prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
+prompt_template = """
     [QUESTION]
     {question}
     [END_QUESTION]
@@ -137,9 +138,7 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
     [RETRIEVED_CONTEXTS]
     {context}
     [END_RETRIEVED_CONTEXTS]
-
-    Answer: """
-
+    """
 
 def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     full_chunks = []
@@ -395,11 +394,11 @@ def train(args, data_lists):
                                              step / len(train_loader) + epoch,
                                              args.epochs)
                     optimizer.step()
-                    epoch_loss += float(loss)
+                    epoch_loss += float(loss.detach())
 
                     if args.wandb and (step + 1) % args.log_steps == 0:
                         wandb.log({
-                            "train/loss": float(loss),
+                            "train/loss": float(loss.detach()),
                             "train/lr": optimizer.param_groups[0]['lr'],
                         })
 
@@ -418,7 +417,6 @@ def train(args, data_lists):
             print("seq_len max: ", max(model.seq_length_stats))
             print("Percent of OOM errors: ",
                   num_oom_errors / len(train_loader))
-
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
 

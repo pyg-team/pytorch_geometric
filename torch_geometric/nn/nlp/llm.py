@@ -108,6 +108,23 @@ class LLM(torch.nn.Module):
         self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
         self.word_embedding = self.llm.model.get_input_embeddings()
 
+        if hasattr(self.tokenizer, 'chat_template'):
+            dummy_message = [{"role": "system", "content": "DUMMY"},
+                                  {"role": "user", "content": "MESSAGE"}]
+            dummy_text = self.tokenizer.apply_chat_template(
+                dummy_message,
+                tokenize=False,
+                add_generation_prompt=False,
+            )
+            dummy_text_with_gen_prompt = self.tokenizer.apply_chat_template(
+                dummy_message,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+            self.gen_prompt = dummy_text_with_gen_prompt[len(dummy_text):]
+        else:
+            self.gen_prompt = None
+
         if 'max_memory' not in kwargs:  # Pure CPU:
             warnings.warn("LLM is being used on CPU, which may be slow")
             self.device = torch.device('cpu')
@@ -232,6 +249,8 @@ class LLM(torch.nn.Module):
         embedding: Optional[List[Tensor]] = None,
         answer: Optional[List[str]] = None,
     ) -> tuple:
+        if self.gen_prompt is not None:
+            return self._get_embeds_with_template(question, context, embedding, answer)
         (batch_size, question, context, eos_user_tokens, bos_embeds,
          pad_embeds) = self._encode_inputs(question, context)
 
@@ -271,6 +290,77 @@ class LLM(torch.nn.Module):
             batch_label_input_ids)
 
         return inputs_embeds, attention_mask, label_input_ids
+
+    def _get_embeds_with_template(
+        self,
+        question: List[str],
+        context: Optional[List[str]] = None,
+        embedding: Optional[List[Tensor]] = None,
+        answer: Optional[List[str]] = None,
+    ) -> tuple:
+        batch_label_input_ids = None
+        if answer is not None:
+            label = self.tokenizer(answer, add_special_tokens=False)
+            eos_tokens = self.tokenizer(self.tokenizer.eos_token, add_special_tokens=False)
+            batch_label_input_ids = []
+
+        batch_inputs_embeds = []
+        batch_attention_mask = []
+        for i in range(len(question)):
+            messages = [{"role": "system", "content": ("You are an expert assistant that can answer "
+                         "any question from its knowledge, given a knowledge graph embedding and "
+                         "it's textualized context. Just give the answer, without explanation.")},
+                        {"role": "user", "content":f"{context[i]} - {question[i]}" },]
+            text = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+            text = text[len(self.tokenizer.bos_token):]
+            input_ids = self.tokenizer(text, add_special_tokens=False).input_ids
+            if answer is not None:
+                label_input_ids = self._label_input_ids(i, label, eos_tokens)
+                input_ids += label_input_ids
+            else:
+                label_input_ids = None
+
+            bos_token = self.tokenizer(
+                self.tokenizer.bos_token,
+                add_special_tokens=False,
+                return_tensors='pt',
+            ).input_ids[0].to(self.device)
+
+            bos_embeds = self.word_embedding(bos_token)
+
+            inputs_embeds =  self.word_embedding(
+                torch.tensor(input_ids, device=self.device))
+
+            to_cat = [bos_embeds, embedding[i], inputs_embeds]
+            inputs_embeds = torch.cat(to_cat, dim=0).to(self.device)
+
+
+            (
+                batch_inputs_embeds,
+                batch_attention_mask,
+                batch_label_input_ids,
+            ) = self._append_embeds(
+                inputs_embeds,
+                batch_inputs_embeds,
+                batch_attention_mask,
+                label_input_ids,
+                batch_label_input_ids,
+            )
+
+        pad_token = torch.tensor(self.tokenizer.pad_token_id,
+                                 device=self.device)
+        pad_embeds = self.word_embedding(pad_token).unsqueeze(0)
+
+        inputs_embeds, attention_mask, label_input_ids = self._pad_embeds(
+            pad_embeds, batch_inputs_embeds, batch_attention_mask,
+            batch_label_input_ids)
+
+        return inputs_embeds, attention_mask, label_input_ids
+
 
     def forward(
         self,
