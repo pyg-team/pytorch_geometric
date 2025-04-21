@@ -109,8 +109,13 @@ class LLM(torch.nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
 
         if hasattr(self.tokenizer, 'chat_template'):
-            dummy_message = [{"role": "system", "content": "DUMMY"},
-                                  {"role": "user", "content": "MESSAGE"}]
+            dummy_message = [{
+                "role": "system",
+                "content": "DUMMY"
+            }, {
+                "role": "user",
+                "content": "MESSAGE"
+            }]
             dummy_text = self.tokenizer.apply_chat_template(
                 dummy_message,
                 tokenize=False,
@@ -250,7 +255,8 @@ class LLM(torch.nn.Module):
         answer: Optional[List[str]] = None,
     ) -> tuple:
         if self.gen_prompt is not None:
-            return self._get_embeds_with_template(question, context, embedding, answer)
+            return self._get_embeds_with_template(question, context, embedding,
+                                                  answer)
         (batch_size, question, context, eos_user_tokens, bos_embeds,
          pad_embeds) = self._encode_inputs(question, context)
 
@@ -301,23 +307,36 @@ class LLM(torch.nn.Module):
         batch_label_input_ids = None
         if answer is not None:
             label = self.tokenizer(answer, add_special_tokens=False)
-            eos_tokens = self.tokenizer(self.tokenizer.eos_token, add_special_tokens=False)
+            eos_tokens = self.tokenizer(self.tokenizer.eos_token,
+                                        add_special_tokens=False)
             batch_label_input_ids = []
 
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(len(question)):
-            messages = [{"role": "system", "content": ("You are an expert assistant that can answer "
-                         "any question from its knowledge, given a knowledge graph embedding and "
-                         "it's textualized context. Just give the answer, without explanation.")},
-                        {"role": "user", "content":f"{context[i]} - {question[i]}" },]
+            messages = [
+                {
+                    "role":
+                    "system",
+                    "content":
+                    ("You are an expert assistant that can answer "
+                     "any question from its knowledge, given a knowledge graph embedding and "
+                     "it's textualized context. Just give the answer, without explanation."
+                     )
+                },
+                {
+                    "role": "user",
+                    "content": f"{context[i]} - {question[i]}"
+                },
+            ]
             text = self.tokenizer.apply_chat_template(
                 messages,
                 tokenize=False,
                 add_generation_prompt=True,
             )
             text = text[len(self.tokenizer.bos_token):]
-            input_ids = self.tokenizer(text, add_special_tokens=False).input_ids
+            input_ids = self.tokenizer(text,
+                                       add_special_tokens=False).input_ids
             if answer is not None:
                 label_input_ids = self._label_input_ids(i, label, eos_tokens)
                 input_ids += label_input_ids
@@ -332,12 +351,11 @@ class LLM(torch.nn.Module):
 
             bos_embeds = self.word_embedding(bos_token)
 
-            inputs_embeds =  self.word_embedding(
+            inputs_embeds = self.word_embedding(
                 torch.tensor(input_ids, device=self.device))
 
             to_cat = [bos_embeds, embedding[i], inputs_embeds]
             inputs_embeds = torch.cat(to_cat, dim=0).to(self.device)
-
 
             (
                 batch_inputs_embeds,
@@ -360,7 +378,6 @@ class LLM(torch.nn.Module):
             batch_label_input_ids)
 
         return inputs_embeds, attention_mask, label_input_ids
-
 
     def forward(
         self,

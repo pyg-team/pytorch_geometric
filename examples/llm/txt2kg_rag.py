@@ -128,6 +128,7 @@ def parse_args():
         "one document")
     return parser.parse_args()
 
+
 # Answer this question based on retrieved contexts. Just give the answer without explanation.
 
 prompt_template = """

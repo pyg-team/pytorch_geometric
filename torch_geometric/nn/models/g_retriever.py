@@ -207,10 +207,10 @@ class GRetriever(torch.nn.Module):
         inputs_embeds, attention_mask, _ = self.llm._get_embeds(
             question, additional_text_context, xs)
 
-       # bos_token = self.llm.tokenizer(
-       #     self.llm.tokenizer.bos_token_id,
-       #     add_special_tokens=False,
-       # ).input_ids[0]
+        # bos_token = self.llm.tokenizer(
+        #     self.llm.tokenizer.bos_token_id,
+        #     add_special_tokens=False,
+        # ).input_ids[0]
 
         with self.llm.autocast_context:
             outputs = self.llm_generator.generate(
