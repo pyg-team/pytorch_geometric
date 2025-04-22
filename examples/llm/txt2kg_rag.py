@@ -131,9 +131,10 @@ def parse_args():
 
 # Answer this question based on retrieved contexts. Just give the answer without explanation.
 
-sys_prompt = ("You are an expert assistant that can answer "
-              "any question from its knowledge, given a knowledge graph embedding and "
-              "it's textualized context. Just give the answer, without explanation.")
+sys_prompt = (
+    "You are an expert assistant that can answer "
+    "any question from its knowledge, given a knowledge graph embedding and "
+    "it's textualized context. Just give the answer, without explanation.")
 
 prompt_template = """
     [QUESTION]
