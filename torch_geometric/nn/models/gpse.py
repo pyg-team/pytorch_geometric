@@ -9,6 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.nn import Module
 from tqdm import trange
 
 import torch_geometric.transforms as T
@@ -379,7 +380,7 @@ class GPSE(torch.nn.Module):
 
     .. code-block:: python
 
-        from torch_geometric.nn import GPSE, GPSENodeEncoder,
+        from torch_geometric.nn import GPSE, GPSENodeEncoder
         from torch_geometric.transforms import AddGPSE
         from torch_geometric.nn.models.gpse import precompute_GPSE
 
@@ -417,13 +418,11 @@ class GPSE(torch.nn.Module):
 
         encoder = GPSENodeEncoder(dim_emb=128, dim_pe_in=32, dim_pe_out=64,
                                   expand_x=False)
-        gnn = GNN(dim_in=128, dim_out=128, num_layers=4)
+        gnn = GNN(...)
 
         for batch in loader:
-            batch = encoder(batch)
-            batch = gnn(batch)
-            # Do something with the batch, which now includes 128-dimensional
-            # node representations
+            x = encoder(batch.x, batch.pestat_GPSE)
+            out = gnn(x, batch.edge_index)
 
 
     Args:
@@ -571,8 +570,7 @@ class GPSE(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        from torch_geometric.graphgym.init import init_weights
-        self.apply(init_weights)
+        pass
 
     @classmethod
     def from_pretrained(cls, name: str, root: str = 'GPSE_pretrained'):
@@ -608,6 +606,7 @@ class GPSE(torch.nn.Module):
         return model
 
     def forward(self, batch):
+        batch = batch.clone()
         for module in self.children():
             batch = module(batch)
         return batch
@@ -635,13 +634,11 @@ class GPSENodeEncoder(torch.nn.Module):
 
         encoder = GPSENodeEncoder(dim_emb=128, dim_pe_in=32, dim_pe_out=64,
                                   expand_x=False)
-        gnn = GNN(dim_in=128, dim_out=128, num_layers=4)
+        gnn = GNN(...)
 
         for batch in loader:
-            batch = encoder(batch)
-            batch = gnn(batch)
-            # Do something with the batch, which now includes 128-dimensional
-            # node representations
+            x = encoder(batch.x, batch.pestat_GPSE)
+            batch = gnn(x, batch.edge_index)
 
     Args:
         dim_emb (int): Size of final node embedding.
@@ -705,33 +702,23 @@ class GPSENodeEncoder(torch.nn.Module):
             raise ValueError(f"{self.__class__.__name__}: Does not support "
                              f"'{model_type}' encoder model.")
 
-    def forward(self, batch):
-        if not hasattr(batch, 'pestat_GPSE'):
-            raise ValueError('Precomputed "pestat_GPSE" variable is required '
-                             'for GNNNodeEncoder; either run '
-                             '`precompute_GPSE(gpse_model, dataset)` on your '
-                             'dataset or add `AddGPSE(gpse_model)` as a (pre) '
-                             'transform.')
-
-        pos_enc = batch.pestat_GPSE
-
+    def forward(self, x, pos_enc):
         pos_enc = self.dropout_be(pos_enc)
         pos_enc = self.raw_norm(pos_enc) if self.raw_norm else pos_enc
         pos_enc = self.pe_encoder(pos_enc)  # (Num nodes) x dim_pe
         pos_enc = self.dropout_ae(pos_enc)
 
         # Expand node features if needed
-        h = self.linear_x(batch.x) if self.expand_x else batch.x
+        h = self.linear_x(x) if self.expand_x else x
 
         # Concatenate final PEs to input embedding
-        batch.x = torch.cat((h, pos_enc), 1)
-
-        return batch
+        return torch.cat((h, pos_enc), 1)
 
 
 @torch.no_grad()
-def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
-                 bernoulli_thresh: float = 0.5, neighbor_loader: bool = False,
+def gpse_process(model: Module, data: Data, rand_type: str,
+                 use_vn: bool = True, bernoulli_thresh: float = 0.5,
+                 neighbor_loader: bool = False,
                  num_neighbors: List[int] = [30, 20, 10], fillval: int = 5,
                  layers_mp: int = None, **kwargs) -> torch.Tensor:
     r"""Processes the data using the :class:`GPSE` model to generate and append
@@ -746,7 +733,7 @@ def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
     :obj:`precompute_GPSE` on your whole dataset is advised instead.
 
     Args:
-        model (GPSE): The :class:`GPSE` model.
+        model (Module): The :class:`GPSE` model.
         data (torch_geometric.data.Data): A :class:`~torch_geometric.data.Data`
             object.
         rand_type (str, optional): Type of random features to use. Options are
