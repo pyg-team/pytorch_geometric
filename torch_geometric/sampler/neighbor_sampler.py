@@ -113,9 +113,6 @@ class NeighborSampler(BaseSampler):
         elif self.data_type == DataType.heterogeneous:
             self.node_types, self.edge_types = data.metadata()
 
-            if self.sample_direction == 'backward':
-                self.edge_types = reverse_edge_types(self.edge_types)
-
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
             self.node_time: Optional[Dict[NodeType, Tensor]] = None
@@ -343,10 +340,6 @@ class NeighborSampler(BaseSampler):
         inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = node_sample(inputs, self._sample)
-        if self.sample_direction == 'backward':
-            row, col = out.row, out.col
-            out.row = col
-            out.col = row
         if self.subgraph_type == SubgraphType.bidirectional:
             out = out.to_bidirectional()
         return out
@@ -360,10 +353,6 @@ class NeighborSampler(BaseSampler):
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
                           self.node_time, neg_sampling)
-        if self.sample_direction == 'backward':
-            row, col = out.row, out.col
-            out.row = col
-            out.col = row
         if self.subgraph_type == SubgraphType.bidirectional:
             out = out.to_bidirectional()
         return out
@@ -409,7 +398,7 @@ class NeighborSampler(BaseSampler):
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
-                    True,  # csc
+                    self.sample_direction == 'forward',  # csc
                     self.replace,
                     self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
@@ -458,6 +447,11 @@ class NeighborSampler(BaseSampler):
                 node, row, col, edge, batch = out + (None, )
                 num_sampled_nodes = num_sampled_edges = None
 
+                if self.sample_direction == 'backward':
+                    row, col = out.row, out.col
+                    out.row = col
+                    out.col = row
+
             else:
                 raise ImportError(f"'{self.__class__.__name__}' requires "
                                   f"either 'pyg-lib' or 'torch-sparse'")
@@ -497,7 +491,7 @@ class NeighborSampler(BaseSampler):
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
-                    True,  # csc
+                    self.sample_direction == 'forward',  # csc
                     self.replace,
                     self.subgraph_type != SubgraphType.induced,
                     self.disjoint,

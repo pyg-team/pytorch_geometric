@@ -126,9 +126,6 @@ def to_hetero_csc(
         edge_time = (edge_time_dict or {}).get(edge_type, None)
         out = to_csc(store, device, share_memory, is_sorted, src_node_time,
                      edge_time, to_transpose)
-        # Edge types need to be reversed for backward sampling:
-        if to_transpose:
-            edge_type = reverse_edge_types([edge_type])[0]
         colptr_dict[edge_type], row_dict[edge_type], perm_dict[edge_type] = out
 
     return colptr_dict, row_dict, perm_dict
