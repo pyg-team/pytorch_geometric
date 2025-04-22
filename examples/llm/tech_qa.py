@@ -117,6 +117,8 @@ def parse_args():
         '--num_gpus', type=int, default=None,
         help="Number of GPUs to use. If not specified,"
         "will determine automatically based on model size.")
+    parser.add_argument('--regenerate_dataset', action="store_true",
+                        help="Regenerate the dataset")
     return parser.parse_args()
 
 
@@ -179,7 +181,7 @@ def get_data(args):
 
 
 def make_dataset(args):
-    if os.path.exists("tech_qa.pt"):
+    if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
         print("Re-using Saved TechQA KG-RAG Dataset...")
         return torch.load("tech_qa.pt", weights_only=False)
     else:
@@ -339,7 +341,7 @@ def train(args, data_lists):
             p.requires_grad = False
         model = GRetriever(llm=llm, gnn=gnn)
     save_name = "tech-qa-model.pt"
-    if os.path.exists(save_name):
+    if os.path.exists(save_name) and not args.regenerate_dataset:
         print("Re-using saved G-retriever model for testing...")
         model = load_params_dict(model, save_name)
     else:
