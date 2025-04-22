@@ -1,4 +1,4 @@
-name: Linting
+name: Testing RAG
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
 
-  mypy:
+  rag_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,32 +22,30 @@ jobs:
         with:
           fetch-depth: 40
 
-      # Skip workflow if only certain files have been changed.
+      # Run workflow if only certain files have been changed.
       - name: Get changed files
-        id: changed-files-specific
+        id: changed-files-specific-rag
         uses: tj-actions/changed-files@v46
         with:
           files: |
-            benchmark/**
-            conda/**
-            docker/**
-            docs/**
-            examples/**
-            graphgym/**
-            README.md
-            CHANGELOG.md
+            torch_geometric/datasets/web_qsp_dataset.py
+            torch_geometric/nn/nlp/**
+            torch_geometric/nn/models/g_retriever.py
+            torch_geometric/loader/rag_loader.py
 
       - name: Setup packages
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         uses: ./.github/actions/setup
+        with:
+          full_install: false
 
       - name: Install main package
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         run: |
-          uv pip install mypy
-          uv pip install -e ".[full,test]"
+          uv pip install -e ".[test,rag]"
 
-      - name: Check type hints
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+      - name: Run tests
+        if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
+        timeout-minutes: 10
         run: |
-          uv run --no-project mypy
+          RAG_TEST=1 uv run --no-project pytest -m rag --durations 10
