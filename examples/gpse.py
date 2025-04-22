@@ -193,7 +193,7 @@ class GPSEPlusGNN(torch.nn.Module):
 
     def forward(self, batch):
         batch = self.encoder1(batch)
-        batch = self.encoder2(batch)
+        batch.x = self.encoder2(batch.x, batch.pestat_GPSE)
         batch.x = self.premp(batch.x)
         batch = self.gnn(batch)
         batch = global_mean_pool(batch.x, batch.batch)
