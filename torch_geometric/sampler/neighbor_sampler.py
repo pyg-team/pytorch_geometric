@@ -71,9 +71,12 @@ class NeighborSampler(BaseSampler):
         self.data_type = DataType.from_data(data)
         self.sample_direction = sample_direction
 
-        if self.sample_direction == 'backward' and time_attr is not None:
-            raise NotImplementedError("Temporal Sampling not yet supported for backward sampling")
+        if self.sample_direction == 'backward':
             # TODO(zaristei)
+            if time_attr is not None:
+                raise NotImplementedError("Temporal Sampling not yet supported for backward sampling")
+            if weight_attr is not None:
+                raise NotImplementedError("Weighted Sampling not yet supported for backward sampling")
 
         if self.data_type == DataType.homogeneous:
             self.num_nodes = data.num_nodes

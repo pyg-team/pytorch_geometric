@@ -381,7 +381,7 @@ def test_bidirectional_neighbor_sampler_hetero(input_type):
 @onlyNeighborSampler
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
 @pytest.mark.parametrize('hetero', [False, True])
-def test_temporal_neighbor_sampler_backwards(input_type, hetero):
+def test_neighbor_sampler_backwards_not_supported(input_type, hetero):
     graph_to_sample = _init_graph_to_sample(input_type, hetero=hetero)
 
     sampler_kwargs = {
@@ -389,6 +389,16 @@ def test_temporal_neighbor_sampler_backwards(input_type, hetero):
         'num_neighbors': [1],
         'sample_direction': 'backward',
         'time_attr': 'time'
+    }
+
+    with pytest.raises(NotImplementedError):
+        NeighborSampler(**sampler_kwargs)
+
+    sampler_kwargs = {
+        'data': graph_to_sample,
+        'num_neighbors': [1],
+        'sample_direction': 'backward',
+        'weight_attr': 'weight'
     }
 
     with pytest.raises(NotImplementedError):
