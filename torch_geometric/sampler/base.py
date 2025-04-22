@@ -321,28 +321,28 @@ class HeteroSamplerOutput(CastMixin):
     metadata: Optional[Any] = None
 
     @property
-    def global_row(self) -> Tensor:
+    def global_row(self) -> Dict[EdgeType, Tensor]:
         return {
             edge_type: local_to_global_node_idx(self.node[edge_type[0]], row)
             for edge_type, row in self.row.items()
         }
 
     @property
-    def global_col(self) -> Tensor:
+    def global_col(self) -> Dict[EdgeType, Tensor]:
         return {
             edge_type: local_to_global_node_idx(self.node[edge_type[2]], col)
             for edge_type, col in self.col.items()
         }
 
     @property
-    def seed_node(self) -> Tensor:
+    def seed_node(self) -> Optional[Dict[NodeType, Tensor]]:
         return {
             node_type: local_to_global_node_idx(self.node[node_type], batch)
             for node_type, batch in self.batch.items()
         } if self.batch is not None else None
 
     @property
-    def global_orig_row(self) -> Tensor:
+    def global_orig_row(self) -> Optional[Dict[EdgeType, Tensor]]:
         return {
             edge_type: local_to_global_node_idx(self.node[edge_type[0]],
                                                 orig_row)
@@ -350,7 +350,7 @@ class HeteroSamplerOutput(CastMixin):
         } if self.orig_row is not None else None
 
     @property
-    def global_orig_col(self) -> Tensor:
+    def global_orig_col(self) -> Optional[Dict[EdgeType, Tensor]]:
         return {
             edge_type: local_to_global_node_idx(self.node[edge_type[2]],
                                                 orig_col)
