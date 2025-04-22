@@ -95,9 +95,9 @@ def parse_args():
     parser.add_argument('--llm_generator_name', type=str,
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
-    parser.add_argument('--doc_chunk_size', type=int,
-                        default=DOC_CHUNK_SIZE_DEFAULT,
-                        help="The chunk size to use VectorRAG (document retrieval)")
+    parser.add_argument(
+        '--doc_chunk_size', type=int, default=DOC_CHUNK_SIZE_DEFAULT,
+        help="The chunk size to use VectorRAG (document retrieval)")
     parser.add_argument(
         '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
         choices=["frozen", "lora",
