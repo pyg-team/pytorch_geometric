@@ -113,6 +113,10 @@ def parse_args():
                         help="Weights & Biases project name")
     parser.add_argument('--wandb', action="store_true",
                         help="Enable wandb logging")
+    parser.add_argument(
+        '--num_gpus', type=int, default=None,
+        help="Number of GPUs to use. If not specified,"
+        "will determine automatically based on model size.")
     return parser.parse_args()
 
 
@@ -321,15 +325,16 @@ def train(args, data_lists):
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     if args.llm_generator_mode == "full":
-        llm = LLM(model_name=args.llm_generator_name)
+        llm = LLM(model_name=args.llm_generator_name, n_gpus=args.num_gpus)
         model = GRetriever(llm=llm, gnn=gnn)
     elif args.llm_generator_mode == "lora":
-        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32)
+        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32,
+                  n_gpus=args.num_gpus)
         model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     else:
         # frozen
-        llm = LLM(model_name=args.llm_generator_name,
-                  dtype=torch.float32).eval()
+        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32,
+                  n_gpus=args.num_gpus).eval()
         for _, p in llm.named_parameters():
             p.requires_grad = False
         model = GRetriever(llm=llm, gnn=gnn)
