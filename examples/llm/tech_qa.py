@@ -61,6 +61,7 @@ LLM_GEN_MODE_DEFAULT = "full"
 DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
 DOC_CHUNK_SIZE_DEFAULT = 8192
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_MODEL', type=str,
@@ -126,6 +127,7 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
 
     Answer: """
 
+
 def _process_and_chunk_text(text, chunk_size):
     full_chunks = []
     # Some corpora of docs are grouped into chunked files, typically by paragraph.
@@ -138,6 +140,7 @@ def _process_and_chunk_text(text, chunk_size):
         chunks = _chunk_text(paragraph, chunk_size)
         full_chunks.extend(chunks)
     return full_chunks
+
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
