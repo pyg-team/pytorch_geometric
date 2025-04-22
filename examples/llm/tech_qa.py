@@ -59,7 +59,7 @@ BATCH_SIZE_DEFAULT = 1
 EVAL_BATCH_SIZE_DEFAULT = 2
 LLM_GEN_MODE_DEFAULT = "full"
 DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
-
+DOC_CHUNK_SIZE_DEFAULT = 8192
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -94,6 +94,9 @@ def parse_args():
     parser.add_argument('--llm_generator_name', type=str,
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
+    parser.add_argument('--doc_chunk_size', type=int,
+                        default=DOC_CHUNK_SIZE_DEFAULT,
+                        help="The chunk size to use for the LLM")
     parser.add_argument(
         '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
         choices=["frozen", "lora",
@@ -123,8 +126,20 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
 
     Answer: """
 
+def _process_and_chunk_text(text, chunk_size):
+    full_chunks = []
+    # Some corpora of docs are grouped into chunked files, typically by paragraph.
+    # Only split into individual documents if many paragraphs are detected
+    paragraphs = re.split(r'\n{2,}', text)
+    if len(paragraphs) < 16:
+        paragraphs = [text]
 
-def get_data():
+    for paragraph in paragraphs:
+        chunks = _chunk_text(paragraph, chunk_size)
+        full_chunks.extend(chunks)
+    return full_chunks
+
+def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
     with open('train.json') as file:
         json_obj = json.load(file)
@@ -143,20 +158,15 @@ def get_data():
             if doc_type != "text":
                 raise ValueError(f"Bad extraction for {file_path}, expecting "
                                  f"text only but got {doc_type}")
-            text_contexts.append(data[0]["metadata"]["content"])
+            text_contexts.extend(
+                _process_and_chunk_text(data[0]["metadata"]["content"],
+                                        args.doc_chunk_size))
     else:
         for file_path in glob(f"corpus/*"):
             with open(file_path, "r+") as f:
                 text_context = f.read()
-            # Some corpora of docs are grouped into chunked files, typically by paragraph.
-            # Only split into individual documents if many paragraphs are detected
-            paragraphs = re.split(r'\n{2,}', text_context)
-            if len(paragraphs) < 16:
-                paragraphs = [text_context]
-
-            for paragraph in paragraphs:
-                chunks = _chunk_text(paragraph, 8192)
-                text_contexts.extend(chunks)
+            text_contexts.extend(
+                _process_and_chunk_text(text_context, args.doc_chunk_size))
 
     return json_obj, text_contexts
 
@@ -166,7 +176,7 @@ def make_dataset(args):
         print("Re-using Saved TechQA KG-RAG Dataset...")
         return torch.load("tech_qa.pt", weights_only=False)
     else:
-        qa_pairs, context_docs = get_data()
+        qa_pairs, context_docs = get_data(args)
         print("Number of Docs in our VectorDB =", len(context_docs))
         data_lists = {"train": [], "validation": [], "test": []}
         triples = []
