@@ -113,7 +113,7 @@ def test_homogeneous_merge(disjoint, bidirectional):
 
 @pytest.mark.parametrize("disjoint", [True, False])
 @pytest.mark.parametrize("bidirectional", [True, False])
-def test_homogeneous_merge_replace(disjoint, bidirectional):
+def test_homogeneous_merge_no_replace(disjoint, bidirectional):
     """Merge an output representing 1<-0->2 with one representing 0->2->3.
     replace=True makes it so that merged output is a simple concatenation
     instead of removing already sampled nodes/edges.
@@ -138,7 +138,7 @@ def test_homogeneous_merge_replace(disjoint, bidirectional):
     if bidirectional:
         expected_output = expected_output.to_bidirectional(
             keep_orig_edges=True)
-    merged_output = output1.merge_with(output2, replace=True)
+    merged_output = output1.merge_with(output2, replace=False)
 
     assert str(merged_output) == str(expected_output)
 

@@ -266,7 +266,7 @@ class SamplerOutput(CastMixin):
 
     @classmethod
     def collate(cls, outputs: List['SamplerOutput'],
-                replace: bool = False) -> 'SamplerOutput':
+                replace: bool = True) -> 'SamplerOutput':
         r"""Collate a list of :class:`~torch_geometric.sampler.SamplerOutput`
         objects into a single :class:`~torch_geometric.sampler.SamplerOutput`
         object. Requires that they all have the same fields.
@@ -300,11 +300,11 @@ class SamplerOutput(CastMixin):
         return out
 
     def merge_with(self, other: 'SamplerOutput',
-                   replace: bool = False) -> 'SamplerOutput':
+                   replace: bool = True) -> 'SamplerOutput':
         """Merges two SamplerOutputs.
-        If replace is False, self's nodes and edges take precedence.
+        If replace is True, self's nodes and edges take precedence.
         """
-        if replace:
+        if not replace:
             return SamplerOutput(
                 node=torch.cat([self.node, other.node], dim=0),
                 row=torch.cat([self.row, len(self.node) + other.row], dim=0),
@@ -664,8 +664,8 @@ class HeteroSamplerOutput(CastMixin):
         return out
 
     @classmethod
-    def collate(cls,
-                outputs: List['HeteroSamplerOutput']) -> 'HeteroSamplerOutput':
+    def collate(cls, outputs: List['HeteroSamplerOutput'],
+                replace: bool = True) -> 'HeteroSamplerOutput':
         r"""Collate a list of
         :class:`~torch_geometric.sampler.HeteroSamplerOutput`objects into a
         single :class:`~torch_geometric.sampler.HeteroSamplerOutput` object.
@@ -675,9 +675,9 @@ class HeteroSamplerOutput(CastMixin):
         raise NotImplementedError
 
     def merge_with(self, other: 'HeteroSamplerOutput',
-                   replace: bool = False) -> 'HeteroSamplerOutput':
+                   replace: bool = True) -> 'HeteroSamplerOutput':
         """Merges two HeteroSamplerOutputs.
-        If replace is False, self's nodes and edges take precedence.
+        If replace is True, self's nodes and edges take precedence.
         """
         # TODO(zaristei)
         raise NotImplementedError
