@@ -1,4 +1,4 @@
-name: Testing RAG on PyTorch 2.5
+name: Testing RAG
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -25,7 +25,7 @@ jobs:
       # Run workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific-rag
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v46
         with:
           files: |
             torch_geometric/datasets/web_qsp_dataset.py
@@ -42,10 +42,10 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         run: |
-          pip install -e .[test,rag]
+          uv pip install -e ".[test,rag]"
 
       - name: Run tests
         if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         timeout-minutes: 10
         run: |
-          RAG_TEST=1 pytest -m rag
+          RAG_TEST=1 uv run --no-project pytest -m rag --durations 10
