@@ -83,6 +83,8 @@ class GRetriever(torch.nn.Module):
             torch.nn.Unflatten(-1, (mlp_out_tokens, mlp_out_channels)),
         ).to(self.llm.device)
 
+        self.seq_length_stats = []
+
     def encode(
         self,
         x: Tensor,
@@ -145,6 +147,9 @@ class GRetriever(torch.nn.Module):
             attention_mask,
             label_input_ids,
         ) = self.llm._get_embeds(question, additional_text_context, xs, label)
+
+        max_seq_len = inputs_embeds.size(1)
+        self.seq_length_stats.append(max_seq_len)
 
         with self.llm.autocast_context:
             outputs = self.llm_generator(
