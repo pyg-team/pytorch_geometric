@@ -15,6 +15,11 @@ from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
 
+def is_rag_test() -> bool:
+    r"""Whether to run the RAG test suite."""
+    return os.getenv('RAG_TEST', '0') == '1'
+
+
 def is_full_test() -> bool:
     r"""Whether to run the full but time-consuming test suite."""
     return os.getenv('FULL_TEST', '0') == '1'
@@ -33,8 +38,8 @@ def onlyFullTest(func: Callable) -> Callable:
 
 def is_distributed_test() -> bool:
     r"""Whether to run the distributed test suite."""
-    return ((is_full_test() or os.getenv('DIST_TEST', '0') == '1')
-            and sys.platform == 'linux' and has_package('pyg_lib'))
+    return (os.getenv('DIST_TEST', '0') == '1' and sys.platform == 'linux'
+            and has_package('pyg_lib'))
 
 
 def onlyDistributedTest(func: Callable) -> Callable:
@@ -202,6 +207,18 @@ def withPackage(*args: str) -> Callable:
         return pytest.mark.skipif(len(na_packages) > 0, reason=reason)(func)
 
     return decorator
+
+
+def onlyRAG(func: Callable) -> Callable:
+    r"""A decorator to specify that this function belongs to the RAG test
+    suite.
+    """
+    import pytest
+    func = pytest.mark.rag(func)
+    return pytest.mark.skipif(
+        not is_rag_test(),
+        reason="RAG tests are disabled",
+    )(func)
 
 
 def withCUDA(func: Callable) -> Callable:
