@@ -25,7 +25,12 @@ from torch_geometric.sampler import (
     SamplerOutput,
 )
 from torch_geometric.sampler.base import DataType, NumNeighbors, SubgraphType
-from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
+from torch_geometric.sampler.utils import (
+    remap_keys,
+    to_csc,
+    to_hetero_csc,
+    reverse_edge_types,
+)
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
@@ -61,10 +66,14 @@ class NeighborSampler(BaseSampler):
             warnings.warn(f"Using '{self.__class__.__name__}' without a "
                           f"'pyg-lib' installation is deprecated and will be "
                           f"removed soon. Please install 'pyg-lib' for "
-                          f"accelerated neighborhood sampling")
+                          f"accelerated neighborhood sampling") 
 
         self.data_type = DataType.from_data(data)
         self.sample_direction = sample_direction
+
+        if self.sample_direction == 'backward' and time_attr is not None:
+            raise NotImplementedError("Temporal Sampling not yet supported for backward sampling")
+            # TODO(zaristei)
 
         if self.data_type == DataType.homogeneous:
             self.num_nodes = data.num_nodes
@@ -100,6 +109,9 @@ class NeighborSampler(BaseSampler):
 
         elif self.data_type == DataType.heterogeneous:
             self.node_types, self.edge_types = data.metadata()
+
+            if self.sample_direction == 'backward':
+                self.edge_types = reverse_edge_types(self.edge_types)
 
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
@@ -142,7 +154,7 @@ class NeighborSampler(BaseSampler):
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time,
                 edge_time_dict=self.edge_time,
-                to_transpose=sample_direction == 'backward')
+                to_transpose=self.sample_direction == 'backward')
 
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
