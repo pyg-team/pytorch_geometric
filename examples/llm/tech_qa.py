@@ -158,6 +158,7 @@ def get_data(args):
     # files.
     # TODO: add support for additional corpus file formats: PDF, CSV, XML,
     # HTML, possibly others.
+    # corpus folder is simply a folder with context documents in it.
     file_paths = glob(f"corpus/*.json")
     if len(file_paths) > 0:
         for file_path in file_paths:
