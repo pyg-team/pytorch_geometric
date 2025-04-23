@@ -21,7 +21,7 @@ def test_gpse_training():
 
     data = Data(x=x, y=y, edge_index=edge_index)
     data = VirtualNode()(data)
-    data.y_graph = torch.tensor(torch.randn(11))
+    data.y_graph = torch.randn(11)
 
     batch = Batch.from_data_list([data])
     model = GPSE()
