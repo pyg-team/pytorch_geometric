@@ -154,8 +154,8 @@ def get_data(args):
         json_obj = json.load(file)
     text_contexts = []
 
-    # Read corpus data to create the KG. Prefer *.json files, fall back to txt
-    # files.
+    # Read corpus data to create the KG and for document retrieval (RAG).
+    # Prefer *.json files, fall back to txt files.
     # TODO: add support for additional corpus file formats: PDF, CSV, XML,
     # HTML, possibly others.
     # corpus folder is simply a folder with context documents in it.
