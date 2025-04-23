@@ -29,7 +29,7 @@ from torch_geometric.sampler.utils import (
     remap_keys,
     to_csc,
     to_hetero_csc,
-    reverse_edge_types,
+    reverse_edge_type,
 )
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
@@ -113,6 +113,11 @@ class NeighborSampler(BaseSampler):
         elif self.data_type == DataType.heterogeneous:
             self.node_types, self.edge_types = data.metadata()
 
+            # reverse edge types if sample_direction is backward
+            if self.sample_direction == 'backward':
+                self.edge_types = [reverse_edge_type(edge_type) for edge_type in self.edge_types]
+                self.to_restored_edge_type = {k: reverse_edge_type(k) for k in self.edge_types}
+
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
             self.node_time: Optional[Dict[NodeType, Tensor]] = None
@@ -184,6 +189,11 @@ class NeighborSampler(BaseSampler):
 
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list({attr.edge_type for attr in edge_attrs})
+
+            # reverse edge types if sample_direction is backward
+            if self.sample_direction == 'backward':
+                self.edge_types = [reverse_edge_type(edge_type) for edge_type in self.edge_types]
+                self.to_restored_edge_type = {k: reverse_edge_type(k) for k in self.edge_types}
 
             if weight_attr is not None:
                 raise NotImplementedError(
@@ -447,6 +457,7 @@ class NeighborSampler(BaseSampler):
                 node, row, col, edge, batch = out + (None, )
                 num_sampled_nodes = num_sampled_edges = None
 
+                # pyg-lib performs this switch but torch sparse does not
                 if self.sample_direction == 'backward':
                     row, col = out.row, out.col
                     out.row = col
@@ -455,18 +466,31 @@ class NeighborSampler(BaseSampler):
             else:
                 raise ImportError(f"'{self.__class__.__name__}' requires "
                                   f"either 'pyg-lib' or 'torch-sparse'")
+            
+            row = remap_keys(row, self.to_edge_type)
+            col = remap_keys(col, self.to_edge_type)
+            edge = remap_keys(edge, self.to_edge_type)
+
+            # In the case of backward sampling, we need to restore the edges keys
+            # to be forward facing in the HeteroSamplerOutput object.
+            if self.sample_direction == 'backward':
+                row = remap_keys(row, self.to_restored_edge_type)
+                col = remap_keys(col, self.to_restored_edge_type)
+                edge = remap_keys(edge, self.to_restored_edge_type)
 
             if num_sampled_edges is not None:
                 num_sampled_edges = remap_keys(
                     num_sampled_edges,
                     self.to_edge_type,
                 )
-
+                if self.sample_direction == 'backward':
+                    num_sampled_edges = remap_keys(num_sampled_edges, self.to_restored_edge_type)
+            
             return HeteroSamplerOutput(
                 node=node,
-                row=remap_keys(row, self.to_edge_type),
-                col=remap_keys(col, self.to_edge_type),
-                edge=remap_keys(edge, self.to_edge_type),
+                row=row,
+                col=col,
+                edge=edge,
                 batch=batch,
                 num_sampled_nodes=num_sampled_nodes,
                 num_sampled_edges=num_sampled_edges,
@@ -528,6 +552,12 @@ class NeighborSampler(BaseSampler):
                 )
                 node, row, col, edge, batch = out + (None, )
                 num_sampled_nodes = num_sampled_edges = None
+
+                # pyg-lib performs this switch but torch sparse does not
+                if self.sample_direction == 'backward':
+                    row, col = out.row, out.col
+                    out.row = col
+                    out.col = row
 
             else:
                 raise ImportError(f"'{self.__class__.__name__}' requires "
