@@ -63,6 +63,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed `utils.group_cat` concatenating dimension ([#9766](https://github.com/pyg-team/pytorch_geometric/pull/9766))
 - Fixed `WebQSDataset.process` raising exceptions ([#9665](https://github.com/pyg-team/pytorch_geometric/pull/9665))
 - Fixed `is_node_attr()` and `is_edge_attr()` errors when `cat_dim` is a tuple ([#9895](https://github.com/pyg-team/pytorch_geometric/issues/9895))
+- Fixed `cluster_loss` calculation in `DMoNPooling` ([#10149](https://github.com/pyg-team/pytorch_geometric/pull/10149))
 
 ### Removed
 
