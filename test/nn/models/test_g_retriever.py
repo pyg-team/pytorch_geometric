@@ -30,7 +30,6 @@ def test_g_retriever() -> None:
     assert str(model) == ('GRetriever(\n'
                           '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
                           '  gnn=GAT(1024, 1024, num_layers=2),\n'
-                          '  mlp_out_tokens=1\n'
                           ')')
 
     x = torch.randn(10, 1024)
@@ -79,7 +78,6 @@ def test_g_retriever_many_tokens() -> None:
     assert str(model) == ('GRetriever(\n'
                           '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
                           '  gnn=GAT(1024, 1024, num_layers=2),\n'
-                          '  mlp_out_tokens=2\n'
                           ')')
 
     x = torch.randn(10, 1024)

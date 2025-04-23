@@ -230,5 +230,4 @@ class GRetriever(torch.nn.Module):
         return (f'{self.__class__.__name__}(\n'
                 f'  llm={self.llm},\n'
                 f'  gnn={self.gnn},\n'
-                f'  mlp_out_tokens={self.mlp_out_tokens}\n'
                 f')')
