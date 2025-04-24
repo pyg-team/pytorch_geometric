@@ -119,6 +119,12 @@ def parse_args():
         "will determine automatically based on model size.")
     parser.add_argument('--regenerate_dataset', action="store_true",
                         help="Regenerate the dataset")
+    parser.add_argument(
+        '--doc_parsing_mode', type=str, default="file",
+        choices=["paragraph",
+                 "file"], help="How to parse documents: 'paragraph' splits "
+        "files by paragraphs, 'file' treats each file as"
+        "one document")
     return parser.parse_args()
 
 
@@ -134,12 +140,13 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
     Answer: """
 
 
-def _process_and_chunk_text(text, chunk_size):
+def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     full_chunks = []
     # Some corpora of docs are grouped into chunked files, typically by paragraph.
     # Only split into individual documents if many paragraphs are detected
-    paragraphs = re.split(r'\n{2,}', text)
-    if len(paragraphs) < 16:
+    if doc_parsing_mode == "paragraph":
+        paragraphs = re.split(r'\n{2,}', text)
+    else:  # doc_parsing_mode == "file":
         paragraphs = [text]
 
     for paragraph in paragraphs:
@@ -170,13 +177,15 @@ def get_data(args):
                                  f"text only but got {doc_type}")
             text_contexts.extend(
                 _process_and_chunk_text(data[0]["metadata"]["content"],
-                                        args.doc_chunk_size))
+                                        args.doc_chunk_size,
+                                        args.doc_parsing_mode))
     else:
         for file_path in glob(f"corpus/*"):
             with open(file_path, "r+") as f:
                 text_context = f.read()
             text_contexts.extend(
-                _process_and_chunk_text(text_context, args.doc_chunk_size))
+                _process_and_chunk_text(text_context, args.doc_chunk_size,
+                                        args.doc_parsing_mode))
 
     return json_obj, text_contexts
 
