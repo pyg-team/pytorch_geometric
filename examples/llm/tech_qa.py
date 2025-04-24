@@ -119,11 +119,12 @@ def parse_args():
         "will determine automatically based on model size.")
     parser.add_argument('--regenerate_dataset', action="store_true",
                         help="Regenerate the dataset")
-    parser.add_argument('--doc_parsing_mode', type=str, default="file",
-                        choices=["paragraph", "file"],
-                        help="How to parse documents: 'paragraph' splits "
-                        "files by paragraphs, 'file' treats each file as"
-                        "one document")
+    parser.add_argument(
+        '--doc_parsing_mode', type=str, default="file",
+        choices=["paragraph",
+                 "file"], help="How to parse documents: 'paragraph' splits "
+        "files by paragraphs, 'file' treats each file as"
+        "one document")
     return parser.parse_args()
 
 
@@ -145,7 +146,7 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     # Only split into individual documents if many paragraphs are detected
     if doc_parsing_mode == "paragraph":
         paragraphs = re.split(r'\n{2,}', text)
-    else: # doc_parsing_mode == "file":
+    else:  # doc_parsing_mode == "file":
         paragraphs = [text]
 
     for paragraph in paragraphs:
