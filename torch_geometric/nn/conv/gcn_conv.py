@@ -246,16 +246,18 @@ class GCNConv(MessagePassing):
                 else:
                     edge_index, edge_weight = cache[0], cache[1]
 
-            elif isinstance(edge_index, SparseTensor):
-                cache = self._cached_adj_t
+            elif isinstance(edge_index, SparseTensor):          
+                cache = self._cached_adj_t                
                 if cache is None:
-                    edge_index = gcn_norm(  # yapf: disable
+                    adj_t = gcn_norm(
                         edge_index, edge_weight, x.size(self.node_dim),
                         self.improved, self.add_self_loops, self.flow, x.dtype)
+                    row, col, edge_weight = adj_t.coo()
+                    edge_index = torch.stack([row, col], dim=0)                    
                     if self.cached:
-                        self._cached_adj_t = edge_index
-                else:
-                    edge_index = cache
+                        self._cached_adj_t = (edge_index, edge_weight)
+                else:              
+                    edge_index, edge_weight = cache
 
         x = self.lin(x)
 
