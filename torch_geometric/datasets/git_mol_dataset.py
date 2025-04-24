@@ -187,7 +187,7 @@ class GitMolDataset(InMemoryDataset):
                 img = self.img_transform(img).unsqueeze(0)
                 # graph
                 atom_features_list = []
-                for atom in mol.GetAtoms():  # type: ignore
+                for atom in mol.GetAtoms():
                     atom_feature = [
                         safe_index(
                             allowable_features['possible_atomic_num_list'],
@@ -219,7 +219,7 @@ class GitMolDataset(InMemoryDataset):
 
                 edges_list = []
                 edge_features_list = []
-                for bond in mol.GetBonds():  # type: ignore
+                for bond in mol.GetBonds():
                     i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                     edge_feature = [
                         safe_index(

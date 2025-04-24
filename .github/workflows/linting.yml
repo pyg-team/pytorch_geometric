@@ -25,7 +25,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v46
         with:
           files: |
             benchmark/**
@@ -44,10 +44,10 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install mypy
-          pip install -e .[full,test]
+          uv pip install mypy
+          uv pip install -e ".[full,test]"
 
       - name: Check type hints
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          mypy
+          uv run --no-project mypy

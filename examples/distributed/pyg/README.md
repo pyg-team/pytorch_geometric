@@ -22,7 +22,7 @@ To run the example, please refer to the steps below.
 - Password-less SSH needs to be set up on all the nodes that you are using (see the [Linux SSH manual](https://linuxize.com/post/how-to-setup-passwordless-ssh-login)).
 - All nodes need to have a consistent environments installed, specifically `torch` and `pyg-lib` versions must be the same.
   You might want to consider using docker containers.
-- *\[Optional\]* In some cases Linux firewall might be blocking TCP connection issues.
+- *[Optional]* In some cases Linux firewall might be blocking TCP connection issues.
   Ensure that firewall settings allow for all nodes to communicate (see the [Linux firewall manual](https://ubuntu.com/server/docs/security-firewall)).
   For this example TCP ports `11111`, `11112` and `11113` should be open (*i.e.* `sudo ufw allow 11111`).
 

@@ -1,6 +1,14 @@
+installation:
+  - changed-files:
+      - any-glob-to-any-file: ["pyproject.toml"]
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: [".github/**/*", "codecov.yaml", ".pre-commit-config.yaml"]
+
 documentation:
   - changed-files:
-      - any-glob-to-any-file: "docs/**/*"
+      - any-glob-to-any-file: ["docs/**/*", "readthedocs.yml", "README.MD"]
 
 example:
   - changed-files:
@@ -33,6 +41,10 @@ explain:
 transform:
   - changed-files:
       - any-glob-to-any-file: "torch_geometric/transforms/**/*"
+
+metrics:
+  - changed-files:
+      - any-glob-to-any-file: "torch_geometric/metrics/**/*"
 
 utils:
   - changed-files:

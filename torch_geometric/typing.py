@@ -9,6 +9,11 @@ import numpy as np
 import torch
 from torch import Tensor
 
+try:
+    from typing import TypeAlias  # type: ignore
+except ImportError:
+    from typing_extensions import TypeAlias
+
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
 WITH_PT22 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 2
@@ -64,6 +69,16 @@ try:
         pyg_lib.sampler.neighbor_sample).parameters)
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
+    try:
+        torch.classes.pyg.CPUHashMap
+        WITH_CPU_HASH_MAP = True
+    except Exception:
+        WITH_CPU_HASH_MAP = False
+    try:
+        torch.classes.pyg.CUDAHashMap
+        WITH_CUDA_HASH_MAP = True
+    except Exception:
+        WITH_CUDA_HASH_MAP = False
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
@@ -78,6 +93,32 @@ except Exception as e:
     WITH_METIS = False
     WITH_EDGE_TIME_NEIGHBOR_SAMPLE = False
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
+    WITH_CPU_HASH_MAP = False
+    WITH_CUDA_HASH_MAP = False
+
+if WITH_CPU_HASH_MAP:
+    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
+else:
+
+    class CPUHashMap:  # type: ignore
+        def __init__(self, key: Tensor) -> None:
+            raise ImportError("'CPUHashMap' requires 'pyg-lib'")
+
+        def get(self, query: Tensor) -> Tensor:
+            raise ImportError("'CPUHashMap' requires 'pyg-lib'")
+
+
+if WITH_CUDA_HASH_MAP:
+    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
+else:
+
+    class CUDAHashMap:  # type: ignore
+        def __init__(self, key: Tensor) -> None:
+            raise ImportError("'CUDAHashMap' requires 'pyg-lib'")
+
+        def get(self, query: Tensor) -> Tensor:
+            raise ImportError("'CUDAHashMap' requires 'pyg-lib'")
+
 
 try:
     import torch_scatter  # noqa

@@ -120,7 +120,7 @@ def test_edge_mask():
                        torch.tensor([[1], [1]]))
 
 
-@withPackage('matplotlib')
+@withPackage('matplotlib', 'pandas')
 @pytest.mark.parametrize('top_k', [2, None])
 @pytest.mark.parametrize('node_mask_type', [None, 'attributes'])
 def test_visualize_feature_importance(

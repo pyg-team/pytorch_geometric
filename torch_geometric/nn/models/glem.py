@@ -144,7 +144,8 @@ class GLEM(torch.nn.Module):
             acc (float): training accuracy
             loss (float): loss value
         """
-        pseudo_labels = pseudo_labels.to(self.device)
+        if pseudo_labels is not None:
+            pseudo_labels = pseudo_labels.to(self.device)
         if em_phase == 'gnn':
             acc, loss = self.train_gnn(train_loader, optimizer, epoch,
                                        pseudo_labels, is_augmented, verbose)
