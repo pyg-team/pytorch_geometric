@@ -9,10 +9,14 @@ from torch_geometric.index import index2ptr
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import coalesce, index_sort, lexsort
 
+
 def reverse_edge_type(edge_type: EdgeType) -> EdgeType:
-    """Reverses edge types for heterogeneous graphs. Useful in cases of backward
-    sampling."""
-    return (edge_type[2], edge_type[1], edge_type[0]) if edge_type is not None else None
+    """Reverses edge types for heterogeneous graphs. Useful in cases of
+    backward sampling.
+    """
+    return (edge_type[2], edge_type[1],
+            edge_type[0]) if edge_type is not None else None
+
 
 # Edge Layout Conversion ######################################################
 
@@ -87,7 +91,8 @@ def to_csc(
 
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time, edge_time)
-        colptr = index2ptr(col, data.size(1) if not to_transpose else data.size(0))
+        colptr = index2ptr(col,
+                           data.size(1) if not to_transpose else data.size(0))
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
         colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,

@@ -29,7 +29,6 @@ def _init_sample_graph(hetero=False):
     # Carol (2) # -> "works with" -> # Dave (3) #
     #############                    ############
     """
-
     sample_attr = None
     sample_edge_indices = None
 
@@ -37,7 +36,10 @@ def _init_sample_graph(hetero=False):
         sample_attr = torch.tensor([[0], [1], [2], [3]])
         sample_edge_indices = torch.tensor([[0, 0, 2], [1, 2, 3]])
     else:
-        sample_attr = dict({"person": dict({"x": torch.tensor([[1], [2], [3]])}), "manager": dict({"x": torch.tensor([[0]])})})
+        sample_attr = dict({
+            "person": dict({"x": torch.tensor([[1], [2], [3]])}),
+            "manager": dict({"x": torch.tensor([[0]])})
+        })
         sample_edge_indices = dict({
             ('person', 'works_with', 'person'):
             dict({"edge_index": torch.tensor([[1], [2]])}),
@@ -71,23 +73,28 @@ def _init_graph_to_sample(graph_dtype, hetero=False, reverse=False):
         graph_store.put_edge_index(sample_edge_indices, edge_type=None,
                                    layout='coo', size=(4, 4))
         feature_store = MyFeatureStore()
-        feature_store.put_tensor(sample_attr, group_name='default', attr_name='x',
-                                 index=None)
+        feature_store.put_tensor(sample_attr, group_name='default',
+                                 attr_name='x', index=None)
         graph_to_sample = (feature_store, graph_store)
     elif graph_dtype == 'data' and hetero:
         graph_to_sample = HeteroData()
         for node_type, node_attr in sample_attr.items():
             graph_to_sample[node_type].x = node_attr['x']
         for edge_type in sample_edge_indices.keys():
-            graph_to_sample[edge_type].edge_index = sample_edge_indices[edge_type]["edge_index"]
+            graph_to_sample[edge_type].edge_index = sample_edge_indices[
+                edge_type]["edge_index"]
     elif graph_dtype == 'remote' and hetero:
         graph_store = MyGraphStore()
         for edge_type, edge_index in sample_edge_indices.items():
             edge_index = edge_index["edge_index"]
-            graph_store.put_edge_index(edge_index, edge_type=edge_type, layout='coo', size=(len(sample_attr[edge_type[0]]["x"]), len(sample_attr[edge_type[2]]["x"])))
+            graph_store.put_edge_index(
+                edge_index, edge_type=edge_type, layout='coo',
+                size=(len(sample_attr[edge_type[0]]["x"]),
+                      len(sample_attr[edge_type[2]]["x"])))
         feature_store = MyFeatureStore()
         for node_type, node_attr in sample_attr.items():
-            feature_store.put_tensor(node_attr["x"], group_name=node_type, attr_name='x', index=None)
+            feature_store.put_tensor(node_attr["x"], group_name=node_type,
+                                     attr_name='x', index=None)
         graph_to_sample = (feature_store, graph_store)
     return graph_to_sample
 
@@ -154,18 +161,23 @@ def test_heterogeneous_neighbor_sampler_basic(input_type):
     assert sampler_output.node['person'].tolist() == [0]
     assert sampler_output.node['manager'].tolist() == [0]
 
-    assert sampler_output.row[('manager', 'works_with', 'person')] == torch.tensor([0])
+    assert sampler_output.row[('manager', 'works_with',
+                               'person')] == torch.tensor([0])
     assert sampler_output.row[('manager', 'leads', 'person')].numel() == 0
     assert sampler_output.row[('person', 'works_with', 'person')].numel() == 0
-    assert sampler_output.col[('manager', 'works_with', 'person')] == torch.tensor([0])
+    assert sampler_output.col[('manager', 'works_with',
+                               'person')] == torch.tensor([0])
     assert sampler_output.col[('manager', 'leads', 'person')].numel() == 0
     assert sampler_output.col[('person', 'works_with', 'person')].numel() == 0
-    assert sampler_output.edge[('manager', 'works_with', 'person')] == torch.tensor([0])
+    assert sampler_output.edge[('manager', 'works_with',
+                                'person')] == torch.tensor([0])
     assert sampler_output.edge[('manager', 'leads', 'person')].numel() == 0
     assert sampler_output.edge[('person', 'works_with', 'person')].numel() == 0
 
     # Sampling Alice should yield no edges
-    node_sampler_input = NodeSamplerInput(input_id=None, node=torch.tensor([0]), input_type="manager")
+    node_sampler_input = NodeSamplerInput(input_id=None,
+                                          node=torch.tensor([0]),
+                                          input_type="manager")
     sampler_output = sampler.sample_from_nodes(node_sampler_input)
 
     assert sampler_output.node['manager'].tolist() == [0]
@@ -177,7 +189,8 @@ def test_heterogeneous_neighbor_sampler_basic(input_type):
     assert sampler_output.col[('manager', 'works_with', 'person')].numel() == 0
     assert sampler_output.col[('manager', 'leads', 'person')].numel() == 0
     assert sampler_output.col[('person', 'works_with', 'person')].numel() == 0
-    assert sampler_output.edge[('manager', 'works_with', 'person')].numel() == 0
+    assert sampler_output.edge[('manager', 'works_with',
+                                'person')].numel() == 0
     assert sampler_output.edge[('manager', 'leads', 'person')].numel() == 0
     assert sampler_output.edge[('person', 'works_with', 'person')].numel() == 0
 
@@ -302,8 +315,9 @@ def test_heterogeneous_neighbor_sampler_backwards(input_type):
     # This output should have Carol and Alice
     reverse_backward_sampler_output = \
         reverse_backward_sampler.sample_from_nodes(node_sampler_input)
-    
-    reverse_key = lambda key: (key[2], key[1], key[0])
+
+    def reverse_key(key):
+        return (key[2], key[1], key[0])
 
     assert sampler_output.node.keys(
     ) == reverse_backward_sampler_output.node.keys()
@@ -316,18 +330,23 @@ def test_heterogeneous_neighbor_sampler_backwards(input_type):
         assert torch.equal(reverse_sampler_output.node[key],
                            backward_sampler_output.node[key])
 
-    assert len(sampler_output.row.keys()) == len(reverse_backward_sampler_output.row.keys())
+    assert len(sampler_output.row.keys()) == len(
+        reverse_backward_sampler_output.row.keys())
     for key in sampler_output.row.keys():
         assert reverse_key(key) in reverse_backward_sampler_output.row.keys()
 
-        assert torch.equal(sampler_output.row[key],
-                           reverse_backward_sampler_output.col[reverse_key(key)])
-        assert torch.equal(sampler_output.col[key],
-                           reverse_backward_sampler_output.row[reverse_key(key)])
-        assert torch.equal(sampler_output.edge[key],
-                           reverse_backward_sampler_output.edge[reverse_key(key)])
-    
-    assert len(reverse_sampler_output.row.keys()) == len(backward_sampler_output.row.keys())
+        assert torch.equal(
+            sampler_output.row[key],
+            reverse_backward_sampler_output.col[reverse_key(key)])
+        assert torch.equal(
+            sampler_output.col[key],
+            reverse_backward_sampler_output.row[reverse_key(key)])
+        assert torch.equal(
+            sampler_output.edge[key],
+            reverse_backward_sampler_output.edge[reverse_key(key)])
+
+    assert len(reverse_sampler_output.row.keys()) == len(
+        backward_sampler_output.row.keys())
     for key in reverse_sampler_output.row.keys():
         assert reverse_key(key) in backward_sampler_output.row.keys()
 
@@ -387,6 +406,7 @@ def test_bidirectional_neighbor_sampler(input_type):
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
 def test_bidirectional_neighbor_sampler_hetero(input_type):
     raise NotImplementedError
+
 
 @onlyNeighborSampler
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
