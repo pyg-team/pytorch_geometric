@@ -30,6 +30,8 @@ from torch_geometric.sampler.utils import (
     reverse_edge_type,
     to_csc,
     to_hetero_csc,
+    local_to_global_node_idx,
+    global_to_local_node_idx,
 )
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
@@ -620,10 +622,9 @@ class NeighborSampler(BaseSampler):
             )
 
 
-class BidirectionalNeighborSampler(BaseSampler):
+class BidirectionalNeighborSampler(NeighborSampler):
     """A sampler that allows for both upstream and downstream sampling."""
 
-    # NOTE: Designed to have the same interface as `NeighborSampler`
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -640,6 +641,10 @@ class BidirectionalNeighborSampler(BaseSampler):
         directed: bool = True,
     ):
 
+        # TODO(zaristei)
+        if isinstance(num_neighbors, NumNeighbors) and isinstance(num_neighbors.values, dict) or isinstance(num_neighbors, dict):
+            raise RuntimeError("BidirectionalNeighborSampler does not yet support edge delimited sampling.")
+
         self.forward_sampler = NeighborSampler(
             data, num_neighbors, subgraph_type, replace, disjoint,
             temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
@@ -654,16 +659,14 @@ class BidirectionalNeighborSampler(BaseSampler):
 
     @property
     def num_neighbors(self) -> NumNeighbors:
-        return self.forward_sampler.num_neighbors
+        return self._num_neighbors
 
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
-        self.forward_sampler.num_neighbors = num_neighbors
-        if not self.backward_neighbors_explicitly_set:
-            self.backward_sampler.num_neighbors = num_neighbors
         if self.num_neighbors.num_hops > 1:
             print("Warning: Number of hops is greater than 1, resulting in "
                   "memory-expensive recursive calls.")
+        self._num_neighbors = num_neighbors
 
     @property
     def is_hetero(self) -> bool:
@@ -686,26 +689,93 @@ class BidirectionalNeighborSampler(BaseSampler):
         self,
         inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        forward_out = self.forward_sampler.sample_from_nodes(inputs)
-        backward_out = self.backward_sampler.sample_from_nodes(inputs)
-        out = forward_out.merge_with(backward_out)
-        return out
+        return super().sample_from_nodes(inputs)
 
     def sample_from_edges(
         self,
         inputs: EdgeSamplerInput,
         neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        forward_out = self.forward_sampler.sample_from_edges(
-            inputs, neg_sampling)
-        backward_out = self.backward_sampler.sample_from_edges(
-            inputs, neg_sampling)
-
-        return forward_out.merge_with(backward_out)
+        # TODO(zaristei) Figure out what exactly regular and negative sampling
+        # imply for bidirectional sampling case
+        if neg_sampling is not None:
+            raise RuntimeError("BidirectionalNeighborSampler does not yet support negative sampling.")
+        # Not thoroughly tested yet!
+        return super().sample_from_edges(inputs)
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
         return self.forward_sampler.edge_permutation
+
+    def _sample(
+        self,
+        seed: Union[Tensor, Dict[NodeType, Tensor]],
+        seed_time: Optional[Union[Tensor, Dict[NodeType, Tensor]]] = None,
+        **kwargs,
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+
+        if seed_time is not None:
+            raise NotImplementedError("BidirectionalNeighborSampler does not yet support temporal sampling.")
+
+        if self.is_hetero:
+            raise NotImplementedError("BidirectionalNeighborSampler does not yet support heterogeneous sampling.")
+        else:
+            current_seed = seed
+            current_seed_batch = None
+            current_seed_time = seed_time
+            seen_seed_set = set(current_seed)
+            if self.disjoint:
+                current_seed_batch = torch.arange(len(current_seed))
+                seen_seed_set = set([(node, batch) for node, batch in zip(current_seed, current_seed_batch)])
+            
+            iter_results = []
+
+            # NOTE: Needs to be altered if n neighbors is a dict of edge types
+            for sampler_iter, n_neighbors in enumerate(self.num_neighbors.values):
+                current_n_neighbors = [n_neighbors]
+                self.forward_sampler.num_neighbors = current_n_neighbors
+                self.backward_sampler.num_neighbors = current_n_neighbors
+
+                fwd_result = self.forward_sampler._sample(current_seed, current_seed_time, **kwargs)
+                bwd_result = self.backward_sampler._sample(current_seed, current_seed_time, **kwargs)
+                # The seeds for the next iteration will be the new nodes in this iteration
+                iter_result = fwd_result.merge_with(bwd_result)
+                iter_results.append(iter_result)
+
+                # Find the nodes not yet seen to set a seed for next iteration
+                if self.disjoint:
+                    iter_seed_global_batch = current_seed_batch[batch for batch in iter_result.batch]
+                    next_seed = list(set([(node, batch) for node, batch in zip(iter_result.node, iter_seed_global_batch)]) - seen_seed_set)
+                    current_seed = torch.tensor([node for node, batch in next_seed])
+                else:
+                    next_seed = list(set([node for node in iter_result.node]) - seen_seed_set)
+                    current_seed = torch.tensor([node for node in next_seed])
+
+                seen_seed_set += set(next_seed)
+
+                # TODO(zaristei) figure out how to update seed times for temporal sampling
+            
+            return SamplerOutput.collate(iter_results)
+                    
+
+            """ Pseudocode
+
+            current seed = seed
+            if disjoint, add ordinal batch ids to current seed for uids
+            for each iter:
+                fwd sample, bwd_sample merge to get first result
+
+                if batch id is not none, we need to maintain a mapping from the ordinal batch ids to the original ones, and apply that mapping
+
+                append iter result to list of iter results for later
+
+                get the next seed by getting the set of (node, batch_id) not yet seen in current seed
+
+                after all iterations have been processed, we collate the large list of sampleroutput results to get final result.
+            """
+
+                
+        return
 
 
 # Sampling Utilities ##########################################################
