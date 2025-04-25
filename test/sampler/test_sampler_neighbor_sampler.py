@@ -395,7 +395,7 @@ def test_bidirectional_neighbor_sampler(input_type):
         # keep_orig_edges=True
         orig_col=None,
         # simple concat of forward and backward metadata
-        metadata=[(None, None), (None, None)])
+        metadata=(None, None))
     assert str(sampler_output) == str(expected_output)
 
 

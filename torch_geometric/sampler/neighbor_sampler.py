@@ -656,6 +656,7 @@ class BidirectionalNeighborSampler(NeighborSampler):
 
         # Trigger warnings on init if number of hops is greater than 1
         self.num_neighbors = num_neighbors
+        self.subgraph_type = subgraph_type
 
     @property
     def num_neighbors(self) -> NumNeighbors:
@@ -663,7 +664,9 @@ class BidirectionalNeighborSampler(NeighborSampler):
 
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
-        if self.num_neighbors.num_hops > 1:
+        if not isinstance(num_neighbors, NumNeighbors):
+            num_neighbors = NumNeighbors(num_neighbors)
+        if num_neighbors.num_hops > 1:
             print("Warning: Number of hops is greater than 1, resulting in "
                   "memory-expensive recursive calls.")
         self._num_neighbors = num_neighbors
@@ -739,9 +742,7 @@ class BidirectionalNeighborSampler(NeighborSampler):
 
             iter_results = []
 
-            # NOTE: Needs to be altered if n neighbors is a dict of edge types
-            for sampler_iter, n_neighbors in enumerate(
-                    self.num_neighbors.values):
+            for n_neighbors in self.num_neighbors.values:
                 current_n_neighbors = [n_neighbors]
                 self.forward_sampler.num_neighbors = current_n_neighbors
                 self.backward_sampler.num_neighbors = current_n_neighbors
@@ -774,33 +775,12 @@ class BidirectionalNeighborSampler(NeighborSampler):
                                      seen_seed_set)
                     current_seed = torch.tensor([node for node in next_seed])
 
-                seen_seed_set += set(next_seed)
+                seen_seed_set |= set(next_seed)
 
                 # TODO(zaristei) figure out how to update seed times for
                 # temporal sampling
 
             return SamplerOutput.collate(iter_results)
-            """ Pseudocode
-
-            current seed = seed
-            if disjoint, add ordinal batch ids to current seed for uids
-            for each iter:
-                fwd sample, bwd_sample merge to get first result
-
-                if batch id is not none, we need to maintain a mapping from
-                the ordinal batch ids to the original ones, and apply that
-                mapping
-
-                append iter result to list of iter results for later
-
-                get the next seed by getting the set of (node, batch_id) not
-                yet seen in current seed
-
-                after all iterations have been processed, we collate the large
-                list of sampleroutput results to get final result.
-            """
-
-        return
 
 
 # Sampling Utilities ##########################################################
