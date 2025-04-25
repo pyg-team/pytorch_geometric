@@ -1,5 +1,3 @@
-# test_graph_transformer.py
-
 import pytest
 import torch
 
@@ -30,3 +28,15 @@ def test_forward_shape(num_graphs, num_nodes, feature_dim, num_classes):
     assert out.shape == (
         num_graphs, num_classes
     ), f"Expected output shape {(num_graphs, num_classes)}, got {out.shape}"
+
+
+def test_super_node_readout():
+    x = torch.tensor([[1.0, 2.0, 3.0, 4.0]])
+    data = Data(x=x, edge_index=torch.empty((2, 0), dtype=torch.long))
+    batch = Batch.from_data_list([data])
+    model = GraphTransformer(hidden_dim=4, num_class=2, use_super_node=True)
+    out = model(batch)["logits"]
+    expected = model.classifier(model.cls_token.expand(1, -1))
+    assert torch.allclose(
+        out, expected
+    ), "Expected output to match classifier(cls_token) for super node readout."
