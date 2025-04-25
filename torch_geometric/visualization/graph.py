@@ -312,18 +312,11 @@ def _visualize_hetero_graph_via_networkx(
                                  f"{node_type} ({len(weights)}) does not "
                                  f"match number of nodes ({num_nodes})")
 
-        # Create a mapping from original node indices to new sequential indices
-        node_mapping = {
-            old_idx: new_idx
-            for new_idx, old_idx in enumerate(
-                sorted(remaining_nodes[node_type]))
-        }
-
         for i in range(num_nodes):
             node_id = current_offset + i
             label = (node_labels_dict[node_type][i]
                      if node_labels_dict is not None
-                     and node_type in node_labels_dict else f"{node_type}_{i}")
+                     and node_type in node_labels_dict else "")
 
             # Calculate node size and opacity if weights provided
             size = node_size_range[1]
