@@ -10,16 +10,18 @@ class GraphTransformer(torch.nn.Module):
     <https://arxiv.org/pdf/2202.08455>_ paper.
     """
     def __init__(
-        self,
-        hidden_dim: int = 16,
-        num_class=2,
-        use_super_node: bool = False,
+            self,
+            hidden_dim: int = 16,
+            num_class=2,
+            use_super_node: bool = False,
+            node_feature_encoder=nn.Identity(),
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
         self.use_super_node = use_super_node
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
+        self.node_feature_encoder = node_feature_encoder
 
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         r"""Aggregates node features into graph-level features.
@@ -61,6 +63,19 @@ class GraphTransformer(torch.nn.Module):
             x_list.append(x_i)
         return torch.stack(x_list, dim=0)
 
+    def _encode_nodes(self, x: torch.Tensor) -> torch.Tensor:
+        """Encodes node features using the node feature encoder.
+
+        Args:
+            x (torch.Tensor): The input features.
+
+        Returns:
+            torch.Tensor: The encoded node features.
+        """
+        if self.node_feature_encoder is not None:
+            x = self.node_feature_encoder(x)
+        return x
+
     def forward(self, data):
         r"""Applies the graph transformer model to the input data.
 
@@ -70,7 +85,9 @@ class GraphTransformer(torch.nn.Module):
         Returns:
             torch.Tensor: The output of the model.
         """
-        x = self._readout(data.x, data.batch)
+        x = data.x
+        x = self._encode_nodes(x)
+        x = self._readout(x, data.batch)
         logits = self.classifier(x)
         return {
             "logits": logits,
