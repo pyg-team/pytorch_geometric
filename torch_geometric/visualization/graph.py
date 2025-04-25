@@ -374,7 +374,7 @@ def _visualize_hetero_graph_via_networkx(
 
     # Draw the graph
     ax = plt.gca()
-    pos = nx.spring_layout(g)
+    pos = nx.arf_layout(g)
 
     # Draw edges with arrows
     for src, dst, data in g.edges(data=True):
