@@ -194,6 +194,7 @@ class NeighborSampler(BaseSampler):
             if self.sample_direction == 'backward':
                 self.edge_types = [reverse_edge_type(edge_type) for edge_type in self.edge_types]
                 self.to_restored_edge_type = {k: reverse_edge_type(k) for k in self.edge_types}
+                self.to_backward_edge_type = {v: k for k, v in self.to_restored_edge_type.items()}
 
             if weight_attr is not None:
                 raise NotImplementedError(
@@ -291,6 +292,11 @@ class NeighborSampler(BaseSampler):
                     row_dict, colptr_dict, self.perm = graph_store.csc()
                 elif self.sample_direction == 'backward':
                     colptr_dict, row_dict, self.perm = graph_store.csr()
+
+                    colptr_dict = remap_keys(colptr_dict, self.to_backward_edge_type)
+                    row_dict = remap_keys(row_dict, self.to_backward_edge_type)
+                    self.perm = remap_keys(self.perm, self.to_backward_edge_type)
+
                 self.row_dict = remap_keys(row_dict, self.to_rel_type)
                 self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
@@ -312,14 +318,30 @@ class NeighborSampler(BaseSampler):
 
     @property
     def num_neighbors(self) -> NumNeighbors:
+        if self.sample_direction == 'backward':
+            return self._input_num_neighbors if self._input_num_neighbors is not None else self._num_neighbors
         return self._num_neighbors
 
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
+        # only used if sample direction is backward and num_neighbors has edge keys
+        self._input_num_neighbors = None
+
         if isinstance(num_neighbors, NumNeighbors):
-            self._num_neighbors = num_neighbors
+            num_neighbors_values = num_neighbors.values
+            if isinstance(num_neighbors_values, dict) and self.sample_direction == 'backward':
+                # reverse the edge_types if sample_direction is backward
+                self._input_num_neighbors = num_neighbors
+                num_neighbors_values = remap_keys(num_neighbors_values, self.to_backward_edge_type)
+                self._num_neighbors = NumNeighbors(num_neighbors_values)
+            else:
+                self._num_neighbors = num_neighbors
         else:
-            self._num_neighbors = NumNeighbors(num_neighbors)
+            if isinstance(num_neighbors, dict) and self.sample_direction == 'backward':
+                # intentionally recursing here to make sure num_neighbors is set as expected for the user
+                self.num_neighbors = NumNeighbors(remap_keys(num_neighbors, self.to_backward_edge_type))
+            else:
+                self._num_neighbors = NumNeighbors(num_neighbors)
 
     @property
     def is_hetero(self) -> bool:
@@ -408,7 +430,7 @@ class NeighborSampler(BaseSampler):
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
-                    self.sample_direction == 'forward',  # csc
+                    True,  # csc
                     self.replace,
                     self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
@@ -457,16 +479,13 @@ class NeighborSampler(BaseSampler):
                 node, row, col, edge, batch = out + (None, )
                 num_sampled_nodes = num_sampled_edges = None
 
-                # pyg-lib performs this switch but torch sparse does not
-                if self.sample_direction == 'backward':
-                    row, col = out.row, out.col
-                    out.row = col
-                    out.col = row
-
             else:
                 raise ImportError(f"'{self.__class__.__name__}' requires "
                                   f"either 'pyg-lib' or 'torch-sparse'")
-            
+
+            if self.sample_direction == 'backward':
+                row, col = col, row            
+
             row = remap_keys(row, self.to_edge_type)
             col = remap_keys(col, self.to_edge_type)
             edge = remap_keys(edge, self.to_edge_type)
@@ -515,7 +534,7 @@ class NeighborSampler(BaseSampler):
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
                 args += (
-                    self.sample_direction == 'forward',  # csc
+                    True,  # csc
                     self.replace,
                     self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
@@ -553,15 +572,12 @@ class NeighborSampler(BaseSampler):
                 node, row, col, edge, batch = out + (None, )
                 num_sampled_nodes = num_sampled_edges = None
 
-                # pyg-lib performs this switch but torch sparse does not
-                if self.sample_direction == 'backward':
-                    row, col = out.row, out.col
-                    out.row = col
-                    out.col = row
-
             else:
                 raise ImportError(f"'{self.__class__.__name__}' requires "
                                   f"either 'pyg-lib' or 'torch-sparse'")
+            
+            if self.sample_direction == 'backward':
+                row, col = col, row
 
             return SamplerOutput(
                 node=node,
@@ -607,6 +623,10 @@ class BidirectionalNeighborSampler(BaseSampler):
             data, num_backward_neighbors, subgraph_type, replace, disjoint,
             temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
             sample_direction='backward', directed=directed)
+        
+        # Trigger warnings on init if number of hops is greater than 1
+        self.num_neighbors = num_neighbors
+        self.num_backward_neighbors = num_backward_neighbors
 
     @property
     def num_neighbors(self) -> NumNeighbors:
@@ -617,6 +637,8 @@ class BidirectionalNeighborSampler(BaseSampler):
         self.forward_sampler.num_neighbors = num_neighbors
         if not self.backward_neighbors_explicitly_set:
             self.backward_sampler.num_neighbors = num_neighbors
+        if self.num_neighbors.num_hops > 1:
+            print("Warning: Number of hops is greater than 1, resulting in memory-expensive recursive calls.")
 
     @property
     def num_backward_neighbors(self) -> NumNeighbors:
@@ -626,6 +648,8 @@ class BidirectionalNeighborSampler(BaseSampler):
     def num_backward_neighbors(self, num_neighbors: NumNeighborsType):
         self.backward_sampler.num_neighbors = num_neighbors
         self.backward_neighbors_explicitly_set = True
+        if self.num_backward_neighbors.num_hops > 1:
+            print("Warning: Number of backward hops is greater than 1, resulting in memory-expensive recursive calls.")
 
     @property
     def is_hetero(self) -> bool:

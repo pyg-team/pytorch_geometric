@@ -87,7 +87,7 @@ def to_csc(
 
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time, edge_time)
-        colptr = index2ptr(col, data.size(1))
+        colptr = index2ptr(col, data.size(1) if not to_transpose else data.size(0))
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
         colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
@@ -129,6 +129,7 @@ def to_hetero_csc(
         # Edge types need to be reversed for backward sampling:
         if to_transpose:
             edge_type = reverse_edge_type(edge_type)
+
         colptr_dict[edge_type], row_dict[edge_type], perm_dict[edge_type] = out
 
     return colptr_dict, row_dict, perm_dict
