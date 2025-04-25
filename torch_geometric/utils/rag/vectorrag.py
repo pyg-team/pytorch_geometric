@@ -1,23 +1,12 @@
 from abc import abstractmethod
+from typing import Any, Dict, List, Optional, Protocol, Union
 
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Protocol,
-    Union
-)
-
-import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.utils.rag.backend_utils import batch_knn
-from torch_geometric.data import (
-    Data,
-)
+from torch_geometric.data import Data
 from torch_geometric.nn.nlp import SentenceTransformer
+from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
 class VectorRAG(Protocol):
@@ -27,13 +16,13 @@ class VectorRAG(Protocol):
         """Retrieve a context for a given query."""
         ...
 
+
 class DocumentRetriever(VectorRAG):
     """Retrieve documents from a vector database."""
-    def __init__(self,
-                 raw_docs: List[str],
-                 embedded_docs: Optional[Tensor] = None,
-                 k_for_docs: int = 2,
-                 model: Optional[Union[SentenceTransformer, torch.nn.Module]] = None,
+    def __init__(self, raw_docs: List[str],
+                 embedded_docs: Optional[Tensor] = None, k_for_docs: int = 2,
+                 model: Optional[Union[SentenceTransformer,
+                                       torch.nn.Module]] = None,
                  model_method_to_call: Optional[str] = "encode",
                  model_kwargs: Optional[Dict[str, Any]] = None):
         """Retrieve documents from a vector database.
@@ -57,8 +46,8 @@ class DocumentRetriever(VectorRAG):
 
         if self.embedded_docs is None:
             assert self.model is not None, "Model must be provided if embedded_docs is not provided"
-            self.embedded_docs = self.encoder(self.raw_docs, **self.model_kwargs)
-
+            self.embedded_docs = self.encoder(self.raw_docs,
+                                              **self.model_kwargs)
 
     def query(self, query: Union[str, Tensor]) -> Data:
         """Retrieve documents from the vector database.

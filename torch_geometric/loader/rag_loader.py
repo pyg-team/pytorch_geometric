@@ -1,14 +1,13 @@
 from abc import abstractmethod
-from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
-from torch_geometric.utils.rag.backend_utils import batch_knn
 from torch_geometric.utils.rag.vectorrag import VectorRAG
+
 
 class RAGFeatureStore(Protocol):
     """Feature store template for remote GNN RAG backend."""

@@ -261,13 +261,13 @@ def make_dataset(args):
         Tuning may be needed for custom data...
         """
 
-        vector_rag = DocumentRetriever(context_docs,
-                                       k_for_docs=args.k_for_docs,
-                                       model=model,
-                                       model_method_to_call="encode",
-                                       model_kwargs={"output_device": device,
-                                                     "batch_size": int(sent_trans_batch_size / 4),
-                                                     "verbose": True})
+        vector_rag = DocumentRetriever(
+            context_docs, k_for_docs=args.k_for_docs, model=model,
+            model_method_to_call="encode", model_kwargs={
+                "output_device": device,
+                "batch_size": int(sent_trans_batch_size / 4),
+                "verbose": True
+            })
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
