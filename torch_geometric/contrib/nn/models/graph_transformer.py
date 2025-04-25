@@ -1,7 +1,32 @@
 import torch
 import torch.nn as nn
+from torch.nn import ModuleList
 
 from torch_geometric.nn import global_mean_pool
+
+
+class IdentityLayer(nn.Module):
+    """Custom identity layer that accepts both x and batch arguments
+    but only returns x.
+    """
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x, batch):
+        """Identity operation that ignores batch."""
+        return x
+
+
+class EncoderLayers(nn.Module):
+    """Container for transformer encoder layers."""
+    def __init__(self, num_layers: int = 0):
+        super().__init__()
+        self.layers = ModuleList([IdentityLayer() for _ in range(num_layers)])
+
+    def forward(self, x, batch):
+        for layer in self.layers:
+            x = layer(x, batch)
+        return x
 
 
 class GraphTransformer(torch.nn.Module):
@@ -10,11 +35,12 @@ class GraphTransformer(torch.nn.Module):
     <https://arxiv.org/pdf/2202.08455>_ paper.
     """
     def __init__(
-            self,
-            hidden_dim: int = 16,
-            num_class=2,
-            use_super_node: bool = False,
-            node_feature_encoder=nn.Identity(),
+        self,
+        hidden_dim: int = 16,
+        num_class=2,
+        use_super_node: bool = False,
+        node_feature_encoder=nn.Identity(),
+        num_encoder_layers: int = 0,
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
@@ -22,6 +48,7 @@ class GraphTransformer(torch.nn.Module):
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
         self.node_feature_encoder = node_feature_encoder
+        self.encoder = EncoderLayers(num_encoder_layers)
 
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         r"""Aggregates node features into graph-level features.
@@ -87,6 +114,7 @@ class GraphTransformer(torch.nn.Module):
         """
         x = data.x
         x = self._encode_nodes(x)
+        x = self.encoder(x, data.batch)
         x = self._readout(x, data.batch)
         logits = self.classifier(x)
         return {
