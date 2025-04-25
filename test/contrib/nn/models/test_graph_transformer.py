@@ -16,6 +16,15 @@ def scale_encoder(x):
     return x * 2
 
 
+class TracableWrapper(torch.nn.Module):
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, x, batch):
+        return self.model.forward(Batch(x=x, batch=batch))["logits"]
+
+
 @pytest.mark.parametrize(
     "num_graphs, num_nodes, feature_dim, num_classes",
     [
@@ -98,3 +107,54 @@ def test_transformer_block_identity():
     out = model(batch)["logits"]
     assert out.shape == (num_graphs, num_classes), \
         f"Expected output shape {(num_graphs, num_classes)}, got {out.shape}"
+
+
+def test_backward():
+    """Test that gradients flow properly through the GraphTransformer model."""
+    num_graphs = 2
+    num_nodes = 5
+    feature_dim = 8
+    num_classes = 3
+
+    data_list = []
+    for _ in range(num_graphs):
+        x = torch.randn(num_nodes, feature_dim)
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        data_list.append(Data(x=x, edge_index=edge_index))
+
+    batch = Batch.from_data_list(data_list)
+    model = GraphTransformer(hidden_dim=feature_dim, num_class=num_classes,
+                             use_super_node=True, num_encoder_layers=1)
+    model.encoder.layers[0] = AddOneLayer()
+    out = model(batch)["logits"]
+    loss = out.sum()
+    loss.backward()
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            assert_message = f"Parameter {name} has None gradient"
+            assert param.grad is not None, assert_message
+
+
+def test_torchscript_trace():
+    """Test that GraphTransformer can be traced with TorchScript."""
+    num_graphs = 2
+    num_nodes = 5
+    feature_dim = 8
+    num_classes = 3
+    x = torch.randn(num_nodes * num_graphs, feature_dim)
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    batch = torch.zeros(num_nodes * num_graphs, dtype=torch.long)
+    for i in range(1, num_graphs):
+        batch[i * num_nodes:(i + 1) * num_nodes] = i
+    data_batch = Batch(x=x, edge_index=edge_index, batch=batch)
+    model = GraphTransformer(
+        hidden_dim=feature_dim,
+        num_class=num_classes,
+    )
+    wrapper = TracableWrapper(model)
+    traced = torch.jit.trace(wrapper, (x, batch))
+    original_output = model(data_batch)["logits"]
+    traced_output = traced(x, batch)
+
+    assert torch.allclose(original_output, traced_output, atol=1e-6), \
+        "Outputs from original and traced models should be close"
