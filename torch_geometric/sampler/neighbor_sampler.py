@@ -628,7 +628,6 @@ class BidirectionalNeighborSampler(BaseSampler):
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighborsType,
-        num_backward_neighbors: Optional[NumNeighborsType] = None,
         subgraph_type: Union[SubgraphType, str] = 'directional',
         replace: bool = False,
         disjoint: bool = False,
@@ -640,23 +639,18 @@ class BidirectionalNeighborSampler(BaseSampler):
         # Deprecated:
         directed: bool = True,
     ):
-        self.backward_neighbors_explicitly_set = (num_backward_neighbors
-                                                  is not None)
-        if num_backward_neighbors is None:
-            num_backward_neighbors = num_neighbors
 
         self.forward_sampler = NeighborSampler(
             data, num_neighbors, subgraph_type, replace, disjoint,
             temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
             sample_direction='forward', directed=directed)
         self.backward_sampler = NeighborSampler(
-            data, num_backward_neighbors, subgraph_type, replace, disjoint,
+            data, num_neighbors, subgraph_type, replace, disjoint,
             temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
             sample_direction='backward', directed=directed)
 
         # Trigger warnings on init if number of hops is greater than 1
         self.num_neighbors = num_neighbors
-        self.num_backward_neighbors = num_backward_neighbors
 
     @property
     def num_neighbors(self) -> NumNeighbors:
@@ -670,18 +664,6 @@ class BidirectionalNeighborSampler(BaseSampler):
         if self.num_neighbors.num_hops > 1:
             print("Warning: Number of hops is greater than 1, resulting in "
                   "memory-expensive recursive calls.")
-
-    @property
-    def num_backward_neighbors(self) -> NumNeighbors:
-        return self.backward_sampler.num_neighbors
-
-    @num_backward_neighbors.setter
-    def num_backward_neighbors(self, num_neighbors: NumNeighborsType):
-        self.backward_sampler.num_neighbors = num_neighbors
-        self.backward_neighbors_explicitly_set = True
-        if self.num_backward_neighbors.num_hops > 1:
-            print("Warning: Number of backward hops is greater than 1,"
-                  "resulting in memory-expensive recursive calls.")
 
     @property
     def is_hetero(self) -> bool:
