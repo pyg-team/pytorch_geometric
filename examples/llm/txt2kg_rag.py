@@ -46,6 +46,7 @@ from torch_geometric.utils.rag.backend_utils import (
 )
 from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
@@ -259,10 +260,14 @@ def make_dataset(args):
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
         """
-        # encode the raw context docs
-        embedded_docs = model.encode(context_docs, output_device=device,
-                                     batch_size=int(sent_trans_batch_size / 4),
-                                     verbose=True)
+
+        vector_rag = DocumentRetriever(context_docs,
+                                       k_for_docs=args.k_for_docs,
+                                       model=model,
+                                       model_method_to_call="encode",
+                                       model_kwargs={"output_device": device,
+                                                     "batch_size": int(sent_trans_batch_size / 4),
+                                                     "verbose": True})
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
@@ -285,8 +290,7 @@ def make_dataset(args):
             data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             local_filter=make_pcst_filter(triples, model),
-            local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
-            embedded_docs=embedded_docs, k_for_docs=args.k_for_docs)
+            local_filter_kwargs=local_filter_kwargs, vector_rag=vector_rag)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
