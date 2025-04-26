@@ -13,6 +13,7 @@ class GraphTransformer(torch.nn.Module):
     An Overview from Architecture Perspective"
     <https://arxiv.org/pdf/2202.08455>_ paper.
     """
+
     def __init__(
         self,
         hidden_dim: int = 16,
@@ -29,11 +30,13 @@ class GraphTransformer(torch.nn.Module):
         self.node_feature_encoder = node_feature_encoder
         encoder_layer = GraphTransformerEncoderLayer(hidden_dim)
         if num_encoder_layers > 0:
-            self.encoder = GraphTransformerEncoder(encoder_layer,
-                                                   num_encoder_layers)
+            self.encoder = GraphTransformerEncoder(
+                encoder_layer, num_encoder_layers
+            )
         else:
             self.encoder = encoder_layer
 
+    @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         r"""Aggregates node features into graph-level features.
         Uses the cls token readout if `use_super_node` is True,
@@ -52,8 +55,10 @@ class GraphTransformer(torch.nn.Module):
         else:
             return global_mean_pool(x, batch)
 
-    def _add_cls_token(self, x: torch.Tensor,
-                       batch: torch.Tensor) -> torch.Tensor:
+    @torch.jit.ignore
+    def _add_cls_token(
+        self, x: torch.Tensor, batch: torch.Tensor
+    ) -> torch.Tensor:
         """Prepends the learnable class token to every graph's node embeddings.
 
         Args:
@@ -74,6 +79,7 @@ class GraphTransformer(torch.nn.Module):
             x_list.append(x_i)
         return torch.stack(x_list, dim=0)
 
+    @torch.jit.ignore
     def _encode_nodes(self, x: torch.Tensor) -> torch.Tensor:
         """Encodes node features using the node feature encoder.
 

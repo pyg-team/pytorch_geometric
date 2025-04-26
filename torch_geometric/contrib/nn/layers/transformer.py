@@ -1,4 +1,3 @@
-import copy
 from typing import Optional
 
 import torch
@@ -145,7 +144,15 @@ class GraphTransformerEncoder(nn.Module):
         """
         super().__init__()
         self.layers = nn.ModuleList(
-            [copy.deepcopy(encoder_layer) for _ in range(num_layers)]
+            [
+                type(encoder_layer)(
+                    hidden_dim=encoder_layer.hidden_dim,
+                    num_heads=encoder_layer.num_heads,
+                    dropout=encoder_layer.dropout_layer.p,
+                    ffn_hidden_dim=encoder_layer.ffn_hidden_dim,
+                    activation=encoder_layer.activation
+                ) for _ in range(num_layers)
+            ]
         )
         self.num_layers = num_layers
 
