@@ -128,7 +128,8 @@ class GraphTransformer(torch.nn.Module):
         x = data.x
         x = self._encode_nodes(x)
         x = self._apply_extra_encoders(data, x)
-        x = self.encoder(x, data.batch)
+        attn_mask = getattr(data, 'attn_mask', None)
+        x = self.encoder(x, data.batch, attn_mask)
         x = self._readout(x, data.batch)
         logits = self.classifier(x)
         return {

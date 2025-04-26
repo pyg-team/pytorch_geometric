@@ -287,7 +287,9 @@ def test_attention_mask_changes_logits(num_heads):
 
     # Create random attention mask
     max_nodes = num_nodes
-    attn_mask = torch.randint(0, 2, (max_nodes, max_nodes), dtype=torch.bool)
+    attn_mask = torch.randint(
+        0, 2, (1, max_nodes, max_nodes), dtype=torch.bool
+    )
 
     # Create model with specified number of heads
     model = GraphTransformer(
@@ -306,7 +308,7 @@ def test_attention_mask_changes_logits(num_heads):
         out1 = model(batch)["logits"]
 
         # Second pass with attention mask
-        model.encoder[0].self_attn.attn_mask = attn_mask
+        batch.attn_mask = attn_mask  # Pass mask through batch
         out2 = model(batch)["logits"]
 
     assert out1.shape == out2.shape, "Outputs should have the same shape"

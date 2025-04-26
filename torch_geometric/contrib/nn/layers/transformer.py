@@ -6,6 +6,10 @@ import torch.nn as nn
 from torch_geometric.contrib.nn.layers.feedforward import (
     PositionwiseFeedForward,
 )
+from torch_geometric.contrib.utils.mask_utils import (
+    build_key_padding,
+    merge_masks,
+)
 
 
 class GraphTransformerEncoderLayer(nn.Module):
@@ -50,31 +54,6 @@ class GraphTransformerEncoderLayer(nn.Module):
         )
         self.key_padding = None
 
-    @staticmethod
-    @torch.jit.ignore
-    def _build_key_padding_mask(batch: torch.Tensor) -> torch.Tensor:
-        """Build key padding mask from batch vector.
-
-        Args:
-            batch (torch.Tensor): Batch assignment vector [total_nodes]
-
-        Returns:
-            torch.Tensor: Boolean mask [batch_size, max_nodes] where True
-            indicates positions that belong to other graphs (padding)
-        """
-        batch_size = int(batch.max() + 1)
-        max_nodes = torch.bincount(batch).max()
-
-        # Create mask marking positions from other graphs as True (padding)
-        mask = torch.ones(
-            batch_size, max_nodes, device=batch.device, dtype=torch.bool
-        )
-        for i in range(batch_size):
-            node_mask = batch == i
-            num_nodes = node_mask.sum()
-            mask[i, :num_nodes] = False
-        return mask
-
     def forward(self, x, batch=None, attn_mask=None):
         """Forward pass through the transformer encoder layer.
 
@@ -94,7 +73,6 @@ class GraphTransformerEncoderLayer(nn.Module):
         batch_size = int(batch.max() + 1)
         max_nodes = torch.bincount(batch).max()
 
-        # Reshape to (batch_size, max_nodes, hidden_dim)
         x_batch = torch.zeros(
             batch_size,
             max_nodes,
@@ -106,12 +84,18 @@ class GraphTransformerEncoderLayer(nn.Module):
             mask = batch == i
             num_nodes = mask.sum()
             x_batch[i, :num_nodes] = x[mask]
-        key_padding_mask = self._build_key_padding_mask(batch)
+
+        additive = merge_masks(
+            key_pad=build_key_padding(batch, num_heads=self.num_heads),
+            attn=attn_mask,
+            num_heads=self.num_heads,
+            dtype=x.dtype
+        )
 
         # Apply attention
         x = self.norm1(x_batch)
         attn_out, _ = self.self_attn(
-            x, x, x, key_padding_mask=key_padding_mask, need_weights=False
+            x, x, x, attn_mask=additive, need_weights=False
         )
         x = x_batch + self.dropout_layer(attn_out)
 
@@ -156,18 +140,19 @@ class GraphTransformerEncoder(nn.Module):
         )
         self.num_layers = num_layers
 
-    def forward(self, x, batch=None):
+    def forward(self, x, batch=None, attn_mask=None):
         """Apply all encoder layers in sequence.
 
         Args:
             x (torch.Tensor): Node feature tensor
             batch (torch.Tensor, optional): Batch vector
+            attn_mask (torch.Tensor, optional): Attention mask
 
         Returns:
             torch.Tensor: Output after passing through all encoder layers
         """
         for layer in self.layers:
-            x = layer(x, batch)
+            x = layer(x, batch, attn_mask)
         return x
 
     def __len__(self):
