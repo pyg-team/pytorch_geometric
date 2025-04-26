@@ -11,7 +11,7 @@ from torch_geometric.data import Batch, Data
 
 class AddOneLayer(nn.Module):
 
-    def forward(self, x, batch):
+    def forward(self, x, batch, attn_mask=None):
         return x + 1.0
 
 
