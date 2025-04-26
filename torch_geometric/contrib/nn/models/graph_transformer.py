@@ -1,3 +1,5 @@
+from typing import Callable, Optional
+
 import torch
 import torch.nn as nn
 
@@ -5,6 +7,7 @@ from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoder,
     GraphTransformerEncoderLayer,
 )
+from torch_geometric.data import Data
 from torch_geometric.nn import global_mean_pool
 
 
@@ -17,10 +20,11 @@ class GraphTransformer(torch.nn.Module):
     def __init__(
         self,
         hidden_dim: int = 16,
-        num_class=2,
+        num_class: int = 2,
         use_super_node: bool = False,
         node_feature_encoder=nn.Identity(),
         num_encoder_layers: int = 0,
+        degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
@@ -28,6 +32,7 @@ class GraphTransformer(torch.nn.Module):
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
         self.node_feature_encoder = node_feature_encoder
+        self.degree_encoder = degree_encoder
         encoder_layer = GraphTransformerEncoderLayer(hidden_dim)
         if num_encoder_layers > 0:
             self.encoder = GraphTransformerEncoder(
@@ -104,6 +109,10 @@ class GraphTransformer(torch.nn.Module):
         """
         x = data.x
         x = self._encode_nodes(x)
+        if self.degree_encoder is not None:
+            deg_feat = self.degree_encoder(data).to(x.device)
+            x = x + deg_feat
+
         x = self.encoder(x, data.batch)
         x = self._readout(x, data.batch)
         logits = self.classifier(x)
