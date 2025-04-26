@@ -98,6 +98,24 @@ class GraphTransformer(torch.nn.Module):
             x = self.node_feature_encoder(x)
         return x
 
+    @torch.jit.ignore
+    def _apply_extra_encoders(
+        self, data: Data, x: torch.Tensor
+    ) -> torch.Tensor:
+        """Apply additional encoders (e.g. degree encoder) to node features.
+
+        Args:
+            data (Data): The input graph data.
+            x (torch.Tensor): Current node features.
+
+        Returns:
+            torch.Tensor: Node features with extra encodings applied.
+        """
+        if self.degree_encoder is not None:
+            deg_feat = self.degree_encoder(data).to(x.device)
+            x = x + deg_feat
+        return x
+
     def forward(self, data):
         r"""Applies the graph transformer model to the input data.
 
@@ -109,10 +127,7 @@ class GraphTransformer(torch.nn.Module):
         """
         x = data.x
         x = self._encode_nodes(x)
-        if self.degree_encoder is not None:
-            deg_feat = self.degree_encoder(data).to(x.device)
-            x = x + deg_feat
-
+        x = self._apply_extra_encoders(data, x)
         x = self.encoder(x, data.batch)
         x = self._readout(x, data.batch)
         logits = self.classifier(x)
