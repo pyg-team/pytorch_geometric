@@ -1,32 +1,11 @@
 import torch
 import torch.nn as nn
-from torch.nn import ModuleList
 
+from torch_geometric.contrib.nn.layers.transformer import (
+    GraphTransformerEncoder,
+    GraphTransformerEncoderLayer,
+)
 from torch_geometric.nn import global_mean_pool
-
-
-class IdentityLayer(nn.Module):
-    """Custom identity layer that accepts both x and batch arguments
-    but only returns x.
-    """
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, x, batch):
-        """Identity operation that ignores batch."""
-        return x
-
-
-class EncoderLayers(nn.Module):
-    """Container for transformer encoder layers."""
-    def __init__(self, num_layers: int = 0):
-        super().__init__()
-        self.layers = ModuleList([IdentityLayer() for _ in range(num_layers)])
-
-    def forward(self, x, batch):
-        for layer in self.layers:
-            x = layer(x, batch)
-        return x
 
 
 class GraphTransformer(torch.nn.Module):
@@ -48,7 +27,12 @@ class GraphTransformer(torch.nn.Module):
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
         self.node_feature_encoder = node_feature_encoder
-        self.encoder = EncoderLayers(num_encoder_layers)
+        encoder_layer = GraphTransformerEncoderLayer(hidden_dim)
+        if num_encoder_layers > 0:
+            self.encoder = GraphTransformerEncoder(encoder_layer,
+                                                   num_encoder_layers)
+        else:
+            self.encoder = encoder_layer
 
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         r"""Aggregates node features into graph-level features.
