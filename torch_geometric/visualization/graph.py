@@ -1,5 +1,5 @@
 from math import sqrt
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import torch
 from torch import Tensor
@@ -164,38 +164,7 @@ def visualize_hetero_graph(
         edge_width_range: Tuple[float, float] = (0.1, 2.0),
         edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
 ) -> Any:
-    """Visualizes a heterogeneous graph using networkx.
-
-    Args:
-        edge_index_dict (Dict[Tuple[str, str, str], Tensor]):
-            The edge indices for each edge type.
-        edge_weight_dict (Dict[Tuple[str, str, str], Tensor]):
-            The edge weights for each edge type.
-        path (str, optional): The path to where the plot is saved.
-            If set to :obj:`None`, will visualize the plot on-the-fly.
-            (default: :obj:`None`)
-        backend (str, optional): Currently only supports "networkx".
-            This parameter is kept for API consistency.
-            (default: :obj:`None`)
-        node_labels_dict (Dict[str, List[str]], optional):
-            The labels/IDs of nodes for each node type.
-            (default: :obj:`None`)
-        node_weight_dict (Dict[str, Tensor], optional):
-            The node weights for each node type.
-            Controls node size and opacity. (default: :obj:`None`)
-        node_size_range (Tuple[float, float], optional):
-            The minimum and maximum node size in the visualization.
-            (default: :obj:`(50, 500)`)
-        node_opacity_range (Tuple[float, float], optional):
-            The minimum and maximum node opacity in the visualization.
-            (default: :obj:`(0.2, 1.0)`)
-        edge_width_range (Tuple[float, float], optional):
-            The minimum and maximum edge width in the visualization.
-            (default: :obj:`(0.1, 2.0)`)
-        edge_opacity_range (Tuple[float, float], optional):
-            The minimum and maximum edge opacity in the visualization.
-            edge opacity in the visualization. (default: :obj:`(0.2, 1.0)`)
-    """
+    """Visualizes a heterogeneous graph using networkx."""
     if backend is not None and backend != "networkx":
         raise ValueError("Only 'networkx' backend is supported")
 
@@ -211,7 +180,7 @@ def visualize_hetero_graph(
                 mask]
 
     # Get all unique nodes that are still in the filtered edges
-    remaining_nodes = {}
+    remaining_nodes: Dict[str, Set[int]] = {}
     for edge_type, edge_index in filtered_edge_index_dict.items():
         src_type, _, dst_type = edge_type
         if src_type not in remaining_nodes:
@@ -270,13 +239,14 @@ def _visualize_hetero_graph_via_networkx(
     import networkx as nx
 
     g = nx.DiGraph()
-    node_offsets = {}
+    node_offsets: Dict[str, int] = {}
     current_offset = 0
 
     # First, collect all unique node types and their counts
     node_types = set()
-    node_counts = {}
-    remaining_nodes = {}  # Track which nodes are actually present in edges
+    node_counts: Dict[str, int] = {}
+    remaining_nodes: Dict[str, Set[int]] = {
+    }  # Track which nodes are actually present in edges
 
     # Get all unique nodes that are in the edges
     for edge_type in edge_index_dict.keys():
@@ -391,14 +361,14 @@ def _visualize_hetero_graph_via_networkx(
     node_alphas = []
 
     # Use matplotlib tab20 colormap for consistent coloring
-    tab20_cmap = plt.cm.tab10
-    node_type_colors = {}  # Store color for each node type
+    tab10_cmap = plt.cm.tab10  # type: ignore[attr-defined]
+    node_type_colors: Dict[str, Any] = {}  # Store color for each node type
     for node in g.nodes():
         node_type = g.nodes[node]['type']
         # Assign a consistent color for each node type
         if node_type not in node_type_colors:
             color_idx = len(node_type_colors) % 10  # Cycle through colors
-            node_type_colors[node_type] = tab20_cmap(color_idx)
+            node_type_colors[node_type] = tab10_cmap(color_idx)
         node_colors.append(node_type_colors[node_type])
         node_sizes.append(g.nodes[node]['size'])
         node_alphas.append(g.nodes[node]['alpha'])
