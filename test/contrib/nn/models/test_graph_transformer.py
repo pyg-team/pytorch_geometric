@@ -15,8 +15,14 @@ class AddOneLayer(nn.Module):
         return x + 1.0
 
 
-def scale_encoder(x):
-    return x * 2
+class ConstantDegreeEncoder(nn.Module):
+
+    def __init__(self, value: float = 1.0):
+        super().__init__()
+        self.value = value
+
+    def forward(self, data: Data) -> torch.Tensor:
+        return torch.full_like(data.x, self.value)
 
 
 class TracableWrapper(torch.nn.Module):
@@ -208,3 +214,54 @@ def test_encoder_layer_type():
     assert isinstance(model.encoder[0], GraphTransformerEncoderLayer), \
         "First encoder layer should be an instance of " \
         "GraphTransformerEncoderLayer"
+
+
+def test_degree_encoder_shifts_logits():
+    """Test that using a degree encoder that returns constant values
+    shifts the logits by a fixed amount.
+    """
+    torch.manual_seed(12345)
+    num_graphs = 2
+    num_nodes = 5
+    feature_dim = 8
+    num_classes = 3
+    data_list = []
+    for _ in range(num_graphs):
+        x = torch.randn(num_nodes, feature_dim)
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        data_list.append(Data(x=x, edge_index=edge_index))
+    batch = Batch.from_data_list(data_list)
+    batch.x = torch.randn_like(batch.x)
+    fixed_x = batch.x.clone()
+
+    model = GraphTransformer(
+        hidden_dim=feature_dim,
+        num_class=num_classes,
+        degree_encoder=ConstantDegreeEncoder(1.0),
+    )
+    model.eval()
+
+    # First run
+    with torch.no_grad():
+        batch.x = fixed_x
+        out1 = model(batch)["logits"]
+
+    # Second run with same features should give same output
+    with torch.no_grad():
+        batch.x = fixed_x
+        out2 = model(batch)["logits"]
+
+    assert torch.allclose(out1, out2, rtol=1e-4), \
+        "Outputs should be identical with fixed input and \
+        constant degree encoder"
+
+    # Test that gradients flow in train mode
+    model.train()
+    batch.x = fixed_x
+    out = model(batch)["logits"]
+    loss = out.sum()
+    loss.backward()
+
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            assert param.grad is not None, f"Parameter {name} has no gradient"
