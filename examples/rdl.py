@@ -101,8 +101,7 @@ print(args)
 
 
 class GloveTextEmbedding:
-    r"""GloveTextEmbedding based on SentenceTransformer.
-    """
+    """GloveTextEmbedding based on SentenceTransformer."""
     def __init__(self, device: Optional[torch.device] = None):
         self.model = SentenceTransformer(
             "sentence-transformers/average_word_embeddings_glove.6B.300d",
@@ -116,18 +115,20 @@ class GloveTextEmbedding:
 class HeteroEncoder(torch.nn.Module):
     r"""HeteroEncoder based on PyTorch Frame.
 
-    A heterogeneous encoder that processes different node types using PyTorch Frame models.
-    For each node type, it creates a separate encoder model that processes the node features
-    according to their data types (categorical, numerical, etc).
+    A heterogeneous encoder that processes different node types using PyTorch
+    Frame models. For each node type, it creates a separate encoder model
+    that processes the node features according to their data types
+    (categorical, numerical, etc).
 
     Args:
         channels (int): The output channels for each node type.
-        node_to_col_names_dict (Dict[NodeType, Dict[torch_frame.stype, List[str]]]):
+        node_to_col_names_dict
+            (Dict[NodeType, Dict[torch_frame.stype, List[str]]]):
             A dictionary mapping from node type to column names dictionary
             compatible to PyTorch Frame.
         node_to_col_stats (Dict[NodeType, Dict[str, Dict[StatType, Any]]]):
-            A dictionary containing statistics for each column in each node type.
-            Used for feature normalization and encoding.
+            A dictionary containing statistics for each column
+            in each node type. Used for feature normalization and encoding.
         torch_frame_model_cls: Model class for PyTorch Frame. The class object
             takes :class:`TensorFrame` object as input and outputs
             :obj:`channels`-dimensional embeddings. Default to
@@ -195,12 +196,14 @@ class HeteroEncoder(torch.nn.Module):
         """Forward pass of the heterogeneous encoder.
 
         Args:
-            tf_dict (Dict[NodeType, torch_frame.TensorFrame]): Dictionary mapping node types
-                to their corresponding TensorFrame objects containing the node features.
+            tf_dict (Dict[NodeType, torch_frame.TensorFrame]):
+                Dictionary mapping node types to their corresponding
+                TensorFrame objects containing the node features.
 
         Returns:
-            Dict[NodeType, Tensor]: Dictionary mapping node types to their encoded
-                representations. Each tensor has shape [num_nodes, channels].
+            Dict[NodeType, Tensor]: Dictionary mapping node
+            types to their encoded representations. Each tensor
+            has shape [num_nodes, channels].
         """
         x_dict = {
             node_type: self.encoders[node_type](tf)
@@ -210,22 +213,27 @@ class HeteroEncoder(torch.nn.Module):
 
 
 class HeteroTemporalEncoder(torch.nn.Module):
-    """HeteroTemporalEncoder class that uses PositionalEncoding to encode temporal information
-    for heterogeneous graphs.
+    """HeteroTemporalEncoder class that uses PositionalEncoding to encode
+    temporal information for heterogeneous graphs.
 
-    This encoder computes relative time embeddings between a seed time and node timestamps,
-    converting the time differences from seconds to days. It applies positional encoding
-    followed by a linear transformation for each node type.
+    This encoder computes relative time embeddings between a seed time and
+    node timestamps, converting the time differences from seconds to days.
+    It applies positional encoding followed by a linear transformation for
+    each node type.
 
     Args:
-        node_types (List[NodeType]): List of node types in the heterogeneous graph
-        channels (int): Number of channels/dimensions for the encoded embeddings
+        node_types (List[NodeType]):
+            List of node types in the heterogeneous graph
+        channels (int):
+            Number of channels/dimensions for the encoded embeddings
 
     Example:
         >>> encoder = HeteroTemporalEncoder(['user', 'item'], channels=64)
         >>> seed_time = torch.tensor([1000])  # Reference timestamp
-        >>> time_dict = {'user': torch.tensor([800, 900]), 'item': torch.tensor([700, 850])}
-        >>> batch_dict = {'user': torch.tensor([0, 0]), 'item': torch.tensor([0, 0])}
+        >>> time_dict = {'user': torch.tensor([800, 900]),
+        >>>             'item': torch.tensor([700, 850])}
+        >>> batch_dict = {'user': torch.tensor([0, 0]),
+        >>>              'item': torch.tensor([0, 0])}
         >>> out_dict = encoder(seed_time, time_dict, batch_dict)
         >>> print(out_dict['user'].shape)  # torch.Size([2, 64])
     """
@@ -259,12 +267,16 @@ class HeteroTemporalEncoder(torch.nn.Module):
         """Forward pass of the temporal encoder.
 
         Args:
-            seed_time (Tensor): Reference timestamps for computing relative times
-            time_dict (Dict[NodeType, Tensor]): Dictionary mapping node types to their timestamps
-            batch_dict (Dict[NodeType, Tensor]): Dictionary mapping node types to batch assignments
+            seed_time (Tensor):
+                Reference timestamps for computing relative times
+            time_dict (Dict[NodeType, Tensor]):
+                Dictionary mapping node types to their timestamps
+            batch_dict (Dict[NodeType, Tensor]):
+                Dictionary mapping node types to batch assignments
 
         Returns:
-            Dict[NodeType, Tensor]: Dictionary mapping node types to their temporal embeddings
+            Dict[NodeType, Tensor]:
+                Dictionary mapping node types to their temporal embeddings
         """
         out_dict: Dict[NodeType, Tensor] = {}
 
@@ -282,19 +294,24 @@ class HeteroTemporalEncoder(torch.nn.Module):
 class HeteroGraphSAGE(torch.nn.Module):
     """Heterogeneous GraphSAGE model with layer normalization.
 
-    This model implements a heterogeneous version of GraphSAGE that operates on multiple
-    node and edge types. Each layer consists of a heterogeneous graph convolution followed
-    by layer normalization and ReLU activation.
+    This model implements a heterogeneous version of GraphSAGE
+    that operates on multiple node and edge types. Each layer
+    consists of a heterogeneous graph convolution followed by
+    layer normalization and ReLU activation.
 
     Args:
         node_types (List[NodeType]): List of node types in the graph
         edge_types (List[EdgeType]): List of edge types in the graph
         channels (int): Number of channels/features
         aggr (str, optional): Node aggregation scheme. Defaults to "mean"
-        num_layers (int, optional): Number of graph convolution layers. Defaults to 2
+        num_layers (int, optional):
+            Number of graph convolution layers. Defaults to 2
 
     Example:
-        >>> model = HeteroGraphSAGE(['user', 'item'], [('user', 'rates', 'item')], 64)
+        >>> model = HeteroGraphSAGE(
+        >>>     node_types=['user', 'item'],
+        >>>     edge_types=[('user', 'rates', 'item')],
+        >>>     channels=64)
         >>> out_dict = model(x_dict, edge_index_dict)
     """
     def __init__(
@@ -367,7 +384,8 @@ class Model(torch.nn.Module):
 
     Args:
         data (HeteroData): The heterogeneous graph data object
-        col_stats_dict (Dict[str, Dict[str, Dict[StatType, Any]]]): Statistics of node features
+        col_stats_dict (Dict[str, Dict[str, Dict[StatType, Any]]]):
+            Statistics of node features
         num_layers (int): Number of GNN layers
         channels (int): Hidden dimension size
         out_channels (int): Output dimension size
@@ -529,7 +547,7 @@ def test(loader: NeighborLoader, model: Model, task: EntityTask) -> np.ndarray:
 
 
 if __name__ == "__main__":
-    ### Prepare the data
+    """ Prepare the data """
 
     # Load the dataset
     print("Loading dataset...")
@@ -566,8 +584,7 @@ if __name__ == "__main__":
             root_dir, f"{args.dataset}_{args.task}_materialized_cache"
         ),  # store materialized graph for convenience
     )
-
-    ### Prepare data loaders
+    """ Prepare data loaders """
     print("Preparing data loaders...")
     loader_dict = {}
 
@@ -614,8 +631,8 @@ if __name__ == "__main__":
 
     # Get task-specific parameters
     print("Getting task-specific parameters...")
-    out_channels, loss_fn, tune_metric, higher_is_better = get_task_type_params(
-        task)
+    (out_channels, loss_fn, tune_metric,
+     higher_is_better) = get_task_type_params(task)
     print("out_channels: ", out_channels)
     print("loss_fn: ", loss_fn)
     print("tune_metric: ", tune_metric)
@@ -635,8 +652,7 @@ if __name__ == "__main__":
 
     # Define the optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
-
-    # Train the model
+    """ Train the model """
     print("Training the model...")
     state_dict = None
     best_val_metric = -math.inf if higher_is_better else math.inf
@@ -654,15 +670,16 @@ if __name__ == "__main__":
             task=task,
         )
         val_metrics = task.evaluate(val_pred, val_table)
-        print(
-            f"Epoch: {epoch:02d}, Train loss: {train_loss}, Val metrics: {val_metrics}"
-        )
+        print(f"Epoch: {epoch:02d}, "
+              f"Train loss: {train_loss}, "
+              f"Val metrics: {val_metrics}")
 
         if (higher_is_better and val_metrics[tune_metric] > best_val_metric
             ) or (not higher_is_better
                   and val_metrics[tune_metric] < best_val_metric):
             best_val_metric = val_metrics[tune_metric]
             state_dict = copy.deepcopy(model.state_dict())
+    """ Evaluate the model """
 
     # Load the best model state dictionary
     print("Loading the best model state dictionary...")
@@ -672,6 +689,7 @@ if __name__ == "__main__":
         model=model,
         task=task,
     )
+
     val_metrics = task.evaluate(val_pred, val_table)
     print(f"Validation metrics: {val_metrics}")
 
