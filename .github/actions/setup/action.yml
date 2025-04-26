@@ -21,66 +21,73 @@ runs:
   using: composite
 
   steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
     - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ inputs.python-version }}
-        check-latest: true
-        cache: pip
-        cache-dependency-path: |
-          pyproject.toml
+      run: |
+        uv python install ${{ inputs.python-version }}
+        uv venv
+        uv pip install --upgrade pip setuptools
+      shell: bash
 
     - name: Install numpy
       run: |
-        pip install "numpy<2"
+        uv pip install "numpy<2"
       shell: bash
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
-        pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
-        python -c "import torch; print('PyTorch:', torch.__version__)"
-        python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-        python -c "import torch; print('CUDA:', torch.version.cuda)"
+        uv pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version == 'nightly' }}
       run: |
-        pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
-        python -c "import torch; print('PyTorch:', torch.__version__)"
-        python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-        python -c "import torch; print('CUDA:', torch.version.cuda)"
+        uv pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
+      shell: bash
+
+    - name: Install compatible networkx
+      if: ${{ inputs.python-version == '3.9' }}
+      run: |
+        uv pip install "networkx<3.2"
+      shell: bash
+
+    - name: Check installation
+      run: |
+        uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
+        uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+        uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
     - name: Install pyg-lib
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
-        pip uninstall -y pyg-lib
-        pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        uv pip install --no-index --upgrade pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
 
     - name: Install faiss-cpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os == 'Linux' }}
       run: |
-        pip install faiss-cpu==1.7.2
+        uv pip install faiss-cpu==1.7.2
       shell: bash
 
     - name: Install faiss-gpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' && runner.os == 'Linux' }}
       run: |
-        pip install faiss-gpu==1.7.2
+        uv pip install faiss-gpu==1.7.2
       shell: bash
 
     - name: Install torchvision
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
-        pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        uv pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install extension packages
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
-        pip install scipy
-        pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        uv pip install scipy
+        uv pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
