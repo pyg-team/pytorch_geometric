@@ -431,7 +431,7 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
                 continue
             node_weight_dict[node_type] = subgraph[node_type] \
                 .get('node_mask',
-                    torch.ones(subgraph[node_type].num_nodes)).squeeze(-1)
+                     torch.ones(subgraph[node_type].num_nodes)).squeeze(-1)
 
         # Call the visualization function
         visualize_hetero_graph(
