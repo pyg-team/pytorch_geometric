@@ -41,9 +41,7 @@ def test_encoder_layer_changes_values_mha():
     x = torch.randn(20, 32)
     out = layer(x)
 
-    # Until real attention is added, out == in
-    assert torch.allclose(
+    # with real attention in place, the layer must alter the tensor
+    assert not torch.allclose(
         out, x
-    ), "With identity attention the layer should act as Identity."
-
-    # Once MHA replaces self.self_attn, this assertion will flip
+    ), "Encoder alyer with MultiheadAttention should change the input tensor"
