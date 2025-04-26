@@ -63,6 +63,7 @@ class RAGQueryLoader:
                  sampler_kwargs: Optional[Dict[str, Any]] = None,
                  loader_kwargs: Optional[Dict[str, Any]] = None,
                  local_filter_kwargs: Optional[Dict[str, Any]] = None,
+                 augment_query: bool = False,
                  vector_rag: Optional[VectorRAG] = None):
         """Loader meant for making queries from a remote backend.
 
@@ -90,6 +91,7 @@ class RAGQueryLoader:
         """
         fstore, gstore = data
         self.vector_rag = vector_rag
+        self.augment_query = augment_query
         self.feature_store = fstore
         self.graph_store = gstore
         self.graph_store.edge_index = self.graph_store.edge_index.contiguous()
@@ -105,6 +107,12 @@ class RAGQueryLoader:
         """Retrieve a subgraph associated with the query with all its feature
         attributes.
         """
+        if self.vector_rag:
+            retrieved_docs = self.vector_rag.query(query)
+
+        if self.augment_query:
+            query = [query] + retrieved_docs
+
         seed_nodes, query_enc = self.feature_store.retrieve_seed_nodes(
             query, **self.seed_nodes_kwargs)
         # Graph Store does not Use These, save computation
@@ -142,6 +150,5 @@ class RAGQueryLoader:
         if self.local_filter:
             data = self.local_filter(data, query, **self.local_filter_kwargs)
         if self.vector_rag:
-            data.text_context = self.vector_rag.query(query_enc)
-
+            data.text_context = retrieved_docs
         return data

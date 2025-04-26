@@ -379,7 +379,7 @@ def train(args, data_lists):
                     # insert VectorRAG context
                     new_qs.append(
                         prompt_template.format(question=q,
-                                               context=batch.text_context[i]))
+                                               context= "\n".join(batch.text_context[i])))
                 batch.question = new_qs
 
                 optimizer.zero_grad()
@@ -462,7 +462,7 @@ def test(model, test_loader, args):
             # insert VectorRAG context
             new_qs.append(
                 prompt_template.format(question=q,
-                                       context=test_batch.text_context[i]))
+                                       context= "\n".join(test_batch.text_context[i])))
         test_batch.question = new_qs
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,

@@ -48,6 +48,8 @@ class DocumentRetriever(VectorRAG):
             assert self.model is not None, "Model must be provided if embedded_docs is not provided"
             self.embedded_docs = self.encoder(self.raw_docs,
                                               **self.model_kwargs)
+            # we don't want to print the verbose output in `query`
+            self.model_kwargs.pop("verbose", None)
 
     def query(self, query: Union[str, Tensor]) -> Data:
         """Retrieve documents from the vector database.
