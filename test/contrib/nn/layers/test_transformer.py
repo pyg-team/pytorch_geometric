@@ -24,3 +24,26 @@ def test_encoder_layer_forward_shapes():
             f"Layer should accept attention mask of shape {attn_mask.shape},\
             but got error: {str(e)}"
         )
+
+
+def test_encoder_layer_changes_values_mha():
+    layer = GraphTransformerEncoderLayer(
+        hidden_dim=32, num_heads=4, dropout=0.0
+    )
+    import torch.nn as nn
+
+    # --- neutralise everything except attention --------------------------
+    layer.norm1 = nn.Identity()
+    layer.norm2 = nn.Identity()
+    layer.dropout_layer = nn.Identity()
+    layer.ffn = nn.Identity()
+
+    x = torch.randn(20, 32)
+    out = layer(x)
+
+    # Until real attention is added, out == in
+    assert torch.allclose(
+        out, x
+    ), "With identity attention the layer should act as Identity."
+
+    # Once MHA replaces self.self_attn, this assertion will flip
