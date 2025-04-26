@@ -265,3 +265,50 @@ def test_degree_encoder_shifts_logits():
     for name, param in model.named_parameters():
         if param.requires_grad:
             assert param.grad is not None, f"Parameter {name} has no gradient"
+
+
+@pytest.mark.parametrize("num_heads", [1, 4])
+def test_attention_mask_changes_logits(num_heads):
+    """Test that using different attention masks produces different logits."""
+    torch.manual_seed(12345)
+
+    num_graphs = 2
+    num_nodes = 5
+    feature_dim = 8
+    num_classes = 3
+
+    # Create test data
+    data_list = []
+    for _ in range(num_graphs):
+        x = torch.randn(num_nodes, feature_dim)
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        data_list.append(Data(x=x, edge_index=edge_index))
+    batch = Batch.from_data_list(data_list)
+
+    # Create random attention mask
+    max_nodes = num_nodes
+    attn_mask = torch.randint(0, 2, (max_nodes, max_nodes), dtype=torch.bool)
+
+    # Create model with specified number of heads
+    model = GraphTransformer(
+        hidden_dim=feature_dim,
+        num_class=num_classes,
+        num_encoder_layers=1,
+    )
+    model.encoder[0] = GraphTransformerEncoderLayer(
+        hidden_dim=feature_dim,
+        num_heads=num_heads,
+    )
+    model.eval()
+
+    with torch.no_grad():
+        # First pass without mask
+        out1 = model(batch)["logits"]
+
+        # Second pass with attention mask
+        model.encoder[0].self_attn.attn_mask = attn_mask
+        out2 = model(batch)["logits"]
+
+    assert out1.shape == out2.shape, "Outputs should have the same shape"
+    assert not torch.allclose(out1, out2, rtol=1e-4), \
+        "Outputs should differ when using different attention masks"
