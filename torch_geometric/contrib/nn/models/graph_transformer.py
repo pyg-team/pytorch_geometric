@@ -43,20 +43,11 @@ class GraphTransformer(torch.nn.Module):
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
-        r"""Aggregates node features into graph-level features.
-        Uses the cls token readout if `use_super_node` is True,
-        otherwise applies a global mean pooling.
-
-        Args:
-            x (torch.Tensor): Node feature tensor.
-            batch (torch.Tensor): Batch vector mapping node to graph.
-
-        Returns:
-            torch.Tensor: Graph-level feature (num_graphs, hidden_dim).
-        """
         if self.use_super_node:
-            x_with_cls = self._add_cls_token(x, batch)
-            return x_with_cls[:, 0, :]
+            # First row for each graph in flattened order
+            graph_sizes = torch.bincount(batch)
+            first_idx = torch.cumsum(graph_sizes, 0) - graph_sizes
+            return x[first_idx]
         else:
             return global_mean_pool(x, batch)
 
@@ -83,6 +74,33 @@ class GraphTransformer(torch.nn.Module):
             x_i = torch.cat([self.cls_token.expand(1, -1), x_i], dim=0)
             x_list.append(x_i)
         return torch.stack(x_list, dim=0)
+
+    @torch.jit.ignore
+    def _prepend_cls_token_flat(
+        self, x: torch.Tensor, batch: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return (x_with_cls_flat, new_batch).
+
+        Args:
+            x (torch.Tensor): Node feature tensor (N, C)
+            batch (torch.Tensor): Batch assignment (N,)
+
+        Returns:
+            tuple[torch.Tensor, torch.Tensor]: Features with prepended
+            CLS tokens and updated batch vector
+        """
+        num_graphs = int(batch.max()) + 1
+        x_list = []
+        b_list = []
+
+        for i in range(num_graphs):
+            mask = batch == i
+            x_i = x[mask]
+            x_with_cls = torch.cat([self.cls_token, x_i], dim=0)
+            x_list.append(x_with_cls)
+            b_list.append(torch.full((len(x_i) + 1, ), i, device=x.device))
+
+        return torch.cat(x_list, dim=0), torch.cat(b_list, dim=0)
 
     @torch.jit.ignore
     def _encode_nodes(self, x: torch.Tensor) -> torch.Tensor:
@@ -128,9 +146,15 @@ class GraphTransformer(torch.nn.Module):
         x = data.x
         x = self._encode_nodes(x)
         x = self._apply_extra_encoders(data, x)
+
+        if self.use_super_node:
+            x, batch_vec = self._prepend_cls_token_flat(x, data.batch)
+        else:
+            batch_vec = data.batch
+
         attn_mask = getattr(data, 'attn_mask', None)
-        x = self.encoder(x, data.batch, attn_mask)
-        x = self._readout(x, data.batch)
+        x = self.encoder(x, batch_vec, attn_mask)
+        x = self._readout(x, batch_vec)
         logits = self.classifier(x)
         return {
             "logits": logits,
