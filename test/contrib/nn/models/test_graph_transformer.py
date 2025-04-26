@@ -314,3 +314,43 @@ def test_attention_mask_changes_logits(num_heads):
     assert out1.shape == out2.shape, "Outputs should have the same shape"
     assert not torch.allclose(out1, out2, rtol=1e-4), \
         "Outputs should differ when using different attention masks"
+
+
+def test_cls_token_transformation():
+    """Test that the cls token is transformed by attention and not just used
+    directly in readout.
+    """
+    torch.manual_seed(12345)  # For reproducibility
+
+    # Create two tiny graphs
+    data_list = []
+    for _ in range(2):
+        x = torch.randn(3, 8)  # 3 nodes, 8 features
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        data_list.append(Data(x=x, edge_index=edge_index))
+
+    batch = Batch.from_data_list(data_list)
+
+    # Create model with single encoder layer and super node
+    model = GraphTransformer(
+        hidden_dim=8, num_class=2, use_super_node=True, num_encoder_layers=1
+    )
+
+    # Store original cls token
+    original_cls = model.cls_token.clone()
+
+    # Run forward pass and extract transformed CLS tokens
+    with torch.no_grad():
+        x = model._encode_nodes(batch.x)
+        x = model._apply_extra_encoders(batch, x)
+        x, batch_vec = model._prepend_cls_token_flat(x, batch.batch)
+        encoded = model.encoder(x, batch_vec)
+
+        # Indices of the first row in each graph (i.e. the CLS token)
+        graph_sizes = torch.bincount(batch_vec)
+        first_idx = torch.cumsum(graph_sizes, 0) - graph_sizes
+        transformed_cls = encoded[first_idx]
+
+    # Verify cls token was transformed
+    assert not torch.allclose(transformed_cls, original_cls.expand(2, -1)), \
+        "CLS token should be modified by attention mechanism"
