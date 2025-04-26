@@ -1,6 +1,3 @@
-# isort: skip_file
-# yapf: disable
-
 import pytest
 import torch.nn as nn
 
@@ -34,5 +31,3 @@ def test_get_activation_function_valid():
 def test_get_activation_function_invalid():
     with pytest.raises(ValueError):
         get_activation_function("invalid_activation")
-
-# yapf: enable
