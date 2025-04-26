@@ -3,7 +3,7 @@ import math
 import warnings
 from abc import ABC
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional, Union
 
@@ -15,6 +15,7 @@ from torch_geometric.sampler.utils import (
     global_to_local_node_idx,
     local_to_global_node_idx,
     to_bidirectional,
+    unique_unsorted,
 )
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
@@ -210,6 +211,7 @@ class SamplerOutput(CastMixin):
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
+    _seed_node: OptTensor = field(repr=False, default=None)
 
     @property
     def global_row(self) -> Tensor:
@@ -221,8 +223,17 @@ class SamplerOutput(CastMixin):
 
     @property
     def seed_node(self) -> Tensor:
-        return local_to_global_node_idx(
-            self.node, self.batch) if self.batch is not None else None
+        # can be set manually if the seed nodes are not contained in the
+        # sampled nodes
+        if self._seed_node is None:
+            self._seed_node = local_to_global_node_idx(
+                self.node, self.batch) if self.batch is not None else None
+        return self._seed_node
+
+    @seed_node.setter
+    def seed_node(self, value: Tensor):
+        assert len(value) == len(self.node)
+        self._seed_node = value
 
     @property
     def global_orig_row(self) -> Tensor:
@@ -352,8 +363,8 @@ class SamplerOutput(CastMixin):
             old_node_uid = torch.stack(old_node_uid, dim=1)
             new_node_uid = torch.stack(new_node_uid, dim=1)
 
-            merged_node_uid = torch.cat([old_node_uid, new_node_uid],
-                                        dim=0).unique(dim=0)
+            merged_node_uid = unique_unsorted(
+                torch.cat([old_node_uid, new_node_uid], dim=0))
             num_old_nodes = old_node_uid.shape[0]
 
             # Recompute num sampled nodes for second output,
@@ -370,7 +381,7 @@ class SamplerOutput(CastMixin):
                     size_of_intersect = torch.cat([
                         old_node_uid,
                         new_node_uid[curr_index:curr_index + minibatch]
-                    ]).unique(dim=0).shape[0] - num_old_nodes
+                    ]).unique(dim=0, sorted=False).shape[0] - num_old_nodes
                     merged_node_num_sampled_nodes.append(size_of_intersect)
                     curr_index += minibatch
 
@@ -444,8 +455,8 @@ class SamplerOutput(CastMixin):
             old_edge_uid = torch.cat(old_edge_uid, dim=1)
             new_edge_uid = torch.cat(new_edge_uid, dim=1)
 
-            merged_edge_uid = torch.cat([old_edge_uid, new_edge_uid],
-                                        dim=0).unique(dim=0)
+            merged_edge_uid = unique_unsorted(
+                torch.cat([old_edge_uid, new_edge_uid], dim=0))
             num_old_edges = old_edge_uid.shape[0]
 
             merged_edge_num_sampled_edges = None
@@ -460,7 +471,7 @@ class SamplerOutput(CastMixin):
                     size_of_intersect = torch.cat([
                         old_edge_uid,
                         new_edge_uid[curr_index:curr_index + minibatch]
-                    ]).unique(dim=0).shape[0] - num_old_edges
+                    ]).unique(dim=0, sorted=False).shape[0] - num_old_edges
                     merged_edge_num_sampled_edges.append(size_of_intersect)
                     curr_index += minibatch
 

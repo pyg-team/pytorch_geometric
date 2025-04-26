@@ -231,3 +231,20 @@ def global_to_local_node_idx(node_values: Tensor,
     sort_idx = torch.argsort(idx_match[:, 1])
 
     return idx_match[:, 0][sort_idx]
+
+
+def unique_unsorted(tensor: Tensor) -> Tensor:
+    """Returns the unique elements of a tensor while preserving the original
+    order.
+
+    Necessary because torch.unique() ignores sort parameter.
+    """
+    seen = set()
+    output = []
+    for val in tensor:
+        val = tuple(val.tolist())
+        if val not in seen:
+            seen.add(val)
+            output.append(val)
+    return torch.tensor(output, dtype=tensor.dtype,
+                        device=tensor.device).reshape((-1, *tensor.shape[1:]))

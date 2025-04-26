@@ -375,11 +375,11 @@ def test_bidirectional_neighbor_sampler(input_type):
 
     expected_output = SamplerOutput(
         # Union between forward and backward nodes
-        node=torch.tensor([0, 2, 3]),
+        node=torch.tensor([2, 0, 3]),
         # Reindexed to be relative to new nodes field
-        row=torch.tensor([0, 1]),
+        row=torch.tensor([1, 0]),
         # Reindexed to be relative to new nodes field
-        col=torch.tensor([1, 2]),
+        col=torch.tensor([0, 2]),
         # Union between forward and backward edges
         edge=torch.tensor([1, 2]),
         # Will be part of node uid if disjoint=True
@@ -397,6 +397,85 @@ def test_bidirectional_neighbor_sampler(input_type):
         # simple concat of forward and backward metadata
         metadata=(None, None))
     assert str(sampler_output) == str(expected_output)
+
+    adv_sampler_kwargs = {
+        'data': graph_to_sample,
+        'num_neighbors': [2, 2, 2, 2],
+    }
+
+    adv_sampler_input = NodeSamplerInput(input_id=None,
+                                         node=torch.tensor([1, 3]))
+
+    adv_sampler = BidirectionalNeighborSampler(**adv_sampler_kwargs)
+    adv_sampler_output = adv_sampler.sample_from_nodes(adv_sampler_input)
+
+    adv_expected_output = SamplerOutput(
+        node=torch.tensor([1, 3, 0, 2]),
+        row=torch.tensor([2, 3, 2]),
+        col=torch.tensor([0, 1, 3]),
+        edge=torch.tensor([0, 2, 1]),
+        batch=None,
+        # 8 _sample calls total, each have 2 num_sampled_nodes slots
+        num_sampled_nodes=[2, 2] + [0] * 14,
+        num_sampled_edges=[2, 0, 1, 0, 0, 0, 0, 0],
+        orig_row=None,
+        orig_col=None,
+        metadata=(None, None))
+    assert str(adv_sampler_output) == str(adv_expected_output)
+
+    adv_sampler_kwargs['disjoint'] = True
+
+    adv_sampler_disjoint = BidirectionalNeighborSampler(**adv_sampler_kwargs)
+    adv_sampler_disjoint_output = adv_sampler_disjoint.sample_from_nodes(
+        adv_sampler_input)
+
+    adv_expected_disjoint_output = SamplerOutput(
+        node=torch.tensor([1, 3, 0, 2, 0, 2, 1, 3]),
+        row=torch.tensor([2, 3, 4, 2, 4, 5]),
+        col=torch.tensor([0, 1, 3, 5, 6, 7]),
+        edge=torch.tensor([0, 2, 1, 1, 0, 2]),
+        batch=torch.tensor([0, 1, 0, 1, 1, 0, 1, 0]),
+        num_sampled_nodes=[
+            # First forward iteration:
+            # (Bob, Dave) -> (Alice, Carol)
+            2,
+            2,
+            # First backward iteration:
+            # (Bob (seen), Dave (seen)) -> (None, None)
+            0,
+            0,
+            # Second forward iteration:
+            # (Alice (seen), Carol (seen)) -> (None, Alice)
+            0,
+            1,
+            # Second backward iteration:
+            # (Alice (seen), Carol (seen)) ->
+            #   (Bob (seen) and Carol, Alice and Dave (seen))
+            0,
+            1,
+            # Third forward iteration:
+            # (Carol (seen), Alice (seen)) -> (Alice (seen), None)
+            0,
+            0,
+            # Third backward iteration:
+            # (Alice (seen), Carol (seen)) -> (Bob and Carol (seen), Dave)
+            0,
+            2,
+            # Fourth forward iteration:
+            # (Bob (seen), Dave (seen)) -> (Alice (seen), Carol (seen))
+            0,
+            0,
+            # Fourth backward iteration:
+            # (Bob (seen), Dave (seen)) -> (None, None)
+            0,
+            0
+        ],
+        num_sampled_edges=[2, 0, 1, 1, 0, 2, 0, 0],
+        orig_row=None,
+        orig_col=None,
+        metadata=(None, None))
+    assert str(adv_sampler_disjoint_output) == str(
+        adv_expected_disjoint_output)
 
 
 @pytest.mark.skip(

@@ -26,6 +26,7 @@ from torch_geometric.sampler import (
 )
 from torch_geometric.sampler.base import DataType, NumNeighbors, SubgraphType
 from torch_geometric.sampler.utils import (
+    global_to_local_node_idx,
     remap_keys,
     reverse_edge_type,
     to_csc,
@@ -732,11 +733,11 @@ class BidirectionalNeighborSampler(NeighborSampler):
             current_seed = seed
             current_seed_batch = None
             current_seed_time = seed_time
-            seen_seed_set = set(current_seed)
+            seen_seed_set = {int(node) for node in current_seed}
             if self.disjoint:
                 current_seed_batch = torch.arange(len(current_seed))
                 seen_seed_set = {
-                    (node, batch)
+                    (int(node), int(batch))
                     for node, batch in zip(current_seed, current_seed_batch)
                 }
 
@@ -758,22 +759,31 @@ class BidirectionalNeighborSampler(NeighborSampler):
 
                 # Find the nodes not yet seen to set a seed for next iteration
                 if self.disjoint:
-                    iter_seed_global_batch = [
-                        current_seed_batch[batch]
-                        for batch in iter_result.batch
-                    ]
-                    next_seed = list(
-                        {(node, batch)
-                         for node, batch in zip(iter_result.node,
-                                                iter_seed_global_batch)} -
-                        seen_seed_set)
-                    current_seed = torch.tensor(
-                        [node for node, batch in next_seed])
+                    iter_seed_global_batch = global_to_local_node_idx(
+                        current_seed_batch, iter_result.batch)
+                    iter_result.seed_node = seed[iter_seed_global_batch]
+
+                    keep_mask = torch.tensor([
+                        (int(node), int(batch)) not in seen_seed_set
+                        for node, batch in zip(iter_result.node,
+                                               iter_seed_global_batch)
+                    ])
+                    next_seed = [(int(node), int(batch))
+                                 for node, batch in zip(
+                                     iter_result.node[keep_mask],
+                                     iter_seed_global_batch[keep_mask])
+                                 ] if keep_mask.any() else []
+                    current_seed, current_seed_batch = torch.tensor(
+                        next_seed).reshape(-1, 2).transpose(0, 1).contiguous()
                 else:
-                    next_seed = list({node
-                                      for node in iter_result.node} -
-                                     seen_seed_set)
-                    current_seed = torch.tensor([node for node in next_seed])
+                    keep_mask = torch.tensor([
+                        int(node) not in seen_seed_set
+                        for node in iter_result.node
+                    ])
+                    next_seed = [
+                        int(node) for node in iter_result.node[keep_mask]
+                    ] if keep_mask.any() else []
+                    current_seed = torch.tensor(next_seed)
 
                 seen_seed_set |= set(next_seed)
 
