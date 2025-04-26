@@ -1,50 +1,38 @@
-import os
-import torch
-import torch_frame
-import torch_geometric
-from torch_geometric.data import HeteroData
-from torch_geometric.seed import seed_everything
 import argparse
-import relbench
-import numpy as np
-import argparse
-import math
-from tqdm import tqdm
-
-
-from relbench.base import TaskType, EntityTask
-from relbench.datasets import get_dataset
-from relbench.tasks import get_task
-from relbench.modeling.utils import get_stype_proposal
-
-from typing import List, Optional
-from sentence_transformers import SentenceTransformer
-from torch import Tensor
-
-from torch_frame.config.text_embedder import TextEmbedderConfig
-from relbench.modeling.graph import get_node_train_table_input, make_pkey_fkey_graph
-from torch_geometric.loader import NeighborLoader
-
 import copy
-from typing import Any, Dict, List
-
-import torch
-from torch import Tensor
-from torch.nn import Embedding, ModuleDict
-from torch_frame.data.stats import StatType
-from torch_geometric.data import HeteroData
-from torch_geometric.nn import MLP
-from torch_geometric.typing import NodeType
+import math
+import os
 from typing import Any, Dict, List, Optional
 
+import numpy as np
 import torch
 import torch_frame
+from relbench.base import EntityTask, TaskType
+from relbench.datasets import get_dataset
+from relbench.modeling.graph import (
+    get_node_train_table_input,
+    make_pkey_fkey_graph,
+)
+from relbench.modeling.utils import get_stype_proposal
+from relbench.tasks import get_task
+from sentence_transformers import SentenceTransformer
 from torch import Tensor
+from torch_frame.config.text_embedder import TextEmbedderConfig
 from torch_frame.data.stats import StatType
 from torch_frame.nn.models import ResNet
-from torch_geometric.nn import HeteroConv, LayerNorm, PositionalEncoding, SAGEConv
-from torch_geometric.typing import EdgeType, NodeType
+from tqdm import tqdm
 
+from torch_geometric.data import HeteroData
+from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn import (
+    MLP,
+    HeteroConv,
+    LayerNorm,
+    PositionalEncoding,
+    SAGEConv,
+)
+from torch_geometric.seed import seed_everything
+from torch_geometric.typing import EdgeType, NodeType
 
 seed_everything(42)
 
@@ -52,66 +40,48 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 root_dir = "./data"
 print("Using device: ", device)
 
-
 args = argparse.ArgumentParser()
 
 # Dataset argument
-args.add_argument("--dataset", 
-                  type=str, 
-                  default="rel-f1",
-                  choices=["rel-stack", 
-                           "rel-amazon", 
-                           "rel-trial", 
-                           "rel-f1",
-                           "rel-hm", 
-                           "rel-event", 
-                           "rel-avito"]
-                  )
+args.add_argument(
+    "--dataset", type=str, default="rel-f1", choices=[
+        "rel-stack", "rel-amazon", "rel-trial", "rel-f1", "rel-hm",
+        "rel-event", "rel-avito"
+    ])
 known_args, _ = args.parse_known_args()
 
 # task argument choices based are based on the dataset, this example only
 # supports node level tasks
 if known_args.dataset == "rel-f1":
     args.add_argument("--task", type=str, default="driver-position",
-                      choices=["driver-position",
-                               "driver-dnf",
-                               "driver-top3"])
+                      choices=["driver-position", "driver-dnf", "driver-top3"])
 elif known_args.dataset == "rel-amazon":
-    args.add_argument("--task", type=str, default="user-churn",
-                      choices=["user-churn",
-                               "item-churn",
-                               "user-ltv",
-                               "item-ltv"])
+    args.add_argument(
+        "--task", type=str, default="user-churn",
+        choices=["user-churn", "item-churn", "user-ltv", "item-ltv"])
 elif known_args.dataset == "rel-hm":
     args.add_argument("--task", type=str, default="user-churn",
-                      choices=["user-churn",
-                               "item-sales"])
+                      choices=["user-churn", "item-sales"])
 elif known_args.dataset == "rel-stack":
     args.add_argument("--task", type=str, default="user-engagement",
-                      choices=["user-engagement",
-                               "user-badge",
-                               "post-votes"])
+                      choices=["user-engagement", "user-badge", "post-votes"])
 elif known_args.dataset == "rel-trial":
-    args.add_argument("--task", type=str, default="study-outcome",
-                      choices=["study-outcome",
-                               "study-adverse",
-                               "site-success"])
+    args.add_argument(
+        "--task", type=str, default="study-outcome",
+        choices=["study-outcome", "study-adverse", "site-success"])
 elif known_args.dataset == "rel-event":
-    args.add_argument("--task", type=str, default="user-repeat",
-                      choices=["user-repeat",
-                               "user-ignore",
-                               "user-attendance"])
+    args.add_argument(
+        "--task", type=str, default="user-repeat",
+        choices=["user-repeat", "user-ignore", "user-attendance"])
 elif known_args.dataset == "rel-avito":
     args.add_argument("--task", type=str, default="user-visits",
-                      choices=["user-visits",
-                               "user-clicks",
-                               "ad-ctr"])
-    
+                      choices=["user-visits", "user-clicks", "ad-ctr"])
+
 # Data loader arguments
 args.add_argument("--time_attr", type=str, default="time")
 args.add_argument("--batch_size", type=int, default=512)
-args.add_argument("--temporal_strategy", type=str, 
-                  default="uniform", choices=["uniform", "last"])
+args.add_argument("--temporal_strategy", type=str, default="uniform",
+                  choices=["uniform", "last"])
 args.add_argument("--num_workers", type=int, default=0)
 args.add_argument("--persistent_workers", type=bool, default=False)
 
@@ -131,11 +101,9 @@ print(args)
 
 
 class GloveTextEmbedding:
-    r"""
-    GloveTextEmbedding based on SentenceTransformer.
+    r"""GloveTextEmbedding based on SentenceTransformer.
     """
-    def __init__(self, device: Optional[torch.device
-                                       ] = None):
+    def __init__(self, device: Optional[torch.device] = None):
         self.model = SentenceTransformer(
             "sentence-transformers/average_word_embeddings_glove.6B.300d",
             device=device,
@@ -173,11 +141,11 @@ class HeteroEncoder(torch.nn.Module):
             tuple specifying :class:`torch_frame.nn.StypeEncoder` class and its
             keyword arguments :obj:`kwargs`.
     """
-
     def __init__(
         self,
         channels: int,
-        node_to_col_names_dict: Dict[NodeType, Dict[torch_frame.stype, List[str]]],
+        node_to_col_names_dict: Dict[NodeType, Dict[torch_frame.stype,
+                                                    List[str]]],
         node_to_col_stats: Dict[NodeType, Dict[str, Dict[StatType, Any]]],
         torch_frame_model_cls=ResNet,
         torch_frame_model_kwargs: Dict[str, Any] = {
@@ -201,9 +169,9 @@ class HeteroEncoder(torch.nn.Module):
 
         for node_type in node_to_col_names_dict.keys():
             stype_encoder_dict = {
-                stype: default_stype_encoder_cls_kwargs[stype][0](
-                    **default_stype_encoder_cls_kwargs[stype][1]
-                )
+                stype:
+                default_stype_encoder_cls_kwargs[stype][0](
+                    **default_stype_encoder_cls_kwargs[stype][1])
                 for stype in node_to_col_names_dict[node_type].keys()
             }
             torch_frame_model = torch_frame_model_cls(
@@ -225,24 +193,24 @@ class HeteroEncoder(torch.nn.Module):
         tf_dict: Dict[NodeType, torch_frame.TensorFrame],
     ) -> Dict[NodeType, Tensor]:
         """Forward pass of the heterogeneous encoder.
-        
+
         Args:
             tf_dict (Dict[NodeType, torch_frame.TensorFrame]): Dictionary mapping node types
                 to their corresponding TensorFrame objects containing the node features.
-                
+
         Returns:
-            Dict[NodeType, Tensor]: Dictionary mapping node types to their encoded 
+            Dict[NodeType, Tensor]: Dictionary mapping node types to their encoded
                 representations. Each tensor has shape [num_nodes, channels].
         """
         x_dict = {
-            node_type: self.encoders[node_type](tf) for node_type, tf in tf_dict.items()
+            node_type: self.encoders[node_type](tf)
+            for node_type, tf in tf_dict.items()
         }
         return x_dict
 
 
 class HeteroTemporalEncoder(torch.nn.Module):
-    """
-    HeteroTemporalEncoder class that uses PositionalEncoding to encode temporal information
+    """HeteroTemporalEncoder class that uses PositionalEncoding to encode temporal information
     for heterogeneous graphs.
 
     This encoder computes relative time embeddings between a seed time and node timestamps,
@@ -264,12 +232,16 @@ class HeteroTemporalEncoder(torch.nn.Module):
     def __init__(self, node_types: List[NodeType], channels: int):
         super().__init__()
 
-        self.encoder_dict = torch.nn.ModuleDict(
-            {node_type: PositionalEncoding(channels) for node_type in node_types}
-        )
-        self.lin_dict = torch.nn.ModuleDict(
-            {node_type: torch.nn.Linear(channels, channels) for node_type in node_types}
-        )
+        self.encoder_dict = torch.nn.ModuleDict({
+            node_type:
+            PositionalEncoding(channels)
+            for node_type in node_types
+        })
+        self.lin_dict = torch.nn.ModuleDict({
+            node_type:
+            torch.nn.Linear(channels, channels)
+            for node_type in node_types
+        })
 
     def reset_parameters(self):
         """Reset the parameters of all encoders and linear layers."""
@@ -284,8 +256,7 @@ class HeteroTemporalEncoder(torch.nn.Module):
         time_dict: Dict[NodeType, Tensor],
         batch_dict: Dict[NodeType, Tensor],
     ) -> Dict[NodeType, Tensor]:
-        """
-        Forward pass of the temporal encoder.
+        """Forward pass of the temporal encoder.
 
         Args:
             seed_time (Tensor): Reference timestamps for computing relative times
@@ -340,7 +311,8 @@ class HeteroGraphSAGE(torch.nn.Module):
         for _ in range(num_layers):
             conv = HeteroConv(
                 {
-                    edge_type: SAGEConv((channels, channels), channels, aggr=aggr)
+                    edge_type: SAGEConv(
+                        (channels, channels), channels, aggr=aggr)
                     for edge_type in edge_types
                 },
                 aggr="sum",
@@ -402,7 +374,6 @@ class Model(torch.nn.Module):
         aggr (str): Aggregation method for GNN
         norm (str): Normalization method for MLP
     """
-
     def __init__(
         self,
         data: HeteroData,
@@ -425,7 +396,8 @@ class Model(torch.nn.Module):
         )
         self.temporal_encoder = HeteroTemporalEncoder(
             node_types=[
-                node_type for node_type in data.node_types if "time" in data[node_type]
+                node_type for node_type in data.node_types
+                if "time" in data[node_type]
             ],
             channels=channels,
         )
@@ -452,7 +424,6 @@ class Model(torch.nn.Module):
         self.gnn.reset_parameters()
         self.head.reset_parameters()
 
-
     def forward(
         self,
         batch: HeteroData,
@@ -478,20 +449,18 @@ class Model(torch.nn.Module):
         seed_time = batch[entity_table].seed_time
         x_dict = self.encoder(batch.tf_dict)
 
-        rel_time_dict = self.temporal_encoder(
-            seed_time, batch.time_dict, batch.batch_dict
-        )
+        rel_time_dict = self.temporal_encoder(seed_time, batch.time_dict,
+                                              batch.batch_dict)
 
         for node_type, rel_time in rel_time_dict.items():
             x_dict[node_type] = x_dict[node_type] + rel_time
-
 
         x_dict = self.gnn(
             x_dict,
             batch.edge_index_dict,
         )
 
-        return self.head(x_dict[entity_table][: seed_time.size(0)])
+        return self.head(x_dict[entity_table][:seed_time.size(0)])
 
 
 def get_task_type_params(task):
@@ -502,22 +471,23 @@ def get_task_type_params(task):
         tune_metric = "mae"
         higher_is_better = False
     elif task.task_type == TaskType.BINARY_CLASSIFICATION:
-        out_channels = 1 
+        out_channels = 1
         loss_fn = torch.nn.BCEWithLogitsLoss()
         tune_metric = "roc_auc"
         higher_is_better = True
     else:
         raise ValueError(f"Unsupported task type: {task.task_type}")
-        
+
     return out_channels, loss_fn, tune_metric, higher_is_better
 
+
 def train(
-        model: Model,
-        loader_dict: Dict[str, NeighborLoader],
-        task: EntityTask,
-        optimizer: torch.optim.Optimizer,
-        loss_fn: torch.nn.Module,
-    ) -> float:
+    model: Model,
+    loader_dict: Dict[str, NeighborLoader],
+    task: EntityTask,
+    optimizer: torch.optim.Optimizer,
+    loss_fn: torch.nn.Module,
+) -> float:
     model.train()
 
     loss_accum = count_accum = 0
@@ -541,10 +511,9 @@ def train(
 
     return loss_accum / count_accum
 
+
 @torch.no_grad()
-def test(loader: NeighborLoader,
-         model: Model,
-         task: EntityTask) -> np.ndarray:
+def test(loader: NeighborLoader, model: Model, task: EntityTask) -> np.ndarray:
     model.eval()
 
     pred_list = []
@@ -564,19 +533,13 @@ if __name__ == "__main__":
 
     # Load the dataset
     print("Loading dataset...")
-    dataset = get_dataset(
-        name=args.dataset,
-        download=True
-    )
+    dataset = get_dataset(name=args.dataset, download=True)
 
     # Load the task
     print("Loading task...")
-    task = get_task(
-        dataset_name=args.dataset,
-        task_name=args.task,
-        download=True
-    )
-    
+    task = get_task(dataset_name=args.dataset, task_name=args.task,
+                    download=True)
+
     # Print task information for debugging
     print(f"Task type: {task.task_type}")
     print(f"Target column: {task.target_col}")
@@ -591,8 +554,7 @@ if __name__ == "__main__":
     # define the text embedder
     print("Defining text embedder...")
     text_embedder_cfg = TextEmbedderConfig(
-    text_embedder=GloveTextEmbedding(device=device), batch_size=256
-    )
+        text_embedder=GloveTextEmbedding(device=device), batch_size=256)
 
     # Transform the dataset into a HeteroData object with torch_frame features
     print("Transforming dataset into HeteroData object...")
@@ -613,7 +575,7 @@ if __name__ == "__main__":
     train_table = task.get_table("train")
     val_table = task.get_table("val")
     test_table = task.get_table("test")
-    
+
     # Print table information for debugging
     print(f"Train table columns: {train_table.df.columns}")
     print(f"Val table columns: {val_table.df.columns}")
@@ -629,13 +591,13 @@ if __name__ == "__main__":
             task=task,
         )
         entity_table = table_input.nodes[0]
-        
+
         # Create a dictionary mapping edge types to number of neighbors
         num_neighbors_dict = {
             edge_type: args.num_neighbors  # [num_neighbors for each direction]
             for edge_type in data.edge_types
         }
-        
+
         loader_dict[split] = NeighborLoader(
             data=data,
             num_neighbors=num_neighbors_dict,
@@ -650,10 +612,10 @@ if __name__ == "__main__":
             persistent_workers=args.persistent_workers,
         )
 
-        
     # Get task-specific parameters
     print("Getting task-specific parameters...")
-    out_channels, loss_fn, tune_metric, higher_is_better = get_task_type_params(task)
+    out_channels, loss_fn, tune_metric, higher_is_better = get_task_type_params(
+        task)
     print("out_channels: ", out_channels)
     print("loss_fn: ", loss_fn)
     print("tune_metric: ", tune_metric)
@@ -692,11 +654,13 @@ if __name__ == "__main__":
             task=task,
         )
         val_metrics = task.evaluate(val_pred, val_table)
-        print(f"Epoch: {epoch:02d}, Train loss: {train_loss}, Val metrics: {val_metrics}")
+        print(
+            f"Epoch: {epoch:02d}, Train loss: {train_loss}, Val metrics: {val_metrics}"
+        )
 
-        if (higher_is_better and val_metrics[tune_metric] > best_val_metric) or (
-            not higher_is_better and val_metrics[tune_metric] < best_val_metric
-        ):
+        if (higher_is_better and val_metrics[tune_metric] > best_val_metric
+            ) or (not higher_is_better
+                  and val_metrics[tune_metric] < best_val_metric):
             best_val_metric = val_metrics[tune_metric]
             state_dict = copy.deepcopy(model.state_dict())
 
@@ -709,7 +673,7 @@ if __name__ == "__main__":
         task=task,
     )
     val_metrics = task.evaluate(val_pred, val_table)
-    print(f"Best Val metrics: {val_metrics}")
+    print(f"Validation metrics: {val_metrics}")
 
     # Test the model on the test set
     test_pred = test(
@@ -718,4 +682,4 @@ if __name__ == "__main__":
         task=task,
     )
     test_metrics = task.evaluate(test_pred)
-    print(f"Best test metrics: {test_metrics}")
+    print(f"Test metrics: {test_metrics}")
