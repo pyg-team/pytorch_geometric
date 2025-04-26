@@ -1,7 +1,12 @@
+# isort: skip_file
+# yapf: disable
 import pytest
 import torch
 import torch.nn as nn
 
+from torch_geometric.contrib.nn.layers.transformer import (
+    GraphTransformerEncoderLayer,
+)
 from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import global_mean_pool
@@ -103,7 +108,7 @@ def test_transformer_block_identity():
     batch = Batch.from_data_list(data_list)
     model = GraphTransformer(hidden_dim=feature_dim, num_class=num_classes,
                              num_encoder_layers=1)
-    model.encoder.layers[0] = AddOneLayer()
+    model.encoder[0] = AddOneLayer()
     out = model(batch)["logits"]
     assert out.shape == (num_graphs, num_classes), \
         f"Expected output shape {(num_graphs, num_classes)}, got {out.shape}"
@@ -125,7 +130,7 @@ def test_backward():
     batch = Batch.from_data_list(data_list)
     model = GraphTransformer(hidden_dim=feature_dim, num_class=num_classes,
                              use_super_node=True, num_encoder_layers=1)
-    model.encoder.layers[0] = AddOneLayer()
+    model.encoder[0] = AddOneLayer()
     out = model(batch)["logits"]
     loss = out.sum()
     loss.backward()
@@ -158,3 +163,16 @@ def test_torchscript_trace():
 
     assert torch.allclose(original_output, traced_output, atol=1e-6), \
         "Outputs from original and traced models should be close"
+
+
+def test_encoder_layer_type():
+    """Test that the first encoder layer in a GraphTransformer is
+    an instance of GraphTransformerEncoderLayer.
+    """
+    model = GraphTransformer(hidden_dim=16, num_encoder_layers=1)
+    assert len(
+        model.encoder) == 1, "Model's encoder should have exactly one layer"
+    assert isinstance(model.encoder[0], GraphTransformerEncoderLayer), \
+        "First encoder layer should be an instance of " \
+        "GraphTransformerEncoderLayer"
+# yapf: enable
