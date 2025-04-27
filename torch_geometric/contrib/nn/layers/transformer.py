@@ -45,16 +45,16 @@ class GraphTransformerEncoderLayer(nn.Module):
         self.dropout_layer = nn.Dropout(dropout)
         self.norm1 = nn.LayerNorm(hidden_dim)
         self.norm2 = nn.LayerNorm(hidden_dim)
-        self.activation = activation
         self.ffn = PositionwiseFeedForward(
             hidden_dim, self.ffn_hidden_dim, dropout, activation
         )
         self.self_attn = nn.MultiheadAttention(
             hidden_dim, num_heads, dropout, batch_first=True
         )
-        self.key_padding = None
 
-    def _pad_to_dense(self, x: torch.Tensor, batch: torch.Tensor) -> tuple:
+    def _pad_to_dense(
+        self, x: torch.Tensor, batch: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Convert flat node features to dense padded batch.
 
         Args:
@@ -62,7 +62,10 @@ class GraphTransformerEncoderLayer(nn.Module):
             batch (torch.Tensor): Batch indices (total_nodes,)
 
         Returns:
-            tuple: (padded tensor, node counts per graph)
+            tuple:
+                dense(torch.Tensor): Padded tensor of shape
+                    (batch_size, max_nodes, hidden_dim)
+                lengths(torch.Tensor): Nodes per graph (batch_size,)
         """
         batch_size = int(batch.max() + 1)
         lengths = torch.bincount(batch)
@@ -71,9 +74,14 @@ class GraphTransformerEncoderLayer(nn.Module):
             batch_size, max_nodes, x.size(-1), device=x.device, dtype=x.dtype
         )
         node_indices = torch.arange(max_nodes, device=x.device)
-        valid_idx = node_indices.unsqueeze(0) < lengths.unsqueeze(1)
-        valid_idx_expanded = valid_idx.unsqueeze(-1).expand(-1, -1, x.size(-1))
-        dense[valid_idx_expanded] = x.view(-1)
+        batch_idx, node_idx = torch.where(
+            node_indices.unsqueeze(0) < lengths.unsqueeze(1)
+        )
+        offsets = torch.nn.functional.pad(
+            torch.cumsum(lengths[:-1], 0), (1, 0)
+        )
+        src_idx = offsets[batch_idx] + node_idx
+        dense[batch_idx, node_idx] = x[src_idx]
 
         return dense, lengths
 
@@ -90,12 +98,25 @@ class GraphTransformerEncoderLayer(nn.Module):
         Returns:
             torch.Tensor: Flat tensor (total_nodes, hidden_dim)
         """
-        node_indices = torch.arange(lengths.max(), device=dense.device)
-        valid_idx = node_indices.unsqueeze(0) < lengths.unsqueeze(1)
-        valid_idx_expanded = valid_idx.unsqueeze(-1).expand(
-            -1, -1, dense.size(-1)
+        total_nodes = lengths.sum().item()
+        out = torch.zeros(
+            total_nodes,
+            dense.size(-1),
+            device=dense.device,
+            dtype=dense.dtype
         )
-        return dense[valid_idx_expanded].view(-1, dense.size(-1))
+
+        batch_idx, node_idx = torch.where(
+            torch.arange(lengths.max(), device=dense.device).unsqueeze(0) <
+            lengths.unsqueeze(1)
+        )
+        offsets = torch.nn.functional.pad(
+            torch.cumsum(lengths[:-1], 0), (1, 0)
+        )
+        tgt_idx = offsets[batch_idx] + node_idx
+        out[tgt_idx] = dense[batch_idx, node_idx]
+
+        return out
 
     def forward(self, x, batch=None, attn_mask=None):
         """Forward pass through transformer encoder layer.
