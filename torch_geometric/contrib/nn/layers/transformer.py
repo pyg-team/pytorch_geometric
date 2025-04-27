@@ -120,7 +120,7 @@ class GraphTransformerEncoderLayer(nn.Module):
         return out
 
     def forward(
-        self, x: Tensor, batch: Tensor, attn_mask: Optional[Tensor],
+        self, x: Tensor, batch: Tensor, struct_mask: Optional[Tensor],
         key_pad: Tensor
     ):
         """Forward pass through transformer encoder layer.
@@ -128,7 +128,7 @@ class GraphTransformerEncoderLayer(nn.Module):
         Args:
             x (Tensor): Node features (total_nodes, hidden_dim)
             batch (Tensor): Batch indices (total_nodes,)
-            attn_mask (Optional[Tensor]): Attention mask
+            struct_mask (Optional[Tensor]): mask for structure-aware attention.
             key_pad (Tensor): Pre-computed key padding mask
 
         Returns:
@@ -139,7 +139,7 @@ class GraphTransformerEncoderLayer(nn.Module):
         x_batch, lengths = self._pad_to_dense(x, batch)
         additive = merge_masks(
             key_pad=key_pad,
-            attn=attn_mask,
+            attn=struct_mask,
             num_heads=self.num_heads,
             dtype=x.dtype
         )
