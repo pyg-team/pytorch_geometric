@@ -150,15 +150,16 @@ class GraphTransformer(torch.nn.Module):
             x, batch_vec = self._prepend_cls_token_flat(x, data.batch)
         else:
             batch_vec = data.batch
-
         attn_mask = getattr(data, 'attn_mask', None)
-        key_pad = build_key_padding(
-            batch_vec, num_heads=self.encoder.num_heads
-        )
         if self.is_encoder_stack:
             x = self.encoder(x, batch_vec, attn_mask)
         else:
-            x = self.encoder(x, batch_vec, attn_mask, key_pad)
+            num_heads = getattr(self.encoder, "num_heads", None)
+            if num_heads is not None:
+                key_pad = build_key_padding(batch_vec, num_heads=num_heads)
+                x = self.encoder(x, batch_vec, attn_mask, key_pad)
+            else:
+                x = self.encoder(x, batch_vec, attn_mask)
 
         x = self._readout(x, batch_vec)
         logits = self.classifier(x)

@@ -181,9 +181,13 @@ class GraphTransformerEncoder(nn.Module):
             ]
         )
         self.num_layers = num_layers
+        self.num_heads = encoder_layer.num_heads
 
     def forward(self, x, batch, attn_mask=None):
         """Apply all encoder layers in sequence.
+
+        If all layers share the same num_heads, build the pad once;
+        if any layer has a different head‐count, rebuild it before that layer.
 
         Args:
             x (torch.Tensor): Node feature tensor
@@ -191,10 +195,14 @@ class GraphTransformerEncoder(nn.Module):
             attn_mask (torch.Tensor, optional): Attention mask
 
         Returns:
-            torch.Tensor: Output after passing through all encoder layers
+            torch.Tensor: Output after passing through all encoder layers.
         """
-        key_pad = build_key_padding(batch, num_heads=self.layers[0].num_heads)
+        current_h = None
+        key_pad = None
         for layer in self.layers:
+            if key_pad is None or layer.num_heads != current_h:
+                key_pad = build_key_padding(batch, num_heads=layer.num_heads)
+                current_h = layer.num_heads
             x = layer(x, batch, attn_mask, key_pad)
         return x
 
