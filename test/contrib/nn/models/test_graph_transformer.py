@@ -324,7 +324,7 @@ def test_attention_mask_changes_logits(num_heads):
         out1 = model(batch)["logits"]
 
         # Second pass with attention mask
-        batch.attn_mask = attn_mask  # Pass mask through batch
+        batch.bias = attn_mask  # Pass mask through batch
         out2 = model(batch)["logits"]
 
     assert out1.shape == out2.shape, "Outputs should have the same shape"
@@ -370,3 +370,33 @@ def test_cls_token_transformation():
     # Verify cls token was transformed
     assert not torch.allclose(transformed_cls, original_cls.expand(2, -1)), \
         "CLS token should be modified by attention mechanism"
+
+
+def test_spatial_bias_shifts_logits():
+    """Test that using spatial bias shift the logits."""
+    feature_dim = 16
+    num_nodes = 10
+    num_classes = 2
+    num_heads = 4
+
+    data = Data(
+        x=torch.randn(num_nodes, feature_dim),
+        edge_index=torch.empty((2, 0), dtype=torch.long),
+    )
+    batch_no_bias = Batch.from_data_list([data])
+    batch_with_bias = Batch.from_data_list([data])
+    bias = torch.zeros((1, num_heads, num_nodes, num_nodes))
+    bias[:, :, 0, 1] = 5.0
+    batch_with_bias.bias = bias
+
+    model = GraphTransformer(
+        hidden_dim=feature_dim, num_class=num_classes, num_encoder_layers=1
+    )
+    model.eval()
+
+    with torch.no_grad():
+        out1 = model(batch_no_bias)["logits"]
+        out2 = model(batch_with_bias)["logits"]
+
+    assert not torch.allclose(out1, out2, rtol=1e-4), \
+        "Logits should differ when using spatial bias"
