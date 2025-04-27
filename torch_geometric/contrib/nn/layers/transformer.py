@@ -65,11 +65,12 @@ class GraphTransformerEncoderLayer(nn.Module):
         Returns:
             torch.Tensor: Transformed node features (total_nodes, hidden_dim)
         """
+        assert x.dim() == 2, f"Expected 2D input tensor (N,C),\
+            got shape {x.shape}"
+
         src = x
         if batch is None:
             batch = torch.zeros(x.size(0), device=x.device, dtype=torch.long)
-
-        # Compute batch size and max nodes per graph
         batch_size = int(batch.max() + 1)
         max_nodes = torch.bincount(batch).max()
 
