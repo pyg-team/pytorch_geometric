@@ -210,6 +210,7 @@ if __name__ == '__main__':
             dataset.num_classes,
         ).cuda()
     elif args.model == 'SGFormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
