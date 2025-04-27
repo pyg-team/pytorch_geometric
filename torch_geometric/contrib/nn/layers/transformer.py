@@ -43,8 +43,8 @@ class GraphTransformerEncoderLayer(nn.Module):
         self.num_heads = num_heads
         self.ffn_hidden_dim = ffn_hidden_dim or 4 * hidden_dim
         self.dropout_layer = nn.Dropout(dropout)
-        self.norm1 = nn.LayerNorm(hidden_dim)  # Normalization before attention
-        self.norm2 = nn.LayerNorm(hidden_dim)  # Normalization before FFN
+        self.norm1 = nn.LayerNorm(hidden_dim)
+        self.norm2 = nn.LayerNorm(hidden_dim)
         self.activation = activation
         self.ffn = PositionwiseFeedForward(
             hidden_dim, self.ffn_hidden_dim, dropout, activation
@@ -54,38 +54,65 @@ class GraphTransformerEncoderLayer(nn.Module):
         )
         self.key_padding = None
 
-    def forward(self, x, batch=None, attn_mask=None):
-        """Forward pass through the transformer encoder layer.
+    def _pad_to_dense(self, x: torch.Tensor, batch: torch.Tensor) -> tuple:
+        """Convert flat node features to dense padded batch.
 
         Args:
-            x (torch.Tensor): Node feature tensor (total_nodes, hidden_dim)
-            batch (torch.Tensor, optional): Batch vector (total_nodes,)
-            attn_mask (torch.Tensor, optional): Attention mask tensor
+            x (torch.Tensor): Node features (total_nodes, hidden_dim)
+            batch (torch.Tensor): Batch indices (total_nodes,)
 
         Returns:
-            torch.Tensor: Transformed node features (total_nodes, hidden_dim)
+            tuple: (padded tensor, node counts per graph)
         """
-        assert x.dim() == 2, f"Expected 2D input tensor (N,C),\
-            got shape {x.shape}"
+        batch_size = int(batch.max() + 1)
+        lengths = torch.bincount(batch)
+        max_nodes = lengths.max()
+        dense = torch.zeros(
+            batch_size, max_nodes, x.size(-1), device=x.device, dtype=x.dtype
+        )
+        node_indices = torch.arange(max_nodes, device=x.device)
+        valid_idx = node_indices.unsqueeze(0) < lengths.unsqueeze(1)
+        valid_idx_expanded = valid_idx.unsqueeze(-1).expand(-1, -1, x.size(-1))
+        dense[valid_idx_expanded] = x.view(-1)
 
-        src = x
+        return dense, lengths
+
+    def _unpad(
+        self, dense: torch.Tensor, lengths: torch.Tensor
+    ) -> torch.Tensor:
+        """Convert dense padded batch back to flat tensor.
+
+        Args:
+            dense (torch.Tensor): Padded tensor of shape
+            (batch_size, max_nodes, hidden_dim)
+            lengths (torch.Tensor): Nodes per graph
+
+        Returns:
+            torch.Tensor: Flat tensor (total_nodes, hidden_dim)
+        """
+        node_indices = torch.arange(lengths.max(), device=dense.device)
+        valid_idx = node_indices.unsqueeze(0) < lengths.unsqueeze(1)
+        valid_idx_expanded = valid_idx.unsqueeze(-1).expand(
+            -1, -1, dense.size(-1)
+        )
+        return dense[valid_idx_expanded].view(-1, dense.size(-1))
+
+    def forward(self, x, batch=None, attn_mask=None):
+        """Forward pass through transformer encoder layer.
+
+        Args:
+            x (torch.Tensor): Node features (total_nodes, hidden_dim)
+            batch (torch.Tensor, optional): Batch indices (total_nodes,)
+            attn_mask (torch.Tensor, optional): Attention mask
+
+        Returns:
+            torch.Tensor: Transformed features (total_nodes, hidden_dim)
+        """
+        assert x.dim() == 2, \
+            f"Expected 2D input tensor (N,C), got shape {x.shape}"
         if batch is None:
             batch = torch.zeros(x.size(0), device=x.device, dtype=torch.long)
-        batch_size = int(batch.max() + 1)
-        max_nodes = torch.bincount(batch).max()
-
-        x_batch = torch.zeros(
-            batch_size,
-            max_nodes,
-            self.hidden_dim,
-            device=x.device,
-            dtype=x.dtype
-        )
-        for i in range(batch_size):
-            mask = batch == i
-            num_nodes = mask.sum()
-            x_batch[i, :num_nodes] = x[mask]
-
+        x_batch, lengths = self._pad_to_dense(x, batch)
         additive = merge_masks(
             key_pad=build_key_padding(batch, num_heads=self.num_heads),
             attn=attn_mask,
@@ -93,21 +120,12 @@ class GraphTransformerEncoderLayer(nn.Module):
             dtype=x.dtype
         )
 
-        # Apply attention
         x = self.norm1(x_batch)
         attn_out, _ = self.self_attn(
             x, x, x, attn_mask=additive, need_weights=False
         )
         x = x_batch + self.dropout_layer(attn_out)
-
-        # Flatten back to (total_nodes, hidden_dim)
-        x_flat = torch.zeros_like(src)
-        for i in range(batch_size):
-            mask = batch == i
-            num_nodes = mask.sum()
-            x_flat[mask] = x[i, :num_nodes]
-
-        # Apply FFN
+        x_flat = self._unpad(x, lengths)
         src2 = x_flat
         x = self.norm2(x_flat)
         ffn_out = self.ffn(x)
