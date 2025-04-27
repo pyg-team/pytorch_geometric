@@ -77,7 +77,11 @@ def arg_parse():
         "--model",
         type=str,
         default='SAGE',
-        choices=['SAGE', 'GAT', 'GCN',], # 'SGFormer'],
+        choices=[
+            'SAGE',
+            'GAT',
+            'GCN',
+        ],  # 'SGFormer'],
         help="Model used for training, default SAGE",
     )
     parser.add_argument(
