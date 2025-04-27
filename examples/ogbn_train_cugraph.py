@@ -76,9 +76,9 @@ def arg_parse():
     parser.add_argument(
         "--model",
         type=str,
-        default='SGFormer',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
-        help="Model used for training, default SGFormer",
+        default='SAGE',
+        choices=['SAGE', 'GAT', 'GCN',], # 'SGFormer'],
+        help="Model used for training, default SAGE",
     )
     parser.add_argument(
         "--num_heads",
@@ -88,7 +88,6 @@ def arg_parse():
     )
     parser.add_argument('--tempdir_root', type=str, default=None)
     args = parser.parse_args()
-
     return args
 
 
