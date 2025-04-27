@@ -59,3 +59,18 @@ def test_merge_masks():
     # Test case 4: No masks
     merged = merge_masks(key_pad=None, attn=None)
     assert merged is None
+
+
+def test_merge_masks_with_bias_float():
+    """Test merge_masks combining boolean key padding & float bias values."""
+    batch = torch.tensor([0, 0, 1])
+    key_pad = build_key_padding(batch, num_heads=1)
+
+    # Create float bias matching key_pad shape
+    bias = torch.zeros_like(key_pad, dtype=torch.float)
+    bias[0, 0, 0, 1] = 5.0
+
+    merged = merge_masks(key_pad=key_pad, attn=bias)
+    assert merged.shape == (2, 2, 2)
+    assert merged[0, 0, 1] == 5.0
+    assert torch.isinf(merged[1, 1, 0])
