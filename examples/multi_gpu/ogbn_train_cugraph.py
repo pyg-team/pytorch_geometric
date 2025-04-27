@@ -82,7 +82,7 @@ def arg_parse():
         "--model",
         type=str,
         default='GCN',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
+        choices=['SAGE', 'GAT', 'GCN',], # 'SGFormer'],
         help="Model used for training, default GCN",
     )
     parser.add_argument(
@@ -347,6 +347,7 @@ if __name__ == '__main__':
             dataset.num_classes,
         )
     elif args.model == 'SGFormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
