@@ -11,7 +11,11 @@ from torch_geometric.data import Batch, Data
 
 class AddOneLayer(nn.Module):
 
-    def forward(self, x, batch, attn_mask=None):
+    def __init__(self, num_heads: int = 1):
+        super().__init__()
+        self.num_heads = num_heads
+
+    def forward(self, x, *args, **kwargs):
         return x + 1.0
 
 
