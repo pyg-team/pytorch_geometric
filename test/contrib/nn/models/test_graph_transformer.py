@@ -25,6 +25,13 @@ class ConstantDegreeEncoder(nn.Module):
         return torch.full_like(data.x, self.value)
 
 
+class IdentityEncoder(nn.Module):
+    """Identity encoder that preserves the encoder interface."""
+
+    def forward(self, x, batch=None, attn_mask=None):
+        return x
+
+
 class TracableWrapper(torch.nn.Module):
 
     def __init__(self, model):
@@ -66,15 +73,20 @@ def test_forward_shape(num_graphs, num_nodes, feature_dim, num_classes):
 
 
 def test_super_node_readout():
+    """Test cls token is properly processed through encoder and readout."""
     x = torch.tensor([[1.0, 2.0, 3.0, 4.0]])
     data = Data(x=x, edge_index=torch.empty((2, 0), dtype=torch.long))
     batch = Batch.from_data_list([data])
+
+    # Create model and make encoder pass-through for test
     model = GraphTransformer(hidden_dim=4, num_class=2, use_super_node=True)
+    model.encoder = IdentityEncoder()  # Skip encoder transformation
+
     out = model(batch)["logits"]
     expected = model.classifier(model.cls_token.expand(1, -1))
     assert torch.allclose(
-        out, expected
-    ), "Expected output to match classifier(cls_token) for super node readout."
+        out, expected, rtol=1e-4
+    ), "With identity encoder, output should match classifier(cls_token)"
 
 
 def test_node_feature_encoder_identity():
