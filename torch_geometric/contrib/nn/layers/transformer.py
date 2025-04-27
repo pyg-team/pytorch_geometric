@@ -2,6 +2,7 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
+from torch import Tensor
 
 from torch_geometric.contrib.nn.layers.feedforward import (
     PositionwiseFeedForward,
@@ -118,24 +119,26 @@ class GraphTransformerEncoderLayer(nn.Module):
 
         return out
 
-    def forward(self, x, batch=None, attn_mask=None):
+    def forward(
+        self, x: Tensor, batch: Tensor, attn_mask: Optional[Tensor],
+        key_pad: Tensor
+    ):
         """Forward pass through transformer encoder layer.
 
         Args:
-            x (torch.Tensor): Node features (total_nodes, hidden_dim)
-            batch (torch.Tensor, optional): Batch indices (total_nodes,)
-            attn_mask (torch.Tensor, optional): Attention mask
+            x (Tensor): Node features (total_nodes, hidden_dim)
+            batch (Tensor): Batch indices (total_nodes,)
+            attn_mask (Optional[Tensor]): Attention mask
+            key_pad (Tensor): Pre-computed key padding mask
 
         Returns:
-            torch.Tensor: Transformed features (total_nodes, hidden_dim)
+            Tensor: Transformed features (total_nodes, hidden_dim)
         """
         assert x.dim() == 2, \
             f"Expected 2D input tensor (N,C), got shape {x.shape}"
-        if batch is None:
-            batch = torch.zeros(x.size(0), device=x.device, dtype=torch.long)
         x_batch, lengths = self._pad_to_dense(x, batch)
         additive = merge_masks(
-            key_pad=build_key_padding(batch, num_heads=self.num_heads),
+            key_pad=key_pad,
             attn=attn_mask,
             num_heads=self.num_heads,
             dtype=x.dtype
@@ -174,25 +177,25 @@ class GraphTransformerEncoder(nn.Module):
                     num_heads=encoder_layer.num_heads,
                     dropout=encoder_layer.dropout_layer.p,
                     ffn_hidden_dim=encoder_layer.ffn_hidden_dim,
-                    activation=encoder_layer.activation
                 ) for _ in range(num_layers)
             ]
         )
         self.num_layers = num_layers
 
-    def forward(self, x, batch=None, attn_mask=None):
+    def forward(self, x, batch, attn_mask=None):
         """Apply all encoder layers in sequence.
 
         Args:
             x (torch.Tensor): Node feature tensor
-            batch (torch.Tensor, optional): Batch vector
+            batch (torch.Tensor): Batch vector
             attn_mask (torch.Tensor, optional): Attention mask
 
         Returns:
             torch.Tensor: Output after passing through all encoder layers
         """
+        key_pad = build_key_padding(batch, num_heads=self.layers[0].num_heads)
         for layer in self.layers:
-            x = layer(x, batch, attn_mask)
+            x = layer(x, batch, attn_mask, key_pad)
         return x
 
     def __len__(self):
