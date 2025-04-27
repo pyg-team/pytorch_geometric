@@ -7,6 +7,7 @@ from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoder,
     GraphTransformerEncoderLayer,
 )
+from torch_geometric.contrib.utils.mask_utils import build_key_padding
 from torch_geometric.data import Data
 from torch_geometric.nn import global_mean_pool
 
@@ -34,17 +35,15 @@ class GraphTransformer(torch.nn.Module):
         self.node_feature_encoder = node_feature_encoder
         self.degree_encoder = degree_encoder
         encoder_layer = GraphTransformerEncoderLayer(hidden_dim)
-        if num_encoder_layers > 0:
-            self.encoder = GraphTransformerEncoder(
-                encoder_layer, num_encoder_layers
-            )
-        else:
-            self.encoder = encoder_layer
+        self.encoder = (
+            GraphTransformerEncoder(encoder_layer, num_encoder_layers)
+            if num_encoder_layers > 0 else encoder_layer
+        )
+        self.is_encoder_stack = num_encoder_layers > 0
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         if self.use_super_node:
-            # First row for each graph in flattened order
             graph_sizes = torch.bincount(batch)
             first_idx = torch.cumsum(graph_sizes, 0) - graph_sizes
             return x[first_idx]
@@ -153,7 +152,14 @@ class GraphTransformer(torch.nn.Module):
             batch_vec = data.batch
 
         attn_mask = getattr(data, 'attn_mask', None)
-        x = self.encoder(x, batch_vec, attn_mask)
+        key_pad = build_key_padding(
+            batch_vec, num_heads=self.encoder.num_heads
+        )
+        if self.is_encoder_stack:
+            x = self.encoder(x, batch_vec, attn_mask)
+        else:
+            x = self.encoder(x, batch_vec, attn_mask, key_pad)
+
         x = self._readout(x, batch_vec)
         logits = self.classifier(x)
         return {
