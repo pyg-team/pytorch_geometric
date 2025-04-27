@@ -1,6 +1,9 @@
+from typing import Optional
+
 import pytest
 import torch
 import torch.nn as nn
+from torch import Tensor
 
 from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoderLayer,
@@ -42,12 +45,16 @@ class TracableWrapper(torch.nn.Module):
         super().__init__()
         self.model = model
 
-    def forward(self, x, batch):
-        # Simple forward that avoids Batch construction
-        out = self.model.node_feature_encoder(x)
-        out = self.model.encoder(out, batch)
-        out = self.model._readout(out, batch)
-        return self.model.classifier(out)
+    def forward(self, x: Tensor, batch: Tensor, bias: Optional[Tensor] = None):
+        data = Batch(
+            x=x,
+            batch=batch,
+            edge_index=torch.empty((2, 0), dtype=torch.long, device=x.device)
+        )
+        if bias is not None:
+            data.bias = bias
+        out = self.model(data)["logits"]
+        return out
 
 
 @pytest.mark.parametrize(
@@ -178,45 +185,33 @@ def test_backward():
 
 
 def test_torchscript_trace():
-    """Test that GraphTransformer can be traced with TorchScript."""
     torch.manual_seed(12345)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
 
-    num_graphs = 2
-    num_nodes = 5
-    feature_dim = 8
-    num_classes = 3
+    # -------- dummy input -----------
+    G, N, F, C = 2, 5, 8, 3
+    x = torch.randn(G * N, F)
+    batch = torch.arange(G).repeat_interleave(N)
+    bias = torch.rand(G, 4, N, N)  # structural mask
 
-    x = torch.randn(num_nodes * num_graphs, feature_dim)
-    batch = torch.zeros(num_nodes * num_graphs, dtype=torch.long)
-    for i in range(1, num_graphs):
-        batch[i * num_nodes:(i + 1) * num_nodes] = i
-
-    # Handle data construction outside tracing
-    data_batch = Batch(
-        x=x,
-        edge_index=torch.empty((2, 0), dtype=torch.long, device=x.device),
-        batch=batch
-    )
-
+    # -------- model & wrapper -------
     model = GraphTransformer(
-        hidden_dim=feature_dim, num_class=num_classes, num_encoder_layers=2
-    )
-    model.eval()
+        hidden_dim=F, num_class=C, num_encoder_layers=2
+    ).eval()
     wrapper = TracableWrapper(model)
 
+    # -------- trace -----------------
     with torch.no_grad():
         try:
-            traced = torch.jit.trace(wrapper, (x, batch))
+            traced = torch.jit.trace(wrapper, (x, batch, bias))
         except Exception as e:
-            pytest.fail(f"Failed to trace model: {str(e)}")
+            pytest.fail(f"TorchScript tracing failed: {e}")
 
-        original_output = model(data_batch)["logits"]
-        traced_output = traced(x, batch)
+        # -------- compare -------------
+        ref = wrapper(x, batch, bias)  # original (eager) run
+        out = traced(x, batch, bias)  # scripted run
 
-        assert torch.allclose(original_output, traced_output, atol=1e-6), \
-            "Outputs from original and traced models should be close"
+        assert torch.allclose(ref, out, atol=1e-6), \
+            "Scripted and eager logits differ"
 
 
 def test_encoder_layer_type():
