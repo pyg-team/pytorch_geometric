@@ -365,7 +365,7 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
 
         return _visualize_score(score, all_feat_labels, path, top_k)
 
-    def visualize_explanation_graph(
+    def visualize_graph(
             self,
             path: Optional[str] = None,
             node_labels: Optional[Dict[NodeType, List[str]]] = None,
