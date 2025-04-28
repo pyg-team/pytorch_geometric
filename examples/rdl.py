@@ -1,5 +1,4 @@
-"""
-This is a demo of Relational Deep Learning code for RelBench dataset.
+"""This is a demo of Relational Deep Learning code for RelBench dataset.
 For more details on RelBench and Relational Deep learning, please refer to
 https://arxiv.org/abs/2407.20060 and
 https://raw.githubusercontent.com/mlresearch/v235/main/assets/fey24a/fey24a.pdf
