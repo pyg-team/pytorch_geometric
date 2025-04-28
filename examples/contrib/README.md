@@ -10,3 +10,5 @@ Modules included here might be moved to the main library in the future.
 | [`rbcd_attack_poisoning.py`](./rbcd_attack_poisoning.py)                           | An example of the RBCD (Resource-Based Critical Data) attack with data poisoning strategies |
 | [`pgm_explainer_node_classification.py`](./pgm_explainer_node_classification.py)   | An example of the PGM (Probabilistic Graphical Model) explainer for node classification     |
 | [`pgm_explainer_graph_classification.py`](./pgm_explainer_graph_classification.py) | An example of the PGM (Probabilistic Graphical Model) explainer for graph classification    |
+| [`node_mixup.py`](./node_mixup.py)                                                 | An example of using Mixup for node classification                                           |
+| [`graph_mixup.py`](./graph_mixup.py)                                               | An example of using Mixup for graph classification                                          |
