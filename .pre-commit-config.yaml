@@ -1,7 +1,8 @@
 ci:
+  # https://pre-commit.ci/#configuration
   autofix_prs: true
   autoupdate_commit_msg: '[pre-commit.ci] pre-commit suggestions'
-  autoupdate_schedule: quarterly
+  autoupdate_schedule: monthly
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -27,7 +28,7 @@ repos:
           )$
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.35.1
+    rev: v1.37.0
     hooks:
       - id: yamllint
         name: Lint yaml
@@ -61,27 +62,27 @@ repos:
         additional_dependencies: [toml]
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
       - id: isort
         name: Sort imports
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
+    rev: 7.2.0
     hooks:
       - id: flake8
         name: Check PEP8
         additional_dependencies: [Flake8-pyproject]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.6
+    rev: v0.11.4
     hooks:
       - id: ruff
         name: Ruff formatting
         args: [--fix, --exit-non-zero-on-fix]
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.21
+    rev: 0.7.22
     hooks:
       - id: mdformat
         name: Format Markdown
