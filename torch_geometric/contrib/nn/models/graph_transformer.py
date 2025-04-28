@@ -1,8 +1,9 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Sequence
 
 import torch
 import torch.nn as nn
 
+from torch_geometric.contrib.nn.bias.base import BiasProvider
 from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoder,
     GraphTransformerEncoderLayer,
@@ -26,6 +27,7 @@ class GraphTransformer(torch.nn.Module):
         node_feature_encoder=nn.Identity(),
         num_encoder_layers: int = 0,
         degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
+        attn_bias_providers: Sequence[BiasProvider] = (),
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
@@ -40,6 +42,7 @@ class GraphTransformer(torch.nn.Module):
             if num_encoder_layers > 0 else encoder_layer
         )
         self.is_encoder_stack = num_encoder_layers > 0
+        self.attn_bias_providers = list(attn_bias_providers)
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
@@ -150,7 +153,7 @@ class GraphTransformer(torch.nn.Module):
             x, batch_vec = self._prepend_cls_token_flat(x, data.batch)
         else:
             batch_vec = data.batch
-        struct_mask = getattr(data, "bias", None)
+        struct_mask = self._collect_attn_bias(data)
         if self.is_encoder_stack:
             x = self.encoder(x, batch_vec, struct_mask)
         else:
@@ -169,3 +172,24 @@ class GraphTransformer(torch.nn.Module):
 
     def __repr__(self):
         return "GraphTransformer()"
+
+    @torch.jit.ignore
+    def _collect_attn_bias(self, data: Data) -> Optional[torch.Tensor]:
+        """Collect attention bias tensors from providers if available.
+
+        Args:
+            data (Data): The input graph data.
+
+        Returns:
+            Optional[torch.Tensor]: The attention bias tensor if providers
+            are available, otherwise None.
+        """
+        if len(self.attn_bias_providers) == 0:
+            return None
+
+        masks = []
+        for prov in self.attn_bias_providers:
+            m = prov(data)
+            if m is not None:
+                masks.append(m.to(torch.float32))
+        return None if not masks else sum(masks)

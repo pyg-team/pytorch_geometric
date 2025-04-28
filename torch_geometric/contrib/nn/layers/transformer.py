@@ -141,7 +141,8 @@ class GraphTransformerEncoderLayer(nn.Module):
             key_pad=key_pad,
             attn=struct_mask,
             num_heads=self.num_heads,
-            dtype=x.dtype
+            dtype=x.dtype,
+            detach=struct_mask is None
         )
 
         x = self.norm1(x_batch)
