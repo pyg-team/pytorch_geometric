@@ -24,15 +24,16 @@ from torch_geometric.data import Data
 class GraphAttnSpatialBias(nn.Module):
     """Learnable spatial bias provider for graph attention.
 
-    Supports both single Data objects with `spatial_pos` of shape
-    (L, L), and Batched Data where `spatial_pos` has been collated
-    to (total_nodes, L) with `ptr` indicating graph boundaries.
+    Maps integer distances in `data.spatial_pos` to per-head additive
+    biases. Supports:
+      • Single-graph Data with spatial_pos ⟶ (L, L)
+      • Batched Data with spatial_pos cat’d as (N, L) plus `ptr`.
 
     Args:
         num_heads (int): Number of attention heads.
-        num_spatial (int): Number of spatial positions (excluding super node).
-        use_super_node (bool): Whether to reserve a special index for
-            super-node distances.
+        num_spatial (int): Number of spatial distances (excl. super node).
+        use_super_node (bool): If True, reserve one extra index for
+            any attention to/from a “super” node at row/col 0.
     """
 
     def __init__(
@@ -44,62 +45,93 @@ class GraphAttnSpatialBias(nn.Module):
         super().__init__()
         self.num_heads = num_heads
         self.use_super_node = use_super_node
-
-        # If using a super node, reserve one extra embedding slot.
+        # Reserve an extra embedding index if using a super node
         self.num_spatial = num_spatial + (1 if use_super_node else 0)
 
-        # Embedding: spatial index → head-specific biases
         self.spatial_embeddings = nn.Embedding(self.num_spatial, num_heads)
         init.xavier_uniform_(self.spatial_embeddings.weight)
 
     @torch.jit.ignore
     def forward(self, data: Data) -> torch.Tensor:
-        """Compute per-head spatial attention bias.
+        """Forward pass to compute spatial biases.
 
         Args:
-            data (Data): Must have `spatial_pos`. Two formats supported:
-                - data.spatial_pos: Tensor (L, L) on a single graph.
-                - data.spatial_pos: Tensor (N, L) on a Batch with `ptr`
-                of length (B+1), where each block of L rows
-                corresponds to one graph.
+            data (Data): Input data containing `spatial_pos` and optionally
+                `ptr` for batched graphs.
+        Returns:torch.Tensor: Spatial bias tensor of shape (B, H, L, L), where
+            B is the batch size, H is the number of attention heads,
+            and L is the number of nodes in each graph.
 
-        Returns:
-            torch.Tensor: Tensor of shape (B, num_heads, L, L).
         """
-        spatial_pos = data.spatial_pos
+        pos = self._prepare_spatial_pos(data)
 
-        # If collated as node-level (N, L), un-batch via ptr.
-        if spatial_pos.dim() == 2:
-            if not hasattr(data, "ptr"):
-                raise AttributeError(
-                    "Batched `Data` must have `ptr` to unbatch spatial_pos."
-                )
-            ptr = data.ptr
-            batch_size = ptr.numel() - 1
-            # Each graph has L nodes = ptr[i+1] - ptr[i]
-            spatial_pos.size(1)
-            graphs = [
-                spatial_pos[ptr[i]:ptr[i + 1]]  # noqa: E203
-                for i in range(batch_size)
-            ]
-            spatial_pos = torch.stack(graphs, dim=0)  # (B, L, L)
-
-        if spatial_pos.dim() != 3:
-            raise ValueError(
-                f"`spatial_pos` must be 3D after unbatching, \
-                    got {spatial_pos.shape}"
-            )
-
-        # Handle super-node positions by mapping row=0 or col=0 to final index
         if self.use_super_node:
-            is_super = torch.zeros_like(spatial_pos, dtype=torch.bool)
-            is_super[:, 0, :] = True
-            is_super[:, :, 0] = True
-            super_index = self.num_spatial - 1
-            spatial_pos = torch.where(is_super, super_index, spatial_pos)
+            pos = self._inject_super_node_index(pos)
 
-        # Lookup embeddings: (B, L, L) -> (B, L, L, H)
-        bias = self.spatial_embeddings(spatial_pos)
-
+        # Embedding lookup: (B, L, L) -> (B, L, L, H)
+        bias = self.spatial_embeddings(pos)
         # Permute to (B, H, L, L)
         return bias.permute(0, 3, 1, 2)
+
+    def _prepare_spatial_pos(self, data: Data) -> torch.LongTensor:
+        """Turn data.spatial_pos into a (B, L, L) tensor.
+
+        Args:
+            data (Data): Input data containing `spatial_pos` and optionally
+                `ptr` for batched graphs.
+
+        Returns:
+            torch.LongTensor: Prepared spatial positions tensor of shape
+                (B, L, L) where B is the batch size and L is the number of
+                nodes in each graph.
+        """
+        if not hasattr(data, "spatial_pos"):
+            raise AttributeError("`Data` requires a `spatial_pos` field.")
+
+        pos = data.spatial_pos
+        # Single graph: (L, L)
+        if pos.dim() == 2 and pos.size(0) == pos.size(1):
+            return pos.unsqueeze(0)
+
+        # Batched node-level: (N, L) with ptr
+        if pos.dim() == 2:
+            if not hasattr(data, "ptr"):
+                raise AttributeError(
+                    "Batched `Data` needs `ptr` to split spatial_pos."
+                )
+            ptr = data.ptr
+            B = ptr.numel() - 1
+            # Each segment pos[ptr[i]:ptr[i+1]] is an (L, L) block
+            graphs = [
+                pos[ptr[i]:ptr[i + 1]]  # noqa: E203
+                for i in range(B)
+            ]
+            return torch.stack(graphs, dim=0)
+
+        # Already proper batched: (B, L, L)
+        if pos.dim() == 3:
+            return pos
+
+        raise ValueError(
+            f"`spatial_pos` must be 2D or 3D, got shape {tuple(pos.shape)}"
+        )
+
+    def _inject_super_node_index(
+        self, spatial_pos: torch.LongTensor
+    ) -> torch.LongTensor:
+        """Map row=0 or col=0 entries to the reserved super-node index.
+
+        Args:
+            spatial_pos (torch.LongTensor): Tensor of shape (B, L, L)
+                containing spatial distances.
+
+        Returns:
+            torch.LongTensor: Updated tensor with super-node index
+                injected for row=0 or col=0 entries.
+
+        """
+        mask = torch.zeros_like(spatial_pos, dtype=torch.bool)
+        mask[:, 0, :] = True
+        mask[:, :, 0] = True
+        super_idx = self.num_spatial - 1
+        return torch.where(mask, super_idx, spatial_pos)
