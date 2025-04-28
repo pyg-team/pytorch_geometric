@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added visualize_graph to HeteroExplanation ([#10207](https://github.com/pyg-team/pytorch_geometric/pull/10207))
 - Added PyTorch 2.6 support ([#10170](https://github.com/pyg-team/pytorch_geometric/pull/10170))
 - Added support for heterogenous graphs in `AttentionExplainer` ([#10169](https://github.com/pyg-team/pytorch_geometric/pull/10169))
 - Added support for heterogenous graphs in `PGExplainer` ([#10168](https://github.com/pyg-team/pytorch_geometric/pull/10168))
