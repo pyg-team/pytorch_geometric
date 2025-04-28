@@ -49,21 +49,24 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
 class LLM(torch.nn.Module):
     r"""A wrapper around a Large Language Model (LLM) from HuggingFace.
 
-    Args:
-        model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"`
-            or :obj:`"gemma"`.
-        num_params (int, optional): An integer representing how many parameters
-            the HuggingFace model has, in billions. This is used to
-            automatically allocate the correct number of GPUs needed, given the
-            available GPU memory of your GPUs. If not specified, the number of
-            parameters is determined using the `huggingface_hub` module.
-        dtype (torch.dtype, optional): The data type to use for the LLM.
-            (default :obj: `torch.bfloat16`)
+    model_name (str): The HuggingFace model name
+    num_params (float, optional): An integer representing how many params the
+        HuggingFace model has, in billions. This is used to automatically
+        allocate the correct number of GPUs needed (using a rough heuristic),
+        given the available GPU memory of your GPUs.
+        If not specified, the number of parameters
+        is determined using the `huggingface_hub` module.
+    n_gpus (int, optional): Number of GPUs to use. Designed for advanced users
+        to select how many GPU's they want to set this manually and override the
+        automatic set up mechanism.
+    dtype (torch.dtype, optional): The data type to use for the LLM.
+        (default :obj: `torch.bfloat16`)
     """
     def __init__(
         self,
         model_name: str,
-        num_params: Optional[int] = None,
+        num_params: Optional[float] = None,
+        n_gpus: Optional[int] = None,
         dtype: Optional[torch.dtype] = torch.bfloat16,
     ) -> None:
         super().__init__()
@@ -71,17 +74,29 @@ class LLM(torch.nn.Module):
         self.model_name = model_name
 
         from transformers import AutoModelForCausalLM, AutoTokenizer
+        if n_gpus is None:
+            if num_params is None:
+                from huggingface_hub import get_safetensors_metadata
+                safetensors_metadata = get_safetensors_metadata(model_name)
+                param_count = safetensors_metadata.parameter_count
+                num_params = float(list(param_count.values())[0] // 10**9)
 
-        if num_params is None:
-            from huggingface_hub import get_safetensors_metadata
-            safetensors_metadata = get_safetensors_metadata(model_name)
-            param_count = safetensors_metadata.parameter_count
-            num_params = list(param_count.values())[0] // 10**9
-
-        # A rough heuristic on GPU memory requirements, e.g., we found that
-        # LLAMA2 (7B parameters) fits on a 85GB GPU.
-        required_memory = 85 * num_params / 7
-        kwargs = get_llm_kwargs(required_memory, dtype)
+            # A rough heuristic on GPU memory requirements, e.g., we found that
+            # LLAMA2 (7B parameters) fits on a 85GB GPU.
+            required_memory = 85 * num_params / 7
+            kwargs = get_llm_kwargs(required_memory, dtype)
+        else:
+            gpu_memory: List[int] = []
+            for i in range(n_gpus):
+                gpu_memory.append(torch.cuda.mem_get_info(i)[0] // 1024**3)
+            kwargs = {}
+            kwargs['max_memory'] = {
+                i: f'{memory}GiB'
+                for i, memory in enumerate(gpu_memory)
+            }
+            kwargs['low_cpu_mem_usage'] = True
+            kwargs['device_map'] = 'auto'
+            kwargs['torch_dtype'] = dtype
 
         print(f"Setting up '{model_name}' with configuration: {kwargs}")
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -99,7 +114,10 @@ class LLM(torch.nn.Module):
             self.autocast_context = nullcontext()
         else:
             self.device = self.llm.device
-            self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+            if dtype == torch.float32:
+                self.autocast_context = nullcontext()
+            else:
+                self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
 
     def _encode_inputs(
         self,
@@ -321,6 +339,7 @@ class LLM(torch.nn.Module):
                 bos_token_id=bos_token,
                 max_new_tokens=max_tokens,
                 attention_mask=attention_mask,
+                pad_token_id=self.tokenizer.eos_token_id,
                 use_cache=True,
             )
 
