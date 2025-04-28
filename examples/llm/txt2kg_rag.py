@@ -287,8 +287,8 @@ def make_dataset(args):
         # VectorDB retrieval just vanilla RAG
         # TODO add reranking NIM to VectorRAG
         query_loader = RAGQueryLoader(
-            graph_data=(fs, gs),
-            seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
+            graph_data=(fs,
+                        gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
             subgraph_filter=make_pcst_filter(triples, model),
             subgraph_filter_kwargs=subgraph_filter_kwargs,

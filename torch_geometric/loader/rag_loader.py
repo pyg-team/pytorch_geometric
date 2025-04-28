@@ -140,7 +140,8 @@ class RAGQueryLoader:
 
         # apply local filter
         if self.subgraph_filter:
-            data = self.subgraph_filter(data, query, **self.subgraph_filter_kwargs)
+            data = self.subgraph_filter(data, query,
+                                        **self.subgraph_filter_kwargs)
         if self.vector_retriever:
             data.text_context = retrieved_docs
         return data
