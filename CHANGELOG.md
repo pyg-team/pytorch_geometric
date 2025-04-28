@@ -9,9 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Adds TXT2KG class with example on HotPotQA ([#9846](https://github.com/pyg-team/pytorch_geometric/pull/9846))
 - Added PyTorch 2.6 support ([#10170](https://github.com/pyg-team/pytorch_geometric/pull/10170))
+- Added support for heterogenous graphs in `AttentionExplainer` ([#10169](https://github.com/pyg-team/pytorch_geometric/pull/10169))
 - Added support for heterogenous graphs in `PGExplainer` ([#10168](https://github.com/pyg-team/pytorch_geometric/pull/10168))
 - Added support for heterogenous graphs in `GNNExplainer` ([#10158](https://github.com/pyg-team/pytorch_geometric/pull/10158))
-- Added Graph Positional and Structural Encoder (GPSE) ([#9018](https://github.com/pyg-team/pytorch_geometric/pull/9018))
+- Added Graph Positional and Structural Encoder (GPSE) and example ([#9018](https://github.com/pyg-team/pytorch_geometric/pull/9018)) ([#10118](https://github.com/pyg-team/pytorch_geometric/pull/10118))
 - Added attract-repel link prediction example ([#10107](https://github.com/pyg-team/pytorch_geometric/pull/10107))
 - Added `ARLinkPredictor` for implementing Attract-Repel embeddings for link prediction ([#10105](https://github.com/pyg-team/pytorch_geometric/pull/10105))
 - Improving documentation for [cuGraph](https://github.com/rapidsai/cugraph) ([#10083](https://github.com/pyg-team/pytorch_geometric/pull/10083))
@@ -63,6 +64,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed `utils.group_cat` concatenating dimension ([#9766](https://github.com/pyg-team/pytorch_geometric/pull/9766))
 - Fixed `WebQSDataset.process` raising exceptions ([#9665](https://github.com/pyg-team/pytorch_geometric/pull/9665))
 - Fixed `is_node_attr()` and `is_edge_attr()` errors when `cat_dim` is a tuple ([#9895](https://github.com/pyg-team/pytorch_geometric/issues/9895))
+- Avoid GRetriever instantiation when num_gnn_layers == 0 ([#10156](https://github.com/pyg-team/pytorch_geometric/pull/10156))
 
 ### Removed
 
