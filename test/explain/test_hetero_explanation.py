@@ -158,11 +158,10 @@ def test_hetero_visualize_graph(tmp_path, hetero_data):
     assert osp.exists(path)
 
     # Test with custom visualization parameters
-    explanation.visualize_graph(path=path,
-                                            node_size_range=(20, 400),
-                                            node_opacity_range=(0.3, 0.9),
-                                            edge_width_range=(0.2, 3.0),
-                                            edge_opacity_range=(0.3, 0.9))
+    explanation.visualize_graph(path=path, node_size_range=(20, 400),
+                                node_opacity_range=(0.3, 0.9),
+                                edge_width_range=(0.2, 3.0),
+                                edge_opacity_range=(0.3, 0.9))
     assert osp.exists(path)
 
     # Test with node labels
