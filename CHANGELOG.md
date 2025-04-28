@@ -67,6 +67,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
+- Removed `SAMPLED_OP` flag from `torch_geometric/typing.py` ([#10023](https://github.com/pyg-team/pytorch_geometric/pull/10023))
+
 ## [2.6.0] - 2024-09-13
 
 ### Added
