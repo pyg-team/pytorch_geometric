@@ -9,7 +9,7 @@ from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
-class VectorRAG(Protocol):
+class VectorRetriever(Protocol):
     """Protocol for VectorRAG."""
     @abstractmethod
     def query(self, query: Any, **kwargs) -> Data:
@@ -17,7 +17,7 @@ class VectorRAG(Protocol):
         ...
 
 
-class DocumentRetriever(VectorRAG):
+class DocumentRetriever(VectorRetriever):
     """Retrieve documents from a vector database."""
     def __init__(self, raw_docs: List[str],
                  embedded_docs: Optional[Tensor] = None, k_for_docs: int = 2,

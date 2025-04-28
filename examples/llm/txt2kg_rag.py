@@ -261,7 +261,7 @@ def make_dataset(args):
         Tuning may be needed for custom data...
         """
 
-        vector_rag = DocumentRetriever(
+        vector_retriever = DocumentRetriever(
             context_docs, k_for_docs=args.k_for_docs, model=model,
             model_method_to_call="encode", model_kwargs={
                 "output_device": device,
@@ -274,7 +274,7 @@ def make_dataset(args):
         fanout = 100
         # number of hops for neighborsampling
         num_hops = 2
-        local_filter_kwargs = {
+        subgraph_filter_kwargs = {
             "topk": 5,  # nodes
             "topk_e": 5,  # edges
             "cost_e": .5,  # edge cost
@@ -287,10 +287,12 @@ def make_dataset(args):
         # VectorDB retrieval just vanilla RAG
         # TODO add reranking NIM to VectorRAG
         query_loader = RAGQueryLoader(
-            data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
+            graph_data=(fs, gs),
+            seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
-            local_filter=make_pcst_filter(triples, model),
-            local_filter_kwargs=local_filter_kwargs, vector_rag=vector_rag)
+            subgraph_filter=make_pcst_filter(triples, model),
+            subgraph_filter_kwargs=subgraph_filter_kwargs,
+            vector_retriever=vector_retriever)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
