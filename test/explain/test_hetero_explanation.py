@@ -145,7 +145,7 @@ def test_visualize_feature_importance(
 
 
 @withPackage('matplotlib', 'networkx')
-def test_visualize_explanation_graph(tmp_path, hetero_data):
+def test_hetero_visualize_graph(tmp_path, hetero_data):
     # Create explanation with both node and edge masks
     explanation = create_random_explanation(hetero_data,
                                             node_mask_type='object',
@@ -154,11 +154,11 @@ def test_visualize_explanation_graph(tmp_path, hetero_data):
     path = osp.join(tmp_path, 'explanation_graph.png')
 
     # Test with default parameters
-    explanation.visualize_explanation_graph(path=path)
+    explanation.visualize_graph(path=path)
     assert osp.exists(path)
 
     # Test with custom visualization parameters
-    explanation.visualize_explanation_graph(path=path,
+    explanation.visualize_graph(path=path,
                                             node_size_range=(20, 400),
                                             node_opacity_range=(0.3, 0.9),
                                             edge_width_range=(0.2, 3.0),
@@ -171,7 +171,7 @@ def test_visualize_explanation_graph(tmp_path, hetero_data):
         'author':
         [f'Author {i}' for i in range(hetero_data['author'].num_nodes)],
     }
-    explanation.visualize_explanation_graph(path=path, node_labels=node_labels)
+    explanation.visualize_graph(path=path, node_labels=node_labels)
     assert osp.exists(path)
 
     # Test with invalid number of labels
@@ -180,7 +180,7 @@ def test_visualize_explanation_graph(tmp_path, hetero_data):
         'author': ['Author 0', 'Author 1'],  # Too few labels
     }
     with pytest.raises(ValueError, match="Number of labels"):
-        explanation.visualize_explanation_graph(node_labels=invalid_labels)
+        explanation.visualize_graph(node_labels=invalid_labels)
 
     # Test with invalid node type in labels
     invalid_labels = {
@@ -190,4 +190,4 @@ def test_visualize_explanation_graph(tmp_path, hetero_data):
         'invalid_type': ['Invalid 0', 'Invalid 1'],  # Invalid node type
     }
     with pytest.raises(ValueError, match="Node type"):
-        explanation.visualize_explanation_graph(node_labels=invalid_labels)
+        explanation.visualize_graph(node_labels=invalid_labels)
