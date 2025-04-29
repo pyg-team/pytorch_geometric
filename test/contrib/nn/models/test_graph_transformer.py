@@ -14,11 +14,12 @@ from torch_geometric.contrib.nn.layers.transformer import (
 )
 from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.data import Batch, Data
+from torch_geometric.nn import GATConv, GCNConv, SAGEConv
 
 
-def make_simple_batch(feature_dim=8, num_nodes=3):
+def make_simple_batch(feature_dim=16, num_nodes=5):
     x = torch.randn(num_nodes, feature_dim)
-    edge_index = torch.empty((2, 0), dtype=torch.long)
+    edge_index = torch.combinations(torch.arange(num_nodes), r=2).t()
     return Batch.from_data_list([Data(x=x, edge_index=edge_index)])
 
 
@@ -672,3 +673,68 @@ def test_gnn_hook_called(gnn_position):
         assert execution_order == [
             "encoder", "gnn"
         ], (f"Expected gnn after encoder for 'post', got {execution_order}")
+
+
+@pytest.mark.parametrize(
+    "conv_cls, position", [
+        (GCNConv, "pre"),
+        (SAGEConv, "post"),
+        (GATConv, "pre"),
+    ]
+)
+def test_gnn_block_with_real_conv(conv_cls, position):
+    """Verify that real PyG conv layers can be used as gnn_block,
+    that they run without error, change the logits, and preserve shape.
+    """
+    torch.manual_seed(0)
+    batch = make_simple_batch(feature_dim=16, num_nodes=5)
+
+    # instantiate a single-head conv to match hidden_dim
+    def gnn_block(data, x):
+        conv = conv_cls(x.size(-1), x.size(-1))
+        return conv(x, data.edge_index)
+
+    # baseline model without hook
+    base = GraphTransformer(hidden_dim=16, num_class=4, num_encoder_layers=2)
+    out_base = base(batch)["logits"]
+
+    # model with GNN hook
+    model = GraphTransformer(
+        hidden_dim=16,
+        num_class=4,
+        num_encoder_layers=2,
+        gnn_block=gnn_block,
+        gnn_position=position,
+    )
+    out = model(batch)["logits"]
+
+    # Shape should be unchanged
+    assert out.shape == out_base.shape
+
+    # But logits should differ when a non-trivial GNN is applied
+    assert not torch.allclose(out, out_base), \
+        f"Logits must change when using {conv_cls.__name__} at {position}"
+
+
+def test_gnn_block_multi_layer_mlp():
+    """Test a custom 2-layer MLP block as gnn_block in 'post' position."""
+    torch.manual_seed(0)
+    batch = make_simple_batch(feature_dim=8, num_nodes=4)
+
+    def mlp_block(data, x):
+        x = nn.Linear(x.size(-1), x.size(-1))(x)
+        return nn.ReLU()(nn.Linear(x.size(-1), x.size(-1))(x))
+
+    base = GraphTransformer(hidden_dim=8, num_class=3, num_encoder_layers=1)
+    out_base = base(batch)["logits"]
+
+    model = GraphTransformer(
+        hidden_dim=8,
+        num_class=3,
+        num_encoder_layers=1,
+        gnn_block=mlp_block,
+        gnn_position="post",
+    )
+    out = model(batch)["logits"]
+    assert out.shape == out_base.shape
+    assert not torch.allclose(out, out_base)
