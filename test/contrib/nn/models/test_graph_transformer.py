@@ -5,11 +5,36 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
+from torch_geometric.contrib.nn.bias import GraphAttnSpatialBias
 from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoderLayer,
 )
 from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.data import Batch, Data
+
+
+def make_batch_with_spatial(
+    batch_size: int,
+    seq_len: int,
+    num_spatial: int,
+    feature_dim: int = 1,
+) -> Batch:
+    """Create a Batch of graphs each carrying spatial_pos and x."""
+    data_list = []
+    for _ in range(batch_size):
+        # spatial distances
+        spatial_pos = torch.randint(0, num_spatial, (seq_len, seq_len))
+        # node features of the requested dimension
+        x = torch.randn(seq_len, feature_dim)
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        data_list.append(
+            Data(
+                x=x,
+                spatial_pos=spatial_pos,
+                edge_index=edge_index,
+            )
+        )
+    return Batch.from_data_list(data_list)
 
 
 class AddOneLayer(nn.Module):
@@ -395,3 +420,39 @@ def test_spatial_bias_shifts_logits():
 
     assert not torch.allclose(out1, out2, rtol=1e-4), \
         "Logits should differ when using spatial bias"
+
+
+def test_bias_provider_api():
+    """Test that using attention bias providers changes the model output."""
+    torch.manual_seed(12345)
+    num_spatial = 8
+    seq_len = 6
+    feature_dim = 16
+
+    batch = make_batch_with_spatial(
+        1, seq_len, num_spatial, feature_dim=feature_dim
+    )
+
+    # Create models with and without bias provider
+    model_no_bias = GraphTransformer(
+        hidden_dim=16,
+        num_class=2,
+        num_encoder_layers=1,
+    )
+    model_with_bias = GraphTransformer(
+        hidden_dim=16,
+        num_class=2,
+        num_encoder_layers=1,
+        attn_bias_providers=[GraphAttnSpatialBias(4, num_spatial)]
+    )
+
+    # Compare outputs
+    model_no_bias.eval()
+    model_with_bias.eval()
+
+    with torch.no_grad():
+        out1 = model_no_bias(batch)["logits"]
+        out2 = model_with_bias(batch)["logits"]
+
+    assert not torch.allclose(out1, out2, rtol=1e-4), \
+        "Outputs should differ when using attention bias providers"

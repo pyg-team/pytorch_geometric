@@ -2,6 +2,7 @@ from typing import Callable, Optional, Sequence
 
 import torch
 import torch.nn as nn
+from torch.nn import ModuleList
 
 from torch_geometric.contrib.nn.bias.base import BiasProvider
 from torch_geometric.contrib.nn.layers.transformer import (
@@ -18,15 +19,16 @@ class GraphTransformer(torch.nn.Module):
     An Overview from Architecture Perspective"
     <https://arxiv.org/pdf/2202.08455>_ paper.
     """
+
     def __init__(
-            self,
-            hidden_dim: int = 16,
-            num_class: int = 2,
-            use_super_node: bool = False,
-            node_feature_encoder=nn.Identity(),
-            num_encoder_layers: int = 0,
-            degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
-            attn_bias_providers: Sequence[BiasProvider] = (),
+        self,
+        hidden_dim: int = 16,
+        num_class: int = 2,
+        use_super_node: bool = False,
+        node_feature_encoder=nn.Identity(),
+        num_encoder_layers: int = 0,
+        degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
+        attn_bias_providers: Sequence[BiasProvider] = (),
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
@@ -36,11 +38,12 @@ class GraphTransformer(torch.nn.Module):
         self.node_feature_encoder = node_feature_encoder
         self.degree_encoder = degree_encoder
         encoder_layer = GraphTransformerEncoderLayer(hidden_dim)
-        self.encoder = (GraphTransformerEncoder(encoder_layer,
-                                                num_encoder_layers)
-                        if num_encoder_layers > 0 else encoder_layer)
+        self.encoder = (
+            GraphTransformerEncoder(encoder_layer, num_encoder_layers)
+            if num_encoder_layers > 0 else encoder_layer
+        )
         self.is_encoder_stack = num_encoder_layers > 0
-        self.attn_bias_providers = list(attn_bias_providers)
+        self.attn_bias_providers = ModuleList(attn_bias_providers)
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
@@ -52,8 +55,9 @@ class GraphTransformer(torch.nn.Module):
             return global_mean_pool(x, batch)
 
     @torch.jit.ignore
-    def _add_cls_token(self, x: torch.Tensor,
-                       batch: torch.Tensor) -> torch.Tensor:
+    def _add_cls_token(
+        self, x: torch.Tensor, batch: torch.Tensor
+    ) -> torch.Tensor:
         """Prepends the learnable class token to every graph's node embeddings.
 
         Args:
@@ -76,8 +80,8 @@ class GraphTransformer(torch.nn.Module):
 
     @torch.jit.ignore
     def _prepend_cls_token_flat(
-            self, x: torch.Tensor,
-            batch: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        self, x: torch.Tensor, batch: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Return (x_with_cls_flat, new_batch).
 
         Args:
@@ -116,8 +120,9 @@ class GraphTransformer(torch.nn.Module):
         return x
 
     @torch.jit.ignore
-    def _apply_extra_encoders(self, data: Data,
-                              x: torch.Tensor) -> torch.Tensor:
+    def _apply_extra_encoders(
+        self, data: Data, x: torch.Tensor
+    ) -> torch.Tensor:
         """Apply additional encoders (e.g. degree encoder) to node features.
 
         Args:
@@ -181,8 +186,9 @@ class GraphTransformer(torch.nn.Module):
             legacy = data.bias
             # cast bool→float, leave floats as-is
             masks.append(
-                legacy.to(torch.float32
-                          ) if not torch.is_floating_point(legacy) else legacy)
+                legacy.to(torch.float32)
+                if not torch.is_floating_point(legacy) else legacy
+            )
 
         for prov in self.attn_bias_providers:
             m = prov(data)
@@ -191,4 +197,6 @@ class GraphTransformer(torch.nn.Module):
 
         if not masks:
             return None
-        return torch.stack(masks, dim=0).sum(dim=0)
+        return torch.stack(
+            masks, dim=0
+        ).sum(dim=0).to(data.x.dtype).to(data.x.device)
