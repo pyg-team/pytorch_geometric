@@ -10,15 +10,17 @@ try:
 except ImportError:
     BatchEncoding = Dict
 
-BOS = '<s>[INST]'
-EOS_USER = '[/INST]'
-EOS = '[/s]'
 IGNORE_INDEX = -100
 MAX_TXT_LEN = 512
 MAX_NEW_TOKENS = 32
 PAD_TOKEN_ID = 0
 PADDING_SIDE = 'left'
 
+
+# legacy constants - used for Llama 2 style prompting
+BOS = '<s>[INST]'
+EOS_USER = '[/INST]'
+EOS = '[/s]'
 
 def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
     torch.cuda.empty_cache()
@@ -106,8 +108,26 @@ class LLM(torch.nn.Module):
             model_name,
             use_fast=False,
         )
-        self.tokenizer.pad_token_id = PAD_TOKEN_ID
-        self.tokenizer.padding_side = PADDING_SIDE
+        if self.tokenizer.chat_template and self.tokenizer.bos_token is None:
+            dummy_convo = [
+                {
+                    "role": "system",
+                        "content": "dummy"
+                    },
+                    {
+                        "role": "user",
+                        "content": "convo"
+                    },
+            ]
+            text = self.tokenizer.apply_chat_template(
+                dummy_convo,
+                tokenize=True,
+            )
+            self.tokenizer.bos_token = self.tokenizer.decode(text[0])
+        if self.tokenizer.pad_token_id is None:
+            self.tokenizer.pad_token_id = PAD_TOKEN_ID
+        if self.tokenizer.padding_side is None:
+            self.tokenizer.padding_side = PADDING_SIDE
         self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
         self.word_embedding = self.llm.model.get_input_embeddings()
         if sys_prompt is not None:
@@ -124,6 +144,7 @@ class LLM(torch.nn.Module):
             else:
                 self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
 
+    # legacy function - used for Llama 2 style prompting
     def _encode_inputs(
         self,
         question: List[str],
@@ -157,6 +178,7 @@ class LLM(torch.nn.Module):
         label_input_ids = label_input_ids + eos_tokens.input_ids
         return label_input_ids
 
+    # legacy function - used for Llama 2 style prompting
     def _input_ids(
         self,
         i: int,
@@ -171,6 +193,7 @@ class LLM(torch.nn.Module):
         input_ids += eos_user_tokens.input_ids
         return input_ids
 
+    # legacy function - used for Llama 2 style prompting
     def _inputs_embeds(
         self,
         i: int,
@@ -230,19 +253,14 @@ class LLM(torch.nn.Module):
                                            device=self.device)
         return inputs_embeds, attention_mask, label_input_ids
 
-    def _get_embeds(
+    # legacy function - used for Llama 2 style prompting
+    def _get_embeds_old(
         self,
         question: List[str],
         context: Optional[List[str]] = None,
         embedding: Optional[List[Tensor]] = None,
         answer: Optional[List[str]] = None,
     ) -> tuple:
-        if self.tokenizer.chat_template and self.sys_prompt:
-            return self._get_embeds_with_template(question, context, embedding,
-                                                  answer)
-        warnings.warn(f"HuggingFace model {self.model_name} is not using a "
-                      "chat template, using Llama 2 style prompting. Please "
-                      "consider using a more recent model.")
         (batch_size, question, context, eos_user_tokens, bos_embeds,
          pad_embeds) = self._encode_inputs(question, context)
 
@@ -283,13 +301,19 @@ class LLM(torch.nn.Module):
 
         return inputs_embeds, attention_mask, label_input_ids
 
-    def _get_embeds_with_template(
+    def _get_embeds(
         self,
         question: List[str],
         context: Optional[List[str]] = None,
         embedding: Optional[List[Tensor]] = None,
         answer: Optional[List[str]] = None,
     ) -> tuple:
+        if not self.tokenizer.chat_template or not self.sys_prompt:
+            warnings.warn(f"HuggingFace model {self.model_name} is not using a "
+                        "chat template, using Llama 2 style prompting. Please "
+                        "consider using a more recent model and initialize the "
+                        "LLM with `sys_prompt`.")
+            return self._get_embeds_old(question, context, embedding, answer)
         batch_label_input_ids = None
         if answer is not None:
             label = self.tokenizer(answer, add_special_tokens=False)
@@ -314,6 +338,7 @@ class LLM(torch.nn.Module):
                 messages,
                 tokenize=False,
                 add_generation_prompt=True,
+                enable_thinking=True,
             )
             text = text[len(self.tokenizer.bos_token):]
             input_ids = self.tokenizer(text,
