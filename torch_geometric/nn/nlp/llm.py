@@ -112,27 +112,6 @@ class LLM(torch.nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
         if sys_prompt is not None:
             self.sys_prompt = sys_prompt
-        if hasattr(self.tokenizer, 'chat_template'):
-            dummy_message = [{
-                "role": "system",
-                "content": "DUMMY"
-            }, {
-                "role": "user",
-                "content": "MESSAGE"
-            }]
-            dummy_text = self.tokenizer.apply_chat_template(
-                dummy_message,
-                tokenize=False,
-                add_generation_prompt=False,
-            )
-            dummy_text_with_gen_prompt = self.tokenizer.apply_chat_template(
-                dummy_message,
-                tokenize=False,
-                add_generation_prompt=True,
-            )
-            self.gen_prompt = dummy_text_with_gen_prompt[len(dummy_text):]
-        else:
-            self.gen_prompt = None
 
         if 'max_memory' not in kwargs:  # Pure CPU:
             warnings.warn("LLM is being used on CPU, which may be slow")
@@ -258,7 +237,7 @@ class LLM(torch.nn.Module):
         embedding: Optional[List[Tensor]] = None,
         answer: Optional[List[str]] = None,
     ) -> tuple:
-        if self.gen_prompt is not None:
+        if self.tokenizer.apply_chat_template:
             return self._get_embeds_with_template(question, context, embedding,
                                                   answer)
         (batch_size, question, context, eos_user_tokens, bos_embeds,
