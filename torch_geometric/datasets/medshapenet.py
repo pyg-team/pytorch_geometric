@@ -7,7 +7,6 @@ import torch
 
 from torch_geometric.data import Data, InMemoryDataset
 
-
 class MedShapeNet(InMemoryDataset):
     r"""The MedShapeNet datasets from the `"MedShapeNet -- A Large-Scale
     Dataset of 3D Medical Shapes for Computer Vision"
@@ -28,8 +27,6 @@ class MedShapeNet(InMemoryDataset):
         root (str): Root directory where the dataset should be saved.
         size (int): Number of invividual 3D structures to download per
             type (classes).
-        train (bool, optional): If :obj:`True`, loads the training dataset,
-            otherwise the test dataset. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -49,7 +46,6 @@ class MedShapeNet(InMemoryDataset):
         self,
         root: str,
         size: int = 100,
-        split: str = 'train',
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
@@ -58,12 +54,8 @@ class MedShapeNet(InMemoryDataset):
         self.size = size
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        if split == 'train':
-            path = self.processed_paths[0]
-        elif split == 'val':
-            path = self.processed_paths[1]
-        else:
-            path = self.processed_paths[2]
+        
+        path = self.processed_paths[0]
         self.load(path)
 
     @property
@@ -75,7 +67,7 @@ class MedShapeNet(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ['train.pt', 'val', 'test.pt']
+        return ['dataset.pt']
 
     @property
     def raw_paths(self) -> List[str]:
@@ -90,9 +82,8 @@ class MedShapeNet(InMemoryDataset):
     def process(self) -> None:
         import urllib3
         from MedShapeNet import MedShapeNet as msn
-        from torch.utils.data import random_split
 
-        msn_instance = msn()
+        msn_instance = msn(timeout=120)
 
         urllib3.HTTPConnectionPool("medshapenet.ddns.net", maxsize=50)
 
@@ -105,24 +96,12 @@ class MedShapeNet(InMemoryDataset):
                     'medshapenetcore/FaceVR'
                 ], list_of_datasets))
 
-        train_size = int(0.7 * self.size)  # 70% for training
-        val_size = int(0.15 * self.size)  # 15% for validation
-        test_size = self.size - train_size - val_size  # Remainder for testing
-
-        train_list, val_list, test_list = [], [], []
         for dataset in list_of_datasets:
             self.newpath = self.root + '/' + dataset.split("/")[1]
             if not os.path.exists(self.newpath):
                 os.makedirs(self.newpath)
             stl_files = msn_instance.dataset_files(dataset, '.stl')
             stl_files = stl_files[:self.size]
-
-            train_data, val_data, test_data = random_split(
-                stl_files, [train_size, val_size, test_size])
-
-            train_list.extend([stl_files[idx] for idx in train_data.indices])
-            val_list.extend([stl_files[idx] for idx in val_data.indices])
-            test_list.extend([stl_files[idx] for idx in test_data.indices])
 
             for stl_file in stl_files:
                 msn_instance.download_stl_as_numpy(bucket_name=dataset,
@@ -141,8 +120,7 @@ class MedShapeNet(InMemoryDataset):
             'ToothFairy': 7
         }
 
-        for dataset, path in zip([train_list, val_list, test_list],
-                                 self.processed_paths):
+        for dataset, path in stl_files, self.processed_paths:
             data_list = []
             for item in dataset:
                 class_name = item.split("/")[0]

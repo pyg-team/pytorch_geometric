@@ -47,14 +47,19 @@ if args.dataset == 'modelnet40':
     print('Loading test data')
     test_dataset = ModelNet(root, '40', False, transform, pre_transform)
 elif args.dataset == 'medshapenet':
-    print('Loading training data')
-    train_dataset = MedShapeNet(root=root, size=50, split="train",
+    print('Loading dataset')
+    dataset = MedShapeNet(root=root, size=50,
                                 pre_transform=pre_transform,
                                 transform=transform, force_reload=False)
-    print('Loading test data')
-    test_dataset = MedShapeNet(root=root, size=50, split="test",
-                               pre_transform=pre_transform,
-                               transform=transform, force_reload=False)
+    
+    seed = 42
+    generator = torch.Generator().manual_seed(seed)
+
+    train_size = int(0.7 * len(dataset))
+    test_size = len(dataset) - train_size
+    train_dataset, test_dataset = torch.utils.data.random_split(dataset, 
+                                [train_size, test_size], generator=generator)
+                                
 else:
     print('Loading training data')
     train_dataset = ModelNet(root, '10', True, transform, pre_transform)
