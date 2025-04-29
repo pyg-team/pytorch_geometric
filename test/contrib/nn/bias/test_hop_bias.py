@@ -128,8 +128,11 @@ def test_hop_bias_config(num_heads, num_hops, use_super_node):
     )
     batch = make_batch_with_hop(batch_size, seq_len, num_hops, feature_dim=1)
     bias = bias_provider(batch)
+    expected_seq_len = seq_len + (1 if use_super_node else 0)
 
-    assert bias.shape == (batch_size, num_heads, seq_len, seq_len)
+    assert bias.shape == (
+        batch_size, num_heads, expected_seq_len, expected_seq_len
+    )
     assert bias.dtype == torch.float32
 
     if use_super_node:

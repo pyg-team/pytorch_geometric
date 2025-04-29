@@ -47,6 +47,7 @@ class GraphAttnSpatialBias(nn.Module):
         self.use_super_node = use_super_node
         # Reserve an extra embedding index if using a super node
         self.num_spatial = num_spatial + (1 if use_super_node else 0)
+        self.super_idx = self.num_spatial - 1 if use_super_node else None
 
         self.spatial_embeddings = nn.Embedding(self.num_spatial, num_heads)
         init.xavier_uniform_(self.spatial_embeddings.weight)
@@ -119,19 +120,25 @@ class GraphAttnSpatialBias(nn.Module):
     def _inject_super_node_index(
         self, spatial_pos: torch.LongTensor
     ) -> torch.LongTensor:
-        """Map row=0 or col=0 entries to the reserved super-node index.
+        """Injects the super node index into the spatial positions tensor.
 
         Args:
-            spatial_pos (torch.LongTensor): Tensor of shape (B, L, L)
-                containing spatial distances.
+            spatial_pos (torch.LongTensor): The spatial positions tensor of
+                shape (B, L, L).
 
         Returns:
-            torch.LongTensor: Updated tensor with super-node index
-                injected for row=0 or col=0 entries.
+            torch.LongTensor: The modified spatial positions tensor with
+                super node index injected, shape (B, L', L') where L' = L + 1
+                if use_super_node is True, otherwise L' = L.
 
         """
-        mask = torch.zeros_like(spatial_pos, dtype=torch.bool)
-        mask[:, 0, :] = True
-        mask[:, :, 0] = True
-        super_idx = self.num_spatial - 1
-        return torch.where(mask, super_idx, spatial_pos)
+        B, L, _ = spatial_pos.shape
+        new_L = L + 1 if self.use_super_node else L
+        padded = torch.full(
+            (B, new_L, new_L),
+            fill_value=self.super_idx,
+            dtype=spatial_pos.dtype,
+            device=spatial_pos.device
+        )
+        padded[:, 1:, 1:] = spatial_pos
+        return padded

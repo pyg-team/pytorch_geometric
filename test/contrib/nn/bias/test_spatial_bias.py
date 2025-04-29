@@ -154,7 +154,10 @@ def test_spatial_bias_config(num_heads, num_spatial, use_super_node):
     )
 
     bias = bias_provider(batch)
-    assert bias.shape == (batch_size, num_heads, seq_len, seq_len)
+    expected_seq_len = seq_len + (1 if use_super_node else 0)
+    assert bias.shape == (
+        batch_size, num_heads, expected_seq_len, expected_seq_len
+    )
     assert bias.dtype == torch.float32
 
     if use_super_node:
