@@ -13,6 +13,11 @@ from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoderLayer,
 )
 from torch_geometric.contrib.nn.models import GraphTransformer
+from torch_geometric.contrib.nn.positional import (
+    DegreeEncoder,
+    EigEncoder,
+    SVDEncoder,
+)
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import GATConv, GCNConv, SAGEConv
 
@@ -397,3 +402,45 @@ def test_positional_encoders(simple_batch):
     hook = model.encoder.register_forward_hook(check_hook)
     _ = model(batch)
     hook.remove()
+
+
+def test_combined_positional_encoders(simple_batch):
+    """Test GraphTransformer with degree, eigen and SVD positional encoders."""
+    # Create a test batch with known structural features
+    batch = simple_batch(feat_dim=16, num_nodes=4)
+    batch.in_degree = torch.tensor([1, 2, 2, 1])
+    batch.out_degree = torch.tensor([2, 1, 1, 2])
+    batch.eig_pos_emb = torch.randn(4, 3)  # 3 eigenvectors
+    batch.svd_pos_emb = torch.randn(4, 6)  # r=3 -> 6 features [U,V]
+
+    # Create model with all three encoders
+
+    encoders = [
+        DegreeEncoder(num_in=3, num_out=3, hidden_dim=16),
+        EigEncoder(num_eigvec=3, hidden_dim=16),
+        SVDEncoder(r=3, hidden_dim=16)
+    ]
+
+    model = GraphTransformer(
+        hidden_dim=16, num_class=2, positional_encoders=encoders
+    )
+
+    # Verify basic shapes and execution
+    out = model(batch)["logits"]
+    assert out.shape == (1, 2)
+
+    # Verify encoders affect output
+    # Remove one encoder and check outputs differ
+    reduced = GraphTransformer(
+        hidden_dim=16, num_class=2, positional_encoders=encoders[:-1]
+    )
+
+    out2 = reduced(batch)["logits"]
+    assert not torch.allclose(out, out2)
+
+    # Verify gradients flow through encoders
+    loss = out.sum()
+    loss.backward()
+    for enc in encoders:
+        for p in enc.parameters():
+            assert p.grad is not None
