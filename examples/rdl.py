@@ -87,7 +87,6 @@ elif known_args.dataset == "rel-avito":
                       choices=["user-visits", "user-clicks", "ad-ctr"])
 
 # Data loader arguments
-args.add_argument("--time_attr", type=str, default="time")
 args.add_argument("--batch_size", type=int, default=512)
 args.add_argument("--temporal_strategy", type=str, default="uniform",
                   choices=["uniform", "last"])
@@ -628,7 +627,7 @@ if __name__ == "__main__":
             num_neighbors=num_neighbors_dict,
             input_nodes=table_input.nodes,
             input_time=table_input.time,
-            time_attr=args.time_attr,
+            time_attr="time",
             transform=table_input.transform,
             batch_size=args.batch_size,
             temporal_strategy=args.temporal_strategy,
