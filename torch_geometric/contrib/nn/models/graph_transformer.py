@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Sequence
+from typing import Callable, Literal, Optional, Sequence
 
 import torch
 import torch.nn as nn
@@ -29,6 +29,9 @@ class GraphTransformer(torch.nn.Module):
         num_encoder_layers: int = 0,
         degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
         attn_bias_providers: Sequence[BaseBiasProvider] = (),
+        gnn_block: Optional[Callable[[Data, torch.Tensor],
+                                     torch.Tensor]] = None,
+        gnn_position: Literal['pre', 'post'] = 'pre'
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
@@ -44,6 +47,8 @@ class GraphTransformer(torch.nn.Module):
         )
         self.is_encoder_stack = num_encoder_layers > 0
         self.attn_bias_providers = ModuleList(attn_bias_providers)
+        self.gnn_block = gnn_block
+        self.gnn_position = gnn_position
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
@@ -149,7 +154,8 @@ class GraphTransformer(torch.nn.Module):
         x = data.x
         x = self._encode_nodes(x)
         x = self._apply_extra_encoders(data, x)
-
+        if self.gnn_block is not None and self.gnn_position == 'pre':
+            x = self.gnn_block(data, x)
         if self.use_super_node:
             x, batch_vec = self._prepend_cls_token_flat(x, data.batch)
         else:
@@ -164,6 +170,9 @@ class GraphTransformer(torch.nn.Module):
                 x = self.encoder(x, batch_vec, struct_mask, key_pad)
             else:
                 x = self.encoder(x, batch_vec, struct_mask)
+
+        if self.gnn_block is not None and self.gnn_position == 'post':
+            x = self.gnn_block(data, x)
 
         x = self._readout(x, batch_vec)
         logits = self.classifier(x)
