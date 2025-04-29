@@ -265,6 +265,73 @@ def test_homogeneous_neighbor_sampler_backwards(input_type):
 
 @onlyNeighborSampler
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
+def test_homogeneous_neighbor_sampler_weighted_backwards(input_type):
+    graph_to_sample = _init_graph_to_sample(input_type, hetero=False)
+    reverse_graph_to_sample = _init_graph_to_sample(input_type, hetero=False,
+                                                    reverse=True)
+
+    sampler_kwargs = {
+        'data': graph_to_sample,
+        'num_neighbors': [1, 1],
+        'weight_attr': 'weight',
+        'sample_direction': 'backward'
+    }
+    reverse_sampler_kwargs = {
+        'data': reverse_graph_to_sample,
+        'num_neighbors': [1, 1],
+        'weight_attr': 'weight',
+        'sample_direction': 'forward',
+    }
+
+    if input_type == 'remote':
+        with pytest.raises(NotImplementedError):
+            NeighborSampler(**sampler_kwargs)
+        return
+
+    graph_to_sample['weight'] = torch.tensor([1.0, 0.0, 1.0])
+    reverse_graph_to_sample['weight'] = torch.tensor([1.0, 0.0, 1.0])
+
+    node_sampler_input = NodeSamplerInput(input_id=None,
+                                          node=torch.tensor([0]))
+
+    # Sampling from Alice should yield Bob
+    backward_sampler = NeighborSampler(**sampler_kwargs)
+    backward_sampler_output = backward_sampler.sample_from_nodes(
+        node_sampler_input)
+
+    reverse_sampler = NeighborSampler(**reverse_sampler_kwargs)
+    reverse_sampler_output = reverse_sampler.sample_from_nodes(
+        node_sampler_input)
+
+    assert torch.equal(backward_sampler_output.node,
+                       reverse_sampler_output.node)
+    assert torch.equal(backward_sampler_output.row, reverse_sampler_output.col)
+    assert torch.equal(backward_sampler_output.col, reverse_sampler_output.row)
+    assert torch.equal(backward_sampler_output.edge,
+                       reverse_sampler_output.edge)
+
+    graph_to_sample['weight'] = torch.tensor([0.0, 1.0, 1.0])
+    reverse_graph_to_sample['weight'] = torch.tensor([0.0, 1.0, 1.0])
+
+    # Sampling from Alice should yield Carol and Dave
+    backward_sampler = NeighborSampler(**sampler_kwargs)
+    backward_sampler_output = backward_sampler.sample_from_nodes(
+        node_sampler_input)
+
+    reverse_sampler = NeighborSampler(**reverse_sampler_kwargs)
+    reverse_sampler_output = reverse_sampler.sample_from_nodes(
+        node_sampler_input)
+
+    assert torch.equal(backward_sampler_output.node,
+                       reverse_sampler_output.node)
+    assert torch.equal(backward_sampler_output.row, reverse_sampler_output.col)
+    assert torch.equal(backward_sampler_output.col, reverse_sampler_output.row)
+    assert torch.equal(backward_sampler_output.edge,
+                       reverse_sampler_output.edge)
+
+
+@onlyNeighborSampler
+@pytest.mark.parametrize('input_type', ['data', 'remote'])
 def test_heterogeneous_neighbor_sampler_backwards(input_type):
     graph_to_sample = _init_graph_to_sample(input_type, hetero=True)
 
@@ -498,16 +565,6 @@ def test_neighbor_sampler_backwards_not_supported(input_type, hetero):
         'num_neighbors': [1],
         'sample_direction': 'backward',
         'time_attr': 'time'
-    }
-
-    with pytest.raises(NotImplementedError):
-        NeighborSampler(**sampler_kwargs)
-
-    sampler_kwargs = {
-        'data': graph_to_sample,
-        'num_neighbors': [1],
-        'sample_direction': 'backward',
-        'weight_attr': 'weight'
     }
 
     with pytest.raises(NotImplementedError):

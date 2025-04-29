@@ -78,10 +78,6 @@ class NeighborSampler(BaseSampler):
                 raise NotImplementedError(
                     "Temporal Sampling not yet supported for backward sampling"
                 )
-            if weight_attr is not None:
-                raise NotImplementedError(
-                    "Weighted Sampling not yet supported for backward sampling"
-                )
 
         if self.data_type == DataType.homogeneous:
             self.num_nodes = data.num_nodes
