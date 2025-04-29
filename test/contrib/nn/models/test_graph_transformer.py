@@ -456,3 +456,57 @@ def test_bias_provider_api():
 
     assert not torch.allclose(out1, out2, rtol=1e-4), \
         "Outputs should differ when using attention bias providers"
+
+
+def test_super_node_bias():
+    """Test spatial bias provider properly handles super node attention."""
+    torch.manual_seed(12345)
+
+    # Create tiny graph
+    num_spatial = 4
+    seq_len = 2  # Just 2 nodes
+    feature_dim = 8
+    num_heads = 4
+
+    batch = make_batch_with_spatial(
+        1, seq_len, num_spatial, feature_dim=feature_dim
+    )
+
+    # Model with both super node and spatial bias
+    model_with_bias = GraphTransformer(
+        hidden_dim=feature_dim,
+        num_class=2,
+        num_encoder_layers=1,
+        use_super_node=True,
+        attn_bias_providers=[
+            GraphAttnSpatialBias(
+                num_heads=num_heads,
+                num_spatial=num_spatial,
+                use_super_node=True
+            )
+        ]
+    )
+
+    # Same model without bias provider
+    model_no_bias = GraphTransformer(
+        hidden_dim=feature_dim,
+        num_class=2,
+        num_encoder_layers=1,
+        use_super_node=True
+    )
+
+    # Compare outputs
+    model_with_bias.eval()
+    model_no_bias.eval()
+
+    with torch.no_grad():
+        out1 = model_no_bias(batch)["logits"]
+        out2 = model_with_bias(batch)["logits"]
+
+    assert not torch.allclose(out1, out2, rtol=1e-4), \
+        "Outputs should differ when using spatial bias with super node"
+
+    bias = model_with_bias.attn_bias_providers[0](batch)
+    expected = (1, num_heads, seq_len + 1, seq_len + 1)
+    assert bias.shape == expected, \
+        f"Expected bias shape {expected}, got {tuple(bias.shape)}"
