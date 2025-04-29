@@ -129,7 +129,14 @@ def parse_args():
     return parser.parse_args()
 
 
-prompt_template = """Answer this question based on retrieved contexts. Just give the answer without explanation.
+# Answer this question based on retrieved contexts. Just give the answer without explanation.
+
+sys_prompt = (
+    "You are an expert assistant that can answer "
+    "any question from its knowledge, given a knowledge graph embedding and "
+    "it's textualized context. Just give the answer, without explanation.")
+
+prompt_template = """
     [QUESTION]
     {question}
     [END_QUESTION]
@@ -137,8 +144,7 @@ prompt_template = """Answer this question based on retrieved contexts. Just give
     [RETRIEVED_CONTEXTS]
     {context}
     [END_RETRIEVED_CONTEXTS]
-
-    Answer: """
+    """
 
 
 def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
@@ -343,19 +349,22 @@ def train(args, data_lists):
     gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
               out_channels=1024, num_layers=num_gnn_layers, heads=4)
     if args.llm_generator_mode == "full":
-        llm = LLM(model_name=args.llm_generator_name, n_gpus=args.num_gpus)
+        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
+                  n_gpus=args.num_gpus)
         model = GRetriever(llm=llm, gnn=gnn)
     elif args.llm_generator_mode == "lora":
-        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32,
-                  n_gpus=args.num_gpus)
+        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
+                  dtype=torch.float32, n_gpus=args.num_gpus)
         model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     else:
         # frozen
-        llm = LLM(model_name=args.llm_generator_name, dtype=torch.float32,
-                  n_gpus=args.num_gpus).eval()
+        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
+                  dtype=torch.float32, n_gpus=args.num_gpus).eval()
+
         for _, p in llm.named_parameters():
             p.requires_grad = False
         model = GRetriever(llm=llm, gnn=gnn)
+
     save_name = "tech-qa-model.pt"
     if os.path.exists(save_name) and not args.regenerate_dataset:
         print("Re-using saved G-retriever model for testing...")
@@ -395,11 +404,11 @@ def train(args, data_lists):
                                              step / len(train_loader) + epoch,
                                              args.epochs)
                     optimizer.step()
-                    epoch_loss += float(loss)
+                    epoch_loss += float(loss.detach())
 
                     if args.wandb and (step + 1) % args.log_steps == 0:
                         wandb.log({
-                            "train/loss": float(loss),
+                            "train/loss": float(loss.detach()),
                             "train/lr": optimizer.param_groups[0]['lr'],
                         })
 
@@ -418,7 +427,6 @@ def train(args, data_lists):
             print("seq_len max: ", max(model.seq_length_stats))
             print("Percent of OOM errors: ",
                   num_oom_errors / len(train_loader))
-
             train_loss = epoch_loss / len(train_loader)
             print(epoch_str + f', Train Loss: {train_loss:4f}')
 
