@@ -31,7 +31,7 @@ class GraphTransformer(torch.nn.Module):
         attn_bias_providers: Sequence[BaseBiasProvider] = (),
         gnn_block: Optional[Callable[[Data, torch.Tensor],
                                      torch.Tensor]] = None,
-        gnn_position: Literal['pre', 'post'] = 'pre'
+        gnn_position: Literal['pre', 'post', 'parallel'] = 'pre'
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
@@ -154,13 +154,19 @@ class GraphTransformer(torch.nn.Module):
         x = data.x
         x = self._encode_nodes(x)
         x = self._apply_extra_encoders(data, x)
+
         if self.gnn_block is not None and self.gnn_position == 'pre':
             x = self.gnn_block(data, x)
         if self.use_super_node:
             x, batch_vec = self._prepend_cls_token_flat(x, data.batch)
         else:
             batch_vec = data.batch
+
         struct_mask = self._collect_attn_bias(data)
+
+        if self.gnn_block and self.gnn_position == 'parallel':
+            x_in = x
+
         if self.is_encoder_stack:
             x = self.encoder(x, batch_vec, struct_mask)
         else:
@@ -173,6 +179,9 @@ class GraphTransformer(torch.nn.Module):
 
         if self.gnn_block is not None and self.gnn_position == 'post':
             x = self.gnn_block(data, x)
+
+        if self.gnn_block and self.gnn_position == 'parallel':
+            x = x + self.gnn_block(data, x_in)
 
         x = self._readout(x, batch_vec)
         logits = self.classifier(x)

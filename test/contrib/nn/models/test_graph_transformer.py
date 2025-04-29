@@ -630,7 +630,7 @@ def test_forward_without_gnn_hook():
     assert out.shape == (1, model.classifier.out_features)
 
 
-@pytest.mark.parametrize("gnn_position", ["pre", "post"])
+@pytest.mark.parametrize("gnn_position", ["pre", "post", "parallel"])
 def test_gnn_hook_called(gnn_position):
     """Ensure gnn_block runs before or after the encoder as specified."""
     torch.manual_seed(0)
@@ -669,10 +669,15 @@ def test_gnn_hook_called(gnn_position):
         assert execution_order == [
             "gnn", "encoder"
         ], (f"Expected gnn before encoder for 'pre', got {execution_order}")
-    else:
+    elif gnn_position == "post":
         assert execution_order == [
             "encoder", "gnn"
         ], (f"Expected gnn after encoder for 'post', got {execution_order}")
+    else:  # parallel
+        assert sorted(execution_order) == ["encoder", "gnn"], (
+            f"Expected both gnn and encoder to run once for 'parallel', \
+            got {execution_order}"
+        )
 
 
 @pytest.mark.parametrize(
