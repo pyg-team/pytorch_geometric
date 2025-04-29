@@ -78,9 +78,16 @@ def arg_parse():
     parser.add_argument(
         "--gnn_choice",
         type=str,
-        default='sgformer',
-        choices=['gcn', 'gat', 'sage', 'sgformer', 'polynormer'],
-        help="Model used for training, default sgformer.",
+        default='SAGE',
+        choices=[
+            'SAGE',
+            'GAT',
+            'GCN',
+            # TODO: Uncomment when we add support for disjoint sampling
+            # 'SGFormer',
+            # 'Polynormer',
+        ],
+        help="Model used for training, default SAGE",
     )
     parser.add_argument(
         "--num_heads",
@@ -90,7 +97,6 @@ def arg_parse():
     )
     parser.add_argument('--tempdir_root', type=str, default=None)
     args = parser.parse_args()
-
     return args
 
 
@@ -124,8 +130,8 @@ def train(args, model, train_loader):
     for i, batch in enumerate(train_loader):
         batch = batch.cuda()
         optimizer.zero_grad()
-        if 'graph_transformer' in args.gnn_choice:
-            if 'polynormer' in args.gnn_choice and i == args.local_epochs:
+        if args.model in ['SGFormer', 'Polynormer']:
+            if args.model == 'Polynormer' and i == args.local_epochs:
                 print('start global attention')
                 model._global = True
             out = model(batch.x, batch.edge_index,
@@ -152,7 +158,7 @@ def test(args, model, loader):
     total_correct = total_examples = 0
     for batch in loader:
         batch = batch.cuda()
-        if 'graph_transformer' in args.gnn_choice:
+        if args.model in ['SGFormer', 'Polynormer']:
             out = model(batch.x, batch.edge_index,
                         batch.batch)[:batch.batch_size]
         else:
@@ -168,13 +174,11 @@ def test(args, model, loader):
 if __name__ == '__main__':
     args = arg_parse()
     torch_geometric.seed_everything(123)
-    if args.gnn_choice == 'polynormer' and args.num_layers != 7:
+    if args.model == 'Polynormer' and args.num_layers != 7:
         print(
             "The original polynormer paper recommends 7 layers, you have "
             "chosen", args.num_layers, "which may effect results. "
             "See for details")
-    if args.gnn_choice in ['sgformer', 'polynormer']:
-        args.gnn_choice = 'graph_transformer_' + args.gnn_choice
     if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
                                           (1024**3)) < 390:
         print("Warning: may not have enough RAM to use this many GPUs.")
@@ -211,8 +215,8 @@ if __name__ == '__main__':
 
     data = (feature_store, graph_store)
 
-    print(f"Training {args.dataset} with {args.gnn_choice} model.")
-    if args.gnn_choice == "gat":
+    print(f"Training {args.dataset} with {args.model} model.")
+    if args.model == "GAT":
         model = torch_geometric.nn.models.GAT(
             dataset.num_features,
             args.hidden_channels,
@@ -220,21 +224,22 @@ if __name__ == '__main__':
             dataset.num_classes,
             heads=args.num_heads,
         ).cuda()
-    elif args.gnn_choice == "gcn":
+    elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         ).cuda()
-    elif args.gnn_choice == "sage":
+    elif args.model == "SAGE":
         model = torch_geometric.nn.models.GraphSAGE(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         ).cuda()
-    elif args.gnn_choice == 'graph_transformer_sgformer':
+    elif args.model == 'SGFormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
@@ -244,7 +249,8 @@ if __name__ == '__main__':
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
         ).cuda()
-    elif args.gnn_choice == 'graph_transformer_polynormer':
+    elif args.model == 'Polynormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.Polynormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
@@ -252,7 +258,7 @@ if __name__ == '__main__':
             local_layers=args.num_layers,
         ).cuda()
     else:
-        raise ValueError(f'Unsupported model type: {args.gnn_choice}')
+        raise ValueError(f'Unsupported model type: {args.model}')
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.wd)
@@ -262,7 +268,7 @@ if __name__ == '__main__':
         num_neighbors=[args.fan_out] * args.num_layers,
         replace=False,
         batch_size=args.batch_size,
-        disjoint='graph_transformer' in args.gnn_choice,
+        disjoint=args.model in ['SGFormer', 'Polynormer'],
     )
 
     train_loader = create_loader(
@@ -294,7 +300,7 @@ if __name__ == '__main__':
     best_val = 0.
     start = time.perf_counter()
     epochs = args.epochs
-    if 'polynormer' in args.gnn_choice:
+    if args.model == 'Polynormer':
         epochs += args.local_epochs
     for epoch in range(1, epochs + 1):
         train_start = time.perf_counter()

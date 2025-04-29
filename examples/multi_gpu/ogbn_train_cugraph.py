@@ -83,9 +83,16 @@ def arg_parse():
     parser.add_argument(
         "--gnn_choice",
         type=str,
-        default='sgformer',
-        choices=['gcn', 'gat', 'sage', 'sgformer', 'polynormer'],
-        help="Model used for training, default sgformer.",
+        default='GCN',
+        choices=[
+            'SAGE',
+            'GAT',
+            'GCN',
+            # TODO: Uncomment when we add support for disjoint sampling
+            # 'SGFormer',
+            # 'Polynormer',
+        ],
+        help="Model used for training, default GCN",
     )
     parser.add_argument(
         "--num_heads",
@@ -349,7 +356,7 @@ if __name__ == '__main__':
     data.y = data.y.reshape(-1)
 
     print(f"Training {args.dataset} with {args.gnn_choice} model.")
-    if args.gnn_choice == "gat":
+    if args.model == "GAT":
         model = torch_geometric.nn.models.GAT(
             dataset.num_features,
             args.hidden_channels,
@@ -357,21 +364,22 @@ if __name__ == '__main__':
             dataset.num_classes,
             heads=args.num_heads,
         )
-    elif args.gnn_choice == "gcn":
+    elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         )
-    elif args.gnn_choice == "sage":
+    elif args.model == "SAGE":
         model = torch_geometric.nn.models.GraphSAGE(
             dataset.num_features,
             args.hidden_channels,
             args.num_layers,
             dataset.num_classes,
         )
-    elif args.gnn_choice == 'graph_transformer_sgformer':
+    elif args.model == 'SGFormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
@@ -381,7 +389,7 @@ if __name__ == '__main__':
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
         )
-    elif args.gnn_choice == 'graph_transformer_polynormer':
+    elif args.model == 'Polynormer':
         model = torch_geometric.nn.models.Polynormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
