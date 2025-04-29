@@ -146,6 +146,7 @@ prompt_template = """
     [END_RETRIEVED_CONTEXTS]
     """
 
+
 def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     full_chunks = []
     # Some corpora of docs are grouped into chunked files, typically by paragraph.
