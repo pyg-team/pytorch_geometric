@@ -15,12 +15,15 @@ class EigEncoder(BasePositionalEncoder):
     Args:
         num_eigvec (int): Number of eigenvectors used
         hidden_dim (int): Output dimension of embeddings
+        seed (int, optional): Random seed for sign flips. Defaults to None.
     """
 
-    def __init__(self, num_eigvec: int, hidden_dim: int):
+    def __init__(self, num_eigvec: int, hidden_dim: int, seed: int = None):
         super().__init__()
+        if seed is not None:
+            torch.manual_seed(seed)
         self.proj = nn.Linear(num_eigvec, hidden_dim)
-        self.sign = 1 if torch.rand(1) > 0.5 else -1
+        self.sign = 2 * torch.randint(0, 2, (1, )) - 1
 
     def forward(self, data: Data) -> torch.Tensor:
         """Project eigenvector embeddings to hidden dimension.
