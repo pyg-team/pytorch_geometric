@@ -16,6 +16,12 @@ from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.data import Batch, Data
 
 
+def make_simple_batch(feature_dim=8, num_nodes=3):
+    x = torch.randn(num_nodes, feature_dim)
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    return Batch.from_data_list([Data(x=x, edge_index=edge_index)])
+
+
 def make_batch_with_spatial(
     batch_size: int,
     seq_len: int,
@@ -603,3 +609,66 @@ def test_multi_provider_fusion(use_super_node):
         f"Expected shape {expected_shape}, got {tuple(struct.shape)}"
     assert torch.allclose(struct, sum_direct, atol=1e-6), \
         "Model's fused bias differs from direct sum of provider outputs"
+
+
+def test_forward_without_gnn_hook():
+    """GraphTransformer without a gnn_block should behave exactly as before."""
+    # Create a single graph with 2 nodes and no edges
+    hidden_dim = 8
+    x = torch.randn(2, hidden_dim)  # feature dim can be arbitrary
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    data = Data(x=x, edge_index=edge_index)
+    batch = Batch.from_data_list([data])
+
+    # Instantiate without any gnn_block
+    model = GraphTransformer(hidden_dim=hidden_dim)
+
+    # Run forward
+    out = model(batch)["logits"]
+    assert isinstance(out, torch.Tensor)
+    assert out.shape == (1, model.classifier.out_features)
+
+
+@pytest.mark.parametrize("gnn_position", ["pre", "post"])
+def test_gnn_hook_called(gnn_position):
+    """Ensure gnn_block runs before or after the encoder as specified."""
+    torch.manual_seed(0)
+    execution_order = []
+
+    # 1) Define the dummy GNN block
+    def gnn_block(data, x):
+        execution_order.append("gnn")
+        return x
+
+    # 2) Build the model with a single encoder layer and our hook
+    model = GraphTransformer(
+        hidden_dim=8,
+        num_class=2,
+        num_encoder_layers=1,
+        gnn_block=gnn_block,
+        gnn_position=gnn_position,
+    )
+
+    # 3) Monkey-patch the real encoder layer's forward to track its call
+    encoder_layer = model.encoder.layers[0]  # GraphTransformerEncoderLayer
+    orig_forward = encoder_layer.forward
+
+    def tracked_forward(x, batch, struct_mask, key_pad):
+        execution_order.append("encoder")
+        return orig_forward(x, batch, struct_mask, key_pad)
+
+    encoder_layer.forward = tracked_forward  # replace method
+
+    # 4) Run a simple forward pass
+    batch = make_simple_batch(feature_dim=8, num_nodes=3)
+    model(batch)
+
+    # 5) Verify ordering
+    if gnn_position == "pre":
+        assert execution_order == [
+            "gnn", "encoder"
+        ], (f"Expected gnn before encoder for 'pre', got {execution_order}")
+    else:
+        assert execution_order == [
+            "encoder", "gnn"
+        ], (f"Expected gnn after encoder for 'post', got {execution_order}")
