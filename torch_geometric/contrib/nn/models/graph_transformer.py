@@ -9,6 +9,7 @@ from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoder,
     GraphTransformerEncoderLayer,
 )
+from torch_geometric.contrib.nn.positional.base import BasePositionalEncoder
 from torch_geometric.contrib.utils.mask_utils import build_key_padding
 from torch_geometric.data import Data
 from torch_geometric.nn import global_mean_pool
@@ -41,6 +42,9 @@ class GraphTransformer(torch.nn.Module):
         gnn_position (Literal['pre', 'post', 'parallel'], optional):
             Where to apply the GNN block. Can be 'pre', 'post', or
             'parallel'. Defaults to 'pre'.
+        positional_encoders (Sequence[BasePositionalEncoder], optional): A
+            sequence of positional encoders to apply to node features.
+            Defaults to an empty sequence.
 
     """
 
@@ -55,7 +59,8 @@ class GraphTransformer(torch.nn.Module):
         attn_bias_providers: Sequence[BaseBiasProvider] = (),
         gnn_block: Optional[Callable[[Data, torch.Tensor],
                                      torch.Tensor]] = None,
-        gnn_position: Literal['pre', 'post', 'parallel'] = 'pre'
+        gnn_position: Literal['pre', 'post', 'parallel'] = 'pre',
+        positional_encoders: Sequence[BasePositionalEncoder] = ()
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)
@@ -73,6 +78,7 @@ class GraphTransformer(torch.nn.Module):
         self.attn_bias_providers = ModuleList(attn_bias_providers)
         self.gnn_block = gnn_block
         self.gnn_position = gnn_position
+        self.positional_encoders = ModuleList(positional_encoders)
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
@@ -201,6 +207,8 @@ class GraphTransformer(torch.nn.Module):
         x = data.x
         x = self._encode_nodes(x)
         x = self._apply_extra_encoders(data, x)
+        if self.positional_encoders:
+            x = x + sum(encoder(data) for encoder in self.positional_encoders)
         return x
 
     def _apply_gnn_if(

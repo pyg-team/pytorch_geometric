@@ -367,3 +367,33 @@ def test_gnn_block_mlp(simple_batch, where):
     )(simple_batch(8, 4))["logits"]
     assert out.shape == base_out.shape
     assert not torch.allclose(out, base_out)
+
+
+def test_positional_encoders(simple_batch):
+    batch = simple_batch(feat_dim=8, num_nodes=5)
+    const_val1, const_val2 = 1.0, 2.0
+    encoders = [
+        ConstantDegreeEncoder(const_val1),
+        ConstantDegreeEncoder(const_val2)
+    ]
+
+    model = GraphTransformer(
+        hidden_dim=8, num_class=2, positional_encoders=encoders
+    )
+
+    # Store original features
+    orig_x = batch.x.clone()
+
+    # Run model
+    model(batch)
+
+    # Check if features were modified correctly before attention
+    # By intercepting at encoder layer
+    def check_hook(module, input, output):
+        x = input[0]
+        expected = orig_x + const_val1 + const_val2
+        assert torch.allclose(x, expected)
+
+    hook = model.encoder.register_forward_hook(check_hook)
+    _ = model(batch)
+    hook.remove()
