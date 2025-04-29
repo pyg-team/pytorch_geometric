@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.nn import ModuleList
 
-from torch_geometric.contrib.nn.bias.base import BiasProvider
+from torch_geometric.contrib.nn.bias.base import BaseBiasProvider
 from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoder,
     GraphTransformerEncoderLayer,
@@ -28,7 +28,7 @@ class GraphTransformer(torch.nn.Module):
         node_feature_encoder=nn.Identity(),
         num_encoder_layers: int = 0,
         degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
-        attn_bias_providers: Sequence[BiasProvider] = (),
+        attn_bias_providers: Sequence[BaseBiasProvider] = (),
     ) -> None:
         super().__init__()
         self.classifier = nn.Linear(hidden_dim, num_class)

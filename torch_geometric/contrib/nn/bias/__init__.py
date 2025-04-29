@@ -1,10 +1,10 @@
-from .base import BiasProvider
+from .base import BaseBiasProvider
 from .spatial import GraphAttnSpatialBias
-from .hop import GraphAttnHopBias
 from .edge import GraphAttnEdgeBias
+from .hop import GraphAttnHopBias
 
 __all__ = [
-    'BiasProvider',
+    'BaseBiasProvider',
     'GraphAttnSpatialBias',
     'GraphAttnHopBias',
     'GraphAttnEdgeBias',

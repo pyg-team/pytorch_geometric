@@ -18,10 +18,11 @@ import torch
 import torch.nn as nn
 from torch.nn import init
 
+from torch_geometric.contrib.nn.bias.base import BaseBiasProvider
 from torch_geometric.data import Data
 
 
-class GraphAttnEdgeBias(nn.Module):
+class GraphAttnEdgeBias(BaseBiasProvider):
     """Learnable edge‐feature bias provider for graph attention.
 
     Maps edge types in `data.edge_dist` to per‑head additive biases.
@@ -43,80 +44,59 @@ class GraphAttnEdgeBias(nn.Module):
         multi_hop_max_dist: int = None,
         use_super_node: bool = False,
     ):
-        super().__init__()
-        self.num_heads = num_heads
+        super().__init__(num_heads, use_super_node)
+        num_tokens = num_edges + 1 + (1 if use_super_node else 0)
+        self.super_idx = num_tokens - 1 if use_super_node else None
+        self.edge_embeddings = nn.Embedding(num_tokens, num_heads)
+        init.xavier_uniform_(self.edge_embeddings.weight)
         self.edge_type = edge_type
         self.multi_hop_max_dist = multi_hop_max_dist
-        self.use_super_node = use_super_node
 
-        # reserve extra idx for padding (0) and optional super-node
-        num_embeddings = num_edges + 1 + (1 if use_super_node else 0)
-        self.edge_embeddings = nn.Embedding(num_embeddings, num_heads)
-        self.super_idx = num_embeddings - 1 if use_super_node else None
-        init.xavier_uniform_(self.edge_embeddings.weight)
-
-    def forward(self, data: Data) -> torch.Tensor:
-        pos = self._prepare_edge_dist(data)
-        if (self.edge_type == 'multi_hop'
-                and self.multi_hop_max_dist is not None):
-            pos = pos.clamp(max=self.multi_hop_max_dist)
-
-        if self.use_super_node:
-            pos = self._inject_super_node_index(pos)
-
-        # (B, L, L) -> (B, L, L, H)
-        bias = self.edge_embeddings(pos)
-        return bias.permute(0, 3, 1, 2)
-
-    def _prepare_edge_dist(self, data: Data) -> torch.LongTensor:
-        if not hasattr(data, "edge_dist"):
-            B = data.ptr.numel() - 1
-            L = data.x.size(0) // B
-            return data.x.new_zeros(B, L, L, dtype=torch.long)
-
-        pos = data.edge_dist
-        # Single graph: (L, L)
-        if pos.dim() == 2 and pos.size(0) == pos.size(1):
-            return pos.unsqueeze(0)
-        # Batched 2D: (N, L) rows cat'd by ptr
-        if pos.dim() == 2:
-            if not hasattr(data, "ptr"):
-                raise AttributeError(
-                    "Batched `Data` needs `ptr` to split edge_dist."
-                )
-            ptr = data.ptr
-            B = ptr.numel() - 1
-            graphs = [pos[ptr[i]:ptr[i + 1]] for i in range(B)]
-            return torch.stack(graphs, dim=0)
-        # Already batched: (B, L, L)
-        if pos.dim() == 3:
-            return pos
-        raise ValueError(
-            f"`edge_dist` must be 2D or 3D, got {tuple(pos.shape)}"
-        )
-
-    def _inject_super_node_index(
-        self, spatial_pos: torch.LongTensor
-    ) -> torch.LongTensor:
-        """Injects the super node index into the spatial positions tensor.
-
+    def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
+        """Build a batched edge distance matrix from `data.edge_dist`.
+        - If `data.edge_dist` is 2D with `data.ptr`, splits rows
+          by ptr into B graphs.
+        - If 2D square, unsqueeze to batch dim.
+        - If 3D, return as-is
         Args:
-            spatial_pos (torch.LongTensor): The spatial positions tensor of
-                shape (B, L, L).
+            data (Data): Graph data containing `edge_dist` and optional `ptr`.
 
         Returns:
-            torch.LongTensor: The modified spatial positions tensor with
-                super node index injected, shape (B, L', L') where L' = L + 1
-                if use_super_node is True, otherwise L' = L.
-
+            torch.LongTensor: Edge distance matrix of shape
+                (B, L, L) where B = number of graphs,
+                L = number of nodes in the graph (+1 if super-node = True).
         """
-        B, L, _ = spatial_pos.shape
-        new_L = L + 1 if self.use_super_node else L
-        padded = torch.full(
-            (B, new_L, new_L),
-            fill_value=self.super_idx,
-            dtype=spatial_pos.dtype,
-            device=spatial_pos.device
-        )
-        padded[:, 1:, 1:] = spatial_pos
-        return padded
+        pos = getattr(data, 'edge_dist', None)
+        if pos is None:
+            B = len(data.ptr) - 1
+            L = data.x.size(0) // B
+            return data.x.new_zeros(B, L, L, dtype=torch.long)
+        if pos.dim() == 2 and hasattr(data, 'ptr'):
+            ptr = data.ptr
+            return torch.stack(
+                [pos[ptr[i]:ptr[i + 1]] for i in range(len(ptr) - 1)], dim=0
+            )
+        if pos.dim() == 2 and pos.size(0) == pos.size(1):
+            return pos.unsqueeze(0)
+        if pos.dim() == 3:
+            return pos
+        raise ValueError(f"Unexpected edge_dist shape {tuple(pos.shape)}")
+
+    def _embed_bias(self, distances: torch.LongTensor) -> torch.Tensor:
+        """Embed edge distances into bias tensor.
+
+        Args:
+            distances (torch.LongTensor): Edge distance matrix of shape
+                (B, L, L) where B = number of graphs,
+                L = number of nodes in the graph (+1 if super-node = True).
+
+        Returns:
+            torch.Tensor: Bias tensor of shape (B, L, L, H) where
+                B = number of graphs,
+                L = number of nodes in the graph (+1 if super-node = True),
+                H = number of attention heads.
+        """
+        if (self.edge_type == 'multi_hop'
+                and self.multi_hop_max_dist is not None):
+            distances = distances.clamp(max=self.multi_hop_max_dist)
+        return self.edge_embeddings(distances)
