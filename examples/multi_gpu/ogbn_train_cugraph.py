@@ -81,7 +81,7 @@ def arg_parse():
         help='Whether or not to add self loop',
     )
     parser.add_argument(
-        "--gnn_choice",
+        "--model",
         type=str,
         default='GCN',
         choices=[
@@ -124,7 +124,7 @@ def evaluate(args, rank, loader, model):
             batch_size = batch.batch_size
 
             batch.y = batch.y.to(torch.long)
-            if 'graph_transformer' in args.gnn_choice:
+            if args.model in ['SGFormer', 'Polynormer']:
                 out = model(batch.x, batch.edge_index,
                             batch.batch)[:batch_size]
             else:
@@ -169,7 +169,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
               num_classes, wall_clock_start):
 
     epochs = args.epochs
-    if 'polynormer' in args.gnn_choice:
+    if args.model == 'Polynormer':
         epochs += args.local_epochs
     batch_size = args.batch_size
     fan_out = args.fan_out
@@ -190,7 +190,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     kwargs = dict(
         num_neighbors=[fan_out] * num_layers,
         batch_size=batch_size,
-        disjoint='graph_transformer' in args.gnn_choice,
+        disjoint=args.gnn_choice in ['SGFormer', 'Polynormer'],
     )
     from cugraph_pyg.data import GraphStore, TensorDictFeatureStore
     from cugraph_pyg.loader import NeighborLoader
@@ -266,8 +266,8 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
             batch_size = batch.batch_size
             batch.y = batch.y.to(torch.long)
             optimizer.zero_grad()
-            if 'graph_transformer' in args.gnn_choice:
-                if 'polynormer' in args.gnn_choice and epoch == args.local_epochs:  # noqa: E501
+            if args.model in ['SGFormer', 'Polynormer']:
+                if args.model == 'Polynormer' and epoch == args.local_epochs:  # noqa: E501
                     print('start global attention')
                     model.model._global = True
                 out = model(batch.x, batch.edge_index, batch.batch)
@@ -334,13 +334,11 @@ if __name__ == '__main__':
 
     args = arg_parse()
     seed_everything(123)
-    if args.gnn_choice == 'polynormer' and args.num_layers != 7:
+    if args.model == 'Polynormer' and args.num_layers != 7:
         print(
             "The original polynormer paper recommends 7 layers, you have "
             "chosen", args.num_layers, "which may effect results. "
             "See for details")
-    if args.gnn_choice in ['sgformer', 'polynormer']:
-        args.gnn_choice = 'graph_transformer_' + args.gnn_choice
     wall_clock_start = time.perf_counter()
 
     root = osp.join(args.dataset_dir, args.dataset_subdir)
@@ -355,7 +353,7 @@ if __name__ == '__main__':
                                             num_nodes=data.num_nodes)
     data.y = data.y.reshape(-1)
 
-    print(f"Training {args.dataset} with {args.gnn_choice} model.")
+    print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
         model = torch_geometric.nn.models.GAT(
             dataset.num_features,
@@ -390,6 +388,7 @@ if __name__ == '__main__':
             gnn_dropout=args.dropout,
         )
     elif args.model == 'Polynormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.Polynormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,
@@ -397,7 +396,7 @@ if __name__ == '__main__':
             local_layers=args.num_layers,
         )
     else:
-        raise ValueError(f'Unsupported model type: {args.gnn_choice}')
+        raise ValueError(f'Unsupported model type: {args.model}')
 
     print("Data =", data)
     if args.num_devices < 1:

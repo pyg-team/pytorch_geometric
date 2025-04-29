@@ -76,7 +76,7 @@ def arg_parse():
         help='Whether or not to add self loop',
     )
     parser.add_argument(
-        "--gnn_choice",
+        "--model",
         type=str,
         default='SAGE',
         choices=[

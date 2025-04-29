@@ -34,11 +34,11 @@ parser.add_argument(
     help='Root directory of dataset.',
 )
 parser.add_argument(
-    '--gnn_choice',
-    type=str,
-    default='sgformer',
-    choices=['gat', 'sage', 'sgformer', 'polynormer'],
-    help='Model used for training, default sgformer.',
+    "--model",
+    type=str.lower,
+    default='SGFormer',
+    choices=['sage', 'gat', 'sgformer', 'polynormer'],
+    help="Model used for training",
 )
 
 parser.add_argument('-e', '--epochs', type=int, default=50)
@@ -75,18 +75,16 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
-if args.gnn_choice == 'polynormer' and args.num_layers != 7:
+if args.model == 'polynormer' and args.num_layers != 7:
     print("The original polynormer paper recommends 7 layers, you have chosen",
           args.num_layers, "which may effect results. See for details")
 
-print(f'Training {args.dataset} with {args.gnn_choice} model.')
+print(f'Training {args.dataset} with {args.model} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-if args.gnn_choice in ['sgformer', 'polynormer']:
-    args.gnn_choice = 'graph_transformer_' + args.gnn_choice
 num_epochs = args.epochs
-if 'polynormer' in args.gnn_choice:
+if args.model == 'polynormer':
     num_epochs += args.local_epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
@@ -117,7 +115,7 @@ def get_loader(input_nodes: dict[str, Tensor]) -> NeighborLoader:
         shuffle=True,
         num_workers=num_workers,
         persistent_workers=True,
-        disjoint='graph_transformer' in args.gnn_choice,
+        disjoint=args.model in ['sgformer', 'polynormer'],
     )
 
 
@@ -135,8 +133,8 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        if 'graph_transformer' in args.gnn_choice:
-            if 'polynormer' in args.gnn_choice and epoch == args.local_epochs:
+        if args.model in ['sgformer', 'polynormer']:
+            if args.model == 'polynormer' and epoch == args.local_epochs:
                 print('start global attention')
                 model._global = True
             out = model(batch.x, batch.edge_index.to(device),
@@ -167,7 +165,7 @@ def test(loader: NeighborLoader) -> float:
     for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
-        if 'graph_transformer' in args.gnn_choice:
+        if args.model in ['sgformer', 'polynormer']:
             out = model(batch.x, batch.edge_index,
                         batch.batch)[:batch.batch_size]
         else:
@@ -199,7 +197,7 @@ def get_model(model_name: str) -> torch.nn.Module:
             out_channels=dataset.num_classes,
             dropout=args.dropout,
         )
-    elif model_name == 'graph_transformer_sgformer':
+    elif model_name == 'sgformer':
         model = SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -209,7 +207,7 @@ def get_model(model_name: str) -> torch.nn.Module:
             gnn_num_layers=num_layers,
             gnn_dropout=args.dropout,
         )
-    elif model_name == 'graph_transformer_polynormer':
+    elif model_name == 'polynormer':
         model = Polynormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -222,7 +220,7 @@ def get_model(model_name: str) -> torch.nn.Module:
     return model
 
 
-model = get_model(args.gnn_choice).to(device)
+model = get_model(args.model).to(device)
 model.reset_parameters()
 optimizer = torch.optim.Adam(
     model.parameters(),
