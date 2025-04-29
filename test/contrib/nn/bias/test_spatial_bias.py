@@ -1,5 +1,3 @@
-# test/contrib/nn/bias/test_spatial_bias.py
-
 import pytest
 import torch
 
@@ -8,129 +6,79 @@ from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.data import Batch, Data
 
 
-def make_batch_with_spatial(
-    batch_size: int,
-    seq_len: int,
-    num_spatial: int,
-    feature_dim: int = 1,
-) -> Batch:
-    """Create a Batch of graphs each carrying spatial_pos and x."""
-    data_list = []
-    for _ in range(batch_size):
-        # spatial distances
-        spatial_pos = torch.randint(0, num_spatial, (seq_len, seq_len))
-        # node features of the requested dimension
-        x = torch.randn(seq_len, feature_dim)
-        edge_index = torch.empty((2, 0), dtype=torch.long)
-        data_list.append(
-            Data(
-                x=x,
-                spatial_pos=spatial_pos,
-                edge_index=edge_index,
+@pytest.fixture
+def spatial_batch():
+    """Factory for batches with spatial_pos and x."""
+
+    def _make(batch_size, seq_len, num_spatial, feat_dim=1):
+        data_list = []
+        for _ in range(batch_size):
+            spatial_pos = torch.randint(0, num_spatial, (seq_len, seq_len))
+            x = torch.randn(seq_len, feat_dim)
+            data_list.append(
+                Data(
+                    x=x,
+                    spatial_pos=spatial_pos,
+                    edge_index=torch.empty((2, 0), dtype=torch.long)
+                )
             )
-        )
-    return Batch.from_data_list(data_list)
+        return Batch.from_data_list(data_list)
+
+    return _make
 
 
-def test_spatial_bias_shape():
-    """Test that forward pass returns correct tensor shape and dtype."""
-    num_heads = 4
-    num_spatial = 10
-    seq_len = 5
-    batch_size = 2
+def test_spatial_bias_shape_dtype(spatial_batch):
+    bias = GraphAttnSpatialBias(num_heads=4, num_spatial=10)
+    batch = spatial_batch(2, 5, 10)
+    out = bias(batch)
 
-    bias_provider = GraphAttnSpatialBias(
-        num_heads=num_heads,
-        num_spatial=num_spatial,
-    )
-    # feature_dim=1 is fine here; we only call bias_provider.forward
-    batch = make_batch_with_spatial(
-        batch_size, seq_len, num_spatial, feature_dim=1
-    )
-
-    bias = bias_provider(batch)
-    assert isinstance(bias, torch.Tensor)
-    assert bias.dtype == torch.float32, "Expected float32 output"
-    assert bias.shape == (batch_size, num_heads, seq_len,
-                          seq_len), (f"Wrong shape: {bias.shape}")
+    assert isinstance(out, torch.Tensor)
+    assert out.dtype == torch.float32
+    assert out.shape == (2, 4, 5, 5)
 
 
-def test_spatial_bias_affects_transformer():
-    """Test that using spatial bias provider changes transformer outputs."""
+def test_spatial_bias_transformer_affects(spatial_batch):
     torch.manual_seed(12345)
-    num_heads = 4
-    num_spatial = 8
-    seq_len = 6
-    feature_dim = 16  # must match GraphTransformer.hidden_dim
+    provider = GraphAttnSpatialBias(num_heads=4, num_spatial=8)
+    batch = spatial_batch(1, 6, 8, feat_dim=16)
 
-    bias_provider = GraphAttnSpatialBias(
-        num_heads=num_heads,
-        num_spatial=num_spatial,
-    )
-    batch = make_batch_with_spatial(
-        1, seq_len, num_spatial, feature_dim=feature_dim
-    )
-
-    # Ensure batch.x has the right feature dimension for the model
-    # (Batch.from_data_list already set this correctly via helper)
-
-    model_no = GraphTransformer(
-        hidden_dim=feature_dim,
+    m0 = GraphTransformer(
+        hidden_dim=16, num_class=3, num_encoder_layers=1
+    ).eval()
+    m1 = GraphTransformer(
+        hidden_dim=16,
         num_class=3,
         num_encoder_layers=1,
-    )
-    model_yes = GraphTransformer(
-        hidden_dim=feature_dim,
-        num_class=3,
-        num_encoder_layers=1,
-        attn_bias_providers=[bias_provider],
-    )
+        attn_bias_providers=[provider]
+    ).eval()
 
-    model_no.eval()
-    model_yes.eval()
     with torch.no_grad():
-        out1 = model_no(batch)["logits"]
-        out2 = model_yes(batch)["logits"]
+        o0 = m0(batch)["logits"]
+        o1 = m1(batch)["logits"]
 
-    assert out1.shape == out2.shape
-    assert not torch.allclose(
-        out1, out2, rtol=1e-4, atol=1e-4
-    ), ("Outputs should differ when spatial bias is applied")
+    assert o0.shape == o1.shape
+    assert not torch.allclose(o0, o1, rtol=1e-4, atol=1e-4)
 
 
-def test_spatial_bias_gradients():
-    """Test that gradients flow through spatial bias provider parameters."""
-    num_heads = 4
-    num_spatial = 8
-    seq_len = 5
-    feature_dim = 16
-
-    bias_provider = GraphAttnSpatialBias(
-        num_heads=num_heads,
-        num_spatial=num_spatial,
-    )
+def test_spatial_bias_gradients(spatial_batch):
+    provider = GraphAttnSpatialBias(num_heads=4, num_spatial=8)
     model = GraphTransformer(
-        hidden_dim=feature_dim,
+        hidden_dim=16,
         num_class=3,
         num_encoder_layers=1,
-        attn_bias_providers=[bias_provider],
+        attn_bias_providers=[provider]
     )
-    batch = make_batch_with_spatial(
-        1, seq_len, num_spatial, feature_dim=feature_dim
-    )
-
+    batch = spatial_batch(1, 5, 8, feat_dim=16)
     out = model(batch)["logits"]
-    loss = out.sum()
-    loss.backward()
+    out.sum().backward()
 
-    for name, param in bias_provider.named_parameters():
-        assert param.grad is not None, f"Parameter {name} has no grad"
-        assert not torch.all(param.grad == 0), \
-            f"Parameter {name} has zero gradient"
+    for name, param in provider.named_parameters():
+        assert param.grad is not None, f"{name} has no grad"
+        assert not torch.all(param.grad == 0), f"{name} grad is zero"
 
 
 @pytest.mark.parametrize(
-    "num_heads,num_spatial,use_super_node",
+    "num_heads,num_spatial,use_super",
     [
         (1, 5, False),
         (4, 5, False),
@@ -138,30 +86,17 @@ def test_spatial_bias_gradients():
         (4, 10, True),
     ],
 )
-def test_spatial_bias_config(num_heads, num_spatial, use_super_node):
-    """Test GraphAttnSpatialBias with various configurations."""
-    seq_len = 7
-    batch_size = 3
-
-    bias_provider = GraphAttnSpatialBias(
-        num_heads=num_heads,
-        num_spatial=num_spatial,
-        use_super_node=use_super_node,
+def test_spatial_bias_config(spatial_batch, num_heads, num_spatial, use_super):
+    bias = GraphAttnSpatialBias(
+        num_heads=num_heads, num_spatial=num_spatial, use_super_node=use_super
     )
-    # feature_dim=1 is sufficient for provider-only tests
-    batch = make_batch_with_spatial(
-        batch_size, seq_len, num_spatial, feature_dim=1
-    )
+    batch = spatial_batch(3, 7, num_spatial)
+    out = bias(batch)
 
-    bias = bias_provider(batch)
-    expected_seq_len = seq_len + (1 if use_super_node else 0)
-    assert bias.shape == (
-        batch_size, num_heads, expected_seq_len, expected_seq_len
-    )
-    assert bias.dtype == torch.float32
+    exp_len = 7 + (1 if use_super else 0)
+    assert out.shape == (3, num_heads, exp_len, exp_len)
 
-    if use_super_node:
-        # check that row 0 differs from row 1 for graph 0, head 0
-        row0 = bias[0, 0, 0, :]
-        row1 = bias[0, 0, 1, :]
-        assert not torch.allclose(row0, row1), "Super-node row should differ"
+    if use_super:
+        r0 = out[0, 0, 0]
+        r1 = out[0, 0, 1]
+        assert not torch.allclose(r0, r1)

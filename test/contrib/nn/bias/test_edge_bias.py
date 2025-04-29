@@ -6,114 +6,86 @@ from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.data import Batch, Data
 
 
-def make_batch_with_edge(
-    batch_size: int,
-    seq_len: int,
-    num_edges: int,
-    feature_dim: int = 1,
-) -> Batch:
-    """Create a Batch of graphs each carrying edge_dist and x."""
-    data_list = []
-    for _ in range(batch_size):
-        edge_dist = torch.randint(0, num_edges, (seq_len, seq_len))
-        x = torch.randn(seq_len, feature_dim)
-        edge_index = torch.empty((2, 0), dtype=torch.long)
-        data_list.append(
-            Data(
+@pytest.fixture
+def edge_batch():  # noqa: E231
+    """Factory for batches with edge_dist and x."""
+
+    def _make(batch_size, seq_len, num_edges, feat_dim=1):
+        data_list = []
+        for _ in range(batch_size):
+            edge_dist = torch.randint(0, num_edges, (seq_len, seq_len))
+            x = torch.randn(seq_len, feat_dim)
+            data = Data(
                 x=x,
                 edge_dist=edge_dist,
-                edge_index=edge_index,
+                edge_index=torch.empty((2, 0), dtype=torch.long)
             )
-        )
-    return Batch.from_data_list(data_list)
+            data_list.append(data)
+        return Batch.from_data_list(data_list)
 
-
-def test_edge_bias_shape():
-    num_heads = 4
-    num_edges = 12
-    seq_len = 5
-    batch_size = 3
-
-    bias_provider = GraphAttnEdgeBias(
-        num_heads=num_heads,
-        num_edges=num_edges,
-    )
-    batch = make_batch_with_edge(batch_size, seq_len, num_edges, feature_dim=1)
-    bias = bias_provider(batch)
-
-    assert isinstance(bias, torch.Tensor)
-    assert bias.dtype == torch.float32
-    assert bias.shape == (batch_size, num_heads, seq_len, seq_len)
-
-
-def test_edge_bias_affects_transformer():
-    torch.manual_seed(0)
-    num_heads = 4
-    num_edges = 8
-    seq_len = 6
-    feature_dim = 16
-
-    bias_provider = GraphAttnEdgeBias(
-        num_heads=num_heads,
-        num_edges=num_edges,
-    )
-    batch = make_batch_with_edge(
-        1, seq_len, num_edges, feature_dim=feature_dim
-    )
-
-    model_no = GraphTransformer(
-        hidden_dim=feature_dim,
-        num_class=2,
-        num_encoder_layers=1,
-    )
-    model_yes = GraphTransformer(
-        hidden_dim=feature_dim,
-        num_class=2,
-        num_encoder_layers=1,
-        attn_bias_providers=[bias_provider],
-    )
-
-    model_no.eval()
-    model_yes.eval()
-    with torch.no_grad():
-        out1 = model_no(batch)["logits"]
-        out2 = model_yes(batch)["logits"]
-
-    assert out1.shape == out2.shape
-    assert not torch.allclose(out1, out2, rtol=1e-4, atol=1e-4)
-
-
-def test_edge_bias_gradients():
-    num_heads = 4
-    num_edges = 7
-    seq_len = 5
-    feature_dim = 16
-
-    bias_provider = GraphAttnEdgeBias(
-        num_heads=num_heads,
-        num_edges=num_edges,
-    )
-    model = GraphTransformer(
-        hidden_dim=feature_dim,
-        num_class=2,
-        num_encoder_layers=1,
-        attn_bias_providers=[bias_provider],
-    )
-    batch = make_batch_with_edge(
-        1, seq_len, num_edges, feature_dim=feature_dim
-    )
-
-    out = model(batch)["logits"]
-    loss = out.sum()
-    loss.backward()
-
-    for name, param in bias_provider.named_parameters():
-        assert param.grad is not None, f"Parameter {name} has no grad"
-        assert not torch.all(param.grad == 0), f"Parameter {name} grad is zero"
+    return _make
 
 
 @pytest.mark.parametrize(
-    "num_heads,num_edges,edge_type,multi_hop_max_dist,use_super_node",
+    "num_heads,num_edges,seq_len,batch_size", [
+        (4, 12, 5, 3),
+    ]
+)
+def test_edge_bias_shape_dtype(
+    edge_batch, num_heads, num_edges, seq_len, batch_size
+):
+    bias = GraphAttnEdgeBias(num_heads=num_heads, num_edges=num_edges)
+    batch = edge_batch(batch_size, seq_len, num_edges)
+    out = bias(batch)
+
+    assert isinstance(out, torch.Tensor)
+    assert out.dtype == torch.float32
+    assert out.shape == (batch_size, num_heads, seq_len, seq_len)
+
+
+def test_edge_bias_transformer_affects(edge_batch):
+    torch.manual_seed(0)
+    provider = GraphAttnEdgeBias(num_heads=4, num_edges=8)
+    batch = edge_batch(1, 6, 8, feat_dim=16)
+
+    m0 = GraphTransformer(
+        hidden_dim=16, num_class=2, num_encoder_layers=1
+    ).eval()
+    m1 = GraphTransformer(
+        hidden_dim=16,
+        num_class=2,
+        num_encoder_layers=1,
+        attn_bias_providers=[provider]
+    ).eval()
+
+    with torch.no_grad():
+        out0 = m0(batch)["logits"]
+        out1 = m1(batch)["logits"]
+
+    assert out0.shape == out1.shape
+    assert not torch.allclose(out0, out1, rtol=1e-4, atol=1e-4)
+
+
+def test_edge_bias_gradients(edge_batch):
+    provider = GraphAttnEdgeBias(num_heads=4, num_edges=7)
+    model = GraphTransformer(
+        hidden_dim=16,
+        num_class=2,
+        num_encoder_layers=1,
+        attn_bias_providers=[provider]
+    )
+    batch = edge_batch(1, 5, 7, feat_dim=16)
+
+    out = model(batch)["logits"]
+    out.sum().backward()
+
+    for name, param in provider.named_parameters():
+        assert param.grad is not None, f"{name} has no grad"
+        assert not torch.all(param.grad == 0), f"{name} grad is zero"
+
+
+@pytest.mark.parametrize(
+    "num_heads,num_edges,edge_type,mhmd,use_super",
     [
         (1, 5, 'simple', None, False),
         (2, 6, 'simple', None, True),
@@ -122,28 +94,22 @@ def test_edge_bias_gradients():
     ],
 )
 def test_edge_bias_config(
-    num_heads, num_edges, edge_type, multi_hop_max_dist, use_super_node
+    edge_batch, num_heads, num_edges, edge_type, mhmd, use_super
 ):
-    seq_len = 7
-    batch_size = 2
-
-    bias_provider = GraphAttnEdgeBias(
+    bias = GraphAttnEdgeBias(
         num_heads=num_heads,
         num_edges=num_edges,
         edge_type=edge_type,
-        multi_hop_max_dist=multi_hop_max_dist,
-        use_super_node=use_super_node,
+        multi_hop_max_dist=mhmd,
+        use_super_node=use_super
     )
-    batch = make_batch_with_edge(batch_size, seq_len, num_edges, feature_dim=1)
-    bias = bias_provider(batch)
-    expected_seq_len = seq_len + (1 if use_super_node else 0)
-    assert bias.shape == (
-        batch_size, num_heads, expected_seq_len, expected_seq_len
-    )
-    assert bias.dtype == torch.float32
+    batch = edge_batch(2, 7, num_edges)
+    out = bias(batch)
 
-    if use_super_node:
-        # row 0 or col 0 should use the super-node embedding
-        row0 = bias[0, 0, 0, :]
-        row1 = bias[0, 0, 1, :]
-        assert not torch.allclose(row0, row1), "Super-node row should differ"
+    exp_len = 7 + (1 if use_super else 0)
+    assert out.shape == (2, num_heads, exp_len, exp_len)
+
+    if use_super:
+        r0 = out[0, 0, 0]
+        r1 = out[0, 0, 1]
+        assert not torch.allclose(r0, r1)
