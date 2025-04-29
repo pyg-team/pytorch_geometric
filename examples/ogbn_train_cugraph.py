@@ -81,7 +81,9 @@ def arg_parse():
             'SAGE',
             'GAT',
             'GCN',
-        ],  # 'SGFormer'],
+            # TODO: Uncomment when we add support for disjoint sampling
+            # 'SGFormer',
+        ],
         help="Model used for training, default SAGE",
     )
     parser.add_argument(
