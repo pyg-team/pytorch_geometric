@@ -63,8 +63,6 @@ def arg_parse():
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--wd', type=float, default=0.000)
     parser.add_argument('-e', '--epochs', type=int, default=50)
-    parser.add_argument('-le', '--local_epochs', type=int, default=50,
-                        help='warmup epochs for polynormer')
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
     parser.add_argument('--eval_steps', type=int, default=1000)
@@ -90,7 +88,6 @@ def arg_parse():
             'GCN',
             # TODO: Uncomment when we add support for disjoint sampling
             # 'SGFormer',
-            # 'Polynormer',
         ],
         help="Model used for training, default GCN",
     )
@@ -116,7 +113,7 @@ def arg_parse():
     return args
 
 
-def evaluate(args, rank, loader, model):
+def evaluate(rank, loader, model):
     with torch.no_grad():
         total_correct = total_examples = 0
         for i, batch in enumerate(loader):
@@ -124,11 +121,7 @@ def evaluate(args, rank, loader, model):
             batch_size = batch.batch_size
 
             batch.y = batch.y.to(torch.long)
-            if args.model in ['SGFormer', 'Polynormer']:
-                out = model(batch.x, batch.edge_index,
-                            batch.batch)[:batch_size]
-            else:
-                out = model(batch.x, batch.edge_index)[:batch_size]
+            out = model(batch.x, batch.edge_index)[:batch_size]
 
             pred = out.argmax(dim=-1)
             y = batch.y[:batch_size].view(-1).to(torch.long)
@@ -169,8 +162,6 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
               num_classes, wall_clock_start):
 
     epochs = args.epochs
-    if args.model == 'Polynormer':
-        epochs += args.local_epochs
     batch_size = args.batch_size
     fan_out = args.fan_out
     num_layers = args.num_layers
@@ -182,15 +173,13 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
     )
 
     model = model.to(rank)
-    model = DistributedDataParallel(model, device_ids=[rank],
-                                    find_unused_parameters=True)
+    model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.wd)
 
     kwargs = dict(
         num_neighbors=[fan_out] * num_layers,
         batch_size=batch_size,
-        disjoint=args.gnn_choice in ['SGFormer', 'Polynormer'],
     )
     from cugraph_pyg.data import GraphStore, TensorDictFeatureStore
     from cugraph_pyg.loader import NeighborLoader
@@ -266,13 +255,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
             batch_size = batch.batch_size
             batch.y = batch.y.to(torch.long)
             optimizer.zero_grad()
-            if args.model in ['SGFormer', 'Polynormer']:
-                if args.model == 'Polynormer' and epoch == args.local_epochs:  # noqa: E501
-                    print('start global attention')
-                    model.model._global = True
-                out = model(batch.x, batch.edge_index, batch.batch)
-            else:
-                out = model(batch.x, batch.edge_index)
+            out = model(batch.x, batch.edge_index)
             loss = F.cross_entropy(out[:batch_size], batch.y[:batch_size])
             loss.backward()
             optimizer.step()
@@ -285,9 +268,9 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
         torch.cuda.synchronize()
 
         inference_start = time.perf_counter()
-        train_acc = evaluate(args, rank, train_loader, model)
+        train_acc = evaluate(rank, train_loader, model)
         dist.barrier()
-        val_acc = evaluate(args, rank, val_loader, model)
+        val_acc = evaluate(rank, val_loader, model)
         dist.barrier()
 
         inference_times.append(time.perf_counter() - inference_start)
@@ -317,7 +300,7 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
 
     if rank == 0:
         print("Testing...")
-    final_test_acc = evaluate(args, rank, test_loader, model)
+    final_test_acc = evaluate(rank, test_loader, model)
     dist.barrier()
     if rank == 0:
         print(f'Test Accuracy: {final_test_acc:.4f} for rank: {rank:02d}')
@@ -334,11 +317,6 @@ if __name__ == '__main__':
 
     args = arg_parse()
     seed_everything(123)
-    if args.model == 'Polynormer' and args.num_layers != 7:
-        print(
-            "The original polynormer paper recommends 7 layers, you have "
-            "chosen", args.num_layers, "which may effect results. "
-            "See for details")
     wall_clock_start = time.perf_counter()
 
     root = osp.join(args.dataset_dir, args.dataset_subdir)
@@ -355,13 +333,11 @@ if __name__ == '__main__':
 
     print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        model = torch_geometric.nn.models.GAT(
-            dataset.num_features,
-            args.hidden_channels,
-            args.num_layers,
-            dataset.num_classes,
-            heads=args.num_heads,
-        )
+        model = torch_geometric.nn.models.GAT(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes,
+                                              heads=args.num_heads)
     elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
@@ -386,14 +362,6 @@ if __name__ == '__main__':
             trans_dropout=args.dropout,
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
-        )
-    elif args.model == 'Polynormer':
-        # TODO add support for this with disjoint sampling
-        model = torch_geometric.nn.models.Polynormer(
-            in_channels=dataset.num_features,
-            hidden_channels=args.hidden_channels,
-            out_channels=dataset.num_classes,
-            local_layers=args.num_layers,
         )
     else:
         raise ValueError(f'Unsupported model type: {args.model}')

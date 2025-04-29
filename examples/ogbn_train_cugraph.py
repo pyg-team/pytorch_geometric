@@ -54,8 +54,6 @@ def arg_parse():
         help="directory of dataset.",
     )
     parser.add_argument('-e', '--epochs', type=int, default=50)
-    parser.add_argument('-le', '--local_epochs', type=int, default=50,
-                        help='warmup epochs for polynormer')
     parser.add_argument('--num_layers', type=int, default=3)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
@@ -85,7 +83,6 @@ def arg_parse():
             'GCN',
             # TODO: Uncomment when we add support for disjoint sampling
             # 'SGFormer',
-            # 'Polynormer',
         ],
         help="Model used for training, default SAGE",
     )
@@ -107,7 +104,6 @@ def create_loader(
     replace,
     batch_size,
     stage_name,
-    disjoint,
     shuffle=False,
 ):
     print(f'Creating {stage_name} loader...')
@@ -119,25 +115,17 @@ def create_loader(
         replace=replace,
         batch_size=batch_size,
         shuffle=shuffle,
-        disjoint=disjoint,
     )
 
 
-def train(args, model, train_loader):
+def train(model, train_loader):
     model.train()
 
     total_loss = total_correct = total_examples = 0
     for i, batch in enumerate(train_loader):
         batch = batch.cuda()
         optimizer.zero_grad()
-        if args.model in ['SGFormer', 'Polynormer']:
-            if args.model == 'Polynormer' and i == args.local_epochs:
-                print('start global attention')
-                model._global = True
-            out = model(batch.x, batch.edge_index,
-                        batch.batch)[:batch.batch_size]
-        else:
-            out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].view(-1).to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
@@ -152,17 +140,13 @@ def train(args, model, train_loader):
 
 
 @torch.no_grad()
-def test(args, model, loader):
+def test(model, loader):
     model.eval()
 
     total_correct = total_examples = 0
     for batch in loader:
         batch = batch.cuda()
-        if args.model in ['SGFormer', 'Polynormer']:
-            out = model(batch.x, batch.edge_index,
-                        batch.batch)[:batch.batch_size]
-        else:
-            out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].view(-1).to(torch.long)
 
         total_correct += out.argmax(dim=-1).eq(y).sum()
@@ -174,11 +158,6 @@ def test(args, model, loader):
 if __name__ == '__main__':
     args = arg_parse()
     torch_geometric.seed_everything(123)
-    if args.model == 'Polynormer' and args.num_layers != 7:
-        print(
-            "The original polynormer paper recommends 7 layers, you have "
-            "chosen", args.num_layers, "which may effect results. "
-            "See for details")
     if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
                                           (1024**3)) < 390:
         print("Warning: may not have enough RAM to use this many GPUs.")
@@ -217,13 +196,11 @@ if __name__ == '__main__':
 
     print(f"Training {args.dataset} with {args.model} model.")
     if args.model == "GAT":
-        model = torch_geometric.nn.models.GAT(
-            dataset.num_features,
-            args.hidden_channels,
-            args.num_layers,
-            dataset.num_classes,
-            heads=args.num_heads,
-        ).cuda()
+        model = torch_geometric.nn.models.GAT(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes,
+                                              heads=args.num_heads).cuda()
     elif args.model == "GCN":
         model = torch_geometric.nn.models.GCN(
             dataset.num_features,
@@ -249,16 +226,8 @@ if __name__ == '__main__':
             gnn_num_layers=args.num_layers,
             gnn_dropout=args.dropout,
         ).cuda()
-    elif args.model == 'Polynormer':
-        # TODO add support for this with disjoint sampling
-        model = torch_geometric.nn.models.Polynormer(
-            in_channels=dataset.num_features,
-            hidden_channels=args.hidden_channels,
-            out_channels=dataset.num_classes,
-            local_layers=args.num_layers,
-        ).cuda()
     else:
-        raise ValueError(f'Unsupported model type: {args.model}')
+        raise ValueError('Unsupported model type: {args.model}')
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.wd)
@@ -268,7 +237,6 @@ if __name__ == '__main__':
         num_neighbors=[args.fan_out] * args.num_layers,
         replace=False,
         batch_size=args.batch_size,
-        disjoint=args.model in ['SGFormer', 'Polynormer'],
     )
 
     train_loader = create_loader(
@@ -300,16 +268,14 @@ if __name__ == '__main__':
     best_val = 0.
     start = time.perf_counter()
     epochs = args.epochs
-    if args.model == 'Polynormer':
-        epochs += args.local_epochs
     for epoch in range(1, epochs + 1):
         train_start = time.perf_counter()
-        loss, train_acc = train(args, model, train_loader)
+        loss, train_acc = train(model, train_loader)
         train_end = time.perf_counter()
         train_times.append(train_end - train_start)
         inference_start = time.perf_counter()
-        train_acc = test(args, model, train_loader)
-        val_acc = test(args, model, val_loader)
+        train_acc = test(model, train_loader)
+        val_acc = test(model, val_loader)
 
         inference_times.append(time.perf_counter() - inference_start)
         val_accs.append(val_acc)
@@ -334,7 +300,7 @@ if __name__ == '__main__':
     print(f"Best validation accuracy: {best_val:.4f}")
 
     print("Testing...")
-    final_test_acc = test(args, model, test_loader)
+    final_test_acc = test(model, test_loader)
     print(f'Test Accuracy: {final_test_acc:.4f}')
 
     total_time = round(time.perf_counter() - wall_clock_start, 2)
