@@ -18,6 +18,30 @@ class GraphTransformer(torch.nn.Module):
     r"""The graph transformer model from the "Transformer for Graphs:
     An Overview from Architecture Perspective"
     <https://arxiv.org/pdf/2202.08455>_ paper.
+
+    Args:
+        hidden_dim (int): The dimension of the hidden representations.
+        num_class (int): The number of output classes.
+        use_super_node (bool, optional): Whether to use a learnable class
+            token as a super node. Defaults to False.
+        node_feature_encoder (nn.Module, optional): A module to encode
+            node features. Defaults to nn.Identity().
+        num_encoder_layers (int, optional): The number of encoder layers
+            in the transformer. Defaults to 0 (single layer).
+        degree_encoder (Optional[Callable[[Data], torch.Tensor]], optional):
+            A function that takes a Data object and returns a tensor of
+            degree encodings for each node. Defaults to None.
+        attn_bias_providers (Sequence[BaseBiasProvider], optional): A
+            sequence of bias providers that return attention bias masks.
+            Defaults to an empty sequence.
+        gnn_block (Optional[Callable[[Data, torch.Tensor],
+            torch.Tensor]], optional): A function that takes a Data object
+            and node features, and returns updated node features after
+            applying a GNN block. Defaults to None.
+        gnn_position (Literal['pre', 'post', 'parallel'], optional):
+            Where to apply the GNN block. Can be 'pre', 'post', or
+            'parallel'. Defaults to 'pre'.
+
     """
 
     def __init__(
