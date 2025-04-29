@@ -16,11 +16,11 @@ MAX_NEW_TOKENS = 32
 PAD_TOKEN_ID = 0
 PADDING_SIDE = 'left'
 
-
 # legacy constants - used for Llama 2 style prompting
 BOS = '<s>[INST]'
 EOS_USER = '[/INST]'
 EOS = '[/s]'
+
 
 def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
     torch.cuda.empty_cache()
@@ -112,12 +112,12 @@ class LLM(torch.nn.Module):
             dummy_convo = [
                 {
                     "role": "system",
-                        "content": "dummy"
-                    },
-                    {
-                        "role": "user",
-                        "content": "convo"
-                    },
+                    "content": "dummy"
+                },
+                {
+                    "role": "user",
+                    "content": "convo"
+                },
             ]
             text = self.tokenizer.apply_chat_template(
                 dummy_convo,
@@ -309,10 +309,11 @@ class LLM(torch.nn.Module):
         answer: Optional[List[str]] = None,
     ) -> tuple:
         if not self.tokenizer.chat_template or not self.sys_prompt:
-            warnings.warn(f"HuggingFace model {self.model_name} is not using a "
-                        "chat template, using Llama 2 style prompting. Please "
-                        "consider using a more recent model and initialize the "
-                        "LLM with `sys_prompt`.")
+            warnings.warn(
+                f"HuggingFace model {self.model_name} is not using a "
+                "chat template, using Llama 2 style prompting. Please "
+                "consider using a more recent model and initialize the "
+                "LLM with `sys_prompt`.")
             return self._get_embeds_old(question, context, embedding, answer)
         batch_label_input_ids = None
         if answer is not None:
