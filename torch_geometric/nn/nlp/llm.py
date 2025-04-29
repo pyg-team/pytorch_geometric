@@ -237,7 +237,7 @@ class LLM(torch.nn.Module):
         embedding: Optional[List[Tensor]] = None,
         answer: Optional[List[str]] = None,
     ) -> tuple:
-        if self.tokenizer.apply_chat_template:
+        if self.tokenizer.chat_template and self.sys_prompt:
             return self._get_embeds_with_template(question, context, embedding,
                                                   answer)
         (batch_size, question, context, eos_user_tokens, bos_embeds,
