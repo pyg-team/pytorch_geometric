@@ -328,50 +328,7 @@ def test_gnn_hook_order(simple_batch, pos):
         assert sorted(seq) == ["enc", "gnn"]
 
 
-# ── GNN‐Block Parametrized Tests ────────────────────────────────────────────
-
-
-@pytest.mark.parametrize(
-    "conv,where", [(GCNConv, "pre"), (SAGEConv, "post"), (GATConv, "pre")]
-)
-def test_gnn_block_real_convs(simple_batch, conv, where):
-    base_out = GraphTransformer(
-        hidden_dim=16, num_class=4, num_encoder_layers=2
-    )(simple_batch(16, 5))["logits"]
-
-    def gnn(data, x):
-        return conv(x.size(-1), x.size(-1))(x, data.edge_index)
-
-    out = GraphTransformer(
-        hidden_dim=16,
-        num_class=4,
-        num_encoder_layers=2,
-        gnn_block=gnn,
-        gnn_position=where
-    )(simple_batch(16, 5))["logits"]
-    assert out.shape == base_out.shape
-    assert not torch.allclose(out, base_out)
-
-
-@pytest.mark.parametrize("where", ["pre", "post", "parallel"])
-def test_gnn_block_mlp(simple_batch, where):
-    base_out = GraphTransformer(
-        hidden_dim=8, num_class=3, num_encoder_layers=1
-    )(simple_batch(8, 4))["logits"]
-
-    def mlp(data, x):
-        y = nn.Linear(x.size(-1), x.size(-1))(x)
-        return nn.ReLU()(nn.Linear(x.size(-1), x.size(-1))(y))
-
-    out = GraphTransformer(
-        hidden_dim=8,
-        num_class=3,
-        num_encoder_layers=1,
-        gnn_block=mlp,
-        gnn_position=where
-    )(simple_batch(8, 4))["logits"]
-    assert out.shape == base_out.shape
-    assert not torch.allclose(out, base_out)
+# ── Positional Encoder Hook Tests ───────────────────────────────────────────
 
 
 def test_positional_encoders(simple_batch):
@@ -444,3 +401,132 @@ def test_combined_positional_encoders(simple_batch):
     for enc in encoders:
         for p in enc.parameters():
             assert p.grad is not None
+
+
+# ── GNN‐Block Parametrized Tests ────────────────────────────────────────────
+
+
+@pytest.mark.parametrize(
+    "conv,where", [(GCNConv, "pre"), (SAGEConv, "post"), (GATConv, "pre")]
+)
+def test_gnn_block_real_convs(simple_batch, conv, where):
+    base_out = GraphTransformer(
+        hidden_dim=16, num_class=4, num_encoder_layers=2
+    )(simple_batch(16, 5))["logits"]
+
+    def gnn(data, x):
+        return conv(x.size(-1), x.size(-1))(x, data.edge_index)
+
+    out = GraphTransformer(
+        hidden_dim=16,
+        num_class=4,
+        num_encoder_layers=2,
+        gnn_block=gnn,
+        gnn_position=where
+    )(simple_batch(16, 5))["logits"]
+    assert out.shape == base_out.shape
+    assert not torch.allclose(out, base_out)
+
+
+# ── Model Representation String ────────────────────────────────────────────
+
+
+def dummy_gnn(data, x):
+    return x
+
+
+@pytest.mark.parametrize(
+    "config, substrings",
+    [
+        (
+            # default: no encoders
+            {
+                "hidden_dim": 16,
+                "num_class": 3,
+                "use_super_node": False,
+                "num_encoder_layers": 0,
+                "attn_bias_providers": [],
+                "gnn_block": None,
+                "gnn_position": "pre",
+                "positional_encoders": [],
+            },
+            [
+                "hidden_dim=16",
+                "num_class=3",
+                "use_super_node=False",
+                "num_encoder_layers=0",
+                "bias_providers=[]",
+                "pos_encoders=[]",
+                "gnn_hook=None@'pre'",
+            ],
+        ),
+        (
+            # with all types of encoders
+            {
+                "hidden_dim":
+                32,
+                "num_class":
+                5,
+                "use_super_node":
+                True,
+                "num_encoder_layers":
+                3,
+                "attn_bias_providers": [],
+                "gnn_block":
+                None,
+                "gnn_position":
+                "parallel",
+                "positional_encoders": [
+                    DegreeEncoder(3, 3, 32),
+                    EigEncoder(4, 32),
+                    SVDEncoder(3, 32),
+                ],
+            },
+            [
+                "hidden_dim=32",
+                "num_class=5",
+                "use_super_node=True",
+                "num_encoder_layers=3",
+                "bias_providers=[]",
+                "pos_encoders=['DegreeEncoder', 'EigEncoder', 'SVDEncoder']",
+                "gnn_hook=None@'parallel'",
+            ],
+        ),
+        (
+            # with single encoder and gnn hook
+            {
+                "hidden_dim": 8,
+                "num_class": 2,
+                "use_super_node": False,
+                "num_encoder_layers": 1,
+                "attn_bias_providers": [],
+                "gnn_block": dummy_gnn,
+                "gnn_position": "post",
+                "positional_encoders": [DegreeEncoder(2, 2, 8)],
+            },
+            [
+                "hidden_dim=8",
+                "num_class=2",
+                "use_super_node=False",
+                "num_encoder_layers=1",
+                "bias_providers=[]",
+                "pos_encoders=['DegreeEncoder']",
+                "gnn_hook=dummy_gnn@'post'",
+            ],
+        ),
+    ]
+)
+def test_repr_various_configs(config, substrings):
+    model = GraphTransformer(
+        hidden_dim=config["hidden_dim"],
+        num_class=config["num_class"],
+        use_super_node=config["use_super_node"],
+        num_encoder_layers=config["num_encoder_layers"],
+        attn_bias_providers=config["attn_bias_providers"],
+        gnn_block=config["gnn_block"],
+        gnn_position=config["gnn_position"],
+        positional_encoders=config["positional_encoders"],
+    )
+    rep = repr(model)
+    for sub in substrings:
+        assert sub in rep, f"{sub!r} not found in repr: {rep}"

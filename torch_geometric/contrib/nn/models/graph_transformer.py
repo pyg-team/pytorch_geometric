@@ -316,6 +316,10 @@ class GraphTransformer(torch.nn.Module):
         else:
             gnn_name = None
 
+        pos_encoders = [
+            enc.__class__.__name__ for enc in self.positional_encoders
+        ]
+
         return (
             "GraphTransformer("
             f"hidden_dim={self.classifier.in_features}, "
@@ -323,6 +327,7 @@ class GraphTransformer(torch.nn.Module):
             f"use_super_node={self.use_super_node}, "
             f"num_encoder_layers={n_layers}, "
             f"bias_providers={providers}, "
+            f"pos_encoders={pos_encoders}, "
             f"gnn_hook={gnn_name}@'{self.gnn_position}'"
             ")"
         )
