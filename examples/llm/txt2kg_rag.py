@@ -46,6 +46,7 @@ from torch_geometric.utils.rag.backend_utils import (
 )
 from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
@@ -259,17 +260,21 @@ def make_dataset(args):
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
         """
-        # encode the raw context docs
-        embedded_docs = model.encode(context_docs, output_device=device,
-                                     batch_size=int(sent_trans_batch_size / 4),
-                                     verbose=True)
+
+        vector_retriever = DocumentRetriever(
+            context_docs, k_for_docs=args.k_for_docs, model=model,
+            model_method_to_call="encode", model_kwargs={
+                "output_device": device,
+                "batch_size": int(sent_trans_batch_size / 4),
+                "verbose": True
+            })
         # k for KNN
         knn_neighsample_bs = 1024
         # number of neighbors for each seed node selected by KNN
         fanout = 100
         # number of hops for neighborsampling
         num_hops = 2
-        local_filter_kwargs = {
+        subgraph_filter_kwargs = {
             "topk": 5,  # nodes
             "topk_e": 5,  # edges
             "cost_e": .5,  # edge cost
@@ -282,11 +287,12 @@ def make_dataset(args):
         # VectorDB retrieval just vanilla RAG
         # TODO add reranking NIM to VectorRAG
         query_loader = RAGQueryLoader(
-            data=(fs, gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
+            graph_data=(fs,
+                        gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
             sampler_kwargs={"num_neighbors": [fanout] * num_hops},
-            local_filter=make_pcst_filter(triples, model),
-            local_filter_kwargs=local_filter_kwargs, raw_docs=context_docs,
-            embedded_docs=embedded_docs, k_for_docs=args.k_for_docs)
+            subgraph_filter=make_pcst_filter(triples, model),
+            subgraph_filter_kwargs=subgraph_filter_kwargs,
+            vector_retriever=vector_retriever)
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
@@ -374,8 +380,9 @@ def train(args, data_lists):
                 for i, q in enumerate(batch["question"]):
                     # insert VectorRAG context
                     new_qs.append(
-                        prompt_template.format(question=q,
-                                               context=batch.text_context[i]))
+                        prompt_template.format(
+                            question=q,
+                            context="\n".join(batch.text_context[i])))
                 batch.question = new_qs
 
                 optimizer.zero_grad()
@@ -457,8 +464,8 @@ def test(model, test_loader, args):
         for i, q in enumerate(test_batch["question"]):
             # insert VectorRAG context
             new_qs.append(
-                prompt_template.format(question=q,
-                                       context=test_batch.text_context[i]))
+                prompt_template.format(
+                    question=q, context="\n".join(test_batch.text_context[i])))
         test_batch.question = new_qs
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,

@@ -66,7 +66,7 @@ class TXT2KG():
             self.ENDPOINT_URL = ENDPOINT_URL
 
         # Set the chunk size for processing text data
-        self.chunk_size = 512
+        self.chunk_size = chunk_size
 
         # Initialize counters and storage for parsing results
         self.doc_id_counter = 0

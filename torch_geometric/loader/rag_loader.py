@@ -1,13 +1,12 @@
 from abc import abstractmethod
-from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
 import torch
-from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
-from torch_geometric.utils.rag.backend_utils import batch_knn
+from torch_geometric.utils.rag.vectorrag import VectorRetriever
 
 
 class RAGFeatureStore(Protocol):
@@ -57,71 +56,60 @@ class RAGGraphStore(Protocol):
 
 class RAGQueryLoader:
     """Loader meant for making RAG queries from a remote backend."""
-    def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
-                 local_filter: Optional[Callable[[Data, Any], Data]] = None,
+    def __init__(self, graph_data: Tuple[RAGFeatureStore, RAGGraphStore],
+                 subgraph_filter: Optional[Callable[[Data, Any], Data]] = None,
                  seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
-                 seed_edges_kwargs: Optional[Dict[str, Any]] = None,
                  sampler_kwargs: Optional[Dict[str, Any]] = None,
                  loader_kwargs: Optional[Dict[str, Any]] = None,
-                 local_filter_kwargs: Optional[Dict[str, Any]] = None,
-                 raw_docs: Optional[List[str]] = None,
-                 embedded_docs: Optional[Tensor] = None,
-                 k_for_docs: Optional[int] = 2):
+                 subgraph_filter_kwargs: Optional[Dict[str, Any]] = None,
+                 augment_query: bool = False,
+                 vector_retriever: Optional[VectorRetriever] = None):
         """Loader meant for making queries from a remote backend.
 
         Args:
-            data (Tuple[RAGFeatureStore, RAGGraphStore]): Remote FeatureStore
+            graph_data (Tuple[RAGFeatureStore, RAGGraphStore]): Remote FeatureStore
                 and GraphStore to load from. Assumed to conform to the
                 protocols listed above.
-            local_filter (Optional[Callable[[Data, Any], Data]], optional):
+            subgraph_filter (Optional[Callable[[Data, Any], Data]], optional):
                 Optional local transform to apply to data after retrieval.
                 Defaults to None.
             seed_nodes_kwargs (Optional[Dict[str, Any]], optional): Paramaters
                 to pass into process for fetching seed nodes. Defaults to None.
-            seed_edges_kwargs (Optional[Dict[str, Any]], optional): Parameters
-                to pass into process for fetching seed edges.
-                Currently this class does not use seed_edges. (TODO)
-                Defaults to None.
             sampler_kwargs (Optional[Dict[str, Any]], optional): Parameters to
                 pass into process for sampling graph. Defaults to None.
             loader_kwargs (Optional[Dict[str, Any]], optional): Parameters to
                 pass into process for loading graph features. Defaults to None.
-            local_filter_kwargs (Optional[Dict[str, Any]], optional): Parameters to
+            subgraph_filter_kwargs (Optional[Dict[str, Any]], optional): Parameters to
                 pass into process for filtering features. Defaults to None.
-            raw_docs (Optional[List[str]], optional): Raw context docs for VectorRAG.
-                Combines with GraphRAG to make HybridRAG. Defaults to None.
-            embedded_docs (Optional[Tensor], optional): Embedded context docs for VectorRAG.
-                Needs to match the `raw_docs`. Defaults to None.
-            k_for_docs (Optional[int], optional): top-k docs to select for vectorRAG.
-                (Default: :obj:`2`).
+            vector_retriever (Optional[VectorRetriever], optional): VectorRetriever to use for
+                retrieving documents. Defaults to None.
         """
-        fstore, gstore = data
-        self.raw_docs = raw_docs
-        self.k_for_docs = k_for_docs
-        if self.raw_docs:
-            assert len(raw_docs) == len(
-                embedded_docs), "Need raw and embedded docs to match"
-        self.embedded_docs = embedded_docs
+        fstore, gstore = graph_data
+        self.vector_retriever = vector_retriever
+        self.augment_query = augment_query
         self.feature_store = fstore
         self.graph_store = gstore
         self.graph_store.edge_index = self.graph_store.edge_index.contiguous()
         self.graph_store.register_feature_store(self.feature_store)
-        self.local_filter = local_filter
+        self.subgraph_filter = subgraph_filter
         self.seed_nodes_kwargs = seed_nodes_kwargs or {}
-        self.seed_edges_kwargs = seed_edges_kwargs or {}
         self.sampler_kwargs = sampler_kwargs or {}
         self.loader_kwargs = loader_kwargs or {}
-        self.local_filter_kwargs = local_filter_kwargs or {}
+        self.subgraph_filter_kwargs = subgraph_filter_kwargs or {}
 
     def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
         attributes.
         """
+        if self.vector_retriever:
+            retrieved_docs = self.vector_retriever.query(query)
+
+        if self.augment_query:
+            query = [query] + retrieved_docs
+
         seed_nodes, query_enc = self.feature_store.retrieve_seed_nodes(
             query, **self.seed_nodes_kwargs)
-        # Graph Store does not Use These, save computation
-        # seed_edges = self.feature_store.retrieve_seed_edges(
-        #     query, **self.seed_edges_kwargs)
+
         subgraph_sample = self.graph_store.sample_subgraph(
             seed_nodes, **self.sampler_kwargs)
 
@@ -151,12 +139,9 @@ class RAGQueryLoader:
         data.edge_index = torch.tensor(list_edge_index).t()
 
         # apply local filter
-        if self.local_filter:
-            data = self.local_filter(data, query, **self.local_filter_kwargs)
-        if self.raw_docs:
-            selected_doc_idxs, _ = next(
-                batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
-            data.text_context = "\n".join(
-                [self.raw_docs[i] for i in selected_doc_idxs])
-
+        if self.subgraph_filter:
+            data = self.subgraph_filter(data, query,
+                                        **self.subgraph_filter_kwargs)
+        if self.vector_retriever:
+            data.text_context = retrieved_docs
         return data

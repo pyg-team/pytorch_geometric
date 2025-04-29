@@ -53,14 +53,16 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
-        - query: The query to search for.
+        - query: The query or list of queries to search for.
         - k_nodes: The number of nodes to retrieve (default: 5).
 
         Returns:
         - The indices of the most similar nodes.
         """
+        if not isinstance(query, (list, tuple)):
+            query = [query]
         result, query_enc = next(
-            self._retrieve_seed_nodes_batch([query], k_nodes))
+            self._retrieve_seed_nodes_batch(query, k_nodes))
         gc.collect()
         torch.cuda.empty_cache()
         return result, query_enc
@@ -87,14 +89,16 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Retrieves the k_edges most similar edges to the given query.
 
         Args:
-        - query: The query to search for.
+        - query: The query or list of queries to search for.
         - k_edges: The number of edges to retrieve (default: 3).
 
         Returns:
         - The indices of the most similar edges.
         """
+        if not isinstance(query, (list, tuple)):
+            query = [query]
         result, query_enc = next(
-            self._retrieve_seed_edges_batch([query], k_edges))
+            self._retrieve_seed_edges_batch(query, k_edges))
         gc.collect()
         torch.cuda.empty_cache()
         return result, query_enc
