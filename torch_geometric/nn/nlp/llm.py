@@ -240,6 +240,9 @@ class LLM(torch.nn.Module):
         if self.tokenizer.chat_template and self.sys_prompt:
             return self._get_embeds_with_template(question, context, embedding,
                                                   answer)
+        warnings.warn(f"HuggingFace model {self.model_name} is not using a "
+                      "chat template, using Llama 2 style prompting. Please "
+                      "consider using a more recent model.")
         (batch_size, question, context, eos_user_tokens, bos_embeds,
          pad_embeds) = self._encode_inputs(question, context)
 
