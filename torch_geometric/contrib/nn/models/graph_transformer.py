@@ -189,9 +189,6 @@ class GraphTransformer(torch.nn.Module):
             "logits": logits,
         }
 
-    def __repr__(self):
-        return "GraphTransformer()"
-
     @torch.jit.ignore
     def _collect_attn_bias(self, data: Data) -> Optional[torch.Tensor]:
         """Combine legacy and all provider masks into one.
@@ -218,3 +215,24 @@ class GraphTransformer(torch.nn.Module):
         return torch.stack(
             masks, dim=0
         ).sum(dim=0).to(data.x.dtype).to(data.x.device)
+
+    def __repr__(self):
+        n_layers = len(self.encoder) if self.is_encoder_stack else 0
+        providers = [
+            prov.__class__.__name__ for prov in self.attn_bias_providers
+        ]
+        if self.gnn_block is not None:
+            gnn_name = self.gnn_block.__name__
+        else:
+            gnn_name = None
+
+        return (
+            "GraphTransformer("
+            f"hidden_dim={self.classifier.in_features}, "
+            f"num_class={self.classifier.out_features}, "
+            f"use_super_node={self.use_super_node}, "
+            f"num_encoder_layers={n_layers}, "
+            f"bias_providers={providers}, "
+            f"gnn_hook={gnn_name}@'{self.gnn_position}'"
+            ")"
+        )

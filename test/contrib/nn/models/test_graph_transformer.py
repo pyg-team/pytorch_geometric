@@ -743,3 +743,87 @@ def test_gnn_block_multi_layer_mlp():
     out = model(batch)["logits"]
     assert out.shape == out_base.shape
     assert not torch.allclose(out, out_base)
+
+
+def dummy_gnn(data, x):
+    return x
+
+
+@pytest.mark.parametrize(
+    "config, substrings",
+    [
+        (
+            # default: no super node, no encoder layers, no hook
+            {
+                "hidden_dim": 16,
+                "num_class": 3,
+                "use_super_node": False,
+                "num_encoder_layers": 0,
+                "attn_bias_providers": [],
+                "gnn_block": None,
+                "gnn_position": "pre",
+            },
+            [
+                "hidden_dim=16",
+                "num_class=3",
+                "use_super_node=False",
+                "num_encoder_layers=0",
+                "bias_providers=[]",
+                "gnn_hook=None@'pre'",
+            ],
+        ),
+        (
+            # with super node, stacked encoder, parallel hook
+            {
+                "hidden_dim": 32,
+                "num_class": 5,
+                "use_super_node": True,
+                "num_encoder_layers": 3,
+                "attn_bias_providers": [],
+                "gnn_block": None,
+                "gnn_position": "parallel",
+            },
+            [
+                "hidden_dim=32",
+                "num_class=5",
+                "use_super_node=True",
+                "num_encoder_layers=3",
+                "bias_providers=[]",
+                "gnn_hook=None@'parallel'",
+            ],
+        ),
+        (
+            # with a real hook and post position
+            {
+                "hidden_dim": 8,
+                "num_class": 2,
+                "use_super_node": False,
+                "num_encoder_layers": 1,
+                "attn_bias_providers": [],
+                "gnn_block": dummy_gnn,
+                "gnn_position": "post",
+            },
+            [
+                "hidden_dim=8",
+                "num_class=2",
+                "use_super_node=False",
+                "num_encoder_layers=1",
+                "bias_providers=[]",
+                "gnn_hook=dummy_gnn@'post'",
+            ],
+        ),
+    ]
+)
+def test_repr_various_configs(config, substrings):
+    model = GraphTransformer(
+        hidden_dim=config["hidden_dim"],
+        num_class=config["num_class"],
+        use_super_node=config["use_super_node"],
+        num_encoder_layers=config["num_encoder_layers"],
+        attn_bias_providers=config["attn_bias_providers"],
+        gnn_block=config["gnn_block"],
+        gnn_position=config["gnn_position"],
+    )
+    rep = repr(model)
+    for sub in substrings:
+        assert sub in rep, f"{sub!r} not found in repr: {rep}"
