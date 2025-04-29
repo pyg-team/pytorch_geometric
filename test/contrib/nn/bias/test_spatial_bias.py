@@ -3,28 +3,6 @@ import torch
 
 from torch_geometric.contrib.nn.bias.spatial import GraphAttnSpatialBias
 from torch_geometric.contrib.nn.models import GraphTransformer
-from torch_geometric.data import Batch, Data
-
-
-@pytest.fixture
-def spatial_batch():
-    """Factory for batches with spatial_pos and x."""
-
-    def _make(batch_size, seq_len, num_spatial, feat_dim=1):
-        data_list = []
-        for _ in range(batch_size):
-            spatial_pos = torch.randint(0, num_spatial, (seq_len, seq_len))
-            x = torch.randn(seq_len, feat_dim)
-            data_list.append(
-                Data(
-                    x=x,
-                    spatial_pos=spatial_pos,
-                    edge_index=torch.empty((2, 0), dtype=torch.long)
-                )
-            )
-        return Batch.from_data_list(data_list)
-
-    return _make
 
 
 def test_spatial_bias_shape_dtype(spatial_batch):

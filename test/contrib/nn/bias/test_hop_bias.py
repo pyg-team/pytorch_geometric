@@ -3,30 +3,9 @@ import torch
 
 from torch_geometric.contrib.nn.bias.hop import GraphAttnHopBias
 from torch_geometric.contrib.nn.models import GraphTransformer
-from torch_geometric.data import Batch, Data
 
 
-@pytest.fixture
-def make_hop_batch():
-    """Factory for creating Batch objects with hop_dist and x."""
-
-    def _make(batch_size, seq_len, num_hops, feature_dim=1):
-        data_list = []
-        for _ in range(batch_size):
-            hop_dist = torch.randint(0, num_hops, (seq_len, seq_len))
-            x = torch.randn(seq_len, feature_dim)
-            data = Data(
-                x=x,
-                hop_dist=hop_dist,
-                edge_index=torch.empty((2, 0), dtype=torch.long),
-            )
-            data_list.append(data)
-        return Batch.from_data_list(data_list)
-
-    return _make
-
-
-def test_hop_bias_shape_and_dtype(make_hop_batch):
+def test_hop_bias_shape_and_dtype(hop_batch):
     num_heads = 4
     num_hops = 10
     seq_len = 5
@@ -36,7 +15,7 @@ def test_hop_bias_shape_and_dtype(make_hop_batch):
         num_heads=num_heads,
         num_hops=num_hops,
     )
-    batch = make_hop_batch(batch_size, seq_len, num_hops)
+    batch = hop_batch(batch_size, seq_len, num_hops)
     bias = bias_provider(batch)
 
     assert isinstance(bias, torch.Tensor)
@@ -44,7 +23,7 @@ def test_hop_bias_shape_and_dtype(make_hop_batch):
     assert bias.shape == (batch_size, num_heads, seq_len, seq_len)
 
 
-def test_hop_bias_affects_transformer(make_hop_batch):
+def test_hop_bias_affects_transformer(hop_batch):
     torch.manual_seed(0)
     num_heads = 4
     num_hops = 8
@@ -55,7 +34,7 @@ def test_hop_bias_affects_transformer(make_hop_batch):
         num_heads=num_heads,
         num_hops=num_hops,
     )
-    batch = make_hop_batch(1, seq_len, num_hops, feature_dim)
+    batch = hop_batch(1, seq_len, num_hops, feature_dim)
 
     model_plain = GraphTransformer(
         hidden_dim=feature_dim,
@@ -79,7 +58,7 @@ def test_hop_bias_affects_transformer(make_hop_batch):
     assert not torch.allclose(out_plain, out_biased, rtol=1e-4, atol=1e-4)
 
 
-def test_hop_bias_gradients(make_hop_batch):
+def test_hop_bias_gradients(hop_batch):
     num_heads = 4
     num_hops = 8
     seq_len = 5
@@ -95,7 +74,7 @@ def test_hop_bias_gradients(make_hop_batch):
         num_encoder_layers=1,
         attn_bias_providers=[bias_provider],
     )
-    batch = make_hop_batch(1, seq_len, num_hops, feature_dim)
+    batch = hop_batch(1, seq_len, num_hops, feature_dim)
 
     out = model(batch)["logits"]
     loss = out.sum()
@@ -117,7 +96,7 @@ def test_hop_bias_gradients(make_hop_batch):
     ],
 )
 def test_hop_bias_configuration(
-    make_hop_batch, num_heads, num_hops, use_super_node
+    hop_batch, num_heads, num_hops, use_super_node
 ):
     seq_len = 7
     batch_size = 3
@@ -127,7 +106,7 @@ def test_hop_bias_configuration(
         num_hops=num_hops,
         use_super_node=use_super_node,
     )
-    batch = make_hop_batch(batch_size, seq_len, num_hops)
+    batch = hop_batch(batch_size, seq_len, num_hops)
     bias = bias_provider(batch)
 
     expected_len = seq_len + (1 if use_super_node else 0)

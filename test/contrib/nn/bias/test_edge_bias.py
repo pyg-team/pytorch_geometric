@@ -3,27 +3,6 @@ import torch
 
 from torch_geometric.contrib.nn.bias.edge import GraphAttnEdgeBias
 from torch_geometric.contrib.nn.models import GraphTransformer
-from torch_geometric.data import Batch, Data
-
-
-@pytest.fixture
-def edge_batch():  # noqa: E231
-    """Factory for batches with edge_dist and x."""
-
-    def _make(batch_size, seq_len, num_edges, feat_dim=1):
-        data_list = []
-        for _ in range(batch_size):
-            edge_dist = torch.randint(0, num_edges, (seq_len, seq_len))
-            x = torch.randn(seq_len, feat_dim)
-            data = Data(
-                x=x,
-                edge_dist=edge_dist,
-                edge_index=torch.empty((2, 0), dtype=torch.long)
-            )
-            data_list.append(data)
-        return Batch.from_data_list(data_list)
-
-    return _make
 
 
 @pytest.mark.parametrize(
