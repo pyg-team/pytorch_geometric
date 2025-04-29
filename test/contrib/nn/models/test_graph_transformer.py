@@ -5,7 +5,10 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from torch_geometric.contrib.nn.bias import GraphAttnSpatialBias
+from torch_geometric.contrib.nn.bias import (
+    GraphAttnEdgeBias,
+    GraphAttnSpatialBias,
+)
 from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoderLayer,
 )
@@ -31,6 +34,34 @@ def make_batch_with_spatial(
             Data(
                 x=x,
                 spatial_pos=spatial_pos,
+                edge_index=edge_index,
+            )
+        )
+    return Batch.from_data_list(data_list)
+
+
+def make_batch_with_spatial_and_edge(
+    batch_size: int,
+    seq_len: int,
+    num_spatial: int,
+    num_edges: int,
+    feature_dim: int = 1,
+) -> Batch:
+    """Create a Batch of graphs with both spatial_pos and edge_dist."""
+    data_list = []
+    for _ in range(batch_size):
+        # Spatial distances
+        spatial_pos = torch.randint(0, num_spatial, (seq_len, seq_len))
+        # Edge types
+        edge_dist = torch.randint(0, num_edges, (seq_len, seq_len))
+        # Node features
+        x = torch.randn(seq_len, feature_dim)
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        data_list.append(
+            Data(
+                x=x,
+                spatial_pos=spatial_pos,
+                edge_dist=edge_dist,
                 edge_index=edge_index,
             )
         )
@@ -510,3 +541,65 @@ def test_super_node_bias():
     expected = (1, num_heads, seq_len + 1, seq_len + 1)
     assert bias.shape == expected, \
         f"Expected bias shape {expected}, got {tuple(bias.shape)}"
+
+
+@pytest.mark.parametrize("use_super_node", [False, True])
+def test_multi_provider_fusion(use_super_node):
+    """Test that multiple attention bias providers combine correctly."""
+    torch.manual_seed(12345)
+
+    # Parameters
+    batch_size = 2
+    seq_len = 4
+    num_spatial = 5
+    num_edges = 6
+    num_heads = 2
+    feature_dim = 8
+
+    # Create providers
+    prov1 = GraphAttnSpatialBias(
+        num_heads=num_heads,
+        num_spatial=num_spatial,
+        use_super_node=use_super_node
+    )
+    prov2 = GraphAttnEdgeBias(
+        num_heads=num_heads,
+        num_edges=num_edges,
+        edge_type='simple',
+        use_super_node=use_super_node
+    )
+
+    # Create model with both providers
+    model = GraphTransformer(
+        hidden_dim=feature_dim,
+        num_class=2,
+        use_super_node=use_super_node,
+        attn_bias_providers=[prov1, prov2]
+    )
+
+    # Create batch with both types of position data
+    batch = make_batch_with_spatial_and_edge(
+        batch_size=batch_size,
+        seq_len=seq_len,
+        num_spatial=num_spatial,
+        num_edges=num_edges,
+        feature_dim=feature_dim
+    )
+
+    # Get fused bias through model's internal method
+    struct = model._collect_attn_bias(batch)
+
+    # Calculate sum directly
+    sum_direct = (
+        prov1(batch).to(struct.dtype).to(struct.device) +
+        prov2(batch).to(struct.dtype).to(struct.device)
+    )
+
+    # Expected shape after accounting for super node
+    expected_len = seq_len + (1 if use_super_node else 0)
+    expected_shape = (batch_size, num_heads, expected_len, expected_len)
+
+    assert struct.shape == expected_shape, \
+        f"Expected shape {expected_shape}, got {tuple(struct.shape)}"
+    assert torch.allclose(struct, sum_direct, atol=1e-6), \
+        "Model's fused bias differs from direct sum of provider outputs"
