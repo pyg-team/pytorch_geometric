@@ -151,43 +151,101 @@ class GraphTransformer(torch.nn.Module):
         Returns:
             torch.Tensor: The output of the model.
         """
+        x = self._encode_and_apply_structural(data)
+        x = self._apply_gnn_if(position="pre", data=data, x=x)
+        x, batch_vec = self._prepare_batch(x, data.batch)
+        struct_mask = self._collect_attn_bias(data)
+        x_parallel_in = x if self._is_parallel() else None
+        x = self._run_encoder(x, batch_vec, struct_mask)
+        x = self._apply_gnn_if(position="post", data=data, x=x)
+
+        if x_parallel_in is not None:
+            x = x + self.gnn_block(data, x_parallel_in)
+
+        x = self._readout(x, batch_vec)
+        return {"logits": self.classifier(x)}
+
+    def _encode_and_apply_structural(self, data: Data) -> torch.Tensor:
+        r"""Encodes node features and applies structural encodings.
+
+        Args:
+            data (Data): The input graph data.
+
+        Returns:
+            torch.Tensor: The encoded node features.
+        """
         x = data.x
         x = self._encode_nodes(x)
         x = self._apply_extra_encoders(data, x)
+        return x
 
-        if self.gnn_block is not None and self.gnn_position == 'pre':
+    def _apply_gnn_if(
+        self, position: Literal['pre', 'post', 'parallel'], data: Data,
+        x: torch.Tensor
+    ) -> torch.Tensor:
+        r"""Applies the GNN block if specified and at the correct position.
+
+        Args:
+            position (Literal['pre', 'post', 'parallel']): Where to apply
+                the GNN block.
+            data (Data): The input graph data.
+            x (torch.Tensor): The current node features.
+
+        Returns:
+            torch.Tensor: The updated node features after applying GNN.
+        """
+        if self.gnn_block is not None and self.gnn_position == position:
             x = self.gnn_block(data, x)
+        return x
+
+    def _prepare_batch(
+        self, x: torch.Tensor, batch: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        r"""Prepares the batch vector and optionally adds a class token.
+
+        Args:
+            x (torch.Tensor): The current node features.
+            batch (torch.Tensor): The batch vector.
+
+        Returns:
+            tuple[torch.Tensor, torch.Tensor]: A tuple containing the updated
+            node features and the batch vector.
+        """
         if self.use_super_node:
-            x, batch_vec = self._prepend_cls_token_flat(x, data.batch)
-        else:
-            batch_vec = data.batch
+            x, batch = self._prepend_cls_token_flat(x, batch)
+        return x, batch
 
-        struct_mask = self._collect_attn_bias(data)
+    def _is_parallel(self) -> bool:
+        r"""Checks if the GNN block is applied in parallel.
 
-        if self.gnn_block and self.gnn_position == 'parallel':
-            x_in = x
+        Returns:
+            bool: True if GNN block is applied in parallel, False otherwise.
+        """
+        return self.gnn_block is not None and self.gnn_position == 'parallel'
 
+    def _run_encoder(
+        self, x: torch.Tensor, batch_vec: torch.Tensor,
+        struct_mask: Optional[torch.Tensor]
+    ) -> torch.Tensor:
+        r"""Runs the encoder on the node features.
+
+        Args:
+            x (torch.Tensor): The current node features.
+            batch_vec (torch.Tensor): The batch vector.
+            struct_mask (Optional[torch.Tensor]): The attention bias mask.
+
+        Returns:
+            torch.Tensor: The updated node features after encoding.
+        """
         if self.is_encoder_stack:
-            x = self.encoder(x, batch_vec, struct_mask)
+            return self.encoder(x, batch_vec, struct_mask)
         else:
             num_heads = getattr(self.encoder, "num_heads", None)
             if num_heads is not None:
                 key_pad = build_key_padding(batch_vec, num_heads=num_heads)
-                x = self.encoder(x, batch_vec, struct_mask, key_pad)
+                return self.encoder(x, batch_vec, struct_mask, key_pad)
             else:
-                x = self.encoder(x, batch_vec, struct_mask)
-
-        if self.gnn_block is not None and self.gnn_position == 'post':
-            x = self.gnn_block(data, x)
-
-        if self.gnn_block and self.gnn_position == 'parallel':
-            x = x + self.gnn_block(data, x_in)
-
-        x = self._readout(x, batch_vec)
-        logits = self.classifier(x)
-        return {
-            "logits": logits,
-        }
+                return self.encoder(x, batch_vec, struct_mask)
 
     @torch.jit.ignore
     def _collect_attn_bias(self, data: Data) -> Optional[torch.Tensor]:
