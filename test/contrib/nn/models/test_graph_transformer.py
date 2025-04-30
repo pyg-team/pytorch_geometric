@@ -19,64 +19,6 @@ from torch_geometric.contrib.nn.positional import (
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import GATConv, GCNConv, SAGEConv
 
-# ── Fixtures & Factories ─────────────────────────────────────────────────────
-
-
-@pytest.fixture
-def simple_batch():
-    """Factory for a single-graph Batch with fully-connected edges."""
-
-    def _make(feat_dim, num_nodes):
-        x = torch.randn(num_nodes, feat_dim)
-        edge_index = torch.combinations(torch.arange(num_nodes), r=2).t()
-        return Batch.from_data_list([Data(x=x, edge_index=edge_index)])
-
-    return _make
-
-
-@pytest.fixture
-def spatial_batch():
-    """Factory for a batch with spatial_pos but no edges."""
-
-    def _make(batch_size, seq_len, num_spatial, feature_dim):
-        data_list = []
-        for _ in range(batch_size):
-            spatial_pos = torch.randint(0, num_spatial, (seq_len, seq_len))
-            x = torch.randn(seq_len, feature_dim)
-            data_list.append(
-                Data(
-                    x=x,
-                    spatial_pos=spatial_pos,
-                    edge_index=torch.empty((2, 0), dtype=torch.long)
-                )
-            )
-        return Batch.from_data_list(data_list)
-
-    return _make
-
-
-@pytest.fixture
-def spatial_edge_batch():
-    """Factory for a batch with spatial_pos and edge_dist."""
-
-    def _make(batch_size, seq_len, num_spatial, num_edges, feature_dim):
-        data_list = []
-        for _ in range(batch_size):
-            spatial_pos = torch.randint(0, num_spatial, (seq_len, seq_len))
-            edge_dist = torch.randint(0, num_edges, (seq_len, seq_len))
-            x = torch.randn(seq_len, feature_dim)
-            data_list.append(
-                Data(
-                    x=x,
-                    spatial_pos=spatial_pos,
-                    edge_dist=edge_dist,
-                    edge_index=torch.empty((2, 0), dtype=torch.long)
-                )
-            )
-        return Batch.from_data_list(data_list)
-
-    return _make
-
 
 class AddOneLayer(nn.Module):
 
@@ -100,7 +42,11 @@ class ConstantDegreeEncoder(nn.Module):
 
 class IdentityEncoder(nn.Module):
 
-    def forward(self, x, batch=None, attn_mask=None):
+    def __init__(self, num_heads=1):
+        super().__init__()
+        self.num_heads = num_heads
+
+    def forward(self, x, *args, **kwargs):
         return x
 
 
@@ -157,8 +103,11 @@ def test_forward_without_gnn_hook(simple_batch):
 
 def test_super_node_readout(simple_batch):
     data = simple_batch(feat_dim=4, num_nodes=1)
-    model = GraphTransformer(hidden_dim=4, num_class=2, use_super_node=True)
-    model.encoder = IdentityEncoder()  # bypass transformer
+    NUM_HEADS = 4
+    model = GraphTransformer(
+        hidden_dim=4, num_heads=NUM_HEADS, num_class=2, use_super_node=True
+    )
+    model.encoder = IdentityEncoder(num_heads=NUM_HEADS)
     out = model(data)["logits"]
     expected = model.classifier(model.cls_token.expand(1, -1))
     assert torch.allclose(out, expected)
@@ -272,7 +221,7 @@ def test_spatial_bias_shifts_logits(
 @pytest.mark.parametrize("use_super_node", [False])
 def test_multi_provider_fusion(spatial_edge_batch, use_super_node):
     batch = spatial_edge_batch(
-        2, seq_len=4, num_spatial=5, num_edges=6, feature_dim=8
+        2, seq_len=4, num_spatial=5, num_edges=6, feat_dim=8
     )
     number_of_heads = 2
     provs = [
