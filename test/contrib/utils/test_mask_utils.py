@@ -1,3 +1,4 @@
+import pytest  # Ensure pytest is imported if not already
 import torch
 
 from torch_geometric.contrib.utils.mask_utils import (
@@ -111,3 +112,19 @@ def test_merge_masks_float_bias(simple_batch):
     assert merged.shape == (2, 2, 2)
     assert merged[0, 0, 1] == 5.0
     assert merged[1, 1, 0] == 0.0
+
+
+def test_merge_masks_key_pad_missing_num_heads():
+    """Test that merge_masks raises ValueError when key_pad is 2-D and
+    num_heads is None.
+    """
+    key_pad = torch.zeros((2, 3), dtype=torch.bool)
+    with pytest.raises(ValueError):
+        merge_masks(key_pad=key_pad, attn=None)
+
+
+def test_merge_masks_invalid_mask_dtype():
+    """Test that merge_masks raises TypeError when mask dtype is invalid."""
+    attn = torch.zeros((2, 2, 3, 3), dtype=torch.int)
+    with pytest.raises(TypeError):
+        merge_masks(key_pad=None, attn=attn)
