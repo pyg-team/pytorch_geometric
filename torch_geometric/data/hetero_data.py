@@ -294,7 +294,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 return node_type
         for edge_type, store in self.edge_items():
             if hasattr(store, 'input_id'):
-                return node_type
+                return edge_type
         return None
 
     def to_dict(self) -> Dict[str, Any]:
