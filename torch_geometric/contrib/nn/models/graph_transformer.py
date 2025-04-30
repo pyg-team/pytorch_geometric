@@ -205,30 +205,6 @@ class GraphTransformer(torch.nn.Module):
             return global_mean_pool(x, batch)
 
     @torch.jit.ignore
-    def _add_cls_token(
-        self, x: torch.Tensor, batch: torch.Tensor
-    ) -> torch.Tensor:
-        """Prepends the learnable class token to every graph's node embeddings.
-
-        Args:
-            x (torch.Tensor): The input features.
-            batch (torch.Tensor): The batch vector.
-
-        Returns:
-            torch.Tensor: A stacked tensor of shape
-            (num_graphs, num_nodes_i+1, hidden_dim) where
-            the first token of every graph corresponds to the cls token.
-        """
-        num_graphs = batch.max().item() + 1
-        x_list = []
-        for i in range(num_graphs):
-            mask = batch == i
-            x_i = x[mask]
-            x_i = torch.cat([self.cls_token.expand(1, -1), x_i], dim=0)
-            x_list.append(x_i)
-        return torch.stack(x_list, dim=0)
-
-    @torch.jit.ignore
     def _prepend_cls_token_flat(
         self, x: torch.Tensor, batch: torch.Tensor
     ) -> tuple[torch.Tensor, torch.Tensor]:
