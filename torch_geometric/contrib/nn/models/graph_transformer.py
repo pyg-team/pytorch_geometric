@@ -84,6 +84,8 @@ class GraphTransformer(torch.nn.Module):
         self.use_super_node = use_super_node
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
+            self.register_parameter('cls_token', self.cls_token)
+
         self.node_feature_encoder = node_feature_encoder
         self.dropout = dropout
         self.num_heads = num_heads
