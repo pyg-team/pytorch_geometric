@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.contrib.nn.bias.edge import GraphAttnEdgeBias
 from torch_geometric.contrib.nn.models import GraphTransformer
+from torch_geometric.data import Batch
 
 
 @pytest.mark.parametrize(
@@ -92,3 +93,55 @@ def test_edge_bias_config(
         r0 = out[0, 0, 0]
         r1 = out[0, 0, 1]
         assert not torch.allclose(r0, r1)
+
+
+def test_edge_bias_uniform_for_zero_dist(simple_batch):
+    """Missing edge_dist → all entries use the same learned embedding."""
+    # Build a batch of two identical 4-node graphs
+    g = simple_batch(8, 4)
+    batch = Batch.from_data_list(g.to_data_list() + g.to_data_list())
+
+    provider = GraphAttnEdgeBias(num_heads=3, num_edges=5)
+    out = provider(batch)
+
+    # Expect shape (2 graphs, 3 heads, 4 nodes, 4 nodes)
+    assert out.shape == (2, 3, 4, 4)
+    assert out.dtype == torch.float32
+
+    # Since every distance is effectively zero, the bias for each head/graph
+    # should be constant across all node pairs.
+    # Compare all entries to the (0,0) position of each head/graph.
+    constant = out[:, :, 0, 0].view(2, 3, 1, 1)
+    assert torch.allclose(out, constant.expand_as(out))
+
+
+def test_edge_bias_changes_transformer_without_dist(simple_batch):
+    """Even without explicit edge_dist, the learned bias alters
+    transformer outputs.
+    """
+    g = simple_batch(8, 5)
+    N_heads = 4
+    batch = Batch.from_data_list(g.to_data_list() + g.to_data_list())
+
+    provider = GraphAttnEdgeBias(num_heads=N_heads, num_edges=7)
+
+    base = GraphTransformer(
+        hidden_dim=8,
+        num_class=2,
+        num_encoder_layers=1,
+    ).eval()
+    biased = GraphTransformer(
+        hidden_dim=8,
+        num_class=2,
+        num_encoder_layers=2,
+        attn_bias_providers=[provider],
+    ).eval()
+
+    with torch.no_grad():
+        out_base = base(batch)["logits"]
+        out_biased = biased(batch)["logits"]
+
+    # Shapes must agree...
+    assert out_base.shape == out_biased.shape
+    # ...but learned edge bias (for distance=0) is nonzero, so outputs differ
+    assert not torch.allclose(out_base, out_biased)

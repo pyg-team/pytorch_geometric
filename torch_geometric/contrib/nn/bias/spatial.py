@@ -52,20 +52,22 @@ class GraphAttnSpatialBias(BaseBiasProvider):
         init.xavier_uniform_(self.spatial_embeddings.weight)
 
     def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
-        """Build a batched distance matrix from `data.spatial_pos`.
-
-        - If `data.spatial_pos` is 2D with `data.ptr`, splits rows
-          by ptr into B graphs.
-        - If 2D square, unsqueeze to batch dim.
-        - If 3D, return as-is
+        """Split a concatenated `data.spatial_pos` into a batched (B, L, L).
 
         Args:
             data (Data): Batched graph data containing `spatial_pos`.
+            Only supports 2D `spatial_pos` when `data.ptr` is present:
+                - `pos` is shape (sum_i L, L) and `data.ptr` length B+1.
+                - Rows [ptr[i]:ptr[i+1]] form each graph of size L.
+                - Stacks into output of shape (B, L, L).
 
         Returns:
             torch.LongTensor: Distance matrix of shape (B, L, L) where
                 B = number of graphs,
                 L = number of nodes in the graph (+1 if super-node = True).
+
+        Raises:
+            ValueError: If `data.spatial_pos` has an unexpected shape.
         """
         pos = data.spatial_pos
         if pos.dim() == 2 and hasattr(data, 'ptr'):
@@ -73,10 +75,6 @@ class GraphAttnSpatialBias(BaseBiasProvider):
             return torch.stack(
                 [pos[ptr[i]:ptr[i + 1]] for i in range(len(ptr) - 1)], dim=0
             )
-        if pos.dim() == 2 and pos.size(0) == pos.size(1):
-            return pos.unsqueeze(0)
-        if pos.dim() == 3:
-            return pos
         raise ValueError(f"Unexpected spatial_pos shape {tuple(pos.shape)}")
 
     def _embed_bias(self, distances: torch.LongTensor) -> torch.Tensor:

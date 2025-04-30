@@ -53,33 +53,30 @@ class GraphAttnEdgeBias(BaseBiasProvider):
         self.multi_hop_max_dist = multi_hop_max_dist
 
     def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
-        """Build a batched edge distance matrix from `data.edge_dist`.
-        - If `data.edge_dist` is 2D with `data.ptr`, splits rows
-          by ptr into B graphs.
-        - If 2D square, unsqueeze to batch dim.
-        - If 3D, return as-is
-        Args:
-            data (Data): Graph data containing `edge_dist` and optional `ptr`.
+        """Split or default `data.edge_dist` into a batched (B, L, L).
+
+        Supported cases:
+        - No `edge_dist`: returns zeros of shape (B, L, L), where
+            B = len(data.ptr)-1 and L = data.x.size(0)//B.
+        - 2D `edge_dist` with `data.ptr`: rows concatenated across graphs,
+            split by `ptr` into B blocks of size L → (B, L, L).
 
         Returns:
-            torch.LongTensor: Edge distance matrix of shape
-                (B, L, L) where B = number of graphs,
-                L = number of nodes in the graph (+1 if super-node = True).
+            LongTensor of shape (B, L, L).
+
+        Raises:
+            ValueError: if `edge_dist` is present but not 2D or missing `ptr`.
         """
-        pos = getattr(data, 'edge_dist', None)
+        pos = getattr(data, "edge_dist", None)
         if pos is None:
             B = len(data.ptr) - 1
             L = data.x.size(0) // B
             return data.x.new_zeros(B, L, L, dtype=torch.long)
-        if pos.dim() == 2 and hasattr(data, 'ptr'):
+        if pos.dim() == 2 and hasattr(data, "ptr"):
             ptr = data.ptr
             return torch.stack(
                 [pos[ptr[i]:ptr[i + 1]] for i in range(len(ptr) - 1)], dim=0
             )
-        if pos.dim() == 2 and pos.size(0) == pos.size(1):
-            return pos.unsqueeze(0)
-        if pos.dim() == 3:
-            return pos
         raise ValueError(f"Unexpected edge_dist shape {tuple(pos.shape)}")
 
     def _embed_bias(self, distances: torch.LongTensor) -> torch.Tensor:

@@ -43,16 +43,25 @@ class GraphAttnHopBias(BaseBiasProvider):
         init.xavier_uniform_(self.hop_embeddings.weight)
 
     def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
+        """Split a concatenated `data.hop_dist` into a batched (B, L, L).
+
+        Only supports 2D `hop_dist` when `data.ptr` is present:
+        - `pos` is shape (sum_i L, L) and `data.ptr` length B+1.
+        - Rows [ptr[i]:ptr[i+1]] form each graph of size L.
+        - Stacks into output of shape (B, L, L).
+
+        Returns:
+            LongTensor of shape (B, L, L).
+
+        Raises:
+            ValueError: if `hop_dist` is not 2D or `data.ptr` is missing.
+        """
         pos = data.hop_dist
-        if pos.dim() == 2 and hasattr(data, 'ptr'):
+        if pos.dim() == 2 and hasattr(data, "ptr"):
             ptr = data.ptr
             return torch.stack(
                 [pos[ptr[i]:ptr[i + 1]] for i in range(len(ptr) - 1)], dim=0
             )
-        if pos.dim() == 2 and pos.size(0) == pos.size(1):
-            return pos.unsqueeze(0)
-        if pos.dim() == 3:
-            return pos
         raise ValueError(f"Unexpected hop_dist shape {tuple(pos.shape)}")
 
     def _embed_bias(self, distances: torch.LongTensor) -> torch.Tensor:
