@@ -29,6 +29,13 @@ class GraphTransformer(torch.nn.Module):
             node features. Defaults to nn.Identity().
         num_encoder_layers (int, optional): The number of encoder layers
             in the transformer. Defaults to 0 (single layer).
+        num_heads (int, optional): The number of attention heads used in
+            in the transformer. Defaults to 4.
+        dropout (float, optional): The dropout rate. Defaults to 0.1.
+        ffn_hidden_dim (Optional[int], optional): The hidden dimension
+            of the feedforward network. If None, defaults to 4 * hidden_dim.
+        activation (str, optional): The activation function to use in the
+            feedforward network. Defaults to 'gelu'.
         degree_encoder (Optional[Callable[[Data], torch.Tensor]], optional):
             A function that takes a Data object and returns a tensor of
             degree encodings for each node. Defaults to None.
@@ -55,6 +62,10 @@ class GraphTransformer(torch.nn.Module):
         use_super_node: bool = False,
         node_feature_encoder=nn.Identity(),
         num_encoder_layers: int = 0,
+        num_heads: int = 4,
+        dropout: float = 0.1,
+        ffn_hidden_dim: Optional[int] = None,
+        activation: str = 'gelu',
         degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
         attn_bias_providers: Sequence[BaseBiasProvider] = (),
         gnn_block: Optional[Callable[[Data, torch.Tensor],
@@ -63,13 +74,34 @@ class GraphTransformer(torch.nn.Module):
         positional_encoders: Sequence[BasePositionalEncoder] = ()
     ) -> None:
         super().__init__()
+
+        if num_heads is None and attn_bias_providers:
+            num_heads = attn_bias_providers[0].num_heads
+        num_heads = num_heads if num_heads is not None else 4
+        self._validate_init_args(
+            hidden_dim, num_class, num_encoder_layers, num_heads, dropout,
+            ffn_hidden_dim, activation, attn_bias_providers, gnn_block,
+            gnn_position, positional_encoders
+        )
+
         self.classifier = nn.Linear(hidden_dim, num_class)
         self.use_super_node = use_super_node
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
         self.node_feature_encoder = node_feature_encoder
         self.degree_encoder = degree_encoder
-        encoder_layer = GraphTransformerEncoderLayer(hidden_dim)
+        self.dropout = dropout
+        self.num_heads = num_heads
+        self.ffn_hidden_dim = ffn_hidden_dim or 4 * hidden_dim
+        self.activation = activation
+
+        encoder_layer = GraphTransformerEncoderLayer(
+            hidden_dim=hidden_dim,
+            num_heads=num_heads,
+            dropout=dropout,
+            ffn_hidden_dim=ffn_hidden_dim,
+            activation=activation
+        )
         self.encoder = (
             GraphTransformerEncoder(encoder_layer, num_encoder_layers)
             if num_encoder_layers > 0 else encoder_layer
@@ -79,6 +111,92 @@ class GraphTransformer(torch.nn.Module):
         self.gnn_block = gnn_block
         self.gnn_position = gnn_position
         self.positional_encoders = ModuleList(positional_encoders)
+
+    def _validate_init_args(
+        self,
+        hidden_dim: int,
+        num_class: int,
+        num_encoder_layers: int,
+        num_heads: int,
+        dropout: float,
+        ffn_hidden_dim: Optional[int],
+        activation: str,
+        attn_bias_providers: Sequence[BaseBiasProvider],
+        gnn_block: Optional[Callable],
+        gnn_position: str,
+        positional_encoders: Sequence[BasePositionalEncoder],
+    ):
+        # ---- shape & type checks ----
+        if not isinstance(hidden_dim, int) or hidden_dim <= 0:
+            raise ValueError(
+                "hidden_dim must be a positive int (got " + f"{hidden_dim})"
+            )
+        if not isinstance(num_class, int) or num_class <= 0:
+            raise ValueError(
+                "num_class must be a positive int (got " + f"{num_class})"
+            )
+        if not isinstance(num_encoder_layers, int) or num_encoder_layers < 0:
+            raise ValueError(
+                "num_encoder_layers must be ≥ 0 (got " +
+                f"{num_encoder_layers})"
+            )
+
+        # ---- transformer hyper-params ----
+        if not isinstance(num_heads, int) or num_heads <= 0:
+            raise ValueError(
+                "Invalid configuration: embed_dim and num_heads must be"
+                f"positive (got num_heads={num_heads})"
+            )
+        if not (isinstance(dropout, float) and 0.0 <= dropout < 1.0):
+            raise ValueError("dropout must be in [0,1) (got " + f"{dropout})")
+        if ffn_hidden_dim is not None:
+            if not (isinstance(ffn_hidden_dim, int)
+                    and ffn_hidden_dim >= hidden_dim):
+                raise ValueError(
+                    "ffn_hidden_dim must be ≥ hidden_dim (" +
+                    f"{hidden_dim}), got {ffn_hidden_dim}"
+                )
+        allowed_acts = {
+            'relu', 'leakyrelu', 'prelu', 'tanh', 'selu', 'elu', 'linear',
+            'gelu'
+        }
+        if activation not in allowed_acts:
+            raise ValueError(
+                "activation must be one of " +
+                f"{allowed_acts} (got '{activation}', not supported)"
+            )
+
+        # ---- bias providers ----
+        for prov in attn_bias_providers:
+            if not isinstance(prov, BaseBiasProvider):
+                raise TypeError(f"{prov!r} is not a BaseBiasProvider")
+            if prov.num_heads != num_heads:
+                msg = (
+                    f"BiasProvider {prov.__class__.__name__} has "
+                    f"num_heads={prov.num_heads}, but GraphTransformer is "
+                    f"configured with num_heads={num_heads}"
+                )
+                raise ValueError(msg)
+
+        # ---- GNN block & position ----
+        valid_positions = {'pre', 'post', 'parallel'}
+        if gnn_position not in valid_positions:
+            raise ValueError(
+                "gnn_position must be one of " +
+                f"{valid_positions}, got '{gnn_position}'"
+            )
+        if gnn_block is None and gnn_position != 'pre':
+            raise ValueError(
+                "Cannot set gnn_position to 'post' or 'parallel' when " +
+                "gnn_block is None"
+            )
+
+        # ---- positional encoders ----
+        for enc in positional_encoders:
+            if not callable(getattr(enc, "forward", None)):
+                raise TypeError(
+                    f"{enc!r} does not have a callable forward method"
+                )
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:

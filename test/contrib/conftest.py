@@ -1,6 +1,8 @@
 import pytest
 import torch
+from torch import nn
 
+from torch_geometric.contrib.nn.bias import BaseBiasProvider
 from torch_geometric.contrib.nn.layers.transformer import (
     GraphTransformerEncoderLayer,
 )
@@ -200,25 +202,33 @@ def simple_batch():
 def dummy_provider():
     """Creates a simple bias provider for testing.
 
-    Returns a module with a single learnable scale parameter that transforms
-    input batches into attention bias tensors.
-
     Returns:
-        nn.Module: Bias provider with shape (B, 4, N, N) output
+        DummyBias: An instance of a simple bias provider.
     """
 
-    class Dummy(torch.nn.Module):
+    class DummyBias(BaseBiasProvider):
 
         def __init__(self):
-            super().__init__()
-            self.scale = torch.nn.Parameter(torch.ones(1))
+            # 4 heads, no super-node
+            super().__init__(num_heads=4, use_super_node=False)
+            self.scale = nn.Parameter(torch.ones(1))
 
-        def forward(self, batch):
-            B = int(batch.batch.max()) + 1
-            N = int(torch.bincount(batch.batch).max())
-            return torch.ones(B, 4, N, N) * 3.14 * self.scale
+        def _extract_raw_distances(self, data):
+            # Build a (B, N, N) zero‐distance tensor
+            B = int(data.batch.max()) + 1
+            N = int(torch.bincount(data.batch).max())
+            return data.x.new_zeros((B, N, N), dtype=torch.long)
 
-    return Dummy()
+        def _embed_bias(self, distances):
+            # distances: (B, N, N) → bias: (B, N, N, H)
+            B, N, _ = distances.shape
+            # constant 3.14 * scale across all entries and heads
+            return (
+                torch.ones(B, N, N, self.num_heads, device=distances.device) *
+                3.14 * self.scale
+            )
+
+    return DummyBias()
 
 
 # ── Positional encoder classes (for GraphTransformer tests) ──────────────────
