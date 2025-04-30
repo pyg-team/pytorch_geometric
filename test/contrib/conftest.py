@@ -12,6 +12,32 @@ from torch_geometric.contrib.nn.positional.eigen import EigEncoder
 from torch_geometric.contrib.nn.positional.svd import SVDEncoder
 from torch_geometric.data import Batch, Data
 
+# ── Benchmark “constants” ────────────────────────────────────────────────────
+
+
+@pytest.fixture
+def structural_config():
+    """Parameters controlling graph‐structure (counts & feature sizes)."""
+    return {
+        "num_graphs": 32,
+        "nodes_per_graph": 128,
+        "feat_dim": 64,
+    }
+
+
+@pytest.fixture
+def positional_config():
+    """Parameters controlling positional & topological features."""
+    return {
+        "num_spatial": 16,
+        "num_edges": 8,
+        "num_hops": 4,
+        "max_degree": 3,
+        "num_eigvec": 4,
+        "num_sing_vec": 3,
+    }
+
+
 # ── Basic graph‐batch fixtures ──────────────────────────────────────────────
 
 
@@ -381,5 +407,61 @@ def make_perf_batch_with_spatial():
                 )
             )
         return Batch.from_data_list(data_list)
+
+    return make
+
+
+# ── Full‐feature batch factory ───────────────────────────────────────────────
+
+
+@pytest.fixture
+def full_feature_batch(
+    make_perf_batch_with_spatial, structural_config, positional_config
+):
+    """Builds a Batch that has *all* of:
+      - spatial_pos, edge_dist, hop_dist
+      - in_degree, out_degree
+      - eig_pos_emb, svd_pos_emb
+    using the two small config dicts above.
+    """
+
+    def make(device):
+        # 1) start from a purely‐spatial batch
+        batch = make_perf_batch_with_spatial(
+            structural_config["num_graphs"],
+            structural_config["nodes_per_graph"],
+            structural_config["feat_dim"],
+            positional_config["num_spatial"],
+            device,
+        )
+
+        # 2) enrich each Data in the batch
+        out_list = []
+        for data in batch.to_data_list():
+            N = data.x.size(0)
+            # degrees
+            data.in_degree = torch.randint(
+                0, positional_config["max_degree"], (N, ), device=device
+            )
+            data.out_degree = torch.randint(
+                0, positional_config["max_degree"], (N, ), device=device
+            )
+            # eigen & SVD positional embeddings
+            data.eig_pos_emb = torch.randn(
+                N, positional_config["num_eigvec"], device=device
+            )
+            data.svd_pos_emb = torch.randn(
+                N, 2 * positional_config["num_sing_vec"], device=device
+            )
+            # edge & hop distances
+            data.edge_dist = torch.randint(
+                0, positional_config["num_edges"], (N, N), device=device
+            )
+            data.hop_dist = torch.randint(
+                0, positional_config["num_hops"], (N, N), device=device
+            )
+            out_list.append(data)
+
+        return Batch.from_data_list(out_list)
 
     return make
