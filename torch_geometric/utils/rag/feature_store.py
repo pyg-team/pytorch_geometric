@@ -35,7 +35,45 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         self.enc_model.eval()
         self.model_kwargs = model_kwargs if model_kwargs is not None else dict(
         )
+
+        # to be set by the config
+        self.k_nodes = None
+
         super().__init__()
+
+    @property
+    def config(self):
+        """Get the config for the feature store.
+        """
+        return self._config
+
+    def _set_from_config(self, config: Dict[str, Any], attr_name: str):
+        """Set an attribute from the config.
+
+        Args:
+            config (Dict[str, Any]): Config dictionary
+            attr_name (str): Name of attribute to set
+
+        Raises:
+            ValueError: If required attribute not found in config
+        """
+        if attr_name not in config:
+            raise ValueError(f"Required config parameter '{attr_name}' not found")
+        setattr(self, attr_name, config[attr_name])
+
+    @config.setter
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the feature store.
+
+        Args:
+            config (Dict[str, Any]): Config dictionary containing required parameters
+
+        Raises:
+            ValueError: If required parameters missing from config
+        """
+        self._set_from_config(config, "k_nodes")
+        self._config = config
+
 
     @property
     def x(self) -> Tensor:
@@ -49,7 +87,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
-    def retrieve_seed_nodes(self, query: Any, k_nodes: int = 5) -> InputNodes:
+    def retrieve_seed_nodes(self, query: Any) -> InputNodes:
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
@@ -62,7 +100,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         if not isinstance(query, (list, tuple)):
             query = [query]
         result, query_enc = next(
-            self._retrieve_seed_nodes_batch(query, k_nodes))
+            self._retrieve_seed_nodes_batch(query, self.k_nodes))
         gc.collect()
         torch.cuda.empty_cache()
         return result, query_enc
@@ -84,42 +122,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         query_enc = self.enc_model.encode(query,
                                           **self.model_kwargs).to(self.device)
         return batch_knn(query_enc, self.x, k_nodes)
-
-    def retrieve_seed_edges(self, query: Any, k_edges: int = 3) -> InputEdges:
-        """Retrieves the k_edges most similar edges to the given query.
-
-        Args:
-        - query: The query or list of queries to search for.
-        - k_edges: The number of edges to retrieve (default: 3).
-
-        Returns:
-        - The indices of the most similar edges.
-        """
-        if not isinstance(query, (list, tuple)):
-            query = [query]
-        result, query_enc = next(
-            self._retrieve_seed_edges_batch(query, k_edges))
-        gc.collect()
-        torch.cuda.empty_cache()
-        return result, query_enc
-
-    def _retrieve_seed_edges_batch(self, query: Iterable[Any],
-                                   k_edges: int) -> Iterator[InputEdges]:
-        """Retrieves the k_edges most similar edges to each query in the batch.
-
-        Args:
-        - query: The batch of queries to search for.
-        - k_edges: The number of edges to retrieve.
-
-        Yields:
-        - The indices of the most similar edges for each query.
-        """
-        if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
-            raise NotImplementedError
-
-        query_enc = self.enc_model.encode(query,
-                                          **self.model_kwargs).to(self.device)
-        return batch_knn(query_enc, self.edge_attr, k_edges)
 
     def load_subgraph(
         self, sample: Union[SamplerOutput, HeteroSamplerOutput]
@@ -195,29 +197,6 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
                                        self.device)
 
         output = self.node_knn_index.search(query_enc, k=k_nodes)
-        yield from output.index
-
-    def _retrieve_seed_edges_batch(self, query: Iterable[Any],
-                                   k_edges: int) -> Iterator[InputEdges]:
-        if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
-            raise NotImplementedError
-
-        enc_model = self.enc_model.to(self.device)
-        query_enc = enc_model.encode(query,
-                                     **self.model_kwargs).to(self.device)
-        del enc_model
-        gc.collect()
-        torch.cuda.empty_cache()
-
-        if self.edge_knn_index is None:
-            self.edge_knn_index = ApproxMIPSKNNIndex(num_cells=100,
-                                                     num_cells_to_visit=100,
-                                                     bits_per_vector=4)
-            # Need to add in batches to avoid OOM
-            _add_features_to_knn_index(self.edge_knn_index, self.edge_attr,
-                                       self.device)
-
-        output = self.edge_knn_index.search(query_enc, k=k_edges)
         yield from output.index
 
 

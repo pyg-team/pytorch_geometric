@@ -40,7 +40,8 @@ from torch_geometric.nn import (
 )
 from torch_geometric.nn.nlp.txt2kg import _chunk_text
 from torch_geometric.utils.rag.backend_utils import (
-    create_remote_backend_from_triplets,
+    create_graph_from_triples,
+    create_remote_backend_from_graph_data,
     make_pcst_filter,
     preprocess_triplet,
 )
@@ -196,6 +197,51 @@ def get_data(args):
 
     return json_obj, text_contexts
 
+def index_kg(args, context_docs):
+    kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
+                        NVIDIA_API_KEY=args.NV_NIM_KEY,
+                        ENDPOINT_URL=args.ENDPOINT_URL,
+                        chunk_size=args.kg_chunk_size)
+    print(
+        "Note that if the TXT2KG process is too slow for you're liking using"
+        "the public NIM, consider deploying yourself using local_lm flag of"
+        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct"
+        "to deploy to a private endpoint, which you can pass to this script"
+        "w/ --ENDPOINT_URL flag."
+    )  # noqa
+    total_tqdm_count = len(context_docs)
+    initial_tqdm_count = 0
+    if os.path.exists("checkpoint_kg.pt"):
+        print("Restoring KG from checkpoint...")
+        saved_relevant_triples = torch.load("checkpoint_kg.pt",
+                                            weights_only=False)
+        kg_maker.relevant_triples = saved_relevant_triples
+        kg_maker.doc_id_counter = len(saved_relevant_triples)
+        initial_tqdm_count = kg_maker.doc_id_counter
+        context_docs = context_docs[kg_maker.doc_id_counter:]
+
+    chkpt_interval = 10
+    chkpt_count = 0
+    for context_doc in tqdm(context_docs, total=total_tqdm_count,
+                            initial=initial_tqdm_count,
+                            desc="Extracting KG triples"):
+        kg_maker.add_doc_2_KG(txt=context_doc)
+        chkpt_count += 1
+        if chkpt_count == chkpt_interval:
+            chkpt_count = 0
+            kg_maker.save_kg("checkpoint_kg.pt")
+    relevant_triples = kg_maker.relevant_triples
+
+    triples.extend(
+        list(
+            chain.from_iterable(
+                triple_set
+                for triple_set in relevant_triples.values())))
+    triples = list(dict.fromkeys(triples))
+    torch.save(triples, "tech_qa_just_triples.pt")
+    if os.path.exists("checkpoint_kg.pt"):
+        os.remove("checkpoint_kg.pt")
+    return triples
 
 def make_dataset(args):
     if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
@@ -209,96 +255,78 @@ def make_dataset(args):
         if os.path.exists("tech_qa_just_triples.pt"):
             triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
         else:
-            kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
-                              NVIDIA_API_KEY=args.NV_NIM_KEY,
-                              ENDPOINT_URL=args.ENDPOINT_URL,
-                              chunk_size=args.kg_chunk_size)
-            print(
-                "Note that if the TXT2KG process is too slow for you're liking using the public NIM, consider deploying yourself using local_lm flag of TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct?snippet_tab=Docker to deploy to a private endpoint, which you can pass to this script w/ --ENDPOINT_URL flag."
-            )  # noqa
-            total_tqdm_count = len(context_docs)
-            initial_tqdm_count = 0
-            if os.path.exists("checkpoint_kg.pt"):
-                print("Restoring KG from checkpoint...")
-                saved_relevant_triples = torch.load("checkpoint_kg.pt",
-                                                    weights_only=False)
-                kg_maker.relevant_triples = saved_relevant_triples
-                kg_maker.doc_id_counter = len(saved_relevant_triples)
-                initial_tqdm_count = kg_maker.doc_id_counter
-                context_docs = context_docs[kg_maker.doc_id_counter:]
-
-            chkpt_interval = 10
-            chkpt_count = 0
-            for context_doc in tqdm(context_docs, total=total_tqdm_count,
-                                    initial=initial_tqdm_count,
-                                    desc="Extracting KG triples"):
-                kg_maker.add_doc_2_KG(txt=context_doc)
-                chkpt_count += 1
-                if chkpt_count == chkpt_interval:
-                    chkpt_count = 0
-                    kg_maker.save_kg("checkpoint_kg.pt")
-            relevant_triples = kg_maker.relevant_triples
-
-            triples.extend(
-                list(
-                    chain.from_iterable(
-                        triple_set
-                        for triple_set in relevant_triples.values())))
-            triples = list(dict.fromkeys(triples))
-            torch.save(triples, "tech_qa_just_triples.pt")
-            if os.path.exists("checkpoint_kg.pt"):
-                os.remove("checkpoint_kg.pt")
+            triples = index_kg(args, context_docs)
 
         print("Number of triples in our GraphDB =", len(triples))
+
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # creating the embedding model
         sent_trans_batch_size = 256
         model = SentenceTransformer(
             model_name='Alibaba-NLP/gte-modernbert-base').to(device)
-        fs, gs = create_remote_backend_from_triplets(
-            triplets=triples, node_embedding_model=model,
-            node_method_to_call="encode", path="backend",
-            pre_transform=preprocess_triplet, node_method_kwargs={
-                "batch_size": min(len(triples), sent_trans_batch_size),
-                "verbose": True,
-            }, graph_db=NeighborSamplingRAGGraphStore,
+
+        print("Creating the graph data from raw triples...")
+        # create the graph data from raw triples
+        graph_data = create_graph_from_triples(
+            triples=triples, embedding_model=model.encode,
+            embedding_method_kwargs={"batch_size": min(len(triples), sent_trans_batch_size),
+                                    "verbose": True},
+            pre_transform=preprocess_triplet)
+
+        print("Creating the graph and feature stores...")
+        # creating the graph and feature stores
+        fs, gs = create_remote_backend_from_graph_data(
+            graph_data=graph_data, path="backend",
+            graph_db=NeighborSamplingRAGGraphStore,
             feature_db=ModernBertFeatureStore).load()
+
         """
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
         """
-
+        print("Creating the vector retriever...")
         vector_retriever = DocumentRetriever(
-            context_docs, k_for_docs=args.k_for_docs, model=model,
-            model_method_to_call="encode", model_kwargs={
+            context_docs, k_for_docs=args.k_for_docs, model=model.encode,
+            model_kwargs={
                 "output_device": device,
                 "batch_size": int(sent_trans_batch_size / 4),
                 "verbose": True
             })
-        # k for KNN
-        knn_neighsample_bs = 1024
-        # number of neighbors for each seed node selected by KNN
-        fanout = 100
-        # number of hops for neighborsampling
-        num_hops = 2
+
+        # subgraph filter args
         subgraph_filter_kwargs = {
             "topk": 5,  # nodes
             "topk_e": 5,  # edges
             "cost_e": .5,  # edge cost
             "num_clusters": 10,  # num clusters
         }
-        print("Now to retrieve context for each query from\
-            our Vector and Graph DBs...")
+        subgraph_filter = make_pcst_filter(triples, model,
+                                           **subgraph_filter_kwargs)
+
+        # number of neighbors for each seed node selected by KNN
+        fanout = 100
+        # number of hops for neighborsampling
+        num_hops = 2
+
+        query_loader_config = {
+            "k_nodes": 1024,  # k for Graph KNN
+            "num_neighbors": [fanout] * num_hops,  # number of sampled neighbors
+        }
+
         # GraphDB retrieval done with KNN+NeighborSampling+PCST
         # PCST = Prize Collecting Steiner Tree
-        # VectorDB retrieval just vanilla RAG
-        # TODO add reranking NIM to VectorRAG
+        # VectorDB retrieval just vanilla vector RAG
+        print("Now to retrieve context for each query from"
+              "our Vector and Graph DBs...")
+
         query_loader = RAGQueryLoader(
-            graph_data=(fs,
-                        gs), seed_nodes_kwargs={"k_nodes": knn_neighsample_bs},
-            sampler_kwargs={"num_neighbors": [fanout] * num_hops},
-            subgraph_filter=make_pcst_filter(triples, model),
-            subgraph_filter_kwargs=subgraph_filter_kwargs,
-            vector_retriever=vector_retriever)
+            graph_data=(fs, gs),
+            subgraph_filter=subgraph_filter,
+            vector_retriever=vector_retriever,
+            config=query_loader_config)
+
+        # pre-process the dataset
         total_data_list = []
         extracted_triple_sizes = []
         for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
@@ -311,6 +339,8 @@ def make_dataset(args):
             total_data_list.append(subgraph)
             extracted_triple_sizes.append(len(subgraph.triples))
         random.shuffle(total_data_list)
+
+        # stats
         print("Min # of Retrieved Triples =", min(extracted_triple_sizes))
         print("Max # of Retrieved Triples =", max(extracted_triple_sizes))
         print("Average # of Retrieved Triples =",

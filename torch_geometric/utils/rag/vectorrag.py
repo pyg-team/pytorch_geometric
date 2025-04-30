@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict, List, Optional, Protocol, Union
+from typing import Any, Callable, Dict, List, Optional, Protocol, Union
 
 import torch
 from torch import Tensor
@@ -22,8 +22,8 @@ class DocumentRetriever(VectorRetriever):
     def __init__(self, raw_docs: List[str],
                  embedded_docs: Optional[Tensor] = None, k_for_docs: int = 2,
                  model: Optional[Union[SentenceTransformer,
-                                       torch.nn.Module]] = None,
-                 model_method_to_call: Optional[str] = "encode",
+                                       torch.nn.Module,
+                                       Callable]] = None,
                  model_kwargs: Optional[Dict[str, Any]] = None):
         """Retrieve documents from a vector database.
 
@@ -32,7 +32,6 @@ class DocumentRetriever(VectorRetriever):
             embedded_docs: Optional[Tensor]: Embedded documents.
             k_for_docs: int: Number of documents to retrieve.
             model: Optional[Union[SentenceTransformer, torch.nn.Module]]: Model to use for encoding.
-            model_method_to_call: Optional[str]: Method to call on the model.
             model_kwargs: Optional[Dict[str, Any]]: Keyword arguments to pass to the model.
         """
         self.raw_docs = raw_docs
@@ -41,7 +40,7 @@ class DocumentRetriever(VectorRetriever):
         self.model = model
 
         if self.model is not None:
-            self.encoder = getattr(self.model, model_method_to_call)
+            self.encoder = self.model
             self.model_kwargs = model_kwargs
 
         if self.embedded_docs is None:
