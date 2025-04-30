@@ -36,9 +36,6 @@ class GraphTransformer(torch.nn.Module):
             of the feedforward network. If None, defaults to 4 * hidden_dim.
         activation (str, optional): The activation function to use in the
             feedforward network. Defaults to 'gelu'.
-        degree_encoder (Optional[Callable[[Data], torch.Tensor]], optional):
-            A function that takes a Data object and returns a tensor of
-            degree encodings for each node. Defaults to None.
         attn_bias_providers (Sequence[BaseBiasProvider], optional): A
             sequence of bias providers that return attention bias masks.
             Defaults to an empty sequence.
@@ -66,7 +63,6 @@ class GraphTransformer(torch.nn.Module):
         dropout: float = 0.1,
         ffn_hidden_dim: Optional[int] = None,
         activation: str = 'gelu',
-        degree_encoder: Optional[Callable[[Data], torch.Tensor]] = None,
         attn_bias_providers: Sequence[BaseBiasProvider] = (),
         gnn_block: Optional[Callable[[Data, torch.Tensor],
                                      torch.Tensor]] = None,
@@ -89,7 +85,6 @@ class GraphTransformer(torch.nn.Module):
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
         self.node_feature_encoder = node_feature_encoder
-        self.degree_encoder = degree_encoder
         self.dropout = dropout
         self.num_heads = num_heads
         self.ffn_hidden_dim = ffn_hidden_dim or 4 * hidden_dim
@@ -272,24 +267,6 @@ class GraphTransformer(torch.nn.Module):
             x = self.node_feature_encoder(x)
         return x
 
-    @torch.jit.ignore
-    def _apply_extra_encoders(
-        self, data: Data, x: torch.Tensor
-    ) -> torch.Tensor:
-        """Apply additional encoders (e.g. degree encoder) to node features.
-
-        Args:
-            data (Data): The input graph data.
-            x (torch.Tensor): Current node features.
-
-        Returns:
-            torch.Tensor: Node features with extra encodings applied.
-        """
-        if self.degree_encoder is not None:
-            deg_feat = self.degree_encoder(data).to(x.device)
-            x = x + deg_feat
-        return x
-
     def forward(self, data):
         r"""Applies the graph transformer model to the input data.
 
@@ -324,7 +301,6 @@ class GraphTransformer(torch.nn.Module):
         """
         x = data.x
         x = self._encode_nodes(x)
-        x = self._apply_extra_encoders(data, x)
         if self.positional_encoders:
             x = x + sum(encoder(data) for encoder in self.positional_encoders)
         return x
