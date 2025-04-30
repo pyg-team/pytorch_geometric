@@ -230,28 +230,39 @@ class GraphTransformer(torch.nn.Module):
     def _prepend_cls_token_flat(
         self, x: torch.Tensor, batch: torch.Tensor
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Return (x_with_cls_flat, new_batch).
+        """Prepend a learnable CLS token to each graph’s nodes in a batch.
 
-        Args:
-            x (torch.Tensor): Node feature tensor (N, C)
-            batch (torch.Tensor): Batch assignment (N,)
+        Given:
+            x (Tensor[N, C]): Node features for N total nodes.
+            batch (LongTensor[N]): Graph assignment indices in [0..B-1].
 
         Returns:
-            tuple[torch.Tensor, torch.Tensor]: Features with prepended
-            CLS tokens and updated batch vector
+            new_x (Tensor[N + B, C]): Features with one CLS token
+            prepended per graph.
+            new_batch (LongTensor[N + B]): Updated batch vector, length N + B.
         """
-        num_graphs = int(batch.max()) + 1
-        x_list = []
-        b_list = []
+        device = x.device
+        B = int(batch.max()) + 1
+        C = x.size(1)
 
-        for i in range(num_graphs):
-            mask = batch == i
-            x_i = x[mask]
-            x_with_cls = torch.cat([self.cls_token, x_i], dim=0)
-            x_list.append(x_with_cls)
-            b_list.append(torch.full((len(x_i) + 1, ), i, device=x.device))
+        lengths = torch.bincount(batch, minlength=B)
+        new_lengths = lengths + 1
+        new_batch = torch.repeat_interleave(
+            torch.arange(B, device=device), new_lengths
+        )
 
-        return torch.cat(x_list, dim=0), torch.cat(b_list, dim=0)
+        new_N = x.size(0) + B
+        new_x = x.new_empty((new_N, C))
+
+        offsets = new_lengths.cumsum(0) - new_lengths
+        cls_tokens = self.cls_token.expand(B, -1)
+        new_x[offsets] = cls_tokens
+
+        orig_positions = torch.arange(x.size(0), device=device)
+        new_positions = orig_positions + batch + 1
+        new_x[new_positions] = x
+
+        return new_x, new_batch
 
     @torch.jit.ignore
     def _encode_nodes(self, x: torch.Tensor) -> torch.Tensor:
