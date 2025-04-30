@@ -364,7 +364,8 @@ class GraphTransformer(torch.nn.Module):
         self, x: torch.Tensor, batch_vec: torch.Tensor,
         struct_mask: Optional[torch.Tensor]
     ) -> torch.Tensor:
-        r"""Runs the encoder on the node features.
+        r"""Runs the encoder on the node features in sequence.
+        Rebuilds key_pad only on head‐count changes.
 
         Args:
             x (torch.Tensor): The current node features.
@@ -374,15 +375,18 @@ class GraphTransformer(torch.nn.Module):
         Returns:
             torch.Tensor: The updated node features after encoding.
         """
-        if self.is_encoder_stack:
-            return self.encoder(x, batch_vec, struct_mask)
-        else:
-            num_heads = getattr(self.encoder, "num_heads", None)
-            if num_heads is not None:
-                key_pad = build_key_padding(batch_vec, num_heads=num_heads)
-                return self.encoder(x, batch_vec, struct_mask, key_pad)
-            else:
-                return self.encoder(x, batch_vec, struct_mask)
+        layers = self.encoder if self.is_encoder_stack else [self.encoder]
+        key_pad = None
+        current_heads = None
+        for layer in layers:
+            if key_pad is None or layer.num_heads != current_heads:
+                key_pad = build_key_padding(
+                    batch_vec, num_heads=layer.num_heads
+                )
+                current_heads = layer.num_heads
+
+            x = layer(x, batch_vec, struct_mask, key_pad)
+        return x
 
     @torch.jit.ignore
     def _collect_attn_bias(self, data: Data) -> Optional[torch.Tensor]:
