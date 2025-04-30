@@ -1,5 +1,3 @@
-# test/contrib/nn/models/test_graph_transformer_refactored.py
-
 import pytest
 import torch
 import torch.nn as nn
@@ -276,15 +274,17 @@ def test_multi_provider_fusion(spatial_edge_batch, use_super_node):
     batch = spatial_edge_batch(
         2, seq_len=4, num_spatial=5, num_edges=6, feature_dim=8
     )
+    number_of_heads = 2
     provs = [
-        GraphAttnSpatialBias(2, 5, use_super_node),
-        GraphAttnEdgeBias(2, 6, use_super_node)
+        GraphAttnSpatialBias(number_of_heads, 5, use_super_node),
+        GraphAttnEdgeBias(number_of_heads, 6, use_super_node)
     ]
     model = GraphTransformer(
         hidden_dim=8,
         num_class=2,
         use_super_node=use_super_node,
-        attn_bias_providers=provs
+        attn_bias_providers=provs,
+        num_heads=number_of_heads,
     )
     fused = model._collect_attn_bias(batch)
     direct = sum(p(batch).to(fused.dtype).to(fused.device) for p in provs)
@@ -475,7 +475,7 @@ def dummy_gnn(data, x):
                 "gnn_block":
                 None,
                 "gnn_position":
-                "parallel",
+                "pre",
                 "positional_encoders": [
                     DegreeEncoder(3, 3, 32),
                     EigEncoder(4, 32),
@@ -489,7 +489,7 @@ def dummy_gnn(data, x):
                 "num_encoder_layers=3",
                 "bias_providers=[]",
                 "pos_encoders=['DegreeEncoder', 'EigEncoder', 'SVDEncoder']",
-                "gnn_hook=None@'parallel'",
+                "gnn_hook=None@'pre'",
             ],
         ),
         (
@@ -530,3 +530,87 @@ def test_repr_various_configs(config, substrings):
     rep = repr(model)
     for sub in substrings:
         assert sub in rep, f"{sub!r} not found in repr: {rep}"
+
+
+@pytest.mark.parametrize(
+    "num_heads, dropout, ffn_hidden_dim, activation, "
+    "providers, should_raise, err_keywords",
+    [
+        # valid
+        (4, 0.0, None, "gelu", [], False, []),
+        (2, 0.5, 16, "relu", [], False, []),
+
+        # bad num_heads
+        (0, 0.1, None, "gelu", [], True, ["embed_dim", "num_heads"]),
+        (-1, 0.1, None, "gelu", [], True, ["embed_dim", "num_heads"]),
+
+        # bad dropout
+        (2, -0.1, None, "gelu", [], True, ["dropout", "[0,1)"]),
+        (2, 1.0, None, "gelu", [], True, ["dropout", "[0,1)"]),
+
+        # bad ffn_hidden_dim
+        (2, 0.1, 4, "gelu", [], True, ["ffn_hidden_dim", "≥"]),
+
+        # bad activation
+        (2, 0.1, None, "invalid", [], True, ["not", "supported"]),
+
+        # mismatched bias‐provider heads
+        (
+            2, 0.1, None, "gelu", [GraphAttnSpatialBias(3, 5)
+                                   ], True, ["BiasProvider"]
+        ),
+    ],
+    ids=[
+        "valid-defaults",
+        "valid-relu",
+        "bad-heads-zero",
+        "bad-heads-negative",
+        "bad-dropout-neg",
+        "bad-dropout-eq1",
+        "bad-ffn-too-small",
+        "bad-activation",
+        "bad-bias-heads",
+    ]
+)
+def test_transformer_init_arg_validation(
+    num_heads, dropout, ffn_hidden_dim, activation, providers, should_raise,
+    err_keywords
+):
+    kwargs = {
+        "hidden_dim": 8,
+        "num_class": 2,
+        "num_encoder_layers": 1,
+        "num_heads": num_heads,
+        "dropout": dropout,
+        "ffn_hidden_dim": ffn_hidden_dim,
+        "activation": activation,
+    }
+    if providers:
+        kwargs["attn_bias_providers"] = providers
+
+    if should_raise:
+        with pytest.raises(ValueError) as exc:
+            GraphTransformer(**kwargs)
+        msg = str(exc.value).lower()
+        for kw in err_keywords:
+            assert kw.lower() in msg
+    else:
+        model = GraphTransformer(**kwargs)
+        # API‐level sanity
+        assert model.num_heads == num_heads
+        assert pytest.approx(model.dropout, rel=1e-6) == dropout
+        expected_ffn = (
+            ffn_hidden_dim if ffn_hidden_dim is not None else 4 *
+            kwargs["hidden_dim"]
+        )
+        assert model.ffn_hidden_dim == expected_ffn
+        assert model.activation == activation
+
+        # layer‐level sanity
+        layer = (
+            model.encoder if not model.is_encoder_stack else model.encoder[0]
+        )
+        assert isinstance(layer, GraphTransformerEncoderLayer)
+        assert layer.num_heads == num_heads
+        assert pytest.approx(layer.dropout_layer.p, rel=1e-6) == dropout
+        assert layer.ffn_hidden_dim == expected_ffn
