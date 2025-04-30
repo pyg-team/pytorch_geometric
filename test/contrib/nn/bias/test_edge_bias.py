@@ -145,3 +145,26 @@ def test_edge_bias_changes_transformer_without_dist(simple_batch):
     assert out_base.shape == out_biased.shape
     # ...but learned edge bias (for distance=0) is nonzero, so outputs differ
     assert not torch.allclose(out_base, out_biased)
+
+
+@pytest.mark.parametrize(
+    "edge_type, multi_hop_max_dist, distances_input", [
+        ("simple", None, torch.tensor([[[0, 1], [2, 3]]], dtype=torch.long)),
+        ("multi_hop", 2, torch.tensor([[[0, 3], [2, 4]]], dtype=torch.long))
+    ]
+)
+def test_embed_bias_via_param(edge_type, multi_hop_max_dist, distances_input):
+    bias_provider = GraphAttnEdgeBias(
+        num_heads=2,
+        num_edges=4,
+        edge_type=edge_type,
+        multi_hop_max_dist=multi_hop_max_dist
+    )
+    result = bias_provider._embed_bias(distances_input)
+    if edge_type == "multi_hop" and multi_hop_max_dist is not None:
+        distances_expected = distances_input.clamp(max=multi_hop_max_dist)
+    else:
+        distances_expected = distances_input
+    expected = bias_provider.edge_embeddings(distances_expected)
+    assert torch.equal(result, expected), \
+        "Embedding bias does not match expected output"
