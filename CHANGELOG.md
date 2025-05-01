@@ -7,7 +7,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-
 - Added `CityNetwork` dataset ([#10115](https://github.com/pyg-team/pytorch_geometric/pull/10115))
 - Added visualize_graph to HeteroExplanation ([#10207](https://github.com/pyg-team/pytorch_geometric/pull/10207))
 - Added PyTorch 2.6 support ([#10170](https://github.com/pyg-team/pytorch_geometric/pull/10170))
