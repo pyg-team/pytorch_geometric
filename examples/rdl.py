@@ -5,7 +5,6 @@ https://raw.githubusercontent.com/mlresearch/v235/main/assets/fey24a/fey24a.pdf
 This is NOT the official code for the experiments in these papers.
 To exactly reproduce the experimental results from the linked papers, please
 see https://github.com/snap-stanford/relbench or
-https://github.com/kumo-ai/ContextGNN for link prediction.
 """
 import argparse
 import copy
