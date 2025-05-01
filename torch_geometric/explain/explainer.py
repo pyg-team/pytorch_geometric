@@ -265,7 +265,7 @@ class Explainer:
                 return (prediction > 0).long().view(-1)
             if self.model_config.return_type == ModelReturnType.probs:
                 return (prediction > 0.5).long().view(-1)
-            assert False
+            raise AssertionError()
 
         if self.model_config.mode == ModelMode.multiclass_classification:
             return prediction.argmax(dim=-1)

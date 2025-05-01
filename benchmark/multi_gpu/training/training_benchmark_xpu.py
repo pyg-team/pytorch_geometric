@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     argparser = get_predefined_args()
     args = argparser.parse_args()
-    setattr(args, 'device', 'xpu')
+    args.device = 'xpu'
 
     assert args.dataset in supported_sets.keys(), \
         f"Dataset {args.dataset} isn't supported."
