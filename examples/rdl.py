@@ -1,10 +1,10 @@
 """This is a demo of Relational Deep Learning code for RelBench dataset.
 For more details on RelBench and Relational Deep learning, please refer to
-https://arxiv.org/abs/2407.20060 and
+https://arxiv.org/abs/2407.20060v1 and
 https://raw.githubusercontent.com/mlresearch/v235/main/assets/fey24a/fey24a.pdf
 This is NOT the official code for the experiments in these papers.
 To exactly reproduce the experimental results from the linked papers, please
-see https://github.com/snap-stanford/relbench or
+see https://github.com/snap-stanford/relbench.
 """
 import argparse
 import copy
@@ -50,58 +50,37 @@ print("Using device: ", device)
 
 args = argparse.ArgumentParser()
 
-# Dataset argument
+NODE_LEVEL_TASKS = [
+    "driver-position", "driver-dnf", "driver-top3", "user-churn", "item-churn",
+    "user-ltv", "item-ltv", "user-churn", "item-sales", "user-engagement",
+    "user-badge", "post-votes", "study-outcome", "study-adverse",
+    "site-success", "user-repeat", "user-ignore", "user-attendance",
+    "user-visits", "user-clicks", "ad-ctr"
+]
+
+# Dataset and task arguments
 args.add_argument(
     "--dataset", type=str, default="rel-f1", choices=[
         "rel-stack", "rel-amazon", "rel-trial", "rel-f1", "rel-hm",
         "rel-event", "rel-avito"
     ])
-known_args, _ = args.parse_known_args()
 
-# task argument choices based are based on the dataset, this example only
-# supports node level tasks
-if known_args.dataset == "rel-f1":
-    args.add_argument("--task", type=str, default="driver-position",
-                      choices=["driver-position", "driver-dnf", "driver-top3"])
-elif known_args.dataset == "rel-amazon":
-    args.add_argument(
-        "--task", type=str, default="user-churn",
-        choices=["user-churn", "item-churn", "user-ltv", "item-ltv"])
-elif known_args.dataset == "rel-hm":
-    args.add_argument("--task", type=str, default="user-churn",
-                      choices=["user-churn", "item-sales"])
-elif known_args.dataset == "rel-stack":
-    args.add_argument("--task", type=str, default="user-engagement",
-                      choices=["user-engagement", "user-badge", "post-votes"])
-elif known_args.dataset == "rel-trial":
-    args.add_argument(
-        "--task", type=str, default="study-outcome",
-        choices=["study-outcome", "study-adverse", "site-success"])
-elif known_args.dataset == "rel-event":
-    args.add_argument(
-        "--task", type=str, default="user-repeat",
-        choices=["user-repeat", "user-ignore", "user-attendance"])
-elif known_args.dataset == "rel-avito":
-    args.add_argument("--task", type=str, default="user-visits",
-                      choices=["user-visits", "user-clicks", "ad-ctr"])
+args.add_argument("--task", type=str, required=True, choices=NODE_LEVEL_TASKS)
 
 # Data loader arguments
 args.add_argument("--batch_size", type=int, default=512)
 args.add_argument("--temporal_strategy", type=str, default="uniform",
                   choices=["uniform", "last"])
-args.add_argument("--num_workers", type=int, default=0)
-args.add_argument("--persistent_workers", type=bool, default=False)
 
 # Model parameters
 args.add_argument("--num_neighbors", type=list, default=[128, 128])
 args.add_argument("--channels", type=int, default=128)
-args.add_argument("--out_channels", type=int, default=1)
 args.add_argument("--aggr", type=str, default="sum")
 args.add_argument("--norm", type=str, default="batch_norm")
 
 # Training parameters
 args.add_argument("--epochs", type=int, default=10)
-args.add_argument("--learning_rate", type=float, default=0.005)
+args.add_argument("--lr", type=float, default=0.005)
 
 args = args.parse_args()
 
@@ -119,7 +98,7 @@ class GloveTextEmbedding:
 
 
 class HeteroEncoder(torch.nn.Module):
-    r"""HeteroEncoder based on PyTorch Frame.
+    r"""HeteroEncoder based on PyTorch Frame implemented with ResNet.
 
     A heterogeneous encoder that processes different node types using PyTorch
     Frame models. For each node type, it creates a separate encoder model
@@ -128,64 +107,48 @@ class HeteroEncoder(torch.nn.Module):
 
     Args:
         channels (int): The output channels for each node type.
-        node_to_col_names_dict
+        num_layers (int): The number of layers for the ResNet.
+        col_names_dict:
             (Dict[NodeType, Dict[torch_frame.stype, List[str]]]):
             A dictionary mapping from node type to column names dictionary
             compatible to PyTorch Frame.
-        node_to_col_stats (Dict[NodeType, Dict[str, Dict[StatType, Any]]]):
+        stats_dict (Dict[NodeType, Dict[str, Dict[StatType, Any]]]):
             A dictionary containing statistics for each column
             in each node type. Used for feature normalization and encoding.
-        torch_frame_model_cls: Model class for PyTorch Frame. The class object
-            takes :class:`TensorFrame` object as input and outputs
-            :obj:`channels`-dimensional embeddings. Default to
-            :class:`torch_frame.nn.ResNet`.
-        torch_frame_model_kwargs (Dict[str, Any]): Keyword arguments for
-            :class:`torch_frame_model_cls` class. Default keyword argument is
-            set specific for :class:`torch_frame.nn.ResNet`. Expect it to
-            be changed for different :class:`torch_frame_model_cls`.
-        default_stype_encoder_cls_kwargs (Dict[torch_frame.stype, Any]):
-            A dictionary mapping from :obj:`torch_frame.stype` object into a
-            tuple specifying :class:`torch_frame.nn.StypeEncoder` class and its
-            keyword arguments :obj:`kwargs`.
     """
     def __init__(
         self,
         channels: int,
-        node_to_col_names_dict: Dict[NodeType, Dict[torch_frame.stype,
-                                                    List[str]]],
-        node_to_col_stats: Dict[NodeType, Dict[str, Dict[StatType, Any]]],
-        torch_frame_model_cls=ResNet,
-        torch_frame_model_kwargs: Dict[str, Any] = {
-            "channels": 128,
-            "num_layers": 4,
-        },
-        default_stype_encoder_cls_kwargs: Dict[torch_frame.stype, Any] = {
-            torch_frame.categorical: (torch_frame.nn.EmbeddingEncoder, {}),
-            torch_frame.numerical: (torch_frame.nn.LinearEncoder, {}),
-            torch_frame.multicategorical: (
-                torch_frame.nn.MultiCategoricalEmbeddingEncoder,
-                {},
-            ),
-            torch_frame.embedding: (torch_frame.nn.LinearEmbeddingEncoder, {}),
-            torch_frame.timestamp: (torch_frame.nn.TimestampEncoder, {}),
-        },
+        num_layers: int,
+        col_names_dict: Dict[
+            NodeType,
+            Dict[torch_frame.stype, List[str]],
+        ],
+        stats_dict: Dict[NodeType, Dict[str, Dict[StatType, Any]]],
     ):
         super().__init__()
 
         self.encoders = torch.nn.ModuleDict()
 
-        for node_type in node_to_col_names_dict.keys():
+        for node_type in col_names_dict.keys():
             stype_encoder_dict = {
-                stype:
-                default_stype_encoder_cls_kwargs[stype][0](
-                    **default_stype_encoder_cls_kwargs[stype][1])
-                for stype in node_to_col_names_dict[node_type].keys()
+                torch_frame.categorical:
+                torch_frame.nn.EmbeddingEncoder(),
+                torch_frame.numerical:
+                torch_frame.nn.LinearEncoder(),
+                torch_frame.multicategorical:
+                torch_frame.nn.MultiCategoricalEmbeddingEncoder(),
+                torch_frame.embedding:
+                torch_frame.nn.LinearEmbeddingEncoder(),
+                torch_frame.timestamp:
+                torch_frame.nn.TimestampEncoder()
             }
-            torch_frame_model = torch_frame_model_cls(
-                **torch_frame_model_kwargs,
+            torch_frame_model = ResNet(
+                channels=channels,
+                num_layers=num_layers,
                 out_channels=channels,
-                col_stats=node_to_col_stats[node_type],
-                col_names_dict=node_to_col_names_dict[node_type],
+                col_stats=stats_dict[node_type],
+                col_names_dict=col_names_dict[node_type],
                 stype_encoder_dict=stype_encoder_dict,
             )
             self.encoders[node_type] = torch_frame_model
@@ -389,8 +352,13 @@ class Model(torch.nn.Module):
     4. An MLP head for final predictions
 
     Args:
-        data (HeteroData): The heterogeneous graph data object
-        col_stats_dict (Dict[str, Dict[str, Dict[StatType, Any]]]):
+        node_types (List[NodeType]): List of node types in the graph
+        edge_types (List[EdgeType]): List of edge types in the graph
+        col_names_dict (Dict[NodeType, Dict[torch_frame.stype, List[str]]]):
+            Dictionary mapping node types to their column names and types
+        temporal_node_types (List[NodeType]):
+            List of node types with temporal features
+        col_stats_dict (Dict[NodeType, Dict[str, Dict[StatType, Any]]]):
             Statistics of node features
         num_layers (int): Number of GNN layers
         channels (int): Hidden dimension size
@@ -400,8 +368,11 @@ class Model(torch.nn.Module):
     """
     def __init__(
         self,
-        data: HeteroData,
-        col_stats_dict: Dict[str, Dict[str, Dict[StatType, Any]]],
+        node_types: List[NodeType],
+        edge_types: List[EdgeType],
+        col_names_dict: Dict[NodeType, Dict[torch_frame.stype, List[str]]],
+        temporal_node_types: List[NodeType],
+        col_stats_dict: Dict[NodeType, Dict[str, Dict[StatType, Any]]],
         num_layers: int,
         channels: int,
         out_channels: int,
@@ -412,22 +383,17 @@ class Model(torch.nn.Module):
 
         self.encoder = HeteroEncoder(
             channels=channels,
-            node_to_col_names_dict={
-                node_type: data[node_type].tf.col_names_dict
-                for node_type in data.node_types
-            },
-            node_to_col_stats=col_stats_dict,
+            num_layers=num_layers,
+            col_names_dict=col_names_dict,
+            stats_dict=col_stats_dict,
         )
         self.temporal_encoder = HeteroTemporalEncoder(
-            node_types=[
-                node_type for node_type in data.node_types
-                if "time" in data[node_type]
-            ],
+            node_types=temporal_node_types,
             channels=channels,
         )
         self.gnn = HeteroGraphSAGE(
-            node_types=data.node_types,
-            edge_types=data.edge_types,
+            node_types=node_types,
+            edge_types=edge_types,
             channels=channels,
             aggr=aggr,
             num_layers=num_layers,
@@ -507,7 +473,7 @@ def get_task_type_params(task):
 
 def train(
     model: Model,
-    loader_dict: Dict[str, NeighborLoader],
+    train_loader: Dict[str, NeighborLoader],
     task: EntityTask,
     optimizer: torch.optim.Optimizer,
     loss_fn: torch.nn.Module,
@@ -515,7 +481,7 @@ def train(
     model.train()
 
     loss_accum = count_accum = 0
-    for batch in tqdm(loader_dict["train"]):
+    for batch in tqdm(train_loader):
         batch = batch.to(device)
 
         optimizer.zero_grad()
@@ -537,11 +503,15 @@ def train(
 
 
 @torch.no_grad()
-def test(loader: NeighborLoader, model: Model, task: EntityTask) -> np.ndarray:
+def test(
+    test_loader: NeighborLoader,
+    model: Model,
+    task: EntityTask,
+) -> np.ndarray:
     model.eval()
 
     pred_list = []
-    for batch in loader:
+    for batch in tqdm(test_loader):
         batch = batch.to(device)
         pred = model(
             batch,
@@ -631,8 +601,8 @@ if __name__ == "__main__":
             batch_size=args.batch_size,
             temporal_strategy=args.temporal_strategy,
             shuffle=split == "train",
-            num_workers=args.num_workers,
-            persistent_workers=args.persistent_workers,
+            num_workers=1,
+            persistent_workers=True,
         )
 
     # Get task-specific parameters
@@ -646,18 +616,34 @@ if __name__ == "__main__":
 
     # Define the model
     print("Initializing the model...")
+
+    node_types = data.node_types  # Include all node types
+    edge_types = data.edge_types  # Include all edge types
+
+    col_names_dict = {
+        node_type: data[node_type].tf.col_names_dict
+        for node_type in data.node_types
+    }
+
+    temporal_node_types = [
+        node_type for node_type in data.node_types if "time" in data[node_type]
+    ]
+
     model = Model(
-        data=data,
+        node_types=node_types,
+        edge_types=edge_types,
+        col_names_dict=col_names_dict,
         col_stats_dict=col_stats_dict,
+        temporal_node_types=temporal_node_types,
         num_layers=len(args.num_neighbors),
         channels=args.channels,
-        out_channels=args.out_channels,
+        out_channels=out_channels,
         aggr=args.aggr,
         norm=args.norm,
     ).to(device)
 
     # Define the optimizer
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     """ Train the model """
     print("Training the model...")
     state_dict = None
@@ -665,13 +651,13 @@ if __name__ == "__main__":
     for epoch in range(1, args.epochs + 1):
         train_loss = train(
             model=model,
-            loader_dict=loader_dict,
+            train_loader=loader_dict["train"],
             task=task,
             optimizer=optimizer,
             loss_fn=loss_fn,
         )
         val_pred = test(
-            loader=loader_dict["val"],
+            test_loader=loader_dict["val"],
             model=model,
             task=task,
         )
@@ -690,18 +676,10 @@ if __name__ == "__main__":
     # Load the best model state dictionary
     print("Loading the best model state dictionary...")
     model.load_state_dict(state_dict)
-    val_pred = test(
-        loader=loader_dict["val"],
-        model=model,
-        task=task,
-    )
-
-    val_metrics = task.evaluate(val_pred, val_table)
-    print(f"Validation metrics: {val_metrics}")
 
     # Test the model on the test set
     test_pred = test(
-        loader=loader_dict["test"],
+        test_loader=loader_dict["test"],
         model=model,
         task=task,
     )
