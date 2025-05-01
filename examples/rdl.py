@@ -9,6 +9,7 @@ see https://github.com/snap-stanford/relbench.
 import argparse
 import copy
 import math
+import operator
 import os
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
@@ -46,8 +47,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 root_dir = "./data"
 print("Using device: ", device)
 
-args = argparse.ArgumentParser()
-
 NODE_LEVEL_TASKS = [
     "driver-position", "driver-dnf", "driver-top3", "user-churn", "item-churn",
     "user-ltv", "item-ltv", "user-churn", "item-sales", "user-engagement",
@@ -56,36 +55,33 @@ NODE_LEVEL_TASKS = [
     "user-visits", "user-clicks", "ad-ctr"
 ]
 
+args = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 # Dataset and task arguments
 args.add_argument(
     "--dataset", type=str, default="rel-f1", choices=[
         "rel-stack", "rel-amazon", "rel-trial", "rel-f1", "rel-hm",
         "rel-event", "rel-avito"
     ])
-
 args.add_argument("--task", type=str, required=True, choices=NODE_LEVEL_TASKS)
-
 # Data loader arguments
 args.add_argument("--batch_size", type=int, default=512)
 args.add_argument("--temporal_strategy", type=str, default="uniform",
                   choices=["uniform", "last"])
-
 # Model parameters
 args.add_argument("--num_neighbors", type=list, default=[128, 128])
 args.add_argument("--channels", type=int, default=128)
 args.add_argument("--aggr", type=str, default="sum")
 args.add_argument("--norm", type=str, default="batch_norm")
-
 # Training parameters
 args.add_argument("--epochs", type=int, default=10)
 args.add_argument("--lr", type=float, default=0.005)
-
 args = args.parse_args()
 
 
 class GloveTextEmbedding:
     """GloveTextEmbedding based on SentenceTransformer."""
-    def __init__(self, device: Optional[torch.device] = None):
+    def __init__(self, device: Optional[torch.device] = None) -> None:
         self.model = SentenceTransformer(
             "sentence-transformers/average_word_embeddings_glove.6B.300d",
             device=device,
@@ -106,24 +102,20 @@ class HeteroEncoder(torch.nn.Module):
     Args:
         channels (int): The output channels for each node type.
         num_layers (int): The number of layers for the ResNet.
-        col_names_dict:
-            (Dict[NodeType, Dict[torch_frame.stype, List[str]]]):
-            A dictionary mapping from node type to column names dictionary
-            compatible to PyTorch Frame.
-        stats_dict (Dict[NodeType, Dict[str, Dict[StatType, Any]]]):
-            A dictionary containing statistics for each column
-            in each node type. Used for feature normalization and encoding.
+        col_names_dict (Dict[NodeType, Dict[torch_frame.stype, List[str]]]): A
+            dictionary mapping from node type to column names dictionary
+            compatible with PyTorch Frame.
+        stats_dict (Dict[NodeType, Dict[str, Dict[StatType, Any]]]): A
+            dictionary containing statistics for each column in each node type.
+            Used for feature normalization and encoding.
     """
     def __init__(
         self,
         channels: int,
         num_layers: int,
-        col_names_dict: Dict[
-            NodeType,
-            Dict[torch_frame.stype, List[str]],
-        ],
+        col_names_dict: Dict[NodeType, Dict[torch_frame.stype, List[str]]],
         stats_dict: Dict[NodeType, Dict[str, Dict[StatType, Any]]],
-    ):
+    ) -> None:
         super().__init__()
 
         self.encoders = torch.nn.ModuleDict()
@@ -151,7 +143,7 @@ class HeteroEncoder(torch.nn.Module):
             )
             self.encoders[node_type] = torch_frame_model
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """Reset the parameters of all encoder models."""
         for encoder in self.encoders.values():
             encoder.reset_parameters()
@@ -163,20 +155,19 @@ class HeteroEncoder(torch.nn.Module):
         """Forward pass of the heterogeneous encoder.
 
         Args:
-            tf_dict (Dict[NodeType, torch_frame.TensorFrame]):
-                Dictionary mapping node types to their corresponding
-                TensorFrame objects containing the node features.
+            tf_dict (Dict[NodeType, torch_frame.TensorFrame]): A dictionary
+                mapping node types to their corresponding TensorFrame objects
+                containing the node features.
 
         Returns:
-            Dict[NodeType, Tensor]: Dictionary mapping node
-            types to their encoded representations. Each tensor
-            has shape [num_nodes, channels].
+            Dict[NodeType, Tensor]: Dictionary mapping node types to their
+                encoded representations. Each tensor has shape
+                [num_nodes, channels].
         """
-        x_dict = {
+        return {
             node_type: self.encoders[node_type](tf)
             for node_type, tf in tf_dict.items()
         }
-        return x_dict
 
 
 class HeteroTemporalEncoder(torch.nn.Module):
@@ -189,10 +180,10 @@ class HeteroTemporalEncoder(torch.nn.Module):
     each node type.
 
     Args:
-        node_types (List[NodeType]):
-            List of node types in the heterogeneous graph
-        channels (int):
-            Number of channels/dimensions for the encoded embeddings
+        node_types (List[NodeType]): List of node types in the heterogeneous
+            graph
+        channels (int): Number of channels/dimensions for the encoded
+            embeddings
 
     Example:
         >>> encoder = HeteroTemporalEncoder(['user', 'item'], channels=64)
@@ -202,11 +193,11 @@ class HeteroTemporalEncoder(torch.nn.Module):
         >>> batch_dict = {'user': torch.tensor([0, 0]),
         >>>              'item': torch.tensor([0, 0])}
         >>> out_dict = encoder(seed_time, time_dict, batch_dict)
-        >>> print(out_dict['user'].shape)  # torch.Size([2, 64])
+        >>> out_dict['user'].shape
+        torch.Size([2, 64])
     """
-    def __init__(self, node_types: List[NodeType], channels: int):
+    def __init__(self, node_types: List[NodeType], channels: int) -> None:
         super().__init__()
-
         self.encoder_dict = torch.nn.ModuleDict({
             node_type:
             PositionalEncoding(channels)
@@ -218,7 +209,7 @@ class HeteroTemporalEncoder(torch.nn.Module):
             for node_type in node_types
         })
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """Reset the parameters of all encoders and linear layers."""
         for encoder in self.encoder_dict.values():
             encoder.reset_parameters()
@@ -234,16 +225,16 @@ class HeteroTemporalEncoder(torch.nn.Module):
         """Forward pass of the temporal encoder.
 
         Args:
-            seed_time (Tensor):
-                Reference timestamps for computing relative times
-            time_dict (Dict[NodeType, Tensor]):
-                Dictionary mapping node types to their timestamps
-            batch_dict (Dict[NodeType, Tensor]):
-                Dictionary mapping node types to batch assignments
+            seed_time (Tensor): Reference timestamps for computing relative
+                times
+            time_dict (Dict[NodeType, Tensor]): Dictionary mapping node types
+                to their timestamps
+            batch_dict (Dict[NodeType, Tensor]): Dictionary mapping node types
+                to batch assignments
 
         Returns:
-            Dict[NodeType, Tensor]:
-                Dictionary mapping node types to their temporal embeddings
+            Dict[NodeType, Tensor]: Dictionary mapping node types to their
+                temporal embeddings
         """
         out_dict: Dict[NodeType, Tensor] = {}
 
@@ -270,9 +261,8 @@ class HeteroGraphSAGE(torch.nn.Module):
         node_types (List[NodeType]): List of node types in the graph
         edge_types (List[EdgeType]): List of edge types in the graph
         channels (int): Number of channels/features
-        aggr (str, optional): Node aggregation scheme. Defaults to "mean"
-        num_layers (int, optional):
-            Number of graph convolution layers. Defaults to 2
+        aggr (str, optional): Node aggregation scheme.
+        num_layers (int, optional): Number of graph convolution layers.
 
     Example:
         >>> model = HeteroGraphSAGE(
@@ -288,7 +278,7 @@ class HeteroGraphSAGE(torch.nn.Module):
         channels: int,
         aggr: str = "mean",
         num_layers: int = 2,
-    ):
+    ) -> None:
         super().__init__()
 
         self.convs = torch.nn.ModuleList()
@@ -310,7 +300,7 @@ class HeteroGraphSAGE(torch.nn.Module):
                 norm_dict[node_type] = LayerNorm(channels, mode="node")
             self.norms.append(norm_dict)
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """Reset the parameters of all convolution and normalization layers."""
         for conv in self.convs:
             conv.reset_parameters()
@@ -376,9 +366,8 @@ class Model(torch.nn.Module):
         out_channels: int,
         aggr: str,
         norm: str,
-    ):
+    ) -> None:
         super().__init__()
-
         self.encoder = HeteroEncoder(
             channels=channels,
             num_layers=num_layers,
@@ -402,10 +391,9 @@ class Model(torch.nn.Module):
             norm=norm,
             num_layers=1,
         )
-
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """Reset the parameters of all model components."""
         self.encoder.reset_parameters()
         self.temporal_encoder.reset_parameters()
@@ -437,16 +425,15 @@ class Model(torch.nn.Module):
         seed_time = batch[entity_table].seed_time
         x_dict = self.encoder(batch.tf_dict)
 
-        rel_time_dict = self.temporal_encoder(seed_time, batch.time_dict,
-                                              batch.batch_dict)
-
+        rel_time_dict = self.temporal_encoder(
+            seed_time,
+            batch.time_dict,
+            batch.batch_dict,
+        )
         for node_type, rel_time in rel_time_dict.items():
             x_dict[node_type] = x_dict[node_type] + rel_time
 
-        x_dict = self.gnn(
-            x_dict,
-            batch.edge_index_dict,
-        )
+        x_dict = self.gnn(x_dict, batch.edge_index_dict)
 
         return self.head(x_dict[entity_table][:seed_time.size(0)])
 
@@ -460,7 +447,7 @@ class AttachTargetTransform:
     the graph object directly, and must be attached to the batch after the
     batch is created.
     """
-    def __init__(self, entity: str, target: Tensor):
+    def __init__(self, entity: str, target: Tensor) -> None:
         self.entity = entity
         self.target = target
 
@@ -492,15 +479,15 @@ class TrainingTableInput(NamedTuple):
     transform: Optional[AttachTargetTransform]
 
 
-def get_task_type_params(task):
+def get_task_type_params(
+        task: EntityTask) -> Tuple[int, torch.nn.Module, str, bool]:
     r"""Get task-specific optimization parameters based on task type.
 
     Args:
         task (EntityTask): Task specification containing task type.
 
     Returns:
-        Tuple[int, torch.nn.Module, str, bool]:
-            Tuple containing:
+        Tuple[int, torch.nn.Module, str, bool]: A tuple containing:
             - out_channels: Number of output channels
             - loss_fn: Loss function
             - tune_metric: Metric to optimize
@@ -586,33 +573,32 @@ def get_train_table_input(
 
 def train(
     model: Model,
-    train_loader: Dict[str, NeighborLoader],
+    train_loader: NeighborLoader,
     task: EntityTask,
     optimizer: torch.optim.Optimizer,
     loss_fn: torch.nn.Module,
 ) -> float:
     model.train()
 
-    loss_accum = count_accum = 0
+    loss_accum = torch.zeros(1, device=device).squeeze_()
+    count_accum = 0
     for batch in tqdm(train_loader):
         batch = batch.to(device)
 
         optimizer.zero_grad()
-        pred = model(
-            batch,
-            task.entity_table,
-        )
+        pred = model(batch, task.entity_table)
         pred = pred.view(-1) if pred.size(1) == 1 else pred
 
         # Get the target column name from the task
-        loss = loss_fn(pred.float(), batch[task.entity_table].y.float())
+        loss = loss_fn(pred, batch[task.entity_table].y.float())
         loss.backward()
         optimizer.step()
 
-        loss_accum += loss.detach().item() * pred.size(0)
+        loss *= pred.size(0)
+        loss_accum += loss
         count_accum += pred.size(0)
 
-    return loss_accum / count_accum
+    return loss_accum.item() / count_accum
 
 
 @torch.no_grad()
@@ -626,18 +612,13 @@ def test(
     pred_list = []
     for batch in tqdm(test_loader):
         batch = batch.to(device)
-        pred = model(
-            batch,
-            task.entity_table,
-        )
+        pred = model(batch, task.entity_table)
         pred = pred.view(-1) if pred.size(1) == 1 else pred
         pred_list.append(pred.detach().cpu())
     return torch.cat(pred_list, dim=0).numpy()
 
 
 if __name__ == "__main__":
-    """ Prepare the data """
-
     # Load the dataset
     print("Loading dataset...")
     dataset = get_dataset(name=args.dataset, download=True)
@@ -646,8 +627,6 @@ if __name__ == "__main__":
     print("Loading task...")
     task = get_task(dataset_name=args.dataset, task_name=args.task,
                     download=True)
-
-    # Print task information for debugging
     print(f"Task type: {task.task_type}")
     print(f"Target column: {task.target_col}")
     print(f"Entity table: {task.entity_table}")
@@ -675,7 +654,7 @@ if __name__ == "__main__":
             root_dir, f"{args.dataset}_{args.task}_materialized_cache"
         ),  # store materialized graph for convenience
     )
-    """ Prepare data loaders """
+
     print("Preparing data loaders...")
     loader_dict = {}
 
@@ -683,8 +662,6 @@ if __name__ == "__main__":
     train_table = task.get_table("train")
     val_table = task.get_table("val")
     test_table = task.get_table("test")
-
-    # Print table information for debugging
     print(f"Train table columns: {train_table.df.columns}")
     print(f"Val table columns: {val_table.df.columns}")
     print(f"Test table columns: {test_table.df.columns}")
@@ -722,8 +699,8 @@ if __name__ == "__main__":
 
     # Get task-specific parameters
     print("Getting task-specific parameters...")
-    (out_channels, loss_fn, tune_metric,
-     higher_is_better) = get_task_type_params(task)
+    out_channels, loss_fn, tune_metric, higher_is_better = \
+        get_task_type_params(task)
     print("out_channels: ", out_channels)
     print("loss_fn: ", loss_fn)
     print("tune_metric: ", tune_metric)
@@ -731,19 +708,15 @@ if __name__ == "__main__":
 
     # Define the model
     print("Initializing the model...")
-
     node_types = data.node_types  # Include all node types
     edge_types = data.edge_types  # Include all edge types
-
     col_names_dict = {
         node_type: data[node_type].tf.col_names_dict
         for node_type in data.node_types
     }
-
     temporal_node_types = [
         node_type for node_type in data.node_types if "time" in data[node_type]
     ]
-
     model = Model(
         node_types=node_types,
         edge_types=edge_types,
@@ -759,7 +732,7 @@ if __name__ == "__main__":
 
     # Define the optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    """ Train the model """
+
     print("Training the model...")
     state_dict = None
     best_val_metric = -math.inf if higher_is_better else math.inf
@@ -781,12 +754,10 @@ if __name__ == "__main__":
               f"Train loss: {train_loss}, "
               f"Val metrics: {val_metrics}")
 
-        if ((higher_is_better and val_metrics[tune_metric] > best_val_metric)
-                or (not higher_is_better
-                    and val_metrics[tune_metric] < best_val_metric)):
+        is_better_op = operator.gt if higher_is_better else operator.lt
+        if is_better_op(val_metrics[tune_metric], best_val_metric):
             best_val_metric = val_metrics[tune_metric]
             state_dict = copy.deepcopy(model.state_dict())
-    """ Evaluate the model """
 
     # Load the best model state dictionary
     print("Loading the best model state dictionary...")
