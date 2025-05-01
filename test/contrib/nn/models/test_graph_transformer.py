@@ -64,7 +64,7 @@ class TraceableWrapper(nn.Module):
         )
         if bias is not None:
             data.bias = bias
-        return self.model(data)["logits"]
+        return self.model(data)
 
 
 # ── Core Forward‐Shape Tests ─────────────────────────────────────────────────
@@ -87,14 +87,14 @@ def test_forward_shape(
     ]
     batch = Batch.from_data_list(batches)
     model = GraphTransformer(hidden_dim=feat_dim, num_class=num_classes)
-    out = model(batch)["logits"]
+    out = model(batch)
     assert out.shape == (num_graphs, num_classes)
 
 
 def test_forward_without_gnn_hook(simple_batch):
     batch = simple_batch(feat_dim=8, num_nodes=2)
     model = GraphTransformer(hidden_dim=8)
-    out = model(batch)["logits"]
+    out = model(batch)
     assert out.shape == (1, model.classifier.out_features)
 
 
@@ -108,7 +108,7 @@ def test_super_node_readout(simple_batch):
         hidden_dim=4, num_heads=NUM_HEADS, num_class=2, use_super_node=True
     )
     model.encoder = IdentityEncoder(num_heads=NUM_HEADS)
-    out = model(data)["logits"]
+    out = model(data)
     expected = model.classifier(model.cls_token.expand(1, -1))
     assert torch.allclose(out, expected)
 
@@ -118,9 +118,9 @@ def test_node_feature_encoder_identity(simple_batch):
     model = GraphTransformer(
         hidden_dim=16, num_class=2, node_feature_encoder=nn.Identity()
     )
-    out1 = model(batch)["logits"]
+    out1 = model(batch)
     batch.x = 2 * batch.x
-    out2 = model(batch)["logits"]
+    out2 = model(batch)
     assert not torch.allclose(out1, out2)
 
 
@@ -131,7 +131,7 @@ def test_transformer_block_identity(simple_batch):
     batch = simple_batch(feat_dim=16, num_nodes=8)
     model = GraphTransformer(hidden_dim=16, num_class=4, num_encoder_layers=1)
     model.encoder[0] = AddOneLayer()
-    out = model(batch)["logits"]
+    out = model(batch)
     assert out.shape == (1, 4)
 
 
@@ -161,7 +161,7 @@ def test_backward(simple_batch):
         hidden_dim=8, num_class=3, use_super_node=True, num_encoder_layers=1
     )
     model.encoder[0] = AddOneLayer()
-    out = model(batch)["logits"]
+    out = model(batch)
     loss = out.sum()
     loss.backward()
     for name, p in model.named_parameters():
@@ -179,9 +179,9 @@ def test_attention_mask_changes_logits(simple_batch, num_heads):
     model.encoder[0] = GraphTransformerEncoderLayer(
         hidden_dim=8, num_heads=num_heads
     )
-    out1 = model(batch)["logits"]
+    out1 = model(batch)
     batch.bias = torch.randint(0, 2, (1, 5, 5), dtype=torch.bool)
-    out2 = model(batch)["logits"]
+    out2 = model(batch)
     assert out1.shape == out2.shape
     assert not torch.allclose(out1, out2)
 
@@ -213,8 +213,8 @@ def test_spatial_bias_shifts_logits(
     model = GraphTransformer(
         hidden_dim=feat_dim, num_class=2, num_encoder_layers=1
     )
-    out0 = model(batch0)["logits"]
-    out1 = model(batch1)["logits"]
+    out0 = model(batch0)
+    out1 = model(batch1)
     assert not torch.allclose(out0, out1)
 
 
@@ -332,7 +332,7 @@ def test_combined_positional_encoders(simple_batch):
     )
 
     # Verify basic shapes and execution
-    out = model(batch)["logits"]
+    out = model(batch)
     assert out.shape == (1, 2)
 
     # Verify encoders affect output
@@ -341,7 +341,7 @@ def test_combined_positional_encoders(simple_batch):
         hidden_dim=16, num_class=2, positional_encoders=encoders[:-1]
     )
 
-    out2 = reduced(batch)["logits"]
+    out2 = reduced(batch)
     assert not torch.allclose(out, out2)
 
     # Verify gradients flow through encoders
@@ -361,7 +361,7 @@ def test_combined_positional_encoders(simple_batch):
 def test_gnn_block_real_convs(simple_batch, conv, where):
     base_out = GraphTransformer(
         hidden_dim=16, num_class=4, num_encoder_layers=2
-    )(simple_batch(16, 5))["logits"]
+    )(simple_batch(16, 5))
 
     def gnn(data, x):
         return conv(x.size(-1), x.size(-1))(x, data.edge_index)
@@ -372,7 +372,7 @@ def test_gnn_block_real_convs(simple_batch, conv, where):
         num_encoder_layers=2,
         gnn_block=gnn,
         gnn_position=where
-    )(simple_batch(16, 5))["logits"]
+    )(simple_batch(16, 5))
     assert out.shape == base_out.shape
     assert not torch.allclose(out, base_out)
 

@@ -39,8 +39,8 @@ def test_edge_bias_transformer_affects(edge_batch):
     ).eval()
 
     with torch.no_grad():
-        out0 = m0(batch)["logits"]
-        out1 = m1(batch)["logits"]
+        out0 = m0(batch)
+        out1 = m1(batch)
 
     assert out0.shape == out1.shape
     assert not torch.allclose(out0, out1, rtol=1e-4, atol=1e-4)
@@ -56,7 +56,7 @@ def test_edge_bias_gradients(edge_batch):
     )
     batch = edge_batch(1, 5, 7, feat_dim=16)
 
-    out = model(batch)["logits"]
+    out = model(batch)
     out.sum().backward()
 
     for name, param in provider.named_parameters():
@@ -138,8 +138,8 @@ def test_edge_bias_changes_transformer_without_dist(simple_batch):
     ).eval()
 
     with torch.no_grad():
-        out_base = base(batch)["logits"]
-        out_biased = biased(batch)["logits"]
+        out_base = base(batch)
+        out_biased = biased(batch)
 
     # Shapes must agree...
     assert out_base.shape == out_biased.shape

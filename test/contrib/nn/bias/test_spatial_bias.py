@@ -31,8 +31,8 @@ def test_spatial_bias_transformer_affects(spatial_batch):
     ).eval()
 
     with torch.no_grad():
-        o0 = m0(batch)["logits"]
-        o1 = m1(batch)["logits"]
+        o0 = m0(batch)
+        o1 = m1(batch)
 
     assert o0.shape == o1.shape
     assert not torch.allclose(o0, o1, rtol=1e-4, atol=1e-4)
@@ -47,7 +47,7 @@ def test_spatial_bias_gradients(spatial_batch):
         attn_bias_providers=[provider]
     )
     batch = spatial_batch(1, 5, 8, feat_dim=16)
-    out = model(batch)["logits"]
+    out = model(batch)
     out.sum().backward()
 
     for name, param in provider.named_parameters():

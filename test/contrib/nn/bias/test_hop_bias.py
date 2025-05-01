@@ -51,8 +51,8 @@ def test_hop_bias_affects_transformer(hop_batch):
     model_plain.eval()
     model_biased.eval()
     with torch.no_grad():
-        out_plain = model_plain(batch)["logits"]
-        out_biased = model_biased(batch)["logits"]
+        out_plain = model_plain(batch)
+        out_biased = model_biased(batch)
 
     assert out_plain.shape == out_biased.shape
     assert not torch.allclose(out_plain, out_biased, rtol=1e-4, atol=1e-4)
@@ -76,7 +76,7 @@ def test_hop_bias_gradients(hop_batch):
     )
     batch = hop_batch(1, seq_len, num_hops, feature_dim)
 
-    out = model(batch)["logits"]
+    out = model(batch)
     loss = out.sum()
     loss.backward()
 

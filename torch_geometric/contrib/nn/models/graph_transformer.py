@@ -264,7 +264,7 @@ class GraphTransformer(torch.nn.Module):
             x = self.node_feature_encoder(x)
         return x
 
-    def forward(self, data):
+    def forward(self, data: Data) -> torch.Tensor:
         """Perform a forward pass of GraphTransformer.
 
         Encodes node features, applies optional GNN blocks, runs the
@@ -274,7 +274,7 @@ class GraphTransformer(torch.nn.Module):
             data (torch_geometric.data.Data): Input graph data.
 
         Returns:
-            dict: Dictionary with key 'logits' and the output tensor.
+            torch.Tensor: Output tensor.
         """
         x = self._encode_and_apply_structural(data)
         x = self._apply_gnn_if(position="pre", data=data, x=x)
@@ -288,7 +288,7 @@ class GraphTransformer(torch.nn.Module):
             x = x + self.gnn_block(data, x_parallel_in)
 
         x = self._readout(x, batch_vec)
-        return {"logits": self.classifier(x)}
+        return self.classifier(x)
 
     def _encode_and_apply_structural(self, data: Data) -> torch.Tensor:
         """Encode node features and apply positional encodings.
