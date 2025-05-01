@@ -16,40 +16,37 @@ from torch_geometric.nn import global_mean_pool
 
 
 class GraphTransformer(torch.nn.Module):
-    r"""The graph transformer model from the "Transformer for Graphs:
-    An Overview from Architecture Perspective"
-    <https://arxiv.org/pdf/2202.08455>_ paper.
+    r"""Graph Transformer model.
+
+    Implements the transformer for graphs as described in
+    "Transformer for Graphs: An Overview from Architecture Perspective"
+    (https://arxiv.org/pdf/2202.08455).
 
     Args:
-        hidden_dim (int): The dimension of the hidden representations.
-        num_class (int): The number of output classes.
-        use_super_node (bool, optional): Whether to use a learnable class
-            token as a super node. Defaults to False.
-        node_feature_encoder (nn.Module, optional): A module to encode
-            node features. Defaults to nn.Identity().
-        num_encoder_layers (int, optional): The number of encoder layers
-            in the transformer. Defaults to 0 (single layer).
-        num_heads (int, optional): The number of attention heads used in
-            in the transformer. Defaults to 4.
-        dropout (float, optional): The dropout rate. Defaults to 0.1.
-        ffn_hidden_dim (Optional[int], optional): The hidden dimension
-            of the feedforward network. If None, defaults to 4 * hidden_dim.
-        activation (str, optional): The activation function to use in the
-            feedforward network. Defaults to 'gelu'.
-        attn_bias_providers (Sequence[BaseBiasProvider], optional): A
-            sequence of bias providers that return attention bias masks.
-            Defaults to an empty sequence.
-        gnn_block (Optional[Callable[[Data, torch.Tensor],
-            torch.Tensor]], optional): A function that takes a Data object
-            and node features, and returns updated node features after
-            applying a GNN block. Defaults to None.
-        gnn_position (Literal['pre', 'post', 'parallel'], optional):
-            Where to apply the GNN block. Can be 'pre', 'post', or
-            'parallel'. Defaults to 'pre'.
-        positional_encoders (Sequence[BasePositionalEncoder], optional): A
-            sequence of positional encoders to apply to node features.
-            Defaults to an empty sequence.
-
+        hidden_dim (int): Dimension of hidden representations.
+        num_class (int): Number of output classes.
+        use_super_node (bool, optional): Use learnable class token as a
+            super node. Defaults to False.
+        node_feature_encoder (nn.Module, optional): Module to encode node
+            features. Defaults to nn.Identity().
+        num_encoder_layers (int, optional): Number of encoder layers.
+            Defaults to 0 (single layer).
+        num_heads (int, optional): Number of attention heads.
+            Defaults to 4.
+        dropout (float, optional): Dropout rate. Defaults to 0.1.
+        ffn_hidden_dim (Optional[int], optional): Hidden dim of feedforward.
+            Defaults to 4 * hidden_dim.
+        activation (str, optional): Activation function.
+            Defaults to 'gelu'.
+        attn_bias_providers (Sequence[BaseBiasProvider], optional): Sequence of
+            bias providers that return attention bias masks.
+            Defaults to empty tuple.
+        gnn_block (Optional[Callable[[Data, torch.Tensor], torch.Tensor]],
+            optional): Function applying a GNN block. Defaults to None.
+        gnn_position (Literal['pre', 'post', 'parallel'], optional): Position
+            to apply the GNN block. Defaults to 'pre'.
+        positional_encoders (Sequence[BasePositionalEncoder], optional):
+        Sequence of positional encoders. Defaults to empty tuple.
     """
 
     def __init__(
@@ -84,7 +81,6 @@ class GraphTransformer(torch.nn.Module):
         self.use_super_node = use_super_node
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
-            self.register_parameter('cls_token', self.cls_token)
 
         self.node_feature_encoder = node_feature_encoder
         self.dropout = dropout
@@ -197,6 +193,18 @@ class GraphTransformer(torch.nn.Module):
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
+        """Readout node features.
+
+        If use_super_node is True, return the CLS token; else perform global
+        mean pooling.
+
+        Args:
+            x (torch.Tensor): Node features.
+            batch (torch.Tensor): Batch indices.
+
+        Returns:
+            torch.Tensor: Readout features.
+        """
         if self.use_super_node:
             graph_sizes = torch.bincount(batch)
             first_idx = torch.cumsum(graph_sizes, 0) - graph_sizes
@@ -207,22 +215,18 @@ class GraphTransformer(torch.nn.Module):
     def _prepend_cls_token_flat(
         self, x: torch.Tensor, batch: torch.Tensor
     ) -> tuple[torch.Tensor, torch.LongTensor]:
-        """Prepend a learnable CLS token to each graph’s nodes in a flat batch.
+        """Prepend a learnable CLS token to each graph's nodes.
 
-        This TorchScript‐compatible method inserts one classification token
-        per graph into the flat node feature tensor without loops or
-        Python‐only indexing.
+        Inserts one classification token per graph without loops or
+        non-TorchScript features.
 
         Args:
             x (torch.Tensor): Node features of shape (N, C).
-            batch (torch.Tensor): Graph indices for each node of shape (N,).
+            batch (torch.Tensor): Graph indices of shape (N,).
 
         Returns:
-            Tuple[torch.Tensor, torch.LongTensor]:
-                new_x: Tensor of shape (N + B, C) with one CLS token per
-                    graph inserted.
-                new_batch: LongTensor of length N + B mapping each token
-                        to its graph index.
+            tuple[torch.Tensor, torch.LongTensor]: New node features of shape
+            (N + B, C) and updated batch indices.
         """
         B = batch.max() + 1
         N, C = x.size(0), x.size(1)
@@ -248,26 +252,29 @@ class GraphTransformer(torch.nn.Module):
 
     @torch.jit.ignore
     def _encode_nodes(self, x: torch.Tensor) -> torch.Tensor:
-        """Encodes node features using the node feature encoder.
+        """Encode node features using the node feature encoder.
 
         Args:
-            x (torch.Tensor): The input features.
+            x (torch.Tensor): Input node features.
 
         Returns:
-            torch.Tensor: The encoded node features.
+            torch.Tensor: Encoded node features.
         """
         if self.node_feature_encoder is not None:
             x = self.node_feature_encoder(x)
         return x
 
     def forward(self, data):
-        r"""Applies the graph transformer model to the input data.
+        """Perform a forward pass of GraphTransformer.
+
+        Encodes node features, applies optional GNN blocks, runs the
+        transformer encoder, and performs readout to produce logits.
 
         Args:
-            data (torch_geometric.data.Data): The input data.
+            data (torch_geometric.data.Data): Input graph data.
 
         Returns:
-            torch.Tensor: The output of the model.
+            dict: Dictionary with key 'logits' and the output tensor.
         """
         x = self._encode_and_apply_structural(data)
         x = self._apply_gnn_if(position="pre", data=data, x=x)
@@ -284,13 +291,13 @@ class GraphTransformer(torch.nn.Module):
         return {"logits": self.classifier(x)}
 
     def _encode_and_apply_structural(self, data: Data) -> torch.Tensor:
-        r"""Encodes node features and applies structural encodings.
+        """Encode node features and apply positional encodings.
 
         Args:
-            data (Data): The input graph data.
+            data (Data): Input graph data.
 
         Returns:
-            torch.Tensor: The encoded node features.
+            torch.Tensor: Node features with positional encodings.
         """
         x = data.x
         x = self._encode_nodes(x)
@@ -302,16 +309,16 @@ class GraphTransformer(torch.nn.Module):
         self, position: Literal['pre', 'post', 'parallel'], data: Data,
         x: torch.Tensor
     ) -> torch.Tensor:
-        r"""Applies the GNN block if specified and at the correct position.
+        """Apply the GNN block at a specified position, if available.
 
         Args:
-            position (Literal['pre', 'post', 'parallel']): Where to apply
+            position (Literal['pre', 'post', 'parallel']): Position to apply
                 the GNN block.
-            data (Data): The input graph data.
-            x (torch.Tensor): The current node features.
+            data (Data): Input graph data.
+            x (torch.Tensor): Current node features.
 
         Returns:
-            torch.Tensor: The updated node features after applying GNN.
+            torch.Tensor: Node features after applying the GNN block.
         """
         if self.gnn_block is not None and self.gnn_position == position:
             x = self.gnn_block(data, x)
@@ -320,25 +327,25 @@ class GraphTransformer(torch.nn.Module):
     def _prepare_batch(
         self, x: torch.Tensor, batch: torch.Tensor
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        r"""Prepares the batch vector and optionally adds a class token.
+        """Prepare the batch vector and optionally prepend the CLS token.
 
         Args:
-            x (torch.Tensor): The current node features.
-            batch (torch.Tensor): The batch vector.
+            x (torch.Tensor): Node features.
+            batch (torch.Tensor): Batch indices for each node.
 
         Returns:
-            tuple[torch.Tensor, torch.Tensor]: A tuple containing the updated
-            node features and the batch vector.
+            x (torch.Tensor): Node features, potentially with prepended CLS.
+            batch (torch.Tensor): Updated batch indices.
         """
         if self.use_super_node:
             x, batch = self._prepend_cls_token_flat(x, batch)
         return x, batch
 
     def _is_parallel(self) -> bool:
-        r"""Checks if the GNN block is applied in parallel.
+        """Check if the GNN block is applied in parallel.
 
         Returns:
-            bool: True if GNN block is applied in parallel, False otherwise.
+            bool: True if a parallel GNN block is used, else False.
         """
         return self.gnn_block is not None and self.gnn_position == 'parallel'
 
@@ -346,16 +353,17 @@ class GraphTransformer(torch.nn.Module):
         self, x: torch.Tensor, batch_vec: torch.Tensor,
         struct_mask: Optional[torch.Tensor]
     ) -> torch.Tensor:
-        r"""Runs the encoder on the node features in sequence.
-        Rebuilds key_pad only on head‐count changes.
+        """Run the transformer encoder.
+
+        Iterates over encoder layers and rebuilds key padding masks as needed.
 
         Args:
-            x (torch.Tensor): The current node features.
-            batch_vec (torch.Tensor): The batch vector.
-            struct_mask (Optional[torch.Tensor]): The attention bias mask.
+            x (torch.Tensor): Node features.
+            batch_vec (torch.Tensor): Batch indices.
+            struct_mask (Optional[torch.Tensor]): Structural attention mask.
 
         Returns:
-            torch.Tensor: The updated node features after encoding.
+            torch.Tensor: Node features after encoding.
         """
         layers = self.encoder if self.is_encoder_stack else [self.encoder]
         key_pad = None
@@ -372,10 +380,13 @@ class GraphTransformer(torch.nn.Module):
 
     @torch.jit.ignore
     def _collect_attn_bias(self, data: Data) -> Optional[torch.Tensor]:
-        """Combine legacy and all provider masks into one.
+        """Collect and aggregate attention bias masks from providers.
+
+        Args:
+            data (Data): Input graph data.
 
         Returns:
-            FloatTensor of shape (B, H, L, L) or None if no mask was provided.
+            Optional[torch.Tensor]: Aggregated attention bias mask or None.
         """
         masks = []
         if getattr(data, "bias", None) is not None:
@@ -398,6 +409,15 @@ class GraphTransformer(torch.nn.Module):
         ).sum(dim=0).to(data.x.dtype).to(data.x.device)
 
     def __repr__(self):
+        """Return a string representation of GraphTransformer.
+
+        Includes details like hidden dims, num classes, encoder layers,
+        bias providers, positional encoders, dropout, num heads, feedforward
+        dim, activation function, and GNN block config.
+
+        Returns:
+            str: String representation.
+        """
         n_layers = len(self.encoder) if self.is_encoder_stack else 0
         providers = [
             prov.__class__.__name__ for prov in self.attn_bias_providers
@@ -423,7 +443,6 @@ class GraphTransformer(torch.nn.Module):
             f"num_heads={self.num_heads}, "
             f"ffn_hidden_dim={self.ffn_hidden_dim}, "
             f"activation='{self.activation}', "
-            f"heads={self.num_heads}, "
             f"gnn_hook={gnn_name}@'{self.gnn_position}'"
             ")"
         )
