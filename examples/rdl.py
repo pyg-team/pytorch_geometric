@@ -10,17 +10,15 @@ import argparse
 import copy
 import math
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 import numpy as np
+import pandas as pd
 import torch
 import torch_frame
-from relbench.base import EntityTask, TaskType
+from relbench.base import EntityTask, Table, TaskType
 from relbench.datasets import get_dataset
-from relbench.modeling.graph import (
-    get_node_train_table_input,
-    make_pkey_fkey_graph,
-)
+from relbench.modeling.graph import make_pkey_fkey_graph
 from relbench.modeling.utils import get_stype_proposal
 from relbench.tasks import get_task
 from sentence_transformers import SentenceTransformer
@@ -453,8 +451,61 @@ class Model(torch.nn.Module):
         return self.head(x_dict[entity_table][:seed_time.size(0)])
 
 
+class AttachTargetTransform:
+    r"""Attach the target label to the heterogeneous mini-batch.
+
+    The batch consists of disjoins subgraphs loaded via temporal sampling.
+    The same input node can occur multiple times with different timestamps,
+    and thus different subgraphs and labels. Hence labels cannot be stored in
+    the graph object directly, and must be attached to the batch after the
+    batch is created.
+    """
+    def __init__(self, entity: str, target: Tensor):
+        self.entity = entity
+        self.target = target
+
+    def __call__(self, batch: HeteroData) -> HeteroData:
+        batch[self.entity].y = self.target[batch[self.entity].input_id]
+        return batch
+
+
+class TrainingTableInput(NamedTuple):
+    r"""Training table input for node prediction tasks.
+
+    A container for organizing input data needed for node-level predictions.
+
+    Attributes:
+        nodes: Tuple of (node_type, indices_tensor) containing the node type
+            identifier and Tensor of node IDs to predict on.
+        time: Optional Tensor of timestamps for temporal sampling. Shape
+            matches node indices. None if task is not temporal.
+        target: Optional Tensor of ground truth labels/values. Shape matches
+            node indices. None during inference.
+        transform: Optional transform that attaches target labels to batches
+            during training. Needed for temporal sampling where nodes can
+            appear multiple times with different labels.
+    """
+
+    nodes: Tuple[NodeType, Tensor]
+    time: Optional[Tensor]
+    target: Optional[Tensor]
+    transform: Optional[AttachTargetTransform]
+
+
 def get_task_type_params(task):
-    """Get task-specific optimization parameters based on task type."""
+    r"""Get task-specific optimization parameters based on task type.
+
+    Args:
+        task (EntityTask): Task specification containing task type.
+
+    Returns:
+        Tuple[int, torch.nn.Module, str, bool]:
+            Tuple containing:
+            - out_channels: Number of output channels
+            - loss_fn: Loss function
+            - tune_metric: Metric to optimize
+            - higher_is_better: Whether higher metric values are better
+    """
     if task.task_type == TaskType.REGRESSION:
         out_channels = 1
         loss_fn = torch.nn.L1Loss()
@@ -469,6 +520,68 @@ def get_task_type_params(task):
         raise ValueError(f"Unsupported task type: {task.task_type}")
 
     return out_channels, loss_fn, tune_metric, higher_is_better
+
+
+def to_unix_time(ser: pd.Series) -> np.ndarray:
+    r"""Convert a pandas Timestamp series to UNIX timestamp in seconds.
+
+    Args:
+        ser (pd.Series): Input pandas Series containing datetime values.
+
+    Returns:
+        np.ndarray: Array of UNIX timestamps in seconds.
+    """
+    assert ser.dtype in [np.dtype("datetime64[s]"), np.dtype("datetime64[ns]")]
+    unix_time = ser.astype("int64").values
+    if ser.dtype == np.dtype("datetime64[ns]"):
+        unix_time //= 10**9
+    return unix_time
+
+
+def get_train_table_input(
+    split_table: Table,
+    task: EntityTask,
+) -> TrainingTableInput:
+    r"""Get the training table input for node prediction.
+
+    Processes a table split and task to create a TrainingTableInput
+    object containing:
+    1. Node indices for the target entity type
+    2. Optional timestamps for temporal sampling
+    3. Optional target labels/values for training
+    4. Optional transform to attach labels during batch loading
+
+    Args:
+        split_table (Table): Table containing node IDs, optional timestamps,
+            and optional target values to predict.
+        task (EntityTask): Task specification containing entity table name,
+            entity column name, target column name, etc.
+
+    Returns:
+        TrainingTableInput: Container with processed node indices, timestamps,
+            target values and transform needed for training/inference.
+    """
+    nodes = torch.from_numpy(
+        split_table.df[task.entity_col].astype(int).values)
+
+    time: Optional[Tensor] = None
+    if split_table.time_col is not None:
+        time = torch.from_numpy(
+            to_unix_time(split_table.df[split_table.time_col]))
+
+    target: Optional[Tensor] = None
+    transform: Optional[AttachTargetTransform] = None
+    if task.target_col in split_table.df:
+        target = torch.from_numpy(
+            split_table.df[task.target_col].values.astype(float))
+        transform = AttachTargetTransform(task.entity_table, target)
+
+    return TrainingTableInput(
+        nodes=(task.entity_table, nodes),
+        time=time,
+        target=target,
+        transform=transform,
+    )
 
 
 def train(
@@ -551,6 +664,8 @@ if __name__ == "__main__":
         text_embedder=GloveTextEmbedding(device=device), batch_size=256)
 
     # Transform the dataset into a HeteroData object with torch_frame features
+    # To better understand this step, please refer to the RelBench
+    # implementation.
     print("Transforming dataset into HeteroData object...")
     data, col_stats_dict = make_pkey_fkey_graph(
         db,
@@ -579,11 +694,11 @@ if __name__ == "__main__":
         ("val", val_table),
         ("test", test_table),
     ]:
-        table_input = get_node_train_table_input(
-            table=table,
+        # Get the training table input for the current split
+        table_input = get_train_table_input(
+            split_table=table,
             task=task,
         )
-        entity_table = table_input.nodes[0]
 
         # Create a dictionary mapping edge types to number of neighbors
         num_neighbors_dict = {
