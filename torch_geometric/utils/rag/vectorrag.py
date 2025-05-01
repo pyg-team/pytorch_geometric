@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Protocol, Union
-
+import os
 import torch
 from torch import Tensor
 
@@ -50,7 +50,7 @@ class DocumentRetriever(VectorRetriever):
             # we don't want to print the verbose output in `query`
             self.model_kwargs.pop("verbose", None)
 
-    def query(self, query: Union[str, Tensor]) -> Data:
+    def query(self, query: Union[str, Tensor]) -> List[str]:
         """Retrieve documents from the vector database.
 
         Args:
@@ -67,3 +67,53 @@ class DocumentRetriever(VectorRetriever):
         selected_doc_idxs, _ = next(
             batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
         return [self.raw_docs[i] for i in selected_doc_idxs]
+
+    def save(self, path: str) -> None:
+        """Save the DocumentRetriever instance to disk.
+
+        Args:
+            path: str: Path where to save the retriever.
+        """
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+
+        # Prepare data to save
+        save_dict = {
+            'raw_docs': self.raw_docs,
+            'embedded_docs': self.embedded_docs,
+            'k_for_docs': self.k_for_docs,
+        }
+
+        # We do not serialize the model
+        torch.save(save_dict, path)
+
+    @classmethod
+    def load(cls,
+             path: str,
+             model: Union[SentenceTransformer,
+                          torch.nn.Module,
+                          Callable],
+              model_kwargs: Optional[Dict[str, Any]] = None) -> VectorRetriever:
+        """Load a DocumentRetriever instance from disk.
+
+        Args:
+            path: str: Path to the saved retriever.
+            model: Union[SentenceTransformer, torch.nn.Module, Callable]:
+                Model to use for encoding. If None, the saved model will be used if available.
+
+        Returns:
+            DocumentRetriever: The loaded retriever.
+        """
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"No saved document retriever found at {path}")
+
+        save_dict = torch.load(path)
+
+        # Create a new DocumentRetriever with the loaded data
+        return cls(
+            raw_docs=save_dict['raw_docs'],
+            embedded_docs=save_dict['embedded_docs'],
+            k_for_docs=save_dict['k_for_docs'],
+            model=model,
+            model_kwargs=model_kwargs
+        )
+

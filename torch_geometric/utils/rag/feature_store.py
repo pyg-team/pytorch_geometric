@@ -19,24 +19,18 @@ from torch_geometric.utils.rag.backend_utils import batch_knn
 class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based approach to retrieve seed nodes and edges.
     """
-    def __init__(self, enc_model: Type[Module],
-                 model_kwargs: Optional[Dict[str,
-                                             Any]] = None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initializes the feature store.
 
         Args:
-        - enc_model: The model to use for encoding queries.
-        - model_kwargs: Additional keyword arguments to pass to the encoding model.
+        - encoder_model: The model to use for encoding queries.
         - args and kwargs: Additional arguments to pass to the parent class.
         """
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
-        self.enc_model = enc_model(*args, **kwargs).to(self.device)
-        self.enc_model.eval()
-        self.model_kwargs = model_kwargs if model_kwargs is not None else dict(
-        )
 
         # to be set by the config
+        self.encoder_model = None
         self.k_nodes = None
 
         super().__init__()
@@ -72,6 +66,10 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             ValueError: If required parameters missing from config
         """
         self._set_from_config(config, "k_nodes")
+        self._set_from_config(config, "encoder_model")
+        self.encoder_model = self.encoder_model.to(self.device)
+        self.encoder_model.eval()
+
         self._config = config
 
 
@@ -119,8 +117,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
 
-        query_enc = self.enc_model.encode(query,
-                                          **self.model_kwargs).to(self.device)
+        query_enc = self.encoder_model.encode(query).to(self.device)
         return batch_knn(query_enc, self.x, k_nodes)
 
     def load_subgraph(
@@ -146,7 +143,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
 # TODO: Refactor because composition >> inheritance
 
-
 def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
                                device: torch.device, batch_size: int = 2**20):
     """Add new features to the existing KNN index in batches.
@@ -168,11 +164,10 @@ def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
 
 
 class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
-    def __init__(self, enc_model: Type[Module],
-                 model_kwargs: Optional[Dict[str,
-                                             Any]] = None, *args, **kwargs):
+    def __init__(self, encoder_model: Type[Module],
+                 *args, **kwargs):
         # TODO: Add kwargs for approx KNN to parameters here.
-        super().__init__(enc_model, model_kwargs, *args, **kwargs)
+        super().__init__(encoder_model, *args, **kwargs)
         self.node_knn_index = None
         self.edge_knn_index = None
 
@@ -181,10 +176,9 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
 
-        enc_model = self.enc_model.to(self.device)
-        query_enc = enc_model.encode(query,
-                                     **self.model_kwargs).to(self.device)
-        del enc_model
+        encoder_model = self.encoder_model.to(self.device)
+        query_enc = encoder_model.encode(query).to(self.device)
+        del encoder_model
         gc.collect()
         torch.cuda.empty_cache()
 
@@ -199,18 +193,3 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         output = self.node_knn_index.search(query_enc, k=k_nodes)
         yield from output.index
 
-
-# TODO: These two classes should be refactored so they are easier to use
-# custom model with the create_remote_backend/ragqueryloader functionality
-class ModernBertFeatureStore(KNNRAGFeatureStore):
-    def __init__(self, *args, **kwargs):
-        kwargs['model_name'] = kwargs.get('model_name',
-                                          'Alibaba-NLP/gte-modernbert-base')
-        super().__init__(SentenceTransformer, *args, **kwargs)
-
-
-class ModernBertApproxFeatureStore(ApproxKNNRAGFeatureStore):
-    def __init__(self, *args, **kwargs):
-        kwargs['model_name'] = kwargs.get('model_name',
-                                          'Alibaba-NLP/gte-modernbert-base')
-        super().__init__(SentenceTransformer, *args, **kwargs)

@@ -45,7 +45,7 @@ from torch_geometric.utils.rag.backend_utils import (
     make_pcst_filter,
     preprocess_triplet,
 )
-from torch_geometric.utils.rag.feature_store import ModernBertFeatureStore
+from torch_geometric.utils.rag.feature_store import KNNRAGFeatureStore
 from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 
@@ -271,7 +271,7 @@ def make_dataset(args):
         graph_data = create_graph_from_triples(
             triples=triples, embedding_model=model.encode,
             embedding_method_kwargs={"batch_size": min(len(triples), sent_trans_batch_size),
-                                    "verbose": True},
+                                     "verbose": True},
             pre_transform=preprocess_triplet)
 
         print("Creating the graph and feature stores...")
@@ -279,30 +279,38 @@ def make_dataset(args):
         fs, gs = create_remote_backend_from_graph_data(
             graph_data=graph_data, path="backend",
             graph_db=NeighborSamplingRAGGraphStore,
-            feature_db=ModernBertFeatureStore).load()
+            feature_db=KNNRAGFeatureStore).load()
 
         """
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
         """
-        print("Creating the vector retriever...")
-        vector_retriever = DocumentRetriever(
-            context_docs, k_for_docs=args.k_for_docs, model=model.encode,
-            model_kwargs={
-                "output_device": device,
-                "batch_size": int(sent_trans_batch_size / 4),
-                "verbose": True
-            })
 
-        # subgraph filter args
-        subgraph_filter_kwargs = {
-            "topk": 5,  # nodes
-            "topk_e": 5,  # edges
-            "cost_e": .5,  # edge cost
-            "num_clusters": 10,  # num clusters
+        model_kwargs = {
+            "output_device": device,
+            "batch_size": int(sent_trans_batch_size / 4),
+            "verbose": True
         }
+
+        if os.path.exists("document_retriever.pt"):
+            print("Loading document retriever from checkpoint...")
+            vector_retriever = DocumentRetriever.load("document_retriever.pt",
+                                                      model=model.encode,
+                                                      model_kwargs=model_kwargs)
+            if args.k_for_docs != vector_retriever.k_for_docs:
+                vector_retriever.k_for_docs = args.k_for_docs
+        else:
+            print("Creating document retriever...")
+            vector_retriever = DocumentRetriever(
+                context_docs, k_for_docs=args.k_for_docs, model=model.encode,
+                model_kwargs=model_kwargs)
+            torch.save(vector_retriever, "document_retriever.pt")
+
         subgraph_filter = make_pcst_filter(triples, model,
-                                           **subgraph_filter_kwargs)
+                                           topk=5, # nodes
+                                           topk_e=5, # edges
+                                           cost_e=.5, # edge cost
+                                           num_clusters=10) # num clusters
 
         # number of neighbors for each seed node selected by KNN
         fanout = 100
@@ -312,12 +320,13 @@ def make_dataset(args):
         query_loader_config = {
             "k_nodes": 1024,  # k for Graph KNN
             "num_neighbors": [fanout] * num_hops,  # number of sampled neighbors
+            "encoder_model": model,
         }
 
         # GraphDB retrieval done with KNN+NeighborSampling+PCST
         # PCST = Prize Collecting Steiner Tree
         # VectorDB retrieval just vanilla vector RAG
-        print("Now to retrieve context for each query from"
+        print("Now to retrieve context for each query from "
               "our Vector and Graph DBs...")
 
         query_loader = RAGQueryLoader(
@@ -353,7 +362,7 @@ def make_dataset(args):
         data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
         torch.save(data_lists, "tech_qa.pt")
-        del model
+        #del model
         gc.collect()
         torch.cuda.empty_cache()
         return data_lists
