@@ -680,9 +680,9 @@ if __name__ == "__main__":
               f"Train loss: {train_loss}, "
               f"Val metrics: {val_metrics}")
 
-        if ((higher_is_better and val_metrics[tune_metric] > best_val_metric
-            ) or (not higher_is_better
-                  and val_metrics[tune_metric] < best_val_metric)):
+        if ((higher_is_better and val_metrics[tune_metric] > best_val_metric)
+                or (not higher_is_better
+                    and val_metrics[tune_metric] < best_val_metric)):
             best_val_metric = val_metrics[tune_metric]
             state_dict = copy.deepcopy(model.state_dict())
     """ Evaluate the model """
