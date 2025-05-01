@@ -157,10 +157,12 @@ target-version = "py39"
 
 [tool.ruff.lint]
 select = [
-    "B",  # flake8-bugbear
+    # "B",  # flake8-bugbear
+    "B904",
     "D",  # pydocstyle
 ]
 ignore = [
+    "B028",  # TODO Don't ignore "No explicit `stacklevel` keyword argument found"
     "D100",  # TODO Don't ignore "Missing docstring in public module"
     "D101",  # TODO Don't ignore "Missing docstring in public class"
     "D102",  # TODO Don't ignore "Missing docstring in public method"
