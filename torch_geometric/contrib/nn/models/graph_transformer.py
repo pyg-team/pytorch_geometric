@@ -204,41 +204,45 @@ class GraphTransformer(torch.nn.Module):
         else:
             return global_mean_pool(x, batch)
 
-    @torch.jit.ignore
     def _prepend_cls_token_flat(
         self, x: torch.Tensor, batch: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Prepend a learnable CLS token to each graph’s nodes in a batch.
+    ) -> tuple[torch.Tensor, torch.LongTensor]:
+        """Prepend a learnable CLS token to each graph’s nodes in a flat batch.
 
-        Given:
-            x (Tensor[N, C]): Node features for N total nodes.
-            batch (LongTensor[N]): Graph assignment indices in [0..B-1].
+        This TorchScript‐compatible method inserts one classification token
+        per graph into the flat node feature tensor without loops or
+        Python‐only indexing.
+
+        Args:
+            x (torch.Tensor): Node features of shape (N, C).
+            batch (torch.Tensor): Graph indices for each node of shape (N,).
 
         Returns:
-            new_x (Tensor[N + B, C]): Features with one CLS token
-            prepended per graph.
-            new_batch (LongTensor[N + B]): Updated batch vector, length N + B.
+            Tuple[torch.Tensor, torch.LongTensor]:
+                new_x: Tensor of shape (N + B, C) with one CLS token per
+                    graph inserted.
+                new_batch: LongTensor of length N + B mapping each token
+                        to its graph index.
         """
-        device = x.device
-        B = int(batch.max()) + 1
-        C = x.size(1)
-
+        B = batch.max() + 1
+        N, C = x.size(0), x.size(1)
         lengths = torch.bincount(batch, minlength=B)
         new_lengths = lengths + 1
-        new_batch = torch.repeat_interleave(
-            torch.arange(B, device=device), new_lengths
-        )
-
-        new_N = x.size(0) + B
-        new_x = x.new_empty((new_N, C))
-
+        graph_ids = torch.arange(B, device=x.device)
+        new_batch = graph_ids.repeat_interleave(new_lengths)
         offsets = new_lengths.cumsum(0) - new_lengths
-        cls_tokens = self.cls_token.expand(B, -1)
-        new_x[offsets] = cls_tokens
-
-        orig_positions = torch.arange(x.size(0), device=device)
-        new_positions = orig_positions + batch + 1
-        new_x[new_positions] = x
+        cls_positions = offsets
+        node_positions = torch.arange(N, device=x.device) + batch + 1
+        all_positions = torch.cat([cls_positions, node_positions], dim=0)
+        cls_tokens = self.cls_token.expand(B, C)
+        all_features = torch.cat([cls_tokens, x], dim=0)
+        total = N + B
+        new_x = x.new_zeros((total, C))
+        new_x = new_x.scatter(
+            0,
+            all_positions.unsqueeze(1).expand(-1, C),
+            all_features,
+        )
 
         return new_x, new_batch
 
@@ -415,6 +419,11 @@ class GraphTransformer(torch.nn.Module):
             f"num_encoder_layers={n_layers}, "
             f"bias_providers={providers}, "
             f"pos_encoders={pos_encoders}, "
+            f"dropout={self.dropout}, "
+            f"num_heads={self.num_heads}, "
+            f"ffn_hidden_dim={self.ffn_hidden_dim}, "
+            f"activation='{self.activation}', "
+            f"heads={self.num_heads}, "
             f"gnn_hook={gnn_name}@'{self.gnn_position}'"
             ")"
         )
