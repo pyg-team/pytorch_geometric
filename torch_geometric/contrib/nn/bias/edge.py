@@ -23,16 +23,19 @@ from torch_geometric.data import Data
 
 
 class GraphAttnEdgeBias(BaseBiasProvider):
-    """Learnable edge‐feature bias provider for graph attention.
+    """Learnable edge-feature bias provider for graph attention networks.
 
-    Maps edge types in `data.edge_dist` to per‑head additive biases.
-    Supports single and batched graphs via `ptr`.
+    Converts edge types in `data.edge_dist` into per-head additive biases,
+    enabling attention modulation based on edge information. When handling
+    batched graphs, the `ptr` attribute in a Data object represents the start
+    and end indices of nodes for each graph. This allows proper partitioning
+    of concatenated node features and ensures individual graph processing.
 
     Args:
         num_heads (int): Number of attention heads.
         num_edges (int): Number of edge types (excl. padding).
         edge_type (str): 'simple' or 'multi_hop'.
-        multi_hop_max_dist (int, optional): max distance for multi-hop.
+        multi_hop_max_dist (int, optional): Max distance for multi-hop.
         use_super_node (bool): Reserve extra index for super‑node.
     """
 
@@ -53,19 +56,23 @@ class GraphAttnEdgeBias(BaseBiasProvider):
         self.multi_hop_max_dist = multi_hop_max_dist
 
     def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
-        """Split or default `data.edge_dist` into a batched (B, L, L).
+        """Extract a batched edge-distance matrix from the input Data object.
 
-        Supported cases:
-        - No `edge_dist`: returns zeros of shape (B, L, L), where
-            B = len(data.ptr)-1 and L = data.x.size(0)//B.
-        - 2D `edge_dist` with `data.ptr`: rows concatenated across graphs,
-            split by `ptr` into B blocks of size L → (B, L, L).
+        Args:
+            data (torch_geometric.data.Data):
+                Input Data object containing edge distances.
 
         Returns:
-            LongTensor of shape (B, L, L).
+            LongTensor: edge-distance matrix
+                - If `data.edge_dist` is None --> shape (B, L, L)
+                - If `data.edge_dist` is 2D tensor and `data.ptr` is present
+                --> shape (B, L, L)
+                - If `data.edge_dist` is 2D tensor but `data.ptr` is missing
+                --> Raises ValueError.
 
         Raises:
-            ValueError: if `edge_dist` is present but not 2D or missing `ptr`.
+            ValueError: If `data.edge_dist` is provided but is not a 2D tensor,
+            or if `data.ptr` is missing.
         """
         pos = getattr(data, "edge_dist", None)
         if pos is None:
