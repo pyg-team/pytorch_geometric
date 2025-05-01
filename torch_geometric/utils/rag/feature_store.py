@@ -1,6 +1,6 @@
 import gc
 from collections.abc import Iterable, Iterator
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, Type, Union
 
 import torch
 from torch import Tensor
@@ -8,10 +8,9 @@ from torch.nn import Module
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
-from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
-from torch_geometric.typing import InputEdges, InputNodes
+from torch_geometric.typing import InputNodes
 from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
@@ -52,7 +51,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             ValueError: If required attribute not found in config
         """
         if attr_name not in config:
-            raise ValueError(f"Required config parameter '{attr_name}' not found")
+            raise ValueError(
+                f"Required config parameter '{attr_name}' not found")
         setattr(self, attr_name, config[attr_name])
 
     @config.setter
@@ -71,7 +71,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         self.encoder_model.eval()
 
         self._config = config
-
 
     @property
     def x(self) -> Tensor:
@@ -143,6 +142,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
 # TODO: Refactor because composition >> inheritance
 
+
 def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
                                device: torch.device, batch_size: int = 2**20):
     """Add new features to the existing KNN index in batches.
@@ -164,8 +164,7 @@ def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
 
 
 class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
-    def __init__(self, encoder_model: Type[Module],
-                 *args, **kwargs):
+    def __init__(self, encoder_model: Type[Module], *args, **kwargs):
         # TODO: Add kwargs for approx KNN to parameters here.
         super().__init__(encoder_model, *args, **kwargs)
         self.node_knn_index = None
@@ -192,4 +191,3 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
 
         output = self.node_knn_index.search(query_enc, k=k_nodes)
         yield from output.index
-

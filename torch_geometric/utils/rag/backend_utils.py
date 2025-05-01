@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import Enum, auto
-import functools
 from typing import (
     Any,
     Callable,
@@ -12,9 +11,9 @@ from typing import (
     Protocol,
     Tuple,
     Type,
+    Union,
     no_type_check,
     runtime_checkable,
-    Union,
 )
 
 import numpy as np
@@ -287,17 +286,18 @@ class RemoteGraphBackendLoader:
             raise NotImplementedError
         return (feature_store, graph_store)
 
-def create_graph_from_triples(triples: Iterable[TripletLike],
-                              embedding_model: Union[Module, Callable],
-                              embedding_method_kwargs: Optional[Dict[str, Any]] = None,
-                              pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
-                              ) -> Data:
+
+def create_graph_from_triples(
+    triples: Iterable[TripletLike],
+    embedding_model: Union[Module, Callable],
+    embedding_method_kwargs: Optional[Dict[str, Any]] = None,
+    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+) -> Data:
     """Utility function that can be used to create a graph from triples.
     """
     # Resolve callable methods
     embedding_method_kwargs = embedding_method_kwargs \
         if embedding_method_kwargs is not None else dict()
-
 
     indexer = LargeGraphIndexer.from_triplets(triples,
                                               pre_transform=pre_transform)
@@ -316,6 +316,7 @@ def create_graph_from_triples(triples: Iterable[TripletLike],
                            edge_feature_name='edge_attr')
     data = data.to("cpu")
     return data
+
 
 def create_remote_backend_from_graph_data(
     graph_data: Data,
@@ -355,17 +356,16 @@ def create_remote_backend_from_graph_data(
         return RemoteGraphBackendLoader(path, RemoteDataType.DATA, graph_db,
                                         feature_db)
     else:
-        partitioner = Partitioner(data=graph_data, num_parts=n_parts, root=path)
+        partitioner = Partitioner(data=graph_data, num_parts=n_parts,
+                                  root=path)
         partitioner.generate_partition()
         return RemoteGraphBackendLoader(path, RemoteDataType.PARTITION,
                                         graph_db, feature_db)
 
 
-def make_pcst_filter(triples: List[Tuple[str, str, str]],
-                     model: SentenceTransformer,
-                     topk: int = 5,
-                     topk_e: int = 5,
-                     cost_e: float = 0.5,
+def make_pcst_filter(triples: List[Tuple[str, str,
+                                         str]], model: SentenceTransformer,
+                     topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
                      num_clusters: int = 1) -> None:
     """Creates a PCST (Prize Collecting Tree) filter.
 
@@ -395,8 +395,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     full_textual_nodes = nodes
 
     def apply_retrieval_via_pcst(
-        graph: Data,  # Input graph data
-        query: str,  # Search query
+            graph: Data,  # Input graph data
+            query: str,  # Search query
     ) -> Tuple[Data, str]:
         """Applies PCST filtering for retrieval.
         PCST = Prize Collecting Steiner Tree

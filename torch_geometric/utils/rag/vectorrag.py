@@ -1,6 +1,7 @@
+import os
 from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Protocol, Union
-import os
+
 import torch
 from torch import Tensor
 
@@ -21,8 +22,7 @@ class DocumentRetriever(VectorRetriever):
     """Retrieve documents from a vector database."""
     def __init__(self, raw_docs: List[str],
                  embedded_docs: Optional[Tensor] = None, k_for_docs: int = 2,
-                 model: Optional[Union[SentenceTransformer,
-                                       torch.nn.Module,
+                 model: Optional[Union[SentenceTransformer, torch.nn.Module,
                                        Callable]] = None,
                  model_kwargs: Optional[Dict[str, Any]] = None):
         """Retrieve documents from a vector database.
@@ -87,12 +87,9 @@ class DocumentRetriever(VectorRetriever):
         torch.save(save_dict, path)
 
     @classmethod
-    def load(cls,
-             path: str,
-             model: Union[SentenceTransformer,
-                          torch.nn.Module,
-                          Callable],
-              model_kwargs: Optional[Dict[str, Any]] = None) -> VectorRetriever:
+    def load(cls, path: str, model: Union[SentenceTransformer, torch.nn.Module,
+                                          Callable],
+             model_kwargs: Optional[Dict[str, Any]] = None) -> VectorRetriever:
         """Load a DocumentRetriever instance from disk.
 
         Args:
@@ -104,16 +101,13 @@ class DocumentRetriever(VectorRetriever):
             DocumentRetriever: The loaded retriever.
         """
         if not os.path.exists(path):
-            raise FileNotFoundError(f"No saved document retriever found at {path}")
+            raise FileNotFoundError(
+                f"No saved document retriever found at {path}")
 
         save_dict = torch.load(path)
 
         # Create a new DocumentRetriever with the loaded data
-        return cls(
-            raw_docs=save_dict['raw_docs'],
-            embedded_docs=save_dict['embedded_docs'],
-            k_for_docs=save_dict['k_for_docs'],
-            model=model,
-            model_kwargs=model_kwargs
-        )
-
+        return cls(raw_docs=save_dict['raw_docs'],
+                   embedded_docs=save_dict['embedded_docs'],
+                   k_for_docs=save_dict['k_for_docs'], model=model,
+                   model_kwargs=model_kwargs)

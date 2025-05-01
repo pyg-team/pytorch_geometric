@@ -197,18 +197,18 @@ def get_data(args):
 
     return json_obj, text_contexts
 
+
 def index_kg(args, context_docs):
     kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
-                        NVIDIA_API_KEY=args.NV_NIM_KEY,
-                        ENDPOINT_URL=args.ENDPOINT_URL,
-                        chunk_size=args.kg_chunk_size)
+                      NVIDIA_API_KEY=args.NV_NIM_KEY,
+                      ENDPOINT_URL=args.ENDPOINT_URL,
+                      chunk_size=args.kg_chunk_size)
     print(
         "Note that if the TXT2KG process is too slow for you're liking using"
         "the public NIM, consider deploying yourself using local_lm flag of"
         "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct"
         "to deploy to a private endpoint, which you can pass to this script"
-        "w/ --ENDPOINT_URL flag."
-    )  # noqa
+        "w/ --ENDPOINT_URL flag.")  # noqa
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
     if os.path.exists("checkpoint_kg.pt"):
@@ -234,14 +234,14 @@ def index_kg(args, context_docs):
 
     triples.extend(
         list(
-            chain.from_iterable(
-                triple_set
-                for triple_set in relevant_triples.values())))
+            chain.from_iterable(triple_set
+                                for triple_set in relevant_triples.values())))
     triples = list(dict.fromkeys(triples))
     torch.save(triples, "tech_qa_just_triples.pt")
     if os.path.exists("checkpoint_kg.pt"):
         os.remove("checkpoint_kg.pt")
     return triples
+
 
 def make_dataset(args):
     if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
@@ -270,9 +270,10 @@ def make_dataset(args):
         # create the graph data from raw triples
         graph_data = create_graph_from_triples(
             triples=triples, embedding_model=model.encode,
-            embedding_method_kwargs={"batch_size": min(len(triples), sent_trans_batch_size),
-                                     "verbose": True},
-            pre_transform=preprocess_triplet)
+            embedding_method_kwargs={
+                "batch_size": min(len(triples), sent_trans_batch_size),
+                "verbose": True
+            }, pre_transform=preprocess_triplet)
 
         print("Creating the graph and feature stores...")
         # creating the graph and feature stores
@@ -280,7 +281,6 @@ def make_dataset(args):
             graph_data=graph_data, path="backend",
             graph_db=NeighborSamplingRAGGraphStore,
             feature_db=KNNRAGFeatureStore).load()
-
         """
         NOTE: these retriever hyperparams are very important.
         Tuning may be needed for custom data...
@@ -294,23 +294,26 @@ def make_dataset(args):
 
         if os.path.exists("document_retriever.pt"):
             print("Loading document retriever from checkpoint...")
-            vector_retriever = DocumentRetriever.load("document_retriever.pt",
-                                                      model=model.encode,
-                                                      model_kwargs=model_kwargs)
+            vector_retriever = DocumentRetriever.load(
+                "document_retriever.pt", model=model.encode,
+                model_kwargs=model_kwargs)
             if args.k_for_docs != vector_retriever.k_for_docs:
                 vector_retriever.k_for_docs = args.k_for_docs
         else:
             print("Creating document retriever...")
-            vector_retriever = DocumentRetriever(
-                context_docs, k_for_docs=args.k_for_docs, model=model.encode,
-                model_kwargs=model_kwargs)
+            vector_retriever = DocumentRetriever(context_docs,
+                                                 k_for_docs=args.k_for_docs,
+                                                 model=model.encode,
+                                                 model_kwargs=model_kwargs)
             torch.save(vector_retriever, "document_retriever.pt")
 
-        subgraph_filter = make_pcst_filter(triples, model,
-                                           topk=5, # nodes
-                                           topk_e=5, # edges
-                                           cost_e=.5, # edge cost
-                                           num_clusters=10) # num clusters
+        subgraph_filter = make_pcst_filter(
+            triples,
+            model,
+            topk=5,  # nodes
+            topk_e=5,  # edges
+            cost_e=.5,  # edge cost
+            num_clusters=10)  # num clusters
 
         # number of neighbors for each seed node selected by KNN
         fanout = 100
@@ -319,7 +322,8 @@ def make_dataset(args):
 
         query_loader_config = {
             "k_nodes": 1024,  # k for Graph KNN
-            "num_neighbors": [fanout] * num_hops,  # number of sampled neighbors
+            "num_neighbors":
+            [fanout] * num_hops,  # number of sampled neighbors
             "encoder_model": model,
         }
 
@@ -329,11 +333,10 @@ def make_dataset(args):
         print("Now to retrieve context for each query from "
               "our Vector and Graph DBs...")
 
-        query_loader = RAGQueryLoader(
-            graph_data=(fs, gs),
-            subgraph_filter=subgraph_filter,
-            vector_retriever=vector_retriever,
-            config=query_loader_config)
+        query_loader = RAGQueryLoader(graph_data=(fs, gs),
+                                      subgraph_filter=subgraph_filter,
+                                      vector_retriever=vector_retriever,
+                                      config=query_loader_config)
 
         # pre-process the dataset
         total_data_list = []

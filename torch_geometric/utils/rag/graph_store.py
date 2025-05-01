@@ -10,15 +10,13 @@ from torch_geometric.sampler import (
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.neighbor_sampler import NumNeighborsType
-from torch_geometric.typing import EdgeTensorType, InputEdges, InputNodes
+from torch_geometric.typing import EdgeTensorType, InputNodes
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     """A graph store that uses neighbor sampling to store and retrieve graph data.
     """
-    def __init__(self, feature_store: Optional[FeatureStore] = None,
-                 **kwargs):
+    def __init__(self, feature_store: Optional[FeatureStore] = None, **kwargs):
         """Initializes the graph store with an optional feature store and neighbor sampling settings.
 
         :param feature_store: The feature store to use, or None if not yet registered.
@@ -31,7 +29,6 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         # to be set by the config
         self.num_neighbors = None
         super().__init__()
-
 
     @property
     def config(self):
@@ -50,7 +47,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             ValueError: If required attribute not found in config
         """
         if attr_name not in config:
-            raise ValueError(f"Required config parameter '{attr_name}' not found")
+            raise ValueError(
+                f"Required config parameter '{attr_name}' not found")
         setattr(self, attr_name, config[attr_name])
 
     @config.setter
@@ -136,9 +134,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         )
         self.put_edge_index(edge_index, **attr)
 
-
     def sample_subgraph(
-        self, seed_nodes: InputNodes
+            self, seed_nodes: InputNodes
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         """Sample the graph starting from the given nodes using the
         in-built NeighborSampler.

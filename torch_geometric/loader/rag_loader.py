@@ -87,7 +87,6 @@ class RAGQueryLoader:
         self.subgraph_filter = subgraph_filter
         self.config = config
 
-
     def _propagate_config(self, config: Dict[str, Any]):
         """Propagate the config the relevant components.
         """
@@ -120,11 +119,9 @@ class RAGQueryLoader:
         if self.augment_query:
             query = [query] + retrieved_docs
 
-        seed_nodes, query_enc = self.feature_store.retrieve_seed_nodes(
-            query)
+        seed_nodes, query_enc = self.feature_store.retrieve_seed_nodes(query)
 
-        subgraph_sample = self.graph_store.sample_subgraph(
-            seed_nodes)
+        subgraph_sample = self.graph_store.sample_subgraph(seed_nodes)
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample)
 
