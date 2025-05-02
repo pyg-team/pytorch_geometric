@@ -52,6 +52,7 @@ from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
 CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
@@ -243,6 +244,50 @@ def index_kg(args, context_docs):
     return triples
 
 
+
+def update_data_lists(args, data_lists):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # creating the embedding model
+    sent_trans_batch_size = 256
+    model = SentenceTransformer(
+        model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
+    model_kwargs = {
+        "output_device": device,
+        "batch_size": int(sent_trans_batch_size / 4),
+    }
+    if os.path.exists("document_retriever.pt"):
+        print("Loading document retriever from checkpoint...")
+        vector_retriever = DocumentRetriever.load("document_retriever.pt",
+                                                  model=model.encode,
+                                                  model_kwargs=model_kwargs)
+        if args.k_for_docs != vector_retriever.k_for_docs:
+            vector_retriever.k_for_docs = args.k_for_docs
+        else:
+            return data_lists
+    else:
+        raise ValueError("Document retriever not found")
+
+    print("k_for_docs changed, updating data lists...")
+
+    total_points = sum(len(data_list) for data_list in data_lists.values())
+
+    progress_bar = tqdm(total=total_points, desc="Updating text contexts")
+
+    for data_list in data_lists.values():
+        for data_point in data_list:
+            q = data_point["question"]
+            data_point["text_context"] = vector_retriever.query(q)
+            progress_bar.update(1)
+
+    progress_bar.close()
+
+    del vector_retriever
+    gc.collect()
+    torch.cuda.empty_cache()
+
+    torch.save(data_lists, "tech_qa.pt")
+    return data_lists
+
 def make_dataset(args):
     if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
         print("Re-using Saved TechQA KG-RAG Dataset...")
@@ -264,7 +309,7 @@ def make_dataset(args):
         # creating the embedding model
         sent_trans_batch_size = 256
         model = SentenceTransformer(
-            model_name='Alibaba-NLP/gte-modernbert-base').to(device)
+            model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
 
         print("Creating the graph data from raw triples...")
         # create the graph data from raw triples
@@ -305,7 +350,7 @@ def make_dataset(args):
                                                  k_for_docs=args.k_for_docs,
                                                  model=model.encode,
                                                  model_kwargs=model_kwargs)
-            torch.save(vector_retriever, "document_retriever.pt")
+            vector_retriever.save("document_retriever.pt")
 
         subgraph_filter = make_pcst_filter(
             triples,
@@ -365,7 +410,7 @@ def make_dataset(args):
         data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
         torch.save(data_lists, "tech_qa.pt")
-        #del model
+        del model
         gc.collect()
         torch.cuda.empty_cache()
         return data_lists
@@ -538,5 +583,8 @@ if __name__ == '__main__':
         sys.exit(1)
     print("Starting TechQA training with args: ", args)
     data_lists = make_dataset(args)
+    if os.path.exists("document_retriever.pt"):
+        print("Updating data lists with document retriever...")
+        data_lists = update_data_lists(args, data_lists)
     model, test_loader = train(args, data_lists)
     test(model, test_loader, args)
