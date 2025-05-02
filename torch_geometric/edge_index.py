@@ -298,8 +298,7 @@ class EdgeIndex(Tensor):
                 indptr = None
             data = torch.stack([row, col], dim=0)
 
-        if (torch_geometric.typing.WITH_PT112
-                and data.layout == torch.sparse_csc):
+        if data.layout == torch.sparse_csc:
             row = data.row_indices()
             indptr = data.ccol_indices()
 
@@ -882,10 +881,6 @@ class EdgeIndex(Tensor):
                 If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
-        if not torch_geometric.typing.WITH_PT112:
-            raise NotImplementedError(
-                "'to_sparse_csc' not supported for PyTorch < 1.12")
-
         (colptr, row), perm = self.get_csc()
         if value is not None and perm is not None:
             value = value[perm]
@@ -922,7 +917,7 @@ class EdgeIndex(Tensor):
             return self.to_sparse_coo(value)
         if layout == torch.sparse_csr:
             return self.to_sparse_csr(value)
-        if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
+        if layout == torch.sparse_csc:
             return self.to_sparse_csc(value)
 
         raise ValueError(f"Unexpected tensor layout (got '{layout}')")
