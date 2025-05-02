@@ -289,131 +289,128 @@ def update_data_lists(args, data_lists):
 
 
 def make_dataset(args):
-    if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
-        print("Re-using Saved TechQA KG-RAG Dataset...")
-        return torch.load("tech_qa.pt", weights_only=False)
+    qa_pairs, context_docs = get_data(args)
+    print("Number of Docs in our VectorDB =", len(context_docs))
+    data_lists = {"train": [], "validation": [], "test": []}
+
+    triples = []
+    if os.path.exists("tech_qa_just_triples.pt"):
+        triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
     else:
-        qa_pairs, context_docs = get_data(args)
-        print("Number of Docs in our VectorDB =", len(context_docs))
-        data_lists = {"train": [], "validation": [], "test": []}
-        triples = []
-        if os.path.exists("tech_qa_just_triples.pt"):
-            triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
-        else:
-            triples = index_kg(args, context_docs)
+        triples = index_kg(args, context_docs)
 
-        print("Number of triples in our GraphDB =", len(triples))
+    print("Number of triples in our GraphDB =", len(triples))
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        # creating the embedding model
-        sent_trans_batch_size = 256
-        model = SentenceTransformer(
-            model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
+    # creating the embedding model
+    sent_trans_batch_size = 256
+    model = SentenceTransformer(
+        model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
 
-        print("Creating the graph data from raw triples...")
-        # create the graph data from raw triples
-        graph_data = create_graph_from_triples(
-            triples=triples, embedding_model=model.encode,
-            embedding_method_kwargs={
-                "batch_size": min(len(triples), sent_trans_batch_size),
-                "verbose": True
-            }, pre_transform=preprocess_triplet)
-
-        print("Creating the graph and feature stores...")
-        # creating the graph and feature stores
-        fs, gs = create_remote_backend_from_graph_data(
-            graph_data=graph_data, path="backend",
-            graph_db=NeighborSamplingRAGGraphStore,
-            feature_db=KNNRAGFeatureStore).load()
-        """
-        NOTE: these retriever hyperparams are very important.
-        Tuning may be needed for custom data...
-        """
-
-        model_kwargs = {
-            "output_device": device,
-            "batch_size": int(sent_trans_batch_size / 4),
+    print("Creating the graph data from raw triples...")
+    # create the graph data from raw triples
+    graph_data = create_graph_from_triples(
+        triples=triples, embedding_model=model.encode,
+        embedding_method_kwargs={
+            "batch_size": min(len(triples), sent_trans_batch_size),
             "verbose": True
-        }
+        }, pre_transform=preprocess_triplet)
 
-        if os.path.exists("document_retriever.pt"):
-            print("Loading document retriever from checkpoint...")
-            vector_retriever = DocumentRetriever.load(
-                "document_retriever.pt", model=model.encode,
-                model_kwargs=model_kwargs)
-            if args.k_for_docs != vector_retriever.k_for_docs:
-                vector_retriever.k_for_docs = args.k_for_docs
-        else:
-            print("Creating document retriever...")
-            vector_retriever = DocumentRetriever(context_docs,
-                                                 k_for_docs=args.k_for_docs,
-                                                 model=model.encode,
-                                                 model_kwargs=model_kwargs)
-            vector_retriever.save("document_retriever.pt")
+    print("Creating the graph and feature stores...")
+    # creating the graph and feature stores
+    fs, gs = create_remote_backend_from_graph_data(
+        graph_data=graph_data, path="backend",
+        graph_db=NeighborSamplingRAGGraphStore,
+        feature_db=KNNRAGFeatureStore).load()
+    """
+    NOTE: these retriever hyperparams are very important.
+    Tuning may be needed for custom data...
+    """
 
-        subgraph_filter = make_pcst_filter(
-            triples,
-            model,
-            topk=5,  # nodes
-            topk_e=5,  # edges
-            cost_e=.5,  # edge cost
-            num_clusters=10)  # num clusters
+    model_kwargs = {
+        "output_device": device,
+        "batch_size": int(sent_trans_batch_size / 4),
+        "verbose": True
+    }
 
-        # number of neighbors for each seed node selected by KNN
-        fanout = 100
-        # number of hops for neighborsampling
-        num_hops = 2
+    if os.path.exists("document_retriever.pt"):
+        print("Loading document retriever from checkpoint...")
+        vector_retriever = DocumentRetriever.load(
+            "document_retriever.pt", model=model.encode,
+            model_kwargs=model_kwargs)
+        if args.k_for_docs != vector_retriever.k_for_docs:
+            vector_retriever.k_for_docs = args.k_for_docs
+    else:
+        print("Creating document retriever...")
+        vector_retriever = DocumentRetriever(context_docs,
+                                                k_for_docs=args.k_for_docs,
+                                                model=model.encode,
+                                                model_kwargs=model_kwargs)
+        vector_retriever.save("document_retriever.pt")
 
-        query_loader_config = {
-            "k_nodes": 1024,  # k for Graph KNN
-            "num_neighbors":
-            [fanout] * num_hops,  # number of sampled neighbors
-            "encoder_model": model,
-        }
+    subgraph_filter = make_pcst_filter(
+        triples,
+        model,
+        topk=5,  # nodes
+        topk_e=5,  # edges
+        cost_e=.5,  # edge cost
+        num_clusters=10)  # num clusters
 
-        # GraphDB retrieval done with KNN+NeighborSampling+PCST
-        # PCST = Prize Collecting Steiner Tree
-        # VectorDB retrieval just vanilla vector RAG
-        print("Now to retrieve context for each query from "
-              "our Vector and Graph DBs...")
+    # number of neighbors for each seed node selected by KNN
+    fanout = 100
+    # number of hops for neighborsampling
+    num_hops = 2
 
-        query_loader = RAGQueryLoader(graph_data=(fs, gs),
-                                      subgraph_filter=subgraph_filter,
-                                      vector_retriever=vector_retriever,
-                                      config=query_loader_config)
+    query_loader_config = {
+        "k_nodes": 1024,  # k for Graph KNN
+        "num_neighbors":
+        [fanout] * num_hops,  # number of sampled neighbors
+        "encoder_model": model,
+    }
 
-        # pre-process the dataset
-        total_data_list = []
-        extracted_triple_sizes = []
-        for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
-            if data_point["is_impossible"]:
-                continue
-            QA_pair = (data_point["question"], data_point["answer"])
-            q = QA_pair[0]
-            subgraph = query_loader.query(q)
-            subgraph.label = QA_pair[1]
-            total_data_list.append(subgraph)
-            extracted_triple_sizes.append(len(subgraph.triples))
-        random.shuffle(total_data_list)
+    # GraphDB retrieval done with KNN+NeighborSampling+PCST
+    # PCST = Prize Collecting Steiner Tree
+    # VectorDB retrieval just vanilla vector RAG
+    print("Now to retrieve context for each query from "
+            "our Vector and Graph DBs...")
 
-        # stats
-        print("Min # of Retrieved Triples =", min(extracted_triple_sizes))
-        print("Max # of Retrieved Triples =", max(extracted_triple_sizes))
-        print("Average # of Retrieved Triples =",
-              sum(extracted_triple_sizes) / len(extracted_triple_sizes))
+    query_loader = RAGQueryLoader(graph_data=(fs, gs),
+                                    subgraph_filter=subgraph_filter,
+                                    vector_retriever=vector_retriever,
+                                    config=query_loader_config)
 
-        # 60:20:20 split
-        data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
-        data_lists["validation"] = total_data_list[
-            int(.6 * len(total_data_list)):int(.8 * len(total_data_list))]
-        data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
+    # pre-process the dataset
+    total_data_list = []
+    extracted_triple_sizes = []
+    for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
+        if data_point["is_impossible"]:
+            continue
+        QA_pair = (data_point["question"], data_point["answer"])
+        q = QA_pair[0]
+        subgraph = query_loader.query(q)
+        subgraph.label = QA_pair[1]
+        total_data_list.append(subgraph)
+        extracted_triple_sizes.append(len(subgraph.triples))
+    random.shuffle(total_data_list)
 
-        torch.save(data_lists, "tech_qa.pt")
-        del model
-        gc.collect()
-        torch.cuda.empty_cache()
-        return data_lists
+    # stats
+    print("Min # of Retrieved Triples =", min(extracted_triple_sizes))
+    print("Max # of Retrieved Triples =", max(extracted_triple_sizes))
+    print("Average # of Retrieved Triples =",
+            sum(extracted_triple_sizes) / len(extracted_triple_sizes))
+
+    # 60:20:20 split
+    data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
+    data_lists["validation"] = total_data_list[
+        int(.6 * len(total_data_list)):int(.8 * len(total_data_list))]
+    data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
+
+    torch.save(data_lists, "tech_qa.pt")
+    del model
+    gc.collect()
+    torch.cuda.empty_cache()
+    return data_lists
 
 
 def train(args, data_lists):
@@ -581,10 +578,15 @@ if __name__ == '__main__':
         print("Error: wandb package not found but --wandb flag was used.")
         print("Please install wandb and rerun the script.")
         sys.exit(1)
+
     print("Starting TechQA training with args: ", args)
-    data_lists = make_dataset(args)
-    if os.path.exists("document_retriever.pt"):
-        print("Updating data lists with document retriever...")
-        data_lists = update_data_lists(args, data_lists)
+    if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
+        print("Re-using Saved TechQA KG-RAG Dataset...")
+        data_lists =  torch.load("tech_qa.pt", weights_only=False)
+        if os.path.exists("document_retriever.pt"):
+            print("Updating data lists with document retriever...")
+            data_lists = update_data_lists(args, data_lists)
+    else:
+        data_lists = make_dataset(args)
     model, test_loader = train(args, data_lists)
     test(model, test_loader, args)
