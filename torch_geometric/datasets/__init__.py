@@ -200,6 +200,7 @@ homo_datasets = [
     'MoleculeGPTDataset',
     'InstructMolDataset',
     'TAGDataset',
+    'CityNetwork',
 ]
 
 hetero_datasets = [
