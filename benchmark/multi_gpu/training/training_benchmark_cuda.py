@@ -27,7 +27,7 @@ if __name__ == '__main__':
     argparser = get_predefined_args()
     argparser.add_argument('--n-gpus', default=1, type=int)
     args = argparser.parse_args()
-    setattr(args, 'device', 'cuda')
+    args.device = 'cuda'
 
     assert args.dataset in supported_sets.keys(), \
         f"Dataset {args.dataset} isn't supported."

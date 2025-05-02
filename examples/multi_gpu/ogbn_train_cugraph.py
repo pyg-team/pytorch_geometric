@@ -65,7 +65,6 @@ def arg_parse():
     parser.add_argument('-e', '--epochs', type=int, default=50)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
-    parser.add_argument('--eval_steps', type=int, default=1000)
     parser.add_argument('--warmup_steps', type=int, default=20)
     parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument(
@@ -227,7 +226,6 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
 
     dist.barrier()
 
-    args.eval_steps
     warmup_steps = args.warmup_steps
     dist.barrier()
     torch.cuda.synchronize()
