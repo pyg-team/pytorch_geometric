@@ -57,6 +57,12 @@ __all__ = [
     '__version__',
 ]
 
+if not torch_geometric.typing.WITH_PT112:
+    import warnings
+
+    warnings.warn("PyG 2.7.0 dropped support for PyTorch 1.11. Consider "
+                  "upgrading to PyTorch 1.12.0+ or downgrading to PyG 2.6.0.")
+
 # Serialization ###############################################################
 
 if torch_geometric.typing.WITH_PT24:
