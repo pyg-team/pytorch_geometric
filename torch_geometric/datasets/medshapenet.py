@@ -7,6 +7,7 @@ import torch
 
 from torch_geometric.data import Data, InMemoryDataset
 
+
 class MedShapeNet(InMemoryDataset):
     r"""The MedShapeNet datasets from the `"MedShapeNet -- A Large-Scale
     Dataset of 3D Medical Shapes for Computer Vision"
@@ -54,7 +55,7 @@ class MedShapeNet(InMemoryDataset):
         self.size = size
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
-        
+
         path = self.processed_paths[0]
         self.load(path)
 
@@ -95,7 +96,7 @@ class MedShapeNet(InMemoryDataset):
                     'medshapenetcore/AutoImplantCraniotomy',
                     'medshapenetcore/FaceVR'
                 ], list_of_datasets))
-        
+
         subset = []
         for dataset in list_of_datasets:
             self.newpath = self.root + '/' + dataset.split("/")[1]
@@ -144,4 +145,3 @@ class MedShapeNet(InMemoryDataset):
                 data_list = [self.pre_transform(d) for d in data_list]
 
             self.save(data_list, path)
-            

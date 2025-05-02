@@ -49,16 +49,17 @@ if args.dataset == 'modelnet40':
     test_dataset = ModelNet(root, '40', False, transform, pre_transform)
 elif args.dataset == 'medshapenet':
     print('Loading dataset')
-    dataset = MedShapeNet(root=root, size=50,
-                                pre_transform=pre_transform,
-                                transform=transform, force_reload=False)
+    dataset = MedShapeNet(root=root, size=50, pre_transform=pre_transform,
+                          transform=transform, force_reload=False)
 
-    random.seed(42)  
+    random.seed(42)
 
     train_indices = []
     test_indices = []
     for label in range(dataset.num_classes):
-        by_class = [i for i, data in enumerate(dataset) if int(data.y) == label]
+        by_class = [
+            i for i, data in enumerate(dataset) if int(data.y) == label
+        ]
         random.shuffle(by_class)
 
         split_point = int(0.7 * len(by_class))
@@ -67,7 +68,7 @@ elif args.dataset == 'medshapenet':
 
     train_dataset = dataset[train_indices]
     test_dataset = dataset[test_indices]
-    
+
 else:
     print('Loading training data')
     train_dataset = ModelNet(root, '10', True, transform, pre_transform)
