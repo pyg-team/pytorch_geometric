@@ -95,15 +95,16 @@ class MedShapeNet(InMemoryDataset):
                     'medshapenetcore/AutoImplantCraniotomy',
                     'medshapenetcore/FaceVR'
                 ], list_of_datasets))
-
+        
+        subset = []
         for dataset in list_of_datasets:
             self.newpath = self.root + '/' + dataset.split("/")[1]
             if not os.path.exists(self.newpath):
                 os.makedirs(self.newpath)
             stl_files = msn_instance.dataset_files(dataset, '.stl')
-            stl_files = stl_files[:self.size]
+            subset.extend(stl_files[:self.size])
 
-            for stl_file in stl_files:
+            for stl_file in stl_files[:self.size]:
                 msn_instance.download_stl_as_numpy(bucket_name=dataset,
                                                    stl_file=stl_file,
                                                    output_dir=self.newpath,
@@ -120,7 +121,7 @@ class MedShapeNet(InMemoryDataset):
             'ToothFairy': 7
         }
 
-        for dataset, path in stl_files, self.processed_paths:
+        for dataset, path in zip([subset], self.processed_paths):
             data_list = []
             for item in dataset:
                 class_name = item.split("/")[0]
@@ -143,3 +144,4 @@ class MedShapeNet(InMemoryDataset):
                 data_list = [self.pre_transform(d) for d in data_list]
 
             self.save(data_list, path)
+            

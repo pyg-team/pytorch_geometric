@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import random
 
 import torch
 import torch.nn.functional as F
@@ -51,15 +52,22 @@ elif args.dataset == 'medshapenet':
     dataset = MedShapeNet(root=root, size=50,
                                 pre_transform=pre_transform,
                                 transform=transform, force_reload=False)
-    
-    seed = 42
-    generator = torch.Generator().manual_seed(seed)
 
-    train_size = int(0.7 * len(dataset))
-    test_size = len(dataset) - train_size
-    train_dataset, test_dataset = torch.utils.data.random_split(dataset, 
-                                [train_size, test_size], generator=generator)
-                                
+    random.seed(42)  
+
+    train_indices = []
+    test_indices = []
+    for label in range(dataset.num_classes):
+        by_class = [i for i, data in enumerate(dataset) if int(data.y) == label]
+        random.shuffle(by_class)
+
+        split_point = int(0.7 * len(by_class))
+        train_indices.extend(by_class[:split_point])
+        test_indices.extend(by_class[split_point:])
+
+    train_dataset = dataset[train_indices]
+    test_dataset = dataset[test_indices]
+    
 else:
     print('Loading training data')
     train_dataset = ModelNet(root, '10', True, transform, pre_transform)
