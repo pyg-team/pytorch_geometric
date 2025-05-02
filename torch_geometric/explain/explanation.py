@@ -103,7 +103,7 @@ class ExplanationMixin:
                 out[index] = 1.0
             return out.view(mask.size())
 
-        assert False
+        raise AssertionError()
 
     def threshold(
         self,
