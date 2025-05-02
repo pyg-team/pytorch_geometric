@@ -11,6 +11,7 @@ from typing import (
     Protocol,
     Tuple,
     Type,
+    Union,
     no_type_check,
     runtime_checkable,
 )
@@ -155,8 +156,12 @@ def retrieval_via_pcst(
     else:
         n = textual_nodes
         e = textual_edges
+
     desc = n.to_csv(index=False) + '\n' + e.to_csv(
         index=False, columns=['src', 'edge_attr', 'dst'])
+
+    if booly:
+        return data, desc
 
     mapping = {n: i for i, n in enumerate(selected_nodes.tolist())}
     src = [mapping[i] for i in edge_index[0].tolist()]
@@ -282,47 +287,55 @@ class RemoteGraphBackendLoader:
         return (feature_store, graph_store)
 
 
-# TODO: make profilable
-def create_remote_backend_from_triplets(
-    triplets: Iterable[TripletLike],
-    node_embedding_model: Module,
-    edge_embedding_model: Optional[Module] = None,
+def create_graph_from_triples(
+    triples: Iterable[TripletLike],
+    embedding_model: Union[Module, Callable],
+    embedding_method_kwargs: Optional[Dict[str, Any]] = None,
+    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
+) -> Data:
+    """Utility function that can be used to create a graph from triples.
+    """
+    # Resolve callable methods
+    embedding_method_kwargs = embedding_method_kwargs \
+        if embedding_method_kwargs is not None else dict()
+
+    indexer = LargeGraphIndexer.from_triplets(triples,
+                                              pre_transform=pre_transform)
+    node_feats = embedding_model(indexer.get_unique_node_features(),
+                                 **embedding_method_kwargs)
+    indexer.add_node_feature('x', node_feats)
+
+    edge_feats = embedding_model(
+        indexer.get_unique_edge_features(feature_name=EDGE_RELATION),
+        **embedding_method_kwargs)
+    indexer.add_edge_feature(new_feature_name="edge_attr",
+                             new_feature_vals=edge_feats,
+                             map_from_feature=EDGE_RELATION)
+
+    data = indexer.to_data(node_feature_name='x',
+                           edge_feature_name='edge_attr')
+    data = data.to("cpu")
+    return data
+
+
+def create_remote_backend_from_graph_data(
+    graph_data: Data,
     graph_db: Type[ConvertableGraphStore] = LocalGraphStore,
     feature_db: Type[ConvertableFeatureStore] = LocalFeatureStore,
-    node_method_to_call: str = "forward",
-    edge_method_to_call: Optional[str] = None,
-    pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
     path: str = '',
     n_parts: int = 1,
-    node_method_kwargs: Optional[Dict[str, Any]] = None,
-    edge_method_kwargs: Optional[Dict[str, Any]] = None,
 ) -> RemoteGraphBackendLoader:
-    """Utility function that can be used to create a RAG Backend from triplets.
+    """Utility function that can be used to create a RAG Backend from triples.
 
     Args:
-        triplets (Iterable[TripletLike]): Triplets to load into the RAG
-            Backend.
-        node_embedding_model (Module): Model to embed nodes into a feature
-            space.
-        edge_embedding_model (Module, optional): Model to embed edges
-            into a feature space. Defaults to the node model.
+        graph_data (Data): Graph data to load into the RAG Backend.
         graph_db (Type[ConvertableGraphStore], optional): GraphStore class to
             use. Defaults to LocalGraphStore.
         feature_db (Type[ConvertableFeatureStore], optional): FeatureStore
             class to use. Defaults to LocalFeatureStore.
-        node_method_to_call (str, optional): method to call for embeddings on
-            the node model. Defaults to "forward".
-        edge_method_to_call (str, optional): method to call for
-            embeddings on the edge model. Defaults to the node method.
-        pre_transform (Callable[[TripletLike], TripletLike], optional):
-            optional preprocessing function for triplets. Defaults to None.
         path (str, optional): path to save resulting stores. Defaults to ''.
         n_parts (int, optional): Number of partitons to store in.
             Defaults to 1.
-        node_method_kwargs (Optional[Dict[str, Any]], optional): args to pass
-            into node encoding method. Defaults to None.
-        edge_method_kwargs (Optional[Dict[str, Any]], optional): args to pass
-            into edge encoding method. Defaults to None.
 
     Returns:
         RemoteGraphBackendLoader: Loader to load RAG backend from disk or
@@ -338,50 +351,22 @@ def create_remote_backend_from_triplets(
         getattr(feature_db, "from_hetero_data")
         getattr(feature_db, "from_partition")
 
-    # Resolve callable methods
-    node_method_kwargs = node_method_kwargs \
-        if node_method_kwargs is not None else dict()
-
-    edge_embedding_model = edge_embedding_model \
-        if edge_embedding_model is not None else node_embedding_model
-    edge_method_to_call = edge_method_to_call \
-        if edge_method_to_call is not None else node_method_to_call
-    edge_method_kwargs = edge_method_kwargs \
-        if edge_method_kwargs is not None else node_method_kwargs
-
-    # These will return AttributeErrors if they don't exist
-    node_model = getattr(node_embedding_model, node_method_to_call)
-    edge_model = getattr(edge_embedding_model, edge_method_to_call)
-
-    indexer = LargeGraphIndexer.from_triplets(triplets,
-                                              pre_transform=pre_transform)
-    node_feats = node_model(indexer.get_unique_node_features(),
-                            **node_method_kwargs)
-    indexer.add_node_feature('x', node_feats)
-
-    edge_feats = edge_model(
-        indexer.get_unique_edge_features(feature_name=EDGE_RELATION),
-        **edge_method_kwargs)
-    indexer.add_edge_feature(new_feature_name="edge_attr",
-                             new_feature_vals=edge_feats,
-                             map_from_feature=EDGE_RELATION)
-
-    data = indexer.to_data(node_feature_name='x',
-                           edge_feature_name='edge_attr')
-    data = data.to("cpu")
     if n_parts == 1:
-        torch.save(data, path)
+        torch.save(graph_data, path)
         return RemoteGraphBackendLoader(path, RemoteDataType.DATA, graph_db,
                                         feature_db)
     else:
-        partitioner = Partitioner(data=data, num_parts=n_parts, root=path)
+        partitioner = Partitioner(data=graph_data, num_parts=n_parts,
+                                  root=path)
         partitioner.generate_partition()
         return RemoteGraphBackendLoader(path, RemoteDataType.PARTITION,
                                         graph_db, feature_db)
 
 
-def make_pcst_filter(triples: List[Tuple[str, str, str]],
-                     model: SentenceTransformer) -> None:
+def make_pcst_filter(triples: List[Tuple[str, str,
+                                         str]], model: SentenceTransformer,
+                     topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
+                     num_clusters: int = 1) -> None:
     """Creates a PCST (Prize Collecting Tree) filter.
 
     :param triples: List of triples (head, relation, tail) representing knowledge graph data
@@ -399,9 +384,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     nodes = []
 
     # Iterate over triples to extract unique nodes (entities)
-    for h, r, t in triples:
+    for h, _, t in triples:
         for node in (h, t):  # Extract head and tail entities from each triple
-            # Add node to list if not already present
             nodes.append(node)
 
     # Remove duplicates and create final list of unique nodes
@@ -411,12 +395,8 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
     full_textual_nodes = nodes
 
     def apply_retrieval_via_pcst(
-        graph: Data,  # Input graph data
-        query: str,  # Search query
-        topk: int = 5,  # Number of top-K results to return (default: 5)
-        topk_e: int = 5,
-        cost_e: float = 0.5,
-        num_clusters: int = 1,
+            graph: Data,  # Input graph data
+            query: str,  # Search query
     ) -> Tuple[Data, str]:
         """Applies PCST filtering for retrieval.
         PCST = Prize Collecting Steiner Tree
@@ -440,8 +420,9 @@ def make_pcst_filter(triples: List[Tuple[str, str, str]],
                                   columns=["src", "edge_attr", "dst"])
         out_graph, desc = retrieval_via_pcst(graph.to(q_emb.device), q_emb,
                                              textual_nodes, textual_edges,
-                                             topk, topk_e, cost_e,
-                                             num_clusters)
+                                             topk=topk, topk_e=topk_e,
+                                             cost_e=cost_e,
+                                             num_clusters=num_clusters)
         out_graph["desc"] = desc
         where_trips_start = desc.find("src,edge_attr,dst")
         parsed_trips = []

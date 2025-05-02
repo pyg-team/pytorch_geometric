@@ -1,5 +1,6 @@
+import os
 from abc import abstractmethod
-from typing import Any, Dict, List, Optional, Protocol, Union
+from typing import Any, Callable, Dict, List, Optional, Protocol, Union
 
 import torch
 from torch import Tensor
@@ -21,9 +22,8 @@ class DocumentRetriever(VectorRetriever):
     """Retrieve documents from a vector database."""
     def __init__(self, raw_docs: List[str],
                  embedded_docs: Optional[Tensor] = None, k_for_docs: int = 2,
-                 model: Optional[Union[SentenceTransformer,
-                                       torch.nn.Module]] = None,
-                 model_method_to_call: Optional[str] = "encode",
+                 model: Optional[Union[SentenceTransformer, torch.nn.Module,
+                                       Callable]] = None,
                  model_kwargs: Optional[Dict[str, Any]] = None):
         """Retrieve documents from a vector database.
 
@@ -32,7 +32,6 @@ class DocumentRetriever(VectorRetriever):
             embedded_docs: Optional[Tensor]: Embedded documents.
             k_for_docs: int: Number of documents to retrieve.
             model: Optional[Union[SentenceTransformer, torch.nn.Module]]: Model to use for encoding.
-            model_method_to_call: Optional[str]: Method to call on the model.
             model_kwargs: Optional[Dict[str, Any]]: Keyword arguments to pass to the model.
         """
         self.raw_docs = raw_docs
@@ -41,7 +40,7 @@ class DocumentRetriever(VectorRetriever):
         self.model = model
 
         if self.model is not None:
-            self.encoder = getattr(self.model, model_method_to_call)
+            self.encoder = self.model
             self.model_kwargs = model_kwargs
 
         if self.embedded_docs is None:
@@ -51,7 +50,7 @@ class DocumentRetriever(VectorRetriever):
             # we don't want to print the verbose output in `query`
             self.model_kwargs.pop("verbose", None)
 
-    def query(self, query: Union[str, Tensor]) -> Data:
+    def query(self, query: Union[str, Tensor]) -> List[str]:
         """Retrieve documents from the vector database.
 
         Args:
@@ -68,3 +67,47 @@ class DocumentRetriever(VectorRetriever):
         selected_doc_idxs, _ = next(
             batch_knn(query_enc, self.embedded_docs, self.k_for_docs))
         return [self.raw_docs[i] for i in selected_doc_idxs]
+
+    def save(self, path: str) -> None:
+        """Save the DocumentRetriever instance to disk.
+
+        Args:
+            path: str: Path where to save the retriever.
+        """
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+
+        # Prepare data to save
+        save_dict = {
+            'raw_docs': self.raw_docs,
+            'embedded_docs': self.embedded_docs,
+            'k_for_docs': self.k_for_docs,
+        }
+
+        # We do not serialize the model
+        torch.save(save_dict, path)
+
+    @classmethod
+    def load(cls, path: str, model: Union[SentenceTransformer, torch.nn.Module,
+                                          Callable],
+             model_kwargs: Optional[Dict[str, Any]] = None) -> VectorRetriever:
+        """Load a DocumentRetriever instance from disk.
+
+        Args:
+            path: str: Path to the saved retriever.
+            model: Union[SentenceTransformer, torch.nn.Module, Callable]:
+                Model to use for encoding. If None, the saved model will be used if available.
+
+        Returns:
+            DocumentRetriever: The loaded retriever.
+        """
+        if not os.path.exists(path):
+            raise FileNotFoundError(
+                f"No saved document retriever found at {path}")
+
+        save_dict = torch.load(path)
+
+        # Create a new DocumentRetriever with the loaded data
+        return cls(raw_docs=save_dict['raw_docs'],
+                   embedded_docs=save_dict['embedded_docs'],
+                   k_for_docs=save_dict['k_for_docs'], model=model,
+                   model_kwargs=model_kwargs)
