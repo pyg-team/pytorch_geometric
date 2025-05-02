@@ -244,7 +244,6 @@ def index_kg(args, context_docs):
     return triples
 
 
-
 def update_data_lists(args, data_lists):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # creating the embedding model
@@ -287,6 +286,7 @@ def update_data_lists(args, data_lists):
 
     torch.save(data_lists, "tech_qa.pt")
     return data_lists
+
 
 def make_dataset(args):
     if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
