@@ -1,8 +1,6 @@
 import os.path as osp
 from typing import Callable, Optional
 
-import torch
-
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
@@ -28,17 +26,16 @@ class CityNetwork(InMemoryDataset):
 
     Args:
         root (str): Root directory where the dataset should be saved.
-        name (str): The name of the dataset (:obj:`"paris"`,
-        :obj:`"shanghai"`, :obj:`"la"`, :obj:`"london"`).
+        name (str): The name of the dataset (``"paris"``, ``"shanghai"``,
+            ``"la"``, ``"london"``).
         augmented (bool, optional): Whether to use the augmented node features
-        from edge features.
-        (default: :obj:`True`)
+            from edge features.(default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
-            version. The data object will be transformed before every access.
-            (default: :obj:`None`)
+            :class:`~torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            every access. (default: :obj:`None`)
         pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
+            an :class:`~torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
         force_reload (bool, optional): Whether to re-process the dataset.
@@ -76,9 +73,7 @@ class CityNetwork(InMemoryDataset):
           - 37
           - 10
     """
-
-    url = ("https://github.com/LeonResearch/"
-           "City-Networks/raw/refs/heads/main/data/")
+    url = "https://github.com/LeonResearch/City-Networks/raw/refs/heads/main/data/"  # noqa: E501
 
     def __init__(
         self,
@@ -94,8 +89,12 @@ class CityNetwork(InMemoryDataset):
         assert self.name in ["paris", "shanghai", "la", "london"]
         self.augmented = augmented
         self.delete_raw = delete_raw
-        super().__init__(root, transform, pre_transform,
-                         force_reload=force_reload)
+        super().__init__(
+            root,
+            transform,
+            pre_transform,
+            force_reload=force_reload,
+        )
         self.load(self.processed_paths[0])
 
     @property
@@ -115,29 +114,25 @@ class CityNetwork(InMemoryDataset):
         return "data.pt"
 
     def download(self) -> None:
-        self.download_path = download_url(self.url + f"{self.name}.tar.gz",
-                                          self.raw_dir)
+        self.download_path = download_url(
+            self.url + f"{self.name}.tar.gz",
+            self.raw_dir,
+        )
 
     def process(self) -> None:
         extract_tar(self.download_path, self.raw_dir)
         data_path = osp.join(self.raw_dir, self.name)
-        node_feat = (torch.load(
-            osp.join(data_path, "node_features_augmented.pt"),
-            weights_only=True) if self.augmented else torch.load(
-                osp.join(data_path, "node_features.pt"), weights_only=True))
-        edge_index = torch.load(osp.join(data_path, "edge_indices.pt"),
-                                weights_only=True)
-        label = torch.load(
-            osp.join(data_path, "10-chunk_16-hop_node_labels.pt"),
-            weights_only=True)
-
-        train_mask = torch.load(osp.join(data_path, "train_mask.pt"),
-                                weights_only=True)
-        val_mask = torch.load(osp.join(data_path, "valid_mask.pt"),
-                              weights_only=True)
-        test_mask = torch.load(osp.join(data_path, "test_mask.pt"),
-                               weights_only=True)
-
+        node_feat = fs.torch_load(
+            osp.join(
+                data_path,
+                f"node_features{'_augmented' if self.augmented else ''}.pt",
+            ))
+        edge_index = fs.torch_load(osp.join(data_path, "edge_indices.pt"))
+        label = fs.torch_load(
+            osp.join(data_path, "10-chunk_16-hop_node_labels.pt"))
+        train_mask = fs.torch_load(osp.join(data_path, "train_mask.pt"))
+        val_mask = fs.torch_load(osp.join(data_path, "valid_mask.pt"))
+        test_mask = fs.torch_load(osp.join(data_path, "test_mask.pt"))
         data = Data(
             x=node_feat,
             edge_index=edge_index,
@@ -146,8 +141,16 @@ class CityNetwork(InMemoryDataset):
             val_mask=val_mask,
             test_mask=test_mask,
         )
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
 
-        data = data if self.pre_transform is None else self.pre_transform(data)
         self.save([data], self.processed_paths[0])
+
         if self.delete_raw:
             fs.rm(data_path)
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}("
+                f"root='{self.root}', "
+                f"name='{self.name}', "
+                f"augmented={self.augmented})")
