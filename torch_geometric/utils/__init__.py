@@ -53,7 +53,7 @@ from ._negative_sampling import (negative_sampling, batched_negative_sampling,
                                  structured_negative_sampling_feasible)
 from .augmentation import shuffle_node, mask_feature, add_random_edge
 from ._tree_decomposition import tree_decomposition
-from .embedding import get_embeddings
+from .embedding import get_embeddings, get_embeddings_hetero
 from ._trim_to_layer import trim_to_layer
 from .ppr import get_ppr
 from ._train_test_split_edges import train_test_split_edges
@@ -145,6 +145,7 @@ __all__ = [
     'add_random_edge',
     'tree_decomposition',
     'get_embeddings',
+    'get_embeddings_hetero',
     'trim_to_layer',
     'get_ppr',
     'train_test_split_edges',
