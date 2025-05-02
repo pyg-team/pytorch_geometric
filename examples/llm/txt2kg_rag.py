@@ -336,17 +336,17 @@ def make_dataset(args):
 
     if os.path.exists("document_retriever.pt"):
         print("Loading document retriever from checkpoint...")
-        vector_retriever = DocumentRetriever.load(
-            "document_retriever.pt", model=model.encode,
-            model_kwargs=model_kwargs)
+        vector_retriever = DocumentRetriever.load("document_retriever.pt",
+                                                  model=model.encode,
+                                                  model_kwargs=model_kwargs)
         if args.k_for_docs != vector_retriever.k_for_docs:
             vector_retriever.k_for_docs = args.k_for_docs
     else:
         print("Creating document retriever...")
         vector_retriever = DocumentRetriever(context_docs,
-                                                k_for_docs=args.k_for_docs,
-                                                model=model.encode,
-                                                model_kwargs=model_kwargs)
+                                             k_for_docs=args.k_for_docs,
+                                             model=model.encode,
+                                             model_kwargs=model_kwargs)
         vector_retriever.save("document_retriever.pt")
 
     subgraph_filter = make_pcst_filter(
@@ -364,8 +364,7 @@ def make_dataset(args):
 
     query_loader_config = {
         "k_nodes": 1024,  # k for Graph KNN
-        "num_neighbors":
-        [fanout] * num_hops,  # number of sampled neighbors
+        "num_neighbors": [fanout] * num_hops,  # number of sampled neighbors
         "encoder_model": model,
     }
 
@@ -373,12 +372,12 @@ def make_dataset(args):
     # PCST = Prize Collecting Steiner Tree
     # VectorDB retrieval just vanilla vector RAG
     print("Now to retrieve context for each query from "
-            "our Vector and Graph DBs...")
+          "our Vector and Graph DBs...")
 
     query_loader = RAGQueryLoader(graph_data=(fs, gs),
-                                    subgraph_filter=subgraph_filter,
-                                    vector_retriever=vector_retriever,
-                                    config=query_loader_config)
+                                  subgraph_filter=subgraph_filter,
+                                  vector_retriever=vector_retriever,
+                                  config=query_loader_config)
 
     # pre-process the dataset
     total_data_list = []
@@ -398,12 +397,13 @@ def make_dataset(args):
     print("Min # of Retrieved Triples =", min(extracted_triple_sizes))
     print("Max # of Retrieved Triples =", max(extracted_triple_sizes))
     print("Average # of Retrieved Triples =",
-            sum(extracted_triple_sizes) / len(extracted_triple_sizes))
+          sum(extracted_triple_sizes) / len(extracted_triple_sizes))
 
     # 60:20:20 split
     data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
-    data_lists["validation"] = total_data_list[
-        int(.6 * len(total_data_list)):int(.8 * len(total_data_list))]
+    data_lists["validation"] = total_data_list[int(.6 * len(total_data_list)
+                                                   ):int(.8 *
+                                                         len(total_data_list))]
     data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
     torch.save(data_lists, "tech_qa.pt")
@@ -582,7 +582,7 @@ if __name__ == '__main__':
     print("Starting TechQA training with args: ", args)
     if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
         print("Re-using Saved TechQA KG-RAG Dataset...")
-        data_lists =  torch.load("tech_qa.pt", weights_only=False)
+        data_lists = torch.load("tech_qa.pt", weights_only=False)
         if os.path.exists("document_retriever.pt"):
             print("Updating data lists with document retriever...")
             data_lists = update_data_lists(args, data_lists)
