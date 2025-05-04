@@ -45,29 +45,31 @@ if not hasattr(torch, 'sparse_csc'):
 
 try:
     import pyg_lib  # noqa
+
     WITH_PYG_LIB = True
-    WITH_GMM = WITH_PT20 and hasattr(pyg_lib.ops, 'grouped_matmul')
-    WITH_SEGMM = hasattr(pyg_lib.ops, 'segment_matmul')
-    if WITH_SEGMM and 'pytest' in sys.modules and torch.cuda.is_available():
+    WITH_GMM = WITH_PT20 and hasattr(pyg_lib.ops, "grouped_matmul")
+    WITH_SEGMM = hasattr(pyg_lib.ops, "segment_matmul")
+    if WITH_SEGMM and "pytest" in sys.modules and torch.cuda.is_available():
         # NOTE `segment_matmul` is currently bugged on older NVIDIA cards which
         # let our GPU tests on CI crash. Try if this error is present on the
         # current GPU and disable `WITH_SEGMM`/`WITH_GMM` if necessary.
         # TODO Drop this code block once `segment_matmul` is fixed.
         try:
-            x = torch.randn(3, 4, device='cuda')
-            ptr = torch.tensor([0, 2, 3], device='cuda')
-            weight = torch.randn(2, 4, 4, device='cuda')
+            x = torch.randn(3, 4, device="cuda")
+            ptr = torch.tensor([0, 2, 3], device="cuda")
+            weight = torch.randn(2, 4, 4, device="cuda")
             out = pyg_lib.ops.segment_matmul(x, ptr, weight)
         except RuntimeError:
             WITH_GMM = False
             WITH_SEGMM = False
-    WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
-    WITH_SOFTMAX = hasattr(pyg_lib.ops, 'softmax_csr')
-    WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
-    WITH_METIS = hasattr(pyg_lib, 'partition')
-    WITH_EDGE_TIME_NEIGHBOR_SAMPLE = ('edge_time' in inspect.signature(
+    WITH_SAMPLED_OP = hasattr(pyg_lib.ops, "sampled_add")
+    WITH_SOFTMAX = hasattr(pyg_lib.ops, "softmax_csr")
+    WITH_LOG_SOFTMAX = hasattr(pyg_lib.ops, "log_softmax_csr")
+    WITH_INDEX_SORT = hasattr(pyg_lib.ops, "index_sort")
+    WITH_METIS = hasattr(pyg_lib, "partition")
+    WITH_EDGE_TIME_NEIGHBOR_SAMPLE = ("edge_time" in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
-    WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
+    WITH_WEIGHTED_NEIGHBOR_SAMPLE = ("edge_weight" in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
     try:
         torch.classes.pyg.CPUHashMap  # noqa: B018
@@ -89,6 +91,7 @@ except Exception as e:
     WITH_SEGMM = False
     WITH_SAMPLED_OP = False
     WITH_SOFTMAX = False
+    WITH_LOG_SOFTMAX = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
     WITH_EDGE_TIME_NEIGHBOR_SAMPLE = False
@@ -122,6 +125,7 @@ else:
 
 try:
     import torch_scatter  # noqa
+
     WITH_TORCH_SCATTER = True
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
@@ -132,8 +136,9 @@ except Exception as e:
 
 try:
     import torch_cluster  # noqa
+
     WITH_TORCH_CLUSTER = True
-    WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
+    WITH_TORCH_CLUSTER_BATCH_SIZE = "batch_size" in torch_cluster.knn.__doc__
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
@@ -149,6 +154,7 @@ except Exception as e:
 
 try:
     import torch_spline_conv  # noqa
+
     WITH_TORCH_SPLINE_CONV = True
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
@@ -160,6 +166,7 @@ except Exception as e:
 try:
     import torch_sparse  # noqa
     from torch_sparse import SparseStorage, SparseTensor
+
     WITH_TORCH_SPARSE = True
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
@@ -212,7 +219,7 @@ except Exception as e:
             sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
             is_sorted: bool = False,
             trust_data: bool = False,
-        ) -> 'SparseTensor':
+        ) -> "SparseTensor":
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         @property
@@ -221,7 +228,7 @@ except Exception as e:
 
         @classmethod
         def from_dense(self, mat: Tensor,
-                       has_value: bool = True) -> 'SparseTensor':
+                       has_value: bool = True) -> "SparseTensor":
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         def size(self, dim: int) -> int:
@@ -237,11 +244,11 @@ except Exception as e:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         def set_value(self, value: Optional[Tensor],
-                      layout: Optional[str] = None) -> 'SparseTensor':
+                      layout: Optional[str] = None) -> "SparseTensor":
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         def fill_value(self, fill_value: float,
-                       dtype: Optional[torch.dtype] = None) -> 'SparseTensor':
+                       dtype: Optional[torch.dtype] = None) -> "SparseTensor":
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         def coo(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
@@ -291,6 +298,7 @@ except Exception as e:
 
 try:
     import torch_frame  # noqa
+
     WITH_TORCH_FRAME = True
     from torch_frame import TensorFrame
 except Exception:
@@ -303,6 +311,7 @@ except Exception:
 
 try:
     import intel_extension_for_pytorch  # noqa
+
     WITH_IPEX = True
 except Exception:
     WITH_IPEX = False
@@ -321,6 +330,7 @@ class MockTorchCSCTensor:
 
     def t(self) -> Tensor:  # Only support accessing its transpose:
         from torch_geometric.utils import to_torch_csr_tensor
+
         size = self.size
         return to_torch_csr_tensor(
             self.edge_index.flip([0]),
@@ -340,17 +350,19 @@ EdgeType = Tuple[str, str, str]
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
 
-DEFAULT_REL = 'to'
-EDGE_TYPE_STR_SPLIT = '__'
+DEFAULT_REL = "to"
+EDGE_TYPE_STR_SPLIT = "__"
 
 
 class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string.
     """
+
     edge_type: tuple[str, str, str]
 
     def __new__(cls, *args: Any) -> 'EdgeTypeStr':
+
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
             args = tuple(args[0])
