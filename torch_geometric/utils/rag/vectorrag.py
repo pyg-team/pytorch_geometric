@@ -104,7 +104,7 @@ class DocumentRetriever(VectorRetriever):
             raise FileNotFoundError(
                 f"No saved document retriever found at {path}")
 
-        save_dict = torch.load(path)
+        save_dict = torch.load(path, weights_only=False)
 
         # Create a new DocumentRetriever with the loaded data
         return cls(raw_docs=save_dict['raw_docs'],
