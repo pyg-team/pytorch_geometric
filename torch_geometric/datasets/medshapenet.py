@@ -75,10 +75,7 @@ class MedShapeNet(InMemoryDataset):
         r"""The absolute filepaths that must be present in order to skip
         downloading.
         """
-        if isinstance(self.raw_file_names, list):
-            return [osp.join(self.raw_dir, f) for f in self.raw_file_names]
-        else:
-            return [osp.join(self.raw_dir, self.raw_file_names)]
+        return [osp.join(self.raw_dir, f) for f in self.raw_file_names]
 
     def process(self) -> None:
         import urllib3

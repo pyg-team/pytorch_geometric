@@ -69,11 +69,15 @@ elif args.dataset == 'medshapenet':
     train_dataset = dataset[train_indices]
     test_dataset = dataset[test_indices]
 
-else:
+elif args.dataset == 'modelnet10':
     print('Loading training data')
     train_dataset = ModelNet(root, '10', True, transform, pre_transform)
     print('Loading test data')
     test_dataset = ModelNet(root, '10', False, transform, pre_transform)
+
+else:
+    raise ValueError(f"Unknown dataset name '{args.dataset}'. "
+                         f"Available options: 'modelnet10', 'modelnet40', 'medshapenet'.")
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
                           num_workers=num_workers)
