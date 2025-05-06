@@ -228,7 +228,7 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
 
         def forward(self, x, edge_index):
             x = self.conv1(x, edge_index).relu()
-            x = self.conv2(x, edge_index)
+            x = self.conv2(x, edge_index).relu()
             return x
 
 
