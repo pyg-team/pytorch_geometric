@@ -458,24 +458,27 @@ def train(args, data_lists):
                             pin_memory=True, shuffle=False)
     test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
-    gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
-              out_channels=1024, num_layers=num_gnn_layers, heads=4)
+    if args.num_gnn_layers > 0:
+        gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
+                out_channels=1024, num_layers=num_gnn_layers, heads=4)
+    else:
+        gnn = None
+
     if args.llm_generator_mode == "full":
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   n_gpus=args.num_gpus)
-        model = GRetriever(llm=llm, gnn=gnn)
     elif args.llm_generator_mode == "lora":
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   dtype=torch.float32, n_gpus=args.num_gpus)
-        model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     else:
         # frozen
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   dtype=torch.float32, n_gpus=args.num_gpus).eval()
-
         for _, p in llm.named_parameters():
             p.requires_grad = False
-        model = GRetriever(llm=llm, gnn=gnn)
+
+    model = GRetriever(llm=llm, gnn=gnn,
+                       use_lora=args.llm_generator_mode == "lora")
 
     save_name = f"{args.dataset}/model.pt"
     if os.path.exists(save_name) and not args.regenerate_dataset:
