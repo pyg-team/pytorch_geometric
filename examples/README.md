@@ -14,8 +14,10 @@ For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see 
 - [`ogbn_train.py`](./ogbn_train.py) is an example for training a GNN on the large-scale `ogbn-papers100m` dataset, containing approximately ~1.6B edges or the medium scale `ogbn-products` dataset, ~62M edges.
   - Uses SGFormer (a kind of GraphTransformer) by default.
   - [SGFormer Paper](https://arxiv.org/pdf/2306.10759)
+  - [Kumo.ai x NVIDIA x Stanford Graph Transformer Webinar](https://www.youtube.com/watch?v=wAYryx3GjLw)
 - [`ogbn_proteins_deepgcn.py`](./ogbn_proteins_deepgcn.py) is an example to showcase how to train deep GNNs on the `ogbn-proteins` dataset.
 - [`ogbn_train_cugraph.py`](./ogbn_train_cugraph.py) shows how to accelerate the `ogbn_train.py` workflow using [CuGraph](https://github.com/rapidsai/cugraph).
+- [`ogbn_train_perforatedai.py`](https://github.com/PerforatedAI/PerforatedAI-Examples/tree/master/otherExamples/torch_geometric/OGBNProducts) shows how to optimize the `ogbn_train.py` workflow using [Perforated AI](https://github.com/PerforatedAI/PerforatedAI-API). Perforated AI provides a PyTorch add-on which increases network accuracy by empowering each artificial neuron with artificial dendrites.
 
 For examples on using `torch.compile`, see the examples under [`examples/compile`](./compile).
 
@@ -24,3 +26,5 @@ For examples on scaling PyG up via multi-GPUs, see the examples under [`examples
 For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
 
 For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
+
+- [Kumo.ai x NVIDIA GNN+LLM Webinar](https://www.youtube.com/watch?v=uRIA8e7Y_vs)

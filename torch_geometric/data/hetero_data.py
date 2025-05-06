@@ -282,6 +282,21 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns a list of edge type and edge storage pairs."""
         return list(self._edge_store_dict.items())
 
+    @property
+    def input_type(self) -> Optional[Union[NodeType, EdgeType]]:
+        r"""Returns the seed/input node/edge type of the graph in case it
+        refers to a sampled subgraph, *e.g.*, obtained via
+        :class:`~torch_geometric.loader.NeighborLoader` or
+        :class:`~torch_geometric.loader.LinkNeighborLoader`.
+        """
+        for node_type, store in self.node_items():
+            if hasattr(store, 'input_id'):
+                return node_type
+        for edge_type, store in self.edge_items():
+            if hasattr(store, 'input_id'):
+                return edge_type
+        return None
+
     def to_dict(self) -> Dict[str, Any]:
         out_dict: Dict[str, Any] = {}
         out_dict['_global_store'] = self._global_store.to_dict()
