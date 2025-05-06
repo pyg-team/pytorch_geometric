@@ -51,8 +51,9 @@ def run(args: argparse.ArgumentParser):
     if args.device == 'xpu':
         try:
             import intel_extension_for_pytorch as ipex
-        except ImportError:
-            raise RuntimeError('XPU device requires IPEX to be installed')
+        except ImportError as e:
+            raise RuntimeError(
+                'XPU device requires IPEX to be installed') from e
 
     if ((args.device == 'cuda' and not torch.cuda.is_available())
             or (args.device == 'xpu' and not torch.xpu.is_available())):

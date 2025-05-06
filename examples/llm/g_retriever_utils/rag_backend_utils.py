@@ -174,13 +174,13 @@ def create_remote_backend_from_triplets(
     """
     # Will return attribute errors for missing attributes
     if not issubclass(graph_db, ConvertableGraphStore):
-        getattr(graph_db, "from_data")
-        getattr(graph_db, "from_hetero_data")
-        getattr(graph_db, "from_partition")
+        graph_db.from_data  # noqa: B018
+        graph_db.from_hetero_data  # noqa: B018
+        graph_db.from_partition  # noqa: B018
     elif not issubclass(feature_db, ConvertableFeatureStore):
-        getattr(feature_db, "from_data")
-        getattr(feature_db, "from_hetero_data")
-        getattr(feature_db, "from_partition")
+        feature_db.from_data  # noqa: B018
+        feature_db.from_hetero_data  # noqa: B018
+        feature_db.from_partition  # noqa: B018
 
     # Resolve callable methods
     node_method_kwargs = node_method_kwargs \
