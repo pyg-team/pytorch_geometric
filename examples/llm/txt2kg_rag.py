@@ -125,9 +125,10 @@ def parse_args():
         "files by paragraphs, 'file' treats each file as"
         "one document. "
         "This will override any value set in the config file.")
-    parser.add_argument('--k_for_docs', type=int, default=None,
-                        help="Number of docs to retrieve for each question. "
-                        "This will override any value set in the config file.")
+    parser.add_argument(
+        '--k_for_docs', type=int, default=None,
+        help="Number of docs to retrieve for each question. "
+        "This will override any value set in the config file.")
     parser.add_argument(
         '--doc_chunk_size', type=int, default=None,
         help="The chunk size to use VectorRAG (document retrieval). "
