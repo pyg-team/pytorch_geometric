@@ -148,10 +148,11 @@ def map_index(
         if inclusive:
             try:
                 out = from_dlpack(result['right_ser'].to_dlpack())
-            except ValueError:
-                raise ValueError("Found invalid entries in 'src' that do not "
-                                 "have a corresponding entry in 'index'. Set "
-                                 "`inclusive=False` to ignore these entries.")
+            except ValueError as e:
+                raise ValueError(
+                    "Found invalid entries in 'src' that do not "
+                    "have a corresponding entry in 'index'. Set "
+                    "`inclusive=False` to ignore these entries.") from e
         else:
             out = from_dlpack(result['right_ser'].fillna(-1).to_dlpack())
 
