@@ -76,8 +76,9 @@ elif args.dataset == 'modelnet10':
     test_dataset = ModelNet(root, '10', False, transform, pre_transform)
 
 else:
-    raise ValueError(f"Unknown dataset name '{args.dataset}'. "
-                         f"Available options: 'modelnet10', 'modelnet40', 'medshapenet'.")
+    raise ValueError(
+        f"Unknown dataset name '{args.dataset}'. "
+        f"Available options: 'modelnet10', 'modelnet40', 'medshapenet'.")
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
                           num_workers=num_workers)
