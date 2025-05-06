@@ -7,10 +7,11 @@ import os
 import random
 import re
 import sys
-import yaml
 from datetime import datetime
 from glob import glob
 from itertools import chain
+
+import yaml
 
 try:
     import wandb
@@ -128,23 +129,25 @@ def parse_args():
     parser.add_argument(
         '--doc_chunk_size', type=int, default=None,
         help="The chunk size to use VectorRAG (document retrieval)")
-    parser.add_argument('--dataset', type=str, default="hotpotqa",
-                        help="Dataset folder name, "
-                             "should contain corpus and train.json files."
-                             "extracted triples, processed dataset, "
-                             "document retriever, and model checkpoints "
-                             "will be saved in the dataset folder")
+    parser.add_argument(
+        '--dataset', type=str, default="hotpotqa", help="Dataset folder name, "
+        "should contain corpus and train.json files."
+        "extracted triples, processed dataset, "
+        "document retriever, and model checkpoints "
+        "will be saved in the dataset folder")
     args = parser.parse_args()
 
     config_path = f"{args.dataset}/config.yaml"
     if os.path.exists(config_path):
         print(f"Loading config from {config_path}...")
-        with open(config_path, 'r') as config_file:
+        with open(config_path) as config_file:
             config = yaml.safe_load(config_file)
 
         if config is not None:
             # Use a loop to check and apply config values for each parameter
-            config_params = ['doc_parsing_mode', 'doc_chunk_size', 'k_for_docs']
+            config_params = [
+                'doc_parsing_mode', 'doc_chunk_size', 'k_for_docs'
+            ]
             for param in config_params:
                 if param in config and getattr(args, param) is None:
                     setattr(args, param, config[param])
@@ -278,9 +281,9 @@ def update_data_lists(args, data_lists):
     }
     if os.path.exists(f"{args.dataset}/document_retriever.pt"):
         print("Loading document retriever from checkpoint...")
-        vector_retriever = DocumentRetriever.load(f"{args.dataset}/document_retriever.pt",
-                                                  model=model.encode,
-                                                  model_kwargs=model_kwargs)
+        vector_retriever = DocumentRetriever.load(
+            f"{args.dataset}/document_retriever.pt", model=model.encode,
+            model_kwargs=model_kwargs)
         if args.k_for_docs != vector_retriever.k_for_docs:
             vector_retriever.k_for_docs = args.k_for_docs
         else:
@@ -348,7 +351,6 @@ def make_dataset(args):
         graph_data=graph_data, path="backend",
         graph_db=NeighborSamplingRAGGraphStore,
         feature_db=KNNRAGFeatureStore).load()
-
     """
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
@@ -363,8 +365,7 @@ def make_dataset(args):
     if os.path.exists(f"{args.dataset}/document_retriever.pt"):
         print("Loading document retriever from checkpoint...")
         vector_retriever = DocumentRetriever.load(
-            f"{args.dataset}/document_retriever.pt",
-            model=model.encode,
+            f"{args.dataset}/document_retriever.pt", model=model.encode,
             model_kwargs=model_kwargs)
         if args.k_for_docs != vector_retriever.k_for_docs:
             vector_retriever.k_for_docs = args.k_for_docs
@@ -607,9 +608,11 @@ if __name__ == '__main__':
         sys.exit(1)
 
     print(f"Starting {args.dataset} training with args: ", args)
-    if os.path.exists(f"{args.dataset}/{args.dataset}.pt") and not args.regenerate_dataset: # noqa
+    if os.path.exists(f"{args.dataset}/{args.dataset}.pt"
+                      ) and not args.regenerate_dataset:  # noqa
         print(f"Re-using Saved {args.dataset} KG-RAG Dataset...")
-        data_lists = torch.load(f"{args.dataset}/{args.dataset}.pt", weights_only=False)
+        data_lists = torch.load(f"{args.dataset}/{args.dataset}.pt",
+                                weights_only=False)
         if os.path.exists(f"{args.dataset}/document_retriever.pt"):
             print("Updating data lists with document retriever...")
             data_lists = update_data_lists(args, data_lists)
