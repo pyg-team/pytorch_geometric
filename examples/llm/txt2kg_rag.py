@@ -460,7 +460,7 @@ def train(args, data_lists):
                              drop_last=False, pin_memory=True, shuffle=False)
     if args.num_gnn_layers > 0:
         gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
-                out_channels=1024, num_layers=num_gnn_layers, heads=4)
+                  out_channels=1024, num_layers=num_gnn_layers, heads=4)
     else:
         gnn = None
 
