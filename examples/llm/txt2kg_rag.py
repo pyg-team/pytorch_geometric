@@ -123,12 +123,15 @@ def parse_args():
         choices=["paragraph",
                  "file"], help="How to parse documents: 'paragraph' splits "
         "files by paragraphs, 'file' treats each file as"
-        "one document")
+        "one document. "
+        "This will override any value set in the config file.")
     parser.add_argument('--k_for_docs', type=int, default=None,
-                        help="Number of docs to retrieve for each question.")
+                        help="Number of docs to retrieve for each question. "
+                        "This will override any value set in the config file.")
     parser.add_argument(
         '--doc_chunk_size', type=int, default=None,
-        help="The chunk size to use VectorRAG (document retrieval)")
+        help="The chunk size to use VectorRAG (document retrieval). "
+        "This will override any value set in the config file.")
     parser.add_argument(
         '--dataset', type=str, default="hotpotqa", help="Dataset folder name, "
         "should contain corpus and train.json files."
