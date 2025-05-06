@@ -26,6 +26,7 @@ dropouts = [0.0, 0.5]
 acts = [None, 'leaky_relu', torch.relu_, F.elu, torch.nn.ReLU()]
 norms = [None, 'batch_norm', 'layer_norm']
 jks = [None, 'last', 'cat', 'max', 'lstm']
+root_weights = [None, False, True]
 
 
 @pytest.mark.parametrize('out_dim', out_dims)
@@ -33,13 +34,15 @@ jks = [None, 'last', 'cat', 'max', 'lstm']
 @pytest.mark.parametrize('act', acts)
 @pytest.mark.parametrize('norm', norms)
 @pytest.mark.parametrize('jk', jks)
-def test_gcn(out_dim, dropout, act, norm, jk):
+@pytest.mark.parametrize('root_weight', root_weights)
+def test_gcn(out_dim, dropout, act, norm, jk, root_weight):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
     model = GCN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
-                act=act, norm=norm, jk=jk)
+                act=act, norm=norm, jk=jk, root_weight=root_weight)
+    model.reset_parameters()
     assert str(model) == f'GCN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -49,13 +52,16 @@ def test_gcn(out_dim, dropout, act, norm, jk):
 @pytest.mark.parametrize('act', acts)
 @pytest.mark.parametrize('norm', norms)
 @pytest.mark.parametrize('jk', jks)
-def test_graph_sage(out_dim, dropout, act, norm, jk):
+@pytest.mark.parametrize('root_weight', root_weights)
+def test_graph_sage(out_dim, dropout, act, norm, jk, root_weight):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     out_channels = 16 if out_dim is None else out_dim
 
     model = GraphSAGE(8, 16, num_layers=3, out_channels=out_dim,
-                      dropout=dropout, act=act, norm=norm, jk=jk)
+                      dropout=dropout, act=act, norm=norm, jk=jk,
+                      root_weight=root_weight)
+    model.reset_parameters()
     assert str(model) == f'GraphSAGE(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -72,6 +78,7 @@ def test_gin(out_dim, dropout, act, norm, jk):
 
     model = GIN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk)
+    model.reset_parameters()
     assert str(model) == f'GIN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -89,11 +96,13 @@ def test_gat(out_dim, dropout, act, norm, jk):
     for v2 in [False, True]:
         model = GAT(8, 16, num_layers=3, out_channels=out_dim, v2=v2,
                     dropout=dropout, act=act, norm=norm, jk=jk)
+        model.reset_parameters()
         assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
         assert model(x, edge_index).size() == (3, out_channels)
 
         model = GAT(8, 16, num_layers=3, out_channels=out_dim, v2=v2,
                     dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
+        model.reset_parameters()
         assert str(model) == f'GAT(8, {out_channels}, num_layers=3)'
         assert model(x, edge_index).size() == (3, out_channels)
 
@@ -116,6 +125,7 @@ def test_pna(out_dim, dropout, act, norm, jk):
     model = PNA(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                 act=act, norm=norm, jk=jk, aggregators=aggregators,
                 scalers=scalers, deg=deg)
+    model.reset_parameters()
     assert str(model) == f'PNA(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -132,6 +142,7 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
 
     model = EdgeCNN(8, 16, num_layers=3, out_channels=out_dim, dropout=dropout,
                     act=act, norm=norm, jk=jk)
+    model.reset_parameters()
     assert str(model) == f'EdgeCNN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
