@@ -40,14 +40,14 @@ class GRetriever(torch.nn.Module):
     def __init__(
         self,
         llm: LLM,
-        gnn: torch.nn.Module,
+        gnn: torch.nn.Module = None,
         use_lora: bool = False,
         mlp_out_tokens: int = 1,
     ) -> None:
         super().__init__()
 
         self.llm = llm
-        self.gnn = gnn.to(self.llm.device)
+        self.gnn = gnn.to(self.llm.device) if gnn is not None else None
 
         self.word_embedding = self.llm.word_embedding
         self.llm_generator = self.llm.llm
@@ -73,15 +73,16 @@ class GRetriever(torch.nn.Module):
             )
             self.llm_generator = get_peft_model(self.llm_generator, config)
 
-        mlp_out_channels = llm.word_embedding.embedding_dim
-        mlp_hidden_channels = self.gnn.out_channels
-        self.projector = torch.nn.Sequential(
-            torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
-            torch.nn.Sigmoid(),
-            torch.nn.Linear(mlp_hidden_channels,
-                            mlp_out_channels * mlp_out_tokens),
-            torch.nn.Unflatten(-1, (mlp_out_tokens, mlp_out_channels)),
-        ).to(self.llm.device)
+        if self.gnn is not None:
+            mlp_out_channels = llm.word_embedding.embedding_dim
+            mlp_hidden_channels = self.gnn.out_channels
+            self.projector = torch.nn.Sequential(
+                torch.nn.Linear(mlp_hidden_channels, mlp_hidden_channels),
+                torch.nn.Sigmoid(),
+                torch.nn.Linear(mlp_hidden_channels,
+                                mlp_out_channels * mlp_out_tokens),
+                torch.nn.Unflatten(-1, (mlp_out_tokens, mlp_out_channels)),
+            ).to(self.llm.device)
 
         self.seq_length_stats = []
 
@@ -127,21 +128,23 @@ class GRetriever(torch.nn.Module):
                 to give to the LLM, such as textified knowledge graphs.
                 (default: :obj:`None`)
         """
-        x = self.encode(x, edge_index, batch, edge_attr)
-        x = self.projector(x)
-        xs = x.split(1, dim=0)
+        xs = None
+        if self.gnn is not None:
+            x = self.encode(x, edge_index, batch, edge_attr)
+            x = self.projector(x)
+            xs = x.split(1, dim=0)
 
-        # Handle case where theres more than one embedding for each sample
-        xs = [x.squeeze(0) for x in xs]
+            # Handle case where theres more than one embedding for each sample
+            xs = [x.squeeze(0) for x in xs]
 
-        # Handle questions without node features:
-        batch_unique = batch.unique()
-        batch_size = len(question)
-        if len(batch_unique) < batch_size:
-            xs = [
-                xs[i] if i in batch_unique else None for i in range(batch_size)
-            ]
-
+            # Handle questions without node features:
+            batch_unique = batch.unique()
+            batch_size = len(question)
+            if len(batch_unique) < batch_size:
+                xs = [
+                    xs[i] if i in batch_unique else None
+                    for i in range(batch_size)
+                ]
         (
             inputs_embeds,
             attention_mask,
@@ -189,20 +192,23 @@ class GRetriever(torch.nn.Module):
             max_out_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: :obj:`32`)
         """
-        x = self.encode(x, edge_index, batch, edge_attr)
-        x = self.projector(x)
-        xs = x.split(1, dim=0)
+        xs = None
+        if self.gnn is not None:
+            x = self.encode(x, edge_index, batch, edge_attr)
+            x = self.projector(x)
+            xs = x.split(1, dim=0)
 
-        # Handle case where theres more than one embedding for each sample
-        xs = [x.squeeze(0) for x in xs]
+            # Handle case where theres more than one embedding for each sample
+            xs = [x.squeeze(0) for x in xs]
 
-        # Handle questions without node features:
-        batch_unique = batch.unique()
-        batch_size = len(question)
-        if len(batch_unique) < batch_size:
-            xs = [
-                xs[i] if i in batch_unique else None for i in range(batch_size)
-            ]
+            # Handle questions without node features:
+            batch_unique = batch.unique()
+            batch_size = len(question)
+            if len(batch_unique) < batch_size:
+                xs = [
+                    xs[i] if i in batch_unique else None
+                    for i in range(batch_size)
+                ]
 
         inputs_embeds, attention_mask, _ = self.llm._get_embeds(
             question, additional_text_context, xs)

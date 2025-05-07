@@ -11,6 +11,8 @@ from datetime import datetime
 from glob import glob
 from itertools import chain
 
+import yaml
+
 try:
     import wandb
     wandb_available = True
@@ -62,7 +64,6 @@ BATCH_SIZE_DEFAULT = 1
 EVAL_BATCH_SIZE_DEFAULT = 2
 LLM_GEN_MODE_DEFAULT = "full"
 DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
-DOC_CHUNK_SIZE_DEFAULT = 8192
 
 
 def parse_args():
@@ -99,20 +100,15 @@ def parse_args():
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
     parser.add_argument(
-        '--doc_chunk_size', type=int, default=DOC_CHUNK_SIZE_DEFAULT,
-        help="The chunk size to use VectorRAG (document retrieval)")
-    parser.add_argument(
         '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
         choices=["frozen", "lora",
                  "full"], help="Whether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
     parser.add_argument('--dont_save_model', action="store_true",
                         help="Whether to skip model saving.")
-    parser.add_argument('--k_for_docs', type=int, default=2,
-                        help="Number of docs to retrieve for each question.")
     parser.add_argument('--log_steps', type=int, default=30,
                         help="Log to wandb every N steps")
-    parser.add_argument('--wandb_project', type=str, default="tech-qa",
+    parser.add_argument('--wandb_project', type=str, default="hotpotqa",
                         help="Weights & Biases project name")
     parser.add_argument('--wandb', action="store_true",
                         help="Enable wandb logging")
@@ -123,12 +119,45 @@ def parse_args():
     parser.add_argument('--regenerate_dataset', action="store_true",
                         help="Regenerate the dataset")
     parser.add_argument(
-        '--doc_parsing_mode', type=str, default="file",
+        '--doc_parsing_mode', type=str, default=None,
         choices=["paragraph",
                  "file"], help="How to parse documents: 'paragraph' splits "
         "files by paragraphs, 'file' treats each file as"
-        "one document")
-    return parser.parse_args()
+        "one document. "
+        "This will override any value set in the config file.")
+    parser.add_argument(
+        '--k_for_docs', type=int, default=None,
+        help="Number of docs to retrieve for each question. "
+        "This will override any value set in the config file.")
+    parser.add_argument(
+        '--doc_chunk_size', type=int, default=None,
+        help="The chunk size to use VectorRAG (document retrieval). "
+        "This will override any value set in the config file.")
+    parser.add_argument(
+        '--dataset', type=str, default="hotpotqa", help="Dataset folder name, "
+        "should contain corpus and train.json files."
+        "extracted triples, processed dataset, "
+        "document retriever, and model checkpoints "
+        "will be saved in the dataset folder")
+    args = parser.parse_args()
+
+    config_path = f"{args.dataset}/config.yaml"
+    if os.path.exists(config_path):
+        print(f"Loading config from {config_path}...")
+        with open(config_path) as config_file:
+            config = yaml.safe_load(config_file)
+
+        if config is not None:
+            # Use a loop to check and apply config values for each parameter
+            config_params = [
+                'doc_parsing_mode', 'doc_chunk_size', 'k_for_docs'
+            ]
+            for param in config_params:
+                if param in config and getattr(args, param) is None:
+                    setattr(args, param, config[param])
+                    print(f"Using config value for {param}: {config[param]}")
+
+    return args
 
 
 # Answer this question based on retrieved contexts. Just give the answer without explanation.
@@ -166,7 +195,7 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
-    with open('train.json') as file:
+    with open(f"{args.dataset}/train.json") as file:
         json_obj = json.load(file)
     text_contexts = []
 
@@ -175,7 +204,7 @@ def get_data(args):
     # TODO: add support for additional corpus file formats: PDF, CSV, XML,
     # HTML, possibly others.
     # corpus folder is simply a folder with context documents in it.
-    file_paths = glob(f"corpus/*.json")
+    file_paths = glob(f"{args.dataset}/corpus/*.json")
     if len(file_paths) > 0:
         for file_path in file_paths:
             with open(file_path, "r+") as f:
@@ -189,7 +218,7 @@ def get_data(args):
                                         args.doc_chunk_size,
                                         args.doc_parsing_mode))
     else:
-        for file_path in glob(f"corpus/*"):
+        for file_path in glob(f"{args.dataset}/corpus/*"):
             with open(file_path, "r+") as f:
                 text_context = f.read()
             text_contexts.extend(
@@ -212,9 +241,9 @@ def index_kg(args, context_docs):
         "w/ --ENDPOINT_URL flag.")  # noqa
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
-    if os.path.exists("checkpoint_kg.pt"):
+    if os.path.exists(f"{args.dataset}/checkpoint_kg.pt"):
         print("Restoring KG from checkpoint...")
-        saved_relevant_triples = torch.load("checkpoint_kg.pt",
+        saved_relevant_triples = torch.load(f"{args.dataset}/checkpoint_kg.pt",
                                             weights_only=False)
         kg_maker.relevant_triples = saved_relevant_triples
         kg_maker.doc_id_counter = len(saved_relevant_triples)
@@ -230,7 +259,7 @@ def index_kg(args, context_docs):
         chkpt_count += 1
         if chkpt_count == chkpt_interval:
             chkpt_count = 0
-            kg_maker.save_kg("checkpoint_kg.pt")
+            kg_maker.save_kg(f"{args.dataset}/checkpoint_kg.pt")
     relevant_triples = kg_maker.relevant_triples
 
     triples.extend(
@@ -238,9 +267,9 @@ def index_kg(args, context_docs):
             chain.from_iterable(triple_set
                                 for triple_set in relevant_triples.values())))
     triples = list(dict.fromkeys(triples))
-    torch.save(triples, "tech_qa_just_triples.pt")
-    if os.path.exists("checkpoint_kg.pt"):
-        os.remove("checkpoint_kg.pt")
+    torch.save(triples, f"{args.dataset}/raw_triples.pt")
+    if os.path.exists(f"{args.dataset}/checkpoint_kg.pt"):
+        os.remove(f"{args.dataset}/checkpoint_kg.pt")
     return triples
 
 
@@ -254,11 +283,11 @@ def update_data_lists(args, data_lists):
         "output_device": device,
         "batch_size": int(sent_trans_batch_size / 4),
     }
-    if os.path.exists("document_retriever.pt"):
+    if os.path.exists(f"{args.dataset}/document_retriever.pt"):
         print("Loading document retriever from checkpoint...")
-        vector_retriever = DocumentRetriever.load("document_retriever.pt",
-                                                  model=model.encode,
-                                                  model_kwargs=model_kwargs)
+        vector_retriever = DocumentRetriever.load(
+            f"{args.dataset}/document_retriever.pt", model=model.encode,
+            model_kwargs=model_kwargs)
         if args.k_for_docs != vector_retriever.k_for_docs:
             vector_retriever.k_for_docs = args.k_for_docs
         else:
@@ -280,11 +309,13 @@ def update_data_lists(args, data_lists):
 
     progress_bar.close()
 
+    vector_retriever.save(f"{args.dataset}/document_retriever.pt")
+
     del vector_retriever
     gc.collect()
     torch.cuda.empty_cache()
 
-    torch.save(data_lists, "tech_qa.pt")
+    torch.save(data_lists, f"{args.dataset}/{args.dataset}.pt")
     return data_lists
 
 
@@ -294,8 +325,9 @@ def make_dataset(args):
     data_lists = {"train": [], "validation": [], "test": []}
 
     triples = []
-    if os.path.exists("tech_qa_just_triples.pt"):
-        triples = torch.load("tech_qa_just_triples.pt", weights_only=False)
+    if os.path.exists(f"{args.dataset}/raw_triples.pt"):
+        triples = torch.load(f"{args.dataset}/raw_triples.pt",
+                             weights_only=False)
     else:
         triples = index_kg(args, context_docs)
 
@@ -334,11 +366,11 @@ def make_dataset(args):
         "verbose": True
     }
 
-    if os.path.exists("document_retriever.pt"):
+    if os.path.exists(f"{args.dataset}/document_retriever.pt"):
         print("Loading document retriever from checkpoint...")
-        vector_retriever = DocumentRetriever.load("document_retriever.pt",
-                                                  model=model.encode,
-                                                  model_kwargs=model_kwargs)
+        vector_retriever = DocumentRetriever.load(
+            f"{args.dataset}/document_retriever.pt", model=model.encode,
+            model_kwargs=model_kwargs)
         if args.k_for_docs != vector_retriever.k_for_docs:
             vector_retriever.k_for_docs = args.k_for_docs
     else:
@@ -347,7 +379,7 @@ def make_dataset(args):
                                              k_for_docs=args.k_for_docs,
                                              model=model.encode,
                                              model_kwargs=model_kwargs)
-        vector_retriever.save("document_retriever.pt")
+        vector_retriever.save(f"{args.dataset}/document_retriever.pt")
 
     subgraph_filter = make_pcst_filter(
         triples,
@@ -406,7 +438,7 @@ def make_dataset(args):
                                                          len(total_data_list))]
     data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
-    torch.save(data_lists, "tech_qa.pt")
+    torch.save(data_lists, f"{args.dataset}/{args.dataset}.pt")
     del model
     gc.collect()
     torch.cuda.empty_cache()
@@ -430,26 +462,29 @@ def train(args, data_lists):
                             pin_memory=True, shuffle=False)
     test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
-    gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
-              out_channels=1024, num_layers=num_gnn_layers, heads=4)
+    if args.num_gnn_layers > 0:
+        gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
+                  out_channels=1024, num_layers=num_gnn_layers, heads=4)
+    else:
+        gnn = None
+
     if args.llm_generator_mode == "full":
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   n_gpus=args.num_gpus)
-        model = GRetriever(llm=llm, gnn=gnn)
     elif args.llm_generator_mode == "lora":
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   dtype=torch.float32, n_gpus=args.num_gpus)
-        model = GRetriever(llm=llm, gnn=gnn, use_lora=True)
     else:
         # frozen
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   dtype=torch.float32, n_gpus=args.num_gpus).eval()
-
         for _, p in llm.named_parameters():
             p.requires_grad = False
-        model = GRetriever(llm=llm, gnn=gnn)
 
-    save_name = "tech-qa-model.pt"
+    model = GRetriever(llm=llm, gnn=gnn,
+                       use_lora=args.llm_generator_mode == "lora")
+
+    save_name = f"{args.dataset}/model.pt"
     if os.path.exists(save_name) and not args.regenerate_dataset:
         print("Re-using saved G-retriever model for testing...")
         model = load_params_dict(model, save_name)
@@ -579,11 +614,13 @@ if __name__ == '__main__':
         print("Please install wandb and rerun the script.")
         sys.exit(1)
 
-    print("Starting TechQA training with args: ", args)
-    if os.path.exists("tech_qa.pt") and not args.regenerate_dataset:
-        print("Re-using Saved TechQA KG-RAG Dataset...")
-        data_lists = torch.load("tech_qa.pt", weights_only=False)
-        if os.path.exists("document_retriever.pt"):
+    print(f"Starting {args.dataset} training with args: ", args)
+    if os.path.exists(f"{args.dataset}/{args.dataset}.pt"
+                      ) and not args.regenerate_dataset:  # noqa
+        print(f"Re-using Saved {args.dataset} KG-RAG Dataset...")
+        data_lists = torch.load(f"{args.dataset}/{args.dataset}.pt",
+                                weights_only=False)
+        if os.path.exists(f"{args.dataset}/document_retriever.pt"):
             print("Updating data lists with document retriever...")
             data_lists = update_data_lists(args, data_lists)
     else:
