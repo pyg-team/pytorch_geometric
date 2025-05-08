@@ -78,18 +78,20 @@ class GDC(BaseTransform):
         self_loop_weight: float = 1.,
         normalization_in: str = 'sym',
         normalization_out: str = 'col',
-        diffusion_kwargs: Dict[str, Any] = dict(method='ppr', alpha=0.15),
-        sparsification_kwargs: Dict[str, Any] = dict(
-            method='threshold',
-            avg_degree=64,
-        ),
+        diffusion_kwargs: Dict[str, Any] = None,
+        sparsification_kwargs: Dict[str, Any] = None,
         exact: bool = True,
     ) -> None:
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
-        self.diffusion_kwargs = diffusion_kwargs
-        self.sparsification_kwargs = sparsification_kwargs
+        self.diffusion_kwargs = dict(
+            method='ppr',
+            alpha=0.15) if diffusion_kwargs is None else diffusion_kwargs
+        self.sparsification_kwargs = dict(
+            method='threshold',
+            avg_degree=64,
+        ) if sparsification_kwargs is None else sparsification_kwargs
         self.exact = exact
 
         if self_loop_weight:

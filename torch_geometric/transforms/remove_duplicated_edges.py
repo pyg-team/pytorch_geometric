@@ -22,9 +22,12 @@ class RemoveDuplicatedEdges(BaseTransform):
     """
     def __init__(
         self,
-        key: Union[str, List[str]] = ['edge_attr', 'edge_weight'],
+        key: Union[str, List[str]] = None,
         reduce: str = "add",
     ) -> None:
+        if key is None:
+            key = ['edge_attr', 'edge_weight']
+
         if isinstance(key, str):
             key = [key]
 

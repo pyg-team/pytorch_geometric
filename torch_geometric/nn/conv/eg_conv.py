@@ -81,7 +81,7 @@ class EGConv(MessagePassing):
         self,
         in_channels: int,
         out_channels: int,
-        aggregators: List[str] = ['symnorm'],
+        aggregators: List[str] = None,
         num_heads: int = 8,
         num_bases: int = 4,
         cached: bool = False,
@@ -89,6 +89,7 @@ class EGConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
+        aggregators = ['symnorm'] if aggregators is None else aggregators
         super().__init__(node_dim=0, **kwargs)
 
         if out_channels % num_heads != 0:

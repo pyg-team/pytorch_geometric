@@ -109,7 +109,7 @@ def run(
     num_steps_per_epoch=-1,
     log_every_n_steps=1,
     batch_size=1024,
-    num_neighbors=[25, 15],
+    num_neighbors=(25, 15),
     hidden_channels=1024,
     dropout=0.5,
     num_val_steps=100,
@@ -237,7 +237,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_devices", type=int, default=1)
     args = parser.parse_args()
 
-    args.num_neighbors = [int(i) for i in args.num_neighbors.split('-')]
+    args.num_neighbors = (int(i) for i in args.num_neighbors.split('-'))
 
     import warnings
     warnings.simplefilter("ignore")
