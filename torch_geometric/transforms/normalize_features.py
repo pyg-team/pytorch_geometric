@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
@@ -14,7 +14,7 @@ class NormalizeFeatures(BaseTransform):
         attrs (List[str]): The names of attributes to normalize.
             (default: :obj:`["x"]`)
     """
-    def __init__(self, attrs: List[str] = None):
+    def __init__(self, attrs: Optional[List[str]] = None):
         self.attrs = ["x"] if attrs is None else attrs
 
     def forward(

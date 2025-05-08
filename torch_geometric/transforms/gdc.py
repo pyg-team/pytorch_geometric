@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -78,8 +78,8 @@ class GDC(BaseTransform):
         self_loop_weight: float = 1.,
         normalization_in: str = 'sym',
         normalization_out: str = 'col',
-        diffusion_kwargs: Dict[str, Any] = None,
-        sparsification_kwargs: Dict[str, Any] = None,
+        diffusion_kwargs: Optional[Dict[str, Any]] = None,
+        sparsification_kwargs: Optional[Dict[str, Any]] = None,
         exact: bool = True,
     ) -> None:
         self.self_loop_weight = self_loop_weight
