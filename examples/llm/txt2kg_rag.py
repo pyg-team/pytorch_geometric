@@ -288,9 +288,9 @@ def update_data_lists(args, data_lists):
     doc_retriever_path = os.path.join(args.dataset, "document_retriever.pt")
     if os.path.exists(doc_retriever_path):
         print("Loading document retriever from checkpoint...")
-        vector_retriever = DocumentRetriever.load(
-            doc_retriever_path, model=model.encode,
-            model_kwargs=model_kwargs)
+        vector_retriever = DocumentRetriever.load(doc_retriever_path,
+                                                  model=model.encode,
+                                                  model_kwargs=model_kwargs)
         if args.k_for_docs != vector_retriever.k_for_docs:
             vector_retriever.k_for_docs = args.k_for_docs
         else:
@@ -374,9 +374,9 @@ def make_dataset(args):
     doc_retriever_path = os.path.join(args.dataset, "document_retriever.pt")
     if os.path.exists(doc_retriever_path):
         print("Loading document retriever from checkpoint...")
-        vector_retriever = DocumentRetriever.load(
-            doc_retriever_path, model=model.encode,
-            model_kwargs=model_kwargs)
+        vector_retriever = DocumentRetriever.load(doc_retriever_path,
+                                                  model=model.encode,
+                                                  model_kwargs=model_kwargs)
         if args.k_for_docs != vector_retriever.k_for_docs:
             vector_retriever.k_for_docs = args.k_for_docs
     else:
@@ -628,7 +628,8 @@ if __name__ == '__main__':
     if os.path.exists(dataset_path) and not args.regenerate_dataset:
         print(f"Re-using Saved {dataset_name} KG-RAG Dataset...")
         data_lists = torch.load(dataset_path, weights_only=False)
-        doc_retriever_path = os.path.join(args.dataset, "document_retriever.pt")
+        doc_retriever_path = os.path.join(args.dataset,
+                                          "document_retriever.pt")
         if os.path.exists(doc_retriever_path):
             print("Updating data lists with document retriever...")
             data_lists = update_data_lists(args, data_lists)
