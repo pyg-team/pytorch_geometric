@@ -1,6 +1,9 @@
 import os
 import time
-from typing import List, Optional, Tuple
+import sys
+import json
+from abc import ABC, abstractmethod
+from typing import Any, List, Optional, Tuple, Callable
 
 import torch
 import torch.multiprocessing as mp
@@ -9,7 +12,110 @@ CLIENT_INITD = False
 
 CLIENT = None
 GLOBAL_NIM_KEY = ""
-SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Separate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph."  # noqa
+
+SYSTEM_PROMPT = """
+You are a helpful assistant that converts text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). 
+Separate each with a new line. Do not output anything else.
+Try to focus on key triples that form a connected graph.
+"""
+
+TRIPLES_SYS_PROMPT = SYSTEM_PROMPT
+
+class EntityExtractor(ABC):
+    @abstractmethod
+    def __call__(self, chunks: List[str]) -> List[str]:
+        pass
+
+class TripleExtractor(ABC):
+    @abstractmethod
+    def __call__(self, txt: str) -> List[Tuple[str, str, str]]:
+        pass
+
+class EntityResolver(ABC):
+    @abstractmethod
+    def __call__(self, entities: List[str], triples: List[Tuple[str, str, str]]) -> List[str]:
+        pass
+
+#class EntityLinker(ABC):
+#    @abstractmethod
+#    def link_entities(self, entities: List[str]) -> List[str]:
+#        pass
+
+
+class LLMEntityExtractor(EntityExtractor):
+    def __init__(self, model: str, api_key: str, endpoint_url: str):
+        self.model = model
+        self.api_key = api_key
+        self.endpoint_url = endpoint_url
+        self.syste = """
+        Extract entities from the text passed by the user.
+        Entities are the names of people, places, things, concepts, etc.
+        Ignore other words like 'the', 'a', 'an', etc.
+        Do not output anything else.
+
+        Output format:
+        [
+            "Entity1",
+            "Entity2",
+            "Entity3"
+        ]
+    """
+
+    @classmethod
+    def parse_entities(cls, raw_result: str) -> List[str]:
+        entities = []
+
+        cleaned_text = raw_result.strip()
+        if (cleaned_text.startswith('[') and cleaned_text.endswith(']')):
+            try:
+                entities = json.loads(cleaned_text)
+                entities = [str(entity) for entity in entities if entity]
+                return entities
+            except json.JSONDecodeError:
+                pass
+        # fallback when json fails
+        lines = cleaned_text.replace('[', '').replace(']', '').split('\n')
+        for line in lines:
+            line = line.strip().strip('"\'').strip(',').strip()
+            if line and not line.startswith('#') and not line.lower().startswith('entity'):
+                entities.append(line)
+        return entities
+
+    def __call__(self, chunks: List[str]) -> List[str]:
+        result = []
+        try:
+            num_procs = min(len(chunks), _get_num_procs())
+            result += _llm_call_and_consume(
+                chunks, self.NVIDIA_API_KEY, self.NIM_MODEL, self.ENDPOINT_URL,
+                num_procs, self.parse_entities)
+        except ImportError:
+            print(
+                "Failed to import `openai` package, please install it and rerun the script"
+            )
+            sys.exit(1)
+        return result
+
+class LLMTripleExtractor(TripleExtractor):
+    def __init__(self, model: str, api_key: str, endpoint_url: str):
+        self.model = model
+        self.api_key = api_key
+        self.endpoint_url = endpoint_url
+        self.system_prompt = TRIPLES_SYS_PROMPT
+
+    def __call__(self, txt: str) -> List[Tuple[str, str, str]]:
+        #TODO: implement
+        pass
+
+class LLMEntityResolver(EntityResolver):
+    def __init__(self, model: str, api_key: str, endpoint_url: str):
+        self.model = model
+        self.api_key = api_key
+        self.endpoint_url = endpoint_url
+        self.system_prompt = """"""
+
+    def __call__(self, entities: List[str], triples: List[Tuple[str, str, str]]) -> List[str]:
+        #TODO: implement
+        pass
 
 
 class TXT2KG():
@@ -74,6 +180,10 @@ class TXT2KG():
         self.total_chars_parsed = 0
         self.time_to_parse = 0.0
 
+        self.entity_extractor = LLMEntityExtractor(NVIDIA_NIM_MODEL, NVIDIA_API_KEY, ENDPOINT_URL)
+        self.triple_extractor = LLMTripleExtractor(NVIDIA_NIM_MODEL, NVIDIA_API_KEY, ENDPOINT_URL)
+        self.entity_resolver = LLMEntityResolver(NVIDIA_NIM_MODEL, NVIDIA_API_KEY, ENDPOINT_URL)
+
     def save_kg(self, path: str) -> None:
         """Saves the relevant triples in the knowledge graph (KG) to a file.
 
@@ -100,6 +210,66 @@ class TXT2KG():
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
         self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse  # noqa
         return out_str
+
+    def reset(self):
+        self.relevant_triples = {}
+
+    def add_doc_2_KG_new(self, txt: str, QA_pair: Optional[Tuple[str, str]] = None) -> None:
+        """Add a document to the Knowledge Graph (KG).
+
+        Args:
+            txt (str): The text to extract triples from.
+            QA_pair (Tuple[str, str]], optional):
+                A QA pair to associate with the extracted triples.
+                Useful for downstream evaluation.
+        """
+
+        # todo add qa pair handling later
+        key = self.doc_id_counter
+        self.doc_id_counter += 1
+
+
+        chunks = _chunk_text(txt, chunk_size=self.chunk_size)
+        local_entities = self.entity_extractor(chunks)
+        triples = self.triple_extractor(txt)
+        triples = self.entity_resolver(local_entities, triples)
+
+        # TODO: determine where to do the entity linking, as we might need the whole KG for that
+        #  linked_entities = self.link_entities(resolved_entities)
+
+        # TODO: augment triples with cos sim + encoder
+        # triples = self.augment_triples(triples)
+
+        self.relevant_triples[key] = triples
+
+
+
+    def entities_from_txt(self, txt: str) -> List[str]:
+        prompt = """
+        Extract entities from the text.
+        Entities are the names of people, places, things, concepts, etc.
+        Ignore other words like 'the', 'a', 'an', etc.
+        Do not output anything else.
+
+        Output format:
+        [
+            "Entity1",
+            "Entity2",
+            "Entity3"
+        ]
+        """
+        res = self._chunk_to_triples_str_local(prompt.format(txt=txt))
+        local_entities = self.parse_entities(res)
+        return local_entities
+
+    def resolve_entities(self, local_entities: List[str], triples: List[Tuple[str, str, str]]):
+
+        # for each entity top k entities similarities
+       # sim_entities = cos_sim(local_entities, self.existing_entities, topk=5, threshold=0.8) 
+        # for each entity top k entities similarities
+        sim_entities = []
+        # TODO: implement entity linking
+        pass
 
     def add_doc_2_KG(
         self,
@@ -150,51 +320,64 @@ class TXT2KG():
                     self._chunk_to_triples_str_local)
             else:
                 try:
-                    pass
+                    num_procs = min(len(chunks), _get_num_procs())
+                    self.relevant_triples[key] = _llm_call_and_consume(
+                        chunks, self.NVIDIA_API_KEY, self.NIM_MODEL, self.ENDPOINT_URL,
+                        num_procs, _parse_n_check_triples)
                 except ImportError:
                     print(
                         "Failed to import `openai` package, please install it and rerun the script"
                     )
                     sys.exit(1)
-                # Process chunks in parallel using multiple processes
-                num_procs = min(len(chunks), _get_num_procs())
-                meta_chunk_size = int(len(chunks) / num_procs)
-                in_chunks_per_proc = {
-                    j:
-                    chunks[j *
-                           meta_chunk_size:min((j + 1) *
-                                               meta_chunk_size, len(chunks))]
-                    for j in range(num_procs)
-                }
-                for retry in range(5):
-                    try:
-                        for retry in range(200):
-                            try:
-                                # Spawn multiple processes, process chunks in parallel
-                                mp.spawn(
-                                    _multiproc_helper,
-                                    args=(in_chunks_per_proc,
-                                          _parse_n_check_triples,
-                                          _chunk_to_triples_str_cloud,
-                                          self.NVIDIA_API_KEY, self.NIM_MODEL,
-                                          self.ENDPOINT_URL), nprocs=num_procs)
-                                break
-                            except:  # noqa
-                                # keep retrying, txt2kg is costly -> stoppage is costly
-                                pass
 
-                        # Collect the results from each process
-                        self.relevant_triples[key] = []
-                        for rank in range(num_procs):
-                            self.relevant_triples[key] += torch.load(
-                                "/tmp/outs_for_proc_" + str(rank))
-                            os.remove("/tmp/outs_for_proc_" + str(rank))
-                        break
-                    except:
-                        pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
+def _llm_call_and_consume(chunks: Tuple[str], NVIDIA_API_KEY: str,
+                            NIM_MODEL: str, ENDPOINT_URL: str,
+                            num_procs: int,
+                            post_process_fn: Callable[[str], List[Any]]) -> Any:
+    result = []
+    # Ensure NVIDIA_API_KEY is set before proceeding
+    assert NVIDIA_API_KEY != '', \
+        "Please init TXT2KG w/ NVIDIA_API_KEY or set local_lm=True"
+    num_procs = min(len(chunks), _get_num_procs())
+    meta_chunk_size = int(len(chunks) / num_procs)
+    in_chunks_per_proc = {
+        j:
+        chunks[j *
+            meta_chunk_size:min((j + 1) *
+                                meta_chunk_size, len(chunks))]
+        for j in range(num_procs)
+    }
+    total_num_tries = 0
+    for retry in range(5):
+        try:
+            for retry in range(200):
+                try:
+                    mp.spawn(
+                        _multiproc_helper,
+                        args=(in_chunks_per_proc,
+                                post_process_fn,
+                                _chunk_to_result_cloud,
+                                NVIDIA_API_KEY, NIM_MODEL,
+                                ENDPOINT_URL),
+                        nprocs=num_procs,
+                        join=True)
+                    break
+                except:  # noqa
+                    total_num_tries += 1
+                    pass
+
+            for rank in range(num_procs):
+                result += torch.load(f"/tmp/outs_for_proc_{rank}")
+                os.remove(f"/tmp/outs_for_proc_{rank}")
+            break
+        except:
+            total_num_tries += 1
+            pass
+    print(f"[_llm_call_and_consume] Total number of tries: {total_num_tries}")
+    return result
 
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
@@ -222,6 +405,35 @@ def _chunk_to_triples_str_cloud(
             out_str += chunk.choices[0].delta.content
     return out_str
 
+
+def _chunk_to_result_cloud(
+        txt: str, GLOBAL_NIM_KEY='',
+        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+        ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
+        system_prompt=SYSTEM_PROMPT) -> str:
+    global CLIENT_INITD
+    if not CLIENT_INITD:
+        # We use NIMs since most PyG users may not be able to run a 70B+ model
+        from openai import OpenAI
+        global CLIENT
+        CLIENT = OpenAI(base_url=ENDPOINT_URL, api_key=GLOBAL_NIM_KEY)
+        CLIENT_INITD = True
+    txt_input = txt
+    completion = CLIENT.chat.completions.create(
+        model=NIM_MODEL, messages=[
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        },
+        {
+            "role": "user",
+            "content": txt_input
+        }], temperature=0, top_p=1, max_tokens=1024, stream=True)
+    out_str = ""
+    for chunk in completion:
+        if chunk.choices[0].delta.content is not None:
+            out_str += chunk.choices[0].delta.content
+    return out_str
 
 def _parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
     # use pythonic checks for triples
