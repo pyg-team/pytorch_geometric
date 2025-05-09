@@ -29,6 +29,7 @@ def spmm(
 
     :rtype: :class:`Tensor`
     """
+    raise Exception
     reduce = 'sum' if reduce == 'add' else reduce
 
     if reduce not in ['sum', 'mean', 'min', 'max']:

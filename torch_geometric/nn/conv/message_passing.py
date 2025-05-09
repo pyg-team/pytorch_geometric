@@ -105,7 +105,7 @@ class MessagePassing(torch.nn.Module):
 
     # Supports `message_and_aggregate` via `EdgeIndex`.
     # TODO Remove once migration is finished.
-    SUPPORTS_FUSED_EDGE_INDEX: Final[bool] = False
+    SUPPORTS_FUSED_EDGE_INDEX: Final[bool] = True
 
     def __init__(
         self,

@@ -3,6 +3,7 @@
 # TODO: Benchmark peak device memory usage
 # TODO: Add torch.compile support to EdgeIndex
 # TODO: Add torch.compile support to custom kernels
+import os
 from itertools import product
 
 import torch
@@ -15,7 +16,7 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GCN, GIN, EdgeCNN, GraphSAGE
 
 torch.set_float32_matmul_precision("high")
-NUM_HOPS = 5
+NUM_HOPS = 6
 
 
 def gen_batch() -> Data:
@@ -44,8 +45,11 @@ def run_benchmark(
     compile: bool,
     compile_dynamic: bool | None,
     subclass: bool,
+    profile: bool = False,
 ) -> Measurement:
     edge_index = EdgeIndex(batch.edge_index) if subclass else batch.edge_index
+    edge_index, indices = edge_index.sort_by('col')
+    print(edge_index.is_sorted_by_col)
     if trim:
         args = (batch.x, edge_index)
         kwargs = dict(
@@ -70,6 +74,36 @@ def run_benchmark(
         torch.compiler.reset()
         model = torch.compile(model, dynamic=compile_dynamic)
 
+    if profile:
+
+        with torch.profiler.profile(
+            record_shapes=True,
+            with_stack=True,
+        ) as prof:
+            for _ in range(5):
+                if backward:
+                    model(*args, **kwargs).backward(grad)
+                else:
+                    model(*args, **kwargs)
+                prof.step()
+
+            if subclass:
+                # reset for starting from scratch wihotu caching
+                args = (batch.x, EdgeIndex(batch.edge_index))
+
+            for _ in range(5):
+                if backward:
+                    model(*args, **kwargs).backward(grad)
+                else:
+                    model(*args, **kwargs)
+                prof.step()
+
+        filename = f"profiles/{sublabel}_{description}.json"
+        os.makedirs("profiles", exist_ok=True)
+        prof.export_chrome_trace(filename)
+        print(f"Profile saved to {filename}")
+        return
+
     return Timer(
         "model(*args, **kwargs).backward(grad)"
         if backward else "model(*args, **kwargs)",
@@ -77,29 +111,36 @@ def run_benchmark(
         label='Benchmark',
         sub_label=sublabel,
         description=description,
-    ).blocked_autorange(min_run_time=1)
+    ).blocked_autorange(min_run_time=3)
 
 
 def main():
     device = torch.device("cuda")
     global_results = []
     models = [
-        lambda: GCN(64, 64, num_layers=NUM_HOPS),
-        lambda: GAT(64, 64, num_layers=NUM_HOPS),
-        lambda: GIN(64, 64, num_layers=NUM_HOPS),
-        lambda: EdgeCNN(64, 64, num_layers=NUM_HOPS),
-        lambda: GraphSAGE(64, 64, num_layers=NUM_HOPS),
+        lambda: GCN(64, 64, num_layers=NUM_HOPS, add_self_loops=False),
+        # lambda: GAT(64, 64, num_layers=NUM_HOPS, add_self_loops=False),
+        # lambda: GIN(64, 64, num_layers=NUM_HOPS),
+        # lambda: EdgeCNN(64, 64, num_layers=NUM_HOPS),
+        # lambda: GraphSAGE(64, 64, num_layers=NUM_HOPS),
     ]
     batch = gen_batch().to(device)
     for model_cls in models:
         results = []
         model = model_cls().to(device)
+        # for backward, trim, compile, compile_dynamic, subclass in product(
+        #     [False, True],  # backward
+        #     [False, True],  # trim
+        #     [False, True],  # compile
+        #     [None, True],  # compile_dynamic
+        #     [False, True],  # subclass
+        # ):
         for backward, trim, compile, compile_dynamic, subclass in product(
-            [False, True],  # backward
-            [False, True],  # trim
-            [False, True],  # compile
-            [None, True],  # compile_dynamic
-            [False, True],  # subclass
+            [False],  # backward
+            [False],  # trim
+            [False],  # compile
+            [None],  # compile_dynamic
+            [True],  # subclass
         ):
             if subclass and compile:
                 # EdgeIndex subclass is not supported with torch.compile
@@ -118,18 +159,21 @@ def main():
             )
             results.append(m)
 
-        # Dump intermediate results
-        compare = Compare(sorted(results, key=lambda x: x.title))
+        if results[0] is not None:
+            # Dump intermediate results
+            compare = Compare(sorted(results, key=lambda x: x.title))
+            compare.highlight_warnings()
+            compare.colorize(rowwise=True)
+            compare.print()
+            global_results.extend(results)
+
+    if global_results:
+        compare = Compare(sorted(global_results, key=lambda x: x.title))
         compare.highlight_warnings()
         compare.colorize(rowwise=True)
         compare.print()
-        global_results.extend(results)
-
-    compare = Compare(sorted(global_results, key=lambda x: x.title))
-    compare.highlight_warnings()
-    compare.colorize(rowwise=True)
-    compare.print()
 
 
 if __name__ == "__main__":
-    main()
+    for i in range(1):
+        main()

@@ -854,6 +854,8 @@ class EdgeIndex(Tensor):
                 If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
+        breakpoint()
+
         (rowptr, col), perm = self.get_csr()
         if value is not None and perm is not None:
             value = value[perm]
@@ -881,6 +883,8 @@ class EdgeIndex(Tensor):
                 If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
+        breakpoint()
+
         (colptr, row), perm = self.get_csc()
         if value is not None and perm is not None:
             value = value[perm]
@@ -1023,6 +1027,7 @@ class EdgeIndex(Tensor):
                 matrix multiplication based on the transposed :obj:`input`.
                 (default: :obj:`False`)
         """
+        breakpoint()
         return matmul(self, other, input_value, other_value, reduce, transpose)
 
     def sparse_narrow(
