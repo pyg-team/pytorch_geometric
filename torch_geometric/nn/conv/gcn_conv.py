@@ -259,8 +259,6 @@ class GCNConv(MessagePassing):
 
         x = self.lin(x)
 
-        breakpoint()
-
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
@@ -273,5 +271,4 @@ class GCNConv(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
-        raise Exception
         return spmm(adj_t, x, reduce=self.aggr)

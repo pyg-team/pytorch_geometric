@@ -49,7 +49,7 @@ def run_benchmark(
 ) -> Measurement:
     edge_index = EdgeIndex(batch.edge_index) if subclass else batch.edge_index
     edge_index, indices = edge_index.sort_by('col')
-    print(edge_index.is_sorted_by_col)
+    print(edge_index.is_sorted_by_row)
     if trim:
         args = (batch.x, edge_index)
         kwargs = dict(
