@@ -142,8 +142,7 @@ def parse_args():
     parser.add_argument(
         '--skip_graph_rag', action="store_true",
         help="Skip the graph RAG step. "
-        "Used to compare the performance of Vector+Graph RAG vs Vector RAG."
-    )
+        "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
     args = parser.parse_args()
 
     if args.skip_graph_rag:
