@@ -138,9 +138,9 @@ class DistLoader:
             # close RPC & worker group at exit:
             atexit.register(shutdown_rpc, self.current_ctx_worker.worker_name)
 
-        except RuntimeError:
+        except RuntimeError as e:
             raise RuntimeError(f"`{self}.init_fn()` could not initialize the "
-                               f"worker loop of the neighbor sampler")
+                               f"worker loop of the neighbor sampler") from e
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(pid={self.pid})'
