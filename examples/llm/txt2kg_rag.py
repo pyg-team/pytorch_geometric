@@ -139,7 +139,15 @@ def parse_args():
         "extracted triples, processed dataset, "
         "document retriever, and model checkpoints "
         "will be saved in the dataset folder")
+    parser.add_argument(
+        '--skip_graph_rag', action="store_true",
+        help="Skip the graph RAG step. "
+        "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
     args = parser.parse_args()
+
+    if args.skip_graph_rag:
+        print("Skipping graph RAG step, setting GNN layers to 0...")
+        args.num_gnn_layers = 0
 
     config_path = os.path.join(args.dataset, "config.yaml")
     if os.path.exists(config_path):
@@ -520,6 +528,9 @@ def train(args, data_lists):
                             question=q,
                             context="\n".join(batch.text_context[i])))
                 batch.question = new_qs
+
+                if args.skip_graph_rag:
+                    batch.desc = None
 
                 optimizer.zero_grad()
                 try:
