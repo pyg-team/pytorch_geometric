@@ -168,3 +168,19 @@ def test_embed_bias_via_param(edge_type, multi_hop_max_dist, distances_input):
     expected = bias_provider.edge_embeddings(distances_expected)
     assert torch.equal(result, expected), \
         "Embedding bias does not match expected output"
+
+
+@pytest.mark.parametrize("use_super", [False, True])
+def test_edge_bias_handles_variable_graph_sizes(
+    blockdiag_edge_batch, use_super
+):
+    """GraphAttnEdgeBias should pad ragged edge_dist blocks to (B, H, L, L)."""
+    node_counts = [12, 7, 19]
+    data = blockdiag_edge_batch(node_counts, feat_dim=8, num_edges=5)
+    provider = GraphAttnEdgeBias(
+        num_heads=3, num_edges=5, use_super_node=use_super
+    )
+    out = provider(data)
+    B = len(node_counts)
+    L = max(node_counts) + (1 if use_super else 0)
+    assert out.shape == (B, 3, L, L)

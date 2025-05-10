@@ -117,3 +117,14 @@ def test_hop_bias_configuration(
         row0 = bias[0, 0, 0]
         row1 = bias[0, 0, 1]
         assert not torch.allclose(row0, row1), "Super-node row should differ"
+
+
+def test_hop_bias_handles_variable_graph_sizes(blockdiag_hop_batch):
+    """GraphAttnHopBias should pad ragged hop_dist blocks to (B, H, L, L)."""
+    node_counts = [20, 17, 13]
+    data = blockdiag_hop_batch(node_counts, feat_dim=8, num_hops=10)
+    provider = GraphAttnHopBias(num_heads=4, num_hops=10)
+    out = provider(data)
+    B = len(node_counts)
+    L = max(node_counts)
+    assert out.shape == (B, 4, L, L)

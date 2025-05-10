@@ -13,9 +13,11 @@ Ref:
  Code adapted from:
  https://github.com/qwerfdsaplking/Graph-Trans
 """
+from typing import List
 
 import torch
 import torch.nn as nn
+from torch import Tensor
 from torch.nn import init
 
 from torch_geometric.contrib.nn.bias.base import BaseBiasProvider
@@ -55,36 +57,50 @@ class GraphAttnEdgeBias(BaseBiasProvider):
         self.edge_type = edge_type
         self.multi_hop_max_dist = multi_hop_max_dist
 
-    def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
-        """Extract a batched edge-distance matrix from the input Data object.
+    def _extract_raw_distances(self, data: Data) -> List[Tensor]:
+        """Extract per-graph edge-distance blocks from a flat edge_dist matrix.
 
         Args:
-            data (torch_geometric.data.Data):
-                Input Data object containing edge distances.
+            data (Data):
+                edge_dist (LongTensor or None):
+                    If present, 2D tensor of shape (∑Ni, ∑Ni) whose
+                    Ni×Ni diagonal blocks are per-graph edge distances.
+                    If None, zero blocks are produced.
+                ptr (LongTensor):
+                    1D tensor of length B+1 holding cumulative node
+                    counts [0, N1, N1+N2, …, ∑Ni].
 
         Returns:
-            LongTensor: edge-distance matrix
-                - If `data.edge_dist` is None --> shape (B, L, L)
-                - If `data.edge_dist` is 2D tensor and `data.ptr` is present
-                --> shape (B, L, L)
-                - If `data.edge_dist` is 2D tensor but `data.ptr` is missing
-                --> Raises ValueError.
+            List[LongTensor]: A list of B edge-distance matrices, each of
+            shape (Ni, Ni). Zero-filled if `edge_dist` was None.
 
         Raises:
-            ValueError: If `data.edge_dist` is provided but is not a 2D tensor,
-            or if `data.ptr` is missing.
+            ValueError: If `ptr` is missing, or if `edge_dist` is present but
+                        not 2D.
         """
-        pos = getattr(data, "edge_dist", None)
-        if pos is None:
-            B = len(data.ptr) - 1
-            L = data.x.size(0) // B
-            return data.x.new_zeros(B, L, L, dtype=torch.long)
-        if pos.dim() == 2 and hasattr(data, "ptr"):
-            ptr = data.ptr
-            return torch.stack(
-                [pos[ptr[i]:ptr[i + 1]] for i in range(len(ptr) - 1)], dim=0
+        ptr = getattr(data, "ptr", None)
+        if ptr is None:
+            raise ValueError("Missing `ptr` for batched edge_dist.")
+
+        edge_dist = getattr(data, "edge_dist", None)
+        blocks = []
+
+        if edge_dist is None:
+            for i in range(len(ptr) - 1):
+                Ni = int(ptr[i + 1] - ptr[i])
+                blocks.append(data.x.new_zeros(Ni, Ni, dtype=torch.long))
+            return blocks
+
+        if edge_dist.dim() != 2:
+            raise ValueError(
+                f"Expected 2D edge_dist, got {tuple(edge_dist.shape)}"
             )
-        raise ValueError(f"Unexpected edge_dist shape {tuple(pos.shape)}")
+
+        for i in range(len(ptr) - 1):
+            start = int(ptr[i])
+            end = int(ptr[i + 1])
+            blocks.append(edge_dist[start:end, start:end])
+        return blocks
 
     def _embed_bias(self, distances: torch.LongTensor) -> torch.Tensor:
         """Embed edge distances into bias tensor.

@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable, List, Sequence
 
 import pytest
 import torch
@@ -519,3 +519,82 @@ def blockdiag_spatial_batch() -> Data:
     ptr = torch.tensor([0, n1, n1 + n2], dtype=torch.long)
     x = torch.randn(n1 + n2, 8)
     return Data(x=x, spatial_pos=spatial_pos, ptr=ptr)
+
+
+@pytest.fixture
+def blockdiag_hop_batch() -> Callable[[Sequence[int], int, int], Data]:
+    """Factory for Data with block-diagonal `hop_dist` and `ptr`.
+
+    Each graph i has Ni nodes; we generate a random Ni×Ni hop_dist block,
+    then assemble a big (∑Ni × ∑Ni) tensor that is block-diagonal,
+    with zeros off the blocks.
+
+    Returns:
+        make(node_counts, feat_dim=1, num_hops=5) -> Data
+    """
+
+    def make(
+        node_counts: Sequence[int],
+        feat_dim: int = 1,
+        num_hops: int = 5
+    ) -> Data:
+        # cumulative pointers [0, N1, N1+N2, …]
+        ptr = [0]
+        for n in node_counts:
+            ptr.append(ptr[-1] + n)
+        total = ptr[-1]
+
+        # start with all-zero block-diagonal matrix
+        hop_dist = torch.zeros((total, total), dtype=torch.long)
+        for i, n in enumerate(node_counts):
+            block = torch.randint(0, num_hops, (n, n), dtype=torch.long)
+            s, e = ptr[i], ptr[i + 1]
+            hop_dist[s:e, s:e] = block
+
+        x = torch.randn(total, feat_dim)
+        return Data(
+            x=x,
+            hop_dist=hop_dist,
+            ptr=torch.tensor(ptr, dtype=torch.long),
+            edge_index=torch.empty((2, 0), dtype=torch.long),
+        )
+
+    return make
+
+
+@pytest.fixture
+def blockdiag_edge_batch() -> Callable[[Sequence[int], int, int], Data]:
+    """Factory for Data with block-diagonal `edge_dist` and `ptr`.
+
+    Each graph i has Ni nodes; we generate a random Ni×Ni edge_dist block,
+    then assemble a big (∑Ni × ∑Ni) tensor that is block-diagonal,
+    with zeros elsewhere.
+
+    Returns:
+        make(node_counts, feat_dim=1, num_edges=5) -> Data
+    """
+
+    def make(
+        node_counts: Sequence[int],
+        feat_dim: int = 1,
+        num_edges: int = 5
+    ) -> Data:
+        ptr = [0]
+        for n in node_counts:
+            ptr.append(ptr[-1] + n)
+        total = ptr[-1]
+        edge_dist = torch.zeros((total, total), dtype=torch.long)
+        for i, n in enumerate(node_counts):
+            block = torch.randint(0, num_edges, (n, n), dtype=torch.long)
+            start, end = ptr[i], ptr[i + 1]
+            edge_dist[start:end, start:end] = block
+
+        x = torch.randn(total, feat_dim)
+        return Data(
+            x=x,
+            edge_dist=edge_dist,
+            ptr=torch.tensor(ptr, dtype=torch.long),
+            edge_index=torch.empty((2, 0), dtype=torch.long),
+        )
+
+    return make

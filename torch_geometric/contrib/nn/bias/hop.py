@@ -13,8 +13,11 @@ Code adapted from:
 https://github.com/qwerfdsaplking/Graph-Trans
 """
 
+from typing import List
+
 import torch
 import torch.nn as nn
+from torch import Tensor
 from torch.nn import init
 
 from torch_geometric.contrib.nn.bias.base import BaseBiasProvider
@@ -42,27 +45,39 @@ class GraphAttnHopBias(BaseBiasProvider):
         self.hop_embeddings = nn.Embedding(total_tokens, num_heads)
         init.xavier_uniform_(self.hop_embeddings.weight)
 
-    def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
-        """Split a concatenated `data.hop_dist` into a batched (B, L, L).
+    def _extract_raw_distances(self, data: Data) -> List[Tensor]:
+        """Extract per-graph hop-distance blocks from a flat hop_dist matrix.
 
-        Only supports 2D `hop_dist` when `data.ptr` is present:
-        - `pos` is shape (sum_i L, L) and `data.ptr` length B+1.
-        - Rows [ptr[i]:ptr[i+1]] form each graph of size L.
-        - Stacks into output of shape (B, L, L).
+        Args:
+            data (Data):
+                hop_dist (LongTensor):
+                    2D tensor of shape (∑Ni, ∑Ni), where each Ni×Ni
+                    diagonal block is the hop-distance matrix for graph i.
+                ptr (LongTensor):
+                    1D tensor of length B+1 holding cumulative node
+                    counts [0, N1, N1+N2, …, ∑Ni].
 
         Returns:
-            LongTensor of shape (B, L, L).
+            List[LongTensor]: A list of B hop-distance matrices, where the
+            i-th element has shape (Ni, Ni).
 
         Raises:
-            ValueError: if `hop_dist` is not 2D or `data.ptr` is missing.
+            ValueError: If `hop_dist` is missing or not 2D, or if `ptr`
+                        is missing.
         """
-        pos = data.hop_dist
-        if pos.dim() == 2 and hasattr(data, "ptr"):
-            ptr = data.ptr
-            return torch.stack(
-                [pos[ptr[i]:ptr[i + 1]] for i in range(len(ptr) - 1)], dim=0
+        hop_dist = getattr(data, "hop_dist", None)
+        ptr = getattr(data, "ptr", None)
+        if hop_dist is None or ptr is None or hop_dist.dim() != 2:
+            raise ValueError(
+                f"Expected 2D data.hop_dist and data.ptr, got "
+                f"{None if hop_dist is None else tuple(hop_dist.shape)}"
             )
-        raise ValueError(f"Unexpected hop_dist shape {tuple(pos.shape)}")
+        blocks = []
+        for i in range(len(ptr) - 1):
+            start = int(ptr[i])
+            end = int(ptr[i + 1])
+            blocks.append(hop_dist[start:end, start:end])
+        return blocks
 
     def _embed_bias(self, distances: torch.LongTensor) -> torch.Tensor:
         return self.hop_embeddings(distances)
