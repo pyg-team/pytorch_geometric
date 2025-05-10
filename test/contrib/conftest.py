@@ -1,5 +1,8 @@
+from typing import Callable, List
+
 import pytest
 import torch
+import torch.nn.functional as F
 from torch import nn
 
 from torch_geometric.contrib.nn.bias import BaseBiasProvider
@@ -465,3 +468,54 @@ def full_feature_batch(
         return Batch.from_data_list(out_list)
 
     return make
+
+
+@pytest.fixture
+def hetero_spatial_batch() -> Callable[[List[int], int, int], Data]:
+    """Creates Data for heterogeneous graphs with padded spatial_pos.
+
+    Factory function for Data objects with unequal-node graphs whose
+    spatial_pos matrices are padded to a uniform size.
+
+    Args:
+        node_counts (List[int]): Number of nodes in each graph.
+        feat_dim (int): Node feature dimensionality.
+        num_spatial (int): Maximum spatial position value.
+
+    Returns:
+        Callable[[List[int], int, int], Data]: Function producing a Data
+        object with padded spatial_pos and ptr attributes.
+    """
+
+    def make(node_counts: List[int], feat_dim: int, num_spatial: int) -> Data:
+        max_n = max(node_counts)
+        padded = []
+        for n in node_counts:
+            mat = torch.randint(0, num_spatial, (n, n))
+            pad = (0, max_n - n, 0, max_n - n)
+            padded.append(F.pad(mat, pad, value=0))
+        spatial_pos = torch.cat(padded, dim=0)
+        ptr = torch.tensor(
+            [i * max_n for i in range(len(node_counts) + 1)],
+            dtype=torch.long,
+        )
+        x = torch.randn(len(node_counts) * max_n, feat_dim)
+        return Data(x=x, spatial_pos=spatial_pos, ptr=ptr)
+
+    return make
+
+
+@pytest.fixture
+def blockdiag_spatial_batch() -> Data:
+    """Create a Data object with block-diagonal spatial_pos for two graphs.
+
+    Graph 1 has 11 nodes, Graph 2 has 14 nodes, so
+    `spatial_pos` is a (25×25) block-diag matrix; `ptr=[0,11,25]`.
+    """
+    n1, n2 = 11, 14
+    mat1 = torch.randint(0, 5, (n1, n1))
+    mat2 = torch.randint(0, 5, (n2, n2))
+    spatial_pos = torch.block_diag(mat1, mat2)
+    ptr = torch.tensor([0, n1, n1 + n2], dtype=torch.long)
+    x = torch.randn(n1 + n2, 8)
+    return Data(x=x, spatial_pos=spatial_pos, ptr=ptr)

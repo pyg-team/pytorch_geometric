@@ -78,3 +78,18 @@ def test_spatial_bias_config(spatial_batch, num_heads, num_spatial, use_super):
         r0 = out[0, 0, 0]
         r1 = out[0, 0, 1]
         assert not torch.allclose(r0, r1)
+
+
+def test_spatial_bias_supports_variable_graph_sizes(hetero_spatial_batch, ):
+    """Test that the spatial bias provider can handle variable graph sizes."""
+    data = hetero_spatial_batch([11, 14], feat_dim=8, num_spatial=5)
+    provider = GraphAttnSpatialBias(num_heads=4, num_spatial=5)
+    _ = provider(data)
+
+
+def test_spatial_bias_handles_heterogeneous_blockdiag_spatial_pos(
+    blockdiag_spatial_batch,
+):
+    """GraphAttnSpatialBias must pad per-graph masks before stacking."""
+    provider = GraphAttnSpatialBias(num_heads=4, num_spatial=5)
+    _ = provider(blockdiag_spatial_batch)

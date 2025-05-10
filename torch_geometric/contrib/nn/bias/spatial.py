@@ -14,8 +14,11 @@ Ref:
  https://github.com/qwerfdsaplking/Graph-Trans
 """
 
+from typing import List
+
 import torch
 import torch.nn as nn
+from torch import Tensor
 from torch.nn import init
 
 from torch_geometric.contrib.nn.bias.base import BaseBiasProvider
@@ -51,31 +54,43 @@ class GraphAttnSpatialBias(BaseBiasProvider):
         self.spatial_embeddings = nn.Embedding(total_tokens, num_heads)
         init.xavier_uniform_(self.spatial_embeddings.weight)
 
-    def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
-        """Split a concatenated `data.spatial_pos` into a batched (B, L, L).
+    def _extract_raw_distances(self, data: Data) -> List[Tensor]:
+        """Extract per-graph distance blocks from a block-diagonal matrix.
+
+        Given `data.spatial_pos`, a 2D LongTensor of shape (∑Ni, ∑Ni),
+        and `data.ptr`, a LongTensor of length B+1 holding cumulative node
+        counts, split `spatial_pos` into B separate distance matrices:
+
+        - Let Ni = ptr[i+1] − ptr[i] for i in [0..B−1].
+        - Return a list of B tensors, where the i-th tensor is
+            spatial_pos[ptr[i]:ptr[i+1], ptr[i]:ptr[i+1]] of shape (Ni, Ni).
 
         Args:
-            data (Data): Batched graph data containing `spatial_pos`.
-            Only supports 2D `spatial_pos` when `data.ptr` is present:
-                - `pos` is shape (sum_i L, L) and `data.ptr` length B+1.
-                - Rows [ptr[i]:ptr[i+1]] form each graph of size L.
-                - Stacks into output of shape (B, L, L).
+            data (Data):
+                - spatial_pos (LongTensor): block-diagonal distances
+                of shape (ΣNi, ΣNi).
+                - ptr (LongTensor): cumulative node counts, length B+1.
 
         Returns:
-            torch.LongTensor: Distance matrix of shape (B, L, L) where
-                B = number of graphs,
-                L = number of nodes in the graph (+1 if super-node = True).
+            List[LongTensor]:
+                List of B distance matrices, each of shape (Ni, Ni).
 
         Raises:
-            ValueError: If `data.spatial_pos` has an unexpected shape.
+            ValueError: if `spatial_pos` is missing or not 2D, or if `ptr`
+                        is missing.
         """
-        pos = data.spatial_pos
-        if pos.dim() == 2 and hasattr(data, 'ptr'):
-            ptr = data.ptr
-            return torch.stack(
-                [pos[ptr[i]:ptr[i + 1]] for i in range(len(ptr) - 1)], dim=0
+        pos = getattr(data, "spatial_pos", None)
+        ptr = getattr(data, "ptr", None)
+        if pos is None or ptr is None or pos.dim() != 2:
+            raise ValueError(
+                f"Expected 2D spatial_pos and ptr, got "
+                f"{None if pos is None else tuple(pos.shape)}"
             )
-        raise ValueError(f"Unexpected spatial_pos shape {tuple(pos.shape)}")
+        raw = []
+        for i in range(len(ptr) - 1):
+            start, end = int(ptr[i]), int(ptr[i + 1])
+            raw.append(pos[start:end, start:end])
+        return raw
 
     def _embed_bias(self, distances: torch.LongTensor) -> torch.Tensor:
         """Embed distances into bias tensor.

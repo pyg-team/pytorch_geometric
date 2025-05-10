@@ -1,7 +1,10 @@
 from abc import abstractmethod
+from typing import List
 
 import torch
 import torch.nn as nn
+from torch import Tensor
+from torch.nn import functional as F
 
 from torch_geometric.data import Data
 
@@ -51,12 +54,13 @@ class BaseBiasProvider(nn.Module):
                 L = number of nodes in the graph (+1 if super-node = True).
         """
         distances = self._extract_raw_distances(data)
-        self._assert_square(distances)
+        distances_padded = self._pad_to_tensor(distances)
+        self._assert_square(distances_padded)
 
         if self.use_super_node:
-            distances = self._pad_with_super_node(distances)
+            distances_padded = self._pad_with_super_node(distances_padded)
 
-        bias = self._embed_bias(distances)
+        bias = self._embed_bias(distances_padded)
         self._assert_embed_shape(bias)
 
         return bias.permute(0, 3, 1, 2)
@@ -118,3 +122,28 @@ class BaseBiasProvider(nn.Module):
                 f"Expected bias shape (*,*,*,{self.num_heads}),"
                 f" got {tuple(bias.shape)}"
             )
+
+    def _pad_to_tensor(self, matrices: List[Tensor]) -> Tensor:
+        """Pad a list of square matrices to a common size and stack them.
+
+        Given a list of square tensors of varying sizes [(N₁×N₁), (N₂×N₂), …],
+        zero-pad each on the bottom and right so that they all become (L×L),
+        where L = max(Nᵢ).  Finally, stack them along a new batch dimension.
+
+        Args:
+            matrices (List[Tensor]):
+                List of 2D square tensors, each of shape (Nᵢ, Nᵢ).
+
+        Returns:
+            Tensor:
+                A 3D tensor of shape (B, L, L), where B = len(matrices) and
+                L = max_i Nᵢ, containing the zero-padded inputs.
+        """
+        sizes = [m.size(0) for m in matrices]
+        max_n = max(sizes)
+        padded = []
+        for m in matrices:
+            pad_right = max_n - m.size(1)
+            pad_bottom = max_n - m.size(0)
+            padded.append(F.pad(m, (0, pad_right, 0, pad_bottom), value=0))
+        return torch.stack(padded, dim=0)
