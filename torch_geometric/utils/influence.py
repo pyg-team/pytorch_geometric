@@ -101,7 +101,7 @@ def jacobian_l1(
     The Jacobian is evaluated w.r.t. the node features of the *k*-hop induced
     sub‑graph centred at ``node_idx``. The result is *folded back* onto the
     **original** node index space so that the returned tensor has length
-    ``data.num_nodes``, where the influence score will be zero for nodes
+    ``data.num_nodes``, where the influence score will be zero for nodes 
     outside the *k*-hop subgraph.
 
     Notes:
@@ -111,8 +111,8 @@ def jacobian_l1(
 
     """
     # Build the induced *k*-hop sub‑graph (with node re‑labelling).
-    edge_index = torch.tensor(data.edge_index)
-    x = torch.tensor(data.x)
+    edge_index = cast(Tensor, data.edge_index)
+    x = cast(Tensor, data.x)
     k_hop_nodes, sub_edge_index, mapping, _ = k_hop_subgraph(
         node_idx, max_hops, edge_index, relabel_nodes=True)
     # get the location of the *center* node inside the sub‑graph
@@ -130,7 +130,7 @@ def jacobian_l1(
 
     jac = jacobian(_forward, sub_x, vectorize=vectorize)
     influence_sub = jac.abs().sum(dim=(0, 2))  # Sum of L1 norm
-    num_nodes = int(data.num_nodes)
+    num_nodes = cast(int, data.num_nodes)
     # Scatter the influence scores back to the *global* node space
     influence_full = torch.zeros(num_nodes, dtype=influence_sub.dtype,
                                  device=device)
@@ -153,27 +153,29 @@ def jacobian_l1_agg_per_hop(
     influence exerted by nodes that are exactly *i* hops away from
     ``node_idx``.
     """
-    num_nodes = int(data.num_nodes)
+    num_nodes = cast(int, data.num_nodes)
+    edge_index = cast(Tensor, data.edge_index)
     influence = jacobian_l1(model, data, max_hops, node_idx, device,
                             vectorize=vectorize)
-    hop_subsets = k_hop_subsets_exact(node_idx, max_hops, data.edge_index,
+    hop_subsets = k_hop_subsets_exact(node_idx, max_hops, edge_index,
                                       num_nodes, influence.device)
     sigle_node_influence_per_hop = [influence[s].sum() for s in hop_subsets]
     return torch.tensor(sigle_node_influence_per_hop, device=influence.device)
 
 
 def avg_total_influence(
-    influence_all_nodes: Tensor,
-    normalize: bool = True,
+    influence_all_nodes: Tensor, 
+    normalize: bool=True,
 ) -> Tensor:
-    """Compute the *influence‑weighted receptive field* ``R``."""
+    """Compute the *influence‑weighted receptive field* ``R``.
+    """
     avg_total_influences = torch.mean(influence_all_nodes, dim=0)
     if normalize:  # nomalize by hop_0 (jacobian of the center node feature)
         avg_total_influences = avg_total_influences / avg_total_influences[0]
     return avg_total_influences
 
 
-def influence_weighted_receptive_field(T: torch.Tensor) -> float:
+def influence_weighted_receptive_field(T: Tensor) -> float:
     """Compute the *influence‑weighted receptive field* ``R``.
 
     Given an influence matrix ``T`` of shape ``[N, k+1]`` (i‑th row contains
@@ -240,7 +242,7 @@ def total_influence(
               returned by :func:`influence_weighted_receptive_field`.
 
     Example::
-        >>> avg_I, R = total_influence(model, data, max_hops=3,
+        >>> avg_I, R = total_influence(model, data, max_hops=3, 
         ...                            num_samples=1000)
         >>> avg_I
         tensor([1.0000, 0.1273, 0.0142, 0.0019])
@@ -248,7 +250,7 @@ def total_influence(
         0.216
     """
     num_samples = data.num_nodes if num_samples is None else num_samples
-    num_nodes = int(data.num_nodes)
+    num_nodes = cast(int, data.num_nodes)
     nodes = torch.randperm(num_nodes)[:num_samples].tolist()
 
     influence_all_nodes: List[Tensor] = [
@@ -256,16 +258,16 @@ def total_influence(
                                 vectorize=vectorize)
         for n in tqdm(nodes, desc="Influence")
     ]
-    influence_all_nodes = torch.vstack(influence_all_nodes).detach().cpu()
+    allnodes = torch.vstack(influence_all_nodes).detach().cpu()
 
     # Average total influence at each hop
     if average:
-        avg_influence = avg_total_influence(influence_all_nodes,
+        avg_influence = avg_total_influence(allnodes,
                                             normalize=normalize)
     else:
-        avg_influence = influence_all_nodes
+        avg_influence = allnodes
 
     # Influence‑weighted receptive field
-    R = influence_weighted_receptive_field(influence_all_nodes)
+    R = influence_weighted_receptive_field(allnodes)
 
     return avg_influence, R
