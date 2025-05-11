@@ -1,8 +1,7 @@
 import torch
-import pytest
-from torch_geometric.nn import GCNConv
 
 from torch_geometric.data import Data
+from torch_geometric.nn import GCNConv
 from torch_geometric.utils.total_influence import total_influence
 
 
