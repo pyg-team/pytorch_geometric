@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -23,7 +23,7 @@ def k_hop_subsets_rough(
 
     Parameters
     ----------
-    node_idx: int | Sequence[int] | Tensor
+    node_idx: int
         Index or indices of the central node(s).
     num_hops: int
         Number of hops *k*.
@@ -62,7 +62,7 @@ def k_hop_subsets_exact(
     num_hops: int,
     edge_index: Tensor,
     num_nodes: int,
-    device: torch.device | str,
+    device: Union[torch.device, str],
 ) -> List[Tensor]:
     """Return **disjoint** *k*-hop subsets.
 
@@ -92,7 +92,7 @@ def jacobian_l1(
     data: Data,
     max_hops: int,
     node_idx: int,
-    device: torch.device | str,
+    device: Union[torch.device, str],
     *,
     vectorize: bool = True,
 ) -> Tensor:
@@ -141,7 +141,7 @@ def jacobian_l1_agg_per_hop(
     data: Data,
     max_hops: int,
     node_idx: int,
-    device: torch.device | str,
+    device: Union[torch.device, str],
     vectorize: bool = True,
 ) -> Tensor:
     """Aggregate Jacobian L1 norms **per hop** for node_idx.
@@ -186,10 +186,10 @@ def total_influence(
     model: torch.nn.Module,
     data: Data,
     max_hops: int,
-    num_samples: int | None = None,
+    num_samples: Union[int, None] = None,
     normalize: bool = True,
     average: bool = True,
-    device: torch.device | str = "cpu",
+    device: Union[torch.device, str] = "cpu",
     vectorize: bool = True,
 ) -> Tuple[Tensor, Tensor]:
     r"""Compute Jacobian‑based influence aggregates for *multiple* seed nodes.
