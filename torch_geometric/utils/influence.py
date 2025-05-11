@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union, Optional
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -237,7 +237,7 @@ def total_influence(
               returned by :func:`influence_weighted_receptive_field`.
 
     Example::
-        >>> avg_I, R = total_influence(model, data, max_hops=3, 
+        >>> avg_I, R = total_influence(model, data, max_hops=3,
         ...                            num_samples=1000)
         >>> avg_I
         tensor([1.0000, 0.1273, 0.0142, 0.0019])
