@@ -1,11 +1,12 @@
+from typing import List, Tuple
+
 import torch
 from torch import Tensor
 from torch.autograd.functional import jacobian
 from tqdm.auto import tqdm
-from typing import List, Tuple
 
-from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.data import Data
+from torch_geometric.utils import k_hop_subgraph
 
 
 def k_hop_subsets_rough(
@@ -31,7 +32,7 @@ def k_hop_subsets_rough(
     num_nodes: int
         Total number of nodes in the graph. Required to allocate the masks.
 
-    Returns
+    Returns:
     -------
     List[Tensor]
         A list ``[H₀, H₁, …, H_k]`` where ``H₀`` contains the seed node(s) and
@@ -69,7 +70,8 @@ def k_hop_subsets_exact(
     have already appeared in previous hops, ensuring that each subset contains
     nodes *exactly* *i* hops away from the seed.
     """
-    rough_subsets = k_hop_subsets_rough(node_idx, num_hops, edge_index, num_nodes)
+    rough_subsets = k_hop_subsets_rough(node_idx, num_hops, edge_index,
+                                        num_nodes)
 
     exact_subsets: List[List[int]] = [rough_subsets[0].tolist()]
     visited: set[int] = set(exact_subsets[0])
@@ -79,7 +81,10 @@ def k_hop_subsets_exact(
         visited |= fresh
         exact_subsets.append(list(fresh))
 
-    return [torch.tensor(s, device=device, dtype=edge_index.dtype) for s in exact_subsets]
+    return [
+        torch.tensor(s, device=device, dtype=edge_index.dtype)
+        for s in exact_subsets
+    ]
 
 
 def jacobian_l1(
@@ -99,7 +104,7 @@ def jacobian_l1(
     ``data.num_nodes``, where the influence score will be zero for nodes outside
     the *k*-hop subgraph.
 
-    Notes
+    Notes:
     -----
     *   The function assumes that the model *and* ``data.x`` share the same
         floating‑point precision (e.g. both ``float32`` or both ``float16``).
@@ -107,8 +112,7 @@ def jacobian_l1(
     """
     # Build the induced *k*-hop sub‑graph (with node re‑labelling).
     k_hop_nodes, sub_edge_index, mapping, _ = k_hop_subgraph(
-        node_idx, max_hops, data.edge_index, relabel_nodes=True
-    )
+        node_idx, max_hops, data.edge_index, relabel_nodes=True)
     # get the location of the *center* node inside the sub‑graph
     root_pos = int(mapping[0])
 
@@ -121,12 +125,12 @@ def jacobian_l1(
     # Jacobian evaluation
     def _forward(x: Tensor) -> Tensor:
         return model(x, sub_edge_index)[root_pos]
+
     jac = jacobian(_forward, sub_x, vectorize=vectorize)
     influence_sub = jac.abs().sum(dim=(0, 2))  # Sum of L1 norm
     # Scatter the influence scores back to the *global* node space
-    influence_full = torch.zeros(
-        data.num_nodes, dtype=influence_sub.dtype, device=device
-    )
+    influence_full = torch.zeros(data.num_nodes, dtype=influence_sub.dtype,
+                                 device=device)
     influence_full[k_hop_nodes] = influence_sub
 
     return influence_full
@@ -136,7 +140,7 @@ def jacobian_l1_agg_per_hop(
     model: torch.nn.Module,
     data: Data,
     max_hops: int,
-    node_idx: int, 
+    node_idx: int,
     device: torch.device | str,
     vectorize: bool = True,
 ) -> Tensor:
@@ -145,13 +149,10 @@ def jacobian_l1_agg_per_hop(
     Returns a vector ``[I_0, I_1, …, I_k]`` where ``I_i`` is the *total* influence
     exerted by nodes that are exactly *i* hops away from ``node_idx``.
     """
-
-    influence = jacobian_l1(
-        model, data, max_hops, node_idx, device, vectorize=vectorize
-    )
-    hop_subsets = k_hop_subsets_exact(
-        node_idx, max_hops, data.edge_index, data.num_nodes, influence.device
-    )
+    influence = jacobian_l1(model, data, max_hops, node_idx, device,
+                            vectorize=vectorize)
+    hop_subsets = k_hop_subsets_exact(node_idx, max_hops, data.edge_index,
+                                      data.num_nodes, influence.device)
     sigle_node_influence_per_hop = [influence[s].sum() for s in hop_subsets]
     return torch.tensor(sigle_node_influence_per_hop, device=influence.device)
 
@@ -160,7 +161,7 @@ def avg_total_influence(influence_all_nodes, normalize=True):
     """Compute the *influence‑weighted receptive field* ``R``.
     """
     avg_total_influences = torch.mean(influence_all_nodes, axis=0)
-    if normalize: # nomalize by hop_0 (jacobian of the center node feature)
+    if normalize:  # nomalize by hop_0 (jacobian of the center node feature)
         avg_total_influences = avg_total_influences / avg_total_influences[0]
     return avg_total_influences
 
@@ -213,7 +214,7 @@ def total_influence(
         normalize (bool, optional): If :obj:`True`, divide each hop‑wise
             average by the influence of hop 0. (default: :obj:`True`)
         average (bool, optional): If :obj:`True`, return the hop‑wise **mean**
-            over all seed nodes (shape ``[k+1]``).  
+            over all seed nodes (shape ``[k+1]``).
             If :obj:`False`, return the full influence matrix of shape
             ``[N, k+1]``. (default: :obj:`True`)
         device (torch.device or str, optional): Device on which to perform the
@@ -225,8 +226,8 @@ def total_influence(
 
     Returns:
         Tuple[Tensor, float]:
-            * **avg_influence** (*Tensor*):  
-              • shape ``[k+1]`` if :obj:`average=True`;  
+            * **avg_influence** (*Tensor*):
+              • shape ``[k+1]`` if :obj:`average=True`;
               • shape ``[N, k+1]`` otherwise.
             * **R** (*float*): Influence‑weighted receptive‑field breadth
               returned by :func:`influence_weighted_receptive_field`.
@@ -242,18 +243,16 @@ def total_influence(
     nodes = torch.randperm(data.num_nodes)[:num_samples].tolist()
 
     influence_all_nodes = [
-        jacobian_l1_agg_per_hop(
-            model, data, max_hops, n, device, vectorize=vectorize
-        )
+        jacobian_l1_agg_per_hop(model, data, max_hops, n, device,
+                                vectorize=vectorize)
         for n in tqdm(nodes, desc="Influence")
     ]
     influence_all_nodes = torch.vstack(influence_all_nodes).detach().cpu()
 
     # Average total influence at each hop
     if average:
-        avg_influence = avg_total_influence(
-            influence_all_nodes, normalize=normalize
-        )
+        avg_influence = avg_total_influence(influence_all_nodes,
+                                            normalize=normalize)
     else:
         avg_influence = influence_all_nodes
 

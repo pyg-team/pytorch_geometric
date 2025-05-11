@@ -19,8 +19,8 @@ class CityNetwork(InMemoryDataset):
     and `london`, where nodes represent junctions and edges represent
     undirected road segments. The task is to predict each node's eccentricity
     score, which is approximated based on its 16-hop neighborhood and naturally
-    requires long-range information. The score indicates how accessible one 
-    node is in the network, and is mapped to 10 quantiles for transductive 
+    requires long-range information. The score indicates how accessible one
+    node is in the network, and is mapped to 10 quantiles for transductive
     classification. See the original
     `source code <https://github.com/LeonResearch/City-Networks>`_ for more
     details on the individual networks.
