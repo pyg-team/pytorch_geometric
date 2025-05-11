@@ -101,8 +101,8 @@ def jacobian_l1(
     The Jacobian is evaluated w.r.t. the node features of the *k*-hop induced
     sub‑graph centred at ``node_idx``. The result is *folded back* onto the
     **original** node index space so that the returned tensor has length
-    ``data.num_nodes``, where the influence score will be zero for nodes outside
-    the *k*-hop subgraph.
+    ``data.num_nodes``, where the influence score will be zero for nodes 
+    outside the *k*-hop subgraph.
 
     Notes:
     -----
@@ -149,8 +149,9 @@ def jacobian_l1_agg_per_hop(
 ) -> Tensor:
     """Aggregate Jacobian L1 norms **per hop** for node_idx.
 
-    Returns a vector ``[I_0, I_1, …, I_k]`` where ``I_i`` is the *total* influence
-    exerted by nodes that are exactly *i* hops away from ``node_idx``.
+    Returns a vector ``[I_0, I_1, …, I_k]`` where ``I_i`` is the *total*
+    influence exerted by nodes that are exactly *i* hops away from
+    ``node_idx``.
     """
     num_nodes = int(data.num_nodes)
     influence = jacobian_l1(model, data, max_hops, node_idx, device,
@@ -173,9 +174,9 @@ def avg_total_influence(influence_all_nodes, normalize=True) -> Tensor:
 def influence_weighted_receptive_field(T: torch.Tensor) -> float:
     """Compute the *influence‑weighted receptive field* ``R``.
 
-    Given an influence matrix ``T`` of shape ``[N, k+1]`` (i‑th row contains the
-    per‑hop influences of node *i*), the receptive field breadth *R* is defined
-    as the expected hop distance when weighting by influence.
+    Given an influence matrix ``T`` of shape ``[N, k+1]`` (i‑th row contains
+    the per‑hop influences of node *i*), the receptive field breadth *R* is
+    defined as the expected hop distance when weighting by influence.
 
     A larger *R* indicates that, on average, influence comes from **farther**
     hops.
@@ -204,8 +205,8 @@ def total_influence(
        :math:`v` w.r.t. the node features of its *k*-hop induced sub‑graph;
     2. sums these scores **per hop** to obtain the influence vector
        :math:`(I_{0}, I_{1}, \dots, I_{k})`;
-    3. optionally averages those vectors over all sampled nodes and (optionally)
-       normalises them by :math:`I_{0}`.
+    3. optionally averages those vectors over all sampled nodes and
+       (optionally) normalises them by :math:`I_{0}`.
 
     Args:
         model (torch.nn.Module): A PyTorch Geometric‑compatible model with
@@ -237,7 +238,7 @@ def total_influence(
               returned by :func:`influence_weighted_receptive_field`.
 
     Example::
-        >>> avg_I, R = total_influence(model, data, max_hops=3,
+        >>> avg_I, R = total_influence(model, data, max_hops=3, 
         ...                            num_samples=1000)
         >>> avg_I
         tensor([1.0000, 0.1273, 0.0142, 0.0019])
