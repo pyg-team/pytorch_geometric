@@ -101,7 +101,7 @@ def jacobian_l1(
     The Jacobian is evaluated w.r.t. the node features of the *k*-hop induced
     sub‑graph centred at ``node_idx``. The result is *folded back* onto the
     **original** node index space so that the returned tensor has length
-    ``data.num_nodes``, where the influence score will be zero for nodes 
+    ``data.num_nodes``, where the influence score will be zero for nodes
     outside the *k*-hop subgraph.
 
     Notes:
@@ -238,7 +238,7 @@ def total_influence(
               returned by :func:`influence_weighted_receptive_field`.
 
     Example::
-        >>> avg_I, R = total_influence(model, data, max_hops=3, 
+        >>> avg_I, R = total_influence(model, data, max_hops=3,
         ...                            num_samples=1000)
         >>> avg_I
         tensor([1.0000, 0.1273, 0.0142, 0.0019])
