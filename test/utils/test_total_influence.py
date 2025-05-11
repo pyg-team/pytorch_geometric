@@ -28,20 +28,20 @@ def test_total_influence_smoke():
     )
     model = GNN()
     I, R = total_influence(
-        model, 
-        data, 
-        max_hops=max_hops, 
+        model,
+        data,
+        max_hops=max_hops,
         num_samples=num_samples,
     )
 
-    assert I.shape == torch.Size([max_hops+1])
+    assert I.shape == torch.Size([max_hops + 1])
     assert 0.0 <= R <= max_hops
 
     I, R = total_influence(
-        model, 
-        data, 
-        max_hops=max_hops, 
+        model,
+        data,
+        max_hops=max_hops,
         num_samples=num_samples,
         average=False,
     )
-    assert I.shape == torch.Size([num_samples, max_hops+1])
+    assert I.shape == torch.Size([num_samples, max_hops + 1])
