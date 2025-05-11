@@ -26,10 +26,10 @@ def test_total_influence_smoke():
         edge_index=edge_index,
     )
     model = GNN()
-    I, R = total_influence(model, data, max_hops=1, num_samples=2)
+    I, R = total_influence(model, data, max_hops=2, num_samples=4)
 
-    assert I.shape == torch.Size([2])
+    assert I.shape == torch.Size([3])
     assert 0.0 <= R <= 1.0
 
-    I, R = total_influence(model, data, max_hops=1, num_samples=2, average=False)
-    assert I.shape == torch.Size([2])
+    I, R = total_influence(model, data, max_hops=1, num_samples=4, average=False)
+    assert I.shape == torch.Size([4, 3])
