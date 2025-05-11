@@ -30,3 +30,6 @@ def test_total_influence_smoke():
 
     assert I.shape == torch.Size([2])
     assert 0.0 <= R <= 1.0
+
+    I, R = total_influence(model, data, max_hops=1, num_samples=2, average=False)
+    assert I.shape == torch.Size([2])
