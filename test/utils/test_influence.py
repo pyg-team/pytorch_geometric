@@ -1,0 +1,33 @@
+import torch
+import pytest
+from torch_geometric.nn import GCNConv
+
+from torch_geometric.data import Data
+from torch_geometric.utils.total_influence import total_influence
+
+
+class GNN(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = GCNConv(5, 6)
+        self.conv2 = GCNConv(6, 7)
+
+    def forward(self, x0, edge_index):
+        x1 = self.conv1(x0, edge_index)
+        x2 = self.conv2(x1, edge_index)
+        return [x1, x2]
+
+
+def test_total_influence_smoke():
+    x = torch.randn(6, 5)
+    edge_index = torch.tensor([[0, 1, 2, 3, 4], [1, 2, 3, 4, 5]])
+
+    data = Data(
+        x=x,
+        edge_index=edge_index,
+    )
+    model = GNN()
+    I, R = total_influence(model, data, max_hops=1, num_samples=2)
+
+    assert I.shape == torch.Size([2])
+    assert 0.0 <= R <= 1.0
