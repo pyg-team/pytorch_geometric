@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple, Union, cast
 
 import torch
 from torch import Tensor
@@ -60,7 +60,7 @@ def k_hop_subsets_rough(
 def k_hop_subsets_exact(
     node_idx: int,
     num_hops: int,
-    edge_index: Optional[Tensor],
+    edge_index: Tensor,
     num_nodes: int,
     device: Union[torch.device, str],
 ) -> List[Tensor]:
@@ -116,7 +116,7 @@ def jacobian_l1(
     k_hop_nodes, sub_edge_index, mapping, _ = k_hop_subgraph(
         node_idx, max_hops, edge_index, relabel_nodes=True)
     # get the location of the *center* node inside the sub‑graph
-    root_pos = int(mapping[0])
+    root_pos = cast(int, mapping[0])
 
     # Move tensors & model to the correct device
     device = torch.device(device)
@@ -162,10 +162,13 @@ def jacobian_l1_agg_per_hop(
     return torch.tensor(sigle_node_influence_per_hop, device=influence.device)
 
 
-def avg_total_influence(influence_all_nodes, normalize=True) -> Tensor:
+def avg_total_influence(
+    influence_all_nodes: Tensor, 
+    normalize: bool=True,
+) -> Tensor:
     """Compute the *influence‑weighted receptive field* ``R``.
     """
-    avg_total_influences = torch.mean(influence_all_nodes, axis=0)
+    avg_total_influences = torch.mean(influence_all_nodes, dim=0)
     if normalize:  # nomalize by hop_0 (jacobian of the center node feature)
         avg_total_influences = avg_total_influences / avg_total_influences[0]
     return avg_total_influences
@@ -249,7 +252,7 @@ def total_influence(
     num_nodes = int(data.num_nodes)
     nodes = torch.randperm(num_nodes)[:num_samples].tolist()
 
-    influence_all_nodes = [
+    influence_all_nodes: List[Tensor] = [
         jacobian_l1_agg_per_hop(model, data, max_hops, n, device,
                                 vectorize=vectorize)
         for n in tqdm(nodes, desc="Influence")
