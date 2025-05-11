@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 import torch
 from torch import Tensor
@@ -45,9 +45,9 @@ def k_hop_subsets_rough(
     node_mask = row.new_empty(num_nodes, dtype=torch.bool)
     edge_mask = row.new_empty(row.size(0), dtype=torch.bool)
 
-    node_idx = torch.tensor([node_idx], device=row.device)
+    node_idx_ = torch.tensor([node_idx], device=row.device)
 
-    subsets = [node_idx]
+    subsets = [node_idx_]
     for _ in range(num_hops):
         node_mask.zero_()
         node_mask[subsets[-1]] = True
@@ -60,7 +60,7 @@ def k_hop_subsets_rough(
 def k_hop_subsets_exact(
     node_idx: int,
     num_hops: int,
-    edge_index: Tensor,
+    edge_index: Optional[Tensor],
     num_nodes: int,
     device: Union[torch.device, str],
 ) -> List[Tensor]:
@@ -111,14 +111,16 @@ def jacobian_l1(
 
     """
     # Build the induced *k*-hop sub‑graph (with node re‑labelling).
+    edge_index = torch.tensor(data.edge_index)
+    x = torch.tensor(data.x)
     k_hop_nodes, sub_edge_index, mapping, _ = k_hop_subgraph(
-        node_idx, max_hops, data.edge_index, relabel_nodes=True)
+        node_idx, max_hops, edge_index, relabel_nodes=True)
     # get the location of the *center* node inside the sub‑graph
     root_pos = int(mapping[0])
 
     # Move tensors & model to the correct device
     device = torch.device(device)
-    sub_x = data.x[k_hop_nodes].to(device)
+    sub_x = x[k_hop_nodes].to(device)
     sub_edge_index = sub_edge_index.to(device)
     model = model.to(device)
 
@@ -128,8 +130,9 @@ def jacobian_l1(
 
     jac = jacobian(_forward, sub_x, vectorize=vectorize)
     influence_sub = jac.abs().sum(dim=(0, 2))  # Sum of L1 norm
+    num_nodes = int(data.num_nodes)
     # Scatter the influence scores back to the *global* node space
-    influence_full = torch.zeros(data.num_nodes, dtype=influence_sub.dtype,
+    influence_full = torch.zeros(num_nodes, dtype=influence_sub.dtype,
                                  device=device)
     influence_full[k_hop_nodes] = influence_sub
 
@@ -149,15 +152,16 @@ def jacobian_l1_agg_per_hop(
     Returns a vector ``[I_0, I_1, …, I_k]`` where ``I_i`` is the *total* influence
     exerted by nodes that are exactly *i* hops away from ``node_idx``.
     """
+    num_nodes = int(data.num_nodes)
     influence = jacobian_l1(model, data, max_hops, node_idx, device,
                             vectorize=vectorize)
     hop_subsets = k_hop_subsets_exact(node_idx, max_hops, data.edge_index,
-                                      data.num_nodes, influence.device)
+                                      num_nodes, influence.device)
     sigle_node_influence_per_hop = [influence[s].sum() for s in hop_subsets]
     return torch.tensor(sigle_node_influence_per_hop, device=influence.device)
 
 
-def avg_total_influence(influence_all_nodes, normalize=True):
+def avg_total_influence(influence_all_nodes, normalize=True) -> Tensor:
     """Compute the *influence‑weighted receptive field* ``R``.
     """
     avg_total_influences = torch.mean(influence_all_nodes, axis=0)
@@ -176,7 +180,7 @@ def influence_weighted_receptive_field(T: torch.Tensor) -> float:
     A larger *R* indicates that, on average, influence comes from **farther**
     hops.
     """
-    normalised = T / T.sum(axis=1, keepdims=True)
+    normalised = T / torch.sum(T, dim=1, keepdim=True)
     hops = torch.arange(T.shape[1]).float()  # 0 … k
     breadth = normalised @ hops  # shape (N,)
     return breadth.mean().item()
@@ -191,7 +195,7 @@ def total_influence(
     average: bool = True,
     device: Union[torch.device, str] = "cpu",
     vectorize: bool = True,
-) -> Tuple[Tensor, Tensor]:
+) -> Tuple[Tensor, float]:
     r"""Compute Jacobian‑based influence aggregates for *multiple* seed nodes.
 
     For every sampled node :math:`v`, this method
@@ -240,7 +244,8 @@ def total_influence(
         0.216
     """
     num_samples = data.num_nodes if num_samples is None else num_samples
-    nodes = torch.randperm(data.num_nodes)[:num_samples].tolist()
+    num_nodes = int(data.num_nodes)
+    nodes = torch.randperm(num_nodes)[:num_samples].tolist()
 
     influence_all_nodes = [
         jacobian_l1_agg_per_hop(model, data, max_hops, n, device,
