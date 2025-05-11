@@ -101,7 +101,7 @@ def jacobian_l1(
     The Jacobian is evaluated w.r.t. the node features of the *k*-hop induced
     sub‑graph centred at ``node_idx``. The result is *folded back* onto the
     **original** node index space so that the returned tensor has length
-    ``data.num_nodes``, where the influence score will be zero for nodes
+    ``data.num_nodes``, where the influence score will be zero for nodes 
     outside the *k*-hop subgraph.
 
     Notes:
@@ -164,11 +164,10 @@ def jacobian_l1_agg_per_hop(
 
 
 def avg_total_influence(
-    influence_all_nodes: Tensor,
-    normalize: bool = True,
+    influence_all_nodes: Tensor, 
+    normalize: bool=True,
 ) -> Tensor:
-    """Compute the *influence‑weighted receptive field* ``R``.
-    """
+    """Compute the *influence‑weighted receptive field* ``R``."""
     avg_total_influences = torch.mean(influence_all_nodes, dim=0)
     if normalize:  # nomalize by hop_0 (jacobian of the center node feature)
         avg_total_influences = avg_total_influences / avg_total_influences[0]
@@ -242,7 +241,7 @@ def total_influence(
               returned by :func:`influence_weighted_receptive_field`.
 
     Example::
-        >>> avg_I, R = total_influence(model, data, max_hops=3,
+        >>> avg_I, R = total_influence(model, data, max_hops=3, 
         ...                            num_samples=1000)
         >>> avg_I
         tensor([1.0000, 0.1273, 0.0142, 0.0019])
@@ -262,7 +261,8 @@ def total_influence(
 
     # Average total influence at each hop
     if average:
-        avg_influence = avg_total_influence(allnodes, normalize=normalize)
+        avg_influence = avg_total_influence(allnodes,
+                                            normalize=normalize)
     else:
         avg_influence = allnodes
 
