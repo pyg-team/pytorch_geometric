@@ -59,7 +59,7 @@ def test_to_captum(model, mask_type, output_idx):
         assert torch.any(out != pre_out)
 
 
-@withPackage('captum')
+@withPackage('captum', 'sklearn')
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('method', methods)
 def test_captum_attribution_methods(mask_type, method):

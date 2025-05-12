@@ -122,7 +122,10 @@ def clean_up_description(description: str) -> str:
     return first_sentence
 
 
-def extract_name(name_raw: str, description: str) -> Tuple[str, str, str]:
+def extract_name(
+    name_raw: str,
+    description: str,
+) -> Tuple[Optional[str], str, str]:
     first_sentence = clean_up_description(description)
 
     splitter = '  --  --  '
@@ -368,6 +371,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                     writer.write(mol)
                     valid_mol_count += 1
 
+                writer.close()
                 print(f"block id: {block_id}\nfound {valid_mol_count}\n\n")
                 sys.stdout.flush()
                 return
@@ -407,6 +411,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                 print(f"block id: {block_id} with 0 valid SDF file")
                 continue
 
+        writer.close()
         print(f"In total: {len(found_CID_set)} molecules")
 
         # Step 05. Convert to PyG data format
@@ -446,12 +451,12 @@ class MoleculeGPTDataset(InMemoryDataset):
 
                 x: torch.Tensor = torch.tensor([
                     types[atom.GetSymbol()] if atom.GetSymbol() in types else 5
-                    for atom in m.GetAtoms()  # type: ignore
+                    for atom in m.GetAtoms()
                 ])
                 x = one_hot(x, num_classes=len(types), dtype=torch.float)
 
                 rows, cols, edge_types = [], [], []
-                for bond in m.GetBonds():  # type: ignore
+                for bond in m.GetBonds():
                     i, j = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                     edge_types += [bonds[bond.GetBondType()]] * 2
                     rows += [i, j]

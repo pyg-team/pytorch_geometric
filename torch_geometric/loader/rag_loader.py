@@ -7,7 +7,7 @@ from torch_geometric.typing import InputEdges, InputNodes
 
 
 class RAGFeatureStore(Protocol):
-    """Feature store for remote GNN RAG backend."""
+    """Feature store template for remote GNN RAG backend."""
     @abstractmethod
     def retrieve_seed_nodes(self, query: Any, **kwargs) -> InputNodes:
         """Makes a comparison between the query and all the nodes to get all
@@ -33,7 +33,7 @@ class RAGFeatureStore(Protocol):
 
 
 class RAGGraphStore(Protocol):
-    """Graph store for remote GNN RAG backend."""
+    """Graph store template for remote GNN RAG backend."""
     @abstractmethod
     def sample_subgraph(self, seed_nodes: InputNodes, seed_edges: InputEdges,
                         **kwargs) -> Union[SamplerOutput, HeteroSamplerOutput]:
@@ -52,6 +52,7 @@ class RAGGraphStore(Protocol):
 
 
 class RAGQueryLoader:
+    """Loader meant for making RAG queries from a remote backend."""
     def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
                  local_filter: Optional[Callable[[Data, Any], Data]] = None,
                  seed_nodes_kwargs: Optional[Dict[str, Any]] = None,

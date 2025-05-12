@@ -204,6 +204,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
+        assert batch.input_type == 'paper'
 
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}

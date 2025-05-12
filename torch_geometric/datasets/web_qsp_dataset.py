@@ -117,12 +117,13 @@ def retrieval_via_pcst(
     return data, desc
 
 
-class WebQSPDataset(InMemoryDataset):
-    r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
-    Labeling for Knowledge Base Question Answering"
-    <https://aclanthology.org/P16-2033/>`_ paper.
+class KGQABaseDataset(InMemoryDataset):
+    r"""Base class for the 2 KGQA datasets used in `"Reasoning on Graphs:
+    Faithful and Interpretable Large Language Model Reasoning"
+    <https://arxiv.org/pdf/2310.01061>`_ paper.
 
     Args:
+        dataset_name (str): HuggingFace `dataset` name.
         root (str): Root directory where the dataset should be saved.
         split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
@@ -134,11 +135,14 @@ class WebQSPDataset(InMemoryDataset):
     """
     def __init__(
         self,
+        dataset_name: str,
         root: str,
         split: str = "train",
         force_reload: bool = False,
         use_pcst: bool = True,
+        use_cwq: bool = True,
     ) -> None:
+        self.dataset_name = dataset_name
         self.use_pcst = use_pcst
         super().__init__(root, force_reload=force_reload)
 
@@ -156,7 +160,7 @@ class WebQSPDataset(InMemoryDataset):
         import datasets
         import pandas as pd
 
-        datasets = datasets.load_dataset('rmanluo/RoG-webqsp')
+        datasets = datasets.load_dataset(self.dataset_name)
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model_name = 'sentence-transformers/all-roberta-large-v1'
@@ -244,3 +248,45 @@ class WebQSPDataset(InMemoryDataset):
                 data_list.append(data)
 
             self.save(data_list, path)
+
+
+class WebQSPDataset(KGQABaseDataset):
+    r"""The WebQuestionsSP dataset of the `"The Value of Semantic Parse
+    Labeling for Knowledge Base Question Answering"
+    <https://aclanthology.org/P16-2033/>`_ paper.
+
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        use_pcst (bool, optional): Whether to preprocess the dataset's graph
+            with PCST or return the full graphs. (default: :obj:`True`)
+    """
+    def __init__(self, root: str, split: str = "train",
+                 force_reload: bool = False, use_pcst: bool = True) -> None:
+        dataset_name = 'rmanluo/RoG-webqsp'
+        super().__init__(dataset_name, root, split, force_reload, use_pcst)
+
+
+class CWQDataset(KGQABaseDataset):
+    r"""The ComplexWebQuestions (CWQ) dataset of the `"The Web as a
+    Knowledge-base forAnswering Complex Questions"
+    <https://arxiv.org/pdf/1803.06643>`_ paper.
+
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
+        use_pcst (bool, optional): Whether to preprocess the dataset's graph
+            with PCST or return the full graphs. (default: :obj:`True`)
+    """
+    def __init__(self, root: str, split: str = "train",
+                 force_reload: bool = False, use_pcst: bool = True) -> None:
+        dataset_name = 'rmanluo/RoG-cwq'
+        super().__init__(dataset_name, root, split, force_reload, use_pcst)

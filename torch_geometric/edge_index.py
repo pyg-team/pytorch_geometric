@@ -17,6 +17,7 @@ from typing import (
     overload,
 )
 
+import numpy as np
 import torch
 import torch.utils._pytree as pytree
 from torch import Tensor
@@ -183,7 +184,7 @@ class EdgeIndex(Tensor):
 
         edge_index = EdgeIndex(
             [[0, 1, 1, 2],
-             [1, 0, 2, 1]]
+             [1, 0, 2, 1]],
             sparse_size=(3, 3),
             sort_order='row',
             is_undirected=True,
@@ -210,7 +211,7 @@ class EdgeIndex(Tensor):
         assert not edge_index.is_undirected
 
         # Sparse-Dense Matrix Multiplication:
-        out = edge_index.flip(0) @ torch.randn(3, 16)
+        out = edge_index.flip(0) @ torch.randn(3, 16)
         assert out.size() == (3, 16)
     """
     # See "https://pytorch.org/docs/stable/notes/extending.html"
@@ -297,8 +298,7 @@ class EdgeIndex(Tensor):
                 indptr = None
             data = torch.stack([row, col], dim=0)
 
-        if (torch_geometric.typing.WITH_PT112
-                and data.layout == torch.sparse_csc):
+        if data.layout == torch.sparse_csc:
             row = data.row_indices()
             indptr = data.ccol_indices()
 
@@ -881,10 +881,6 @@ class EdgeIndex(Tensor):
                 If not specified, non-zero elements will be assigned a value of
                 :obj:`1.0`. (default: :obj:`None`)
         """
-        if not torch_geometric.typing.WITH_PT112:
-            raise NotImplementedError(
-                "'to_sparse_csc' not supported for PyTorch < 1.12")
-
         (colptr, row), perm = self.get_csc()
         if value is not None and perm is not None:
             value = value[perm]
@@ -921,7 +917,7 @@ class EdgeIndex(Tensor):
             return self.to_sparse_coo(value)
         if layout == torch.sparse_csr:
             return self.to_sparse_csr(value)
-        if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
+        if layout == torch.sparse_csc:
             return self.to_sparse_csc(value)
 
         raise ValueError(f"Unexpected tensor layout (got '{layout}')")
@@ -1246,6 +1242,14 @@ class EdgeIndex(Tensor):
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
 
+    def tolist(self) -> List[Any]:
+        """"""  # noqa: D419
+        return self._data.tolist()
+
+    def numpy(self, *, force: bool = False) -> np.ndarray:
+        """"""  # noqa: D419
+        return self._data.numpy(force=force)
+
     # Helpers #################################################################
 
     def _shallow_copy(self) -> 'EdgeIndex':
@@ -1478,7 +1482,7 @@ def _slice(
     step: int = 1,
 ) -> Union[EdgeIndex, Tensor]:
 
-    if ((start is None or start <= 0)
+    if ((start is None or start == 0 or start <= -input.size(dim))
             and (end is None or end > input.size(dim)) and step == 1):
         return input._shallow_copy()  # No-op.
 

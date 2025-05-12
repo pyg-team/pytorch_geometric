@@ -76,10 +76,12 @@ from .wikidata import Wikidata5M
 from .myket import MyketDataset
 from .brca_tgca import BrcaTcga
 from .neurograph import NeuroGraphDataset
-from .web_qsp_dataset import WebQSPDataset
+from .web_qsp_dataset import WebQSPDataset, CWQDataset
 from .git_mol_dataset import GitMolDataset
 from .molecule_gpt_dataset import MoleculeGPTDataset
+from .instruct_mol_dataset import InstructMolDataset
 from .tag_dataset import TAGDataset
+from .city import CityNetwork
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -193,9 +195,12 @@ homo_datasets = [
     'BrcaTcga',
     'NeuroGraphDataset',
     'WebQSPDataset',
+    'CWQDataset',
     'GitMolDataset',
     'MoleculeGPTDataset',
+    'InstructMolDataset',
     'TAGDataset',
+    'CityNetwork',
 ]
 
 hetero_datasets = [

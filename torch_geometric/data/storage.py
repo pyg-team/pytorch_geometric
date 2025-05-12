@@ -806,6 +806,10 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if not isinstance(cat_dim, int):
+            return False
+
         num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_nodes:
@@ -852,6 +856,10 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if not isinstance(cat_dim, int):
+            return False
+
         num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_edges:

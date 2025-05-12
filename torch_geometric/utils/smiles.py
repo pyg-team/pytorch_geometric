@@ -91,7 +91,7 @@ def from_rdmol(mol: Any) -> 'torch_geometric.data.Data':
     assert isinstance(mol, Chem.Mol)
 
     xs: List[List[int]] = []
-    for atom in mol.GetAtoms():  # type: ignore
+    for atom in mol.GetAtoms():
         row: List[int] = []
         row.append(x_map['atomic_num'].index(atom.GetAtomicNum()))
         row.append(x_map['chirality'].index(str(atom.GetChiralTag())))
@@ -108,7 +108,7 @@ def from_rdmol(mol: Any) -> 'torch_geometric.data.Data':
     x = torch.tensor(xs, dtype=torch.long).view(-1, 9)
 
     edge_indices, edge_attrs = [], []
-    for bond in mol.GetBonds():  # type: ignore
+    for bond in mol.GetBonds():
         i = bond.GetBeginAtomIdx()
         j = bond.GetEndAtomIdx()
 

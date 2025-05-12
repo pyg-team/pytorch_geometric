@@ -7,7 +7,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Hashable,
     Iterable,
     Iterator,
     List,
@@ -23,14 +22,16 @@ from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import Data
+from torch_geometric.io import fs
 from torch_geometric.typing import WITH_PT24
 
-TripletLike = Tuple[Hashable, Hashable, Hashable]
+# Could be any hashable type
+TripletLike = Tuple[str, str, str]
 
 KnowledgeGraphLike = Iterable[TripletLike]
 
 
-def ordered_set(values: Iterable[Hashable]) -> List[Hashable]:
+def ordered_set(values: Iterable[str]) -> List[str]:
     return list(dict.fromkeys(values))
 
 
@@ -70,13 +71,13 @@ if WITH_PT24:
 
 
 class LargeGraphIndexer:
-    """For a dataset that consists of mulitiple subgraphs that are assumed to
+    """For a dataset that consists of multiple subgraphs that are assumed to
     be part of a much larger graph, collate the values into a large graph store
     to save resources.
     """
     def __init__(
         self,
-        nodes: Iterable[Hashable],
+        nodes: Iterable[str],
         edges: KnowledgeGraphLike,
         node_attr: Optional[Dict[str, List[Any]]] = None,
         edge_attr: Optional[Dict[str, List[Any]]] = None,
@@ -85,7 +86,7 @@ class LargeGraphIndexer:
         by id. Not meant to be used directly.
 
         Args:
-            nodes (Iterable[Hashable]): Node ids in the graph.
+            nodes (Iterable[str]): Node ids in the graph.
             edges (KnowledgeGraphLike): Edge ids in the graph.
             node_attr (Optional[Dict[str, List[Any]]], optional): Mapping node
                 attribute name and list of their values in order of unique node
@@ -94,7 +95,7 @@ class LargeGraphIndexer:
                 attribute name and list of their values in order of unique edge
                 ids. Defaults to None.
         """
-        self._nodes: Dict[Hashable, int] = dict()
+        self._nodes: Dict[str, int] = dict()
         self._edges: Dict[TripletLike, int] = dict()
 
         self._mapped_node_features: Set[str] = set()
@@ -201,7 +202,7 @@ class LargeGraphIndexer:
         index.
 
         Args:
-            graphs (Iterable[&quot;LargeGraphIndexer&quot;]): Indices to be
+            graphs (Iterable[LargeGraphIndexer]): Indices to be
                 combined.
 
         Returns:
@@ -212,8 +213,8 @@ class LargeGraphIndexer:
         trips = chain.from_iterable([graph.to_triplets() for graph in graphs])
         return cls.from_triplets(trips)
 
-    def get_unique_node_features(
-            self, feature_name: str = NODE_PID) -> List[Hashable]:
+    def get_unique_node_features(self,
+                                 feature_name: str = NODE_PID) -> List[str]:
         r"""Get all the unique values for a specific node attribute.
 
         Args:
@@ -221,7 +222,7 @@ class LargeGraphIndexer:
                 Defaults to NODE_PID.
 
         Returns:
-            List[Hashable]: List of unique values for the specified feature.
+            List[str]: List of unique values for the specified feature.
         """
         try:
             if feature_name in self._mapped_node_features:
@@ -229,9 +230,9 @@ class LargeGraphIndexer:
                     "Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_node_features(feature_name))
 
-        except KeyError:
+        except KeyError as e:
             raise AttributeError(
-                f"Nodes do not have a feature called {feature_name}")
+                f"Nodes do not have a feature called {feature_name}") from e
 
     def add_node_feature(
         self,
@@ -272,7 +273,7 @@ class LargeGraphIndexer:
     def get_node_features(
         self,
         feature_name: str = NODE_PID,
-        pids: Optional[Iterable[Hashable]] = None,
+        pids: Optional[Iterable[str]] = None,
     ) -> List[Any]:
         r"""Get node feature values for a given set of unique node ids.
             Returned values are not necessarily unique.
@@ -280,7 +281,7 @@ class LargeGraphIndexer:
         Args:
             feature_name (str, optional): Name of feature to fetch. Defaults
                 to NODE_PID.
-            pids (Optional[Iterable[Hashable]], optional): Node ids to fetch
+            pids (Optional[Iterable[str]], optional): Node ids to fetch
                 for. Defaults to None, which fetches all nodes.
 
         Returns:
@@ -302,7 +303,7 @@ class LargeGraphIndexer:
     def get_node_features_iter(
         self,
         feature_name: str = NODE_PID,
-        pids: Optional[Iterable[Hashable]] = None,
+        pids: Optional[Iterable[str]] = None,
         index_only: bool = False,
     ) -> Iterator[Any]:
         """Iterator version of get_node_features. If index_only is True,
@@ -337,8 +338,8 @@ class LargeGraphIndexer:
                 else:
                     yield self.node_attr[feature_name][idx]
 
-    def get_unique_edge_features(
-            self, feature_name: str = EDGE_PID) -> List[Hashable]:
+    def get_unique_edge_features(self,
+                                 feature_name: str = EDGE_PID) -> List[str]:
         r"""Get all the unique values for a specific edge attribute.
 
         Args:
@@ -346,16 +347,16 @@ class LargeGraphIndexer:
                 Defaults to EDGE_PID.
 
         Returns:
-            List[Hashable]: List of unique values for the specified feature.
+            List[str]: List of unique values for the specified feature.
         """
         try:
             if feature_name in self._mapped_edge_features:
                 raise IndexError(
                     "Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_edge_features(feature_name))
-        except KeyError:
+        except KeyError as e:
             raise AttributeError(
-                f"Edges do not have a feature called {feature_name}")
+                f"Edges do not have a feature called {feature_name}") from e
 
     def add_edge_feature(
         self,
@@ -396,7 +397,7 @@ class LargeGraphIndexer:
     def get_edge_features(
         self,
         feature_name: str = EDGE_PID,
-        pids: Optional[Iterable[Hashable]] = None,
+        pids: Optional[Iterable[str]] = None,
     ) -> List[Any]:
         r"""Get edge feature values for a given set of unique edge ids.
             Returned values are not necessarily unique.
@@ -404,7 +405,7 @@ class LargeGraphIndexer:
         Args:
             feature_name (str, optional): Name of feature to fetch.
                 Defaults to EDGE_PID.
-            pids (Optional[Iterable[Hashable]], optional): Edge ids to fetch
+            pids (Optional[Iterable[str]], optional): Edge ids to fetch
                 for. Defaults to None, which fetches all edges.
 
         Returns:
@@ -505,13 +506,13 @@ class LargeGraphIndexer:
         for fname in os.listdir(node_attr_path):
             full_fname = f"{node_attr_path}/{fname}"
             key = fname.split(".")[0]
-            indexer.node_attr[key] = torch.load(full_fname)
+            indexer.node_attr[key] = fs.torch_load(full_fname)
 
         edge_attr_path = path + "/edge_attr"
         for fname in os.listdir(edge_attr_path):
             full_fname = f"{edge_attr_path}/{fname}"
             key = fname.split(".")[0]
-            indexer.edge_attr[key] = torch.load(full_fname)
+            indexer.edge_attr[key] = fs.torch_load(full_fname)
 
         return indexer
 

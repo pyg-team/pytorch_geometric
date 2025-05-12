@@ -12,6 +12,7 @@ from typing import (
     Union,
 )
 
+import numpy as np
 import torch
 import torch.utils._pytree as pytree
 from torch import Tensor
@@ -410,6 +411,14 @@ class Index(Tensor):
         return torch._tensor_str._add_suffixes(prefix + tensor_str, suffixes,
                                                indent, force_newline=False)
 
+    def tolist(self) -> List[Any]:
+        """"""  # noqa: D419
+        return self._data.tolist()
+
+    def numpy(self, *, force: bool = False) -> np.ndarray:
+        """"""  # noqa: D419
+        return self._data.numpy(force=force)
+
     # Helpers #################################################################
 
     def _shallow_copy(self) -> 'Index':
@@ -632,7 +641,7 @@ def _slice(
     step: int = 1,
 ) -> Index:
 
-    if ((start is None or start <= 0)
+    if ((start is None or start <= 0 or start <= -input.size(dim))
             and (end is None or end > input.size(dim)) and step == 1):
         return input._shallow_copy()  # No-op.
 

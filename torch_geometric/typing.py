@@ -9,6 +9,11 @@ import numpy as np
 import torch
 from torch import Tensor
 
+try:
+    from typing import TypeAlias  # type: ignore
+except ImportError:
+    from typing_extensions import TypeAlias
+
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
 WITH_PT22 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 2
@@ -16,8 +21,6 @@ WITH_PT23 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 3
 WITH_PT24 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 4
 WITH_PT25 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 5
 WITH_PT26 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 6
-WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
-WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
@@ -64,6 +67,16 @@ try:
         pyg_lib.sampler.neighbor_sample).parameters)
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
+    try:
+        torch.classes.pyg.CPUHashMap  # noqa: B018
+        WITH_CPU_HASH_MAP = True
+    except Exception:
+        WITH_CPU_HASH_MAP = False
+    try:
+        torch.classes.pyg.CUDAHashMap  # noqa: B018
+        WITH_CUDA_HASH_MAP = True
+    except Exception:
+        WITH_CUDA_HASH_MAP = False
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
@@ -78,6 +91,32 @@ except Exception as e:
     WITH_METIS = False
     WITH_EDGE_TIME_NEIGHBOR_SAMPLE = False
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
+    WITH_CPU_HASH_MAP = False
+    WITH_CUDA_HASH_MAP = False
+
+if WITH_CPU_HASH_MAP:
+    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
+else:
+
+    class CPUHashMap:  # type: ignore
+        def __init__(self, key: Tensor) -> None:
+            raise ImportError("'CPUHashMap' requires 'pyg-lib'")
+
+        def get(self, query: Tensor) -> Tensor:
+            raise ImportError("'CPUHashMap' requires 'pyg-lib'")
+
+
+if WITH_CUDA_HASH_MAP:
+    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
+else:
+
+    class CUDAHashMap:  # type: ignore
+        def __init__(self, key: Tensor) -> None:
+            raise ImportError("'CUDAHashMap' requires 'pyg-lib'")
+
+        def get(self, query: Tensor) -> Tensor:
+            raise ImportError("'CUDAHashMap' requires 'pyg-lib'")
+
 
 try:
     import torch_scatter  # noqa
@@ -307,6 +346,8 @@ class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string.
     """
+    edge_type: tuple[str, str, str]
+
     def __new__(cls, *args: Any) -> 'EdgeTypeStr':
         if isinstance(args[0], (list, tuple)):
             # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
@@ -314,27 +355,37 @@ class EdgeTypeStr(str):
 
         if len(args) == 1 and isinstance(args[0], str):
             arg = args[0]  # An edge type string was passed.
+            edge_type = tuple(arg.split(EDGE_TYPE_STR_SPLIT))
+            if len(edge_type) != 3:
+                raise ValueError(f"Cannot convert the edge type '{arg}' to a "
+                                 f"tuple since it holds invalid characters")
 
         elif len(args) == 2 and all(isinstance(arg, str) for arg in args):
             # A `(src, dst)` edge type was passed - add `DEFAULT_REL`:
-            arg = EDGE_TYPE_STR_SPLIT.join((args[0], DEFAULT_REL, args[1]))
+            edge_type = (args[0], DEFAULT_REL, args[1])
+            arg = EDGE_TYPE_STR_SPLIT.join(edge_type)
 
         elif len(args) == 3 and all(isinstance(arg, str) for arg in args):
             # A `(src, rel, dst)` edge type was passed:
+            edge_type = tuple(args)
             arg = EDGE_TYPE_STR_SPLIT.join(args)
 
         else:
             raise ValueError(f"Encountered invalid edge type '{args}'")
 
-        return str.__new__(cls, arg)
+        out = str.__new__(cls, arg)
+        out.edge_type = edge_type  # type: ignore
+        return out
 
     def to_tuple(self) -> EdgeType:
         r"""Returns the original edge type."""
-        out = tuple(self.split(EDGE_TYPE_STR_SPLIT))
-        if len(out) != 3:
+        if len(self.edge_type) != 3:
             raise ValueError(f"Cannot convert the edge type '{self}' to a "
                              f"tuple since it holds invalid characters")
-        return out
+        return self.edge_type
+
+    def __reduce__(self) -> tuple[Any, Any]:
+        return (self.__class__, (self.edge_type, ))
 
 
 # There exist some short-cuts to query edge-types (given that the full triplet
