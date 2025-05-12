@@ -342,6 +342,7 @@ def make_dataset(args):
     if os.path.exists(raw_triples_path):
         triples = torch.load(raw_triples_path, weights_only=False)
     else:
+        assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG"
         triples = index_kg(args, context_docs)
 
     print("Number of triples in our GraphDB =", len(triples))
