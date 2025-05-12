@@ -71,7 +71,7 @@ def parse_args():
     parser.add_argument('--NV_NIM_MODEL', type=str,
                         default=NV_NIM_MODEL_DEFAULT,
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
-    parser.add_argument('--NV_NIM_KEY', type=str, default="",
+    parser.add_argument('--NV_NIM_KEY', type=str,
                         help="NVIDIA API key")
     parser.add_argument(
         '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL, help=
@@ -144,6 +144,8 @@ def parse_args():
         help="Skip the graph RAG step. "
         "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
     args = parser.parse_args()
+
+    assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
 
     if args.skip_graph_rag:
         print("Skipping graph RAG step, setting GNN layers to 0...")
@@ -342,7 +344,6 @@ def make_dataset(args):
     if os.path.exists(raw_triples_path):
         triples = torch.load(raw_triples_path, weights_only=False)
     else:
-        assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG"
         triples = index_kg(args, context_docs)
 
     print("Number of triples in our GraphDB =", len(triples))
