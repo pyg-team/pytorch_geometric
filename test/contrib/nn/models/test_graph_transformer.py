@@ -19,6 +19,8 @@ from torch_geometric.contrib.nn.positional import (
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import GATConv, GCNConv, SAGEConv
 
+CUDA = torch.cuda.is_available()
+
 
 class AddOneLayer(nn.Module):
 
@@ -563,3 +565,79 @@ def test_transformer_init_arg_validation(
         assert layer.num_heads == num_heads
         assert pytest.approx(layer.dropout_layer.p, rel=1e-6) == dropout
         assert layer.ffn_hidden_dim == expected_ffn
+
+
+@pytest.mark.parametrize('device', ['cpu'] + (['cuda'] if CUDA else []))
+def test_parameters_and_buffers_on_same_device(
+    transformer_model,
+    full_feature_batch,
+    structural_config,
+    positional_config,
+    degree_encoder,
+    eig_encoder,
+    svd_encoder,
+    device,
+):
+    # skip gpu if it's not actually there
+    if device == 'cuda' and not CUDA:
+        pytest.skip("CUDA not available")
+
+    # build positional encoders
+    pos_encoders = [
+        degree_encoder(
+            positional_config['max_degree'],
+            positional_config['max_degree'],
+            structural_config['feat_dim'],
+        ),
+        eig_encoder(
+            positional_config['num_eigvec'],
+            structural_config['feat_dim'],
+        ),
+        svd_encoder(
+            positional_config['num_sing_vec'],
+            structural_config['feat_dim'],
+        ),
+    ]
+
+    # build bias providers
+    bias_providers = [
+        GraphAttnSpatialBias(
+            num_heads=2,
+            num_spatial=positional_config['num_spatial'],
+            use_super_node=True,
+        ),
+        GraphAttnEdgeBias(
+            num_heads=2,
+            num_edges=positional_config['num_edges'],
+            use_super_node=True,
+        ),
+    ]
+
+    # instantiate and move to target device
+    model = transformer_model(
+        hidden_dim=structural_config['feat_dim'],
+        num_class=3,
+        use_super_node=True,
+        num_encoder_layers=2,
+        num_heads=2,
+        positional_encoders=pos_encoders,
+        attn_bias_providers=bias_providers,
+    ).to(device)
+
+    # build a batch that lives on the same device
+    batch = full_feature_batch(device)
+
+    # do one forward pass (in case any buffers are lazily created)
+    _ = model(batch)
+
+    # all parameters must be on `device`
+    for name, param in model.named_parameters():
+        assert param.device.type == device, (
+            f"Parameter '{name}' is on {param.device}, expected {device}"
+        )
+
+    # all buffers (e.g. cls_token, layernorm stats, embeddings, etc.) too
+    for name, buf in model.named_buffers():
+        assert buf.device.type == device, (
+            f"Buffer '{name}' is on {buf.device}, expected {device}"
+        )

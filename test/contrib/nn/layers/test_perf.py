@@ -117,9 +117,10 @@ def test_encoder_full_feature_speed(
 
     # ─── build a batch with spatial info ───────────────────────────────────
     batch = full_feature_batch(device)
+    conv = GCNConv(HIDDEN_DIM, HIDDEN_DIM).to(device)
 
     def gcn_hook(data, x):
-        return GCNConv(HIDDEN_DIM, HIDDEN_DIM)(x, data.edge_index)
+        return conv(x, data.edge_index)
 
     model = GraphTransformer(
         hidden_dim=HIDDEN_DIM,

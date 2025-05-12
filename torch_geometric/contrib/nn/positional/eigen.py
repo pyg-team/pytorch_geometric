@@ -23,7 +23,8 @@ class EigEncoder(BasePositionalEncoder):
         if seed is not None:
             torch.manual_seed(seed)
         self.proj = nn.Linear(num_eigvec, hidden_dim)
-        self.sign = 2 * torch.randint(0, 2, (1, )) - 1
+        sign = 2 * torch.randint(0, 2, (1, )) - 1
+        self.register_buffer("sign", sign)
 
     def forward(self, data: Data) -> torch.Tensor:
         """Project eigenvector embeddings to hidden dimension.
