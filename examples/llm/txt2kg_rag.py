@@ -71,8 +71,7 @@ def parse_args():
     parser.add_argument('--NV_NIM_MODEL', type=str,
                         default=NV_NIM_MODEL_DEFAULT,
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
-    parser.add_argument('--NV_NIM_KEY', type=str,
-                        help="NVIDIA API key")
+    parser.add_argument('--NV_NIM_KEY', type=str, help="NVIDIA API key")
     parser.add_argument(
         '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL, help=
         "The URL hosting your model, in case you are not using the public NIM."
