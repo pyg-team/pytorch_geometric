@@ -462,23 +462,14 @@ def make_dataset(args):
     return data_lists
 
 
-def train(args, data_lists):
+def train(args, train_loader, val_loader):
     if args.wandb:
         wandb.init(project=args.wandb_project,
                    name=f"run_{datetime.now().strftime('%Y-%m-%d_%H:%M')}",
                    config=vars(args))
-
-    batch_size = args.batch_size
-    eval_batch_size = args.eval_batch_size
     hidden_channels = args.gnn_hidden_channels
     num_gnn_layers = args.num_gnn_layers
-    train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
-                              drop_last=True, pin_memory=True, shuffle=True)
-    val_loader = DataLoader(data_lists["validation"],
-                            batch_size=eval_batch_size, drop_last=False,
-                            pin_memory=True, shuffle=False)
-    test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
-                             drop_last=False, pin_memory=True, shuffle=False)
+
     if args.num_gnn_layers > 0:
         gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
                   out_channels=1024, num_layers=num_gnn_layers, heads=4)
@@ -500,6 +491,11 @@ def train(args, data_lists):
 
     model = GRetriever(llm=llm, gnn=gnn,
                        use_lora=args.llm_generator_mode == "lora")
+
+    if args.llm_generator_mode == "frozen" and args.num_gnn_layers == 0:
+        if not args.dont_save_model:
+            save_params_dict(model, save_path=save_name)
+        return model
 
     save_name = os.path.join(args.dataset, "model.pt")
     if os.path.exists(save_name) and not args.regenerate_dataset:
@@ -594,7 +590,7 @@ def train(args, data_lists):
         model.eval()
         if not args.dont_save_model:
             save_params_dict(model, save_path=save_name)
-    return model, test_loader
+    return model
 
 
 def test(model, test_loader, args):
@@ -647,5 +643,16 @@ if __name__ == '__main__':
             data_lists = update_data_lists(args, data_lists)
     else:
         data_lists = make_dataset(args)
-    model, test_loader = train(args, data_lists)
+
+    batch_size = args.batch_size
+    eval_batch_size = args.eval_batch_size
+    train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
+                              drop_last=True, pin_memory=True, shuffle=True)
+    val_loader = DataLoader(data_lists["validation"],
+                            batch_size=eval_batch_size, drop_last=False,
+                            pin_memory=True, shuffle=False)
+    test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
+                             drop_last=False, pin_memory=True, shuffle=False)
+
+    model = train(args, train_loader, val_loader)
     test(model, test_loader, args)
