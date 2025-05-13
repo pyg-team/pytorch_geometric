@@ -704,9 +704,11 @@ def main():
             device=device,
         )
         val_metrics = task.evaluate(val_pred, task.get_table("val"))
-        print(f"Epoch: {epoch:02d}, "
-              f"Train loss: {train_loss}, "
-              f"Val metrics: {val_metrics}")
+        print(
+            f"Epoch: {epoch:02d}, "
+            f"train_loss: {train_loss:.4f}, "
+            f"{', '.join([f'val_{k}: {v:.4f}' for k, v in val_metrics.items()])}"  # noqa: E501
+        )
 
         is_better_op = operator.gt if higher_is_better else operator.lt
         if is_better_op(val_metrics[tune_metric], best_val_metric):
@@ -722,7 +724,9 @@ def main():
         device=device,
     )
     test_metrics = task.evaluate(test_pred)
-    print(f"Test metrics: {test_metrics}")
+    print(
+        f"{', '.join([f'test_{k}: {v:.4f}' for k, v in test_metrics.items()])}"
+    )
 
 
 if __name__ == "__main__":
