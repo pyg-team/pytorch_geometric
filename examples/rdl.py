@@ -1,13 +1,12 @@
-"""This is a demo of Relational Deep Learning code for RelBench dataset.
-For more details on RelBench and Relational Deep learning, please refer to
-https://arxiv.org/abs/2407.20060v1 and
-https://raw.githubusercontent.com/mlresearch/v235/main/assets/fey24a/fey24a.pdf
-This is NOT the official code for the experiments in these papers.
-To exactly reproduce the experimental results from the linked papers, please
-see https://github.com/snap-stanford/relbench.
+"""This example demonstrates how to train a Relational Deep Learning model
+using RelBench.
+
+Please refer to:
+- https://arxiv.org/abs/2407.20060 for RelBench, and
+- https://github.com/snap-stanford/relbench for reproducing the results
+  reported on the RelBench paper.
 """
 import argparse
-import copy
 import math
 import operator
 import os
@@ -18,10 +17,10 @@ import pandas as pd
 import torch
 import torch_frame
 from relbench.base import EntityTask, Table, TaskType
-from relbench.datasets import get_dataset
+from relbench.datasets import get_dataset, get_dataset_names
 from relbench.modeling.graph import make_pkey_fkey_graph
 from relbench.modeling.utils import get_stype_proposal
-from relbench.tasks import get_task
+from relbench.tasks import get_task, get_task_names
 from sentence_transformers import SentenceTransformer
 from torch import Tensor
 from torch_frame.config.text_embedder import TextEmbedderConfig
@@ -42,41 +41,6 @@ from torch_geometric.seed import seed_everything
 from torch_geometric.typing import EdgeType, NodeType
 
 seed_everything(42)
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-root_dir = "./data"
-print("Using device: ", device)
-
-NODE_LEVEL_TASKS = [
-    "driver-position", "driver-dnf", "driver-top3", "user-churn", "item-churn",
-    "user-ltv", "item-ltv", "user-churn", "item-sales", "user-engagement",
-    "user-badge", "post-votes", "study-outcome", "study-adverse",
-    "site-success", "user-repeat", "user-ignore", "user-attendance",
-    "user-visits", "user-clicks", "ad-ctr"
-]
-
-args = argparse.ArgumentParser(
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-# Dataset and task arguments
-args.add_argument(
-    "--dataset", type=str, default="rel-f1", choices=[
-        "rel-stack", "rel-amazon", "rel-trial", "rel-f1", "rel-hm",
-        "rel-event", "rel-avito"
-    ])
-args.add_argument("--task", type=str, required=True, choices=NODE_LEVEL_TASKS)
-# Data loader arguments
-args.add_argument("--batch_size", type=int, default=512)
-args.add_argument("--temporal_strategy", type=str, default="uniform",
-                  choices=["uniform", "last"])
-# Model parameters
-args.add_argument("--num_neighbors", type=list, default=[128, 128])
-args.add_argument("--channels", type=int, default=128)
-args.add_argument("--aggr", type=str, default="sum")
-args.add_argument("--norm", type=str, default="batch_norm")
-# Training parameters
-args.add_argument("--epochs", type=int, default=10)
-args.add_argument("--lr", type=float, default=0.005)
-args = args.parse_args()
 
 
 class GloveTextEmbedding:
@@ -100,14 +64,12 @@ class HeteroEncoder(torch.nn.Module):
     (categorical, numerical, etc).
 
     Args:
-        channels (int): The output channels for each node type.
-        num_layers (int): The number of layers for the ResNet.
-        col_names_dict (Dict[NodeType, Dict[torch_frame.stype, List[str]]]): A
-            dictionary mapping from node type to column names dictionary
-            compatible with PyTorch Frame.
-        stats_dict (Dict[NodeType, Dict[str, Dict[StatType, Any]]]): A
-            dictionary containing statistics for each column in each node type.
-            Used for feature normalization and encoding.
+        channels: The output channels for each node type.
+        num_layers: The number of layers for the ResNet.
+        col_names_dict: A dictionary mapping from node type to column names
+            dictionary compatible with PyTorch Frame.
+        stats_dict: A dictionary containing statistics for each column in each
+            node type. Used for feature normalization and encoding.
     """
     def __init__(
         self,
@@ -155,14 +117,12 @@ class HeteroEncoder(torch.nn.Module):
         """Forward pass of the heterogeneous encoder.
 
         Args:
-            tf_dict (Dict[NodeType, torch_frame.TensorFrame]): A dictionary
-                mapping node types to their corresponding TensorFrame objects
-                containing the node features.
+            tf_dict: A dictionary mapping node types to their corresponding
+                TensorFrame objects containing the node features.
 
         Returns:
-            Dict[NodeType, Tensor]: Dictionary mapping node types to their
-                encoded representations. Each tensor has shape
-                [num_nodes, channels].
+            Dictionary mapping node types to their encoded representations.
+            Each tensor has shape ``[num_nodes, channels]``.
         """
         return {
             node_type: self.encoders[node_type](tf)
@@ -180,10 +140,8 @@ class HeteroTemporalEncoder(torch.nn.Module):
     each node type.
 
     Args:
-        node_types (List[NodeType]): List of node types in the heterogeneous
-            graph
-        channels (int): Number of channels/dimensions for the encoded
-            embeddings
+        node_types: List of node types in the heterogeneous graph
+        channels: Number of channels/dimensions for the encoded embeddings
 
     Example:
         >>> encoder = HeteroTemporalEncoder(['user', 'item'], channels=64)
@@ -225,16 +183,12 @@ class HeteroTemporalEncoder(torch.nn.Module):
         """Forward pass of the temporal encoder.
 
         Args:
-            seed_time (Tensor): Reference timestamps for computing relative
-                times
-            time_dict (Dict[NodeType, Tensor]): Dictionary mapping node types
-                to their timestamps
-            batch_dict (Dict[NodeType, Tensor]): Dictionary mapping node types
-                to batch assignments
+            seed_time: Reference timestamps for computing relative times
+            time_dict: Dictionary mapping node types to their timestamps
+            batch_dict: Dictionary mapping node types to batch assignments
 
         Returns:
-            Dict[NodeType, Tensor]: Dictionary mapping node types to their
-                temporal embeddings
+            Dictionary mapping node types to their temporal embeddings
         """
         out_dict: Dict[NodeType, Tensor] = {}
 
@@ -258,11 +212,11 @@ class HeteroGraphSAGE(torch.nn.Module):
     layer normalization and ReLU activation.
 
     Args:
-        node_types (List[NodeType]): List of node types in the graph
-        edge_types (List[EdgeType]): List of edge types in the graph
-        channels (int): Number of channels/features
-        aggr (str, optional): Node aggregation scheme.
-        num_layers (int, optional): Number of graph convolution layers.
+        node_types: List of node types in the graph
+        edge_types: List of edge types in the graph
+        channels: Number of channels/features
+        aggr: Node aggregation scheme.
+        num_layers: Number of graph convolution layers.
 
     Example:
         >>> model = HeteroGraphSAGE(
@@ -316,11 +270,11 @@ class HeteroGraphSAGE(torch.nn.Module):
         """Forward pass of the heterogeneous GraphSAGE model.
 
         Args:
-            x_dict (Dict[NodeType, Tensor]): Node feature dictionary
-            edge_index_dict (Dict[NodeType, Tensor]): Edge index dictionary
+            x_dict: Node feature dictionary
+            edge_index_dict: Edge index dictionary
 
         Returns:
-            Dict[NodeType, Tensor]: Updated node features after message passing
+            Updated node features after message passing
         """
         for _, (conv, norm_dict) in enumerate(zip(self.convs, self.norms)):
             x_dict = conv(x_dict, edge_index_dict)
@@ -340,19 +294,17 @@ class Model(torch.nn.Module):
     4. An MLP head for final predictions
 
     Args:
-        node_types (List[NodeType]): List of node types in the graph
-        edge_types (List[EdgeType]): List of edge types in the graph
-        col_names_dict (Dict[NodeType, Dict[torch_frame.stype, List[str]]]):
-            Dictionary mapping node types to their column names and types
-        temporal_node_types (List[NodeType]):
-            List of node types with temporal features
-        col_stats_dict (Dict[NodeType, Dict[str, Dict[StatType, Any]]]):
-            Statistics of node features
-        num_layers (int): Number of GNN layers
-        channels (int): Hidden dimension size
-        out_channels (int): Output dimension size
-        aggr (str): Aggregation method for GNN
-        norm (str): Normalization method for MLP
+        node_types: List of node types in the graph
+        edge_types: List of edge types in the graph
+        col_names_dict: Dictionary mapping node types to their column names and
+            types
+        temporal_node_types: List of node types with temporal features
+        col_stats_dict: Statistics of node features
+        num_layers: Number of GNN layers
+        channels: Hidden dimension size
+        out_channels: Output dimension size
+        aggr: Aggregation method for GNN
+        norm: Normalization method for MLP
     """
     def __init__(
         self,
@@ -416,8 +368,8 @@ class Model(torch.nn.Module):
             6. Apply final MLP head to target node embeddings
 
         Args:
-            batch (HeteroData): Batch of heterogeneous graph data
-            entity_table (NodeType): The target node type for prediction
+            batch: Batch of heterogeneous graph data
+            entity_table: The target node type for prediction
 
         Returns:
             Tensor: Predictions for nodes in the entity table
@@ -441,11 +393,11 @@ class Model(torch.nn.Module):
 class AttachTargetTransform:
     r"""Attach the target label to the heterogeneous mini-batch.
 
-    The batch consists of disjoins subgraphs loaded via temporal sampling.
-    The same input node can occur multiple times with different timestamps,
-    and thus different subgraphs and labels. Hence labels cannot be stored in
-    the graph object directly, and must be attached to the batch after the
-    batch is created.
+    The batch consists of disjoins subgraphs loaded via temporal sampling. The
+    same input node can occur multiple times with different timestamps, and
+    thus different subgraphs and labels. Hence labels cannot be stored in the
+    graph object directly, and must be attached to the batch after the batch is
+    created.
     """
     def __init__(self, entity: str, target: Tensor) -> None:
         self.entity = entity
@@ -472,7 +424,6 @@ class TrainingTableInput(NamedTuple):
             during training. Needed for temporal sampling where nodes can
             appear multiple times with different labels.
     """
-
     nodes: Tuple[NodeType, Tensor]
     time: Optional[Tensor]
     target: Optional[Tensor]
@@ -484,14 +435,14 @@ def get_task_type_params(
     r"""Get task-specific optimization parameters based on task type.
 
     Args:
-        task (EntityTask): Task specification containing task type.
+        task: Task specification containing task type.
 
     Returns:
-        Tuple[int, torch.nn.Module, str, bool]: A tuple containing:
-            - out_channels: Number of output channels
-            - loss_fn: Loss function
-            - tune_metric: Metric to optimize
-            - higher_is_better: Whether higher metric values are better
+        Tuple containing:
+        - out_channels: Number of output channels
+        - loss_fn: Loss function
+        - tune_metric: Metric to optimize
+        - higher_is_better: Whether higher metric values are better
     """
     if task.task_type == TaskType.REGRESSION:
         out_channels = 1
@@ -513,10 +464,10 @@ def to_unix_time(ser: pd.Series) -> np.ndarray:
     r"""Convert a pandas Timestamp series to UNIX timestamp in seconds.
 
     Args:
-        ser (pd.Series): Input pandas Series containing datetime values.
+        ser: Input pandas Series containing datetime values.
 
     Returns:
-        np.ndarray: Array of UNIX timestamps in seconds.
+        Array of UNIX timestamps in seconds.
     """
     assert ser.dtype in [np.dtype("datetime64[s]"), np.dtype("datetime64[ns]")]
     unix_time = ser.astype("int64").values
@@ -539,14 +490,14 @@ def get_train_table_input(
     4. Optional transform to attach labels during batch loading
 
     Args:
-        split_table (Table): Table containing node IDs, optional timestamps,
-            and optional target values to predict.
-        task (EntityTask): Task specification containing entity table name,
-            entity column name, target column name, etc.
+        split_table: Table containing node IDs, optional timestamps, and
+            optional target values to predict.
+        task: Task specification containing entity table name, entity column
+            name, target column name, etc.
 
     Returns:
-        TrainingTableInput: Container with processed node indices, timestamps,
-            target values and transform needed for training/inference.
+        Container with processed node indices, timestamps, target values and
+        transform needed for training/inference.
     """
     nodes = torch.from_numpy(
         split_table.df[task.entity_col].astype(int).values)
@@ -577,6 +528,7 @@ def train(
     task: EntityTask,
     optimizer: torch.optim.Optimizer,
     loss_fn: torch.nn.Module,
+    device: torch.device,
 ) -> float:
     model.train()
 
@@ -606,6 +558,7 @@ def test(
     test_loader: NeighborLoader,
     model: Model,
     task: EntityTask,
+    device: torch.device,
 ) -> np.ndarray:
     model.eval()
 
@@ -618,71 +571,77 @@ def test(
     return torch.cat(pred_list, dim=0).numpy()
 
 
-if __name__ == "__main__":
-    # Load the dataset
-    print("Loading dataset...")
+def main():
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--dataset", type=str, default="rel-f1",
+                        choices=get_dataset_names())
+    parser.add_argument("--task", type=str, required=True)
+    parser.add_argument("--batch_size", type=int, default=512)
+    parser.add_argument("--temporal_strategy", type=str, default="uniform",
+                        choices=["uniform", "last"])
+    parser.add_argument("--num_neighbors", type=list, default=[128, 128])
+    parser.add_argument("--channels", type=int, default=128)
+    parser.add_argument("--aggr", type=str, default="sum")
+    parser.add_argument("--norm", type=str, default="batch_norm")
+    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--lr", type=float, default=0.005)
+    parser.add_argument("--num_workers", type=int, default=4)
+    args = parser.parse_args()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("Using device:", device)
+
+    print("Loading dataset and task...")
+    assert args.task in get_task_names(args.dataset), (
+        f"Invalid task '{args.task}' for dataset '{args.dataset}'. "
+        f"Available tasks: {get_task_names(args.dataset)}")
     dataset = get_dataset(name=args.dataset, download=True)
-
-    # Load the task
-    print("Loading task...")
-    task = get_task(dataset_name=args.dataset, task_name=args.task,
-                    download=True)
+    task = get_task(
+        dataset_name=args.dataset,
+        task_name=args.task,
+        download=True,
+    )
     print(f"Task type: {task.task_type}")
-    print(f"Target column: {task.target_col}")
-    print(f"Entity table: {task.entity_table}")
+    print(f"Target column: '{task.target_col}'")
+    print(f"Entity table: '{task.entity_table}'")
 
-    # get the column to stype dictionary
     print("Getting column to stype dictionary...")
     db = dataset.get_db()
     col_to_stype_dict = get_stype_proposal(db)
     print("Column to stype dictionary: ", col_to_stype_dict)
 
-    # define the text embedder
     print("Defining text embedder...")
     text_embedder_cfg = TextEmbedderConfig(
-        text_embedder=GloveTextEmbedding(device=device), batch_size=256)
+        text_embedder=GloveTextEmbedding(device=device),
+        batch_size=256,
+    )
 
     # Transform the dataset into a HeteroData object with torch_frame features
-    # To better understand this step, please refer to the RelBench
-    # implementation.
+    # See also:
+    # https://github.com/snap-stanford/relbench/blob/v1.1.0/relbench/modeling/graph.py#L20-L111  # noqa: E501
     print("Transforming dataset into HeteroData object...")
     data, col_stats_dict = make_pkey_fkey_graph(
         db,
-        col_to_stype_dict=col_to_stype_dict,  # speficied column types
+        col_to_stype_dict=col_to_stype_dict,  # specified column types
         text_embedder_cfg=text_embedder_cfg,  # our chosen text encoder
-        cache_dir=os.path.join(
-            root_dir, f"{args.dataset}_{args.task}_materialized_cache"
-        ),  # store materialized graph for convenience
+        cache_dir=os.path.join(  # store materialized graph for convenience
+            "./data",
+            f"{args.dataset}_{args.task}_materialized_cache",
+        ),
     )
 
     print("Preparing data loaders...")
     loader_dict = {}
-
-    # load the training, validation, and test tables
-    train_table = task.get_table("train")
-    val_table = task.get_table("val")
-    test_table = task.get_table("test")
-    print(f"Train table columns: {train_table.df.columns}")
-    print(f"Val table columns: {val_table.df.columns}")
-    print(f"Test table columns: {test_table.df.columns}")
-
-    for split, table in [
-        ("train", train_table),
-        ("val", val_table),
-        ("test", test_table),
-    ]:
-        # Get the training table input for the current split
-        table_input = get_train_table_input(
-            split_table=table,
-            task=task,
-        )
-
-        # Create a dictionary mapping edge types to number of neighbors
+    for split in ["train", "val", "test"]:
+        table = task.get_table(split)
+        print(f"Creating '{split}' dataloader with columns: "
+              f"{list(table.df.columns)}")
+        table_input = get_train_table_input(split_table=table, task=task)
         num_neighbors_dict = {
-            edge_type: args.num_neighbors  # [num_neighbors for each direction]
+            edge_type: args.num_neighbors
             for edge_type in data.edge_types
         }
-
         loader_dict[split] = NeighborLoader(
             data=data,
             num_neighbors=num_neighbors_dict,
@@ -693,11 +652,10 @@ if __name__ == "__main__":
             batch_size=args.batch_size,
             temporal_strategy=args.temporal_strategy,
             shuffle=split == "train",
-            num_workers=1,
-            persistent_workers=True,
+            num_workers=args.num_workers,
+            persistent_workers=args.num_workers > 0,
         )
 
-    # Get task-specific parameters
     print("Getting task-specific parameters...")
     out_channels, loss_fn, tune_metric, higher_is_better = \
         get_task_type_params(task)
@@ -706,10 +664,7 @@ if __name__ == "__main__":
     print("tune_metric: ", tune_metric)
     print("higher_is_better: ", higher_is_better)
 
-    # Define the model
     print("Initializing the model...")
-    node_types = data.node_types  # Include all node types
-    edge_types = data.edge_types  # Include all edge types
     col_names_dict = {
         node_type: data[node_type].tf.col_names_dict
         for node_type in data.node_types
@@ -718,8 +673,8 @@ if __name__ == "__main__":
         node_type for node_type in data.node_types if "time" in data[node_type]
     ]
     model = Model(
-        node_types=node_types,
-        edge_types=edge_types,
+        node_types=data.node_types,  # Include all node types
+        edge_types=data.edge_types,  # Include all edge types
         col_names_dict=col_names_dict,
         col_stats_dict=col_stats_dict,
         temporal_node_types=temporal_node_types,
@@ -729,12 +684,9 @@ if __name__ == "__main__":
         aggr=args.aggr,
         norm=args.norm,
     ).to(device)
-
-    # Define the optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     print("Training the model...")
-    state_dict = None
     best_val_metric = -math.inf if higher_is_better else math.inf
     for epoch in range(1, args.epochs + 1):
         train_loss = train(
@@ -743,13 +695,15 @@ if __name__ == "__main__":
             task=task,
             optimizer=optimizer,
             loss_fn=loss_fn,
+            device=device,
         )
         val_pred = test(
             test_loader=loader_dict["val"],
             model=model,
             task=task,
+            device=device,
         )
-        val_metrics = task.evaluate(val_pred, val_table)
+        val_metrics = task.evaluate(val_pred, task.get_table("val"))
         print(f"Epoch: {epoch:02d}, "
               f"Train loss: {train_loss}, "
               f"Val metrics: {val_metrics}")
@@ -757,17 +711,19 @@ if __name__ == "__main__":
         is_better_op = operator.gt if higher_is_better else operator.lt
         if is_better_op(val_metrics[tune_metric], best_val_metric):
             best_val_metric = val_metrics[tune_metric]
-            state_dict = copy.deepcopy(model.state_dict())
+            torch.save(model.state_dict(), "best_model.pt")
 
-    # Load the best model state dictionary
-    print("Loading the best model state dictionary...")
-    model.load_state_dict(state_dict)
-
-    # Test the model on the test set
+    print("Testing the best model...")
+    model.load_state_dict(torch.load("best_model.pt"))
     test_pred = test(
         test_loader=loader_dict["test"],
         model=model,
         task=task,
+        device=device,
     )
     test_metrics = task.evaluate(test_pred)
     print(f"Test metrics: {test_metrics}")
+
+
+if __name__ == "__main__":
+    main()
