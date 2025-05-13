@@ -1,6 +1,11 @@
-import torch
-import numpy as np
+import copy
 import random
+from typing import Optional
+
+import numpy as np
+import torch
+
+from torch_geometric.data import HeteroData
 from torch_geometric.explain import Explainer, GNNExplainer, HeteroExplanation
 from torch_geometric.explain.config import (
     ExplanationType,
@@ -10,11 +15,9 @@ from torch_geometric.explain.config import (
     ModelReturnType,
     ModelTaskLevel,
 )
-from torch_geometric.data import HeteroData
+from torch_geometric.nn import SAGEConv, to_hetero
 from torch_geometric.testing import get_random_edge_index
-from typing import Optional
-from torch_geometric.nn import to_hetero, SAGEConv
-import copy
+
 
 # Set random seeds for reproducibility
 def set_seed(seed: int = 42):
@@ -35,6 +38,7 @@ class GraphSAGE(torch.nn.Module):
     def forward(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
         return self.conv2(x, edge_index)
+
 
 class HeteroSAGE(torch.nn.Module):
     def __init__(self, metadata, model_config: Optional[ModelConfig] = None):
@@ -66,7 +70,7 @@ class HeteroSAGE(torch.nn.Module):
                     x = x.log_softmax(dim=-1)
 
         return x
-    
+
 
 def create_hetero_data():
     # Create a simple heterogeneous graph
@@ -84,10 +88,14 @@ def create_hetero_data():
 
     return data
 
-def create_hetero_data_with_one_node_type(hetero_data: HeteroData, node_type: str = 'paper'):
+
+def create_hetero_data_with_one_node_type(hetero_data: HeteroData,
+                                          node_type: str = 'paper'):
     hetero_data_with_one_node_type = copy.deepcopy(hetero_data)
     # Keep only the specified node type and remove others
-    node_types_to_remove = [nt for nt in hetero_data.node_types if nt != node_type]
+    node_types_to_remove = [
+        nt for nt in hetero_data.node_types if nt != node_type
+    ]
     for nt in node_types_to_remove:
         del hetero_data_with_one_node_type[nt]
 
@@ -97,10 +105,11 @@ def create_hetero_data_with_one_node_type(hetero_data: HeteroData, node_type: st
         src, _, dst = edge_type
         if src != node_type or dst != node_type:
             edge_types_to_remove.append(edge_type)
-    
+
     for et in edge_types_to_remove:
         del hetero_data_with_one_node_type[et]
     return hetero_data_with_one_node_type
+
 
 def create_hetero_explanation(
     hetero_data: HeteroData,
@@ -154,6 +163,7 @@ def create_hetero_explanation(
     assert isinstance(explanation, HeteroExplanation)
     return explanation
 
+
 def main():
     # Set seed for reproducibility
     set_seed(42)
@@ -175,7 +185,8 @@ def main():
     # Create heterogeneous data with more than one node and edge type
     hetero_data = create_hetero_data()
     # Create heterogeneous data with one node and edge type
-    hetero_data_with_one_node_type = create_hetero_data_with_one_node_type(hetero_data, node_type='paper')
+    hetero_data_with_one_node_type = create_hetero_data_with_one_node_type(
+        hetero_data, node_type='paper')
 
     hetero_explanation_with_one_node_type = create_hetero_explanation(
         hetero_data=hetero_data_with_one_node_type,
@@ -199,45 +210,74 @@ def main():
     # Log comparison of both explanations
     print("\nComparison of Heterogeneous Explanations:")
     print("=========================================")
-    
+
     print("\n1. Full Heterogeneous Graph Explanation:")
     print("----------------------------------------")
     print("Node Masks:")
     for node_type, mask in hetero_explanation.node_mask_dict.items():
-        print(f"  {node_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}")
-    
+        print(
+            f"  {node_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}"
+        )
+
     print("\nEdge Masks:")
     for edge_type, mask in hetero_explanation.edge_mask_dict.items():
-        print(f"  {edge_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}")
+        print(
+            f"  {edge_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}"
+        )
 
     print("\n2. Single Node Type Graph Explanation (Paper only):")
     print("------------------------------------------------")
     print("Node Masks:")
-    for node_type, mask in hetero_explanation_with_one_node_type.node_mask_dict.items():
-        print(f"  {node_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}")
-    
+    for node_type, mask in hetero_explanation_with_one_node_type.node_mask_dict.items(
+    ):
+        print(
+            f"  {node_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}"
+        )
+
     print("\nEdge Masks:")
-    for edge_type, mask in hetero_explanation_with_one_node_type.edge_mask_dict.items():
-        print(f"  {edge_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}")
+    for edge_type, mask in hetero_explanation_with_one_node_type.edge_mask_dict.items(
+    ):
+        print(
+            f"  {edge_type}: shape={mask.shape}, mean={mask.mean():.4f}, std={mask.std():.4f}"
+        )
 
     # Compare paper-related masks between both explanations
     print("\n3. Comparison of Paper-related Masks:")
     print("-------------------------------------")
     if 'paper' in hetero_explanation.node_mask_dict and 'paper' in hetero_explanation_with_one_node_type.node_mask_dict:
         paper_mask_full = hetero_explanation.node_mask_dict['paper']
-        paper_mask_single = hetero_explanation_with_one_node_type.node_mask_dict['paper']
+        paper_mask_single = hetero_explanation_with_one_node_type.node_mask_dict[
+            'paper']
         print(f"Paper Node Masks:")
-        print(f"  Full graph: mean={paper_mask_full.mean():.4f}, std={paper_mask_full.std():.4f}")
-        print(f"  Single type: mean={paper_mask_single.mean():.4f}, std={paper_mask_single.std():.4f}")
-        print(f"  Mean difference: {abs(paper_mask_full.mean() - paper_mask_single.mean()):.4f}")
+        print(
+            f"  Full graph: mean={paper_mask_full.mean():.4f}, std={paper_mask_full.std():.4f}"
+        )
+        print(
+            f"  Single type: mean={paper_mask_single.mean():.4f}, std={paper_mask_single.std():.4f}"
+        )
+        print(
+            f"  Mean difference: {abs(paper_mask_full.mean() - paper_mask_single.mean()):.4f}"
+        )
 
-    if ('paper', 'to', 'paper') in hetero_explanation.edge_mask_dict and ('paper', 'to', 'paper') in hetero_explanation_with_one_node_type.edge_mask_dict:
-        paper_edge_mask_full = hetero_explanation.edge_mask_dict[('paper', 'to', 'paper')]
-        paper_edge_mask_single = hetero_explanation_with_one_node_type.edge_mask_dict[('paper', 'to', 'paper')]
+    if ('paper', 'to', 'paper') in hetero_explanation.edge_mask_dict and (
+            'paper', 'to',
+            'paper') in hetero_explanation_with_one_node_type.edge_mask_dict:
+        paper_edge_mask_full = hetero_explanation.edge_mask_dict[('paper',
+                                                                  'to',
+                                                                  'paper')]
+        paper_edge_mask_single = hetero_explanation_with_one_node_type.edge_mask_dict[
+            ('paper', 'to', 'paper')]
         print(f"\nPaper-Paper Edge Masks:")
-        print(f"  Full graph: mean={paper_edge_mask_full.mean():.4f}, std={paper_edge_mask_full.std():.4f}")
-        print(f"  Single type: mean={paper_edge_mask_single.mean():.4f}, std={paper_edge_mask_single.std():.4f}")
-        print(f"  Mean difference: {abs(paper_edge_mask_full.mean() - paper_edge_mask_single.mean()):.4f}")
+        print(
+            f"  Full graph: mean={paper_edge_mask_full.mean():.4f}, std={paper_edge_mask_full.std():.4f}"
+        )
+        print(
+            f"  Single type: mean={paper_edge_mask_single.mean():.4f}, std={paper_edge_mask_single.std():.4f}"
+        )
+        print(
+            f"  Mean difference: {abs(paper_edge_mask_full.mean() - paper_edge_mask_single.mean()):.4f}"
+        )
+
 
 if __name__ == "__main__":
-    main() 
+    main()
