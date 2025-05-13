@@ -405,8 +405,7 @@ def make_dataset(args):
         topk=5,  # nodes
         topk_e=5,  # edges
         cost_e=.5,  # edge cost
-        num_clusters=10, # num clusters
-        with_text_graph= not args.omit_text_graph) # option to omit text graph
+        num_clusters=10)  # num clusters
 
     # number of neighbors for each seed node selected by KNN
     fanout = 100
@@ -534,7 +533,7 @@ def train(args, data_lists):
                             context="\n".join(batch.text_context[i])))
                 batch.question = new_qs
 
-                if args.skip_graph_rag:
+                if args.skip_graph_rag or args.omit_text_graph:
                     batch.desc = None
 
                 optimizer.zero_grad()

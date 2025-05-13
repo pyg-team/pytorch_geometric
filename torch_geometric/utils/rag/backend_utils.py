@@ -368,7 +368,7 @@ def create_remote_backend_from_graph_data(
 def make_pcst_filter(triples: List[Tuple[str, str,
                                          str]], model: SentenceTransformer,
                      topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
-                     num_clusters: int = 1, with_text_graph: bool = True) -> None:
+                     num_clusters: int = 1) -> None:
     """Creates a PCST (Prize Collecting Tree) filter.
 
     :param triples: List of triples (head, relation, tail) representing knowledge graph data
@@ -425,7 +425,7 @@ def make_pcst_filter(triples: List[Tuple[str, str,
                                              topk=topk, topk_e=topk_e,
                                              cost_e=cost_e,
                                              num_clusters=num_clusters)
-        out_graph["desc"] = desc if with_text_graph else ""
+        out_graph["desc"] = desc
         where_trips_start = desc.find("src,edge_attr,dst")
         parsed_trips = []
         for trip in desc[where_trips_start + 18:-1].split("\n"):
