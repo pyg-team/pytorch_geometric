@@ -40,8 +40,6 @@ from torch_geometric.nn import (
 from torch_geometric.seed import seed_everything
 from torch_geometric.typing import EdgeType, NodeType
 
-seed_everything(42)
-
 
 class GloveTextEmbedding:
     """GloveTextEmbedding based on SentenceTransformer."""
@@ -572,6 +570,8 @@ def test(
 
 
 def main():
+    seed_everything(42)
+
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--dataset", type=str, default="rel-f1",
