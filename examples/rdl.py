@@ -586,7 +586,6 @@ def main():
     parser.add_argument("--norm", type=str, default="batch_norm")
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--lr", type=float, default=0.005)
-    parser.add_argument("--num_workers", type=int, default=4)
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -652,8 +651,8 @@ def main():
             batch_size=args.batch_size,
             temporal_strategy=args.temporal_strategy,
             shuffle=split == "train",
-            num_workers=args.num_workers,
-            persistent_workers=args.num_workers > 0,
+            num_workers=4,
+            persistent_workers=True,
         )
 
     print("Getting task-specific parameters...")
