@@ -528,10 +528,8 @@ def train(args, train_loader, val_loader):
                             context="\n".join(batch.text_context[i])))
                 batch.question = new_qs
 
-
                 if args.skip_graph_rag or args.omit_text_graph:
                     batch.desc = ""
-
 
                 optimizer.zero_grad()
                 try:
