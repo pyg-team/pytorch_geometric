@@ -5,7 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn import GraphConv
 from torch_geometric.nn.pool.connect import FilterEdges
-from torch_geometric.nn.pool.select import SelectTopK
+from torch_geometric.nn.pool.select import SelectSAG
 from torch_geometric.typing import OptTensor
 
 
@@ -87,7 +87,7 @@ class SAGPooling(torch.nn.Module):
         self.multiplier = multiplier
 
         self.gnn = GNN(in_channels, 1, **kwargs)
-        self.select = SelectTopK(1, ratio, min_score, nonlinearity)
+        self.select = SelectSAG(ratio, min_score, nonlinearity)
         self.connect = FilterEdges()
 
         self.reset_parameters()
@@ -95,7 +95,6 @@ class SAGPooling(torch.nn.Module):
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         self.gnn.reset_parameters()
-        self.select.reset_parameters()
 
     def forward(
         self,
