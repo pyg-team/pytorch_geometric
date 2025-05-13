@@ -325,6 +325,7 @@ class LLM(torch.nn.Module):
         batch_inputs_embeds = []
         batch_attention_mask = []
         for i in range(len(question)):
+            ctx = f"{context[i]} - " if context else ""
             messages = [
                 {
                     "role": "system",
@@ -332,7 +333,7 @@ class LLM(torch.nn.Module):
                 },
                 {
                     "role": "user",
-                    "content": f"{context[i]} - {question[i]}"
+                    "content": f"{ctx} - {question[i]}"
                 },
             ]
             text = self.tokenizer.apply_chat_template(
