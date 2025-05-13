@@ -142,6 +142,9 @@ def parse_args():
         '--skip_graph_rag', action="store_true",
         help="Skip the graph RAG step. "
         "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
+    parser.add_argument(
+        '--omit_text_graph', action="store_true",
+        help="Omit the text graph from the LLM Input.")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
@@ -402,7 +405,8 @@ def make_dataset(args):
         topk=5,  # nodes
         topk_e=5,  # edges
         cost_e=.5,  # edge cost
-        num_clusters=10)  # num clusters
+        num_clusters=10, # num clusters
+        with_text_graph= not args.omit_text_graph) # option to omit text graph
 
     # number of neighbors for each seed node selected by KNN
     fanout = 100
