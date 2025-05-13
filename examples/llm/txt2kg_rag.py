@@ -531,7 +531,7 @@ def train(args, data_lists):
                 batch.question = new_qs
 
                 if args.skip_graph_rag:
-                    batch.desc = None
+                    batch.desc = ""
 
                 optimizer.zero_grad()
                 try:
