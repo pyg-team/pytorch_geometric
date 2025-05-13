@@ -2,9 +2,9 @@
 using RelBench.
 
 Please refer to:
-- https://arxiv.org/abs/2407.20060 for RelBench, and
-- https://github.com/snap-stanford/relbench for reproducing the results
-  reported on the RelBench paper.
+1. https://arxiv.org/abs/2407.20060 for RelBench, and
+2. https://github.com/snap-stanford/relbench for reproducing the results
+   reported on the RelBench paper.
 """
 import argparse
 import math
