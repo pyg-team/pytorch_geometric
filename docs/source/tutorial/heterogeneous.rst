@@ -108,7 +108,7 @@ Utility Functions
 
 The :class:`torch_geometric.data.HeteroData` class provides a number of useful utility functions to modify and analyze the given graph.
 
-For example, single node or edge stores can be indiviually indexed:
+For example, single node or edge stores can be individually indexed:
 
 .. code-block:: python
 

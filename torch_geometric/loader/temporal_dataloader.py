@@ -6,7 +6,7 @@ from torch_geometric.data import TemporalData
 
 
 class TemporalDataLoader(torch.utils.data.DataLoader):
-    r"""A data loader which merges succesive events of a
+    r"""A data loader which merges successive events of a
     :class:`torch_geometric.data.TemporalData` to a mini-batch.
 
     Args:
@@ -15,7 +15,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
-            destination nodes to the number of postive destination nodes.
+            destination nodes to the number of positive destination nodes.
             (default: :obj:`0.0`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.

@@ -32,7 +32,7 @@ from torch_geometric.typing import EdgeType, NodeType
 
 RemoteGraphBackend = Tuple[FeatureStore, GraphStore]
 
-# TODO: Make everything compatible with Hetero graphs aswell
+# TODO: Make everything compatible with Hetero graphs as well
 
 
 # Adapted from LocalGraphStore
@@ -161,7 +161,7 @@ def create_remote_backend_from_triplets(
         pre_transform (Callable[[TripletLike], TripletLike] | None, optional):
             optional preprocessing function for triplets. Defaults to None.
         path (str, optional): path to save resulting stores. Defaults to ''.
-        n_parts (int, optional): Number of partitons to store in.
+        n_parts (int, optional): Number of partitions to store in.
             Defaults to 1.
         node_method_kwargs (Optional[Dict[str, Any]], optional): args to pass
             into node encoding method. Defaults to None.

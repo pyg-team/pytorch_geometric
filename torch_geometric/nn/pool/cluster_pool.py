@@ -55,7 +55,7 @@ class ClusterPooling(torch.nn.Module):
         self.in_channels = in_channels
         self.edge_score_method = edge_score_method
         self.dropout = dropout
-        self.threshhold = threshold
+        self.threshold = threshold
 
         self.lin = torch.nn.Linear(2 * in_channels, 1)
 
@@ -116,7 +116,7 @@ class ClusterPooling(torch.nn.Module):
 
         from scipy.sparse.csgraph import connected_components
 
-        edge_contract = edge_index[:, edge_score > self.threshhold]
+        edge_contract = edge_index[:, edge_score > self.threshold]
 
         adj = to_scipy_sparse_matrix(edge_contract, num_nodes=x.size(0))
         _, cluster_np = connected_components(adj, directed=True,

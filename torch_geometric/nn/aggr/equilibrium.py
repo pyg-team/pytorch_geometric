@@ -52,7 +52,7 @@ class MomentumOptimizer(torch.nn.Module):
     layer. It is based on an unrolled Nesterov momentum algorithm.
 
     Args:
-        learning_rate (flaot): learning rate for optimizer.
+        learning_rate (float): learning rate for optimizer.
         momentum (float): momentum for optimizer.
         learnable (bool): If :obj:`True` then the :obj:`learning_rate` and
             :obj:`momentum` will be learnable parameters. If False they

@@ -277,7 +277,7 @@ class TAGDataset(InMemoryDataset):
             for k, tensor in all_encoded_token.items():
                 torch.save(tensor, os.path.join(path, f'{k}.pt'))
                 print('Token saved:', os.path.join(path, f'{k}.pt'))
-        os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # supressing warning
+        os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # suppressing warning
         return all_encoded_token
 
     def __repr__(self) -> str:

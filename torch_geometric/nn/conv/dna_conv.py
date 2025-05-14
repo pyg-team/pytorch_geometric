@@ -163,7 +163,7 @@ class MultiHead(Attention):
     def __repr__(self) -> str:  # pragma: no cover
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, heads={self.heads}, '
-                f'groups={self.groups}, dropout={self.droput}, '
+                f'groups={self.groups}, dropout={self.dropout}, '
                 f'bias={self.bias})')
 
 
