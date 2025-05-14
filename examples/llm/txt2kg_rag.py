@@ -572,6 +572,8 @@ def train(args, train_loader, val_loader):
             model.eval()
             with torch.no_grad():
                 for step, batch in enumerate(val_loader):
+                    if args.skip_graph_rag or args.omit_text_graph:
+                        batch.desc = ""
                     loss = get_loss(model, batch)
                     val_loss += loss.item()
                 val_loss = val_loss / len(val_loader)
@@ -612,6 +614,8 @@ def test(model, test_loader, args):
                 prompt_template.format(
                     question=q, context="\n".join(test_batch.text_context[i])))
         test_batch.question = new_qs
+        if args.skip_graph_rag or args.omit_text_graph:
+            test_batch.desc = ""
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
