@@ -634,7 +634,6 @@ if __name__ == '__main__':
         print("Please install wandb and rerun the script.")
         sys.exit(1)
 
-
     # Need to sanitize sensitive keys
     saved_NIM_KEY = args.NV_NIM_KEY
     args.NV_NIM_KEY = "********"
