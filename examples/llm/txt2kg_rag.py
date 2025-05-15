@@ -634,7 +634,12 @@ if __name__ == '__main__':
         print("Please install wandb and rerun the script.")
         sys.exit(1)
 
+    # Need to sanitize sensitive keys
+    saved_NIM_KEY = args.NV_NIM_KEY
+    args.NV_NIM_KEY = "********"
     print(f"Starting {args.dataset} training with args: ", args)
+    args.NV_NIM_KEY = saved_NIM_KEY
+
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
     if os.path.exists(dataset_path) and not args.regenerate_dataset:
