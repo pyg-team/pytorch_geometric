@@ -142,6 +142,8 @@ def parse_args():
         '--skip_graph_rag', action="store_true",
         help="Skip the graph RAG step. "
         "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
+    parser.add_argument('--omit_text_graph', action="store_true",
+                        help="Omit the text graph from the LLM Input.")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
@@ -526,7 +528,7 @@ def train(args, train_loader, val_loader):
                             context="\n".join(batch.text_context[i])))
                 batch.question = new_qs
 
-                if args.skip_graph_rag:
+                if args.skip_graph_rag or args.omit_text_graph:
                     batch.desc = ""
 
                 optimizer.zero_grad()
@@ -570,7 +572,8 @@ def train(args, train_loader, val_loader):
             model.eval()
             with torch.no_grad():
                 for step, batch in enumerate(val_loader):
-                    if args.skip_graph_rag:
+                    if args.skip_graph_rag or args.omit_text_graph:
+
                         batch.desc = ""
                     loss = get_loss(model, batch)
                     val_loss += loss.item()
@@ -612,7 +615,7 @@ def test(model, test_loader, args):
                 prompt_template.format(
                     question=q, context="\n".join(test_batch.text_context[i])))
         test_batch.question = new_qs
-        if args.skip_graph_rag:
+        if args.skip_graph_rag or args.omit_text_graph:
             test_batch.desc = ""
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(test_batch.question, preds,
