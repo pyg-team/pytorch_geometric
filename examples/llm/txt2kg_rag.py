@@ -573,6 +573,7 @@ def train(args, train_loader, val_loader):
             with torch.no_grad():
                 for step, batch in enumerate(val_loader):
                     if args.skip_graph_rag or args.omit_text_graph:
+
                         batch.desc = ""
                     loss = get_loss(model, batch)
                     val_loss += loss.item()
