@@ -142,6 +142,10 @@ def parse_args():
         '--skip_graph_rag', action="store_true",
         help="Skip the graph RAG step. "
         "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
+    parser.add_argument(
+        '--num_gnn_tokens', type=int, default=1,
+        help="Number of tokens to output from the GNN. Default is 1.")
+
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
@@ -490,7 +494,8 @@ def train(args, train_loader, val_loader):
             p.requires_grad = False
 
     model = GRetriever(llm=llm, gnn=gnn,
-                       use_lora=args.llm_generator_mode == "lora")
+                       use_lora=args.llm_generator_mode == "lora",
+                       mlp_out_tokens=args.num_gnn_tokens)
 
     if args.llm_generator_mode == "frozen" and args.num_gnn_layers == 0:
         if not args.dont_save_model:
