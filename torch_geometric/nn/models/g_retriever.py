@@ -5,6 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn.nlp.llm import LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
+from torch_geometric.nn.models import SGFormer
 
 
 class GRetriever(torch.nn.Module):
@@ -99,7 +100,13 @@ class GRetriever(torch.nn.Module):
             edge_attr = edge_attr.to(self.llm.device)
         batch = batch.to(self.llm.device)
 
-        out = self.gnn(x, edge_index, edge_attr=edge_attr)
+        model_specific_kwargs = {}
+
+        if isinstance(self.gnn, SGFormer):
+            model_specific_kwargs['batch'] = batch
+
+        out = self.gnn(x, edge_index, edge_attr=edge_attr,
+                       **model_specific_kwargs)
         return scatter(out, batch, dim=0, reduce='mean')
 
     def forward(
