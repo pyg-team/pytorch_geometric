@@ -3,9 +3,9 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.models import SGFormer
 from torch_geometric.nn.nlp.llm import LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
-from torch_geometric.nn.models import SGFormer
 
 
 class GRetriever(torch.nn.Module):
