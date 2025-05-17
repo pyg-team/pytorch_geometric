@@ -576,7 +576,9 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--dataset", type=str, default="rel-f1",
                         choices=get_dataset_names())
-    parser.add_argument("--task", type=str, required=True)
+    parser.add_argument(
+        "--task", type=str, default=None,
+        help="See available tasks at https://relbench.stanford.edu/")
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument("--temporal_strategy", type=str, default="uniform",
                         choices=["uniform", "last"])
@@ -593,7 +595,7 @@ def main():
 
     print("Loading dataset and task...")
     assert args.task in get_task_names(args.dataset), (
-        f"Invalid task '{args.task}' for dataset '{args.dataset}'. "
+        f"Invalid --task '{args.task}' for --dataset '{args.dataset}'. "
         f"Available tasks: {get_task_names(args.dataset)}")
     dataset = get_dataset(name=args.dataset, download=True)
     task = get_task(
