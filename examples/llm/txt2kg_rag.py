@@ -34,6 +34,7 @@ from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn import (
     GAT,
+    SGFormer,
     LLM,
     TXT2KG,
     GRetriever,
@@ -68,6 +69,10 @@ DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--gnn_model', type=str, default="GAT",
+        choices=["GAT", "SGFormer"],
+        help="The GNN model to use. Default is GAT.")
     parser.add_argument('--NV_NIM_MODEL', type=str,
                         default=NV_NIM_MODEL_DEFAULT,
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
@@ -471,8 +476,19 @@ def train(args, train_loader, val_loader):
     num_gnn_layers = args.num_gnn_layers
 
     if args.num_gnn_layers > 0:
-        gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
-                  out_channels=1024, num_layers=num_gnn_layers, heads=4)
+        if args.gnn_model == "GAT":
+            gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
+                      out_channels=1024, num_layers=num_gnn_layers, heads=4)
+        elif args.gnn_model == "SGFormer":
+            gnn = SGFormer(in_channels=768,
+                           hidden_channels=hidden_channels,
+                           out_channels=1024,
+                           trans_num_heads=1,
+                           trans_dropout=0.5,
+                           gnn_num_layers=num_gnn_layers,
+                           gnn_dropout=0.5)
+        else:
+            raise ValueError(f"Invalid GNN model: {args.gnn_model}")
     else:
         gnn = None
 
