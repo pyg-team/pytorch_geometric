@@ -2,7 +2,6 @@ import io
 
 import torch
 
-import torch_geometric.typing
 from torch_geometric.nn import ASAPooling, GCNConv, GraphConv
 from torch_geometric.testing import is_full_test, onlyFullTest, onlyLinux
 
@@ -23,7 +22,7 @@ def test_asap():
         assert out[0].size() == (num_nodes // 2, in_channels)
         assert out[1].size() == (2, 2)
 
-        if torch_geometric.typing.WITH_PT113 and is_full_test():
+        if is_full_test():
             torch.jit.script(pool)
 
         pool = ASAPooling(in_channels, ratio=0.5, GNN=GNN, add_self_loops=True)
