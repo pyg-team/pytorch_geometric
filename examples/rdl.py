@@ -576,7 +576,9 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--dataset", type=str, default="rel-f1",
                         choices=get_dataset_names())
-    parser.add_argument("--task", type=str, required=True)
+    parser.add_argument("--task", type=str, required=True,
+                        help="As an example, possible tasks for 'rel-f1'\
+                        are ['driver-position', 'driver-dnf', 'driver-top3'])
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument("--temporal_strategy", type=str, default="uniform",
                         choices=["uniform", "last"])
