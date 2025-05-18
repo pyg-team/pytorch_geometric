@@ -3,7 +3,6 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.nn.models import SGFormer
 from torch_geometric.nn.nlp.llm import LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
@@ -103,8 +102,8 @@ class GRetriever(torch.nn.Module):
         model_specific_kwargs = {}
 
         # duck typing for SGFormer to get around circular import
-        if (hasattr(self.gnn, 'trans_conv') and
-            hasattr(self.gnn, 'graph_conv')):
+        if (hasattr(self.gnn, 'trans_conv')
+                and hasattr(self.gnn, 'graph_conv')):
             model_specific_kwargs['batch'] = batch
         else:
             model_specific_kwargs['edge_attr'] = edge_attr
