@@ -13,7 +13,7 @@ from torch.utils.benchmark import Compare, Measurement, Timer
 from torch_geometric import EdgeIndex
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GCN, GIN, EdgeCNN, GraphSAGE
+from torch_geometric.nn.models import GCN
 
 torch.set_float32_matmul_precision("high")
 NUM_HOPS = 6
@@ -77,8 +77,8 @@ def run_benchmark(
     if profile:
 
         with torch.profiler.profile(
-            record_shapes=True,
-            with_stack=True,
+                record_shapes=True,
+                with_stack=True,
         ) as prof:
             for _ in range(5):
                 if backward:
