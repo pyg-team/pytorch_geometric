@@ -148,7 +148,7 @@ def indices_complete_check(
         if isinstance(aux, Tensor):
             aux = aux.cpu().numpy()
 
-        assert np.all(np.in1d(out,
+        assert np.all(np.isin(out,
                               aux)), "Not all output nodes are in aux nodes!"
         outs.append(out)
 
@@ -498,7 +498,7 @@ class IBMBBaseLoader(torch.utils.data.DataLoader):
             assert adj is not None
 
         for out, aux in pbar:
-            mask = torch.from_numpy(np.in1d(aux, out))
+            mask = torch.from_numpy(np.isin(aux, out))
             if isinstance(aux, np.ndarray):
                 aux = torch.from_numpy(aux)
             subg = get_subgraph(aux, graph, return_edge_index_type, adj,
@@ -541,7 +541,7 @@ class IBMBBaseLoader(torch.utils.data.DataLoader):
         out, aux = zip(*data_list)
         out = np.concatenate(out)
         aux = np.unique(np.concatenate(aux))
-        mask = torch.from_numpy(np.in1d(aux, out))
+        mask = torch.from_numpy(np.isin(aux, out))
         aux = torch.from_numpy(aux)
 
         subg = get_subgraph(aux, self.graph, self.return_edge_index_type,
