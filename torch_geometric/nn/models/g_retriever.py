@@ -102,11 +102,14 @@ class GRetriever(torch.nn.Module):
 
         model_specific_kwargs = {}
 
-        if isinstance(self.gnn, SGFormer):
+        # duck typing for SGFormer to get around circular import
+        if (hasattr(self.gnn, 'trans_conv') and
+            hasattr(self.gnn, 'graph_conv')):
             model_specific_kwargs['batch'] = batch
+        else:
+            model_specific_kwargs['edge_attr'] = edge_attr
 
-        out = self.gnn(x, edge_index, edge_attr=edge_attr,
-                       **model_specific_kwargs)
+        out = self.gnn(x, edge_index, **model_specific_kwargs)
         return scatter(out, batch, dim=0, reduce='mean')
 
     def forward(
