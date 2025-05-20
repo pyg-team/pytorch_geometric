@@ -61,7 +61,7 @@ class GNNExplainer(ExplainerAlgorithm):
             :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
     """
 
-    coeffs = {
+    default_coeffs = {
         'edge_size': 0.005,
         'edge_reduction': 'sum',
         'node_feat_size': 1.0,
@@ -75,6 +75,7 @@ class GNNExplainer(ExplainerAlgorithm):
         super().__init__()
         self.epochs = epochs
         self.lr = lr
+        self.coeffs = dict(self.default_coeffs)
         self.coeffs.update(kwargs)
 
         self.node_mask = self.hard_node_mask = None
@@ -559,7 +560,7 @@ class GNNExplainer(ExplainerAlgorithm):
 class GNNExplainer_:
     r"""Deprecated version for :class:`GNNExplainer`."""
 
-    coeffs = GNNExplainer.coeffs
+    coeffs = GNNExplainer.default_coeffs
 
     conversion_node_mask_type = {
         'feature': 'common_attributes',
