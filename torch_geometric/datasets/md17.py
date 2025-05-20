@@ -57,7 +57,7 @@ class MD17(InMemoryDataset):
     +--------------------+--------------------+-------------------------------+-----------+
     | Uracil             | DFT                | :obj:`uracil`                 | 133,770   |
     +--------------------+--------------------+-------------------------------+-----------+
-    | Naphthalene        | DFT                | :obj:`napthalene`             | 326,250   |
+    | Naphthalene        | DFT                | :obj:`naphthalene`            | 326,250   |
     +--------------------+--------------------+-------------------------------+-----------+
     | Aspirin            | DFT                | :obj:`aspirin`                | 211,762   |
     +--------------------+--------------------+-------------------------------+-----------+
@@ -77,7 +77,7 @@ class MD17(InMemoryDataset):
     +--------------------+--------------------+-------------------------------+-----------+
     | Uracil (R)         | DFT (PBE/def2-SVP) | :obj:`revised uracil`         | 100,000   |
     +--------------------+--------------------+-------------------------------+-----------+
-    | Naphthalene (R)    | DFT (PBE/def2-SVP) | :obj:`revised napthalene`     | 100,000   |
+    | Naphthalene (R)    | DFT (PBE/def2-SVP) | :obj:`revised naphthalene`    | 100,000   |
     +--------------------+--------------------+-------------------------------+-----------+
     | Aspirin (R)        | DFT (PBE/def2-SVP) | :obj:`revised aspirin`        | 100,000   |
     +--------------------+--------------------+-------------------------------+-----------+
@@ -309,7 +309,7 @@ class MD17(InMemoryDataset):
     file_names = {
         'benzene': 'md17_benzene2017.npz',
         'uracil': 'md17_uracil.npz',
-        'naphtalene': 'md17_naphthalene.npz',
+        'naphthalene': 'md17_naphthalene.npz',
         'aspirin': 'md17_aspirin.npz',
         'salicylic acid': 'md17_salicylic.npz',
         'malonaldehyde': 'md17_malonaldehyde.npz',
