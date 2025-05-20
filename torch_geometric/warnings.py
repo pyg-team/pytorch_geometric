@@ -25,9 +25,8 @@ def filterwarnings(
 
 class WarningCache(set):
     """Cache for warnings."""
-    @torch.jit.unused
     def warn(self, message: str, stacklevel: int = 5, **kwargs: Any) -> None:
         """Trigger warning message."""
-        if message not in self:
+        if not torch.jit.is_scripting() and message not in self:
             self.add(message)
             warn(message, stacklevel=stacklevel, **kwargs)
