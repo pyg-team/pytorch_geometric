@@ -1,6 +1,7 @@
+from torch.nn import Module
+
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
-from torch_geometric.nn.models.gpse import GPSE
 from torch_geometric.transforms import BaseTransform, VirtualNode
 
 
@@ -13,7 +14,7 @@ class AddGPSE(BaseTransform):
     the actual encodings.
 
     Args:
-        model (GPSE): The pre-trained GPSE model.
+        model (Module): The pre-trained GPSE model.
         use_vn (bool, optional): Whether to use virtual nodes.
             (default: :obj:`True`)
         rand_type (str, optional): Type of random features to use. Options are
@@ -21,7 +22,7 @@ class AddGPSE(BaseTransform):
             (default: :obj:`NormalSE`)
 
     """
-    def __init__(self, model: GPSE, use_vn: bool = True,
+    def __init__(self, model: Module, use_vn: bool = True,
                  rand_type: str = 'NormalSE'):
         self.model = model
         self.use_vn = use_vn

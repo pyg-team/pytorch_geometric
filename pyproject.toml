@@ -1,5 +1,5 @@
 [build-system]
-requires=["flit_core >=3.2,<4"]
+requires=["flit_core >=3.12,<4"]
 build-backend="flit_core.buildapi"
 
 [project]
@@ -18,10 +18,10 @@ keywords=[
     "graph-neural-networks",
     "graph-convolutional-networks",
 ]
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICENSE"]
 classifiers=[
     "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -57,6 +57,14 @@ benchmark=[
     "pandas",
     "protobuf<4.21",
     "wandb",
+]
+rag=[
+    "pcst_fast",
+    "datasets",
+    "transformers",
+    "pandas",
+    "sentencepiece",
+    "accelerate",
 ]
 test=[
     "onnx",
@@ -149,9 +157,18 @@ target-version = "py39"
 
 [tool.ruff.lint]
 select = [
+    "B",  # flake8-bugbear
     "D",  # pydocstyle
 ]
 ignore = [
+    "B006",  # TODO Don't ignore "Do not use mutable data structures for argument defaults"
+    "B007",  # TODO Don't ignore "Loop control variable `{name}` not used within loop body"
+    "B008",  # TODO Don't ignore "Do not perform function call `{name}` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable"
+    "B020",  # TODO Don't ignore "Loop control variable `{name}` overrides iterable it iterates"
+    "B024",  # TODO Don't ignore "`{name}` is an abstract base class, but it has no abstract methods or properties"
+    "B026",  # TODO Don't ignore "Star-arg unpacking after a keyword argument is strongly discouraged"
+    "B027",  # TODO Don't ignore "`{name}` is an empty method in an abstract base class, but has no abstract decorator"
+    "B028",  # TODO Don't ignore "No explicit `stacklevel` keyword argument found"
     "D100",  # TODO Don't ignore "Missing docstring in public module"
     "D101",  # TODO Don't ignore "Missing docstring in public class"
     "D102",  # TODO Don't ignore "Missing docstring in public method"
@@ -191,6 +208,9 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+]
+markers = [
+    "rag: mark test as RAG test",
 ]
 
 [tool.coverage.run]
