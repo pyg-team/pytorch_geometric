@@ -719,7 +719,7 @@ class GPSENodeEncoder(torch.nn.Module):
 def gpse_process(model: Module, data: Data, rand_type: str,
                  use_vn: bool = True, bernoulli_thresh: float = 0.5,
                  neighbor_loader: bool = False,
-                 num_neighbors: List[int] = [30, 20, 10], fillval: int = 5,
+                 num_neighbors: List[int] = None, fillval: int = 5,
                  layers_mp: int = None, **kwargs) -> torch.Tensor:
     r"""Processes the data using the :class:`GPSE` model to generate and append
     GPSE encodings. Identical to :obj:`gpse_process_batch`, but operates on a
@@ -758,6 +758,7 @@ def gpse_process(model: Module, data: Data, rand_type: str,
         :class:`~torch_geometric.data.Data` object, with :class:`GPSE`
         encodings appended as :obj:`out.pestat_GPSE` attribute.
     """
+    num_neighbors = [30, 20, 10] if num_neighbors is None else num_neighbors
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # Generate random features for the encoder
     n = data.num_nodes
@@ -809,8 +810,8 @@ def gpse_process(model: Module, data: Data, rand_type: str,
 def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
                        bernoulli_thresh: float = 0.5,
                        neighbor_loader: bool = False,
-                       num_neighbors: List[int] = [30, 20, 10],
-                       fillval: int = 5, layers_mp: int = None,
+                       num_neighbors: List[int] = None, fillval: int = 5,
+                       layers_mp: int = None,
                        **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
     r"""Process a batch of data using the :class:`GPSE` model to generate and
     append :class:`GPSE` encodings. Identical to `gpse_process`, but operates
@@ -850,6 +851,7 @@ def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
             to the stacked :class:`GPSE` encodings and the pointers indicating
             individual graphs.
     """
+    num_neighbors = [30, 20, 10] if num_neighbors is None else num_neighbors
     n = batch.num_nodes
     dim_in = model.state_dict()[list(model.state_dict())[0]].shape[1]
 
