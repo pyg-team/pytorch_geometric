@@ -1,14 +1,14 @@
 import warnings
-from typing import Any, Literal
+from typing import Literal
 
 import torch_geometric
 
 
-def warn(message: str, **kwargs: Any) -> None:
+def warn(message: str, stacklevel: int = 5) -> None:
     if torch_geometric.is_compiling():
         return
 
-    warnings.warn(message, **kwargs)
+    warnings.warn(message, stacklevel=stacklevel)
 
 
 def filterwarnings(
@@ -23,8 +23,8 @@ def filterwarnings(
 
 class WarningCache(set):
     """Cache for warnings."""
-    def warn(self, message: str, stacklevel: int = 5, **kwargs: Any) -> None:
+    def warn(self, message: str, stacklevel: int = 5) -> None:
         """Trigger warning message."""
         if message not in self:
             self.add(message)
-            warn(message, stacklevel=stacklevel, **kwargs)
+            warn(message, stacklevel=stacklevel)
