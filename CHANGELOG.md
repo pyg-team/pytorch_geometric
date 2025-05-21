@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added RelBench example ([#10230](https://github.com/pyg-team/pytorch_geometric/pull/10230))
+- Added `CityNetwork` dataset ([#10115](https://github.com/pyg-team/pytorch_geometric/pull/10115))
 - Added visualize_graph to HeteroExplanation ([#10207](https://github.com/pyg-team/pytorch_geometric/pull/10207))
 - Added PyTorch 2.6 support ([#10170](https://github.com/pyg-team/pytorch_geometric/pull/10170))
 - Added support for heterogenous graphs in `AttentionExplainer` ([#10169](https://github.com/pyg-team/pytorch_geometric/pull/10169))
@@ -50,6 +52,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Chained exceptions explicitly instead of implicitly ([#10242](https://github.com/pyg-team/pytorch_geometric/pull/10242))
 - Updated cuGraph examples to use buffered sampling which keeps data in memory and is significantly faster than the deprecated buffered sampling ([#10079](https://github.com/pyg-team/pytorch_geometric/pull/10079))
 - Updated Dockerfile to use latest from NVIDIA ([#9794](https://github.com/pyg-team/pytorch_geometric/pull/9794))
 - Dropped Python 3.8 support ([#9696](https://github.com/pyg-team/pytorch_geometric/pull/9606))
@@ -68,6 +71,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Avoid GRetriever instantiation when num_gnn_layers == 0 ([#10156](https://github.com/pyg-team/pytorch_geometric/pull/10156))
 
 ### Removed
+
+- Dropped support for PyTorch 1.12 ([#10248](https://github.com/pyg-team/pytorch_geometric/pull/10248))
+- Dropped support for PyTorch 1.11 ([#10247](https://github.com/pyg-team/pytorch_geometric/pull/10247))
 
 ## [2.6.0] - 2024-09-13
 

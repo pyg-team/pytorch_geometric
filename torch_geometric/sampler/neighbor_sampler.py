@@ -279,6 +279,7 @@ class NeighborSampler(BaseSampler):
         self.subgraph_type = SubgraphType(subgraph_type)
         self.disjoint = disjoint
         self.temporal_strategy = temporal_strategy
+        self.keep_orig_edges = False
 
     @property
     def num_neighbors(self) -> NumNeighbors:
@@ -321,7 +322,7 @@ class NeighborSampler(BaseSampler):
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = node_sample(inputs, self._sample)
         if self.subgraph_type == SubgraphType.bidirectional:
-            out = out.to_bidirectional()
+            out = out.to_bidirectional(keep_orig_edges=self.keep_orig_edges)
         return out
 
     # Edge-based sampling #####################################################
@@ -334,7 +335,7 @@ class NeighborSampler(BaseSampler):
         out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
                           self.node_time, neg_sampling)
         if self.subgraph_type == SubgraphType.bidirectional:
-            out = out.to_bidirectional()
+            out = out.to_bidirectional(keep_orig_edges=self.keep_orig_edges)
         return out
 
     # Other Utilities #########################################################
