@@ -99,7 +99,7 @@ class SetTransformerAggregation(Aggregation):
                 "SetTransformerAggregation requires dim_size to be explicitly passed. "
                 "Alternatively, ensure data is preprocessed using to_dense_batch."
             )
-        
+
         # GPU-safe validation without device sync
         if (index >= dim_size).any():
             raise ValueError(
