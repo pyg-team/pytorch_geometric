@@ -208,6 +208,8 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+    # Turn remaining DeprecationWarnings into errors
+    "error::DeprecationWarning",
 ]
 markers = [
     "rag: mark test as RAG test",
