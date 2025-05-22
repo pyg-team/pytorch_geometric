@@ -354,7 +354,7 @@ class BaseData:
         """
         return self.apply(lambda x: x.contiguous(), *args)
 
-    def to(self, device: Union[int, str], *args: str,
+    def to(self, device: Union[int, str, torch.device], *args: str,
            non_blocking: bool = False):
         r"""Performs tensor device conversion, either for all attributes or
         only the ones given in :obj:`*args`.
