@@ -160,9 +160,9 @@ def visualize_hetero_graph(
         node_labels_dict: Optional[Dict[str, List[str]]] = None,
         node_weight_dict: Optional[Dict[str, Tensor]] = None,
         node_size_range: Tuple[float, float] = (50, 500),
-        node_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        node_opacity_range: Tuple[float, float] = (1.0, 1.0),
         edge_width_range: Tuple[float, float] = (0.1, 2.0),
-        edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        edge_opacity_range: Tuple[float, float] = (1.0, 1.0),
 ) -> Any:
     """Visualizes a heterogeneous graph using networkx."""
     if backend is not None and backend != "networkx":
@@ -231,9 +231,9 @@ def _visualize_hetero_graph_via_networkx(
         node_labels_dict: Optional[Dict[str, List[str]]] = None,
         node_weight_dict: Optional[Dict[str, Tensor]] = None,
         node_size_range: Tuple[float, float] = (50, 500),
-        node_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        node_opacity_range: Tuple[float, float] = (1.0, 1.0),
         edge_width_range: Tuple[float, float] = (0.1, 2.0),
-        edge_opacity_range: Tuple[float, float] = (0.2, 1.0),
+        edge_opacity_range: Tuple[float, float] = (1.0, 1.0),
 ) -> Any:
     import matplotlib.pyplot as plt
     import networkx as nx
