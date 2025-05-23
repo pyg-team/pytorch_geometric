@@ -333,7 +333,7 @@ class LLM(torch.nn.Module):
                 },
                 {
                     "role": "user",
-                    "content": f"{ctx} - {question[i]}"
+                    "content": f"{ctx}{question[i]}"
                 },
             ]
             text = self.tokenizer.apply_chat_template(
