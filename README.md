@@ -102,7 +102,7 @@ for epoch in range(200):
 
 </details>
 
-More information about evaluating final model performance can be found in the corresponding [example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn.py).
+More information about evaluating final model performance can be found in the corresponding [example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn.py). [example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/planetoid_train.py) offers a unified codebase covering GCN, GAT, and Cheb Convs, as well as many more.
 
 ### Create your own GNN layer
 
@@ -169,7 +169,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 <summary><b>Expand to see all implemented GNN layers...</b></summary>
 
 - **[GCN2Conv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.GCN2Conv.html)** from Chen *et al.*: [Simple and Deep Graph Convolutional Networks](https://arxiv.org/abs/2007.02133) (ICML 2020) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn2_cora.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn2_ppi.py)\]
-- **[SplineConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SplineConv.html)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cora.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/faust.py)\]
+- **[SplineConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SplineConv.html)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/spline_gnn.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/faust.py)\]
 - **[NNConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.NNConv.html)** from Gilmer *et al.*: [Neural Message Passing for Quantum Chemistry](https://arxiv.org/abs/1704.01212) (ICML 2017) \[[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/qm9_nn_conv.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/mnist_nn_conv.py)\]
 - **[CGConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.CGConv.html)** from Xie and Grossman: [Crystal Graph Convolutional Neural Networks for an Accurate and Interpretable Prediction of Material Properties](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.145301) (Physical Review Letters 120, 2018)
 - **[ECConv](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.ECConv.html)** from Simonovsky and Komodakis: [Edge-Conditioned Convolution on Graphs](https://arxiv.org/abs/1704.02901) (CVPR 2017)
