@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `MedShapeNet` Dataset ([#9823](https://github.com/pyg-team/pytorch_geometric/pull/9823))
 - Added RelBench example ([#10230](https://github.com/pyg-team/pytorch_geometric/pull/10230))
 - Added `CityNetwork` dataset ([#10115](https://github.com/pyg-team/pytorch_geometric/pull/10115))
 - Added visualize_graph to HeteroExplanation ([#10207](https://github.com/pyg-team/pytorch_geometric/pull/10207))
@@ -51,6 +52,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Adapt `dgcnn_classification` example to work with `ModelNet` and `MedShapeNet` Datasets ([#9823](https://github.com/pyg-team/pytorch_geometric/pull/9823))
 - Chained exceptions explicitly instead of implicitly ([#10242](https://github.com/pyg-team/pytorch_geometric/pull/10242))
 - Updated cuGraph examples to use buffered sampling which keeps data in memory and is significantly faster than the deprecated buffered sampling ([#10079](https://github.com/pyg-team/pytorch_geometric/pull/10079))
 - Updated Dockerfile to use latest from NVIDIA ([#9794](https://github.com/pyg-team/pytorch_geometric/pull/9794))
