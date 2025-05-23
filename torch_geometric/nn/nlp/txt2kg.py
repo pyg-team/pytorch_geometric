@@ -26,7 +26,7 @@ Try to focus on key triples that form a connected graph.
 
 TRIPLES_SYS_PROMPT_NEW = (
     "You are an expert that can extract knowledge triples with the form `('entity', 'relation', 'entity)` "
-    "from a text, mainly using entities from the entity list given by the user. "
+    "from a text, mainly using entities from the entity list given by the user. Keep relations 2 words max."
     "Separate each with a new line. Do not output anything else (no notes, no explanations, etc)."
 )
 
@@ -54,7 +54,7 @@ class EntityResolver(ABC):
 class LLMEntityExtractor(RemoteAction):
     def __init__(self):
         self.system_prompt = """
-        Extract key entities from the given text. Extracted entities are nouns, verbs, or adjectives, particularly regarding sentiment. This is for an extraction task, please be thorough and accurate to the reference text.
+        Extract key entities from the given text. Extracted entities are nouns, verbs, or adjectives, particularly regarding sentiment. Keep them 2 words max. This is for an extraction task, please be thorough and accurate to the reference text.
         Do not output anything else.
 
         Output format:
@@ -283,6 +283,16 @@ AGAIN, DO NOT output anything else.
                 items_to_original_id.pop(item)
             if len(items_to_original_id) == 0:
                 break
+
+        # clean up new_items one more time
+        cleaned_new_items = []
+        for item in new_items:
+            match = re.search(r'"([^"]*)"', item)
+            if match:
+                cleaned_new_items.append(match.group(1))
+            else:
+                cleaned_new_items.append(item)
+        new_items = cleaned_new_items
 
         # handles remaining items
         for item in items_to_original_id:
