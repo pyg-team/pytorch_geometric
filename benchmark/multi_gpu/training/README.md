@@ -44,7 +44,7 @@ pip install torch==2.1.0.post2 intel-extension-for-pytorch==2.1.30+xpu --extra-i
 
 ### Running benchmark
 
-This [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) is helpful for you to lauch DDP training on intel GPU.
+This [guide](https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/features/DDP.html) is helpful for you to launch DDP training on intel GPU.
 
 To Run benchmark, e.g. assuming you have `n` XPUs:
 

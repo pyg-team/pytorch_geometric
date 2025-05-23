@@ -104,7 +104,7 @@ class Index(Tensor):
     conversion in case its representation is sorted.
     Caches are filled based on demand (*e.g.*, when calling
     :meth:`Index.get_indptr`), or when explicitly requested via
-    :meth:`Index.fill_cache_`, and are maintaned and adjusted over its
+    :meth:`Index.fill_cache_`, and are maintained and adjusted over its
     lifespan.
 
     This representation ensures optimal computation in GNN message passing

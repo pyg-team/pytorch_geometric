@@ -131,7 +131,7 @@ class GRetriever(torch.nn.Module):
         x = self.projector(x)
         xs = x.split(1, dim=0)
 
-        # Handle case where theres more than one embedding for each sample
+        # Handle case where there's more than one embedding for each sample
         xs = [x.squeeze(0) for x in xs]
 
         # Handle questions without node features:
@@ -190,7 +190,7 @@ class GRetriever(torch.nn.Module):
         x = self.projector(x)
         xs = x.split(1, dim=0)
 
-        # Handle case where theres more than one embedding for each sample
+        # Handle case where there's more than one embedding for each sample
         xs = [x.squeeze(0) for x in xs]
 
         # Handle questions without node features:

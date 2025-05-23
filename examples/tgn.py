@@ -8,7 +8,7 @@
 # the batch, the TGN paper code has access to previous interactions in the
 # batch.
 # While both approaches are correct, together with the authors of the paper we
-# decided to present this version here as it is more realsitic and a better
+# decided to present this version here as it is more realistic and a better
 # test bed for future methods.
 
 import os.path as osp
