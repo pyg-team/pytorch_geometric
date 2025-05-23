@@ -61,6 +61,7 @@ from .gps_conv import GPSConv
 from .antisymmetric_conv import AntiSymmetricConv
 from .dir_gnn_conv import DirGNNConv
 from .mixhop_conv import MixHopConv
+from .aero_gnn_conv import AeroGNNConv
 
 import torch_geometric.nn.conv.utils  # noqa
 
@@ -131,6 +132,7 @@ __all__ = [
     'AntiSymmetricConv',
     'DirGNNConv',
     'MixHopConv',
+    'AeroGNNConv',
 ]
 
 classes = __all__
