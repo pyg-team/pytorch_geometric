@@ -463,7 +463,7 @@ class MeshCNNConv(MessagePassing):
                             correctly. Continuing..")
             else:
                 input_dimension = getattr(network, "in_channels",
-                                          getattr(network, "in_features"))
+                                          network.in_features)
                 assert input_dimension == self.in_channels, f"The input \
                 dimension of the neural network in kernel[{i}] must \
                 be \
@@ -481,7 +481,7 @@ class MeshCNNConv(MessagePassing):
                                 correctly. Continuing..")
             else:
                 output_dimension = getattr(network, "out_channels",
-                                           getattr(network, "out_features"))
+                                           network.out_features)
                 assert output_dimension == self.out_channels, f"The output \
                     dimension of the neural network in kernel[{i}] must \
                     be \
