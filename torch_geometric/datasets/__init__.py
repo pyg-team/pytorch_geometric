@@ -80,6 +80,7 @@ from .web_qsp_dataset import WebQSPDataset, CWQDataset
 from .git_mol_dataset import GitMolDataset
 from .molecule_gpt_dataset import MoleculeGPTDataset
 from .instruct_mol_dataset import InstructMolDataset
+from .protein_mpnn_dataset import ProteinMPNNDataset
 from .tag_dataset import TAGDataset
 from .city import CityNetwork
 
@@ -199,6 +200,7 @@ homo_datasets = [
     'GitMolDataset',
     'MoleculeGPTDataset',
     'InstructMolDataset',
+    'ProteinMPNNDataset',
     'TAGDataset',
     'CityNetwork',
 ]
