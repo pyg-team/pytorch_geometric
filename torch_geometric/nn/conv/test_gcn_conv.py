@@ -1,7 +1,9 @@
 import torch
+
+from torch_geometric.data import Batch, Data
 from torch_geometric.nn import GCNConv
-from torch_geometric.data import Data, Batch
 from torch_geometric.typing import SparseTensor
+
 
 def test_gcnconv_sparse_tensor_with_batching():
     torch.manual_seed(123)
@@ -30,7 +32,8 @@ def test_gcnconv_sparse_tensor_with_batching():
     edge_weight = batch.edge_weight
 
     # Create batched SparseTensor (global index is preserved)
-    adj = SparseTensor.from_edge_index(edge_index, edge_weight, sparse_sizes=(num_nodes, num_nodes))
+    adj = SparseTensor.from_edge_index(edge_index, edge_weight,
+                                       sparse_sizes=(num_nodes, num_nodes))
 
     # Apply GCNConv
     conv = GCNConv(in_channels, out_channels, cached=True)
