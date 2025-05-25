@@ -170,7 +170,7 @@ def run(args: argparse.ArgumentParser):
 
                     assert len(
                         num_neighbors) == layers, \
-                        f'''num_neighbors={num_neighbors} lenght
+                        f'''num_neighbors={num_neighbors} length
                         != num of layers={layers}'''
 
                     kwargs = {

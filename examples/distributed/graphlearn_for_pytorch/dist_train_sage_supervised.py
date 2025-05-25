@@ -208,7 +208,7 @@ if __name__ == '__main__':
         '--num_training_procs',
         type=int,
         default=2,
-        help='The number of traning processes per node',
+        help='The number of training processes per node',
     )
     parser.add_argument(
         '--epochs',

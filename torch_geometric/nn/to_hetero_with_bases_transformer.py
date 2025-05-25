@@ -380,7 +380,7 @@ class HeteroBasisConv(torch.nn.Module):
 
 
 class LinearAlign(torch.nn.Module):
-    # Aligns representions to the same dimensionality. Note that this will
+    # Aligns representations to the same dimensionality. Note that this will
     # create lazy modules, and as such requires a forward pass in order to
     # initialize parameters.
     def __init__(self, keys: List[Union[NodeType, EdgeType]],
