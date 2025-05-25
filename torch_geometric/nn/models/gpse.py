@@ -283,7 +283,7 @@ class GNNInductiveHybridMultiHead(torch.nn.Module):
             (default: :obj:`add`)
         has_bn (bool, optional): Whether to apply batch normalization to layer
             outputs. (default: :obj:`True`)
-        has_l2norm (bool, optional): Wheter to apply L2 normalization to the
+        has_l2norm (bool, optional): Whether to apply L2 normalization to the
             layer outputs. (default: :obj:`True`)
         dropout (float, optional): Dropout ratio at layer output.
             (default: :obj:`0.2`)
@@ -951,7 +951,7 @@ def precompute_GPSE(model: GPSE, dataset: Dataset, use_vn: bool = True,
                                                   **kwargs)
 
         batch_out = batch_out.to('cpu', non_blocking=True)
-        # Need to wait for batch_ptr to finish transfering so that start and
+        # Need to wait for batch_ptr to finish transferring so that start and
         # end indices are ready to use
         batch_ptr = batch_ptr.to('cpu', non_blocking=False)
 
@@ -966,7 +966,7 @@ def precompute_GPSE(model: GPSE, dataset: Dataset, use_vn: bool = True,
         pbar.update(len(batch_ptr) - 1)
     pbar.close()
 
-    # Collate dataset and reset indicies and data list
+    # Collate dataset and reset indices and data list
     dataset.transform = orig_dataset_transform
     dataset._indices = None
     dataset._data_list = data_list
