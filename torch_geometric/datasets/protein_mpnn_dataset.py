@@ -3,7 +3,7 @@ import pickle
 import random
 from collections import defaultdict
 from itertools import product
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -175,7 +175,7 @@ class ProteinMPNNDataset(InMemoryDataset):
                 break
             self.save(data_list, self.processed_paths[self.splits[self.split]])
 
-    def _process_split(self):
+    def _process_split(self) -> Dict[int, List[Tuple[str, int]]]:
         import pandas as pd
         save_path = self.processed_paths[0]
 
@@ -293,20 +293,23 @@ class ProteinMPNNDataset(InMemoryDataset):
             for seqid_j, ch_j in zip(seqid, chids) if seqid_j > self.homo
         }
         # stack all chains in the assembly together
-        seq, xyz, idx, masked = '', [], [], []
+        seq: str = ''
+        xyz_all: List[torch.Tensor] = []
+        idx_all: List[torch.Tensor] = []
+        masked: List[int] = []
         seq_list = []
         for counter, (k, v) in enumerate(asmb.items()):
             seq += chains[k[0]]['seq']
             seq_list.append(chains[k[0]]['seq'])
-            xyz.append(v)
-            idx.append(torch.full((v.shape[0], ), counter))
+            xyz_all.append(v)
+            idx_all.append(torch.full((v.shape[0], ), counter))
             if k[0] in homo:
                 masked.append(counter)
 
         return {
             'seq': seq,
-            'xyz': torch.cat(xyz, dim=0),
-            'idx': torch.cat(idx, dim=0),
+            'xyz': torch.cat(xyz_all, dim=0),
+            'idx': torch.cat(idx_all, dim=0),
             'masked': torch.Tensor(masked).int(),
             'label': chain_id,
         }
@@ -316,7 +319,7 @@ class ProteinMPNNDataset(InMemoryDataset):
             'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
         extra_alphabet = [str(item) for item in list(np.arange(300))]
         chain_alphabet = init_alphabet + extra_alphabet
-        my_dict = {}
+        my_dict: Dict[str, Union[str, int, Dict[str, Any], List[Any]]] = {}
         concat_seq = ''
         mask_list = []
         visible_list = []
@@ -366,9 +369,14 @@ class ProteinMPNNDataset(InMemoryDataset):
         my_dict['visible_list'] = visible_list
         my_dict['num_of_chains'] = len(mask_list) + len(visible_list)
         my_dict['seq'] = concat_seq
+        import pdb
+        pdb.set_trace()
         return my_dict
 
-    def _process_pdb3(self, b: Dict[str, Any]):
+    def _process_pdb3(
+        self, b: Dict[str, Any]
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor,
+               torch.Tensor, torch.Tensor, torch.Tensor]:
         L = len(b['seq'])
         # residue idx with jumps across chains
         residue_idx = -100 * np.ones([L], dtype=np.int32)
@@ -438,23 +446,21 @@ class ProteinMPNNDataset(InMemoryDataset):
         x_chain_all[isnan] = 0.
 
         # Conversion
-        residue_idx = torch.from_numpy(residue_idx).to(dtype=torch.long)
-        chain_seq_label_all = torch.from_numpy(chain_seq_label_all).to(
-            dtype=torch.long)
-        x_chain_all = torch.from_numpy(x_chain_all).to(dtype=torch.float32)
-        mask = torch.from_numpy(mask).to(dtype=torch.float32)
-        mask_self = torch.from_numpy(mask_self).to(dtype=torch.float32)
-        chain_mask_all = torch.from_numpy(chain_mask_all).to(
-            dtype=torch.float32)
-        chain_encoding_all = torch.from_numpy(chain_encoding_all).to(
-            dtype=torch.long)
-        return x_chain_all, chain_seq_label_all, mask, chain_mask_all, residue_idx, mask_self, chain_encoding_all  # noqa: E501
+        return (
+            torch.from_numpy(x_chain_all).to(dtype=torch.float32),
+            torch.from_numpy(chain_seq_label_all).to(dtype=torch.long),
+            torch.from_numpy(mask).to(dtype=torch.float32),
+            torch.from_numpy(chain_mask_all).to(dtype=torch.float32),
+            torch.from_numpy(residue_idx).to(dtype=torch.long),
+            torch.from_numpy(mask_self).to(dtype=torch.float32),
+            torch.from_numpy(chain_encoding_all).to(dtype=torch.long),
+        )
 
     def _process_pdb4(
         self,
         x: torch.Tensor,
         mask: torch.Tensor,
-    ) -> Union[torch.Tensor, torch.Tensor]:
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         N, Ca, C, O = (x[:, i, :] for i in range(4))  # noqa: E741
         b = Ca - N
         c = C - Ca
@@ -476,8 +482,8 @@ class ProteinMPNNDataset(InMemoryDataset):
             distances = torch.sqrt(torch.sum((A[row] - B[col])**2, 1) + 1e-6)
             rbf = self._rbf(distances)
             rbf_all.append(rbf)
-        rbf_all = torch.cat(rbf_all, dim=-1)
-        return edge_index_original, rbf_all
+
+        return edge_index_original, torch.cat(rbf_all, dim=-1)
 
     def _rbf(self, D: torch.Tensor) -> torch.Tensor:
         D_min, D_max, D_count = 2., 22., self.num_rbf
