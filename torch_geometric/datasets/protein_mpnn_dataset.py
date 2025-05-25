@@ -6,7 +6,6 @@ from itertools import product
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import numpy as np
-import pandas as pd
 import torch
 from tqdm import tqdm
 
@@ -177,6 +176,7 @@ class ProteinMPNNDataset(InMemoryDataset):
             self.save(data_list, self.processed_paths[self.splits[self.split]])
 
     def _process_split(self):
+        import pandas as pd
         save_path = self.processed_paths[0]
 
         if os.path.exists(save_path):
