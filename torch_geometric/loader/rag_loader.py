@@ -68,7 +68,7 @@ class RAGQueryLoader:
             local_filter (Optional[Callable[[Data, Any], Data]], optional):
                 Optional local transform to apply to data after retrieval.
                 Defaults to None.
-            seed_nodes_kwargs (Optional[Dict[str, Any]], optional): Paramaters
+            seed_nodes_kwargs (Optional[Dict[str, Any]], optional): Parameters
                 to pass into process for fetching seed nodes. Defaults to None.
             seed_edges_kwargs (Optional[Dict[str, Any]], optional): Parameters
                 to pass into process for fetching seed edges. Defaults to None.
