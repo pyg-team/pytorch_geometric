@@ -351,9 +351,9 @@ class ProteinMPNNDataset(InMemoryDataset):
             if initial_sequence[4:10] == "HHHHHH":
                 res = res[:, 10:]
             if res.shape[1] >= 4:
-                my_dict[f'seq_chain_{letter}'] = "".join(
-                    list(np.array(list(t['seq']))[res][0]))
-                concat_seq += my_dict[f'seq_chain_{letter}']
+                chain_seq = "".join(list(np.array(list(t['seq']))[res][0]))
+                my_dict[f'seq_chain_{letter}'] = chain_seq
+                concat_seq += chain_seq
                 if idx in t['masked']:
                     mask_list.append(letter)
                 else:
@@ -369,8 +369,6 @@ class ProteinMPNNDataset(InMemoryDataset):
         my_dict['visible_list'] = visible_list
         my_dict['num_of_chains'] = len(mask_list) + len(visible_list)
         my_dict['seq'] = concat_seq
-        import pdb
-        pdb.set_trace()
         return my_dict
 
     def _process_pdb3(
