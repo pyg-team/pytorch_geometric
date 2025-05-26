@@ -142,7 +142,7 @@ class ProteinMPNNDataset(InMemoryDataset):
                         pbar.update(1)
                         continue
 
-                    x_chain_all, chain_seq_label_all, mask, chain_mask_all, residue_idx, mask_self, chain_encoding_all = self._process_pdb3(  # noqa: E501
+                    x_chain_all, chain_seq_label_all, mask, chain_mask_all, residue_idx, chain_encoding_all = self._process_pdb3(  # noqa: E501
                         my_dict)
                     edge_index, edge_attr = self._process_pdb4(
                         x_chain_all, mask)
@@ -154,7 +154,6 @@ class ProteinMPNNDataset(InMemoryDataset):
                         mask=mask,  # [seq_len]
                         chain_mask_all=chain_mask_all,  # [seq_len]
                         residue_idx=residue_idx,  # [seq_len]
-                        # mask_self=mask_self, # [seq_len, seq_len]
                         chain_encoding_all=chain_encoding_all,  # [seq_len]
                     )
 
@@ -374,12 +373,10 @@ class ProteinMPNNDataset(InMemoryDataset):
     def _process_pdb3(
         self, b: Dict[str, Any]
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor,
-               torch.Tensor, torch.Tensor, torch.Tensor]:
+               torch.Tensor, torch.Tensor]:
         L = len(b['seq'])
         # residue idx with jumps across chains
         residue_idx = -100 * np.ones([L], dtype=np.int32)
-        # for interface loss calculation - 0 for self interaction, 1 for other
-        mask_self = np.ones([L, L], dtype=np.int32)
         # get the list of masked / visible chains
         masked_chains, visible_chains = b['masked_list'], b['visible_list']
         visible_temp_dict, masked_temp_dict = {}, {}
@@ -424,7 +421,6 @@ class ProteinMPNNDataset(InMemoryDataset):
             chain_mask_list.append(chain_mask)
             chain_encoding_list.append(c * np.ones(chain_length))
             l1 += chain_length
-            mask_self[l0:l1, l0:l1] = np.zeros([chain_length, chain_length])
             residue_idx[l0:l1] = 100 * (c - 1) + np.arange(l0, l1)
             l0 += chain_length
             c += 1
@@ -450,7 +446,6 @@ class ProteinMPNNDataset(InMemoryDataset):
             torch.from_numpy(mask).to(dtype=torch.float32),
             torch.from_numpy(chain_mask_all).to(dtype=torch.float32),
             torch.from_numpy(residue_idx).to(dtype=torch.long),
-            torch.from_numpy(mask_self).to(dtype=torch.float32),
             torch.from_numpy(chain_encoding_all).to(dtype=torch.long),
         )
 
