@@ -90,7 +90,8 @@ class Encoder(MessagePassing):
         edge_attr = self.norm3(edge_attr + self.dropout3(h_e))
         return x, edge_attr
 
-    def message(self, x_i, x_j, edge_attr) -> torch.Tensor:
+    def message(self, x_i: torch.Tensor, x_j: torch.Tensor,
+                edge_attr: torch.Tensor) -> torch.Tensor:
         h = torch.cat([x_i, x_j, edge_attr], dim=-1)  # [E, 2*d_v + d_e]
         h = self.out_e(h)  # [E, d_e]
         return h
@@ -190,8 +191,18 @@ class ProteinMPNN(torch.nn.Module):
             if p.dim() > 1:
                 torch.nn.init.xavier_uniform_(p)
 
-    def forward(self, x, edge_index, edge_attr, chain_seq_label, mask,
-                chain_mask_all, residue_idx, chain_encoding_all, batch):
+    def forward(
+        self,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
+        edge_attr: torch.Tensor,
+        chain_seq_label: torch.Tensor,
+        mask: torch.Tensor,
+        chain_mask_all: torch.Tensor,
+        residue_idx: torch.Tensor,
+        chain_encoding_all: torch.Tensor,
+        batch: torch.Tensor,
+    ) -> torch.Tensor:
         device = x.device
         # TODO: move edge_index and edge_attr here
         if self.training and self.augment_eps > 0:
