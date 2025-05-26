@@ -75,14 +75,82 @@ class NoamOpt:
         self.optimizer.zero_grad()
 
 
+def train(model, optimizer, data_loader, device):
+    model.train()
+    train_sum = 0.0
+    train_acc = 0.0
+    train_weights = 0.0
+    for batch in data_loader:
+        optimizer.zero_grad()
+        batch = batch.to(device)
+        logits = model(batch.x, batch.edge_index, batch.edge_attr,
+                       batch.chain_seq_label, batch.mask, batch.chain_mask_all,
+                       batch.residue_idx, batch.chain_encoding_all,
+                       batch.batch)
+
+        mask_for_loss = batch.mask * batch.chain_mask_all
+        y = batch.chain_seq_label
+        _, loss = loss_smoothed(y, logits, mask_for_loss)
+        loss.backward()
+
+        optimizer.step()
+
+        loss, loss_av, true_false = loss_nll(y, logits, mask_for_loss)
+
+        train_sum += torch.sum(loss * mask_for_loss).cpu().data.numpy()
+        train_acc += torch.sum(true_false * mask_for_loss).cpu().data.numpy()
+        train_weights += torch.sum(mask_for_loss).cpu().data.numpy()
+
+    train_loss = train_sum / train_weights
+    train_accuracy = train_acc / train_weights
+    train_perplexity = np.exp(train_loss)
+
+    return train_perplexity, train_accuracy
+
+
+@torch.no_grad()
+def eval(model, data_loader, device):
+    model.eval()
+    valid_sum = 0.
+    valid_weights = 0.
+    valid_acc = 0.
+    for batch in data_loader:
+        batch = batch.to(device)
+        logits = model(batch.x, batch.edge_index, batch.edge_attr,
+                       batch.chain_seq_label, batch.mask, batch.chain_mask_all,
+                       batch.residue_idx, batch.chain_encoding_all,
+                       batch.batch)
+
+        mask_for_loss = batch.mask * batch.chain_mask_all
+        y = batch.chain_seq_label
+        loss, loss_av, true_false = loss_nll(y, logits, mask_for_loss)
+
+        valid_sum += torch.sum(loss * mask_for_loss).cpu().data.numpy()
+        valid_acc += torch.sum(true_false * mask_for_loss).cpu().data.numpy()
+        valid_weights += torch.sum(mask_for_loss).cpu().data.numpy()
+
+    valid_loss = valid_sum / valid_weights
+    valid_accuracy = valid_acc / valid_weights
+    valid_perplexity = np.exp(valid_loss)
+
+    return valid_perplexity, valid_accuracy
+
+
 def main(args):
+    wall_clock_start = time.perf_counter()
     seed_everything(123)
     torch.amp.GradScaler()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     train_dataset = ProteinMPNNDataset(root=args.data_path, split='train')
-    train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False,
-                              num_workers=6)
+    valid_dataset = ProteinMPNNDataset(root=args.data_path, split='valid')
+    test_dataset = ProteinMPNNDataset(root=args.data_path, split='test')
+    train_loader = DataLoader(train_dataset, batch_size=args.train_batch_size,
+                              shuffle=True, num_workers=6)
+    valid_loader = DataLoader(valid_dataset, batch_size=args.eval_batch_size,
+                              shuffle=False, num_workers=6)
+    test_loader = DataLoader(test_dataset, batch_size=args.eval_batch_size,
+                             shuffle=False, num_workers=6)
 
     model = ProteinMPNN(
         hidden_dim=args.hidden_dim,
@@ -100,73 +168,39 @@ def main(args):
         optimizer=torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98),
                                    eps=1e-9), step=total_step)
 
+    times = []
     for e in range(args.num_epochs):
-        train_sum = 0.0
-        train_acc = 0.0
-        train_weights = 0.0
-        for batch in train_loader:
-            optimizer.zero_grad()
-            batch = batch.to(device)
-            # import pdb; pdb.set_trace()
-            logits = model(batch.x, batch.edge_index, batch.edge_attr,
-                           batch.chain_seq_label, batch.mask,
-                           batch.chain_mask_all, batch.residue_idx,
-                           batch.chain_encoding_all, batch.batch)
-            # print(logits.size())
-            mask_for_loss = batch.mask * batch.chain_mask_all
-            y = batch.chain_seq_label
-            _, loss = loss_smoothed(y, logits, mask_for_loss)
-            loss.backward()
+        start = time.perf_counter()
+        train_perplexity, train_accuracy = train(model, optimizer,
+                                                 train_loader, device)
+        valid_perplexity, valid_accuracy = eval(model, valid_loader, device)
 
-            optimizer.step()
+        print(
+            f'epoch: {e:03d}, step: {total_step}, '
+            f'train: {train_perplexity:.3f}, valid: {valid_perplexity:.3f}, '
+            f'train_acc: {train_accuracy:.3f}, valid_acc: {valid_accuracy:.3f}'
+        )
+        times.append(time.perf_counter() - start)
 
-            loss, loss_av, true_false = loss_nll(y, logits, mask_for_loss)
-
-            train_sum += torch.sum(loss * mask_for_loss).cpu().data.numpy()
-            train_acc += torch.sum(true_false *
-                                   mask_for_loss).cpu().data.numpy()
-            train_weights += torch.sum(mask_for_loss).cpu().data.numpy()
-            # import pdb; pdb.set_trace()
-
-        train_loss = train_sum / train_weights
-        train_accuracy = train_acc / train_weights
-        train_perplexity = np.exp(train_loss)
-        # validation_loss = validation_sum / validation_weights
-        # validation_accuracy = validation_acc / validation_weights
-        # validation_perplexity = np.exp(validation_loss)
-
-        train_perplexity_ = np.format_float_positional(
-            np.float32(train_perplexity), unique=False, precision=3)
-        validation_perplexity_ = 0  # np.format_float_positional(np.float32(validation_perplexity), unique=False, precision=3)  # noqa: E501
-        train_accuracy_ = np.format_float_positional(
-            np.float32(train_accuracy), unique=False, precision=3)
-        validation_accuracy_ = 0  # np.format_float_positional(np.float32(validation_accuracy), unique=False, precision=3) # noqa: E501
-
-        time.time()
-        print(f'epoch: {e+1}, step: {total_step}, train: {train_perplexity_},'
-              f'valid: {validation_perplexity_}, train_acc: {train_accuracy_},'
-              f'valid_acc: {validation_accuracy_}')
+    print(f'Average Epoch Time: {torch.tensor(times).mean():.4f}s')
+    print(f'Median Epoch Time: {torch.tensor(times).median():.4f}s')
+    print(f'Total Program Runtime: '
+          f'{time.perf_counter() - wall_clock_start:.4f}s')
+    # Test
+    test_perplexity, test_accuracy = eval(model, test_loader, device)
+    print(f'test: {test_perplexity:.3f}, test_acc: {test_accuracy:.3f}')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_path', type=str, default='data/ProteinMPNN',
                         help='path for loading training data')
-    # parser.add_argument('--path_for_outputs', type=str, default='./exp_020',
-    #                     help='path for logs and model weights')
-    # parser.add_argument('--previous_checkpoint', type=str, default='',
-    #                     help='path for previous model weights, e.g. file.pt')
     parser.add_argument('--num_epochs', type=int, default=10,
                         help='number of epochs to train for')
-    # parser.add_argument('--save_model_every_n_epochs', type=int, default=10,
-    #                     help='save model weights every n epochs')
-    # parser.add_argument('--reload_data_every_n_epochs', type=int, default=2,
-    #                     help='reload training data every n epochs')
-    # parser.add_argument(
-    #     '--num_examples_per_epoch', type=int, default=1000000,
-    #     help='number of training example to load for one epoch')
-    # parser.add_argument('--batch_size', type=int, default=10000,
-    #                     help='number of tokens for one batch')
+    parser.add_argument('--train_batch_size', type=int, default=2,
+                        help='number of tokens for one train batch')
+    parser.add_argument('--eval_batch_size', type=int, default=8,
+                        help='number of tokens for one valid or test batch')
     # parser.add_argument('--max_protein_length', type=int, default=10000,
     #                     help='maximum length of the protein complext')
     parser.add_argument('--hidden_dim', type=int, default=128,
@@ -192,6 +226,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    start_time = time.time()
     main(args)
-    print(f'Total Time: {time.time() - start_time:2f}s')
