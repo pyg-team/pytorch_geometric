@@ -130,7 +130,7 @@ class Decoder(MessagePassing):
     ) -> torch.Tensor:
         # x: [N, d_v]
         # edge_index: [2, E]
-        # edge_attr: [E, d_e
+        # edge_attr: [E, d_e]
         h_message = self.propagate(x=x, x_label=x_label, edge_index=edge_index,
                                    edge_attr=edge_attr, mask=mask)
         dh = h_message / self.scale
@@ -142,9 +142,6 @@ class Decoder(MessagePassing):
     def message(self, x_i: torch.Tensor, x_j: torch.Tensor,
                 x_label_j: torch.Tensor, edge_attr: torch.Tensor,
                 mask: torch.Tensor) -> torch.Tensor:
-        # EXV: [h_V,   0, h_E]
-        # ESV: [h_V, h_S, h_E]
-        # input = mask_attend * ESV + (1 - mask_attend) * EXV
         h_1 = torch.cat([x_j, edge_attr, x_label_j], dim=-1)
         h_0 = torch.cat([x_j, edge_attr, torch.zeros_like(x_label_j)], dim=-1)
         h = h_1 * mask + h_0 * (1 - mask)
@@ -215,8 +212,8 @@ class ProteinMPNN(torch.nn.Module):
 
         # mask
         h_label = self.label_embedding(chain_seq_label)
-        batch_chain_mask_all, batch_mask = to_dense_batch(
-            chain_mask_all * mask, batch)  # [B, N]
+        batch_chain_mask_all, _ = to_dense_batch(chain_mask_all * mask,
+                                                 batch)  # [B, N]
         # 0 - visible - encoder, 1 - masked - decoder
         decoding_order = torch.argsort(
             (batch_chain_mask_all + 1e-4) * (torch.abs(

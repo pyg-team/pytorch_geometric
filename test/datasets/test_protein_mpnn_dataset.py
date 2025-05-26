@@ -4,7 +4,7 @@ from torch_geometric.testing import withPackage
 
 @withPackage('torch_cluster')
 def test_protein_mpnn_dataset():
-    dataset = ProteinMPNNDataset(root='./data/ProteinMPNN')
+    dataset = ProteinMPNNDataset(root='./data/ProteinMPNN', force_reload=True)
 
     assert len(dataset) == 150
     assert dataset[0].x.size() == (229, 4, 3)

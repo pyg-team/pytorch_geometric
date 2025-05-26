@@ -13,29 +13,26 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import ProteinMPNN
 
 
-def loss_smoothed(S, log_probs, mask, weight=0.1):
-    # S: [batch_size]
-    # log_probs: [batch_size, 21]
-    # mask: [batch_size]
+def loss_smoothed(y, logits, mask, weight=0.1):
     """Negative log probabilities."""
-    S_onehot = torch.nn.functional.one_hot(S, 21).float()
+    y_onehot = torch.nn.functional.one_hot(y, 21).float()
 
     # Label smoothing
-    S_onehot = S_onehot + weight / float(S_onehot.size(-1))
-    S_onehot = S_onehot / S_onehot.sum(-1, keepdim=True)
+    y_onehot = y_onehot + weight / float(y_onehot.size(-1))
+    y_onehot = y_onehot / y_onehot.sum(-1, keepdim=True)
 
-    loss = -(S_onehot * log_probs).sum(-1)
+    loss = -(y_onehot * logits).sum(-1)
     loss_av = torch.sum(loss * mask) / 2000.0
     return loss, loss_av
 
 
-def loss_nll(S, log_probs, mask):
+def loss_nll(y, logits, mask):
     """Negative log probabilities."""
     criterion = torch.nn.NLLLoss(reduction='none')
-    loss = criterion(log_probs.contiguous().view(-1, log_probs.size(-1)),
-                     S.contiguous().view(-1)).view(S.size())
-    S_argmaxed = torch.argmax(log_probs, -1)  # [B, L]
-    true_false = (S == S_argmaxed).float()
+    loss = criterion(logits.contiguous().view(-1, logits.size(-1)),
+                     y.contiguous().view(-1)).view(y.size())
+    y_argmaxed = torch.argmax(logits, -1)  # [B, L]
+    true_false = (y == y_argmaxed).float()
     loss_av = torch.sum(loss * mask) / torch.sum(mask)
     return loss, loss_av, true_false
 
@@ -75,7 +72,7 @@ class NoamOpt:
         self.optimizer.zero_grad()
 
 
-def train(model, optimizer, data_loader, device):
+def train(model, optimizer, data_loader, device, scaler):
     model.train()
     train_sum = 0.0
     train_acc = 0.0
@@ -83,19 +80,41 @@ def train(model, optimizer, data_loader, device):
     for batch in data_loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        logits = model(batch.x, batch.edge_index, batch.edge_attr,
-                       batch.chain_seq_label, batch.mask, batch.chain_mask_all,
-                       batch.residue_idx, batch.chain_encoding_all,
-                       batch.batch)
-
         mask_for_loss = batch.mask * batch.chain_mask_all
         y = batch.chain_seq_label
-        _, loss = loss_smoothed(y, logits, mask_for_loss)
-        loss.backward()
 
-        optimizer.step()
+        if torch.cuda.is_available() and args.mixed_precision:
+            with torch.amp.autocast('cuda'):
+                logits = model(batch.x, batch.edge_index, batch.edge_attr,
+                               batch.chain_seq_label, batch.mask,
+                               batch.chain_mask_all, batch.residue_idx,
+                               batch.chain_encoding_all, batch.batch)
+                _, loss = loss_smoothed(y, logits, mask_for_loss)
 
-        loss, loss_av, true_false = loss_nll(y, logits, mask_for_loss)
+            scaler.scale(loss).backward()
+
+            if args.gradient_norm > 0:
+                torch.nn.utils.clip_grad_norm_(model.parameters(),
+                                               args.gradient_norm)
+
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            logits = model(batch.x, batch.edge_index, batch.edge_attr,
+                           batch.chain_seq_label, batch.mask,
+                           batch.chain_mask_all, batch.residue_idx,
+                           batch.chain_encoding_all, batch.batch)
+
+            _, loss = loss_smoothed(y, logits, mask_for_loss)
+            loss.backward()
+
+            if args.gradient_norm > 0:
+                torch.nn.utils.clip_grad_norm_(model.parameters(),
+                                               args.gradient_norm)
+
+            optimizer.step()
+
+        loss, _, true_false = loss_nll(y, logits, mask_for_loss)
 
         train_sum += torch.sum(loss * mask_for_loss).cpu().data.numpy()
         train_acc += torch.sum(true_false * mask_for_loss).cpu().data.numpy()
@@ -123,7 +142,7 @@ def eval(model, data_loader, device):
 
         mask_for_loss = batch.mask * batch.chain_mask_all
         y = batch.chain_seq_label
-        loss, loss_av, true_false = loss_nll(y, logits, mask_for_loss)
+        loss, _, true_false = loss_nll(y, logits, mask_for_loss)
 
         valid_sum += torch.sum(loss * mask_for_loss).cpu().data.numpy()
         valid_acc += torch.sum(true_false * mask_for_loss).cpu().data.numpy()
@@ -139,12 +158,27 @@ def eval(model, data_loader, device):
 def main(args):
     wall_clock_start = time.perf_counter()
     seed_everything(123)
-    torch.amp.GradScaler()
+    scaler = torch.amp.GradScaler()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_dataset = ProteinMPNNDataset(root=args.data_path, split='train')
-    valid_dataset = ProteinMPNNDataset(root=args.data_path, split='valid')
-    test_dataset = ProteinMPNNDataset(root=args.data_path, split='test')
+    train_dataset = ProteinMPNNDataset(
+        root=args.data_path,
+        split='train',
+        rescut=args.rescut,
+        max_length=args.max_protein_length,
+    )
+    valid_dataset = ProteinMPNNDataset(
+        root=args.data_path,
+        split='valid',
+        rescut=args.rescut,
+        max_length=args.max_protein_length,
+    )
+    test_dataset = ProteinMPNNDataset(
+        root=args.data_path,
+        split='test',
+        rescut=args.rescut,
+        max_length=args.max_protein_length,
+    )
     train_loader = DataLoader(train_dataset, batch_size=args.train_batch_size,
                               shuffle=True, num_workers=6)
     valid_loader = DataLoader(valid_dataset, batch_size=args.eval_batch_size,
@@ -172,7 +206,7 @@ def main(args):
     for e in range(args.num_epochs):
         start = time.perf_counter()
         train_perplexity, train_accuracy = train(model, optimizer,
-                                                 train_loader, device)
+                                                 train_loader, device, scaler)
         valid_perplexity, valid_accuracy = eval(model, valid_loader, device)
 
         print(
@@ -193,16 +227,26 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    # dataset config
     parser.add_argument('--data_path', type=str, default='data/ProteinMPNN',
                         help='path for loading training data')
+    parser.add_argument('--max_protein_length', type=int, default=10000,
+                        help='maximum length of the protein complext')
+    parser.add_argument('--rescut', type=float, default=3.5,
+                        help='PDB resolution cutoff')
+    # training config
     parser.add_argument('--num_epochs', type=int, default=10,
                         help='number of epochs to train for')
-    parser.add_argument('--train_batch_size', type=int, default=2,
+    parser.add_argument('--train_batch_size', type=int, default=4,
                         help='number of tokens for one train batch')
     parser.add_argument('--eval_batch_size', type=int, default=8,
                         help='number of tokens for one valid or test batch')
-    # parser.add_argument('--max_protein_length', type=int, default=10000,
-    #                     help='maximum length of the protein complext')
+    parser.add_argument(
+        '--gradient_norm', type=float, default=-1.0,
+        help='clip gradient norm, set to negative to omit clipping')
+    parser.add_argument('--mixed_precision', type=bool, default=True,
+                        help='train with mixed precision')
+    # model config
     parser.add_argument('--hidden_dim', type=int, default=128,
                         help='hidden model dimension')
     parser.add_argument('--num_encoder_layers', type=int, default=3,
@@ -216,13 +260,6 @@ if __name__ == '__main__':
     parser.add_argument(
         '--backbone_noise', type=float, default=0.2,
         help='amount of noise added to backbone during training')
-    # parser.add_argument('--rescut', type=float, default=3.5,
-    #                     help='PDB resolution cutoff')
-    # parser.add_argument(
-    #     '--gradient_norm', type=float, default=-1.0,
-    #     help='clip gradient norm, set to negative to omit clipping')
-    # parser.add_argument('--mixed_precision', type=bool, default=True,
-    #                     help='train with mixed precision')
 
     args = parser.parse_args()
 
