@@ -40,14 +40,49 @@ def loss_nll(S, log_probs, mask):
     return loss, loss_av, true_false
 
 
+class NoamOpt:
+    """Optim wrapper that implements rate."""
+    def __init__(self, model_size, factor, warmup, optimizer, step):
+        self.optimizer = optimizer
+        self._step = step
+        self.warmup = warmup
+        self.factor = factor
+        self.model_size = model_size
+        self._rate = 0
+
+    @property
+    def param_groups(self):
+        """Return param_groups."""
+        return self.optimizer.param_groups
+
+    def step(self):
+        """Update parameters and rate."""
+        self._step += 1
+        rate = self.rate()
+        for p in self.optimizer.param_groups:
+            p['lr'] = rate
+        self._rate = rate
+        self.optimizer.step()
+
+    def rate(self, step=None):
+        """Implement learning rate above."""
+        if step is None:
+            step = self._step
+        return self.factor * (self.model_size**(-0.5) *
+                              min(step**(-0.5), step * self.warmup**(-1.5)))
+
+    def zero_grad(self):
+        self.optimizer.zero_grad()
+
+
 def main(args):
     seed_everything(123)
     torch.amp.GradScaler()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     train_dataset = ProteinMPNNDataset(root=args.data_path, split='train')
-    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=False,
-                              num_workers=4)
+    train_loader = DataLoader(train_dataset, batch_size=2, shuffle=False,
+                              num_workers=6)
 
     model = ProteinMPNN(
         hidden_dim=args.hidden_dim,
@@ -59,10 +94,11 @@ def main(args):
         num_positional_embedding=16,
     ).to(device)
 
-    optimizer = torch.optim.AdamW(
-        [p for p in model.parameters() if p.requires_grad], lr=1e-5)
-
     total_step = 0
+    optimizer = NoamOpt(
+        model_size=args.hidden_dim, factor=2, warmup=4000,
+        optimizer=torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98),
+                                   eps=1e-9), step=total_step)
 
     for e in range(args.num_epochs):
         train_sum = 0.0
