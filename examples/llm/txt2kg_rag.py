@@ -146,10 +146,14 @@ def parse_args():
         '--skip_graph_rag', action="store_true",
         help="Skip the graph RAG step. "
         "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
+    parser.add_argument(
+        '--use_x_percent_corpus', default=100, type=int,
+        help="Debug flag that allows user to only use a random percentage "
+        "of available knowledge base corpus for RAG")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
-
+    assert args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus > 0, "Please provide a value in (0,100]
     if args.skip_graph_rag:
         print("Skipping graph RAG step, setting GNN layers to 0...")
         args.num_gnn_layers = 0
@@ -237,7 +241,10 @@ def get_data(args):
             text_contexts.extend(
                 _process_and_chunk_text(text_context, args.doc_chunk_size,
                                         args.doc_parsing_mode))
-
+    if args.use_x_percent_corpus < 100:
+        random.shuffle(text_contexts)
+        text_contexts = text_contexts[0:int(len(text_contexts) * args.use_x_percent_corpus / 100.0)]
+        
     return json_obj, text_contexts
 
 
