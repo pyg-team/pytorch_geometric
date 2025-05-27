@@ -255,7 +255,7 @@ def get_data(args):
     if args.use_x_percent_corpus < 100:
         random.shuffle(text_contexts)
         text_contexts = text_contexts[0:int(len(text_contexts) * args.use_x_percent_corpus / 100.0)]
-        
+
     return json_obj, text_contexts
 
 
