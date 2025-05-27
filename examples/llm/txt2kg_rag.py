@@ -109,7 +109,7 @@ def parse_args():
                         help="Whether to skip model saving.")
     parser.add_argument('--log_steps', type=int, default=30,
                         help="Log to wandb every N steps")
-    parser.add_argument('--wandb_project', type=str, default="hotpotqa",
+    parser.add_argument('--wandb_project', type=str, default="techqa",
                         help="Weights & Biases project name")
     parser.add_argument('--wandb', action="store_true",
                         help="Enable wandb logging")
