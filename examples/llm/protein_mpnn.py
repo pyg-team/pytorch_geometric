@@ -232,7 +232,7 @@ if __name__ == '__main__':
     parser.add_argument('--rescut', type=float, default=3.5,
                         help='PDB resolution cutoff')
     # training config
-    parser.add_argument('--num_epochs', type=int, default=10,
+    parser.add_argument('--num_epochs', type=int, default=50,
                         help='number of epochs to train for')
     parser.add_argument('--train_batch_size', type=int, default=4,
                         help='number of tokens for one train batch')

@@ -33,10 +33,6 @@ class ProteinMPNNDataset(InMemoryDataset):
             (default: :obj:`3.5`)
         homo (float, optional): Homology cutoff.
             (default: :obj:`0.70`)
-        num_neighbors (int, optional): Number of neighbors for each amino acid.
-            (default: :obj:`30`)
-        num_rbf (int, optional): Number of radial basis functions.
-            (default: :obj:`16`)
         max_length (int, optional): Maximum length of the protein complex.
             (default: :obj:`10000`)
         num_units (int, optional): Number of units of the protein complex.
@@ -73,8 +69,6 @@ class ProteinMPNNDataset(InMemoryDataset):
         datacut: str = '2030-01-01',
         rescut: float = 3.5,
         homo: float = 0.70,
-        num_neighbors: int = 30,
-        num_rbf: int = 16,
         max_length: int = 10000,
         num_units: int = 150,
         transform: Optional[Callable] = None,
@@ -86,8 +80,6 @@ class ProteinMPNNDataset(InMemoryDataset):
         self.datacut = datacut
         self.rescut = rescut
         self.homo = homo
-        self.num_neighbors = num_neighbors
-        self.num_rbf = num_rbf
         self.max_length = max_length
         self.num_units = num_units
 
