@@ -1,8 +1,6 @@
 from torch_geometric.datasets import ProteinMPNNDataset
-from torch_geometric.testing import withPackage
 
 
-@withPackage('torch_cluster')
 def test_protein_mpnn_dataset():
     dataset = ProteinMPNNDataset(root='./data/ProteinMPNN', force_reload=True)
 
