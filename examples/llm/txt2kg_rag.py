@@ -218,7 +218,26 @@ def get_data(args):
         user_input = input("Y/N")
         if user_input.lower() == "y" or user_input.lower() == "yes":
             print("Downloading data...")
-            # add download code
+            # downloads
+            zip_path = hf_hub_download(
+                repo_id="nvidia/TechQA-RAG-Eval",
+                repo_type="dataset",
+                filename="corpus.zip",
+            )
+            json_path = hf_hub_download(
+                repo_id="nvidia/TechQA-RAG-Eval",
+                repo_type="dataset",
+                filename="train.json",
+            )
+            # move to working dir
+            import zipfile
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall("corpus")
+            import shutil
+            shutil.copy(json_path, "train.json")
+            
+            
+        
         elif user_input.lower() == "y" or user_input.lower() == "yes":
             quit("No selected, no data to work with ... exiting")
         else:
