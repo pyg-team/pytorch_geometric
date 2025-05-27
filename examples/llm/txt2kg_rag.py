@@ -1,5 +1,3 @@
-# default args -> 40% test acc.
-# 5-8% diff vs VectorRAG baselines
 import argparse
 import gc
 import json
