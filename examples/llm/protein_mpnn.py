@@ -158,10 +158,10 @@ def main(args):
     seed_everything(123)
     scaler = torch.amp.GradScaler()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    
+
     if args.size == 'complete':
         warnings.warn("The complete dataset weighs 64.1 GB", UserWarning)
-        
+
     train_dataset = ProteinMPNNDataset(
         root=args.data_path,
         size=args.size,
