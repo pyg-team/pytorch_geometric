@@ -210,7 +210,8 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
-    if args.dataset.lower() == "techqa" and not (os.path.exists(os.path.join(args.dataset, "train.json"))
+    if args.dataset.lower() == "techqa" and not (
+            os.path.exists(os.path.join(args.dataset, "train.json"))
             or os.path.join(args.dataset, "corpus")):
         print("Could not find Q&A pairs and/or knowledge base corpus")
         print("Would you like to download the TechQA dataset for demo?")
