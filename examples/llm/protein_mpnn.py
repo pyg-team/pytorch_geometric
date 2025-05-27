@@ -85,8 +85,7 @@ def train(model, optimizer, data_loader, device, scaler):
 
         if torch.cuda.is_available() and args.mixed_precision:
             with torch.amp.autocast('cuda'):
-                logits = model(batch.x, batch.edge_index, batch.edge_attr,
-                               batch.chain_seq_label, batch.mask,
+                logits = model(batch.x, batch.chain_seq_label, batch.mask,
                                batch.chain_mask_all, batch.residue_idx,
                                batch.chain_encoding_all, batch.batch)
                 _, loss = loss_smoothed(y, logits, mask_for_loss)
@@ -100,8 +99,7 @@ def train(model, optimizer, data_loader, device, scaler):
             scaler.step(optimizer)
             scaler.update()
         else:
-            logits = model(batch.x, batch.edge_index, batch.edge_attr,
-                           batch.chain_seq_label, batch.mask,
+            logits = model(batch.x, batch.chain_seq_label, batch.mask,
                            batch.chain_mask_all, batch.residue_idx,
                            batch.chain_encoding_all, batch.batch)
 
@@ -135,10 +133,9 @@ def eval(model, data_loader, device):
     valid_acc = 0.
     for batch in data_loader:
         batch = batch.to(device)
-        logits = model(batch.x, batch.edge_index, batch.edge_attr,
-                       batch.chain_seq_label, batch.mask, batch.chain_mask_all,
-                       batch.residue_idx, batch.chain_encoding_all,
-                       batch.batch)
+        logits = model(batch.x, batch.chain_seq_label, batch.mask,
+                       batch.chain_mask_all, batch.residue_idx,
+                       batch.chain_encoding_all, batch.batch)
 
         mask_for_loss = batch.mask * batch.chain_mask_all
         y = batch.chain_seq_label
@@ -190,7 +187,7 @@ def main(args):
         hidden_dim=args.hidden_dim,
         num_encoder_layers=args.num_encoder_layers,
         num_decoder_layers=args.num_decoder_layers,
-        k_neighbors=args.num_neighbors,
+        num_neighbors=args.num_neighbors,
         dropout=args.dropout,
         augment_eps=args.backbone_noise,
         num_positional_embedding=16,
@@ -253,8 +250,10 @@ if __name__ == '__main__':
                         help='number of encoder layers')
     parser.add_argument('--num_decoder_layers', type=int, default=3,
                         help='number of decoder layers')
-    parser.add_argument('--num_neighbors', type=int, default=48,
+    parser.add_argument('--num_neighbors', type=int, default=30,
                         help='number of neighbors for the sparse graph')
+    parser.add_argument('--num_rbf', type=int, default=16,
+                        help='number of radial basis functions')
     parser.add_argument('--dropout', type=float, default=0.1,
                         help='dropout level; 0.0 means no dropout')
     parser.add_argument(
