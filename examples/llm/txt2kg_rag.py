@@ -137,7 +137,7 @@ def parse_args():
         help="The chunk size to use VectorRAG (document retrieval). "
         "This will override any value set in the config file.")
     parser.add_argument(
-        '--dataset', type=str, default="hotpotqa", help="Dataset folder name, "
+        '--dataset', type=str, default="techqa", help="Dataset folder name, "
         "should contain corpus and train.json files."
         "extracted triples, processed dataset, "
         "document retriever, and model checkpoints "
@@ -153,7 +153,7 @@ def parse_args():
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
-    assert args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus > 0, "Please provide a value in (0,100]
+    assert args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus > 0, "Please provide a value in (0,100]"
     if args.skip_graph_rag:
         print("Skipping graph RAG step, setting GNN layers to 0...")
         args.num_gnn_layers = 0
@@ -212,6 +212,37 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
+    if "techqa" in args.dataset.lower() and not (
+        (os.path.join(args.dataset, "train.json"))
+            or os.path.exists(os.path.join(args.dataset, "corpus"))):
+        print("Could not find Q&A pairs and/or knowledge base corpus")
+        print("Would you like to download the TechQA dataset for demo?")
+        user_input = input("Y/N")
+        if user_input.lower() == "y" or user_input.lower() == "yes":
+            print("Downloading data...")
+            # downloads
+            zip_path = hf_hub_download(
+                repo_id="nvidia/TechQA-RAG-Eval",
+                repo_type="dataset",
+                filename="corpus.zip",
+            )
+            json_path = hf_hub_download(
+                repo_id="nvidia/TechQA-RAG-Eval",
+                repo_type="dataset",
+                filename="train.json",
+            )
+            # move to working dir
+            if not os.path.exists(args.dataset):
+                os.mkdir(args.dataset)
+            import zipfile
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(os.path.join(args.dataset, "corpus"))
+            import shutil
+            shutil.copy(json_path, os.path.join(args.dataset, "train.json"))
+        elif user_input.lower() == "n" or user_input.lower() == "no":
+            sys.exit("No selected, no data to work with... exiting.")
+        else:
+            sys.exit("Invalid user input, exiting.")
     with open(os.path.join(args.dataset, "train.json")) as file:
         json_obj = json.load(file)
     text_contexts = []
@@ -243,7 +274,8 @@ def get_data(args):
                                         args.doc_parsing_mode))
     if args.use_x_percent_corpus < 100:
         random.shuffle(text_contexts)
-        text_contexts = text_contexts[0:int(len(text_contexts) * args.use_x_percent_corpus / 100.0)]
+        text_contexts = text_contexts[
+            0:int(len(text_contexts) * args.use_x_percent_corpus / 100.0)]
 
     return json_obj, text_contexts
 
@@ -283,10 +315,7 @@ def index_kg(args, context_docs):
             kg_maker.save_kg(checkpoint_path)
     relevant_triples = kg_maker.relevant_triples
 
-    triples.extend(
-        list(
-            chain.from_iterable(triple_set
-                                for triple_set in relevant_triples.values())))
+    triples = list(chain.from_iterable(triple_set for triple_set in relevant_triples.values()))
     triples = list(dict.fromkeys(triples))
     raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
     torch.save(triples, raw_triples_path)
