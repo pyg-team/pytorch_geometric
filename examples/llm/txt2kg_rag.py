@@ -315,7 +315,9 @@ def index_kg(args, context_docs):
             kg_maker.save_kg(checkpoint_path)
     relevant_triples = kg_maker.relevant_triples
 
-    triples = list(chain.from_iterable(triple_set for triple_set in relevant_triples.values()))
+    triples = list(
+        chain.from_iterable(triple_set
+                            for triple_set in relevant_triples.values()))
     triples = list(dict.fromkeys(triples))
     raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
     torch.save(triples, raw_triples_path)
