@@ -213,8 +213,8 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
     if args.dataset.lower() == "techqa" and not (
-            os.path.exists(os.path.join(args.dataset, "train.json"))
-            or os.path.join(args.dataset, "corpus")):
+            (os.path.join(args.dataset, "train.json"))
+            or os.path.exists(os.path.join(args.dataset, "corpus"))):
         print("Could not find Q&A pairs and/or knowledge base corpus")
         print("Would you like to download the TechQA dataset for demo?")
         user_input = input("Y/N")
@@ -232,6 +232,8 @@ def get_data(args):
                 filename="train.json",
             )
             # move to working dir
+            if not os.path.exists(args.dataset):
+                os.mkdir(args.dataset)
             import zipfile
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(os.path.join(args.dataset, "corpus"))
