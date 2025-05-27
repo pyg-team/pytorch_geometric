@@ -212,7 +212,8 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
-    if not (os.path.exists(os.path.join(args.dataset, "train.json")) or os.path.join(args.dataset, "corpus")):
+    if not (os.path.exists(os.path.join(args.dataset, "train.json"))
+            or os.path.join(args.dataset, "corpus")):
         print("Could not find Q&A pairs and/or knowledge base corpus")
         print("Would you like to download the TechQA dataset for demo?")
         user_input = input("Y/N")
@@ -235,8 +236,6 @@ def get_data(args):
                 zip_ref.extractall(os.path.join(args.dataset, "corpus"))
             import shutil
             shutil.copy(json_path, os.path.join(args.dataset,"train.json"))
-
-
 
         elif user_input.lower() == "y" or user_input.lower() == "yes":
             quit("No selected, no data to work with ... exiting")
@@ -273,7 +272,8 @@ def get_data(args):
                                         args.doc_parsing_mode))
     if args.use_x_percent_corpus < 100:
         random.shuffle(text_contexts)
-        text_contexts = text_contexts[0:int(len(text_contexts) * args.use_x_percent_corpus / 100.0)]
+        text_contexts = text_contexts[
+            0:int(len(text_contexts) * args.use_x_percent_corpus / 100.0)]
 
     return json_obj, text_contexts
 
