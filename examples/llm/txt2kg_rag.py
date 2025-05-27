@@ -618,6 +618,14 @@ def train(args, train_loader, val_loader):
             model.eval()
             with torch.no_grad():
                 for step, batch in enumerate(val_loader):
+                    new_qs = []
+                    for i, q in enumerate(batch["question"]):
+                        # insert VectorRAG context
+                        new_qs.append(
+                            prompt_template.format(
+                                question=q,
+                                context="\n".join(batch.text_context[i])))
+                    batch.question = new_qs
                     if args.skip_graph_rag:
                         batch.desc = ""
                     loss = get_loss(model, batch)
