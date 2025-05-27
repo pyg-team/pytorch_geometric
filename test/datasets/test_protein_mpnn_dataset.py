@@ -8,8 +8,6 @@ def test_protein_mpnn_dataset():
 
     assert len(dataset) == 150
     assert dataset[0].x.size() == (229, 4, 3)
-    assert dataset[0].edge_index.size() == (2, 6540)
-    assert dataset[0].edge_attr.size() == (6540, 400)
     assert dataset[0].chain_seq_label.size() == (229, )
     assert dataset[0].mask.size() == (229, )
     assert dataset[0].chain_mask_all.size() == (229, )

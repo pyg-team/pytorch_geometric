@@ -2,7 +2,6 @@ import os
 import pickle
 import random
 from collections import defaultdict
-from itertools import product
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -15,7 +14,6 @@ from torch_geometric.data import (
     download_url,
     extract_tar,
 )
-from torch_geometric.nn import knn_graph
 
 
 class ProteinMPNNDataset(InMemoryDataset):
@@ -144,12 +142,9 @@ class ProteinMPNNDataset(InMemoryDataset):
 
                     x_chain_all, chain_seq_label_all, mask, chain_mask_all, residue_idx, chain_encoding_all = self._process_pdb3(  # noqa: E501
                         my_dict)
-                    edge_index, edge_attr = self._process_pdb4(
-                        x_chain_all, mask)
+
                     data = Data(
                         x=x_chain_all,  # [seq_len, 4, 3]
-                        edge_index=edge_index,  # [2, num_edges]
-                        edge_attr=edge_attr,  # [num_edges, num_rbf * 25]
                         chain_seq_label=chain_seq_label_all,  # [seq_len]
                         mask=mask,  # [seq_len]
                         chain_mask_all=chain_mask_all,  # [seq_len]
@@ -448,41 +443,3 @@ class ProteinMPNNDataset(InMemoryDataset):
             torch.from_numpy(residue_idx).to(dtype=torch.long),
             torch.from_numpy(chain_encoding_all).to(dtype=torch.long),
         )
-
-    def _process_pdb4(
-        self,
-        x: torch.Tensor,
-        mask: torch.Tensor,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        N, Ca, C, O = (x[:, i, :] for i in range(4))  # noqa: E741
-        b = Ca - N
-        c = C - Ca
-        a = torch.cross(b, c, dim=-1)
-        Cb = -0.58273431 * a + 0.56802827 * b - 0.54067466 * c + Ca
-
-        valid_mask = mask.bool()
-        valid_Ca = Ca[valid_mask]
-
-        edge_index = knn_graph(valid_Ca, k=self.num_neighbors, loop=True)
-        row, col = edge_index
-        original_indices = torch.arange(Ca.size(0))[valid_mask]
-        edge_index_original = torch.stack(
-            [original_indices[row], original_indices[col]], dim=0)
-        row, col = edge_index_original
-
-        rbf_all = []
-        for A, B in list(product([N, Ca, C, O, Cb], repeat=2)):
-            distances = torch.sqrt(torch.sum((A[row] - B[col])**2, 1) + 1e-6)
-            rbf = self._rbf(distances)
-            rbf_all.append(rbf)
-
-        return edge_index_original, torch.cat(rbf_all, dim=-1)
-
-    def _rbf(self, D: torch.Tensor) -> torch.Tensor:
-        D_min, D_max, D_count = 2., 22., self.num_rbf
-        D_mu = torch.linspace(D_min, D_max, D_count)
-        D_mu = D_mu.view([1, -1])
-        D_sigma = (D_max - D_min) / D_count
-        D_expand = torch.unsqueeze(D, -1)
-        RBF = torch.exp(-((D_expand - D_mu) / D_sigma)**2)
-        return RBF

@@ -1,6 +1,10 @@
+from itertools import product
+from typing import Tuple
+
 import torch
 import torch.nn.functional as F
 
+from torch_geometric.nn import knn_graph
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import to_dense_adj, to_dense_batch
 
@@ -157,7 +161,8 @@ class ProteinMPNN(torch.nn.Module):
         hidden_dim: int = 128,
         num_encoder_layers: int = 3,
         num_decoder_layers: int = 3,
-        k_neighbors: int = 30,
+        num_neighbors: int = 30,
+        num_rbf: int = 16,
         dropout: float = 0.1,
         augment_eps: float = 0.2,
         num_positional_embedding: int = 16,
@@ -166,6 +171,8 @@ class ProteinMPNN(torch.nn.Module):
         super().__init__()
         self.augment_eps = augment_eps
         self.hidden_dim = hidden_dim
+        self.num_neighbors = num_neighbors
+        self.num_rbf = num_rbf
         self.embedding = PositionalEncoding(num_positional_embedding)
         self.edge_mlp = torch.nn.Sequential(
             torch.nn.Linear(num_positional_embedding + 400, hidden_dim),
@@ -191,11 +198,52 @@ class ProteinMPNN(torch.nn.Module):
             if p.dim() > 1:
                 torch.nn.init.xavier_uniform_(p)
 
+    def _featurize(
+        self,
+        x: torch.Tensor,
+        mask: torch.Tensor,
+        batch: torch.Tensor,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        N, Ca, C, O = (x[:, i, :] for i in range(4))  # noqa: E741
+        b = Ca - N
+        c = C - Ca
+        a = torch.cross(b, c, dim=-1)
+        Cb = -0.58273431 * a + 0.56802827 * b - 0.54067466 * c + Ca
+
+        valid_mask = mask.bool()
+        valid_Ca = Ca[valid_mask]
+        valid_batch = batch[valid_mask]
+
+        edge_index = knn_graph(valid_Ca, k=self.num_neighbors,
+                               batch=valid_batch, loop=True)
+
+        row, col = edge_index
+        original_indices = torch.arange(Ca.size(0),
+                                        device=x.device)[valid_mask]
+        edge_index_original = torch.stack(
+            [original_indices[row], original_indices[col]], dim=0)
+        row, col = edge_index_original
+
+        rbf_all = []
+        for A, B in list(product([N, Ca, C, O, Cb], repeat=2)):
+            distances = torch.sqrt(torch.sum((A[row] - B[col])**2, 1) + 1e-6)
+            rbf = self._rbf(distances)
+            rbf_all.append(rbf)
+
+        return edge_index_original, torch.cat(rbf_all, dim=-1)
+
+    def _rbf(self, D: torch.Tensor) -> torch.Tensor:
+        D_min, D_max, D_count = 2., 22., self.num_rbf
+        D_mu = torch.linspace(D_min, D_max, D_count, device=D.device)
+        D_mu = D_mu.view([1, -1])
+        D_sigma = (D_max - D_min) / D_count
+        D_expand = torch.unsqueeze(D, -1)
+        RBF = torch.exp(-((D_expand - D_mu) / D_sigma)**2)
+        return RBF
+
     def forward(
         self,
         x: torch.Tensor,
-        edge_index: torch.Tensor,
-        edge_attr: torch.Tensor,
         chain_seq_label: torch.Tensor,
         mask: torch.Tensor,
         chain_mask_all: torch.Tensor,
@@ -204,9 +252,10 @@ class ProteinMPNN(torch.nn.Module):
         batch: torch.Tensor,
     ) -> torch.Tensor:
         device = x.device
-        # TODO: move edge_index and edge_attr here
         if self.training and self.augment_eps > 0:
             x = x + self.augment_eps * torch.randn_like(x)
+
+        edge_index, edge_attr = self._featurize(x, mask, batch)
 
         row, col = edge_index
         offset = residue_idx[row] - residue_idx[col]
