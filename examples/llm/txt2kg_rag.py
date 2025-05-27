@@ -137,7 +137,7 @@ def parse_args():
         help="The chunk size to use VectorRAG (document retrieval). "
         "This will override any value set in the config file.")
     parser.add_argument(
-        '--dataset', type=str, default="hotpotqa", help="Dataset folder name, "
+        '--dataset', type=str, default="techqa", help="Dataset folder name, "
         "should contain corpus and train.json files."
         "extracted triples, processed dataset, "
         "document retriever, and model checkpoints "
@@ -153,7 +153,7 @@ def parse_args():
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
-    assert args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus > 0, "Please provide a value in (0,100]
+    assert args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus > 0, "Please provide a value in (0,100]"
     if args.skip_graph_rag:
         print("Skipping graph RAG step, setting GNN layers to 0...")
         args.num_gnn_layers = 0
