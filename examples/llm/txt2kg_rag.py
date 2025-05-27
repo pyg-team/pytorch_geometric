@@ -235,9 +235,9 @@ def get_data(args):
                 zip_ref.extractall("corpus")
             import shutil
             shutil.copy(json_path, "train.json")
-            
-            
-        
+
+
+
         elif user_input.lower() == "y" or user_input.lower() == "yes":
             quit("No selected, no data to work with ... exiting")
         else:
