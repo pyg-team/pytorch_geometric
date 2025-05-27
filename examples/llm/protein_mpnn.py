@@ -3,6 +3,7 @@
 """
 import argparse
 import time
+import warnings
 
 import numpy as np
 import torch
@@ -157,21 +158,27 @@ def main(args):
     seed_everything(123)
     scaler = torch.amp.GradScaler()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+    
+    if args.size == 'complete':
+        warnings.warn("The complete dataset weighs 64.1 GB", UserWarning)
+        
     train_dataset = ProteinMPNNDataset(
         root=args.data_path,
+        size=args.size,
         split='train',
         rescut=args.rescut,
         max_length=args.max_protein_length,
     )
     valid_dataset = ProteinMPNNDataset(
         root=args.data_path,
+        size=args.size,
         split='valid',
         rescut=args.rescut,
         max_length=args.max_protein_length,
     )
     test_dataset = ProteinMPNNDataset(
         root=args.data_path,
+        size=args.size,
         split='test',
         rescut=args.rescut,
         max_length=args.max_protein_length,
@@ -227,6 +234,8 @@ if __name__ == '__main__':
     # dataset config
     parser.add_argument('--data_path', type=str, default='data/ProteinMPNN',
                         help='path for loading training data')
+    parser.add_argument('--size', type=str, default='subsample',
+                        help='Use of "subsample" or "complete" dataset')
     parser.add_argument('--max_protein_length', type=int, default=10000,
                         help='maximum length of the protein complext')
     parser.add_argument('--rescut', type=float, default=3.5,

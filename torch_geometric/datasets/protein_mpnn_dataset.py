@@ -23,6 +23,11 @@ class ProteinMPNNDataset(InMemoryDataset):
 
     Args:
         root (str): Root directory where the dataset should be saved.
+        size (str): Size of the PDB information to train the model
+            If :obj:`"subsample"`, A subset of PDBs is used (229.4 MB).
+            If :obj:`"complete"`, The whole set  of PDBs from original paper 
+                    is used (64.1 GB).
+            (default: :obj:`"subsample"`)
         split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"valid"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
@@ -53,9 +58,11 @@ class ProteinMPNNDataset(InMemoryDataset):
             (default: :obj:`False`)
     """
 
-    raw_url = ('https://files.ipd.uw.edu/pub/training_sets/'
-               'pdb_2021aug02_sample.tar.gz')
-    sub_folder = raw_url.split('/')[-1].split('.')[0]
+    raw_url = {'subsample':'https://files.ipd.uw.edu/pub/training_sets/'
+               'pdb_2021aug02_sample.tar.gz',
+               'complete':'https://files.ipd.uw.edu/pub/training_sets/'
+               'pdb_2021aug02.tar.gz'}
+    
     splits = {
         'train': 1,
         'valid': 2,
@@ -65,6 +72,7 @@ class ProteinMPNNDataset(InMemoryDataset):
     def __init__(
         self,
         root: str,
+        size: str = 'subsample',
         split: str = 'train',
         datacut: str = '2030-01-01',
         rescut: float = 3.5,
@@ -76,13 +84,16 @@ class ProteinMPNNDataset(InMemoryDataset):
         pre_filter: Optional[Callable] = None,
         force_reload: bool = False,
     ) -> None:
+        self.size = size
         self.split = split
         self.datacut = datacut
         self.rescut = rescut
         self.homo = homo
         self.max_length = max_length
         self.num_units = num_units
-
+        
+        self.sub_folder = self.raw_url[self.size].split('/')[-1].split('.')[0]
+        
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
         self.load(self.processed_paths[self.splits[self.split]])
@@ -99,7 +110,7 @@ class ProteinMPNNDataset(InMemoryDataset):
         return ['splits.pkl', 'train.pt', 'valid.pt', 'test.pt']
 
     def download(self) -> None:
-        file_path = download_url(self.raw_url, self.raw_dir)
+        file_path = download_url(self.raw_url[self.size], self.raw_dir)
         extract_tar(file_path, self.raw_dir)
         os.unlink(file_path)
 
