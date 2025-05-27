@@ -232,9 +232,9 @@ def get_data(args):
             # move to working dir
             import zipfile
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall("corpus")
+                zip_ref.extractall(os.path.join(args.dataset, "corpus"))
             import shutil
-            shutil.copy(json_path, "train.json")
+            shutil.copy(json_path, os.path.join(args.dataset,"train.json"))
 
 
 
