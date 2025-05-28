@@ -18,8 +18,6 @@ try:
 except ImportError:
     wandb_available = False
 
-from huggingface_hub import hf_hub_download
-
 import torch
 from g_retriever import (
     adjust_learning_rate,
@@ -28,6 +26,7 @@ from g_retriever import (
     load_params_dict,
     save_params_dict,
 )
+from huggingface_hub import hf_hub_download
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
@@ -223,12 +222,13 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
-	
+
     json_path = Path(args.dataset) / "train.json"
     corpus_path = Path(args.dataset) / "corpus"
 
     # techqa specified but neither corpus or train.json exists
-    if "techqa" in args.dataset.lower() and not (json_path.exists() or corpus_path.exists()):
+    if "techqa" in args.dataset.lower() and not (json_path.exists()
+                                                 or corpus_path.exists()):
         print("Could not find Q&A pairs and/or knowledge base corpus")
         print("Would you like to download the TechQA dataset for demo?")
         user_input = input("Y/N: ")
