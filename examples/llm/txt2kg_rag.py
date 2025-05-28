@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from glob import glob
 from itertools import chain
+from pathlib import Path
 
 import yaml
 
@@ -16,6 +17,8 @@ try:
     wandb_available = True
 except ImportError:
     wandb_available = False
+
+from huggingface_hub import hf_hub_download
 
 import torch
 from g_retriever import (
@@ -54,7 +57,7 @@ from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
-CHUNK_SIZE_DEFAULT = 512
+KG_CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
 LR_DEFAULT = 1e-5
@@ -79,7 +82,7 @@ def parse_args():
         "The URL hosting your model, in case you are not using the public NIM."
     )
     parser.add_argument(
-        '--kg_chunk_size', type=int, default=512,
+        '--kg_chunk_size', type=int, default=KG_CHUNK_SIZE_DEFAULT,
         help="When splitting context documents for txt2kg,\
         the maximum number of characters per chunk.")
     parser.add_argument('--gnn_hidden_channels', type=int,
@@ -171,6 +174,11 @@ def parse_args():
                 if param in config and getattr(args, param) is None:
                     setattr(args, param, config[param])
                     print(f"Using config value for {param}: {config[param]}")
+    else:
+        print("Skipping config loading...")
+
+    assert args.doc_chunk_size is not None, "doc_chunk_size has not been set"
+    assert args.k_for_docs is not None, "k_for_docs has not been set"
 
     return args
 
@@ -199,23 +207,31 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     # Only split into individual documents if many paragraphs are detected
     if doc_parsing_mode == "paragraph":
         paragraphs = re.split(r'\n{2,}', text)
-    else:  # doc_parsing_mode == "file":
+    else:
+        # doc_parsing_mode == 'file' or doc_parsing_mode is None
         paragraphs = [text]
 
     for paragraph in paragraphs:
-        chunks = _chunk_text(paragraph, chunk_size)
+        if chunk_size is not None:
+            chunks = _chunk_text(paragraph, chunk_size)
+        else:
+            # defaults to 512 in _chunk_text
+            chunks = _chunk_text(paragraph)
         full_chunks.extend(chunks)
     return full_chunks
 
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
-    if "techqa" in args.dataset.lower() and not (
-        (os.path.join(args.dataset, "train.json"))
-            or os.path.exists(os.path.join(args.dataset, "corpus"))):
+	
+    json_path = Path(args.dataset) / "train.json"
+    corpus_path = Path(args.dataset) / "corpus"
+
+    # techqa specified but neither corpus or train.json exists
+    if "techqa" in args.dataset.lower() and not (json_path.exists() or corpus_path.exists()):
         print("Could not find Q&A pairs and/or knowledge base corpus")
         print("Would you like to download the TechQA dataset for demo?")
-        user_input = input("Y/N")
+        user_input = input("Y/N: ")
         if user_input.lower() == "y" or user_input.lower() == "yes":
             print("Downloading data...")
             # downloads
@@ -234,7 +250,7 @@ def get_data(args):
                 os.mkdir(args.dataset)
             import zipfile
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(os.path.join(args.dataset, "corpus"))
+                zip_ref.extractall(args.dataset)
             import shutil
             shutil.copy(json_path, os.path.join(args.dataset, "train.json"))
         elif user_input.lower() == "n" or user_input.lower() == "no":
