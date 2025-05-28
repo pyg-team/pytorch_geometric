@@ -174,6 +174,11 @@ def parse_args():
                 if param in config and getattr(args, param) is None:
                     setattr(args, param, config[param])
                     print(f"Using config value for {param}: {config[param]}")
+    else:
+        print("Skipping config loading...")
+
+    assert args.doc_chunk_size is not None, "doc_chunk_size has not been set"
+    assert args.k_for_docs is not None, "k_for_docs has not been set"
 
     return args
 
