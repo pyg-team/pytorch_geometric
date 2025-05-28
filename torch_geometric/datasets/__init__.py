@@ -30,6 +30,7 @@ from .faust import FAUST
 from .dynamic_faust import DynamicFAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
+from .medshapenet import MedShapeNet
 from .coma import CoMA
 from .shrec2016 import SHREC2016
 from .tosca import TOSCA
@@ -147,6 +148,7 @@ homo_datasets = [
     'DynamicFAUST',
     'ShapeNet',
     'ModelNet',
+    'MedShapeNet',
     'CoMA',
     'SHREC2016',
     'TOSCA',
