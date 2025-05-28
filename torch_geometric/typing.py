@@ -21,8 +21,6 @@ WITH_PT23 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 3
 WITH_PT24 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 4
 WITH_PT25 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 5
 WITH_PT26 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 6
-WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
-WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
@@ -70,12 +68,12 @@ try:
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
     try:
-        torch.classes.pyg.CPUHashMap
+        torch.classes.pyg.CPUHashMap  # noqa: B018
         WITH_CPU_HASH_MAP = True
     except Exception:
         WITH_CPU_HASH_MAP = False
     try:
-        torch.classes.pyg.CUDAHashMap
+        torch.classes.pyg.CUDAHashMap  # noqa: B018
         WITH_CUDA_HASH_MAP = True
     except Exception:
         WITH_CUDA_HASH_MAP = False

@@ -268,7 +268,7 @@ def withMETIS(func: Callable) -> Callable:
     with_metis = WITH_METIS
 
     if with_metis:
-        try:  # Test that METIS can succesfully execute:
+        try:  # Test that METIS can successfully execute:
             # TODO Using `pyg-lib` metis partitioning leads to some weird bugs
             # in the # CI. As such, we require `torch-sparse` for now.
             rowptr = torch.tensor([0, 2, 4, 6])
