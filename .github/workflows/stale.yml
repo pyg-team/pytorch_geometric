@@ -25,3 +25,4 @@ jobs:
           stale-issue-label: 'stale'
           only-issue-labels: 'bug'
           exempt-all-issue-milestones: true
+          operations-per-run: 10
