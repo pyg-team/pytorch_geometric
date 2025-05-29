@@ -27,6 +27,6 @@ jobs:
           days-before-pr-close: -1
           stale-issue-message: 'This issue has been automatically marked as stale due to lack of activity. It will be closed if no further activity occurs. Thank you'
           close-issue-message: 'This issue is closed due to lack of activity. Feel free to reopen it if you still have questions.'
-          stale-issue-label: 'stale-issue'
+          stale-issue-label: 'stale'
           only-issue-labels: 'bug'
           exempt-all-issue-milestones: true
