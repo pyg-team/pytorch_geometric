@@ -114,7 +114,7 @@ def get_loader(input_nodes: dict[str, Tensor]) -> NeighborLoader:
         batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers,
-        persistent_workers=True,
+        persistent_workers=num_workers > 0,
         disjoint=args.model in ['sgformer', 'polynormer'],
     )
 
