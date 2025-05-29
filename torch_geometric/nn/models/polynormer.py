@@ -188,7 +188,8 @@ class Polynormer(torch.nn.Module):
         if self._global:
             batch, indices = batch.sort()
             rev_perm = torch.empty_like(indices)
-            rev_perm[indices] = torch.arange(len(indices), device=indices.device)
+            rev_perm[indices] = torch.arange(len(indices),
+                                             device=indices.device)
             x_local = self.ln(x_local[indices])
             x_global, mask = to_dense_batch(x_local, batch)
             for attn in self.global_attn:
