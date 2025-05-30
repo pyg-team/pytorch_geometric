@@ -129,7 +129,7 @@ def read_soc(files: List[str], name: str) -> List[Data]:
     edge_index = pd.read_csv(files[0], sep='\t', header=None,
                              skiprows=skiprows, dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
-    num_nodes = edge_index.max().item() + 1
+    num_nodes = int(edge_index.max()) + 1
     edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
@@ -143,11 +143,15 @@ def read_wiki(files: List[str], name: str) -> List[Data]:
     edge_index = torch.from_numpy(edge_index.values).t()
 
     idx = torch.unique(edge_index.flatten())
-    idx_assoc = torch.full((edge_index.max() + 1, ), -1, dtype=torch.long)
+    idx_assoc = torch.full(  # type: ignore
+        (edge_index.max() + 1, ),
+        -1,
+        dtype=torch.long,
+    )
     idx_assoc[idx] = torch.arange(idx.size(0))
 
     edge_index = idx_assoc[edge_index]
-    num_nodes = edge_index.max().item() + 1
+    num_nodes = int(edge_index.max()) + 1
     edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
