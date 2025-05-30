@@ -33,6 +33,8 @@ class Polynormer(torch.nn.Module):
             (default: :obj:`1`)
         beta (float): Aggregate type.
             (default: :obj:`0.9`)
+        qk_shared (bool optional): Whether weight of query and key are shared.
+            (default: :obj:`True`)
         pre_ln (bool): Pre layer normalization.
             (default: :obj:`False`)
         post_bn (bool): Post batch normlization.
@@ -52,6 +54,7 @@ class Polynormer(torch.nn.Module):
         global_dropout: float = 0.5,
         heads: int = 1,
         beta: float = 0.9,
+        qk_shared: bool = False,
         pre_ln: bool = False,
         post_bn: bool = True,
         local_attn: bool = False,
@@ -120,11 +123,12 @@ class Polynormer(torch.nn.Module):
         for _ in range(global_layers):
             self.global_attn.append(
                 PolynormerAttention(
-                    hidden_channels,
-                    heads,
-                    hidden_channels,
-                    beta,
-                    global_dropout,
+                    channels=hidden_channels,
+                    heads=heads,
+                    head_channels=hidden_channels,
+                    beta=beta,
+                    dropout=global_dropout,
+                    qk_shared=qk_shared,
                 ))
         self.pred_local = torch.nn.Linear(inner_channels, out_channels)
         self.pred_global = torch.nn.Linear(inner_channels, out_channels)
