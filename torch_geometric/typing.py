@@ -10,7 +10,7 @@ import torch
 from torch import Tensor
 
 try:
-    from typing import TypeAlias  # type: ignore
+    from typing import TypeAlias
 except ImportError:
     from typing_extensions import TypeAlias
 
@@ -21,6 +21,8 @@ WITH_PT23 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 3
 WITH_PT24 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 4
 WITH_PT25 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 5
 WITH_PT26 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 6
+WITH_PT27 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 7
+WITH_PT28 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 8
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
@@ -95,7 +97,7 @@ except Exception as e:
     WITH_CUDA_HASH_MAP = False
 
 if WITH_CPU_HASH_MAP:
-    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
+    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap  # type: ignore
 else:
 
     class CPUHashMap:  # type: ignore
@@ -107,7 +109,7 @@ else:
 
 
 if WITH_CUDA_HASH_MAP:
-    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
+    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap  # type: ignore
 else:
 
     class CUDAHashMap:  # type: ignore
