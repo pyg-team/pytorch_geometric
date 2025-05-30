@@ -3,7 +3,7 @@ name: Setup
 inputs:
   python-version:
     required: false
-    default: '3.9'
+    default: '3.10'  # TODO Change back once `pyg-lib` wheels are fixed.
   torch-version:
     required: false
     default: '2.7.0'
@@ -64,7 +64,7 @@ runs:
     - name: Install pyg-lib
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
-        uv pip install --prerelease=allow --no-index --upgrade pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        uv pip install --no-index --upgrade pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
 
     - name: Install faiss-cpu
