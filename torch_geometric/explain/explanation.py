@@ -110,7 +110,7 @@ class ExplanationMixin:
         *args,
         **kwargs,
     ) -> Union['Explanation', 'HeteroExplanation']:
-        """Thresholds the explanation masks according to the thresholding
+        """Thresholds the explanation masks according to the threshold
         method.
 
         Args:
@@ -206,7 +206,7 @@ class Explanation(Data, ExplanationMixin):
         feat_labels: Optional[List[str]] = None,
         top_k: Optional[int] = None,
     ):
-        r"""Creates a bar plot of the node feature importances by summing up
+        r"""Creates a bar plot of the node feature importance by summing up
         the node mask across all nodes.
 
         Args:
@@ -329,7 +329,7 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         feat_labels: Optional[Dict[NodeType, List[str]]] = None,
         top_k: Optional[int] = None,
     ):
-        r"""Creates a bar plot of the node feature importances by summing up
+        r"""Creates a bar plot of the node feature importance by summing up
         node masks across all nodes for each node type.
 
         Args:
