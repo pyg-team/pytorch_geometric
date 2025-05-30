@@ -65,7 +65,7 @@ class PolynormerAttention(torch.nn.Module):
         """
         B, N, *_ = x.shape
         h = self.h_lins(x)
-        k = F.sigmoid(self.k(x)).view(B, N, self.head_channels, self.heads)
+        k = self.k(x).sigmoid().view(B, N, self.head_channels, self.heads)
         if self.qk_shared:
             q = k
         else:
