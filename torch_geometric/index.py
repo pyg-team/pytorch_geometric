@@ -361,10 +361,10 @@ class Index(Tensor):
         return index
 
     # Prevent auto-wrapping outputs back into the proper subclass type:
-    __torch_function__ = torch._C._disabled_torch_function_impl
+    __torch_function__ = torch._C._disabled_torch_function_impl  # type: ignore
 
     @classmethod
-    def __torch_dispatch__(
+    def __torch_dispatch__(  # type: ignore
         cls: Type,
         func: Callable[..., Any],
         types: Iterable[Type[Any]],

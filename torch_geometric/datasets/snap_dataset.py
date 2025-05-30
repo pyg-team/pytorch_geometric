@@ -109,7 +109,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
         row = torch.cat([row, row_ego, col_ego], dim=0)
         col = torch.cat([col, col_ego, row_ego], dim=0)
         edge_index = torch.stack([row, col], dim=0)
-        edge_index = coalesce(edge_index, num_nodes=N)
+        edge_index = coalesce(edge_index, num_nodes=int(N))
 
         data = EgoData(x=x, edge_index=edge_index, circle=circle,
                        circle_batch=circle_batch)
