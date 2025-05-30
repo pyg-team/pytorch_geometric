@@ -143,8 +143,8 @@ def read_wiki(files: List[str], name: str) -> List[Data]:
     edge_index = torch.from_numpy(edge_index.values).t()
 
     idx = torch.unique(edge_index.flatten())
-    idx_assoc = torch.full(  # type: ignore
-        (edge_index.max() + 1, ),
+    idx_assoc = torch.full(
+        (edge_index.max() + 1, ),  # type: ignore
         -1,
         dtype=torch.long,
     )
