@@ -40,6 +40,7 @@ from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 from .add_gpse import AddGPSE
 from .feature_propagation import FeaturePropagation
 from .half_hop import HalfHop
+from .mesh_to_dual_graph import MeshToDualGraph
 
 from .distance import Distance
 from .cartesian import Cartesian
@@ -112,6 +113,7 @@ graph_transforms = [
     'AddGPSE',
     'FeaturePropagation',
     'HalfHop',
+    'MeshToDualGraph',
 ]
 
 vision_transforms = [
