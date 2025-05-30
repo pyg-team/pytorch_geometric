@@ -23,7 +23,6 @@ class PolynormerAttention(torch.nn.Module):
             (default: :obj:`True`)
         dropout (float, optional): Dropout probability of the final
             attention output. (default: :obj:`0.0`)
-
     """
     def __init__(
         self,
