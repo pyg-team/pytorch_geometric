@@ -22,7 +22,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-14]
         include:
           - os: ubuntu-latest
-            python-version: '3.10'  # TODO Change back once `pyg-lib` wheels are fixed.
+            python-version: '3.9'
           - os: windows-latest
             python-version: '3.9'
           - os: macos-14
