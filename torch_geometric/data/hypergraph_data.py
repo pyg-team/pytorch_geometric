@@ -39,7 +39,7 @@ class HyperGraphData(Data):
         edge_index (LongTensor, optional): Hyperedge tensor
             with shape :obj:`[2, num_edges*num_nodes_per_edge]`.
             Where `edge_index[1]` denotes the hyperedge index and
-            `edge_index[0]` denotes the node indicies that are connected
+            `edge_index[0]` denotes the node indices that are connected
             by the hyperedge. (default: :obj:`None`)
             (default: :obj:`None`)
         edge_attr (torch.Tensor, optional): Edge feature matrix with shape
