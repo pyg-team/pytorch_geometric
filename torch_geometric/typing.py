@@ -10,7 +10,7 @@ import torch
 from torch import Tensor
 
 try:
-    from typing import TypeAlias
+    from typing import TypeAlias  # type: ignore
 except ImportError:
     from typing_extensions import TypeAlias
 
@@ -97,7 +97,7 @@ except Exception as e:
     WITH_CUDA_HASH_MAP = False
 
 if WITH_CPU_HASH_MAP:
-    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap  # type: ignore
+    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
 else:
 
     class CPUHashMap:  # type: ignore
@@ -109,7 +109,7 @@ else:
 
 
 if WITH_CUDA_HASH_MAP:
-    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap  # type: ignore
+    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
 else:
 
     class CUDAHashMap:  # type: ignore
