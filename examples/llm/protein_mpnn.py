@@ -3,7 +3,6 @@
 """
 import argparse
 import time
-import warnings
 
 import numpy as np
 import psutil
@@ -161,11 +160,9 @@ def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     if args.size == 'large' and psutil.virtual_memory().total < 64.1 * 1024**3:
-        warnings.warn((
-            f"WARNING: Available system RAM ({psutil.virtual_memory().total / 1024**3:.2f} GB)"
-            " is less than the dataset size (64.1 GB).\n"
-            "Consider freeing memory or using a machine with more available RAM."
-        ), UserWarning)
+        print('Warning: may not have enough RAM to run this example.')
+        print('Consider upgrading RAM if an error occurs.')
+        print('Estimated RAM Needed: ~64.1GB.')
 
     train_dataset = ProteinMPNNDataset(
         root=args.data_path,
