@@ -23,11 +23,12 @@ runs:
   steps:
     - name: Install uv
       uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        activate-environment: true
 
     - name: Set up Python ${{ inputs.python-version }}
       run: |
-        uv python install ${{ inputs.python-version }}
-        uv venv
         uv pip install --upgrade pip setuptools
       shell: bash
 
