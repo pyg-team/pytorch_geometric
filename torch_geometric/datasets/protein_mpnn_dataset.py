@@ -23,10 +23,9 @@ class ProteinMPNNDataset(InMemoryDataset):
 
     Args:
         root (str): Root directory where the dataset should be saved.
-        size (str): Size of the PDB information to train the model
-            If :obj:`"small"`, a subset of PDBs is used (229.4 MB).
-            If :obj:`"large"`, the whole set of PDBs from original paper
-                    is used (64.1 GB).
+        size (str): Size of the PDB information to train the model.
+            If :obj:`"small"`, loads the small dataset (229.4 MB).
+            If :obj:`"large"`, loads the large dataset (64.1 GB).
             (default: :obj:`"small"`)
         split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"valid"`, loads the validation dataset.
