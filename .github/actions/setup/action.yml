@@ -36,6 +36,11 @@ runs:
         uv pip install "numpy<2"
       shell: bash
 
+    - name: Install pandas
+      run: |
+        uv pip install "pandas<2.2.3"
+      shell: bash
+
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
