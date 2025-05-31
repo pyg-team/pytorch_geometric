@@ -53,6 +53,5 @@ def test_appnp_dropout():
     assert torch.allclose(0.1 * x, conv(x, adj1.t()), rtol=1e-5, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4),
-                                            rtol=1e-5, atol=1e-6)
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         assert torch.allclose(0.1 * x, conv(x, adj2.t()), rtol=1e-5, atol=1e-6)
