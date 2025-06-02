@@ -16,8 +16,8 @@ import argparse
 import os
 import os.path as osp
 import time
-import psutil
 
+import psutil
 import torch
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 
@@ -386,10 +386,12 @@ def main(args):
     running_time = (end_time - start_time) / 3600
     print(f'Total running time: {running_time:.2f} hours')
 
+
 if __name__ == '__main__':
-    available_gb = psutil.virtual_memory().available/(1024**3)
+    available_gb = psutil.virtual_memory().available / (1024**3)
     if available_gb < 80:
-        print(f"  WARNING: This test may require more RAM than available.\n"
+        print(
+            f"  WARNING: This test may require more RAM than available.\n"
             f"    Estimated RAM needed: ~80 GB\n"
             f"    Detected available RAM: {available_gb:.2f} GB\n"
             f"    If the program crashes or is killed, consider upgrading system memory."
