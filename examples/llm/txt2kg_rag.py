@@ -1,5 +1,3 @@
-# default args -> 40% test acc.
-# 5-8% diff vs VectorRAG baselines
 import argparse
 import gc
 import json
@@ -10,6 +8,7 @@ import sys
 from datetime import datetime
 from glob import glob
 from itertools import chain
+from pathlib import Path
 
 import yaml
 
@@ -27,6 +26,7 @@ from g_retriever import (
     load_params_dict,
     save_params_dict,
 )
+from huggingface_hub import hf_hub_download
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
@@ -56,7 +56,7 @@ from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
-CHUNK_SIZE_DEFAULT = 512
+KG_CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
 LR_DEFAULT = 1e-5
@@ -81,7 +81,7 @@ def parse_args():
         "The URL hosting your model, in case you are not using the public NIM."
     )
     parser.add_argument(
-        '--kg_chunk_size', type=int, default=512,
+        '--kg_chunk_size', type=int, default=KG_CHUNK_SIZE_DEFAULT,
         help="When splitting context documents for txt2kg,\
         the maximum number of characters per chunk.")
     parser.add_argument('--gnn_hidden_channels', type=int,
@@ -111,7 +111,7 @@ def parse_args():
                         help="Whether to skip model saving.")
     parser.add_argument('--log_steps', type=int, default=30,
                         help="Log to wandb every N steps")
-    parser.add_argument('--wandb_project', type=str, default="hotpotqa",
+    parser.add_argument('--wandb_project', type=str, default="techqa",
                         help="Weights & Biases project name")
     parser.add_argument('--wandb', action="store_true",
                         help="Enable wandb logging")
@@ -137,7 +137,7 @@ def parse_args():
         help="The chunk size to use VectorRAG (document retrieval). "
         "This will override any value set in the config file.")
     parser.add_argument(
-        '--dataset', type=str, default="hotpotqa", help="Dataset folder name, "
+        '--dataset', type=str, default="techqa", help="Dataset folder name, "
         "should contain corpus and train.json files."
         "extracted triples, processed dataset, "
         "document retriever, and model checkpoints "
@@ -146,10 +146,14 @@ def parse_args():
         '--skip_graph_rag', action="store_true",
         help="Skip the graph RAG step. "
         "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
+    parser.add_argument(
+        '--use_x_percent_corpus', default=100, type=int,
+        help="Debug flag that allows user to only use a random percentage "
+        "of available knowledge base corpus for RAG")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
-
+    assert args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus > 0, "Please provide a value in (0,100]"
     if args.skip_graph_rag:
         print("Skipping graph RAG step, setting GNN layers to 0...")
         args.num_gnn_layers = 0
@@ -169,6 +173,11 @@ def parse_args():
                 if param in config and getattr(args, param) is None:
                     setattr(args, param, config[param])
                     print(f"Using config value for {param}: {config[param]}")
+    else:
+        print("Skipping config loading...")
+
+    assert args.doc_chunk_size is not None, "doc_chunk_size has not been set"
+    assert args.k_for_docs is not None, "k_for_docs has not been set"
 
     return args
 
@@ -197,17 +206,57 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     # Only split into individual documents if many paragraphs are detected
     if doc_parsing_mode == "paragraph":
         paragraphs = re.split(r'\n{2,}', text)
-    else:  # doc_parsing_mode == "file":
+    else:
+        # doc_parsing_mode == 'file' or doc_parsing_mode is None
         paragraphs = [text]
 
     for paragraph in paragraphs:
-        chunks = _chunk_text(paragraph, chunk_size)
+        if chunk_size is not None:
+            chunks = _chunk_text(paragraph, chunk_size)
+        else:
+            # defaults to 512 in _chunk_text
+            chunks = _chunk_text(paragraph)
         full_chunks.extend(chunks)
     return full_chunks
 
 
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
+
+    json_path = Path(args.dataset) / "train.json"
+    corpus_path = Path(args.dataset) / "corpus"
+
+    # techqa specified but neither corpus or train.json exists
+    if "techqa" in args.dataset.lower() and not (json_path.exists()
+                                                 or corpus_path.exists()):
+        print("Could not find Q&A pairs and/or knowledge base corpus")
+        print("Would you like to download the TechQA dataset for demo?")
+        user_input = input("Y/N: ")
+        if user_input.lower() == "y" or user_input.lower() == "yes":
+            print("Downloading data...")
+            # downloads
+            zip_path = hf_hub_download(
+                repo_id="nvidia/TechQA-RAG-Eval",
+                repo_type="dataset",
+                filename="corpus.zip",
+            )
+            json_path = hf_hub_download(
+                repo_id="nvidia/TechQA-RAG-Eval",
+                repo_type="dataset",
+                filename="train.json",
+            )
+            # move to working dir
+            if not os.path.exists(args.dataset):
+                os.mkdir(args.dataset)
+            import zipfile
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(args.dataset)
+            import shutil
+            shutil.copy(json_path, os.path.join(args.dataset, "train.json"))
+        elif user_input.lower() == "n" or user_input.lower() == "no":
+            sys.exit("No selected, no data to work with... exiting.")
+        else:
+            sys.exit("Invalid user input, exiting.")
     with open(os.path.join(args.dataset, "train.json")) as file:
         json_obj = json.load(file)
     text_contexts = []
@@ -237,6 +286,10 @@ def get_data(args):
             text_contexts.extend(
                 _process_and_chunk_text(text_context, args.doc_chunk_size,
                                         args.doc_parsing_mode))
+    if args.use_x_percent_corpus < 100:
+        random.shuffle(text_contexts)
+        text_contexts = text_contexts[
+            0:int(len(text_contexts) * args.use_x_percent_corpus / 100.0)]
 
     return json_obj, text_contexts
 
@@ -276,10 +329,9 @@ def index_kg(args, context_docs):
             kg_maker.save_kg(checkpoint_path)
     relevant_triples = kg_maker.relevant_triples
 
-    triples.extend(
-        list(
-            chain.from_iterable(triple_set
-                                for triple_set in relevant_triples.values())))
+    triples = list(
+        chain.from_iterable(triple_set
+                            for triple_set in relevant_triples.values()))
     triples = list(dict.fromkeys(triples))
     raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
     torch.save(triples, raw_triples_path)
@@ -582,6 +634,14 @@ def train(args, train_loader, val_loader):
             model.eval()
             with torch.no_grad():
                 for step, batch in enumerate(val_loader):
+                    new_qs = []
+                    for i, q in enumerate(batch["question"]):
+                        # insert VectorRAG context
+                        new_qs.append(
+                            prompt_template.format(
+                                question=q,
+                                context="\n".join(batch.text_context[i])))
+                    batch.question = new_qs
                     if args.skip_graph_rag:
                         batch.desc = ""
                     loss = get_loss(model, batch)
