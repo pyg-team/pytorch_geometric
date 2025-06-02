@@ -64,7 +64,7 @@ def test_in_memory_dataset():
     assert dataset[1].test_str == '2'
 
     with pytest.warns(UserWarning, match="internal storage format"):
-        dataset.data
+        dataset.data  # noqa: B018
 
     assert torch.equal(dataset.x, torch.cat([x1, x2], dim=0))
     assert dataset.edge_index.tolist() == [

@@ -641,7 +641,7 @@ class NumNeighbors:
             elif isinstance(self.values, dict):
                 default = self.default
             else:
-                assert False
+                raise AssertionError()
 
             # Confirm that `values` only hold valid edge types:
             if isinstance(self.values, dict):
