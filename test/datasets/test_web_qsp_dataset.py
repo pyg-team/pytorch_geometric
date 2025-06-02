@@ -142,10 +142,10 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
         "test": ds_test
     })
 
-    def mock_load_dataset(name: str):
+    def mock_load_dataset(path: str):
         # Save the dataset and then load it to emulate downloading from HF
         DATASET_CACHE_DIR = os.path.join(tmp_path,
-                                         ".cache/huggingface/datasets", name)
+                                         ".cache/huggingface/datasets", path)
         os.makedirs(DATASET_CACHE_DIR, exist_ok=True)
 
         ds.save_to_disk(DATASET_CACHE_DIR)
