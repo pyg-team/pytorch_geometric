@@ -803,7 +803,7 @@ class EdgeIndex(Tensor):
 
         size = self.get_sparse_size()
         if value is not None and value.dim() > 1:
-            size = size + value.size()[1:]  # type: ignore
+            size = size + value.size()[1:]
 
         out = torch.full(size, fill_value, dtype=dtype, device=self.device)
         out[self._data[0], self._data[1]] = value if value is not None else 1
@@ -1186,10 +1186,10 @@ class EdgeIndex(Tensor):
         return edge_index
 
     # Prevent auto-wrapping outputs back into the proper subclass type:
-    __torch_function__ = torch._C._disabled_torch_function_impl
+    __torch_function__ = torch._C._disabled_torch_function_impl  # type: ignore
 
     @classmethod
-    def __torch_dispatch__(
+    def __torch_dispatch__(  # type: ignore
         cls: Type,
         func: Callable[..., Any],
         types: Iterable[Type[Any]],
