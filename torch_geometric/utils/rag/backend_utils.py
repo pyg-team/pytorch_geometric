@@ -345,13 +345,13 @@ def create_remote_backend_from_graph_data(
     """
     # Will return attribute errors for missing attributes
     if not issubclass(graph_db, ConvertableGraphStore):
-        getattr(graph_db, "from_data")
-        getattr(graph_db, "from_hetero_data")
-        getattr(graph_db, "from_partition")
+        graph_db.from_data
+        graph_db.from_hetero_data
+        graph_db.from_partition
     elif not issubclass(feature_db, ConvertableFeatureStore):
-        getattr(feature_db, "from_data")
-        getattr(feature_db, "from_hetero_data")
-        getattr(feature_db, "from_partition")
+        feature_db.from_data
+        feature_db.from_hetero_data
+        feature_db.from_partition
 
     if n_parts == 1:
         torch.save(graph_data, path)
