@@ -390,13 +390,11 @@ def main(args):
 if __name__ == '__main__':
     available_gb = psutil.virtual_memory().available / (1024**3)
     if available_gb < 80:
-        print(
-            f"  WARNING: This test may require more RAM than available.\n"
-            f"    Estimated RAM needed: ~80 GB\n"
-            f"    Detected available RAM: {available_gb:.2f} GB\n"
-            "    If the program crashes or is killed, consider upgrading "
-            "system memory."
-        )
+        print(f"  WARNING: This test may require more RAM than available.\n"
+              f"    Estimated RAM needed: ~80 GB\n"
+              f"    Detected available RAM: {available_gb:.2f} GB\n"
+              "    If the program crashes or is killed, consider upgrading "
+              "system memory.")
 
     parser = argparse.ArgumentParser(description='GLEM Example:')
     parser.add_argument('--gpu', type=int, default=0)
