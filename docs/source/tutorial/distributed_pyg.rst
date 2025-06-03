@@ -9,7 +9,7 @@ Distributed Training in PyG
     Developers and researchers can now take full advantage of distributed training on large-scale datasets which cannot be fully loaded in memory of one machine at the same time.
     This implementation doesn't require any additional packages to be installed on top of the default :pyg:`PyG` stack.
 
-In real life applications, graphs often consists of billions of nodes that cannott fit into a single system memory.
+In real life applications, graphs often consists of billions of nodes that cannot fit into a single system memory.
 This is when distributed training of Graph Neural Networks comes in handy.
 By allocating a number of partitions of the large graph into a cluster of CPUs, one can deploy synchronized model training on the whole dataset at once by making use of :pytorch:`PyTorch's` `Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ capabilities.
 This architecture seamlessly distributes training of Graph Neural Networks across multiple nodes via `Remote Procedure Calls (RPCs) <https://pytorch.org/docs/stable/rpc.html>`_ for efficient sampling and retrieval of non-local features with traditional DDP for model training.
@@ -174,7 +174,7 @@ The :class:`~torch_geometric.distributed.DistNeighborSampler` class provides ful
 
 A batch of seed nodes follows three main steps before it is made available for the model's :meth:`forward` pass by the data loader:
 
-#. **Distributed node sampling:** While the underlying priciples of neighbor sampling holds for the distributed case as well, the implementation slightly diverges from single-machine sampling.
+#. **Distributed node sampling:** While the underlying principles of neighbor sampling holds for the distributed case as well, the implementation slightly diverges from single-machine sampling.
    In distributed training, seed nodes can belong to different partitions, leading to simultaneous sampling on multiple machines for a single batch.
    Consequently, synchronization of sampling results across machines is necessary to obtain seed nodes for the subsequent layer, requiring modifications to the basic algorithm.
    For nodes within a local partition, the sampling occurs on the local machine.
