@@ -282,7 +282,7 @@ class MeshCNNConv(MessagePassing):
         else:
             # ensures kernels is properly formed, otherwise throws
             # the appropriate error.
-            self.__assert_kernels(kernels)
+            self._assert_kernels(kernels)
             self.kernels = kernels
 
     def forward(self, x: Tensor, edge_index: Tensor):
@@ -414,6 +414,7 @@ class MeshCNNConv(MessagePassing):
         #     dim=1)  # shape: (|E| x 4 x in_channels)
         # m.view(E4, in_channels)  # shape 4*|E| x in_channels
         # return m
+
     def update(self, inputs: Tensor, x: Tensor) -> Tensor:
         r"""The UPDATE step, in reference to the UPDATE and AGGREGATE
         formulation of message passing convolution.
@@ -429,7 +430,7 @@ class MeshCNNConv(MessagePassing):
         """
         return self.kernels[0].forward(x) + inputs
 
-    def __assert_kernels(self, kernels: ModuleList):
+    def _assert_kernels(self, kernels: ModuleList):
         r"""Ensures that :obj:`kernels` is a list of 5 :obj:`torch.nn.Module`
         modules (i.e. networks). In addition, it also ensures that each network
         takes in input of dimension :attr:`in_channels`, and returns output
