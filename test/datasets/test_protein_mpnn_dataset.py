@@ -1,8 +1,10 @@
 from torch_geometric.datasets import ProteinMPNNDataset
+from torch_geometric.testing import onlyOnline
 
 
+@onlyOnline
 def test_protein_mpnn_dataset():
-    dataset = ProteinMPNNDataset(root='./data/ProteinMPNN', force_reload=True)
+    dataset = ProteinMPNNDataset(root='./data/ProteinMPNN')
 
     assert len(dataset) == 150
     assert dataset[0].x.size() == (229, 4, 3)
