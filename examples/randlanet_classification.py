@@ -38,7 +38,7 @@ class SharedMLP(MLP):
         kwargs['act'] = kwargs.get('act', 'LeakyReLU')
         kwargs['act_kwargs'] = kwargs.get('act_kwargs', lrelu02_kwargs)
         # BatchNorm with 1 - 0.99 = 0.01 momentum
-        # and 1e-6 eps by defaut (tensorflow momentum != pytorch momentum)
+        # and 1e-6 eps by default (tensorflow momentum != pytorch momentum)
         kwargs['norm_kwargs'] = kwargs.get('norm_kwargs', bn099_kwargs)
         super().__init__(*args, **kwargs)
 
@@ -72,7 +72,7 @@ class LocalFeatureAggregation(MessagePassing):
             (Tensor): locSE weighted by feature attention scores.
 
         """
-        # Encode local neighboorhod structural information
+        # Encode local neighborhood structural information
         pos_diff = pos_j - pos_i
         distance = torch.sqrt((pos_diff * pos_diff).sum(1, keepdim=True))
         relative_infos = torch.cat([pos_i, pos_j, pos_diff, distance],

@@ -1,10 +1,13 @@
-import warnings
 from typing import Optional, Tuple, Union
 
 import numpy as np
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack
+
+from torch_geometric.warnings import WarningCache
+
+_warning_cache = WarningCache()
 
 
 def map_index(
@@ -93,10 +96,10 @@ def map_index(
             WITH_CUDF = True
         except ImportError:
             import pandas as pd
-            warnings.warn("Using CPU-based processing within 'map_index' "
-                          "which may cause slowdowns and device "
-                          "synchronization. Consider installing 'cudf' to "
-                          "accelerate computation")
+            _warning_cache.warn("Using CPU-based processing within "
+                                "'map_index' which may cause slowdowns and "
+                                "device synchronization. Consider installing "
+                                "'cudf' to accelerate computation")
     else:
         import pandas as pd
 
