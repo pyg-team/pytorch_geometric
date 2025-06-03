@@ -200,16 +200,24 @@ def total_influence(
     device: Union[torch.device, str] = "cpu",
     vectorize: bool = True,
 ) -> Tuple[Tensor, float]:
-    r"""Compute Jacobian‑based influence aggregates for *multiple* seed nodes.
+    r"""Compute Jacobian‑based influence aggregates for *multiple* seed nodes,
+    as introduced in
+    `"Towards Quantifying Long-Range Interactions in Graph Machine Learning:
+    a Large Graph Dataset and a Measurement"
+    <https://arxiv.org/abs/2503.09008>`_ paper.
+    This measurement quantifies how a GNN model's output at a node is
+    influenced by features of other nodes at increasing hop distances.
 
-    For every sampled node :math:`v`, this method
+    Specifically, for every sampled node :math:`v`, this method
 
     1. evaluates the **L1‑norm** of the Jacobian of the model output at
        :math:`v` w.r.t. the node features of its *k*-hop induced sub‑graph;
     2. sums these scores **per hop** to obtain the influence vector
        :math:`(I_{0}, I_{1}, \dots, I_{k})`;
     3. optionally averages those vectors over all sampled nodes and
-       (optionally) normalises them by :math:`I_{0}`.
+       optionally normalises them by :math:`I_{0}`.
+
+    Please refer to Section 4 of the paper for a more detailed definition.
 
     Args:
         model (torch.nn.Module): A PyTorch Geometric‑compatible model with
@@ -217,10 +225,10 @@ def total_influence(
         data (torch_geometric.data.Data): Graph data object providing at least
             :obj:`x` (node features) and :obj:`edge_index` (connectivity).
         max_hops (int): Maximum hop distance :math:`k`.
-        num_samples (int, optional): Number of seed nodes to evaluate.
+        num_samples (int, optional): Number of random seed nodes to evaluate.
             If :obj:`None`, all nodes are used. (default: :obj:`None`)
-        normalize (bool, optional): If :obj:`True`, divide each hop‑wise
-            average by the influence of hop 0. (default: :obj:`True`)
+        normalize (bool, optional): If :obj:`True`, normalize each hop‑wise
+            influence by the influence of hop 0. (default: :obj:`True`)
         average (bool, optional): If :obj:`True`, return the hop‑wise **mean**
             over all seed nodes (shape ``[k+1]``).
             If :obj:`False`, return the full influence matrix of shape
@@ -235,8 +243,8 @@ def total_influence(
     Returns:
         Tuple[Tensor, float]:
             * **avg_influence** (*Tensor*):
-              • shape ``[k+1]`` if :obj:`average=True`;
-              • shape ``[N, k+1]`` otherwise.
+              shape ``[k+1]`` if :obj:`average=True`;
+              shape ``[N, k+1]`` otherwise.
             * **R** (*float*): Influence‑weighted receptive‑field breadth
               returned by :func:`influence_weighted_receptive_field`.
 
