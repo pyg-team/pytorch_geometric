@@ -566,7 +566,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             This is equivalent to writing :obj:`data.x_dict`.
 
         Args:
-            key (str): The attribute to collect from all node and ege types.
+            key (str): The attribute to collect from all node and edge types.
             allow_empty (bool, optional): If set to :obj:`True`, will not raise
                 an error in case the attribute does not exit in any node or
                 edge type. (default: :obj:`False`)
