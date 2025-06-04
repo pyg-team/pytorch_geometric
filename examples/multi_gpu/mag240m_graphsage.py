@@ -109,7 +109,7 @@ def run(
     num_steps_per_epoch=-1,
     log_every_n_steps=1,
     batch_size=1024,
-    num_neighbors=(25, 15),
+    num_neighbors,
     hidden_channels=1024,
     dropout=0.5,
     num_val_steps=100,
