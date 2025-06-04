@@ -201,7 +201,7 @@ def total_influence(
     vectorize: bool = True,
 ) -> Tuple[Tensor, float]:
     r"""Compute Jacobian‑based influence aggregates for *multiple* seed nodes,
-    as introduced in
+    as introduced in the
     `"Towards Quantifying Long-Range Interactions in Graph Machine Learning:
     a Large Graph Dataset and a Measurement"
     <https://arxiv.org/abs/2503.09008>`_ paper.
