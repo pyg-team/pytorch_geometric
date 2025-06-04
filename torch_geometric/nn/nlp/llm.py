@@ -1,6 +1,7 @@
+import os
 import warnings
 from contextlib import nullcontext
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -47,11 +48,11 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
 
 
 class LLM(torch.nn.Module):
-    r"""A wrapper around a Large Language Model (LLM) from HuggingFace.
+    r"""A wrapper around a Large Language Model (LLM) from HuggingFace or OpenAI.
 
     Args:
-        model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"`
-            or :obj:`"gemma"`.
+        model_name (str): The model name, *e.g.*,
+            :obj:`"meta/llama-3.2-3b-instruct"`.
         num_params (int, optional): An integer representing how many parameters
             the HuggingFace model has, in billions. This is used to
             automatically allocate the correct number of GPUs needed, given the
@@ -59,47 +60,100 @@ class LLM(torch.nn.Module):
             parameters is determined using the `huggingface_hub` module.
         dtype (torch.dtype, optional): The data type to use for the LLM.
             (default :obj: `torch.bfloat16`)
+        backend (str, optional): The backend to use. Can be either
+            :obj:`"huggingface"` or :obj:`"openai"`. (default: :obj:`"huggingface"`)
+        openai_base_url (str, optional): The base URL for the OpenAI API.
+            Only used when backend is :obj:`"openai"`.
+            (default: :obj:`"https://integrate.api.nvidia.com/v1"`)
+        openai_api_key (str, optional): The API key for the OpenAI API.
+            Only used when backend is :obj:`"openai"`. If not provided,
+            it will try to read from the environment variable
+            :obj:`"OPENAI_API_KEY"`.
+        temperature (float, optional): The temperature for OpenAI generation.
+            Only used when backend is :obj:`"openai"`. (default: :obj:`0.6`)
+        top_p (float, optional): The top_p parameter for OpenAI generation.
+            Only used when backend is :obj:`"openai"`. (default: :obj:`0.7`)
     """
     def __init__(
         self,
         model_name: str,
         num_params: Optional[int] = None,
         dtype: Optional[torch.dtype] = torch.bfloat16,
+        backend: str = "huggingface",
+        openai_base_url: str = "https://integrate.api.nvidia.com/v1",
+        openai_api_key: Optional[str] = None,
+        temperature: float = 0.6,
+        top_p: float = 0.7,
     ) -> None:
         super().__init__()
 
         self.model_name = model_name
+        self.backend = backend.lower()
 
-        from transformers import AutoModelForCausalLM, AutoTokenizer
+        if self.backend == "huggingface":
+            from transformers import AutoModelForCausalLM, AutoTokenizer
 
-        if num_params is None:
-            from huggingface_hub import get_safetensors_metadata
-            safetensors_metadata = get_safetensors_metadata(model_name)
-            param_count = safetensors_metadata.parameter_count
-            num_params = list(param_count.values())[0] // 10**9
+            if num_params is None:
+                from huggingface_hub import get_safetensors_metadata
+                safetensors_metadata = get_safetensors_metadata(model_name)
+                param_count = safetensors_metadata.parameter_count
+                num_params = list(param_count.values())[0] // 10**9
 
-        # A rough heuristic on GPU memory requirements, e.g., we found that
-        # LLAMA2 (7B parameters) fits on a 85GB GPU.
-        required_memory = 85 * num_params / 7
-        kwargs = get_llm_kwargs(required_memory, dtype)
+            # A rough heuristic on GPU memory requirements, e.g., we found that
+            # LLAMA2 (7B parameters) fits on a 85GB GPU.
+            required_memory = 85 * num_params / 7
+            kwargs = get_llm_kwargs(required_memory, dtype)
 
-        print(f"Setting up '{model_name}' with configuration: {kwargs}")
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model_name,
-            use_fast=False,
-        )
-        self.tokenizer.pad_token_id = PAD_TOKEN_ID
-        self.tokenizer.padding_side = PADDING_SIDE
-        self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
-        self.word_embedding = self.llm.model.get_input_embeddings()
+            print(f"Setting up '{model_name}' with configuration: {kwargs}")
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                model_name,
+                use_fast=False,
+            )
+            self.tokenizer.pad_token_id = PAD_TOKEN_ID
+            self.tokenizer.padding_side = PADDING_SIDE
+            self.llm = AutoModelForCausalLM.from_pretrained(
+                model_name, **kwargs)
+            self.word_embedding = self.llm.model.get_input_embeddings()
 
-        if 'max_memory' not in kwargs:  # Pure CPU:
-            warnings.warn("LLM is being used on CPU, which may be slow")
+            if 'max_memory' not in kwargs:  # Pure CPU:
+                warnings.warn("LLM is being used on CPU, which may be slow")
+                self.device = torch.device('cpu')
+                self.autocast_context = nullcontext()
+            else:
+                self.device = self.llm.device
+                self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+
+        elif self.backend == "openai":
+            from functools import partial
+
+            from openai import OpenAI
+
+            api_key = openai_api_key or os.environ.get("OPENAI_API_KEY")
+            if api_key is None:
+                raise ValueError("OpenAI API key must be provided either "
+                                 "as an argument or via the OPENAI_API_KEY "
+                                 "environment variable.")
+
+            self.client = OpenAI(
+                base_url=openai_base_url,
+                api_key=api_key,
+            )
+
+            self.temperature = temperature
+            self.top_p = top_p
+
+            self.llm = partial(
+                self.client.chat.completions.create,
+                model=model_name,
+                temperature=temperature,
+            )
+
             self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
+
         else:
-            self.device = self.llm.device
-            self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+            raise ValueError(f"Unknown backend: {backend}. "
+                             "Must be one of ['huggingface', 'openai']")
 
     def _encode_inputs(
         self,
@@ -254,6 +308,18 @@ class LLM(torch.nn.Module):
 
         return inputs_embeds, attention_mask, label_input_ids
 
+    def _get_tgi_embeddings(
+        self,
+        prompt: List[List[Dict[str, str]]],
+    ) -> tuple:
+        batch_encoding = self.tokenizer.apply_chat_template(
+            prompt, tokenize=True, add_generation_prompt=True,
+            return_tensors="pt", padding=True, return_dict=True)
+        input_ids = batch_encoding.input_ids.to(self.device)
+        attention_mask = batch_encoding.attention_mask.to(self.device)
+        input_embeds = self.word_embedding(input_ids)
+        return input_embeds, attention_mask
+
     def forward(
         self,
         question: List[str],
@@ -273,6 +339,10 @@ class LLM(torch.nn.Module):
                 :obj:`context` or :obj:`embedding` should be used, not
                 both. (default: :obj:`None`)
         """
+        if self.backend == "openai":
+            warnings.warn("Training is not supported with `openai` backend")
+            return torch.tensor(0.0)
+
         inputs_embeds, attention_mask, label_input_ids = self._get_embeds(
             question, context, embedding, answer)
 
@@ -288,16 +358,18 @@ class LLM(torch.nn.Module):
     @torch.no_grad()
     def inference(
         self,
-        question: List[str],
+        prompt: Union[List[str], List[List[Dict[str, str]]]],
         context: Optional[List[str]] = None,
         embedding: Optional[List[Tensor]] = None,
         max_tokens: Optional[int] = MAX_NEW_TOKENS,
+        stream: bool = False,
     ) -> List[str]:
         r"""The inference pass.
 
         Args:
-            question (list[str]): The questions/prompts.
-            answer (list[str]): The answers/labels.
+            prompt (list[str]): The questions/prompts. It can be either
+                a single string or a dict in the HF TGI format
+                (https://huggingface.co/docs/text-generation-inference/).
             context (list[str], optional): Additional context to give to the
                 LLM, such as textified knowledge graphs. (default: :obj:`None`)
             embedding (list[torch.Tensor], optional): RAG embedding
@@ -306,14 +378,45 @@ class LLM(torch.nn.Module):
                 both. (default: :obj:`None`)
             max_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: :obj:`32`)
+            stream (bool, optional): Whether to stream the response. Only used
+                with the OpenAI backend. (default: :obj:`False`)
         """
-        inputs_embeds, attention_mask, _ = self._get_embeds(
-            question, context, embedding)
+        if self.backend == "openai":
+            results = []
 
-        bos_token = self.tokenizer(
-            BOS,
-            add_special_tokens=False,
-        ).input_ids[0]
+            # Batch processing is not supported by openai api
+            for conversation in prompt:
+                outputs = self.llm(messages=conversation, stream=stream,
+                                   top_p=self.top_p, max_tokens=max_tokens)
+
+                if stream:
+                    chunked_answer = []
+                    for chunk in outputs:
+                        if chunk.choices[0].delta.content is not None:
+                            chunked_answer.append(
+                                chunk.choices[0].delta.content)
+                    answer = ''.join(chunked_answer)
+                else:
+                    answer = outputs.choices[0].message.content
+
+                results.append(answer)
+
+            return results
+
+        if isinstance(prompt[0], List):
+            inputs_embeds, attention_mask = self._get_tgi_embeddings(prompt)
+            bos_token = self.tokenizer(
+                BOS,
+                add_special_tokens=False,
+            ).input_ids[0]
+        else:
+            inputs_embeds, attention_mask, _ = self._get_embeds(
+                prompt, context, embedding)
+
+            bos_token = self.tokenizer(
+                BOS,
+                add_special_tokens=False,
+            ).input_ids[0]
 
         with self.autocast_context:
             outputs = self.llm.generate(
@@ -327,4 +430,4 @@ class LLM(torch.nn.Module):
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.model_name})'
+        return f'{self.__class__.__name__}({self.model_name}, backend={self.backend})'
