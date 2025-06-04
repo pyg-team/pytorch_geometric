@@ -112,9 +112,9 @@ def load_search_file(fname):
 def load_alias_file(fname):
     with open(fname) as f:
         file = csv.reader(f, delimiter=' ')
-        for line in file:
+        for _line in file:
             break
-    return line
+    return _line
 
 
 def exclude_list_id(list, id):

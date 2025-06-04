@@ -199,5 +199,5 @@ if __name__ == '__main__':
         num_workers=args.num_workers,
     )
 
-    for batch in tqdm(loader):
+    for _ in tqdm(loader):
         pass
