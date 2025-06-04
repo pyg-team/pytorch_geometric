@@ -1,8 +1,9 @@
 from torch_geometric.datasets import ProteinMPNNDataset
-from torch_geometric.testing import onlyOnline
+from torch_geometric.testing import onlyOnline, withPackage
 
 
 @onlyOnline
+@withPackage('pandas')
 def test_protein_mpnn_dataset():
     dataset = ProteinMPNNDataset(root='./data/ProteinMPNN')
 
