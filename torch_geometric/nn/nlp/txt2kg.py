@@ -1,17 +1,16 @@
-import os
-import time
-import sys
 import json
+import os
 import re
+import sys
+import time
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Callable
-
-import torch
-import torch.multiprocessing as mp
-from torchmetrics.functional import pairwise_cosine_similarity
-from sentence_transformers import SentenceTransformer
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import networkx as nx
+import torch
+import torch.multiprocessing as mp
+from sentence_transformers import SentenceTransformer
+from torchmetrics.functional import pairwise_cosine_similarity
 
 CLIENT_INITD = False
 
@@ -30,6 +29,7 @@ TRIPLES_SYS_PROMPT_NEW = (
     "Separate each with a new line. Do not output anything else (no notes, no explanations, etc)."
 )
 
+
 # defines the interface for chunk-wise actions (e.g. entity extraction, triple extraction, etc.)
 class Action(ABC):
     # function that will parse the LLM output
@@ -37,19 +37,23 @@ class Action(ABC):
     def parse(self, raw_result: Any) -> Any:
         pass
 
+
 # defines the interface for remote chunk-wise actions (e.g. entity extraction, triple extraction, etc.)
 class RemoteAction(Action):
     # function that will prepare the prompt for the LLM
     @abstractmethod
-    def prepare_prompt(self, chunk: str, previous_results: Any = None) -> List[Dict[str, str]]:
+    def prepare_prompt(self, chunk: str,
+                       previous_results: Any = None) -> List[Dict[str, str]]:
         pass
 
 
 # defines the interface for entity resolution
 class EntityResolver(ABC):
     @abstractmethod
-    def __call__(self, entities: List[str], triples: List[Tuple[str, str, str]]) -> List[str]:
+    def __call__(self, entities: List[str],
+                 triples: List[Tuple[str, str, str]]) -> List[str]:
         pass
+
 
 class LLMEntityExtractor(RemoteAction):
     def __init__(self):
@@ -80,28 +84,36 @@ class LLMEntityExtractor(RemoteAction):
         lines = cleaned_text.replace('[', '').replace(']', '').split('\n')
         for line in lines:
             line = line.strip().strip('"\'').strip(',').strip()
-            if line and not line.startswith('#') and not line.lower().startswith('entity'):
+            if line and not line.startswith(
+                    '#') and not line.lower().startswith('entity'):
                 entities.append(line)
         return entities
 
-    def prepare_prompt(self, chunk: str, previous_result: Any = None) -> List[Dict[str, str]]:
-        messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": chunk}
-        ]
+    def prepare_prompt(self, chunk: str,
+                       previous_result: Any = None) -> List[Dict[str, str]]:
+        messages = [{
+            "role": "system",
+            "content": self.system_prompt
+        }, {
+            "role": "user",
+            "content": chunk
+        }]
         return messages
 
     def __call__(self, chunks: List[str]) -> List[str]:
         return []
 
-class EntityAugmenter(Action):
 
+class EntityAugmenter(Action):
     def parse(self, out: str) -> List[str]:
         local_entities = out
         local_entities = [l_e.lower() for l_e in local_entities]
         local_entities = list(set(local_entities))
         # remove trailing spaces, commas, quotes, etc.
-        local_entities = [l_e.strip().strip(',').strip('"').strip("'") for l_e in local_entities]
+        local_entities = [
+            l_e.strip().strip(',').strip('"').strip("'")
+            for l_e in local_entities
+        ]
         # filter out huge entities
         local_entities = [l_e for l_e in local_entities if len(l_e) < 64]
         return local_entities
@@ -111,14 +123,18 @@ class LLMTripleExtractor(RemoteAction):
     def __init__(self, system_prompt: str):
         self.system_prompt = system_prompt
 
-    def prepare_prompt(self, chunk: str, previous_result: Any = None) -> List[Dict[str, str]]:
+    def prepare_prompt(self, chunk: str,
+                       previous_result: Any = None) -> List[Dict[str, str]]:
         entities = previous_result
 
         augmented_chunk = f"Entities: {entities}\nText: {chunk}"
-        messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": augmented_chunk}
-        ]
+        messages = [{
+            "role": "system",
+            "content": self.system_prompt
+        }, {
+            "role": "user",
+            "content": augmented_chunk
+        }]
         return messages
 
     def parse(self, raw_result: str) -> List[Tuple[str, str, str]]:
@@ -138,17 +154,17 @@ class LLMTripleExtractor(RemoteAction):
             try:
                 if llm_obeyed:
                     # remove parenthesis and single quotes for parsing
-                    triple_str = triple_str.replace("(", "").replace(")",
-                                                                    "").replace(
-                                                                        "'", "")
+                    triple_str = triple_str.replace("(", "").replace(
+                        ")", "").replace("'", "")
                 split_trip = triple_str.split(',')
                 if len(split_trip) != 3:
                     # LLM sometimes output triples in the form `entity - relation - entity`
                     split_trip = triple_str.split('-')
                 # remove blank space at beginning or end
-                split_trip = [(i[1:] if i[0] == " " else i) for i in split_trip]
+                split_trip = [(i[1:] if i[0] == " " else i)
+                              for i in split_trip]
                 split_trip = [(i[:-1].lower() if i[-1] == " " else i)
-                            for i in split_trip]
+                              for i in split_trip]
                 potential_trip = tuple(split_trip)
             except:  # noqa
                 continue
@@ -165,9 +181,9 @@ class LLMTripleExtractor(RemoteAction):
         return []
 
 
-
 class RemoteLLMCaller:
-    def __init__(self, model: str, api_key: str, endpoint_url: str, max_tokens: int = 1024):
+    def __init__(self, model: str, api_key: str, endpoint_url: str,
+                 max_tokens: int = 1024):
         self.model = model
         self.api_key = api_key
         self.endpoint_url = endpoint_url
@@ -183,8 +199,11 @@ class RemoteLLMCaller:
             global CLIENT
             CLIENT = OpenAI(base_url=self.endpoint_url, api_key=self.api_key)
             CLIENT_INITD = True
-        completion = CLIENT.chat.completions.create(
-            model=self.model, messages=messages, temperature=0, top_p=1, max_tokens=self.max_tokens, stream=True)
+        completion = CLIENT.chat.completions.create(model=self.model,
+                                                    messages=messages,
+                                                    temperature=0, top_p=1,
+                                                    max_tokens=self.max_tokens,
+                                                    stream=True)
         out_str = ""
         for chunk in completion:
             if chunk.choices[0].delta.content is not None:
@@ -217,9 +236,8 @@ You are given a list of entity strings.
 AGAIN, DO NOT output anything else.
 """
 
-
-        self.match_pattern = re.compile(r'(\[[^\]]*\])\s*("[^"]*")', re.VERBOSE | re.MULTILINE)
-
+        self.match_pattern = re.compile(r'(\[[^\]]*\])\s*("[^"]*")',
+                                        re.VERBOSE | re.MULTILINE)
 
     def _process(self, raw_result: str) -> List[str]:
         try:
@@ -238,13 +256,17 @@ AGAIN, DO NOT output anything else.
         return array, summary_word
 
     def _prepare_prompt(self, items: List[str]) -> List[Dict[str, str]]:
-        messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": str(items)}
-        ]
+        messages = [{
+            "role": "system",
+            "content": self.system_prompt
+        }, {
+            "role": "user",
+            "content": str(items)
+        }]
         return messages
 
-    def _iterative_resolution(self, items: List[str], num_iters: int = 5) -> List[str]:
+    def _iterative_resolution(self, items: List[str],
+                              num_iters: int = 5) -> List[str]:
         items_to_original_id = {item: i for i, item in enumerate(items)}
 
         # contains the mapping of the new items to the original items
@@ -261,7 +283,9 @@ AGAIN, DO NOT output anything else.
             try:
                 ret_items, summary_word = self._process(raw_result)
             except Exception as e:
-                print(f"[_iterative_resolution] Failed to process LLM output: {type(e).__name__}: {str(e)}")
+                print(
+                    f"[_iterative_resolution] Failed to process LLM output: {type(e).__name__}: {str(e)}"
+                )
                 continue
             print(f"Summary word: {summary_word}")
             # handling diff kind of wrong LLM outputs
@@ -271,16 +295,20 @@ AGAIN, DO NOT output anything else.
                 continue
 
             # handles hallucinated items
-            ret_items = [item for item in ret_items if item in items_to_original_id]
+            ret_items = [
+                item for item in ret_items if item in items_to_original_id
+            ]
             # handles empty items
-            ret_items = list(set([item for item in ret_items if item]))
-            print(f"Ret items (after filtering hallucinated items): {ret_items}")
+            ret_items = list({item for item in ret_items if item})
+            print(
+                f"Ret items (after filtering hallucinated items): {ret_items}")
 
             summary_word = summary_word.strip(" '*-").lower()
             new_items.append(summary_word)
 
             for item in ret_items:
-                items_to_id_mapping[items_to_original_id[item]] = len(new_items) - 1
+                items_to_id_mapping[
+                    items_to_original_id[item]] = len(new_items) - 1
                 items_to_original_id.pop(item)
             if len(items_to_original_id) == 0:
                 break
@@ -306,8 +334,8 @@ AGAIN, DO NOT output anything else.
 
         return new_items, items_to_id_mapping
 
-
-    def _clean_and_deduplicate(self, items: List[str]) -> Tuple[List[str], Dict[int, int]]:
+    def _clean_and_deduplicate(
+            self, items: List[str]) -> Tuple[List[str], Dict[int, int]]:
         cleaned_items = []
         item_mapping = {}
         for i, item in enumerate(items):
@@ -319,7 +347,9 @@ AGAIN, DO NOT output anything else.
                 cleaned_items.append(cleaned_item)
         return cleaned_items, item_mapping
 
-    def __call__(self, triples: List[Tuple[str, str, str]]) -> List[Tuple[str, str, str]]:
+    def __call__(
+            self, triples: List[Tuple[str, str,
+                                      str]]) -> List[Tuple[str, str, str]]:
         ents = {}
         rels = {}
         triples_by_ids = {}
@@ -344,8 +374,10 @@ AGAIN, DO NOT output anything else.
         # LLM based entity and relation resolution
         # TODO: explore others methods for resolution (like lighter specialized models)
         # we want more shots for relations as they usually are more ambiguous
-        new_ents, new_ent_mapping = self._iterative_resolution(ents, num_iters=5)
-        new_rels, new_rel_mapping = self._iterative_resolution(rels, num_iters=5)
+        new_ents, new_ent_mapping = self._iterative_resolution(
+            ents, num_iters=5)
+        new_rels, new_rel_mapping = self._iterative_resolution(
+            rels, num_iters=5)
 
         consolidated_ent_mapping = {}
         for orig_id, cleaned_id in ent_mapping.items():
@@ -364,13 +396,14 @@ AGAIN, DO NOT output anything else.
         triples = []
         for i in sorted(triples_by_ids.keys()):
             h, r, t = triples_by_ids[i]
-            triple = (ents[ent_mapping[h]], rels[rel_mapping[r]], ents[ent_mapping[t]])
+            triple = (ents[ent_mapping[h]], rels[rel_mapping[r]],
+                      ents[ent_mapping[t]])
             triples.append(triple)
 
         return triples
 
-def _multistage_proc_helper(rank, in_chunks_per_proc,
-                            actions: List[Action],
+
+def _multistage_proc_helper(rank, in_chunks_per_proc, actions: List[Action],
                             remote_llm_caller: RemoteLLMCaller):
     per_chunk_results = []
     try:
@@ -383,20 +416,28 @@ def _multistage_proc_helper(rank, in_chunks_per_proc,
                         out = remote_llm_caller(messages)
                     out = action.parse(out)
                 except Exception as e:
-                    print(f"[_multistage_proc_helper] Process {rank} failed on chunk processing: {type(e).__name__}: {str(e)}")
+                    print(
+                        f"[_multistage_proc_helper] Process {rank} failed on chunk processing: {type(e).__name__}: {str(e)}"
+                    )
                     import traceback
-                    print(f"[_multistage_proc_helper] Process {rank} traceback: {traceback.format_exc()}")
+                    print(
+                        f"[_multistage_proc_helper] Process {rank} traceback: {traceback.format_exc()}"
+                    )
                     out = []
                     break
             per_chunk_results += out
         torch.save(per_chunk_results, "/tmp/txt2kg_outs_for_proc_" + str(rank))
     except Exception as e:
-        print(f"[_multistage_proc_helper] Process {rank} failed completely: {type(e).__name__}: {str(e)}")
+        print(
+            f"[_multistage_proc_helper] Process {rank} failed completely: {type(e).__name__}: {str(e)}"
+        )
         import traceback
-        print(f"[_multistage_proc_helper] Process {rank} complete failure traceback: {traceback.format_exc()}")
+        print(
+            f"[_multistage_proc_helper] Process {rank} complete failure traceback: {traceback.format_exc()}"
+        )
 
-def consume_actions(chunks: Tuple[str],
-                    actions: List[Action],
+
+def consume_actions(chunks: Tuple[str], actions: List[Action],
                     remote_llm_caller: RemoteLLMCaller) -> Any:
     result = []
 
@@ -404,9 +445,7 @@ def consume_actions(chunks: Tuple[str],
     meta_chunk_size = int(len(chunks) / num_procs)
     in_chunks_per_proc = {
         j:
-        chunks[j *
-            meta_chunk_size:min((j + 1) *
-                                meta_chunk_size, len(chunks))]
+        chunks[j * meta_chunk_size:min((j + 1) * meta_chunk_size, len(chunks))]
         for j in range(num_procs)
     }
     total_num_tries = 0
@@ -419,18 +458,19 @@ def consume_actions(chunks: Tuple[str],
                     #    _multistage_proc_helper(i, in_chunks_per_proc, actions, remote_llm_caller)
                     mp.spawn(
                         _multistage_proc_helper,
-                        args=(in_chunks_per_proc,
-                              actions,
-                              remote_llm_caller),
-                        nprocs=num_procs,
-                        join=True)
+                        args=(in_chunks_per_proc, actions, remote_llm_caller),
+                        nprocs=num_procs, join=True)
                     break
                 except Exception as e:
                     total_num_tries += 1
-                    print(f"[consume_actions] Process spawn failed on attempt {total_num_tries}: {type(e).__name__}: {str(e)}")
+                    print(
+                        f"[consume_actions] Process spawn failed on attempt {total_num_tries}: {type(e).__name__}: {str(e)}"
+                    )
                     # For debugging, you might also want to see the full traceback:
                     import traceback
-                    print(f"[consume_actions] Full traceback: {traceback.format_exc()}")
+                    print(
+                        f"[consume_actions] Full traceback: {traceback.format_exc()}"
+                    )
 
             for rank in range(num_procs):
                 result += torch.load(f"/tmp/txt2kg_outs_for_proc_{rank}")
@@ -438,9 +478,12 @@ def consume_actions(chunks: Tuple[str],
             break
         except Exception as e:
             total_num_tries += 1
-            print(f"[consume_actions] Overall retry {retry+1}/5 failed: {type(e).__name__}: {str(e)}")
+            print(
+                f"[consume_actions] Overall retry {retry+1}/5 failed: {type(e).__name__}: {str(e)}"
+            )
             import traceback
-            print(f"[consume_actions] Full traceback: {traceback.format_exc()}")
+            print(
+                f"[consume_actions] Full traceback: {traceback.format_exc()}")
     print(f"[consume_actions] Total number of tries: {total_num_tries}")
     return result
 
@@ -450,6 +493,7 @@ def triples_to_nx(triples: List[Tuple[str, str, str]]) -> nx.Graph:
     for h, r, t in triples:
         graph.add_edge(h, t, relation=r)
     return graph
+
 
 class TXT2KG():
     """A class to convert text data into a Knowledge Graph (KG) format.
@@ -514,13 +558,16 @@ class TXT2KG():
         self.time_to_parse = 0.0
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.embedding_model = SentenceTransformer('Alibaba-NLP/gte-modernbert-base', device=device)
+        self.embedding_model = SentenceTransformer(
+            'Alibaba-NLP/gte-modernbert-base', device=device)
 
-        self.remote_llm_caller = RemoteLLMCaller(NVIDIA_NIM_MODEL, NVIDIA_API_KEY, ENDPOINT_URL)
+        self.remote_llm_caller = RemoteLLMCaller(NVIDIA_NIM_MODEL,
+                                                 NVIDIA_API_KEY, ENDPOINT_URL)
 
         self.entity_extractor = LLMEntityExtractor()
         self.entity_augmenter = EntityAugmenter()
-        self.triple_extractor = LLMTripleExtractor(system_prompt=TRIPLES_SYS_PROMPT_NEW)
+        self.triple_extractor = LLMTripleExtractor(
+            system_prompt=TRIPLES_SYS_PROMPT_NEW)
 
         #self.resolver_llm_caller = RemoteLLMCaller("nvdev/meta/llama-4-maverick-17b-128e-instruct", NVIDIA_API_KEY, ENDPOINT_URL)
         self.entity_resolver = LLMEntityResolver(self.remote_llm_caller)
@@ -555,7 +602,8 @@ class TXT2KG():
     def reset(self):
         self.relevant_triples = {}
 
-    def add_doc_2_KG_new(self, txt: str, QA_pair: Optional[Tuple[str, str]] = None) -> None:
+    def add_doc_2_KG_new(self, txt: str,
+                         QA_pair: Optional[Tuple[str, str]] = None) -> None:
         """Add a document to the Knowledge Graph (KG).
 
         Args:
@@ -564,14 +612,11 @@ class TXT2KG():
                 A QA pair to associate with the extracted triples.
                 Useful for downstream evaluation.
         """
-
         # todo add qa pair handling later
         key = self.doc_id_counter
         self.doc_id_counter += 1
 
-
         # 1. Chunk wise extractions
-
 
         chunks = _chunk_text(txt, chunk_size=self.chunk_size)
 
@@ -583,17 +628,13 @@ class TXT2KG():
 
         triples = consume_actions(chunks, actions, self.remote_llm_caller)
 
-
         # 2. Document wise linking
 
         triples = self.entity_resolver(triples)
 
         self.relevant_triples[key] = triples
 
-
-
         return
-
 
         # TODO explore
         emb_entities = self.embedding_model.encode(local_entities,
@@ -610,13 +651,14 @@ class TXT2KG():
         # get topk most similar entities
         indices_list = indices.cpu().tolist()
 
-        chunk_entities = [
-            [local_entities[entity_idx] for entity_idx in chunk_indices]
-            for chunk_indices in indices_list
-        ]
+        chunk_entities = [[
+            local_entities[entity_idx] for entity_idx in chunk_indices
+        ] for chunk_indices in indices_list]
 
-        augmented_chunks = [f"Entities: {chunk_e}\nText: {chunk}"
-                            for chunk_e,chunk in zip(chunk_entities, chunks)]
+        augmented_chunks = [
+            f"Entities: {chunk_e}\nText: {chunk}"
+            for chunk_e, chunk in zip(chunk_entities, chunks)
+        ]
 
         triples = self.triple_extractor(augmented_chunks)
         triples = self.entity_resolver(local_entities, triples)
@@ -675,8 +717,8 @@ class TXT2KG():
                     num_procs = min(len(chunks), _get_num_procs())
                     self.relevant_triples[key] = _llm_call_and_consume(
                         chunks, SYSTEM_PROMPT, self.NVIDIA_API_KEY,
-                        self.NIM_MODEL, self.ENDPOINT_URL,
-                        num_procs, _parse_n_check_triples)
+                        self.NIM_MODEL, self.ENDPOINT_URL, num_procs,
+                        _parse_n_check_triples)
                 except ImportError:
                     print(
                         "Failed to import `openai` package, please install it and rerun the script"
@@ -686,9 +728,11 @@ class TXT2KG():
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
+
 # ##############################################################################
 # ############################## Helper functions ##############################
 # ##############################################################################
+
 
 def _get_num_procs():
     if hasattr(os, "sched_getaffinity"):
@@ -753,14 +797,16 @@ def _chunk_text(text: str, chunk_size: int = 512) -> list[str]:
 
     return chunks
 
+
 # ##############################################################################
 # ############################## Legacy code ###################################
 # ##############################################################################
 
-def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str, NVIDIA_API_KEY: str,
-                            NIM_MODEL: str, ENDPOINT_URL: str,
-                            num_procs: int,
-                            post_process_fn: Callable[[str], List[Any]]) -> Any:
+
+def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str,
+                          NVIDIA_API_KEY: str, NIM_MODEL: str,
+                          ENDPOINT_URL: str, num_procs: int,
+                          post_process_fn: Callable[[str], List[Any]]) -> Any:
     result = []
     # Ensure NVIDIA_API_KEY is set before proceeding
     assert NVIDIA_API_KEY != '', \
@@ -769,9 +815,7 @@ def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str, NVIDIA_API_KEY
     meta_chunk_size = int(len(chunks) / num_procs)
     in_chunks_per_proc = {
         j:
-        chunks[j *
-            meta_chunk_size:min((j + 1) *
-                                meta_chunk_size, len(chunks))]
+        chunks[j * meta_chunk_size:min((j + 1) * meta_chunk_size, len(chunks))]
         for j in range(num_procs)
     }
     total_num_tries = 0
@@ -788,20 +832,21 @@ def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str, NVIDIA_API_KEY
                     #    ENDPOINT_URL, system_prompt)
                     mp.spawn(
                         _multiproc_helper,
-                        args=(in_chunks_per_proc,
-                              post_process_fn,
-                              _chunk_to_result_cloud,
-                              NVIDIA_API_KEY, NIM_MODEL,
-                              ENDPOINT_URL, system_prompt),
-                        nprocs=num_procs,
-                        join=True)
+                        args=(in_chunks_per_proc, post_process_fn,
+                              _chunk_to_result_cloud, NVIDIA_API_KEY,
+                              NIM_MODEL, ENDPOINT_URL, system_prompt),
+                        nprocs=num_procs, join=True)
                     break
                 except Exception as e:
                     total_num_tries += 1
-                    print(f"[_llm_call_and_consume] Process spawn failed on attempt {total_num_tries}: {type(e).__name__}: {str(e)}")
+                    print(
+                        f"[_llm_call_and_consume] Process spawn failed on attempt {total_num_tries}: {type(e).__name__}: {str(e)}"
+                    )
                     # For debugging, you might also want to see the full traceback:
                     import traceback
-                    print(f"[_llm_call_and_consume] Full traceback: {traceback.format_exc()}")
+                    print(
+                        f"[_llm_call_and_consume] Full traceback: {traceback.format_exc()}"
+                    )
 
             for rank in range(num_procs):
                 result += torch.load(f"/tmp/txt2kg_outs_for_proc_{rank}")
@@ -809,9 +854,13 @@ def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str, NVIDIA_API_KEY
             break
         except Exception as e:
             total_num_tries += 1
-            print(f"[_llm_call_and_consume] Overall retry {retry+1}/5 failed: {type(e).__name__}: {str(e)}")
+            print(
+                f"[_llm_call_and_consume] Overall retry {retry+1}/5 failed: {type(e).__name__}: {str(e)}"
+            )
             import traceback
-            print(f"[_llm_call_and_consume] Full traceback: {traceback.format_exc()}")
+            print(
+                f"[_llm_call_and_consume] Full traceback: {traceback.format_exc()}"
+            )
     print(f"[_llm_call_and_consume] Total number of tries: {total_num_tries}")
     return result
 
@@ -843,11 +892,10 @@ def _chunk_to_triples_str_cloud(
     return out_str
 
 
-def _chunk_to_result_cloud(
-        txt: str, GLOBAL_NIM_KEY='',
-        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
-        ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
-        system_prompt=SYSTEM_PROMPT) -> str:
+def _chunk_to_result_cloud(txt: str, GLOBAL_NIM_KEY='',
+                           NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+                           ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
+                           system_prompt=SYSTEM_PROMPT) -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
@@ -857,12 +905,10 @@ def _chunk_to_result_cloud(
         CLIENT_INITD = True
     txt_input = txt
     completion = CLIENT.chat.completions.create(
-        model=NIM_MODEL, messages=[
-        {
+        model=NIM_MODEL, messages=[{
             "role": "system",
             "content": system_prompt
-        },
-        {
+        }, {
             "role": "user",
             "content": txt_input
         }], temperature=0, top_p=1, max_tokens=1024, stream=True)
@@ -871,6 +917,7 @@ def _chunk_to_result_cloud(
         if chunk.choices[0].delta.content is not None:
             out_str += chunk.choices[0].delta.content
     return out_str
+
 
 def _parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
     # use pythonic checks for triples
@@ -908,6 +955,7 @@ def _parse_n_check_triples(triples_str: str) -> List[Tuple[str, str, str]]:
                 processed.append(potential_trip)
     return processed
 
+
 def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     relevant_triples = []
     for chunk in chunks:
@@ -919,6 +967,6 @@ def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
                       NIM_MODEL, ENDPOINT_URL, system_prompt):
     out = _llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
                                  GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL,
-                                 ENDPOINT_URL=ENDPOINT_URL, system_prompt=system_prompt)
+                                 ENDPOINT_URL=ENDPOINT_URL,
+                                 system_prompt=system_prompt)
     torch.save(out, "/tmp/txt2kg_outs_for_proc_" + str(rank))
-
