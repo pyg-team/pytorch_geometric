@@ -1,9 +1,8 @@
 import copy
-from abc import ABC
 from typing import Any
 
 
-class BaseTransform(ABC):
+class BaseTransform:
     r"""An abstract base class for writing transforms.
 
     Transforms are a general way to modify and customize

@@ -1,7 +1,6 @@
 import copy
 import math
 import warnings
-from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
@@ -369,9 +368,10 @@ class HeteroSamplerOutput(CastMixin):
                         out.edge[edge_type] = None
 
                 else:
-                    warnings.warn(f"Cannot convert to bidirectional graph "
-                                  f"since the edge type {edge_type} does not "
-                                  f"seem to have a reverse edge type")
+                    warnings.warn(
+                        f"Cannot convert to bidirectional graph "
+                        f"since the edge type {edge_type} does not "
+                        f"seem to have a reverse edge type", stacklevel=2)
 
         return out
 
@@ -610,7 +610,7 @@ class NegativeSampling(CastMixin):
         return torch.multinomial(weight, num_samples, replacement=True)
 
 
-class BaseSampler(ABC):
+class BaseSampler:
     r"""An abstract base class that initializes a graph sampler and provides
     :meth:`sample_from_nodes` and :meth:`sample_from_edges` routines.
 

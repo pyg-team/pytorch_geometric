@@ -297,7 +297,7 @@ class InMemoryDataset(Dataset):
             self._data_list = None
         msg += f' {msg4}'
 
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)
 
         return self._data
 

@@ -108,13 +108,15 @@ class AddMetaPaths(BaseTransform):
         **kwargs: bool,
     ) -> None:
         if 'drop_orig_edges' in kwargs:
-            warnings.warn("'drop_orig_edges' is deprecated. Use "
-                          "'drop_orig_edge_types' instead")
+            warnings.warn(
+                "'drop_orig_edges' is deprecated. Use "
+                "'drop_orig_edge_types' instead", stacklevel=2)
             drop_orig_edge_types = kwargs['drop_orig_edges']
 
         if 'drop_unconnected_nodes' in kwargs:
-            warnings.warn("'drop_unconnected_nodes' is deprecated. Use "
-                          "'drop_unconnected_node_types' instead")
+            warnings.warn(
+                "'drop_unconnected_nodes' is deprecated. Use "
+                "'drop_unconnected_node_types' instead", stacklevel=2)
             drop_unconnected_node_types = kwargs['drop_unconnected_nodes']
 
         for path in metapaths:

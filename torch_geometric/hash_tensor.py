@@ -69,10 +69,11 @@ def get_hash_map(key: Tensor) -> Union[CPUHashMap, CUDAHashMap]:
         return CUDAHashMap(key, 0.5)
 
     if key.is_cuda:
-        warnings.warn("Fallback to CPU-based mapping algorithm which may "
-                      "cause slowdowns and device synchronization. Please "
-                      "install 'pyg-lib' for an accelerated 'HashTensor' "
-                      "implementation.")
+        warnings.warn(
+            "Fallback to CPU-based mapping algorithm which may "
+            "cause slowdowns and device synchronization. Please "
+            "install 'pyg-lib' for an accelerated 'HashTensor' "
+            "implementation.", stacklevel=2)
 
     if torch_geometric.typing.WITH_CPU_HASH_MAP:
         return CPUHashMap(key.cpu(), -1)
