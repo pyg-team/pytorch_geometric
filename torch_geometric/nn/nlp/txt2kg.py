@@ -244,7 +244,7 @@ AGAIN, DO NOT output anything else.
         ]
         return messages
 
-    def _multi_shot_resolution(self, items: List[str], num_shots: int = 5) -> List[str]:
+    def _iterative_resolution(self, items: List[str], num_iters: int = 5) -> List[str]:
         items_to_original_id = {item: i for i, item in enumerate(items)}
 
         # contains the mapping of the new items to the original items
@@ -254,13 +254,14 @@ AGAIN, DO NOT output anything else.
 
         print("before resolution: ", items_to_original_id.keys())
 
-        for shots in range(num_shots):
+        for shots in range(num_iters):
             messages = self._prepare_prompt(items_to_original_id.keys())
             raw_result = self.remote_llm_caller(messages)
             print(f"Raw result: {raw_result}")
             try:
                 ret_items, summary_word = self._process(raw_result)
-            except:
+            except Exception as e:
+                print(f"[_iterative_resolution] Failed to process LLM output: {type(e).__name__}: {str(e)}")
                 continue
             print(f"Summary word: {summary_word}")
             # handling diff kind of wrong LLM outputs
@@ -272,7 +273,7 @@ AGAIN, DO NOT output anything else.
             # handles hallucinated items
             ret_items = [item for item in ret_items if item in items_to_original_id]
             # handles empty items
-            ret_items = [item for item in ret_items if item]
+            ret_items = list(set([item for item in ret_items if item]))
             print(f"Ret items (after filtering hallucinated items): {ret_items}")
 
             summary_word = summary_word.strip(" '*-").lower()
@@ -343,8 +344,8 @@ AGAIN, DO NOT output anything else.
         # LLM based entity and relation resolution
         # TODO: explore others methods for resolution (like lighter specialized models)
         # we want more shots for relations as they usually are more ambiguous
-        new_ents, new_ent_mapping = self._multi_shot_resolution(ents, num_shots=5)
-        new_rels, new_rel_mapping = self._multi_shot_resolution(rels, num_shots=10)
+        new_ents, new_ent_mapping = self._iterative_resolution(ents, num_iters=5)
+        new_rels, new_rel_mapping = self._iterative_resolution(rels, num_iters=5)
 
         consolidated_ent_mapping = {}
         for orig_id, cleaned_id in ent_mapping.items():
@@ -372,15 +373,27 @@ def _multistage_proc_helper(rank, in_chunks_per_proc,
                             actions: List[Action],
                             remote_llm_caller: RemoteLLMCaller):
     per_chunk_results = []
-    for chunk in in_chunks_per_proc[rank]:
-        out = chunk
-        for action in actions:
-            if isinstance(action, RemoteAction):
-                messages = action.prepare_prompt(chunk, out)
-                out = remote_llm_caller(messages)
-            out = action.parse(out)
-        per_chunk_results += out
-    torch.save(per_chunk_results, "/tmp/txt2kg_outs_for_proc_" + str(rank))
+    try:
+        for chunk in in_chunks_per_proc[rank]:
+            out = chunk
+            for action in actions:
+                try:
+                    if isinstance(action, RemoteAction):
+                        messages = action.prepare_prompt(chunk, out)
+                        out = remote_llm_caller(messages)
+                    out = action.parse(out)
+                except Exception as e:
+                    print(f"[_multistage_proc_helper] Process {rank} failed on chunk processing: {type(e).__name__}: {str(e)}")
+                    import traceback
+                    print(f"[_multistage_proc_helper] Process {rank} traceback: {traceback.format_exc()}")
+                    out = []
+                    break
+            per_chunk_results += out
+        torch.save(per_chunk_results, "/tmp/txt2kg_outs_for_proc_" + str(rank))
+    except Exception as e:
+        print(f"[_multistage_proc_helper] Process {rank} failed completely: {type(e).__name__}: {str(e)}")
+        import traceback
+        print(f"[_multistage_proc_helper] Process {rank} complete failure traceback: {traceback.format_exc()}")
 
 def consume_actions(chunks: Tuple[str],
                     actions: List[Action],
@@ -412,18 +425,23 @@ def consume_actions(chunks: Tuple[str],
                         nprocs=num_procs,
                         join=True)
                     break
-                except:  # noqa
+                except Exception as e:
                     total_num_tries += 1
-                    pass
+                    print(f"[consume_actions] Process spawn failed on attempt {total_num_tries}: {type(e).__name__}: {str(e)}")
+                    # For debugging, you might also want to see the full traceback:
+                    import traceback
+                    print(f"[consume_actions] Full traceback: {traceback.format_exc()}")
 
             for rank in range(num_procs):
                 result += torch.load(f"/tmp/txt2kg_outs_for_proc_{rank}")
                 os.remove(f"/tmp/txt2kg_outs_for_proc_{rank}")
             break
-        except:
+        except Exception as e:
             total_num_tries += 1
-            pass
-    print(f"[_llm_call_and_consume] Total number of tries: {total_num_tries}")
+            print(f"[consume_actions] Overall retry {retry+1}/5 failed: {type(e).__name__}: {str(e)}")
+            import traceback
+            print(f"[consume_actions] Full traceback: {traceback.format_exc()}")
+    print(f"[consume_actions] Total number of tries: {total_num_tries}")
     return result
 
 
@@ -778,17 +796,22 @@ def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str, NVIDIA_API_KEY
                         nprocs=num_procs,
                         join=True)
                     break
-                except:  # noqa
+                except Exception as e:
                     total_num_tries += 1
-                    pass
+                    print(f"[_llm_call_and_consume] Process spawn failed on attempt {total_num_tries}: {type(e).__name__}: {str(e)}")
+                    # For debugging, you might also want to see the full traceback:
+                    import traceback
+                    print(f"[_llm_call_and_consume] Full traceback: {traceback.format_exc()}")
 
             for rank in range(num_procs):
                 result += torch.load(f"/tmp/txt2kg_outs_for_proc_{rank}")
                 os.remove(f"/tmp/txt2kg_outs_for_proc_{rank}")
             break
-        except:
+        except Exception as e:
             total_num_tries += 1
-            pass
+            print(f"[_llm_call_and_consume] Overall retry {retry+1}/5 failed: {type(e).__name__}: {str(e)}")
+            import traceback
+            print(f"[_llm_call_and_consume] Full traceback: {traceback.format_exc()}")
     print(f"[_llm_call_and_consume] Total number of tries: {total_num_tries}")
     return result
 
