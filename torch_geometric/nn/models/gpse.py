@@ -716,11 +716,18 @@ class GPSENodeEncoder(torch.nn.Module):
 
 
 @torch.no_grad()
-def gpse_process(model: Module, data: Data, rand_type: str,
-                 use_vn: bool = True, bernoulli_thresh: float = 0.5,
-                 neighbor_loader: bool = False,
-                 num_neighbors: List[int] = None, fillval: int = 5,
-                 layers_mp: int = None, **kwargs) -> torch.Tensor:
+def gpse_process(
+    model: Module,
+    data: Data,
+    rand_type: str,
+    use_vn: bool = True,
+    bernoulli_thresh: float = 0.5,
+    neighbor_loader: bool = False,
+    num_neighbors: Optional[List[int]] = None,
+    fillval: int = 5,
+    layers_mp: int = None,
+    **kwargs,
+) -> torch.Tensor:
     r"""Processes the data using the :class:`GPSE` model to generate and append
     GPSE encodings. Identical to :obj:`gpse_process_batch`, but operates on a
     single :class:`~torch_geometric.data.Dataset` object.
