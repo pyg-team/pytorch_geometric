@@ -104,16 +104,16 @@ class HeteroGraphSAGE(torch.nn.Module):
 def run(
     rank,
     data,
-    num_devices=1,
-    num_epochs=1,
-    num_steps_per_epoch=-1,
-    log_every_n_steps=1,
-    batch_size=1024,
-    num_neighbors=[25, 15],
-    hidden_channels=1024,
-    dropout=0.5,
-    num_val_steps=100,
-    lr=.001,
+    num_devices,
+    num_epochs,
+    num_steps_per_epoch,
+    log_every_n_steps,
+    batch_size,
+    num_neighbors,
+    hidden_channels,
+    dropout,
+    num_val_steps,
+    lr,
 ):
     if num_devices > 1:
         if rank == 0:
