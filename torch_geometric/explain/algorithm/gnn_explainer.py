@@ -197,6 +197,8 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> None:
+        # Initialize the node and edge masks based on the node mask
+        # type and edge mask type defined in the explainer config.
         ...
 
     def _train(
@@ -654,7 +656,8 @@ class GNNExplainer_:
         return self._convert_output(explanation, edge_index, index=node_idx,
                                     x=x)
 
-    def _convert_output(self, explanation, edge_index, index=None, x=None):
+    def _convert_output(self, explanation, edge_index, index=None,
+                        x=None) -> Tuple[Tensor, Tensor]:
         node_mask = explanation.get('node_mask')
         edge_mask = explanation.get('edge_mask')
 

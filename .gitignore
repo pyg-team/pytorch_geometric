@@ -21,6 +21,7 @@ coverage.xml
 .vscode
 .idea
 .venv
+venv/
 *.out
 *.pt
 *.onnx

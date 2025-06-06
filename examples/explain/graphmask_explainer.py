@@ -7,9 +7,8 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, GraphMaskExplainer
 from torch_geometric.nn import GATConv, GCNConv
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-path = osp.join(osp.dirname(osp.realpath(__file__)), 'data', 'Planetoid')
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+path = osp.join(osp.dirname(osp.realpath(__file__)), 'data', 'Cora')
 dataset = Planetoid(path, name='Cora')
 data = dataset[0].to(device)
 

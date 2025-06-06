@@ -77,7 +77,7 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"attributes"`: Will mask each feature across all nodes.
 
         edge_mask_type (MaskType or str, optional): The type of mask to apply
-            on edges. Has the sample possible values as :obj:`node_mask_type`.
+            on edges. Has the same values as :obj:`node_mask_type`.
             (default: :obj:`None`)
     """
     explanation_type: ExplanationType
@@ -193,7 +193,7 @@ class ThresholdConfig(CastMixin):
                 - :obj:`"topk_hard"`: Same as :obj:`"topk"` but values are set
                   to :obj:`1` for all elements which are kept.
 
-        value (int or float, optional): The value to use when thresholding.
+        value (int or float, optional): The value to use for thresholding.
             (default: :obj:`None`)
     """
     type: ThresholdType
