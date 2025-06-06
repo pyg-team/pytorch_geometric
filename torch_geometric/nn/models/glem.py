@@ -205,7 +205,7 @@ class GLEM(torch.nn.Module):
             optimizer.zero_grad()
             all_out.append(out)
             total_correct += int(out.argmax(dim=-1).eq(labels).sum())
-            total_loss += float(loss)
+            total_loss += float(loss.detach())
             if verbose:
                 pbar.update(batch['n_id'].size(0))
 
@@ -259,7 +259,7 @@ class GLEM(torch.nn.Module):
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
-            total_loss += float(loss)
+            total_loss += float(loss.detach())
             total_correct += int(out.argmax(dim=-1).eq(labels).sum())
             if verbose:
                 pbar.update(batch.batch_size)
