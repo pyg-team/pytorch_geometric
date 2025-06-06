@@ -14,8 +14,8 @@ class NormalizeFeatures(BaseTransform):
         attrs (List[str]): The names of attributes to normalize.
             (default: :obj:`["x"]`)
     """
-    def __init__(self, attrs: Optional[List[str]] = None):
-        self.attrs = ["x"] if attrs is None else attrs
+    def __init__(self, attrs: Optional[List[str]] = None) -> None:
+        self.attrs = attrs or ["x"]
 
     def forward(
         self,

@@ -16,8 +16,12 @@ from torch_geometric.typing import EdgeTensorType, InputEdges, InputNodes
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
-    def __init__(self, feature_store: Optional[FeatureStore] = None,
-                 num_neighbors: Optional[NumNeighborsType] = None, **kwargs):
+    def __init__(
+        self,
+        feature_store: Optional[FeatureStore] = None,
+        num_neighbors: Optional[NumNeighborsType] = None,
+        **kwargs,
+    ) -> None:
         self.feature_store = feature_store
         self._num_neighbors = num_neighbors or [1]
         self.sample_kwargs = kwargs

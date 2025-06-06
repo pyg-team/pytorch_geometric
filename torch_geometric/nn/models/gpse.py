@@ -758,7 +758,6 @@ def gpse_process(model: Module, data: Data, rand_type: str,
         :class:`~torch_geometric.data.Data` object, with :class:`GPSE`
         encodings appended as :obj:`out.pestat_GPSE` attribute.
     """
-    num_neighbors = [30, 20, 10] if num_neighbors is None else num_neighbors
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # Generate random features for the encoder
     n = data.num_nodes
@@ -785,6 +784,8 @@ def gpse_process(model: Module, data: Data, rand_type: str,
         if layers_mp is None:
             raise ValueError('Please provide the number of message-passing '
                              'layers as "layers_mp".')
+
+        num_neighbors = num_neighbors or [30, 20, 10]
         diff = layers_mp - len(num_neighbors)
         if fillval > 0 and diff > 0:
             num_neighbors += [fillval] * diff
@@ -807,12 +808,18 @@ def gpse_process(model: Module, data: Data, rand_type: str,
 
 
 @torch.no_grad()
-def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
-                       bernoulli_thresh: float = 0.5,
-                       neighbor_loader: bool = False,
-                       num_neighbors: List[int] = None, fillval: int = 5,
-                       layers_mp: int = None,
-                       **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+def gpse_process_batch(
+    model: GPSE,
+    batch,
+    rand_type: str,
+    use_vn: bool = True,
+    bernoulli_thresh: float = 0.5,
+    neighbor_loader: bool = False,
+    num_neighbors: Optional[List[int]] = None,
+    fillval: int = 5,
+    layers_mp: int = None,
+    **kwargs,
+) -> Tuple[torch.Tensor, torch.Tensor]:
     r"""Process a batch of data using the :class:`GPSE` model to generate and
     append :class:`GPSE` encodings. Identical to `gpse_process`, but operates
     on a batch of :class:`~torch_geometric.data.Data` objects.
@@ -851,7 +858,6 @@ def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
             to the stacked :class:`GPSE` encodings and the pointers indicating
             individual graphs.
     """
-    num_neighbors = [30, 20, 10] if num_neighbors is None else num_neighbors
     n = batch.num_nodes
     dim_in = model.state_dict()[list(model.state_dict())[0]].shape[1]
 
@@ -883,6 +889,8 @@ def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
         if layers_mp is None:
             raise ValueError('Please provide the number of message-passing '
                              'layers as "layers_mp".')
+
+        num_neighbors = num_neighbors or [30, 20, 10]
         diff = layers_mp - len(num_neighbors)
         if fillval > 0 and diff > 0:
             num_neighbors += [fillval] * diff

@@ -85,13 +85,10 @@ class GDC(BaseTransform):
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
-        self.diffusion_kwargs = dict(
-            method='ppr',
-            alpha=0.15) if diffusion_kwargs is None else diffusion_kwargs
-        self.sparsification_kwargs = dict(
-            method='threshold',
-            avg_degree=64,
-        ) if sparsification_kwargs is None else sparsification_kwargs
+        self.diffusion_kwargs = diffusion_kwargs or dict(
+            method='ppr', alpha=0.15)
+        self.sparsification_kwargs = sparsification_kwargs or dict(
+            method='threshold', avg_degree=64)
         self.exact = exact
 
         if self_loop_weight:

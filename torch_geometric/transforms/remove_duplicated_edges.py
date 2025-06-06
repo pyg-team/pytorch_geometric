@@ -25,8 +25,7 @@ class RemoveDuplicatedEdges(BaseTransform):
         key: Optional[Union[str, List[str]]] = None,
         reduce: str = "add",
     ) -> None:
-        if key is None:
-            key = ['edge_attr', 'edge_weight']
+        key = key or ['edge_attr', 'edge_weight']
 
         if isinstance(key, str):
             key = [key]

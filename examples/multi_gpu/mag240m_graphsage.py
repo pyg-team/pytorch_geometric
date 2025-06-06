@@ -237,7 +237,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_devices", type=int, default=1)
     args = parser.parse_args()
 
-    args.num_neighbors = (int(i) for i in args.num_neighbors.split('-'))
+    args.num_neighbors = [int(i) for i in args.num_neighbors.split('-')]
 
     import warnings
     warnings.simplefilter("ignore")
