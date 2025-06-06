@@ -112,7 +112,7 @@ class EGConv(MessagePassing):
                                 (out_channels // num_heads) * num_bases,
                                 bias=False, weight_initializer='glorot')
         self.comb_lin = Linear(in_channels,
-                               num_heads * num_bases * len(aggregators))
+                               num_heads * num_bases * len(self.aggregators))
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
