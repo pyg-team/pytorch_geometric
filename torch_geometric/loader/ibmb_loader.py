@@ -236,7 +236,7 @@ def create_batchwise_out_aux_pairs(
             logits[tele_set, i] = 1. / len(tele_set)
 
         new_logits = logits.clone()
-        for i in range(num_iter):
+        for _ in range(num_iter):
             new_logits = adj @ new_logits * (1 - alpha) + alpha * logits
 
         inds = new_logits.argsort(0)

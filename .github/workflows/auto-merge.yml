@@ -2,7 +2,7 @@ name: Auto-merge Bot PRs
 
 on:  # yamllint disable-line rule:truthy
   pull_request_target:
-    types: [opened]
+    types: [opened, reopened]
 
 permissions:
   contents: write
@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'pre-commit-ci[bot]' }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Label bot PRs
         run: gh pr edit --add-label "ci,skip-changelog" ${{ github.event.pull_request.html_url }}
         env:

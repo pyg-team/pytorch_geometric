@@ -162,13 +162,6 @@ select = [
     "D",  # pydocstyle
 ]
 ignore = [
-    "B007",  # TODO Don't ignore "Loop control variable `{name}` not used within loop body"
-    "B008",  # TODO Don't ignore "Do not perform function call `{name}` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable"
-    "B020",  # TODO Don't ignore "Loop control variable `{name}` overrides iterable it iterates"
-    "B024",  # TODO Don't ignore "`{name}` is an abstract base class, but it has no abstract methods or properties"
-    "B026",  # TODO Don't ignore "Star-arg unpacking after a keyword argument is strongly discouraged"
-    "B027",  # TODO Don't ignore "`{name}` is an empty method in an abstract base class, but has no abstract decorator"
-    "B028",  # TODO Don't ignore "No explicit `stacklevel` keyword argument found"
     "D100",  # TODO Don't ignore "Missing docstring in public module"
     "D101",  # TODO Don't ignore "Missing docstring in public class"
     "D102",  # TODO Don't ignore "Missing docstring in public method"

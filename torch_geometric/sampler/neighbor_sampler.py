@@ -52,16 +52,18 @@ class NeighborSampler(BaseSampler):
     ):
         if not directed:
             subgraph_type = SubgraphType.induced
-            warnings.warn(f"The usage of the 'directed' argument in "
-                          f"'{self.__class__.__name__}' is deprecated. Use "
-                          f"`subgraph_type='induced'` instead.")
+            warnings.warn(
+                f"The usage of the 'directed' argument in "
+                f"'{self.__class__.__name__}' is deprecated. Use "
+                f"`subgraph_type='induced'` instead.", stacklevel=2)
 
         if (not torch_geometric.typing.WITH_PYG_LIB and sys.platform == 'linux'
                 and subgraph_type != SubgraphType.induced):
-            warnings.warn(f"Using '{self.__class__.__name__}' without a "
-                          f"'pyg-lib' installation is deprecated and will be "
-                          f"removed soon. Please install 'pyg-lib' for "
-                          f"accelerated neighborhood sampling")
+            warnings.warn(
+                f"Using '{self.__class__.__name__}' without a "
+                f"'pyg-lib' installation is deprecated and will be "
+                f"removed soon. Please install 'pyg-lib' for "
+                f"accelerated neighborhood sampling", stacklevel=2)
 
         self.data_type = DataType.from_data(data)
 
@@ -806,7 +808,7 @@ def neg_sample(
     out = out.view(num_samples, seed.numel())
     mask = node_time[out] > seed_time  # holds all invalid samples.
     neg_sampling_complete = False
-    for i in range(5):  # pragma: no cover
+    for _ in range(5):  # pragma: no cover
         num_invalid = int(mask.sum())
         if num_invalid == 0:
             neg_sampling_complete = True
