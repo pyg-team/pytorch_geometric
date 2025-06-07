@@ -112,7 +112,7 @@ def load_search_file(fname):
 def load_alias_file(fname):
     with open(fname) as f:
         file = csv.reader(f, delimiter=' ')
-        for line in file:
+        for line in file:  # noqa: B007
             break
     return line
 

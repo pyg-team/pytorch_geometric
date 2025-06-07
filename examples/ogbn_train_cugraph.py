@@ -122,7 +122,7 @@ def train(model, train_loader):
     model.train()
 
     total_loss = total_correct = total_examples = 0
-    for i, batch in enumerate(train_loader):
+    for batch in train_loader:
         batch = batch.cuda()
         optimizer.zero_grad()
         out = model(batch.x, batch.edge_index)[:batch.batch_size]

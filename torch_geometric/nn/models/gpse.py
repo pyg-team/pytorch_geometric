@@ -801,7 +801,7 @@ def gpse_process(
                                 shuffle=False, pin_memory=True, **kwargs)
         out_list = []
         pbar = trange(data.num_nodes, position=2)
-        for i, batch in enumerate(loader):
+        for batch in loader:
             out, _ = model(batch.to(device))
             out = out[:batch.batch_size].to("cpu", non_blocking=True)
             out_list.append(out)
@@ -906,7 +906,7 @@ def gpse_process_batch(
                                 shuffle=False, pin_memory=True, **kwargs)
         out_list = []
         pbar = trange(batch.num_nodes, position=2)
-        for i, batch in enumerate(loader):
+        for batch in loader:
             out, _ = model(batch.to(device))
             out = out[:batch.batch_size].to('cpu', non_blocking=True)
             out_list.append(out)

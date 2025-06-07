@@ -92,7 +92,7 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
 class RPCRouter:
     r"""A router to get the worker based on the partition ID."""
     def __init__(self, partition_to_workers: List[List[str]]):
-        for pid, rpc_worker_list in enumerate(partition_to_workers):
+        for rpc_worker_list in partition_to_workers:
             if len(rpc_worker_list) == 0:
                 raise ValueError('No RPC worker is in worker list')
         self.partition_to_workers = partition_to_workers
@@ -120,7 +120,7 @@ def rpc_partition_to_workers(
     partition_to_workers = [[] for _ in range(num_partitions)]
     gathered_results = global_all_gather(
         (ctx.role, num_partitions, current_partition_idx))
-    for worker_name, (role, nparts, idx) in gathered_results.items():
+    for worker_name, (_, _, idx) in gathered_results.items():
         partition_to_workers[idx].append(worker_name)
     return partition_to_workers
 

@@ -385,7 +385,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                         f'Train explainer for graph {index} with layer '
                         f'{layer}')
             self._enable_layer(layer)
-            for epoch in range(self.epochs):
+            for _ in range(self.epochs):
                 with torch.no_grad():
                     model(x, edge_index, **kwargs)
                 gates, total_penalty = [], 0
