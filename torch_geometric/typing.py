@@ -81,8 +81,9 @@ try:
         WITH_CUDA_HASH_MAP = False
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'pyg-lib'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     pyg_lib = object
     WITH_PYG_LIB = False
     WITH_GMM = False
@@ -125,8 +126,9 @@ try:
     WITH_TORCH_SCATTER = True
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'torch-scatter'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     torch_scatter = object
     WITH_TORCH_SCATTER = False
 
@@ -136,8 +138,9 @@ try:
     WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'torch-cluster'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     WITH_TORCH_CLUSTER = False
     WITH_TORCH_CLUSTER_BATCH_SIZE = False
 
@@ -154,7 +157,7 @@ except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(
             f"An issue occurred while importing 'torch-spline-conv'. "
-            f"Disabling its usage. Stacktrace: {e}")
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     WITH_TORCH_SPLINE_CONV = False
 
 try:
@@ -163,8 +166,9 @@ try:
     WITH_TORCH_SPARSE = True
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'torch-sparse'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     WITH_TORCH_SPARSE = False
 
     class SparseStorage:  # type: ignore

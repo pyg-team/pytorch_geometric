@@ -95,7 +95,7 @@ if __name__ == "__main__":
     model = Net().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-    for epoch in range(2):
+    for _ in range(2):
         train(model, train_loader)
 
     explainer = Explainer(

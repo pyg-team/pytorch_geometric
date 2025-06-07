@@ -1,5 +1,5 @@
 import copy
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any
 
 
@@ -31,6 +31,7 @@ class BaseTransform(ABC):
         # Shallow-copy the data so that we prevent in-place data modification.
         return self.forward(copy.copy(data))
 
+    @abstractmethod
     def forward(self, data: Any) -> Any:
         pass
 
