@@ -128,7 +128,7 @@ class TAGDataset(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         file_names = []
-        for root, _, files in os.walk(osp.join(self.root, 'raw')):
+        for _, _, files in os.walk(osp.join(self.root, 'raw')):
             for file in files:
                 file_names.append(file)
         return file_names

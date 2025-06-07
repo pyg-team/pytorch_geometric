@@ -806,7 +806,7 @@ def neg_sample(
     out = out.view(num_samples, seed.numel())
     mask = node_time[out] > seed_time  # holds all invalid samples.
     neg_sampling_complete = False
-    for i in range(5):  # pragma: no cover
+    for _ in range(5):  # pragma: no cover
         num_invalid = int(mask.sum())
         if num_invalid == 0:
             neg_sampling_complete = True

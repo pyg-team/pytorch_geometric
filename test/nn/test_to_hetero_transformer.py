@@ -221,7 +221,7 @@ def test_to_hetero_basic():
 
     for aggr in ['sum', 'mean', 'min', 'max', 'mul']:
         model = Net2()
-        model = to_hetero(model, metadata, aggr='mean', debug=False)
+        model = to_hetero(model, metadata, aggr=aggr, debug=False)
         assert sum(p.numel() for p in model.parameters()) == 5824
 
         out1 = model(x_dict, edge_index_dict)
@@ -436,7 +436,7 @@ def test_to_hetero_and_rgcn_equal_output():
     for i, edge_type in enumerate(edge_types):
         weight = model.conv['__'.join(edge_type)].lin.weight
         weight.data = conv.weight[i].data.t()
-    for i, node_type in enumerate(node_types):
+    for node_type in node_types:
         model.lin[node_type].weight.data = conv.root.data.t()
         model.lin[node_type].bias.data = conv.bias.data
 
