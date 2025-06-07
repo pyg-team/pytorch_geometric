@@ -13,6 +13,7 @@ from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
+    has_package,
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
@@ -249,7 +250,15 @@ def test_packaging():
 
 
 @withPackage('onnx', 'onnxruntime', 'onnxscript')
-def test_onnx(tmp_path):
+@pytest.mark.parametrize('dynamo', [
+    pytest.param(
+        True, marks=pytest.mark.skipif(has_package('torch<2.7.0'),
+                                       reason="Requires torch>=2.7.0")),
+    pytest.param(
+        False, marks=pytest.mark.skipif(has_package('torch>=2.7.0'),
+                                        reason="Deprecated in torch<2.7.0")),
+])
+def test_onnx(tmp_path, dynamo):
     import onnx
     import onnxruntime as ort
 
@@ -274,13 +283,14 @@ def test_onnx(tmp_path):
     assert expected.size() == (3, 16)
 
     path = osp.join(tmp_path, 'model.onnx')
+    kwargs = {"dynamo": True} if dynamo else {}
     torch.onnx.export(
         model,
         (x, edge_index),
         path,
         input_names=('x', 'edge_index'),
         opset_version=16,
-        dynamo=True,  # False is deprecated by PyTorch
+        **kwargs,
     )
 
     model = onnx.load(path)
