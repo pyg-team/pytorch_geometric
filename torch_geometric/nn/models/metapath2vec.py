@@ -233,7 +233,7 @@ class MetaPath2Vec(torch.nn.Module):
         """
         from sklearn.linear_model import LogisticRegression
 
-        clf = LogisticRegression(solver=solver, *args,
+        clf = LogisticRegression(*args, solver=solver,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())
         return clf.score(test_z.detach().cpu().numpy(),

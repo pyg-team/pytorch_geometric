@@ -178,7 +178,7 @@ def filter_hetero_data(
     out = copy.copy(data)
 
     for node_type in out.node_types:
-        # Handle the case of disconneted graph sampling:
+        # Handle the case of disconnected graph sampling:
         if node_type not in node_dict:
             node_dict[node_type] = torch.empty(0, dtype=torch.long)
 
@@ -186,7 +186,7 @@ def filter_hetero_data(
                            node_dict[node_type])
 
     for edge_type in out.edge_types:
-        # Handle the case of disconneted graph sampling:
+        # Handle the case of disconnected graph sampling:
         if edge_type not in row_dict:
             row_dict[edge_type] = torch.empty(0, dtype=torch.long)
         if edge_type not in col_dict:

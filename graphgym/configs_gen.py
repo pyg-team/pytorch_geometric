@@ -112,7 +112,7 @@ def load_search_file(fname):
 def load_alias_file(fname):
     with open(fname) as f:
         file = csv.reader(f, delimiter=' ')
-        for line in file:
+        for line in file:  # noqa: B007
             break
     return line
 
@@ -121,7 +121,9 @@ def exclude_list_id(list, id):
     return [list[i] for i in range(len(list)) if i != id]
 
 
-def gen_grid(args, config, config_budget={}):
+def gen_grid(args, config, config_budget=None):
+    if config_budget is None:
+        config_budget = {}
     task_name = f'{get_fname(args.config)}_grid_{get_fname(args.grid)}'
     fname_start = get_fname(args.config)
     out_dir = f'{args.out_dir}/{task_name}'
@@ -161,7 +163,11 @@ def gen_grid(args, config, config_budget={}):
         print(f'{len(vars_value)} configurations saved to: {out_dir}')
 
 
-def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
+def gen_grid_sample(args, config, config_budget=None, compare_alias_list=None):
+    if config_budget is None:
+        config_budget = {}
+    if compare_alias_list is None:
+        compare_alias_list = []
     task_name = f'{get_fname(args.config)}_grid_{get_fname(args.grid)}'
     fname_start = get_fname(args.config)
     out_dir = f'{args.out_dir}/{task_name}'

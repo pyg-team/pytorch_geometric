@@ -130,11 +130,13 @@ class Transformer:
         # (node-level, edge-level) by filling `self._state`:
         for node in list(self.graph.nodes):
             if node.op == 'call_function' and 'training' in node.kwargs:
-                warnings.warn(f"Found function '{node.name}' with keyword "
-                              f"argument 'training'. During FX tracing, this "
-                              f"will likely be baked in as a constant value. "
-                              f"Consider replacing this function by a module "
-                              f"to properly encapsulate its training flag.")
+                warnings.warn(
+                    f"Found function '{node.name}' with keyword "
+                    f"argument 'training'. During FX tracing, this "
+                    f"will likely be baked in as a constant value. "
+                    f"Consider replacing this function by a module "
+                    f"to properly encapsulate its training flag.",
+                    stacklevel=2)
 
             if node.op == 'placeholder':
                 if node.name not in self._state:

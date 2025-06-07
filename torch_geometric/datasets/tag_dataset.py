@@ -128,7 +128,7 @@ class TAGDataset(InMemoryDataset):
     @property
     def raw_file_names(self) -> List[str]:
         file_names = []
-        for root, _, files in os.walk(osp.join(self.root, 'raw')):
+        for _, _, files in os.walk(osp.join(self.root, 'raw')):
             for file in files:
                 file_names.append(file)
         return file_names
@@ -277,7 +277,7 @@ class TAGDataset(InMemoryDataset):
             for k, tensor in all_encoded_token.items():
                 torch.save(tensor, os.path.join(path, f'{k}.pt'))
                 print('Token saved:', os.path.join(path, f'{k}.pt'))
-        os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # supressing warning
+        os.environ["TOKENIZERS_PARALLELISM"] = 'true'  # suppressing warning
         return all_encoded_token
 
     def __repr__(self) -> str:

@@ -115,7 +115,7 @@ def arg_parse():
 def evaluate(rank, loader, model):
     with torch.no_grad():
         total_correct = total_examples = 0
-        for i, batch in enumerate(loader):
+        for batch in loader:
             batch = batch.to(rank)
             batch_size = batch.batch_size
 

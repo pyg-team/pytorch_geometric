@@ -8,7 +8,7 @@ implementation extended original implementation from LM to LLM and opt for LoRA
 from peft.
 
 ``note::
-    use addtional trick, please add your external prediction by assigning
+    use additional trick, please add your external prediction by assigning
     `ext_pred_path` and combine it into pretraining phase and node features
 """
 
@@ -17,6 +17,7 @@ import os
 import os.path as osp
 import time
 
+import psutil
 import torch
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 
@@ -96,7 +97,7 @@ def main(args):
     split_idx['valid']
     test_idx = split_idx['test']
 
-    # randome sample pseudo labels nodes, generate their index
+    # random sample pseudo labels nodes, generate their index
     num_pseudo_labels = int(gold_idx.numel() * pl_ratio)
     idx_to_select = torch.randperm(test_idx.numel())[:num_pseudo_labels]
     pseudo_labels_idx = test_idx[idx_to_select]
@@ -387,6 +388,14 @@ def main(args):
 
 
 if __name__ == '__main__':
+    available_gb = psutil.virtual_memory().available / (1024**3)
+    if available_gb < 80:
+        print(f"  WARNING: This test may require more RAM than available.\n"
+              f"    Estimated RAM needed: ~80 GB\n"
+              f"    Detected available RAM: {available_gb:.2f} GB\n"
+              "    If the program crashes or is killed, consider upgrading "
+              "system memory.")
+
     parser = argparse.ArgumentParser(description='GLEM Example:')
     parser.add_argument('--gpu', type=int, default=0)
     parser.add_argument('--num_runs', type=int, default=10,
