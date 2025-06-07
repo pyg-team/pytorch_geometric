@@ -42,7 +42,8 @@ def get_embeddings(
             hook_handles.append(module.register_forward_hook(hook))
 
     if len(hook_handles) == 0:
-        warnings.warn("The 'model' does not have any 'MessagePassing' layers")
+        warnings.warn("The 'model' does not have any 'MessagePassing' layers",
+                      stacklevel=2)
 
     training = model.training
     model.eval()
@@ -123,8 +124,9 @@ def get_embeddings_hetero(
                 hook_handles.append(module.register_forward_hook(hook))
 
     if len(hook_handles) == 0:
-        warnings.warn("The 'model' does not have any heterogenous "
-                      "'MessagePassing' layers")
+        warnings.warn(
+            "The 'model' does not have any heterogenous "
+            "'MessagePassing' layers", stacklevel=2)
 
     # Run the model forward pass
     training = model.training

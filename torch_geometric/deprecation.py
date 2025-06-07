@@ -23,7 +23,7 @@ def deprecated(
             out = f"'{name}' is deprecated"
             if details is not None:
                 out += f", {details}"
-            warnings.warn(out)
+            warnings.warn(out, stacklevel=2)
             return func(*args, **kwargs)
 
         return wrapper

@@ -3,7 +3,7 @@ name: Setup
 inputs:
   python-version:
     required: false
-    default: '3.10'  # TODO Change back once `pyg-lib` wheels are fixed.
+    default: '3.9'
   torch-version:
     required: false
     default: '2.7.0'
@@ -33,11 +33,12 @@ runs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        activate-environment: true
 
     - name: Set up Python ${{ inputs.python-version }}
       run: |
-        uv python install ${{ inputs.python-version }}
-        uv venv
         uv pip install --upgrade pip setuptools
       shell: bash
 
