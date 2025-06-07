@@ -67,7 +67,6 @@ def arg_parse():
                         help='warmup epochs for polynormer')
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
-    parser.add_argument('--eval_steps', type=int, default=1000)
     parser.add_argument('--warmup_steps', type=int, default=20)
     parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument(
@@ -119,7 +118,7 @@ def arg_parse():
 def evaluate(args, rank, loader, model):
     with torch.no_grad():
         total_correct = total_examples = 0
-        for i, batch in enumerate(loader):
+        for batch in loader:
             batch = batch.to(rank)
             batch_size = batch.batch_size
 
@@ -238,7 +237,6 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
 
     dist.barrier()
 
-    args.eval_steps
     warmup_steps = args.warmup_steps
     dist.barrier()
     torch.cuda.synchronize()

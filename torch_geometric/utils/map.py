@@ -1,10 +1,13 @@
-import warnings
 from typing import Optional, Tuple, Union
 
 import numpy as np
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack
+
+from torch_geometric.warnings import WarningCache
+
+_warning_cache = WarningCache()
 
 
 def map_index(
@@ -93,10 +96,10 @@ def map_index(
             WITH_CUDF = True
         except ImportError:
             import pandas as pd
-            warnings.warn("Using CPU-based processing within 'map_index' "
-                          "which may cause slowdowns and device "
-                          "synchronization. Consider installing 'cudf' to "
-                          "accelerate computation")
+            _warning_cache.warn("Using CPU-based processing within "
+                                "'map_index' which may cause slowdowns and "
+                                "device synchronization. Consider installing "
+                                "'cudf' to accelerate computation")
     else:
         import pandas as pd
 
@@ -148,10 +151,11 @@ def map_index(
         if inclusive:
             try:
                 out = from_dlpack(result['right_ser'].to_dlpack())
-            except ValueError:
-                raise ValueError("Found invalid entries in 'src' that do not "
-                                 "have a corresponding entry in 'index'. Set "
-                                 "`inclusive=False` to ignore these entries.")
+            except ValueError as e:
+                raise ValueError(
+                    "Found invalid entries in 'src' that do not "
+                    "have a corresponding entry in 'index'. Set "
+                    "`inclusive=False` to ignore these entries.") from e
         else:
             out = from_dlpack(result['right_ser'].fillna(-1).to_dlpack())
 

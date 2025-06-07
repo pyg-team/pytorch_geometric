@@ -373,7 +373,7 @@ def train(model, rank, device, loader, optimizer):
     model.train()
     reg_criterion = torch.nn.L1Loss()
     loss_accum = 0.0
-    for step, batch in enumerate(
+    for step, batch in enumerate(  # noqa: B007
             tqdm(loader, desc="Training", disable=(rank > 0))):
         batch = batch.to(device)
         pred = model(batch).view(-1, )
