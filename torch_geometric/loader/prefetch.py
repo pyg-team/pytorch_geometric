@@ -27,8 +27,9 @@ class DeviceHelper:
 
         if ((self.device.type == 'cuda' and not with_cuda)
                 or (self.device.type == 'xpu' and not with_xpu)):
-            warnings.warn(f"Requested device '{self.device.type}' is not "
-                          f"available, falling back to CPU")
+            warnings.warn(
+                f"Requested device '{self.device.type}' is not "
+                f"available, falling back to CPU", stacklevel=2)
             self.device = torch.device('cpu')
 
         self.stream = None
