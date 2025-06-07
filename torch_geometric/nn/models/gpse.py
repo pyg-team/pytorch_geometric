@@ -9,6 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.nn import Module
 from tqdm import trange
 
 import torch_geometric.transforms as T
@@ -282,7 +283,7 @@ class GNNInductiveHybridMultiHead(torch.nn.Module):
             (default: :obj:`add`)
         has_bn (bool, optional): Whether to apply batch normalization to layer
             outputs. (default: :obj:`True`)
-        has_l2norm (bool, optional): Wheter to apply L2 normalization to the
+        has_l2norm (bool, optional): Whether to apply L2 normalization to the
             layer outputs. (default: :obj:`True`)
         dropout (float, optional): Dropout ratio at layer output.
             (default: :obj:`0.2`)
@@ -715,10 +716,18 @@ class GPSENodeEncoder(torch.nn.Module):
 
 
 @torch.no_grad()
-def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
-                 bernoulli_thresh: float = 0.5, neighbor_loader: bool = False,
-                 num_neighbors: List[int] = [30, 20, 10], fillval: int = 5,
-                 layers_mp: int = None, **kwargs) -> torch.Tensor:
+def gpse_process(
+    model: Module,
+    data: Data,
+    rand_type: str,
+    use_vn: bool = True,
+    bernoulli_thresh: float = 0.5,
+    neighbor_loader: bool = False,
+    num_neighbors: Optional[List[int]] = None,
+    fillval: int = 5,
+    layers_mp: int = None,
+    **kwargs,
+) -> torch.Tensor:
     r"""Processes the data using the :class:`GPSE` model to generate and append
     GPSE encodings. Identical to :obj:`gpse_process_batch`, but operates on a
     single :class:`~torch_geometric.data.Dataset` object.
@@ -731,7 +740,7 @@ def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
     :obj:`precompute_GPSE` on your whole dataset is advised instead.
 
     Args:
-        model (GPSE): The :class:`GPSE` model.
+        model (Module): The :class:`GPSE` model.
         data (torch_geometric.data.Data): A :class:`~torch_geometric.data.Data`
             object.
         rand_type (str, optional): Type of random features to use. Options are
@@ -782,6 +791,8 @@ def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
         if layers_mp is None:
             raise ValueError('Please provide the number of message-passing '
                              'layers as "layers_mp".')
+
+        num_neighbors = num_neighbors or [30, 20, 10]
         diff = layers_mp - len(num_neighbors)
         if fillval > 0 and diff > 0:
             num_neighbors += [fillval] * diff
@@ -790,7 +801,7 @@ def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
                                 shuffle=False, pin_memory=True, **kwargs)
         out_list = []
         pbar = trange(data.num_nodes, position=2)
-        for i, batch in enumerate(loader):
+        for batch in loader:
             out, _ = model(batch.to(device))
             out = out[:batch.batch_size].to("cpu", non_blocking=True)
             out_list.append(out)
@@ -804,12 +815,18 @@ def gpse_process(model: GPSE, data: Data, rand_type: str, use_vn: bool = True,
 
 
 @torch.no_grad()
-def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
-                       bernoulli_thresh: float = 0.5,
-                       neighbor_loader: bool = False,
-                       num_neighbors: List[int] = [30, 20, 10],
-                       fillval: int = 5, layers_mp: int = None,
-                       **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+def gpse_process_batch(
+    model: GPSE,
+    batch,
+    rand_type: str,
+    use_vn: bool = True,
+    bernoulli_thresh: float = 0.5,
+    neighbor_loader: bool = False,
+    num_neighbors: Optional[List[int]] = None,
+    fillval: int = 5,
+    layers_mp: int = None,
+    **kwargs,
+) -> Tuple[torch.Tensor, torch.Tensor]:
     r"""Process a batch of data using the :class:`GPSE` model to generate and
     append :class:`GPSE` encodings. Identical to `gpse_process`, but operates
     on a batch of :class:`~torch_geometric.data.Data` objects.
@@ -879,6 +896,8 @@ def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
         if layers_mp is None:
             raise ValueError('Please provide the number of message-passing '
                              'layers as "layers_mp".')
+
+        num_neighbors = num_neighbors or [30, 20, 10]
         diff = layers_mp - len(num_neighbors)
         if fillval > 0 and diff > 0:
             num_neighbors += [fillval] * diff
@@ -887,7 +906,7 @@ def gpse_process_batch(model: GPSE, batch, rand_type: str, use_vn: bool = True,
                                 shuffle=False, pin_memory=True, **kwargs)
         out_list = []
         pbar = trange(batch.num_nodes, position=2)
-        for i, batch in enumerate(loader):
+        for batch in loader:
             out, _ = model(batch.to(device))
             out = out[:batch.batch_size].to('cpu', non_blocking=True)
             out_list.append(out)
@@ -949,7 +968,7 @@ def precompute_GPSE(model: GPSE, dataset: Dataset, use_vn: bool = True,
                                                   **kwargs)
 
         batch_out = batch_out.to('cpu', non_blocking=True)
-        # Need to wait for batch_ptr to finish transfering so that start and
+        # Need to wait for batch_ptr to finish transferring so that start and
         # end indices are ready to use
         batch_ptr = batch_ptr.to('cpu', non_blocking=False)
 
@@ -964,7 +983,7 @@ def precompute_GPSE(model: GPSE, dataset: Dataset, use_vn: bool = True,
         pbar.update(len(batch_ptr) - 1)
     pbar.close()
 
-    # Collate dataset and reset indicies and data list
+    # Collate dataset and reset indices and data list
     dataset.transform = orig_dataset_transform
     dataset._indices = None
     dataset._data_list = data_list

@@ -111,13 +111,17 @@ class Database(ABC):
             for key, value in schema_dict.items()
         }
 
+    @abstractmethod
     def connect(self) -> None:
         r"""Connects to the database.
         Databases will automatically connect on instantiation.
         """
+        raise NotImplementedError
 
+    @abstractmethod
     def close(self) -> None:
         r"""Closes the connection to the database."""
+        raise NotImplementedError
 
     @abstractmethod
     def insert(self, index: int, data: Any) -> None:

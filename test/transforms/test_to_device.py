@@ -17,5 +17,5 @@ def test_to_device(device):
     assert str(transform) == f'ToDevice({device})'
 
     data = transform(data)
-    for key, value in data:
+    for _, value in data:
         assert value.device == device

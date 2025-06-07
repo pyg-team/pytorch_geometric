@@ -108,9 +108,10 @@ class ToHeteroMessagePassing(torch.nn.Module):
 
         if (not hasattr(module, 'reset_parameters')
                 and sum([p.numel() for p in module.parameters()]) > 0):
-            warnings.warn(f"'{module}' will be duplicated, but its parameters "
-                          f"cannot be reset. To suppress this warning, add a "
-                          f"'reset_parameters()' method to '{module}'")
+            warnings.warn(
+                f"'{module}' will be duplicated, but its parameters "
+                f"cannot be reset. To suppress this warning, add a "
+                f"'reset_parameters()' method to '{module}'", stacklevel=2)
 
         convs = {edge_type: copy.deepcopy(module) for edge_type in edge_types}
         self.hetero_module = HeteroConv(convs, aggr)

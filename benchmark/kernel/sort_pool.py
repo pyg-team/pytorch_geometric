@@ -10,7 +10,7 @@ class SortPool(torch.nn.Module):
         super().__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             self.convs.append(SAGEConv(hidden, hidden))
         self.pool = SortAggregation(k=30)
         self.conv1d = Conv1d(hidden, 32, 5)

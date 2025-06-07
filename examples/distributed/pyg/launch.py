@@ -41,7 +41,7 @@ def kill_proc(ip, port, pids):
                     ip + f" 'kill {pid}'")
         subprocess.run(kill_cmd, shell=True)
         killed_pids.append(pid)
-    for i in range(3):
+    for _ in range(3):
         killed_pids = get_pids_to_kill(ip, port, killed_pids)
         if len(killed_pids) == 0:
             break
@@ -161,7 +161,7 @@ def get_remote_pids(ip, port, cmd_regex):
 def get_all_remote_pids(hosts, ssh_port, udf_command):
     """Get all remote processes."""
     remote_pids = {}
-    for node_id, host in enumerate(hosts):
+    for host in hosts:
         ip, _ = host
         # When creating training processes in remote machines, we may insert
         # some arguments in the commands. We need to use regular expressions to

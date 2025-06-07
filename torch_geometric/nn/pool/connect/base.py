@@ -4,7 +4,6 @@ from typing import Optional
 import torch
 from torch import Tensor
 
-import torch_geometric.typing
 from torch_geometric.nn.pool.select import SelectOutput
 
 
@@ -49,8 +48,7 @@ class ConnectOutput:
         self.batch = batch
 
 
-if torch_geometric.typing.WITH_PT113:
-    ConnectOutput = torch.jit.script(ConnectOutput)
+ConnectOutput = torch.jit.script(ConnectOutput)
 
 
 class Connect(torch.nn.Module):

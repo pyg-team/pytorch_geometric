@@ -192,7 +192,7 @@ class Explainer:
             if target is not None:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
-                    f"type '{self.explanation_type.value}'")
+                    f"type '{self.explanation_type.value}'", stacklevel=2)
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 
@@ -265,7 +265,7 @@ class Explainer:
                 return (prediction > 0).long().view(-1)
             if self.model_config.return_type == ModelReturnType.probs:
                 return (prediction > 0.5).long().view(-1)
-            assert False
+            raise AssertionError()
 
         if self.model_config.mode == ModelMode.multiclass_classification:
             return prediction.argmax(dim=-1)

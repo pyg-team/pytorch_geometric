@@ -108,13 +108,15 @@ class AddMetaPaths(BaseTransform):
         **kwargs: bool,
     ) -> None:
         if 'drop_orig_edges' in kwargs:
-            warnings.warn("'drop_orig_edges' is deprecated. Use "
-                          "'drop_orig_edge_types' instead")
+            warnings.warn(
+                "'drop_orig_edges' is deprecated. Use "
+                "'drop_orig_edge_types' instead", stacklevel=2)
             drop_orig_edge_types = kwargs['drop_orig_edges']
 
         if 'drop_unconnected_nodes' in kwargs:
-            warnings.warn("'drop_unconnected_nodes' is deprecated. Use "
-                          "'drop_unconnected_node_types' instead")
+            warnings.warn(
+                "'drop_unconnected_nodes' is deprecated. Use "
+                "'drop_unconnected_node_types' instead", stacklevel=2)
             drop_unconnected_node_types = kwargs['drop_unconnected_nodes']
 
         for path in metapaths:
@@ -144,7 +146,7 @@ class AddMetaPaths(BaseTransform):
             if self.max_sample is not None:
                 edge_index, edge_weight = self._sample(edge_index, edge_weight)
 
-            for i, edge_type in enumerate(metapath[1:]):
+            for edge_type in metapath[1:]:
                 edge_index2, edge_weight2 = self._edge_index(data, edge_type)
 
                 edge_index, edge_weight = edge_index.matmul(
@@ -276,7 +278,7 @@ class AddRandomMetaPaths(BaseTransform):
             row = start = torch.randperm(num_nodes)[:num_starts].repeat(
                 self.walks_per_node[j])
 
-            for i, edge_type in enumerate(metapath):
+            for edge_type in metapath:
                 edge_index = EdgeIndex(
                     data[edge_type].edge_index,
                     sparse_size=data[edge_type].size(),

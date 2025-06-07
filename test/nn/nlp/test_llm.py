@@ -2,10 +2,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.nlp import LLM
-from torch_geometric.testing import onlyFullTest, withPackage
+from torch_geometric.testing import onlyRAG, withPackage
 
 
-@onlyFullTest
+@onlyRAG
 @withPackage('transformers', 'accelerate')
 def test_llm() -> None:
     question = ["Is PyG the best open-source GNN library?"]

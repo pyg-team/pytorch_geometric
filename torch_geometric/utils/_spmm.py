@@ -63,18 +63,20 @@ def spmm(
 
         # Always convert COO to CSR for more efficient processing:
         if src.layout == torch.sparse_coo:
-            warnings.warn(f"Converting sparse tensor to CSR format for more "
-                          f"efficient processing. Consider converting your "
-                          f"sparse tensor to CSR format beforehand to avoid "
-                          f"repeated conversion (got '{src.layout}')")
+            warnings.warn(
+                f"Converting sparse tensor to CSR format for more "
+                f"efficient processing. Consider converting your "
+                f"sparse tensor to CSR format beforehand to avoid "
+                f"repeated conversion (got '{src.layout}')", stacklevel=2)
             src = src.to_sparse_csr()
 
         # Warn in case of CSC format without gradient computation:
         if src.layout == torch.sparse_csc and not other.requires_grad:
-            warnings.warn(f"Converting sparse tensor to CSR format for more "
-                          f"efficient processing. Consider converting your "
-                          f"sparse tensor to CSR format beforehand to avoid "
-                          f"repeated conversion (got '{src.layout}')")
+            warnings.warn(
+                f"Converting sparse tensor to CSR format for more "
+                f"efficient processing. Consider converting your "
+                f"sparse tensor to CSR format beforehand to avoid "
+                f"repeated conversion (got '{src.layout}')", stacklevel=2)
 
         # Use the default code path for `sum` reduction (works on CPU/GPU):
         if reduce == 'sum':
@@ -99,10 +101,11 @@ def spmm(
         # TODO The `torch.sparse.mm` code path with the `reduce` argument does
         # not yet support CSC :(
         if src.layout == torch.sparse_csc:
-            warnings.warn(f"Converting sparse tensor to CSR format for more "
-                          f"efficient processing. Consider converting your "
-                          f"sparse tensor to CSR format beforehand to avoid "
-                          f"repeated conversion (got '{src.layout}')")
+            warnings.warn(
+                f"Converting sparse tensor to CSR format for more "
+                f"efficient processing. Consider converting your "
+                f"sparse tensor to CSR format beforehand to avoid "
+                f"repeated conversion (got '{src.layout}')", stacklevel=2)
             src = src.to_sparse_csr()
 
         return torch.sparse.mm(src, other, reduce)
@@ -115,8 +118,7 @@ def spmm(
         if src.layout == torch.sparse_csr:
             ptr = src.crow_indices()
             deg = ptr[1:] - ptr[:-1]
-        elif (torch_geometric.typing.WITH_PT112
-              and src.layout == torch.sparse_csc):
+        elif src.layout == torch.sparse_csc:
             assert src.layout == torch.sparse_csc
             ones = torch.ones_like(src.values())
             index = src.row_indices()
