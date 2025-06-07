@@ -43,7 +43,7 @@ def to_nested_tensor(
         xs = [x]
 
     # This currently copies the data, although `x` is already contiguous.
-    # Sadly, there does not exist any (public) API to preven this :(
+    # Sadly, there does not exist any (public) API to prevent this :(
     return torch.nested.as_nested_tensor(xs)
 
 

@@ -54,7 +54,7 @@ def test_base_storage():
     assert int(deepcopied_storage.x) == 0
 
     with pytest.raises(AttributeError, match="has no attribute 'asdf'"):
-        storage.asdf
+        storage.asdf  # noqa: B018
 
 
 def test_storage_tensor_methods():

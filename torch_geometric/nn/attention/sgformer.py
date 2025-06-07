@@ -28,7 +28,6 @@ class SGFormerAttention(torch.nn.Module):
     ) -> None:
         super().__init__()
         assert channels % heads == 0
-        assert heads == 1, 'The number of heads are fixed as 1.'
         if head_channels is None:
             head_channels = channels // heads
 

@@ -755,7 +755,7 @@ class DimeNetPlusPlus(DimeNet):
             interaction blocks after the skip connection. (default: :obj:`2`)
         num_output_layers: (int, optional): Number of linear layers for the
             output blocks. (default: :obj:`3`)
-        act: (str or Callable, optional): The activation funtion.
+        act: (str or Callable, optional): The activation function.
             (default: :obj:`"swish"`)
         output_initializer (str, optional): The initialization method for the
             output layer (:obj:`"zeros"`, :obj:`"glorot_orthogonal"`).
@@ -805,7 +805,7 @@ class DimeNetPlusPlus(DimeNet):
 
         # We are re-using the RBF, SBF and embedding layers of `DimeNet` and
         # redefine output_block and interaction_block in DimeNet++.
-        # Hence, it is to be noted that in the above initalization, the
+        # Hence, it is to be noted that in the above initialization, the
         # variable `num_bilinear` does not have any purpose as it is used
         # solely in the `OutputBlock` of DimeNet:
         self.output_blocks = torch.nn.ModuleList([

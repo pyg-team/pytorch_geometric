@@ -76,9 +76,15 @@ def arg_parse():
     parser.add_argument(
         "--model",
         type=str,
-        default='SGFormer',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
-        help="Model used for training, default SGFormer",
+        default='SAGE',
+        choices=[
+            'SAGE',
+            'GAT',
+            'GCN',
+            # TODO: Uncomment when we add support for disjoint sampling
+            # 'SGFormer',
+        ],
+        help="Model used for training, default SAGE",
     )
     parser.add_argument(
         "--num_heads",
@@ -88,7 +94,6 @@ def arg_parse():
     )
     parser.add_argument('--tempdir_root', type=str, default=None)
     args = parser.parse_args()
-
     return args
 
 
@@ -211,6 +216,7 @@ if __name__ == '__main__':
             dataset.num_classes,
         ).cuda()
     elif args.model == 'SGFormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,

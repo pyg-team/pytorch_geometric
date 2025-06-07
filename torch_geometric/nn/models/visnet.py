@@ -11,7 +11,7 @@ from torch_geometric.utils import scatter
 
 
 class CosineCutoff(torch.nn.Module):
-    r"""Appies a cosine cutoff to the input distances.
+    r"""Applies a cosine cutoff to the input distances.
 
     .. math::
         \text{cutoffs} =
@@ -572,7 +572,7 @@ class ViS_MP(MessagePassing):
         d_ij: Tensor,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
         r"""Computes the residual scalar and vector features of the nodes and
-        scalar featues of the edges.
+        scalar features of the edges.
 
         Args:
             x (torch.Tensor): The scalar features of the nodes.

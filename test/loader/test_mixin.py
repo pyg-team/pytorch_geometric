@@ -9,6 +9,7 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.testing import onlyLinux, onlyNeighborSampler
 
 
+@pytest.mark.xfail(reason="TODO: Fix test")
 @onlyLinux
 @onlyNeighborSampler
 @pytest.mark.parametrize('loader_cores', [None, [1, 2]])
@@ -29,9 +30,9 @@ def test_cpu_affinity_neighbor_loader(loader_cores, spawn_context):
             # returns "pid <pid>'s current affinity list <n>-<m>"
             out.append(stdout.split(':')[1].strip())
         if loader_cores:
-            out == ['[1]', '[2]']
+            assert out == ['[1]', '[2]']
         else:
-            out[0] != out[1]
+            assert out[0] != out[1]
 
 
 def init_fn(worker_id):

@@ -152,7 +152,7 @@ def gen_grid(args, config, config_budget={}):
                         }
                 else:
                     raise ValueError('Only 2-level config files are supported')
-                var_repr = str(var).strip("[]").strip("''")
+                var_repr = str(var).strip("[]").strip("''")  # noqa: B005
                 fname_out += f'-{vars_alias[id]}={var_repr}'
             if len(config_budget) > 0:
                 config_out = match_baseline_cfg(config_out, config_budget)
@@ -221,7 +221,7 @@ def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
                     else:
                         raise ValueError(
                             'Only 2-level config files are supported')
-                    var_repr = str(var).strip("[]").strip("''")
+                    var_repr = str(var).strip("[]").strip("''")  # noqa: B005
                     fname_out += f'-{vars_alias[id]}={var_repr}'
                 if len(config_budget) > 0:
                     config_out = match_baseline_cfg(config_out, config_budget,

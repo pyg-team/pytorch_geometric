@@ -133,7 +133,7 @@ def dist_link_neighbor_loader_hetero(
                 assert batch[key].num_sampled_edges[0] > 0
                 assert batch[key].edge_attr.size(0) == batch[key].num_edges
             else:
-                batch[key].num_sampled_edges[0] == 0
+                assert batch[key].num_sampled_edges[0] == 0
     assert loader.channel.empty()
 
 

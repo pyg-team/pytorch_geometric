@@ -1,14 +1,12 @@
 import os
 import os.path as osp
 import random
-import sys
 import warnings
 
 import pytest
 import torch
 import torch.nn.functional as F
 
-import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
@@ -220,10 +218,6 @@ def test_compile_basic(device):
 
 
 def test_packaging():
-    if (not torch_geometric.typing.WITH_PT113 and sys.version_info.major == 3
-            and sys.version_info.minor >= 10):
-        return  # Unsupported Python version
-
     warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)

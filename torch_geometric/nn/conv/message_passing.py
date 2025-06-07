@@ -276,7 +276,7 @@ class MessagePassing(torch.nn.Module):
                     f"{index.min().item()}). Please ensure that all "
                     f"indices in 'edge_index' point to valid indices "
                     f"in the interval [0, {src.size(self.node_dim)}) in "
-                    f"your node feature matrix and try again.")
+                    f"your node feature matrix and try again.") from e
 
             if (index.numel() > 0 and index.max() >= src.size(self.node_dim)):
                 raise IndexError(
@@ -285,7 +285,7 @@ class MessagePassing(torch.nn.Module):
                     f"{index.max().item()}). Please ensure that all "
                     f"indices in 'edge_index' point to valid indices "
                     f"in the interval [0, {src.size(self.node_dim)}) in "
-                    f"your node feature matrix and try again.")
+                    f"your node feature matrix and try again.") from e
 
             raise e
 

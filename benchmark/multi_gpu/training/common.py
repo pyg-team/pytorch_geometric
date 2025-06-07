@@ -122,7 +122,7 @@ def run(rank: int, world_size: int, args: argparse.ArgumentParser,
         num_neighbors = [num_neighbors] * args.num_layers
 
     if len(num_neighbors) != args.num_layers:
-        err_msg = (f'num_neighbors={num_neighbors} lenght != num of'
+        err_msg = (f'num_neighbors={num_neighbors} length != num of'
                    'layers={args.num_layers}')
 
     kwargs = {

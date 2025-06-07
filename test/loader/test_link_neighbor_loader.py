@@ -137,6 +137,8 @@ def test_hetero_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
+        assert batch.input_type == ('paper', 'to', 'author')
+
         if neg_sampling_ratio is None:
             # Assert only positive samples are present in the original graph:
             edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)

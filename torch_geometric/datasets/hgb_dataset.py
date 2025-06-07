@@ -123,8 +123,8 @@ class HGBDataset(InMemoryDataset):
             start = info.index('LINK\tSTART\tEND\tMEANING') + 1
             end = info[start:].index('')
             for key, row in enumerate(info[start:start + end]):
-                row = row.split('\t')[1:]
-                src, dst, rel = (v for v in row if v != '')
+                edge = row.split('\t')[1:]
+                src, dst, rel = (v for v in edge if v != '')
                 src, dst = n_types[int(src)], n_types[int(dst)]
                 rel = rel.split('-')[1]
                 e_types[key] = (src, rel, dst)

@@ -97,7 +97,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
             from scipy.sparse.linalg import eigs, eigsh
             eig_fn = eigs if not self.is_undirected else eigsh
 
-            eig_vals, eig_vecs = eig_fn(  # type: ignore
+            eig_vals, eig_vecs = eig_fn(
                 L,
                 k=self.k + 1,
                 which='SR' if not self.is_undirected else 'SA',

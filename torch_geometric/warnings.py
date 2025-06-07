@@ -4,11 +4,11 @@ from typing import Literal
 import torch_geometric
 
 
-def warn(message: str) -> None:
+def warn(message: str, stacklevel: int = 5) -> None:
     if torch_geometric.is_compiling():
         return
 
-    warnings.warn(message)
+    warnings.warn(message, stacklevel=stacklevel)
 
 
 def filterwarnings(
@@ -19,3 +19,12 @@ def filterwarnings(
         return
 
     warnings.filterwarnings(action, message)
+
+
+class WarningCache(set):
+    """Cache for warnings."""
+    def warn(self, message: str, stacklevel: int = 5) -> None:
+        """Trigger warning message."""
+        if message not in self:
+            self.add(message)
+            warn(message, stacklevel=stacklevel)

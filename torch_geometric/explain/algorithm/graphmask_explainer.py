@@ -274,7 +274,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         elif self.model_config.mode == ModelMode.regression:
             loss = self._loss_regression(y_hat, y)
         else:
-            assert False
+            raise AssertionError()
 
         g = torch.relu(loss - self.allowance).mean()
         f = penalty * self.penalty_scaling
