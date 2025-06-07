@@ -45,7 +45,7 @@ dependencies=[
 [project.optional-dependencies]
 graphgym=[
     "protobuf<4.21",
-    "pytorch-lightning<2.3.0",
+    "pytorch-lightning",
     "yacs",
 ]
 modelhub=[
@@ -69,6 +69,7 @@ rag=[
 test=[
     "onnx",
     "onnxruntime",
+    "onnxscript",
     "pytest",
     "pytest-cov",
 ]
@@ -200,6 +201,7 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+    "error::DeprecationWarning",
 ]
 markers = [
     "rag: mark test as RAG test",
