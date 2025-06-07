@@ -300,6 +300,22 @@ class GraphTransformer(torch.nn.Module):
             torch.Tensor: Node features with positional encodings.
         """
         x = data.x
+
+        # Handle when node features are None (common in regression datasets)
+        if x is None and self.node_feature_encoder is not None:
+            # Get input dimension from the first layer of the encoder
+            if hasattr(self.node_feature_encoder, '__getitem__'):
+                first_layer = self.node_feature_encoder[0]
+            else:
+                first_layer = self.node_feature_encoder
+            input_dim = getattr(
+                first_layer, 'in_features', self.classifier.in_features
+            )
+
+            num_nodes = data.num_nodes
+            device = next(self.parameters()).device
+            x = torch.zeros(num_nodes, input_dim, device=device)
+
         x = self._encode_nodes(x)
         if self.positional_encoders:
             x = x + sum(encoder(data) for encoder in self.positional_encoders)

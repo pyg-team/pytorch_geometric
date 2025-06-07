@@ -224,6 +224,24 @@ def simple_batch():
     return make
 
 
+@pytest.fixture
+def simple_none_batch():
+    """Creates a single graph batch with None node features.
+
+    This reproduces the error scenario where datasets (like QM7B regression)
+    don't provide node features, causing GraphTransformer to fail with:
+    "linear(): argument 'input' (position 1) must be Tensor, not NoneType"
+
+    Returns:
+        Batch: A batch containing one graph with None node features
+    """
+    data = Data(
+        x=None,  # No node features - this triggers the error
+        edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+    )
+    return Batch.from_data_list([data])
+
+
 # ── Fixtures for bias‐provider tests ────────────────────────────────────────
 
 

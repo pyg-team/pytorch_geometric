@@ -641,3 +641,29 @@ def test_parameters_and_buffers_on_same_device(
         assert buf.device.type == device, (
             f"Buffer '{name}' is on {buf.device}, expected {device}"
         )
+
+
+# ── Edge Case Tests ──────────────────────────────────────────────────────────
+
+
+def test_graph_transformer_none_features_handled(simple_none_batch):
+    """Test GraphTransformer regression: handling None node features.
+
+    test that GraphTransformer can process datasets with
+    None node features (like QM7B regression dataset).
+
+    Parameters
+    ----------
+    simple_none_batch : Batch
+        A batch containing data with x=None to simulate missing node features.
+    """
+    node_feature_encoder = nn.Sequential(nn.Linear(10, 16), nn.ReLU())
+
+    model = GraphTransformer(
+        hidden_dim=16, num_class=2, node_feature_encoder=node_feature_encoder
+    )
+
+    output = model(simple_none_batch)
+    assert output.shape == (1, 2)
+    assert torch.isfinite(output).all()
+    assert not torch.isnan(output).any()
