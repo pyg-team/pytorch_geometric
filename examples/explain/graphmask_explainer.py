@@ -32,7 +32,7 @@ class GCN(torch.nn.Module):
 model = GCN().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-for epoch in range(1, 201):
+for _ in range(1, 201):
     model.train()
     optimizer.zero_grad()
     out = model(data.x, data.edge_index)
@@ -76,7 +76,7 @@ class GAT(torch.nn.Module):
 model = GAT().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-for epoch in range(1, 201):
+for _ in range(1, 201):
     model.train()
     optimizer.zero_grad()
     out = model(data.x, data.edge_index)
