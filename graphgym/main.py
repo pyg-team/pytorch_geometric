@@ -1,6 +1,7 @@
 import logging
 import os
 
+import custom_graphgym  # noqa, register custom modules
 import torch
 
 from torch_geometric import seed_everything
