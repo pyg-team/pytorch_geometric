@@ -48,7 +48,7 @@ class GLEM(torch.nn.Module):
         lm_dtype: torch.dtype = torch.bfloat16,
         lm_use_lora: bool = True,
         lora_target_modules: Optional[Union[List[str], str]] = None,
-        device: Union[str, torch.device] = None,
+        device: Optional[Union[str, torch.device]] = None,
     ):
         super().__init__()
 
