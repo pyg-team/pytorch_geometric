@@ -1,8 +1,9 @@
 import copy
+from abc import ABC, abstractmethod
 from typing import Any
 
 
-class BaseTransform:
+class BaseTransform(ABC):
     r"""An abstract base class for writing transforms.
 
     Transforms are a general way to modify and customize
@@ -30,6 +31,7 @@ class BaseTransform:
         # Shallow-copy the data so that we prevent in-place data modification.
         return self.forward(copy.copy(data))
 
+    @abstractmethod
     def forward(self, data: Any) -> Any:
         pass
 

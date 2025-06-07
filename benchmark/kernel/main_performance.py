@@ -2,12 +2,12 @@ import argparse
 from itertools import product
 
 import torch
+from datasets import get_dataset
 from gcn import GCN
 from gin import GIN
 from graph_sage import GraphSAGE
 from train_eval import eval_acc, inference_run, train
 
-from datasets import get_dataset
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile

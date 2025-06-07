@@ -157,9 +157,8 @@ class KGQABaseDataset(InMemoryDataset):
         return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
     def process(self) -> None:
-        import pandas as pd
-
         import datasets
+        import pandas as pd
 
         datasets = datasets.load_dataset(self.dataset_name)
 

@@ -2,6 +2,7 @@ import argparse
 from itertools import product
 
 from asap import ASAP
+from datasets import get_dataset
 from diff_pool import DiffPool
 from edge_pool import EdgePool
 from gcn import GCN, GCNWithJK
@@ -14,8 +15,6 @@ from set2set import Set2SetNet
 from sort_pool import SortPool
 from top_k import TopK
 from train_eval import cross_validation_with_val_set
-
-from datasets import get_dataset
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=100)

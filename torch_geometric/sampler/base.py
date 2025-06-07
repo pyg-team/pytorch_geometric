@@ -1,6 +1,7 @@
 import copy
 import math
 import warnings
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
@@ -610,7 +611,7 @@ class NegativeSampling(CastMixin):
         return torch.multinomial(weight, num_samples, replacement=True)
 
 
-class BaseSampler:
+class BaseSampler(ABC):
     r"""An abstract base class that initializes a graph sampler and provides
     :meth:`sample_from_nodes` and :meth:`sample_from_edges` routines.
 
@@ -622,6 +623,7 @@ class BaseSampler:
         As such, it is recommended to limit the amount of information stored in
         the sampler.
     """
+    @abstractmethod
     def sample_from_nodes(
         self,
         index: NodeSamplerInput,
@@ -642,6 +644,7 @@ class BaseSampler:
         """
         raise NotImplementedError
 
+    @abstractmethod
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
