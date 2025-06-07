@@ -29,6 +29,9 @@ class AddGPSE(BaseTransform):
         self.vn = VirtualNode()
         self.rand_type = rand_type
 
+    def forward(self, data: Data):
+        pass
+
     def __call__(self, data: Data) -> Data:
         from torch_geometric.nn.models.gpse import gpse_process
 
