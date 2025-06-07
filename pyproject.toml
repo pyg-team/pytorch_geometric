@@ -161,7 +161,6 @@ select = [
     "D",  # pydocstyle
 ]
 ignore = [
-    "B007",  # TODO Don't ignore "Loop control variable `{name}` not used within loop body"
     "D100",  # TODO Don't ignore "Missing docstring in public module"
     "D101",  # TODO Don't ignore "Missing docstring in public class"
     "D102",  # TODO Don't ignore "Missing docstring in public method"

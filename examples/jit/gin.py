@@ -26,7 +26,7 @@ class GIN(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         self.batch_norms = torch.nn.ModuleList()
 
-        for i in range(num_layers):
+        for _ in range(num_layers):
             mlp = Sequential(
                 Linear(in_channels, 2 * hidden_channels),
                 BatchNorm(2 * hidden_channels),

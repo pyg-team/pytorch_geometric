@@ -146,7 +146,7 @@ class AddMetaPaths(BaseTransform):
             if self.max_sample is not None:
                 edge_index, edge_weight = self._sample(edge_index, edge_weight)
 
-            for i, edge_type in enumerate(metapath[1:]):
+            for edge_type in metapath[1:]:
                 edge_index2, edge_weight2 = self._edge_index(data, edge_type)
 
                 edge_index, edge_weight = edge_index.matmul(
@@ -278,7 +278,7 @@ class AddRandomMetaPaths(BaseTransform):
             row = start = torch.randperm(num_nodes)[:num_starts].repeat(
                 self.walks_per_node[j])
 
-            for i, edge_type in enumerate(metapath):
+            for edge_type in metapath:
                 edge_index = EdgeIndex(
                     data[edge_type].edge_index,
                     sparse_size=data[edge_type].size(),

@@ -346,7 +346,7 @@ class InMemoryDataset(Dataset):
 
 def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
     if isinstance(node, Mapping):
-        for key, value in node.items():
+        for value in node.values():
             yield from nested_iter(value)
     elif isinstance(node, Sequence):
         yield from enumerate(node)
