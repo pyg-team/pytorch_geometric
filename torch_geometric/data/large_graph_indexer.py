@@ -141,7 +141,7 @@ class LargeGraphIndexer:
                 self.edge_attr[default_key] = list()
             self.edge_attr[EDGE_PID] = edges
 
-            for i, tup in enumerate(edges):
+            for tup in edges:
                 h, r, t = tup
                 self.edge_attr[EDGE_HEAD].append(h)
                 self.edge_attr[EDGE_RELATION].append(r)

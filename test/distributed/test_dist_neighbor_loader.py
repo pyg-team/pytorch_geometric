@@ -143,11 +143,11 @@ def dist_neighbor_loader_hetero(
                 # TODO There is a current known flake, which we need to fix:
                 e_id = batch[edge_type].e_id
                 if e_id.numel() > 0 and e_id.max() >= edge_index.size(1):
-                    warnings.warn("Known test flake")
+                    warnings.warn("Known test flake", stacklevel=2)
                 else:
                     global_edge_index2 = edge_index[:, e_id]
                     if not torch.equal(global_edge_index1, global_edge_index2):
-                        warnings.warn("Known test flake")
+                        warnings.warn("Known test flake", stacklevel=2)
 
     assert loader.channel.empty()
 

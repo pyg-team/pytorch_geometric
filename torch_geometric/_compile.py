@@ -36,6 +36,7 @@ def compile(
         :meth:`torch_geometric.compile` is deprecated in favor of
         :meth:`torch.compile`.
     """
-    warnings.warn("'torch_geometric.compile' is deprecated in favor of "
-                  "'torch.compile'")
+    warnings.warn(
+        "'torch_geometric.compile' is deprecated in favor of "
+        "'torch.compile'", stacklevel=2)
     return torch.compile(model, *args, **kwargs)  # type: ignore

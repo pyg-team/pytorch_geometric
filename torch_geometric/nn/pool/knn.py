@@ -91,9 +91,10 @@ class KNNIndex:
                     if hasattr(self.index, 'reserveMemory'):
                         self.index.reserveMemory(self.reserve)
                     else:
-                        warnings.warn(f"'{self.index.__class__.__name__}' "
-                                      f"does not support pre-allocation of "
-                                      f"memory")
+                        warnings.warn(
+                            f"'{self.index.__class__.__name__}' "
+                            f"does not support pre-allocation of "
+                            f"memory", stacklevel=2)
 
             self.index.train(emb)
 
@@ -135,14 +136,16 @@ class KNNIndex:
         query_k = min(query_k, self.numel)
 
         if k > 2048:  # `faiss` supports up-to `k=2048`:
-            warnings.warn(f"Capping 'k' to faiss' upper limit of 2048 "
-                          f"(got {k}). This may cause some relevant items to "
-                          f"not be retrieved.")
+            warnings.warn(
+                f"Capping 'k' to faiss' upper limit of 2048 "
+                f"(got {k}). This may cause some relevant items to "
+                f"not be retrieved.", stacklevel=2)
         elif query_k > 2048:
-            warnings.warn(f"Capping 'k' to faiss' upper limit of 2048 "
-                          f"(got {k} which got extended to {query_k} due to "
-                          f"the exclusion of existing links). This may cause "
-                          f"some relevant items to not be retrieved.")
+            warnings.warn(
+                f"Capping 'k' to faiss' upper limit of 2048 "
+                f"(got {k} which got extended to {query_k} due to "
+                f"the exclusion of existing links). This may cause "
+                f"some relevant items to not be retrieved.", stacklevel=2)
             query_k = 2048
 
         score, index = self.index.search(emb.detach(), query_k)

@@ -88,9 +88,10 @@ def scatter(
 
             if (src.is_cuda and src.requires_grad and not is_compiling()
                     and not is_in_onnx_export()):
-                warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
-                              f"can be accelerated via the 'torch-scatter'"
-                              f" package, but it was not found")
+                warnings.warn(
+                    f"The usage of `scatter(reduce='{reduce}')` "
+                    f"can be accelerated via the 'torch-scatter'"
+                    f" package, but it was not found", stacklevel=2)
 
             index = broadcast(index, src, dim)
             if not is_in_onnx_export():
@@ -120,9 +121,10 @@ def scatter(
                 or not src.is_cuda):
 
             if src.is_cuda and not is_compiling():
-                warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
-                              f"can be accelerated via the 'torch-scatter'"
-                              f" package, but it was not found")
+                warnings.warn(
+                    f"The usage of `scatter(reduce='{reduce}')` "
+                    f"can be accelerated via the 'torch-scatter'"
+                    f" package, but it was not found", stacklevel=2)
 
             index = broadcast(index, src, dim)
             # We initialize with `one` here to match `scatter_mul` output:

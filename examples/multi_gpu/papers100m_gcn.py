@@ -112,7 +112,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
         acc.reset()
 
     with torch.no_grad():
-        for i, batch in enumerate(test_loader):
+        for batch in test_loader:
             batch = batch.to(rank)
             batch_size = batch.num_sampled_nodes[0]
 
