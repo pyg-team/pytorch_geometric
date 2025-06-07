@@ -166,10 +166,11 @@ class Dataset(torch.utils.data.Dataset):
         elif y.numel() == y.size(0) and torch.is_floating_point(y):
             num_classes = torch.unique(y).numel()
             if num_classes > 2:
-                warnings.warn("Found floating-point labels while calling "
-                              "`dataset.num_classes`. Returning the number of "
-                              "unique elements. Please make sure that this "
-                              "is expected before proceeding.")
+                warnings.warn(
+                    "Found floating-point labels while calling "
+                    "`dataset.num_classes`. Returning the number of "
+                    "unique elements. Please make sure that this "
+                    "is expected before proceeding.", stacklevel=2)
             return num_classes
         else:
             return y.size(-1)
@@ -241,7 +242,8 @@ class Dataset(torch.utils.data.Dataset):
                 "The `pre_transform` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
                 "make use of another pre-processing technique, pass "
-                "`force_reload=True` explicitly to reload the dataset.")
+                "`force_reload=True` explicitly to reload the dataset.",
+                stacklevel=2)
 
         f = osp.join(self.processed_dir, 'pre_filter.pt')
         if osp.exists(f) and torch.load(f, weights_only=False) != _repr(
@@ -250,7 +252,8 @@ class Dataset(torch.utils.data.Dataset):
                 "The `pre_filter` argument differs from the one used in "
                 "the pre-processed version of this dataset. If you want to "
                 "make use of another pre-fitering technique, pass "
-                "`force_reload=True` explicitly to reload the dataset.")
+                "`force_reload=True` explicitly to reload the dataset.",
+                stacklevel=2)
 
         if not self.force_reload and files_exist(self.processed_paths):
             return

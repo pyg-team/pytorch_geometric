@@ -57,10 +57,11 @@ class DataParallel(torch.nn.DataParallel):
                  follow_batch=None, exclude_keys=None):
         super().__init__(module, device_ids, output_device)
 
-        warnings.warn("'DataParallel' is usually much slower than "
-                      "'DistributedDataParallel' even on a single machine. "
-                      "Please consider switching to 'DistributedDataParallel' "
-                      "for multi-GPU training.")
+        warnings.warn(
+            "'DataParallel' is usually much slower than "
+            "'DistributedDataParallel' even on a single machine. "
+            "Please consider switching to 'DistributedDataParallel' "
+            "for multi-GPU training.", stacklevel=2)
 
         self.src_device = torch.device(f'cuda:{self.device_ids[0]}')
         self.follow_batch = follow_batch or []

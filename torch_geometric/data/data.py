@@ -1193,4 +1193,4 @@ def warn_or_raise(msg: str, raise_on_error: bool = True):
     if raise_on_error:
         raise ValueError(msg)
     else:
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)
