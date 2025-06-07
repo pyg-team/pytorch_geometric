@@ -81,7 +81,7 @@ class HM(InMemoryDataset):
             xs.append(torch.from_numpy(x).to(torch.float))
 
         x = torch.from_numpy(df['age'].values).to(torch.float).view(-1, 1)
-        x = x.nan_to_num(nan=x.nanmean())  # type: ignore
+        x = x.nan_to_num(nan=x.nanmean())
         xs.append(x / x.max())
 
         data['customer'].x = torch.cat(xs, dim=-1)

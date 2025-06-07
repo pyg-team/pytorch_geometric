@@ -144,7 +144,7 @@ def read_wiki(files: List[str], name: str) -> List[Data]:
 
     idx = torch.unique(edge_index.flatten())
     idx_assoc = torch.full(
-        (edge_index.max() + 1, ),  # type: ignore
+        (edge_index.max() + 1, ),
         -1,
         dtype=torch.long,
     )

@@ -1,3 +1,5 @@
+from typing import Any
+
 from torch.nn import Module
 
 from torch_geometric.data import Data
@@ -22,14 +24,18 @@ class AddGPSE(BaseTransform):
             (default: :obj:`NormalSE`)
 
     """
-    def __init__(self, model: Module, use_vn: bool = True,
-                 rand_type: str = 'NormalSE'):
+    def __init__(
+        self,
+        model: Module,
+        use_vn: bool = True,
+        rand_type: str = 'NormalSE',
+    ):
         self.model = model
         self.use_vn = use_vn
         self.vn = VirtualNode()
         self.rand_type = rand_type
 
-    def forward(self, data: Data):
+    def forward(self, data: Data) -> Any:
         pass
 
     def __call__(self, data: Data) -> Data:
