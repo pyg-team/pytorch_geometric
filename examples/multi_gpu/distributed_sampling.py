@@ -48,7 +48,7 @@ def test(
     model.eval()
     total_correct = torch.tensor(0, dtype=torch.long, device=rank)
     total_examples = 0
-    for i, batch in enumerate(loader):
+    for batch in loader:
         out = model(batch.x, batch.edge_index.to(rank))
         pred = out[:batch.batch_size].argmax(dim=-1)
         y = batch.y[:batch.batch_size].to(rank)

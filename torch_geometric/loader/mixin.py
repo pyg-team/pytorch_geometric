@@ -248,7 +248,8 @@ class AffinityMixin:
             warnings.warn(
                 "Due to conflicting parallelization methods it is not advised "
                 "to use affinitization with 'HeteroData' datasets. "
-                "Use `enable_multithreading` for better performance.")
+                "Use `enable_multithreading` for better performance.",
+                stacklevel=2)
 
         self.loader_cores = loader_cores[:] if loader_cores else None
         if self.loader_cores is None:

@@ -90,7 +90,7 @@ class SGConv(MessagePassing):
                     edge_index, edge_weight, x.size(self.node_dim), False,
                     self.add_self_loops, self.flow, dtype=x.dtype)
 
-            for k in range(self.K):
+            for _ in range(self.K):
                 # propagate_type: (x: Tensor, edge_weight: OptTensor)
                 x = self.propagate(edge_index, x=x, edge_weight=edge_weight)
                 if self.cached:
