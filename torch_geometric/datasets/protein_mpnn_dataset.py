@@ -388,7 +388,7 @@ class ProteinMPNNDataset(InMemoryDataset):
             elif letter in masked_chains:
                 masked_temp_dict[letter] = chain_seq
         # check for duplicate chains (same sequence but different identity)
-        for km, vm in masked_temp_dict.items():
+        for _, vm in masked_temp_dict.items():
             for kv, vv in visible_temp_dict.items():
                 if vm == vv:
                     if kv not in masked_chains:
