@@ -44,8 +44,7 @@ def test_encoder_speed(benchmark, make_perf_batch):
     median = benchmark.stats.stats.median
     assert median <= BASELINE * 1.10, (
         f"Encoder forward too slow: {median*1e3:.1f} ms "
-        f">(baseline {BASELINE*1e3:.1f} ms ×1.10)"
-    )
+        f">(baseline {BASELINE*1e3:.1f} ms ×1.10)")
 
 
 def test_encoder_with_bias_speed(benchmark, make_perf_batch_with_spatial):
@@ -56,22 +55,17 @@ def test_encoder_with_bias_speed(benchmark, make_perf_batch_with_spatial):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # -------- setup -----------
-    batch = make_perf_batch_with_spatial(
-        NUM_GRAPHS, NODES, HIDDEN_DIM, NUM_SPATIAL, device
-    )
+    batch = make_perf_batch_with_spatial(NUM_GRAPHS, NODES, HIDDEN_DIM,
+                                         NUM_SPATIAL, device)
     model = GraphTransformer(
-        hidden_dim=HIDDEN_DIM,
-        num_class=10,
-        num_encoder_layers=4,
-        use_super_node=True,
-        attn_bias_providers=[
+        hidden_dim=HIDDEN_DIM, num_class=10, num_encoder_layers=4,
+        use_super_node=True, attn_bias_providers=[
             GraphAttnSpatialBias(
                 num_heads=NUM_HEADS,
                 num_spatial=NUM_SPATIAL,
                 use_super_node=True,
             )
-        ]
-    ).to(device)
+        ]).to(device)
     model.eval()
 
     # -------- benchmark --------
@@ -84,8 +78,7 @@ def test_encoder_with_bias_speed(benchmark, make_perf_batch_with_spatial):
     median = benchmark.stats.stats.median
     assert median <= BASELINE * 1.10, (
         f"Encoder+bias forward too slow: {median*1e3:.1f} ms "
-        f">(baseline {BASELINE*1e3:.1f} ms ×1.10)"
-    )
+        f">(baseline {BASELINE*1e3:.1f} ms ×1.10)")
 
 
 @pytest.mark.parametrize(
@@ -135,17 +128,12 @@ def test_encoder_full_feature_speed(
             SVDEncoder(r=NUM_SING_VEC, hidden_dim=HIDDEN_DIM),
         ],
         attn_bias_providers=[
-            GraphAttnSpatialBias(
-                num_heads=NUM_HEADS,
-                num_spatial=NUM_SPATIAL,
-                use_super_node=True
-            ),
-            GraphAttnEdgeBias(
-                num_heads=NUM_HEADS, num_edges=NUM_EDGES, use_super_node=True
-            ),
-            GraphAttnHopBias(
-                num_heads=NUM_HEADS, num_hops=NUM_HOPS, use_super_node=True
-            ),
+            GraphAttnSpatialBias(num_heads=NUM_HEADS, num_spatial=NUM_SPATIAL,
+                                 use_super_node=True),
+            GraphAttnEdgeBias(num_heads=NUM_HEADS, num_edges=NUM_EDGES,
+                              use_super_node=True),
+            GraphAttnHopBias(num_heads=NUM_HEADS, num_hops=NUM_HOPS,
+                             use_super_node=True),
         ],
         gnn_block=gcn_hook,
         gnn_position=gnn_position,
@@ -160,5 +148,4 @@ def test_encoder_full_feature_speed(
     median = benchmark.stats.stats.median
     assert median <= BASELINE * 1.10, (
         f"Full‐feature ({gnn_position}) too slow: "
-        f"{median*1e3:.1f} ms > baseline {BASELINE*1e3:.1f} ms ×1.10"
-    )
+        f"{median*1e3:.1f} ms > baseline {BASELINE*1e3:.1f} ms ×1.10")

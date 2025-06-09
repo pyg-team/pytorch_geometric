@@ -57,8 +57,7 @@ def two_graph_batch():
     for _ in range(2):
         x = torch.randn(3, 8)
         data_list.append(
-            Data(x=x, edge_index=torch.empty((2, 0), dtype=torch.long))
-        )
+            Data(x=x, edge_index=torch.empty((2, 0), dtype=torch.long)))
     return Batch.from_data_list(data_list)
 
 
@@ -78,7 +77,6 @@ def edge_batch():
     Returns:
         Callable: Function that produces a Batch with edge_dist attribute
     """
-
     def make(batch_size, seq_len, num_edges, feat_dim=1):
         data_list = []
         for _ in range(batch_size):
@@ -89,8 +87,7 @@ def edge_batch():
                     x=x,
                     edge_dist=edge_dist,
                     edge_index=torch.empty((2, 0), dtype=torch.long),
-                )
-            )
+                ))
         return Batch.from_data_list(data_list)
 
     return make
@@ -112,7 +109,6 @@ def hop_batch():
     Returns:
         Callable: Function that produces a Batch with hop_dist attribute
     """
-
     def make(batch_size, seq_len, num_hops, feat_dim=1):
         data_list = []
         for _ in range(batch_size):
@@ -123,8 +119,7 @@ def hop_batch():
                     x=x,
                     hop_dist=hop_dist,
                     edge_index=torch.empty((2, 0), dtype=torch.long),
-                )
-            )
+                ))
         return Batch.from_data_list(data_list)
 
     return make
@@ -146,7 +141,6 @@ def spatial_batch():
     Returns:
         Callable: Function that produces a Batch with spatial_pos attribute
     """
-
     def make(batch_size, seq_len, num_spatial, feat_dim=1):
         data_list = []
         for _ in range(batch_size):
@@ -157,8 +151,7 @@ def spatial_batch():
                     x=x,
                     spatial_pos=spatial_pos,
                     edge_index=torch.empty((2, 0), dtype=torch.long),
-                )
-            )
+                ))
         return Batch.from_data_list(data_list)
 
     return make
@@ -181,7 +174,6 @@ def spatial_edge_batch():
     Returns:
         Callable: Function that produces a Batch with spatial_pos and edge_dist
     """
-
     def make(batch_size, seq_len, num_spatial, num_edges, feat_dim):
         data_list = []
         for _ in range(batch_size):
@@ -194,8 +186,7 @@ def spatial_edge_batch():
                     spatial_pos=spatial_pos,
                     edge_dist=edge_dist,
                     edge_index=torch.empty((2, 0), dtype=torch.long),
-                )
-            )
+                ))
         return Batch.from_data_list(data_list)
 
     return make
@@ -215,7 +206,6 @@ def simple_batch():
     Returns:
         Callable: Function that produces a Batch with a fully-connected graph
     """
-
     def make(feat_dim, num_nodes):
         x = torch.randn(num_nodes, feat_dim)
         edge_index = torch.combinations(torch.arange(num_nodes), r=2).t()
@@ -252,9 +242,7 @@ def dummy_provider():
     Returns:
         DummyBias: An instance of a simple bias provider.
     """
-
     class DummyBias(BaseBiasProvider):
-
         def __init__(self):
             # 4 heads, no super-node
             super().__init__(num_heads=4, use_super_node=False)
@@ -272,8 +260,7 @@ def dummy_provider():
             # constant 3.14 * scale across all entries and heads
             return (
                 torch.ones(B, N, N, self.num_heads, device=distances.device) *
-                3.14 * self.scale
-            )
+                3.14 * self.scale)
 
     return DummyBias()
 
@@ -310,7 +297,6 @@ def transformer_model():
         Callable: Function that instantiates a GraphTransformer with given
         kwargs
     """
-
     def make(**kwargs):
         return GraphTransformer(**kwargs)
 
@@ -333,9 +319,8 @@ def encoder_layer(request):
         GraphTransformerEncoderLayer: Configured transformer encoder layer
     """
     hidden_dim, num_heads, dropout = request.param
-    return GraphTransformerEncoderLayer(
-        hidden_dim=hidden_dim, num_heads=num_heads, dropout=dropout
-    )
+    return GraphTransformerEncoderLayer(hidden_dim=hidden_dim,
+                                        num_heads=num_heads, dropout=dropout)
 
 
 @pytest.fixture(params=[(2, 10), (1, 20)])
@@ -374,19 +359,14 @@ def make_perf_batch():
     Returns:
         Callable: Function that produces a Batch for performance testing
     """
-
     def make(num_graphs, nodes_per_graph, feat_dim, device):
         data_list = []
         for _ in range(num_graphs):
             x = torch.randn(nodes_per_graph, feat_dim, device=device)
             data_list.append(
                 Data(
-                    x=x,
-                    edge_index=torch.empty(
-                        (2, 0), dtype=torch.long, device=device
-                    )
-                )
-            )
+                    x=x, edge_index=torch.empty((2, 0), dtype=torch.long,
+                                                device=device)))
         return Batch.from_data_list(data_list)
 
     return make
@@ -408,25 +388,18 @@ def make_perf_batch_with_spatial():
     Returns:
         Callable: Function that produces a Batch with spatial positions
     """
-
     def make(num_graphs, nodes_per_graph, feat_dim, num_spatial, device):
         data_list = []
         for _ in range(num_graphs):
             x = torch.randn(nodes_per_graph, feat_dim, device=device)
-            spatial_pos = torch.randint(
-                0,
-                num_spatial, (nodes_per_graph, nodes_per_graph),
-                device=device
-            )
+            spatial_pos = torch.randint(0, num_spatial,
+                                        (nodes_per_graph, nodes_per_graph),
+                                        device=device)
             data_list.append(
                 Data(
-                    x=x,
-                    edge_index=torch.empty(
-                        (2, 0), dtype=torch.long, device=device
-                    ),
-                    spatial_pos=spatial_pos
-                )
-            )
+                    x=x, edge_index=torch.empty((2, 0), dtype=torch.long,
+                                                device=device),
+                    spatial_pos=spatial_pos))
         return Batch.from_data_list(data_list)
 
     return make
@@ -436,16 +409,14 @@ def make_perf_batch_with_spatial():
 
 
 @pytest.fixture
-def full_feature_batch(
-    make_perf_batch_with_spatial, structural_config, positional_config
-):
+def full_feature_batch(make_perf_batch_with_spatial, structural_config,
+                       positional_config):
     """Builds a Batch that has *all* of:
       - spatial_pos, edge_dist, hop_dist
       - in_degree, out_degree
       - eig_pos_emb, svd_pos_emb
     using the two small config dicts above.
     """
-
     def make(device):
         # 1) start from a purely‐spatial batch
         batch = make_perf_batch_with_spatial(
@@ -461,26 +432,20 @@ def full_feature_batch(
         for data in batch.to_data_list():
             N = data.x.size(0)
             # degrees
-            data.in_degree = torch.randint(
-                0, positional_config["max_degree"], (N, ), device=device
-            )
-            data.out_degree = torch.randint(
-                0, positional_config["max_degree"], (N, ), device=device
-            )
+            data.in_degree = torch.randint(0, positional_config["max_degree"],
+                                           (N, ), device=device)
+            data.out_degree = torch.randint(0, positional_config["max_degree"],
+                                            (N, ), device=device)
             # eigen & SVD positional embeddings
-            data.eig_pos_emb = torch.randn(
-                N, positional_config["num_eigvec"], device=device
-            )
+            data.eig_pos_emb = torch.randn(N, positional_config["num_eigvec"],
+                                           device=device)
             data.svd_pos_emb = torch.randn(
-                N, 2 * positional_config["num_sing_vec"], device=device
-            )
+                N, 2 * positional_config["num_sing_vec"], device=device)
             # edge & hop distances
-            data.edge_dist = torch.randint(
-                0, positional_config["num_edges"], (N, N), device=device
-            )
-            data.hop_dist = torch.randint(
-                0, positional_config["num_hops"], (N, N), device=device
-            )
+            data.edge_dist = torch.randint(0, positional_config["num_edges"],
+                                           (N, N), device=device)
+            data.hop_dist = torch.randint(0, positional_config["num_hops"],
+                                          (N, N), device=device)
             out_list.append(data)
 
         return Batch.from_data_list(out_list)
@@ -504,7 +469,6 @@ def hetero_spatial_batch() -> Callable[[List[int], int, int], Data]:
         Callable[[List[int], int, int], Data]: Function producing a Data
         object with padded spatial_pos and ptr attributes.
     """
-
     def make(node_counts: List[int], feat_dim: int, num_spatial: int) -> Data:
         max_n = max(node_counts)
         padded = []
@@ -550,12 +514,8 @@ def blockdiag_hop_batch() -> Callable[[Sequence[int], int, int], Data]:
     Returns:
         make(node_counts, feat_dim=1, num_hops=5) -> Data
     """
-
-    def make(
-        node_counts: Sequence[int],
-        feat_dim: int = 1,
-        num_hops: int = 5
-    ) -> Data:
+    def make(node_counts: Sequence[int], feat_dim: int = 1,
+             num_hops: int = 5) -> Data:
         # cumulative pointers [0, N1, N1+N2, …]
         ptr = [0]
         for n in node_counts:
@@ -591,12 +551,8 @@ def blockdiag_edge_batch() -> Callable[[Sequence[int], int, int], Data]:
     Returns:
         make(node_counts, feat_dim=1, num_edges=5) -> Data
     """
-
-    def make(
-        node_counts: Sequence[int],
-        feat_dim: int = 1,
-        num_edges: int = 5
-    ) -> Data:
+    def make(node_counts: Sequence[int], feat_dim: int = 1,
+             num_edges: int = 5) -> Data:
         ptr = [0]
         for n in node_counts:
             ptr.append(ptr[-1] + n)

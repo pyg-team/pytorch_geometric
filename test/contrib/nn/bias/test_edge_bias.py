@@ -6,14 +6,11 @@ from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.data import Batch
 
 
-@pytest.mark.parametrize(
-    "num_heads,num_edges,seq_len,batch_size", [
-        (4, 12, 5, 3),
-    ]
-)
-def test_edge_bias_shape_dtype(
-    edge_batch, num_heads, num_edges, seq_len, batch_size
-):
+@pytest.mark.parametrize("num_heads,num_edges,seq_len,batch_size", [
+    (4, 12, 5, 3),
+])
+def test_edge_bias_shape_dtype(edge_batch, num_heads, num_edges, seq_len,
+                               batch_size):
     bias = GraphAttnEdgeBias(num_heads=num_heads, num_edges=num_edges)
     batch = edge_batch(batch_size, seq_len, num_edges)
     out = bias(batch)
@@ -28,15 +25,10 @@ def test_edge_bias_transformer_affects(edge_batch):
     provider = GraphAttnEdgeBias(num_heads=4, num_edges=8)
     batch = edge_batch(1, 6, 8, feat_dim=16)
 
-    m0 = GraphTransformer(
-        hidden_dim=16, num_class=2, num_encoder_layers=1
-    ).eval()
-    m1 = GraphTransformer(
-        hidden_dim=16,
-        num_class=2,
-        num_encoder_layers=1,
-        attn_bias_providers=[provider]
-    ).eval()
+    m0 = GraphTransformer(hidden_dim=16, num_class=2,
+                          num_encoder_layers=1).eval()
+    m1 = GraphTransformer(hidden_dim=16, num_class=2, num_encoder_layers=1,
+                          attn_bias_providers=[provider]).eval()
 
     with torch.no_grad():
         out0 = m0(batch)
@@ -48,12 +40,8 @@ def test_edge_bias_transformer_affects(edge_batch):
 
 def test_edge_bias_gradients(edge_batch):
     provider = GraphAttnEdgeBias(num_heads=4, num_edges=7)
-    model = GraphTransformer(
-        hidden_dim=16,
-        num_class=2,
-        num_encoder_layers=1,
-        attn_bias_providers=[provider]
-    )
+    model = GraphTransformer(hidden_dim=16, num_class=2, num_encoder_layers=1,
+                             attn_bias_providers=[provider])
     batch = edge_batch(1, 5, 7, feat_dim=16)
 
     out = model(batch)
@@ -73,16 +61,11 @@ def test_edge_bias_gradients(edge_batch):
         (3, 9, 'multi_hop', 5, True),
     ],
 )
-def test_edge_bias_config(
-    edge_batch, num_heads, num_edges, edge_type, mhmd, use_super
-):
-    bias = GraphAttnEdgeBias(
-        num_heads=num_heads,
-        num_edges=num_edges,
-        edge_type=edge_type,
-        multi_hop_max_dist=mhmd,
-        use_super_node=use_super
-    )
+def test_edge_bias_config(edge_batch, num_heads, num_edges, edge_type, mhmd,
+                          use_super):
+    bias = GraphAttnEdgeBias(num_heads=num_heads, num_edges=num_edges,
+                             edge_type=edge_type, multi_hop_max_dist=mhmd,
+                             use_super_node=use_super)
     batch = edge_batch(2, 7, num_edges)
     out = bias(batch)
 
@@ -148,18 +131,13 @@ def test_edge_bias_changes_transformer_without_dist(simple_batch):
 
 
 @pytest.mark.parametrize(
-    "edge_type, multi_hop_max_dist, distances_input", [
-        ("simple", None, torch.tensor([[[0, 1], [2, 3]]], dtype=torch.long)),
-        ("multi_hop", 2, torch.tensor([[[0, 3], [2, 4]]], dtype=torch.long))
-    ]
-)
+    "edge_type, multi_hop_max_dist, distances_input",
+    [("simple", None, torch.tensor([[[0, 1], [2, 3]]], dtype=torch.long)),
+     ("multi_hop", 2, torch.tensor([[[0, 3], [2, 4]]], dtype=torch.long))])
 def test_embed_bias_via_param(edge_type, multi_hop_max_dist, distances_input):
-    bias_provider = GraphAttnEdgeBias(
-        num_heads=2,
-        num_edges=4,
-        edge_type=edge_type,
-        multi_hop_max_dist=multi_hop_max_dist
-    )
+    bias_provider = GraphAttnEdgeBias(num_heads=2, num_edges=4,
+                                      edge_type=edge_type,
+                                      multi_hop_max_dist=multi_hop_max_dist)
     result = bias_provider._embed_bias(distances_input)
     if edge_type == "multi_hop" and multi_hop_max_dist is not None:
         distances_expected = distances_input.clamp(max=multi_hop_max_dist)
@@ -171,15 +149,13 @@ def test_embed_bias_via_param(edge_type, multi_hop_max_dist, distances_input):
 
 
 @pytest.mark.parametrize("use_super", [False, True])
-def test_edge_bias_handles_variable_graph_sizes(
-    blockdiag_edge_batch, use_super
-):
+def test_edge_bias_handles_variable_graph_sizes(blockdiag_edge_batch,
+                                                use_super):
     """GraphAttnEdgeBias should pad ragged edge_dist blocks to (B, H, L, L)."""
     node_counts = [12, 7, 19]
     data = blockdiag_edge_batch(node_counts, feat_dim=8, num_edges=5)
-    provider = GraphAttnEdgeBias(
-        num_heads=3, num_edges=5, use_super_node=use_super
-    )
+    provider = GraphAttnEdgeBias(num_heads=3, num_edges=5,
+                                 use_super_node=use_super)
     out = provider(data)
     B = len(node_counts)
     L = max(node_counts) + (1 if use_super else 0)

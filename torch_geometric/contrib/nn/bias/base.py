@@ -30,7 +30,6 @@ class BaseBiasProvider(nn.Module):
         use_super_node (bool): Whether to reserve an extra index for
             the super node.
     """
-
     def __init__(
         self,
         num_heads: int,
@@ -89,9 +88,8 @@ class BaseBiasProvider(nn.Module):
         """
         ...
 
-    def _pad_with_super_node(
-        self, distances: torch.LongTensor
-    ) -> torch.LongTensor:
+    def _pad_with_super_node(self,
+                             distances: torch.LongTensor) -> torch.LongTensor:
         """Insert a super-node index at row/col 0.
 
         Args:
@@ -112,16 +110,13 @@ class BaseBiasProvider(nn.Module):
         """Validate tensor is 3D and square in trailing dims."""
         if tensor.dim() != 3 or tensor.size(1) != tensor.size(2):
             raise ValueError(
-                f"Expected square 3D tensor, got {tuple(tensor.shape)}"
-            )
+                f"Expected square 3D tensor, got {tuple(tensor.shape)}")
 
     def _assert_embed_shape(self, bias: torch.Tensor) -> None:
         """Ensure bias embeddings have proper head dimension."""
         if bias.dim() != 4 or bias.size(-1) != self.num_heads:
-            raise ValueError(
-                f"Expected bias shape (*,*,*,{self.num_heads}),"
-                f" got {tuple(bias.shape)}"
-            )
+            raise ValueError(f"Expected bias shape (*,*,*,{self.num_heads}),"
+                             f" got {tuple(bias.shape)}")
 
     def _pad_to_tensor(self, matrices: List[Tensor]) -> Tensor:
         """Pad a list of square matrices to a common size and stack them.

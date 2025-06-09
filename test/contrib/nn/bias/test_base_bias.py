@@ -6,7 +6,6 @@ from torch_geometric.contrib.nn.bias.base import BaseBiasProvider
 
 class DummyBias(BaseBiasProvider):
     """Dummy implementation of BaseBiasProvider for testing purposes."""
-
     def _extract_raw_distances(self, data):
         """Return input data as distances (dummy implementation)."""
         return data

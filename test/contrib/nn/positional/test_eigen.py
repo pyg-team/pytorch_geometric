@@ -9,10 +9,8 @@ def test_eig_encoder_shape():
     num_eigvec = 3
     hidden_dim = 16
 
-    data = Data(
-        x=torch.randn(num_nodes, 4),
-        eig_pos_emb=torch.randn(num_nodes, num_eigvec)
-    )
+    data = Data(x=torch.randn(num_nodes, 4),
+                eig_pos_emb=torch.randn(num_nodes, num_eigvec))
 
     encoder = EigEncoder(num_eigvec=num_eigvec, hidden_dim=hidden_dim)
     out = encoder(data)

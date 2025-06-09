@@ -40,7 +40,6 @@ class GraphAttnEdgeBias(BaseBiasProvider):
         multi_hop_max_dist (int, optional): Max distance for multi-hop.
         use_super_node (bool): Reserve extra index for super‑node.
     """
-
     def __init__(
         self,
         num_heads: int,
@@ -93,8 +92,7 @@ class GraphAttnEdgeBias(BaseBiasProvider):
 
         if edge_dist.dim() != 2:
             raise ValueError(
-                f"Expected 2D edge_dist, got {tuple(edge_dist.shape)}"
-            )
+                f"Expected 2D edge_dist, got {tuple(edge_dist.shape)}")
 
         for i in range(len(ptr) - 1):
             start = int(ptr[i])

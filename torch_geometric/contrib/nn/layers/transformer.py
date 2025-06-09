@@ -14,15 +14,9 @@ from torch_geometric.contrib.utils.mask_utils import (
 
 
 class GraphTransformerEncoderLayer(nn.Module):
-
-    def __init__(
-        self,
-        hidden_dim: int,
-        num_heads: int = 4,
-        dropout: float = 0.1,
-        ffn_hidden_dim: Optional[int] = None,
-        activation='gelu'
-    ):
+    def __init__(self, hidden_dim: int, num_heads: int = 4,
+                 dropout: float = 0.1, ffn_hidden_dim: Optional[int] = None,
+                 activation='gelu'):
         """Initialize a GraphTransformerEncoderLayer.
 
         Args:
@@ -46,16 +40,14 @@ class GraphTransformerEncoderLayer(nn.Module):
         self.dropout_layer = nn.Dropout(dropout)
         self.norm1 = nn.LayerNorm(hidden_dim)
         self.norm2 = nn.LayerNorm(hidden_dim)
-        self.ffn = PositionwiseFeedForward(
-            hidden_dim, self.ffn_hidden_dim, dropout, activation
-        )
-        self.self_attn = nn.MultiheadAttention(
-            hidden_dim, num_heads, dropout, batch_first=True
-        )
+        self.ffn = PositionwiseFeedForward(hidden_dim, self.ffn_hidden_dim,
+                                           dropout, activation)
+        self.self_attn = nn.MultiheadAttention(hidden_dim, num_heads, dropout,
+                                               batch_first=True)
 
     def _pad_to_dense(
-        self, x: torch.Tensor, batch: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+            self, x: torch.Tensor,
+            batch: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """Convert flat node features to dense padded batch.
 
         Args:
@@ -71,24 +63,20 @@ class GraphTransformerEncoderLayer(nn.Module):
         batch_size = int(batch.max() + 1)
         lengths = torch.bincount(batch)
         max_nodes = lengths.max()
-        dense = torch.zeros(
-            batch_size, max_nodes, x.size(-1), device=x.device, dtype=x.dtype
-        )
+        dense = torch.zeros(batch_size, max_nodes, x.size(-1), device=x.device,
+                            dtype=x.dtype)
         node_indices = torch.arange(max_nodes, device=x.device)
         batch_idx, node_idx = torch.where(
-            node_indices.unsqueeze(0) < lengths.unsqueeze(1)
-        )
-        offsets = torch.nn.functional.pad(
-            torch.cumsum(lengths[:-1], 0), (1, 0)
-        )
+            node_indices.unsqueeze(0) < lengths.unsqueeze(1))
+        offsets = torch.nn.functional.pad(torch.cumsum(lengths[:-1], 0),
+                                          (1, 0))
         src_idx = offsets[batch_idx] + node_idx
         dense[batch_idx, node_idx] = x[src_idx]
 
         return dense, lengths
 
-    def _unpad(
-        self, dense: torch.Tensor, lengths: torch.Tensor
-    ) -> torch.Tensor:
+    def _unpad(self, dense: torch.Tensor,
+               lengths: torch.Tensor) -> torch.Tensor:
         """Convert dense padded batch back to flat tensor.
 
         Args:
@@ -100,29 +88,21 @@ class GraphTransformerEncoderLayer(nn.Module):
             torch.Tensor: Flat tensor (total_nodes, hidden_dim)
         """
         total_nodes = lengths.sum().item()
-        out = torch.zeros(
-            total_nodes,
-            dense.size(-1),
-            device=dense.device,
-            dtype=dense.dtype
-        )
+        out = torch.zeros(total_nodes, dense.size(-1), device=dense.device,
+                          dtype=dense.dtype)
 
         batch_idx, node_idx = torch.where(
             torch.arange(lengths.max(), device=dense.device).unsqueeze(0) <
-            lengths.unsqueeze(1)
-        )
-        offsets = torch.nn.functional.pad(
-            torch.cumsum(lengths[:-1], 0), (1, 0)
-        )
+            lengths.unsqueeze(1))
+        offsets = torch.nn.functional.pad(torch.cumsum(lengths[:-1], 0),
+                                          (1, 0))
         tgt_idx = offsets[batch_idx] + node_idx
         out[tgt_idx] = dense[batch_idx, node_idx]
 
         return out
 
-    def forward(
-        self, x: Tensor, batch: Tensor, struct_mask: Optional[Tensor],
-        key_pad: Tensor
-    ):
+    def forward(self, x: Tensor, batch: Tensor, struct_mask: Optional[Tensor],
+                key_pad: Tensor):
         """Forward pass through transformer encoder layer.
 
         Args:
@@ -137,18 +117,13 @@ class GraphTransformerEncoderLayer(nn.Module):
         assert x.dim() == 2, \
             f"Expected 2D input tensor (N,C), got shape {x.shape}"
         x_batch, lengths = self._pad_to_dense(x, batch)
-        additive = merge_masks(
-            key_pad=key_pad,
-            attn=struct_mask,
-            num_heads=self.num_heads,
-            dtype=x.dtype,
-            detach=struct_mask is None
-        )
+        additive = merge_masks(key_pad=key_pad, attn=struct_mask,
+                               num_heads=self.num_heads, dtype=x.dtype,
+                               detach=struct_mask is None)
 
         x = self.norm1(x_batch)
-        attn_out, _ = self.self_attn(
-            x, x, x, attn_mask=additive, need_weights=False
-        )
+        attn_out, _ = self.self_attn(x, x, x, attn_mask=additive,
+                                     need_weights=False)
         x = x_batch + self.dropout_layer(attn_out)
         x_flat = self._unpad(x, lengths)
         src2 = x_flat
@@ -161,7 +136,6 @@ class GraphTransformerEncoderLayer(nn.Module):
 
 class GraphTransformerEncoder(nn.Module):
     """A stack of N encoder layers."""
-
     def __init__(self, encoder_layer, num_layers):
         """Initialize the encoder with a specified number of identical layers.
 
@@ -171,16 +145,14 @@ class GraphTransformerEncoder(nn.Module):
             num_layers (int): The number of encoder layers to stack
         """
         super().__init__()
-        self.layers = nn.ModuleList(
-            [
-                type(encoder_layer)(
-                    hidden_dim=encoder_layer.hidden_dim,
-                    num_heads=encoder_layer.num_heads,
-                    dropout=encoder_layer.dropout_layer.p,
-                    ffn_hidden_dim=encoder_layer.ffn_hidden_dim,
-                ) for _ in range(num_layers)
-            ]
-        )
+        self.layers = nn.ModuleList([
+            type(encoder_layer)(
+                hidden_dim=encoder_layer.hidden_dim,
+                num_heads=encoder_layer.num_heads,
+                dropout=encoder_layer.dropout_layer.p,
+                ffn_hidden_dim=encoder_layer.ffn_hidden_dim,
+            ) for _ in range(num_layers)
+        ])
         self.num_layers = num_layers
         self.num_heads = encoder_layer.num_heads
 

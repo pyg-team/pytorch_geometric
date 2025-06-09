@@ -8,7 +8,6 @@ from torch_geometric.data import Data
 
 class BasePositionalEncoder(nn.Module, ABC):
     """Base class for all positional encoders."""
-
     def __init__(self):
         super().__init__()
 

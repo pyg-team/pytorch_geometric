@@ -35,10 +35,8 @@ class GraphAttnHopBias(BaseBiasProvider):
         num_hops (int): Max hop distance (excl. super node).
         use_super_node (bool): Reserve an extra index for super‑node.
     """
-
-    def __init__(
-        self, num_heads: int, num_hops: int, use_super_node: bool = False
-    ):
+    def __init__(self, num_heads: int, num_hops: int,
+                 use_super_node: bool = False):
         super().__init__(num_heads, use_super_node)
         total_tokens = num_hops + (1 if use_super_node else 0)
         self.super_idx = total_tokens - 1 if use_super_node else None
@@ -70,8 +68,7 @@ class GraphAttnHopBias(BaseBiasProvider):
         if hop_dist is None or ptr is None or hop_dist.dim() != 2:
             raise ValueError(
                 f"Expected 2D data.hop_dist and data.ptr, got "
-                f"{None if hop_dist is None else tuple(hop_dist.shape)}"
-            )
+                f"{None if hop_dist is None else tuple(hop_dist.shape)}")
         blocks = []
         for i in range(len(ptr) - 1):
             start = int(ptr[i])

@@ -20,9 +20,8 @@ def build_key_padding(batch: Tensor, *, num_heads: int) -> Tensor:
             indicates masked positions.
     """
     if batch.numel() == 0:
-        return torch.empty(
-            (0, num_heads, 0, 0), dtype=torch.bool, device=batch.device
-        )
+        return torch.empty((0, num_heads, 0, 0), dtype=torch.bool,
+                           device=batch.device)
     num_graphs = int(batch.max()) + 1
     lengths = torch.bincount(batch, minlength=num_graphs)
     l_max = int(lengths.max())
@@ -50,10 +49,8 @@ def _to_additive(mask: Tensor, *, dtype: torch.dtype) -> Tensor:
         return out
     if torch.is_floating_point(mask):
         return mask.to(dtype)
-    raise TypeError(
-        "Mask tensor must be boolean or floating point, "
-        f"got dtype {mask.dtype}"
-    )
+    raise TypeError("Mask tensor must be boolean or floating point, "
+                    f"got dtype {mask.dtype}")
 
 
 def merge_masks(
@@ -87,8 +84,7 @@ def merge_masks(
     if key_pad is not None and key_pad.dim() == 2:
         if num_heads is None:
             raise ValueError(
-                "num_heads=... is required when key_pad has shape (B, L)"
-            )
+                "num_heads=... is required when key_pad has shape (B, L)")
         key_pad = build_key_padding(key_pad, num_heads=num_heads)
 
     merged = None

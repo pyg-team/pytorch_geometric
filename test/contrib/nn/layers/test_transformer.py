@@ -15,9 +15,8 @@ def test_encoder_layer_forward_and_attention(encoder_layer, input_batch):
     key_pad = build_key_padding(batch, num_heads=layer.num_heads)
     num_graphs = batch.max().item() + 1
     max_nodes = x.size(0) // num_graphs
-    attn_mask = torch.ones(
-        num_graphs, layer.num_heads, max_nodes, max_nodes, dtype=torch.bool
-    )
+    attn_mask = torch.ones(num_graphs, layer.num_heads, max_nodes, max_nodes,
+                           dtype=torch.bool)
     out = layer(x, batch, attn_mask, key_pad)
     assert out.shape == x.shape
     assert not torch.allclose(out, x)

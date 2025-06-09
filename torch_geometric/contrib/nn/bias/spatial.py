@@ -41,7 +41,6 @@ class GraphAttnSpatialBias(BaseBiasProvider):
         use_super_node (bool): If True, reserve one extra index for
             any attention to/from a “super” node at row/col 0.
     """
-
     def __init__(
         self,
         num_heads: int,
@@ -82,10 +81,8 @@ class GraphAttnSpatialBias(BaseBiasProvider):
         pos = getattr(data, "spatial_pos", None)
         ptr = getattr(data, "ptr", None)
         if pos is None or ptr is None or pos.dim() != 2:
-            raise ValueError(
-                f"Expected 2D spatial_pos and ptr, got "
-                f"{None if pos is None else tuple(pos.shape)}"
-            )
+            raise ValueError(f"Expected 2D spatial_pos and ptr, got "
+                             f"{None if pos is None else tuple(pos.shape)}")
         raw = []
         for i in range(len(ptr) - 1):
             start, end = int(ptr[i]), int(ptr[i + 1])

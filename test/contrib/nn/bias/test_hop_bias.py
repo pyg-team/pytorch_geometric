@@ -82,8 +82,8 @@ def test_hop_bias_gradients(hop_batch):
 
     for name, param in bias_provider.named_parameters():
         assert param.grad is not None, f"Parameter {name!r} has no gradient"
-        assert not torch.all(param.grad == 0
-                             ), (f"Parameter {name!r} gradient is zero")
+        assert not torch.all(param.grad == 0), (
+            f"Parameter {name!r} gradient is zero")
 
 
 @pytest.mark.parametrize(
@@ -95,9 +95,8 @@ def test_hop_bias_gradients(hop_batch):
         (4, 10, True),
     ],
 )
-def test_hop_bias_configuration(
-    hop_batch, num_heads, num_hops, use_super_node
-):
+def test_hop_bias_configuration(hop_batch, num_heads, num_hops,
+                                use_super_node):
     seq_len = 7
     batch_size = 3
 

@@ -17,7 +17,6 @@ class EigEncoder(BasePositionalEncoder):
         hidden_dim (int): Output dimension of embeddings
         seed (int, optional): Random seed for sign flips. Defaults to None.
     """
-
     def __init__(self, num_eigvec: int, hidden_dim: int, seed: int = None):
         super().__init__()
         if seed is not None:

@@ -15,7 +15,6 @@ class DegreeEncoder(BasePositionalEncoder):
         out_embed (nn.Embedding): Embedding layer for out-degree.
 
     """
-
     def __init__(self, num_in: int, num_out: int, hidden_dim: int) -> None:
         super().__init__()
         self.in_embed = nn.Embedding(num_in, hidden_dim, padding_idx=0)

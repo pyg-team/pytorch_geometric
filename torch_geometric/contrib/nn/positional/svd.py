@@ -17,7 +17,6 @@ class SVDEncoder(BasePositionalEncoder):
         hidden_dim (int): Output dimension
         seed (int, optional): Random seed for sign flips. Defaults to None.
     """
-
     def __init__(self, r: int, hidden_dim: int, seed: int = None):
         super().__init__()
         self.r = r
@@ -38,10 +37,8 @@ class SVDEncoder(BasePositionalEncoder):
         """
         pos = data.svd_pos_emb
         if pos.size(1) != 2 * self.r:
-            raise ValueError(
-                f"Expected svd_pos_emb with {2*self.r} features,\
-                    got {pos.size(1)}"
-            )
+            raise ValueError(f"Expected svd_pos_emb with {2*self.r} features,\
+                    got {pos.size(1)}")
 
         u, v = pos[:, :self.r], pos[:, self.r:]
         return self.proj(torch.cat([u * self.sign, v * (-self.sign)], dim=-1))
