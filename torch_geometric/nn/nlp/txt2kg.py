@@ -581,7 +581,11 @@ class TXT2KG():
         Returns:
             None
         """
-        torch.save(self.relevant_triples, path)
+
+        # save can sometimes fail, so we first save to a temp file and then move to the final path
+        tmp_path = path + ".tmp"
+        torch.save(self.relevant_triples, tmp_path)
+        os.rename(tmp_path, path)
 
     def _chunk_to_triples_str_local(self, txt: str) -> str:
         # call LLM on text
