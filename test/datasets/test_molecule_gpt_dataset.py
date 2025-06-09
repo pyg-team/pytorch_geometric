@@ -1,6 +1,8 @@
+import torch.distributed as dist
+
 from torch_geometric.datasets import MoleculeGPTDataset
 from torch_geometric.testing import withPackage
-import torch.distributed as dist
+
 
 @withPackage('transformers', 'sentencepiece', 'accelerate', 'rdkit')
 def test_molecule_gpt_dataset():
