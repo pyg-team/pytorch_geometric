@@ -34,8 +34,8 @@ def test_neighbor_sampler_basic():
 
     loader = NeighborSampler(adj_t, sizes=[2, 4], batch_size=2)
 
-    for batch_size, n_id, adjs in loader:
-        for (adj_t, e_id, size) in adjs:
+    for _, _, adjs in loader:
+        for adj_t, _, size in adjs:
             assert adj_t.size(0) == size[1]
             assert adj_t.size(1) == size[0]
 

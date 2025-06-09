@@ -40,9 +40,11 @@ class LightningDataModule(PLLightningDataModule):
                           kwargs.get('num_workers', 0) > 0)
 
         if 'shuffle' in kwargs:
-            warnings.warn(f"The 'shuffle={kwargs['shuffle']}' option is "
-                          f"ignored in '{self.__class__.__name__}'. Remove it "
-                          f"from the argument list to disable this warning")
+            warnings.warn(
+                f"The 'shuffle={kwargs['shuffle']}' option is "
+                f"ignored in '{self.__class__.__name__}'. Remove it "
+                f"from the argument list to disable this warning",
+                stacklevel=2)
             del kwargs['shuffle']
 
         self.kwargs = kwargs
@@ -74,34 +76,39 @@ class LightningData(LightningDataModule):
             raise ValueError(f"Undefined 'loader' option (got '{loader}')")
 
         if loader == 'full' and kwargs['batch_size'] != 1:
-            warnings.warn(f"Re-setting 'batch_size' to 1 in "
-                          f"'{self.__class__.__name__}' for loader='full' "
-                          f"(got '{kwargs['batch_size']}')")
+            warnings.warn(
+                f"Re-setting 'batch_size' to 1 in "
+                f"'{self.__class__.__name__}' for loader='full' "
+                f"(got '{kwargs['batch_size']}')", stacklevel=2)
             kwargs['batch_size'] = 1
 
         if loader == 'full' and kwargs['num_workers'] != 0:
-            warnings.warn(f"Re-setting 'num_workers' to 0 in "
-                          f"'{self.__class__.__name__}' for loader='full' "
-                          f"(got '{kwargs['num_workers']}')")
+            warnings.warn(
+                f"Re-setting 'num_workers' to 0 in "
+                f"'{self.__class__.__name__}' for loader='full' "
+                f"(got '{kwargs['num_workers']}')", stacklevel=2)
             kwargs['num_workers'] = 0
 
         if loader == 'full' and kwargs.get('sampler') is not None:
-            warnings.warn("'sampler' option is not supported for "
-                          "loader='full'")
+            warnings.warn(
+                "'sampler' option is not supported for "
+                "loader='full'", stacklevel=2)
             kwargs.pop('sampler', None)
 
         if loader == 'full' and kwargs.get('batch_sampler') is not None:
-            warnings.warn("'batch_sampler' option is not supported for "
-                          "loader='full'")
+            warnings.warn(
+                "'batch_sampler' option is not supported for "
+                "loader='full'", stacklevel=2)
             kwargs.pop('batch_sampler', None)
 
         super().__init__(has_val, has_test, **kwargs)
 
         if loader == 'full':
             if kwargs.get('pin_memory', False):
-                warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
-                              f"'{self.__class__.__name__}' for loader='full' "
-                              f"(got 'True')")
+                warnings.warn(
+                    f"Re-setting 'pin_memory' to 'False' in "
+                    f"'{self.__class__.__name__}' for loader='full' "
+                    f"(got 'True')", stacklevel=2)
             self.kwargs['pin_memory'] = False
 
         self.data = data
@@ -127,10 +134,11 @@ class LightningData(LightningDataModule):
                 graph_sampler.__class__,
             )
             if len(sampler_kwargs) > 0:
-                warnings.warn(f"Ignoring the arguments "
-                              f"{list(sampler_kwargs.keys())} in "
-                              f"'{self.__class__.__name__}' since a custom "
-                              f"'graph_sampler' was passed")
+                warnings.warn(
+                    f"Ignoring the arguments "
+                    f"{list(sampler_kwargs.keys())} in "
+                    f"'{self.__class__.__name__}' since a custom "
+                    f"'graph_sampler' was passed", stacklevel=2)
             self.graph_sampler = graph_sampler
 
         else:

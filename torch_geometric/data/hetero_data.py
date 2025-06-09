@@ -585,12 +585,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         global _DISPLAYED_TYPE_NAME_WARNING
         if not _DISPLAYED_TYPE_NAME_WARNING and '__' in name:
             _DISPLAYED_TYPE_NAME_WARNING = True
-            warnings.warn(f"There exist type names in the "
-                          f"'{self.__class__.__name__}' object that contain "
-                          f"double underscores '__' (e.g., '{name}'). This "
-                          f"may lead to unexpected behavior. To avoid any "
-                          f"issues, ensure that your type names only contain "
-                          f"single underscores.")
+            warnings.warn(
+                f"There exist type names in the "
+                f"'{self.__class__.__name__}' object that contain "
+                f"double underscores '__' (e.g., '{name}'). This "
+                f"may lead to unexpected behavior. To avoid any "
+                f"issues, ensure that your type names only contain "
+                f"single underscores.", stacklevel=2)
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object

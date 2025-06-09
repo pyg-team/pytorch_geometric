@@ -81,7 +81,7 @@ class EGConv(MessagePassing):
         self,
         in_channels: int,
         out_channels: int,
-        aggregators: List[str] = ['symnorm'],
+        aggregators: Optional[List[str]] = None,
         num_heads: int = 8,
         num_bases: int = 4,
         cached: bool = False,
@@ -96,23 +96,23 @@ class EGConv(MessagePassing):
                              f"divisible by the number of heads "
                              f"(got {num_heads})")
 
-        for a in aggregators:
-            if a not in ['sum', 'mean', 'symnorm', 'min', 'max', 'var', 'std']:
-                raise ValueError(f"Unsupported aggregator: '{a}'")
-
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.num_heads = num_heads
         self.num_bases = num_bases
         self.cached = cached
         self.add_self_loops = add_self_loops
-        self.aggregators = aggregators
+        self.aggregators = aggregators or ['symnorm']
+
+        for a in self.aggregators:
+            if a not in ['sum', 'mean', 'symnorm', 'min', 'max', 'var', 'std']:
+                raise ValueError(f"Unsupported aggregator: '{a}'")
 
         self.bases_lin = Linear(in_channels,
                                 (out_channels // num_heads) * num_bases,
                                 bias=False, weight_initializer='glorot')
         self.comb_lin = Linear(in_channels,
-                               num_heads * num_bases * len(aggregators))
+                               num_heads * num_bases * len(self.aggregators))
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))

@@ -252,8 +252,9 @@ def withDevice(func: Callable) -> Callable:
     if device:
         backend = os.getenv('TORCH_BACKEND')
         if backend is None:
-            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
-                          f"order to test against '{device}'")
+            warnings.warn(
+                f"Please specify the backend via 'TORCH_BACKEND' in"
+                f"order to test against '{device}'", stacklevel=2)
         else:
             import_module(backend)
             devices.append(pytest.param(torch.device(device), id=device))
