@@ -581,7 +581,6 @@ class TXT2KG():
         Returns:
             None
         """
-
         # save can sometimes fail, so we first save to a temp file and then move to the final path
         tmp_path = path + ".tmp"
         torch.save(self.relevant_triples, tmp_path)
