@@ -30,7 +30,7 @@ if __name__ == '__main__':
     torch.set_num_threads(cfg.num_threads)
     dump_cfg(cfg)
     # Repeat for different random seeds
-    for i in range(args.repeat):
+    for _ in range(args.repeat):
         set_run_dir(cfg.out_dir)
         set_printing()
         # Set configurations for each run

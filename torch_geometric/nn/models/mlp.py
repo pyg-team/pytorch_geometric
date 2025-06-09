@@ -99,8 +99,10 @@ class MLP(torch.nn.Module):
         act_first = act_first or kwargs.get("relu_first", False)
         batch_norm = kwargs.get("batch_norm", None)
         if batch_norm is not None and isinstance(batch_norm, bool):
-            warnings.warn("Argument `batch_norm` is deprecated, "
-                          "please use `norm` to specify normalization layer.")
+            warnings.warn(
+                "Argument `batch_norm` is deprecated, "
+                "please use `norm` to specify normalization layer.",
+                stacklevel=2)
             norm = 'batch_norm' if batch_norm else None
             batch_norm_kwargs = kwargs.get("batch_norm_kwargs", None)
             norm_kwargs = batch_norm_kwargs or {}

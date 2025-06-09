@@ -73,7 +73,7 @@ def assert_run_mproc(
     ]
     results = []
 
-    for p, q in zip(procs, queues):
+    for p, _ in zip(procs, queues):
         p.start()
 
     for p, q in zip(procs, queues):

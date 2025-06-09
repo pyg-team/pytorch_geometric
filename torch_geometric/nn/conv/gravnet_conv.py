@@ -63,7 +63,8 @@ class GravNetConv(MessagePassing):
         if num_workers is not None:
             warnings.warn(
                 "'num_workers' attribute in '{self.__class__.__name__}' is "
-                "deprecated and will be removed in a future release")
+                "deprecated and will be removed in a future release",
+                stacklevel=2)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

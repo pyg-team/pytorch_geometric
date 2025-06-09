@@ -226,11 +226,12 @@ def torch_load(path: str, map_location: Any = None) -> Any:
                             "compatible in your case.")
                 match = re.search(r'add_safe_globals\(.*?\)', error_msg)
                 if match is not None:
-                    warnings.warn(f"{warn_msg} Please use "
-                                  f"`torch.serialization.{match.group()}` to "
-                                  f"allowlist this global.")
+                    warnings.warn(
+                        f"{warn_msg} Please use "
+                        f"`torch.serialization.{match.group()}` to "
+                        f"allowlist this global.", stacklevel=2)
                 else:
-                    warnings.warn(warn_msg)
+                    warnings.warn(warn_msg, stacklevel=2)
 
                 with fsspec.open(path, 'rb') as f:
                     return torch.load(f, map_location, weights_only=False)

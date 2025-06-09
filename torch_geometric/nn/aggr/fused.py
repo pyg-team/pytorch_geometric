@@ -216,7 +216,7 @@ class FusedAggregation(Aggregation):
         outs: List[Optional[Tensor]] = []
 
         # Iterate over all reduction ops to compute first results:
-        for i, reduce in enumerate(self.reduce_ops):
+        for reduce in self.reduce_ops:
             if reduce is None:
                 outs.append(None)
                 continue
