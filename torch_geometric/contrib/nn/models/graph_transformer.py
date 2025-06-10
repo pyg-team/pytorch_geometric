@@ -254,6 +254,18 @@ class GraphTransformer(torch.nn.Module):
 
         return new_x, new_batch
 
+    @staticmethod
+    def _find_in_features(module):
+        """Recursively finds the in_features attribute in a module."""
+        if hasattr(module, 'in_features'):
+            return module.in_features
+        if hasattr(module, 'children'):
+            for child in module.children():
+                in_feat = GraphTransformer._find_in_features(child)
+                if in_feat is not None:
+                    return in_feat
+        return None
+
     @torch.jit.ignore
     def _encode_nodes(self, x: torch.Tensor) -> torch.Tensor:
         """Encodes node features using the node feature encoder.
@@ -269,15 +281,23 @@ class GraphTransformer(torch.nn.Module):
                 match the encoder's expected input.
         """
         encoder = self.node_feature_encoder
-        if encoder is None or isinstance(encoder, nn.Identity):
-            return x
         if x is None:
             raise ValueError(
                 "Input node features are None. Please ensure your dataset "
                 "provides node features or supply a suitable "
                 "node_feature_encoder that can handle None input."
             )
-        in_features = getattr(encoder, 'in_features', None)
+        if isinstance(encoder, nn.Identity):
+            expected_dim = self.classifier.in_features
+            if x.size(-1) != expected_dim:
+                raise ValueError(
+                    f"Node feature dimension mismatch: got {x.size(-1)}, "
+                    f"expected {expected_dim} for nn.Identity encoder. "
+                    "Please ensure your input features match hidden_dim or "
+                    "use a node_feature_encoder that projects to hidden_dim."
+                )
+            return x
+        in_features = self._find_in_features(encoder)
         if in_features is not None and x.size(-1) != in_features:
             raise ValueError(
                 f"Node feature dimension mismatch: got {x.size(-1)}, "

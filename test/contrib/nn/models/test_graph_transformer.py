@@ -669,12 +669,42 @@ def test_graph_transformer_none_features_handled(simple_none_batch):
     assert not torch.isnan(output).any()
 
 
-def test_graph_transformer_feature_dim_mismatch(simple_batch):
-    """Test that a feature dimension mismatch produces a ValueError."""
-    batch = simple_batch(feat_dim=1, num_nodes=10)
-    node_feature_encoder = nn.Linear(10, 64)
+@pytest.mark.parametrize(
+    "encoder_factory,feat_dim,should_raise",
+    [
+        # Linear with mismatched input features
+        (lambda: nn.Linear(10, 64), 1, True),
+        # Sequential with mismatched input features
+        (lambda: nn.Sequential(nn.Linear(10, 64), nn.ReLU()), 1, True),
+        # Linear with matching input features
+        (lambda: nn.Linear(1, 64), 1, False),
+        # Sequential with matching input features
+        (lambda: nn.Sequential(nn.Linear(1, 64), nn.ReLU()), 1, False),
+        # Identity with mismatched input features (should raise)
+        (lambda: nn.Identity(), 1, True),
+        # Identity with matching input features (should not raise)
+        (lambda: nn.Identity(), 64, False),
+    ],
+    ids=[
+        "linear_mismatch",
+        "sequential_mismatch",
+        "linear_match",
+        "sequential_match",
+        "identity_mismatch",
+        "identity_match",
+    ]
+)
+def test_graph_transformer_feature_dim_mismatch(
+    simple_batch, encoder_factory, feat_dim, should_raise
+):
+    batch = simple_batch(feat_dim=feat_dim, num_nodes=10)
+    node_feature_encoder = encoder_factory()
     model = GraphTransformer(
         hidden_dim=64, num_class=1, node_feature_encoder=node_feature_encoder
     )
-    with pytest.raises(ValueError, match="Node feature dimension mismatch"):
+    if should_raise:
+        with pytest.raises(ValueError,
+                           match="Node feature dimension mismatch"):
+            model(batch)
+    else:
         model(batch)
