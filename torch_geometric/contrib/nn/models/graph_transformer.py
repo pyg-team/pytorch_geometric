@@ -48,18 +48,11 @@ class GraphTransformer(torch.nn.Module):
         positional_encoders (Sequence[BasePositionalEncoder], optional):
         Sequence of positional encoders. Defaults to empty tuple.
     """
-
     def __init__(
-        self,
-        hidden_dim: int = 16,
-        num_class: int = 2,
-        use_super_node: bool = False,
-        node_feature_encoder=None,
-        num_encoder_layers: int = 0,
-        num_heads: int = 4,
-        dropout: float = 0.1,
-        ffn_hidden_dim: Optional[int] = None,
-        activation: str = 'gelu',
+        self, hidden_dim: int = 16, num_class: int = 2,
+        use_super_node: bool = False, node_feature_encoder=None,
+        num_encoder_layers: int = 0, num_heads: int = 4, dropout: float = 0.1,
+        ffn_hidden_dim: Optional[int] = None, activation: str = 'gelu',
         attn_bias_providers: Sequence[BaseBiasProvider] = (),
         gnn_block: Optional[Callable[[Data, torch.Tensor],
                                      torch.Tensor]] = None,
@@ -75,11 +68,10 @@ class GraphTransformer(torch.nn.Module):
             node_feature_encoder = nn.Identity()
 
         num_heads = num_heads if num_heads is not None else 4
-        self._validate_init_args(
-            hidden_dim, num_class, num_encoder_layers, num_heads, dropout,
-            ffn_hidden_dim, activation, attn_bias_providers, gnn_block,
-            gnn_position, positional_encoders
-        )
+        self._validate_init_args(hidden_dim, num_class, num_encoder_layers,
+                                 num_heads, dropout, ffn_hidden_dim,
+                                 activation, attn_bias_providers, gnn_block,
+                                 gnn_position, positional_encoders)
 
         self.classifier = nn.Linear(hidden_dim, num_class)
         self.use_super_node = use_super_node
@@ -93,16 +85,11 @@ class GraphTransformer(torch.nn.Module):
         self.activation = activation
 
         encoder_layer = GraphTransformerEncoderLayer(
-            hidden_dim=hidden_dim,
-            num_heads=num_heads,
-            dropout=dropout,
-            ffn_hidden_dim=ffn_hidden_dim,
-            activation=activation
-        )
-        self.encoder = (
-            GraphTransformerEncoder(encoder_layer, num_encoder_layers)
-            if num_encoder_layers > 0 else encoder_layer
-        )
+            hidden_dim=hidden_dim, num_heads=num_heads, dropout=dropout,
+            ffn_hidden_dim=ffn_hidden_dim, activation=activation)
+        self.encoder = (GraphTransformerEncoder(encoder_layer,
+                                                num_encoder_layers)
+                        if num_encoder_layers > 0 else encoder_layer)
         self.is_encoder_stack = num_encoder_layers > 0
         self.attn_bias_providers = ModuleList(attn_bias_providers)
         self.gnn_block = gnn_block
@@ -125,34 +112,27 @@ class GraphTransformer(torch.nn.Module):
     ):
         # ---- shape & type checks ----
         if not isinstance(hidden_dim, int) or hidden_dim <= 0:
-            raise ValueError(
-                "hidden_dim must be a positive int (got " + f"{hidden_dim})"
-            )
+            raise ValueError("hidden_dim must be a positive int (got " +
+                             f"{hidden_dim})")
         if not isinstance(num_class, int) or num_class <= 0:
-            raise ValueError(
-                "num_class must be a positive int (got " + f"{num_class})"
-            )
+            raise ValueError("num_class must be a positive int (got " +
+                             f"{num_class})")
         if not isinstance(num_encoder_layers, int) or num_encoder_layers < 0:
-            raise ValueError(
-                "num_encoder_layers must be ≥ 0 (got " +
-                f"{num_encoder_layers})"
-            )
+            raise ValueError("num_encoder_layers must be ≥ 0 (got " +
+                             f"{num_encoder_layers})")
 
         # ---- transformer hyper-params ----
         if not isinstance(num_heads, int) or num_heads <= 0:
             raise ValueError(
                 "Invalid configuration: embed_dim and num_heads must be"
-                f"positive (got num_heads={num_heads})"
-            )
+                f"positive (got num_heads={num_heads})")
         if not (isinstance(dropout, float) and 0.0 <= dropout < 1.0):
             raise ValueError("dropout must be in [0,1) (got " + f"{dropout})")
         if ffn_hidden_dim is not None:
             if not (isinstance(ffn_hidden_dim, int)
                     and ffn_hidden_dim >= hidden_dim):
-                raise ValueError(
-                    "ffn_hidden_dim must be ≥ hidden_dim (" +
-                    f"{hidden_dim}), got {ffn_hidden_dim}"
-                )
+                raise ValueError("ffn_hidden_dim must be ≥ hidden_dim (" +
+                                 f"{hidden_dim}), got {ffn_hidden_dim}")
         allowed_acts = {
             'relu', 'leakyrelu', 'prelu', 'tanh', 'selu', 'elu', 'linear',
             'gelu'
@@ -160,40 +140,33 @@ class GraphTransformer(torch.nn.Module):
         if activation not in allowed_acts:
             raise ValueError(
                 "activation must be one of " +
-                f"{allowed_acts} (got '{activation}', not supported)"
-            )
+                f"{allowed_acts} (got '{activation}', not supported)")
 
         # ---- bias providers ----
         for prov in attn_bias_providers:
             if not isinstance(prov, BaseBiasProvider):
                 raise TypeError(f"{prov!r} is not a BaseBiasProvider")
             if prov.num_heads != num_heads:
-                msg = (
-                    f"BiasProvider {prov.__class__.__name__} has "
-                    f"num_heads={prov.num_heads}, but GraphTransformer is "
-                    f"configured with num_heads={num_heads}"
-                )
+                msg = (f"BiasProvider {prov.__class__.__name__} has "
+                       f"num_heads={prov.num_heads}, but GraphTransformer is "
+                       f"configured with num_heads={num_heads}")
                 raise ValueError(msg)
 
         # ---- GNN block & position ----
         valid_positions = {'pre', 'post', 'parallel'}
         if gnn_position not in valid_positions:
-            raise ValueError(
-                "gnn_position must be one of " +
-                f"{valid_positions}, got '{gnn_position}'"
-            )
+            raise ValueError("gnn_position must be one of " +
+                             f"{valid_positions}, got '{gnn_position}'")
         if gnn_block is None and gnn_position != 'pre':
             raise ValueError(
                 "Cannot set gnn_position to 'post' or 'parallel' when " +
-                "gnn_block is None"
-            )
+                "gnn_block is None")
 
         # ---- positional encoders ----
         for enc in positional_encoders:
             if not callable(getattr(enc, "forward", None)):
                 raise TypeError(
-                    f"{enc!r} does not have a callable forward method"
-                )
+                    f"{enc!r} does not have a callable forward method")
 
     @torch.jit.ignore
     def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
@@ -217,8 +190,8 @@ class GraphTransformer(torch.nn.Module):
             return global_mean_pool(x, batch)
 
     def _prepend_cls_token_flat(
-        self, x: torch.Tensor, batch: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.LongTensor]:
+            self, x: torch.Tensor,
+            batch: torch.Tensor) -> tuple[torch.Tensor, torch.LongTensor]:
         """Prepend a learnable CLS token to each graph's nodes.
 
         Inserts one classification token per graph without loops or
@@ -275,15 +248,13 @@ class GraphTransformer(torch.nn.Module):
             raise ValueError(
                 "Input node features are None. Please ensure your dataset "
                 "provides node features or supply a suitable "
-                "node_feature_encoder that can handle None input."
-            )
+                "node_feature_encoder that can handle None input.")
         in_features = getattr(encoder, 'in_features', None)
         if in_features is not None and x.size(-1) != in_features:
             raise ValueError(
                 f"Node feature dimension mismatch: got {x.size(-1)}, "
                 f"expected {in_features}. Please check your dataset and "
-                f"node_feature_encoder configuration."
-            )
+                f"node_feature_encoder configuration.")
         return encoder(x)
 
     def forward(self, data: Data) -> torch.Tensor:
@@ -330,9 +301,8 @@ class GraphTransformer(torch.nn.Module):
                 first_layer = self.node_feature_encoder[0]
             else:
                 first_layer = self.node_feature_encoder
-            input_dim = getattr(
-                first_layer, 'in_features', self.classifier.in_features
-            )
+            input_dim = getattr(first_layer, 'in_features',
+                                self.classifier.in_features)
 
             num_nodes = data.num_nodes
             device = next(self.parameters()).device
@@ -343,10 +313,8 @@ class GraphTransformer(torch.nn.Module):
             x = x + sum(encoder(data) for encoder in self.positional_encoders)
         return x
 
-    def _apply_gnn_if(
-        self, position: Literal['pre', 'post', 'parallel'], data: Data,
-        x: torch.Tensor
-    ) -> torch.Tensor:
+    def _apply_gnn_if(self, position: Literal['pre', 'post', 'parallel'],
+                      data: Data, x: torch.Tensor) -> torch.Tensor:
         """Apply the GNN block at a specified position, if available.
 
         Args:
@@ -363,8 +331,8 @@ class GraphTransformer(torch.nn.Module):
         return x
 
     def _prepare_batch(
-        self, x: torch.Tensor, batch: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+            self, x: torch.Tensor,
+            batch: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """Prepare the batch vector and optionally prepend the CLS token.
 
         Args:
@@ -387,10 +355,8 @@ class GraphTransformer(torch.nn.Module):
         """
         return self.gnn_block is not None and self.gnn_position == 'parallel'
 
-    def _run_encoder(
-        self, x: torch.Tensor, batch_vec: torch.Tensor,
-        struct_mask: Optional[torch.Tensor]
-    ) -> torch.Tensor:
+    def _run_encoder(self, x: torch.Tensor, batch_vec: torch.Tensor,
+                     struct_mask: Optional[torch.Tensor]) -> torch.Tensor:
         """Run the transformer encoder.
 
         Iterates over encoder layers and rebuilds key padding masks as needed.
@@ -408,9 +374,8 @@ class GraphTransformer(torch.nn.Module):
         current_heads = None
         for layer in layers:
             if key_pad is None or layer.num_heads != current_heads:
-                key_pad = build_key_padding(
-                    batch_vec, num_heads=layer.num_heads
-                )
+                key_pad = build_key_padding(batch_vec,
+                                            num_heads=layer.num_heads)
                 current_heads = layer.num_heads
 
             x = layer(x, batch_vec, struct_mask, key_pad)
@@ -431,9 +396,8 @@ class GraphTransformer(torch.nn.Module):
             legacy = data.bias
             # cast bool→float, leave floats as-is
             masks.append(
-                legacy.to(torch.float32)
-                if not torch.is_floating_point(legacy) else legacy
-            )
+                legacy.to(torch.float32
+                          ) if not torch.is_floating_point(legacy) else legacy)
 
         for prov in self.attn_bias_providers:
             m = prov(data)
@@ -442,9 +406,8 @@ class GraphTransformer(torch.nn.Module):
 
         if not masks:
             return None
-        return torch.stack(
-            masks, dim=0
-        ).sum(dim=0).to(data.x.dtype).to(data.x.device)
+        return torch.stack(masks,
+                           dim=0).sum(dim=0).to(data.x.dtype).to(data.x.device)
 
     def __repr__(self):
         """Return a string representation of GraphTransformer.
@@ -469,18 +432,16 @@ class GraphTransformer(torch.nn.Module):
             enc.__class__.__name__ for enc in self.positional_encoders
         ]
 
-        return (
-            "GraphTransformer("
-            f"hidden_dim={self.classifier.in_features}, "
-            f"num_class={self.classifier.out_features}, "
-            f"use_super_node={self.use_super_node}, "
-            f"num_encoder_layers={n_layers}, "
-            f"bias_providers={providers}, "
-            f"pos_encoders={pos_encoders}, "
-            f"dropout={self.dropout}, "
-            f"num_heads={self.num_heads}, "
-            f"ffn_hidden_dim={self.ffn_hidden_dim}, "
-            f"activation='{self.activation}', "
-            f"gnn_hook={gnn_name}@'{self.gnn_position}'"
-            ")"
-        )
+        return ("GraphTransformer("
+                f"hidden_dim={self.classifier.in_features}, "
+                f"num_class={self.classifier.out_features}, "
+                f"use_super_node={self.use_super_node}, "
+                f"num_encoder_layers={n_layers}, "
+                f"bias_providers={providers}, "
+                f"pos_encoders={pos_encoders}, "
+                f"dropout={self.dropout}, "
+                f"num_heads={self.num_heads}, "
+                f"ffn_hidden_dim={self.ffn_hidden_dim}, "
+                f"activation='{self.activation}', "
+                f"gnn_hook={gnn_name}@'{self.gnn_position}'"
+                ")")
