@@ -1,4 +1,5 @@
 import torch
+import pytest
 from unittest.mock import Mock, patch
 
 from torch_geometric.data import Data
@@ -24,6 +25,13 @@ class TestKNNRAGFeatureStore:
         # Sample node features and edge attributes
         self.sample_x = torch.randn(10, 128)  # 10 nodes, 128 features
         self.sample_edge_attr = torch.randn(8, 64)  # 8 edges, 64 features
+    
+    def test_bad_config(self):
+        """Test bad config initialization."""
+        with pytest.raises(ValueError, match="Required config parameter"):
+            store = KNNRAGFeatureStore()
+            store.config = {}
+        
         
     def create_feature_store(self):
         """Create a KNNRAGFeatureStore with mocked dependencies."""

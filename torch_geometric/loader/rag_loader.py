@@ -18,6 +18,18 @@ class RAGFeatureStore(Protocol):
         for the RAG Sampler.
         """
         ...
+    
+    @property
+    @abstractmethod
+    def config(self) -> Dict[str, Any]:
+        """Get the config for the RAGFeatureStore."""
+        ...
+    
+    @config.setter
+    @abstractmethod
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the RAGFeatureStore."""
+        ...
 
     @abstractmethod
     def retrieve_seed_edges(self, query: Any, **kwargs) -> InputEdges:
@@ -41,6 +53,18 @@ class RAGGraphStore(Protocol):
     def sample_subgraph(self, seed_nodes: InputNodes, seed_edges: InputEdges,
                         **kwargs) -> Union[SamplerOutput, HeteroSamplerOutput]:
         """Sample a subgraph using the seeded nodes and edges."""
+        ...
+
+    @property
+    @abstractmethod
+    def config(self) -> Dict[str, Any]:
+        """Get the config for the RAGGraphStore."""
+        ...
+
+    @config.setter
+    @abstractmethod
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the RAGGraphStore."""
         ...
 
     @abstractmethod
