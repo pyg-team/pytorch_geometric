@@ -42,9 +42,12 @@ def _init_sample_graph(hetero=False):
             "manager": dict({"x": torch.tensor([[0]])})
         })
         sample_edge_attr = dict({
-            ('person', 'works_with', 'person'): dict({"edge_attr": torch.tensor([[3]])}),
-            ('manager', 'leads', 'person'): dict({"edge_attr": torch.tensor([[1]])}),
-            ('manager', 'works_with', 'person'): dict({"edge_attr": torch.tensor([[2]])})
+            ('person', 'works_with', 'person'):
+            dict({"edge_attr": torch.tensor([[3]])}),
+            ('manager', 'leads', 'person'):
+            dict({"edge_attr": torch.tensor([[1]])}),
+            ('manager', 'works_with', 'person'):
+            dict({"edge_attr": torch.tensor([[2]])})
         })
         sample_edge_indices = dict({
             ('person', 'works_with', 'person'):
@@ -58,7 +61,8 @@ def _init_sample_graph(hetero=False):
 
 
 def _init_graph_to_sample(graph_dtype, hetero=False, reverse=False):
-    sample_attr, sample_edge_attr, sample_edge_indices = _init_sample_graph(hetero)
+    sample_attr, sample_edge_attr, sample_edge_indices = _init_sample_graph(
+        hetero)
     if reverse:
         if not hetero:
             sample_edge_indices = sample_edge_indices.flip(0)
@@ -78,7 +82,9 @@ def _init_graph_to_sample(graph_dtype, hetero=False, reverse=False):
             sample_edge_attr = reversed_edge_attr
     graph_to_sample = None
     if graph_dtype == 'data' and not hetero:
-        graph_to_sample = Data(edge_index=sample_edge_indices, x=sample_attr, time=sample_attr.squeeze(-1), edge_attr=sample_edge_attr.squeeze(-1))
+        graph_to_sample = Data(edge_index=sample_edge_indices, x=sample_attr,
+                               time=sample_attr.squeeze(-1),
+                               edge_attr=sample_edge_attr.squeeze(-1))
     elif graph_dtype == 'remote' and not hetero:
         graph_store = MyGraphStore()
         graph_store.put_edge_index(sample_edge_indices, edge_type=None,
@@ -89,8 +95,9 @@ def _init_graph_to_sample(graph_dtype, hetero=False, reverse=False):
         # temporal node sampling on (fs, gs) needs 'time' attr
         feature_store.put_tensor(sample_attr.squeeze(-1), group_name='default',
                                  attr_name='time', index=None)
-        feature_store.put_tensor(sample_edge_attr.squeeze(-1), group_name='default',
-                                 attr_name='edge_attr', index=None)
+        feature_store.put_tensor(sample_edge_attr.squeeze(-1),
+                                 group_name='default', attr_name='edge_attr',
+                                 index=None)
         graph_to_sample = (feature_store, graph_store)
     elif graph_dtype == 'data' and hetero:
         graph_to_sample = HeteroData()
@@ -100,7 +107,8 @@ def _init_graph_to_sample(graph_dtype, hetero=False, reverse=False):
         for edge_type in sample_edge_indices.keys():
             graph_to_sample[edge_type].edge_index = sample_edge_indices[
                 edge_type]["edge_index"]
-            graph_to_sample[edge_type].edge_attr = sample_edge_attr[edge_type]["edge_attr"].squeeze(-1)
+            graph_to_sample[edge_type].edge_attr = sample_edge_attr[edge_type][
+                "edge_attr"].squeeze(-1)
     elif graph_dtype == 'remote' and hetero:
         graph_store = MyGraphStore()
         for edge_type, edge_index in sample_edge_indices.items():
@@ -114,10 +122,12 @@ def _init_graph_to_sample(graph_dtype, hetero=False, reverse=False):
             feature_store.put_tensor(node_attr["x"], group_name=node_type,
                                      attr_name='x', index=None)
             # temporal node sampling on (fs, gs) needs 'time' attr
-            feature_store.put_tensor(node_attr["x"].squeeze(-1), group_name=node_type,
-                                     attr_name='time', index=None)
+            feature_store.put_tensor(node_attr["x"].squeeze(-1),
+                                     group_name=node_type, attr_name='time',
+                                     index=None)
         for edge_type, edge_attr in sample_edge_attr.items():
-            feature_store.put_tensor(edge_attr["edge_attr"].squeeze(-1), group_name=edge_type,
+            feature_store.put_tensor(edge_attr["edge_attr"].squeeze(-1),
+                                     group_name=edge_type,
                                      attr_name='edge_attr', index=None)
         graph_to_sample = (feature_store, graph_store)
     return graph_to_sample
@@ -353,12 +363,15 @@ def test_homogeneous_neighbor_sampler_weighted_backwards(input_type):
     assert torch.equal(backward_sampler_output.edge,
                        reverse_sampler_output.edge)
 
+
 @onlyNeighborSampler
 @pytest.mark.parametrize('input_type', ['data', 'remote'])
 @pytest.mark.parametrize('time_attr', ['time', 'edge_attr'])
-def test_homogeneous_neighbor_sampler_temporal_backwards(input_type, time_attr):
+def test_homogeneous_neighbor_sampler_temporal_backwards(
+        input_type, time_attr):
     graph_to_sample = _init_graph_to_sample(input_type, hetero=False)
-    reverse_graph_to_sample = _init_graph_to_sample(input_type, hetero=False, reverse=True)
+    reverse_graph_to_sample = _init_graph_to_sample(input_type, hetero=False,
+                                                    reverse=True)
 
     sampler_kwargs = {
         'data': graph_to_sample,
@@ -372,16 +385,19 @@ def test_homogeneous_neighbor_sampler_temporal_backwards(input_type, time_attr):
     }
 
     node_sampler_input = NodeSamplerInput(input_id=None,
-                                          node=torch.tensor([1]), time=torch.tensor([1]))
+                                          node=torch.tensor([1]),
+                                          time=torch.tensor([1]))
     reverse_node_sampler_input = NodeSamplerInput(input_id=None,
-                                          node=torch.tensor([0]), time=torch.tensor([1]))
+                                                  node=torch.tensor([0]),
+                                                  time=torch.tensor([1]))
 
     # sampling from Dave should yield Carol, Alice
     sampler = NeighborSampler(**sampler_kwargs)
     sampler_output = sampler.sample_from_nodes(node_sampler_input)
 
     reverse_sampler = NeighborSampler(**reverse_sampler_kwargs)
-    reverse_sampler_output = reverse_sampler.sample_from_nodes(reverse_node_sampler_input)
+    reverse_sampler_output = reverse_sampler.sample_from_nodes(
+        reverse_node_sampler_input)
 
     assert torch.equal(sampler_output.node, torch.tensor([1, 0]))
     assert torch.equal(reverse_sampler_output.node, torch.tensor([0, 1]))
