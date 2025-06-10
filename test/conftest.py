@@ -103,4 +103,3 @@ def cleanup_dist():
     yield
     if dist.is_available() and dist.is_initialized():
         dist.destroy_process_group()
-
