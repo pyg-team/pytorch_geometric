@@ -74,7 +74,8 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
 def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
                  trim=False):
     if trim:
-        warnings.warn("Trimming not yet implemented for heterogeneous graphs")
+        warnings.warn("Trimming not yet implemented for heterogeneous graphs",
+                      stacklevel=2)
 
     if progress_bar:
         loader = tqdm(loader, desc=desc)
@@ -98,8 +99,9 @@ def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
     if args.write_csv == 'prof' and not args.profile:
-        warnings.warn("Cannot write profile data to CSV because profiling is "
-                      "disabled")
+        warnings.warn(
+            "Cannot write profile data to CSV because profiling is "
+            "disabled", stacklevel=2)
 
     if args.device == 'xpu':
         try:

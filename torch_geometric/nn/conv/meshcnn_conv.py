@@ -456,12 +456,13 @@ class MeshCNNConv(MessagePassing):
                 {type(network)}"
             if not hasattr(network, "in_channels") and \
                     not hasattr(network, "in_features"):
-                warn(f"kernel[{i}] does not have attribute \
+                warn(
+                    f"kernel[{i}] does not have attribute \
                             'in_channels' nor 'out_features'. The \
                             network must take as input a \
                             {self.in_channels}-dimensional tensor. \
                             Still, assuming user configured \
-                            correctly. Continuing..")
+                            correctly. Continuing..", stacklevel=2)
             else:
                 input_dimension = getattr(network, "in_channels",
                                           network.in_features)
@@ -474,12 +475,13 @@ class MeshCNNConv(MessagePassing):
 
             if not hasattr(network, "out_channels") and \
                     not hasattr(network, "out_features"):
-                warn(f"kernel[{i}] does not have attribute \
+                warn(
+                    f"kernel[{i}] does not have attribute \
                                 'in_channels' nor 'out_features'. The \
                                 network must take as input a \
                                 {self.in_channels}-dimensional tensor. \
                                 Still, assuming user configured \
-                                correctly. Continuing..")
+                                correctly. Continuing..", stacklevel=2)
             else:
                 output_dimension = getattr(network, "out_channels",
                                            network.out_features)
