@@ -69,7 +69,7 @@ class GraphSAGE(torch.nn.Module):
 
         self.convs.append(SAGEConv(in_channels, hidden_channels))
         self.norms.append(BatchNorm(hidden_channels))
-        for i in range(1, num_layers):
+        for _ in range(1, num_layers):
             self.convs.append(SAGEConv(hidden_channels, hidden_channels))
             self.norms.append(BatchNorm(hidden_channels))
 

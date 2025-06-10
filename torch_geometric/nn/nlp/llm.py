@@ -49,15 +49,16 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
 class LLM(torch.nn.Module):
     r"""A wrapper around a Large Language Model (LLM) from HuggingFace.
 
-    model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"` or
-        :obj:`"gemma"`.
-    num_params (int, optional): An integer representing how many parameters the
-        HuggingFace model has, in billions. This is used to automatically
-        allocate the correct number of GPUs needed, given the available GPU
-        memory of your GPUs. If not specified, the number of parameters
-        is determined using the `huggingface_hub` module.
-    dtype (torch.dtype, optional): The data type to use for the LLM.
-        (default :obj: `torch.bfloat16`)
+    Args:
+        model_name (str): The HuggingFace model name, *e.g.*, :obj:`"llama2"`
+            or :obj:`"gemma"`.
+        num_params (int, optional): An integer representing how many parameters
+            the HuggingFace model has, in billions. This is used to
+            automatically allocate the correct number of GPUs needed, given the
+            available GPU memory of your GPUs. If not specified, the number of
+            parameters is determined using the `huggingface_hub` module.
+        dtype (torch.dtype, optional): The data type to use for the LLM.
+            (default :obj: `torch.bfloat16`)
     """
     def __init__(
         self,
@@ -93,7 +94,8 @@ class LLM(torch.nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
 
         if 'max_memory' not in kwargs:  # Pure CPU:
-            warnings.warn("LLM is being used on CPU, which may be slow")
+            warnings.warn("LLM is being used on CPU, which may be slow",
+                          stacklevel=2)
             self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:

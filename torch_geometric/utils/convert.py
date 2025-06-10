@@ -251,13 +251,13 @@ def from_networkx(
     if group_edge_attrs is not None and not isinstance(group_edge_attrs, list):
         group_edge_attrs = edge_attrs
 
-    for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
+    for _, feat_dict in G.nodes(data=True):
         if set(feat_dict.keys()) != set(node_attrs):
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data_dict[str(key)].append(value)
 
-    for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
+    for _, _, feat_dict in G.edges(data=True):
         if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():

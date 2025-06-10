@@ -10,7 +10,7 @@ class GCN(torch.nn.Module):
         super().__init__()
         self.conv1 = GCNConv(dataset.num_features, hidden)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             self.convs.append(GCNConv(hidden, hidden))
         self.lin1 = Linear(hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
@@ -42,7 +42,7 @@ class GCNWithJK(torch.nn.Module):
         super().__init__()
         self.conv1 = GCNConv(dataset.num_features, hidden)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             self.convs.append(GCNConv(hidden, hidden))
         self.jump = JumpingKnowledge(mode)
         if mode == 'cat':

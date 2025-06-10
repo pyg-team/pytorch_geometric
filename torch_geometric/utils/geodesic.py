@@ -66,9 +66,10 @@ def geodesic_distance(  # noqa: D417
 
     if 'dest' in kwargs:
         dst = kwargs['dest']
-        warnings.warn("'dest' attribute in 'geodesic_distance' is deprecated "
-                      "and will be removed in a future release. Use the 'dst' "
-                      "argument instead.")
+        warnings.warn(
+            "'dest' attribute in 'geodesic_distance' is deprecated "
+            "and will be removed in a future release. Use the 'dst' "
+            "argument instead.", stacklevel=2)
 
     max_distance = float('inf') if max_distance is None else max_distance
 

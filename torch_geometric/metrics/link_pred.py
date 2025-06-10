@@ -221,8 +221,8 @@ class LinkPredMetric(_LinkPredMetric):
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
-            self.register_buffer('accum', torch.tensor(0.))
-            self.register_buffer('total', torch.tensor(0))
+            self.register_buffer('accum', torch.tensor(0.), persistent=False)
+            self.register_buffer('total', torch.tensor(0), persistent=False)
 
     def update(
         self,
@@ -402,11 +402,8 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         for metric in self.values():
             if not isinstance(metric, LinkPredMetric):
-                metric.update(
-                    pred_index_mat=pred_index_mat,
-                    edge_label_index=edge_label_index,
-                    edge_label_weight=edge_label_weight,
-                )
+                metric.update(pred_index_mat, edge_label_index,
+                              edge_label_weight)
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
@@ -423,7 +420,12 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
 
 class LinkPredPrecision(LinkPredMetric):
-    r"""A link prediction metric to compute Precision @ :math:`k`.
+    r"""A link prediction metric to compute Precision @ :math:`k`, *i.e.* the
+    proportion of recommendations within the top-:math:`k` that are actually
+    relevant.
+
+    A higher precision indicates the model's ability to surface relevant items
+    early in the ranking.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -437,7 +439,11 @@ class LinkPredPrecision(LinkPredMetric):
 
 
 class LinkPredRecall(LinkPredMetric):
-    r"""A link prediction metric to compute Recall @ :math:`k`.
+    r"""A link prediction metric to compute Recall @ :math:`k`, *i.e.* the
+    proportion of relevant items that appear within the top-:math:`k`.
+
+    A higher recall indicates the model's ability to retrieve a larger
+    proportion of relevant items.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -472,7 +478,11 @@ class LinkPredF1(LinkPredMetric):
 
 class LinkPredMAP(LinkPredMetric):
     r"""A link prediction metric to compute MAP @ :math:`k` (Mean Average
-    Precision).
+    Precision), considering the order of relevant items within the
+    top-:math:`k`.
+
+    MAP @ :math:`k` can provide a more comprehensive view of ranking quality
+    than precision alone.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -493,6 +503,10 @@ class LinkPredNDCG(LinkPredMetric):
     r"""A link prediction metric to compute the NDCG @ :math:`k` (Normalized
     Discounted Cumulative Gain).
 
+    In particular, can account for the position of relevant items by
+    considering relevance scores, giving higher weight to more relevant items
+    appearing at the top.
+
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
         weighted (bool, optional): If set to :obj:`True`, assumes sorted lists
@@ -509,10 +523,11 @@ class LinkPredNDCG(LinkPredMetric):
         discount = torch.arange(2, k + 2, dtype=dtype).log2()
 
         self.discount: Tensor
-        self.register_buffer('discount', discount)
+        self.register_buffer('discount', discount, persistent=False)
 
         if not weighted:
-            self.register_buffer('idcg', cumsum(1.0 / discount))
+            self.register_buffer('idcg', cumsum(1.0 / discount),
+                                 persistent=False)
         else:
             self.idcg = None
 
@@ -549,7 +564,8 @@ class LinkPredNDCG(LinkPredMetric):
 
 class LinkPredMRR(LinkPredMetric):
     r"""A link prediction metric to compute the MRR @ :math:`k` (Mean
-    Reciprocal Rank).
+    Reciprocal Rank), *i.e.* the mean reciprocal rank of the first correct
+    prediction (or zero otherwise).
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -564,9 +580,28 @@ class LinkPredMRR(LinkPredMetric):
         return (pred_rel_mat / arange).max(dim=-1)[0]
 
 
+class LinkPredHitRatio(LinkPredMetric):
+    r"""A link prediction metric to compute the hit ratio @ :math:`k`, *i.e.*
+    the percentage of users for whom at least one relevant item is present
+    within the top-:math:`k` recommendations.
+
+    A high ratio signifies the model's effectiveness in satisfying a broad
+    range of user preferences.
+    """
+    higher_is_better: bool = True
+    weighted: bool = False
+
+    def _compute(self, data: LinkPredMetricData) -> Tensor:
+        pred_rel_mat = data.pred_rel_mat[:, :self.k]
+        return pred_rel_mat.max(dim=-1)[0].to(torch.get_default_dtype())
+
+
 class LinkPredCoverage(_LinkPredMetric):
     r"""A link prediction metric to compute the Coverage @ :math:`k` of
-    predictions.
+    predictions, *i.e.* the percentage of unique items recommended across all
+    users within the top-:math:`k`.
+
+    Higher coverage indicates a wider exploration of the item catalog.
 
     Args:
         k (int): The number of top-:math:`k` predictions to evaluate against.
@@ -583,7 +618,7 @@ class LinkPredCoverage(_LinkPredMetric):
         if WITH_TORCHMETRICS:
             self.add_state('mask', mask, dist_reduce_fx='max')
         else:
-            self.register_buffer('mask', mask)
+            self.register_buffer('mask', mask, persistent=False)
 
     def update(
         self,
@@ -635,15 +670,18 @@ class LinkPredDiversity(_LinkPredMetric):
     def __init__(self, k: int, category: Tensor) -> None:
         super().__init__(k)
 
+        self.accum: Tensor
+        self.total: Tensor
+
         if WITH_TORCHMETRICS:
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
-            self.register_buffer('accum', torch.tensor(0.))
-            self.register_buffer('total', torch.tensor(0))
+            self.register_buffer('accum', torch.tensor(0.), persistent=False)
+            self.register_buffer('total', torch.tensor(0), persistent=False)
 
         self.category: Tensor
-        self.register_buffer('category', category)
+        self.register_buffer('category', category, persistent=False)
 
     def update(
         self,
@@ -658,6 +696,166 @@ class LinkPredDiversity(_LinkPredMetric):
 
         self.accum += div.sum()
         self.total += pred_index_mat.size(0)
+
+    def compute(self) -> Tensor:
+        if self.total == 0:
+            return torch.zeros_like(self.accum)
+        return self.accum / self.total
+
+    def _reset(self) -> None:
+        self.accum.zero_()
+        self.total.zero_()
+
+
+class LinkPredPersonalization(_LinkPredMetric):
+    r"""A link prediction metric to compute the Personalization @ :math:`k`,
+    *i.e.* the dissimilarity of recommendations across different users.
+
+    Higher personalization suggests that the model tailors recommendations to
+    individual user preferences rather than providing generic results.
+
+    Dissimilarity is defined by the average inverse cosine similarity between
+    users' lists of recommendations.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+        max_src_nodes (int, optional): The maximum source nodes to consider to
+            compute pair-wise dissimilarity. If specified,
+            Personalization @ :math:`k` is approximated to avoid computation
+            blowup due to quadratic complexity. (default: :obj:`2**12`)
+        batch_size (int, optional): The batch size to determine how many pairs
+            of user recommendations should be processed at once.
+            (default: :obj:`2**16`)
+    """
+    higher_is_better: bool = True
+
+    def __init__(
+        self,
+        k: int,
+        max_src_nodes: Optional[int] = 2**12,
+        batch_size: int = 2**16,
+    ) -> None:
+        super().__init__(k)
+        self.max_src_nodes = max_src_nodes
+        self.batch_size = batch_size
+
+        self.preds: List[Tensor]
+        self.total: Tensor
+
+        if WITH_TORCHMETRICS:
+            self.add_state('preds', default=[], dist_reduce_fx='cat')
+            self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
+        else:
+            self.preds = []
+            self.register_buffer('total', torch.tensor(0), persistent=False)
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
+
+        # NOTE Move to CPU to avoid memory blowup.
+        pred_index_mat = pred_index_mat[:, :self.k].cpu()
+
+        if self.max_src_nodes is None:
+            self.preds.append(pred_index_mat)
+            self.total += pred_index_mat.size(0)
+        elif self.total < self.max_src_nodes:
+            remaining = int(self.max_src_nodes - self.total)
+            pred_index_mat = pred_index_mat[:remaining]
+            self.preds.append(pred_index_mat)
+            self.total += pred_index_mat.size(0)
+
+    def compute(self) -> Tensor:
+        device = self.total.device
+        score = torch.tensor(0.0, device=device)
+        total = torch.tensor(0, device=device)
+
+        if len(self.preds) == 0:
+            return score
+
+        pred = torch.cat(self.preds, dim=0)
+
+        if pred.size(0) == 0:
+            return score
+
+        # Calculate all pairs of nodes (e.g., triu_indices with offset=1).
+        # NOTE We do this in chunks to avoid memory blow-up, which leads to a
+        # more efficient but trickier implementation.
+        num_pairs = (pred.size(0) * (pred.size(0) - 1)) // 2
+        offset = torch.arange(pred.size(0) - 1, 0, -1, device=device)
+        rowptr = cumsum(offset)
+        for start in range(0, num_pairs, self.batch_size):
+            end = min(start + self.batch_size, num_pairs)
+            idx = torch.arange(start, end, device=device)
+
+            # Find the corresponding row:
+            row = torch.searchsorted(rowptr, idx, right=True) - 1
+            # Find the corresponding column:
+            col = idx - rowptr[row] + (pred.size(0) - offset[row])
+
+            left = pred[row.cpu()].to(device)
+            right = pred[col.cpu()].to(device)
+
+            # Use offset to work around applying `isin` along a specific dim:
+            i = max(left.max(), right.max()) + 1  # type: ignore
+            i = torch.arange(0, i * row.size(0), i, device=device).view(-1, 1)
+            isin = torch.isin(left + i, right + i)
+
+            # Compute personalization via average inverse cosine similarity:
+            cos = isin.sum(dim=-1) / pred.size(1)
+            score += (1 - cos).sum()
+            total += cos.numel()
+
+        return score / total
+
+    def _reset(self) -> None:
+        self.preds = []
+        self.total.zero_()
+
+
+class LinkPredAveragePopularity(_LinkPredMetric):
+    r"""A link prediction metric to compute the Average Recommendation
+    Popularity (ARP) @ :math:`k`, which provides insights into the model's
+    tendency to recommend popular items by averaging the popularity scores of
+    items within the top-:math:`k` recommendations.
+
+    Args:
+        k (int): The number of top-:math:`k` predictions to evaluate against.
+        popularity (torch.Tensor): The popularity of every item in the training
+            set, *e.g.*, the number of times an item has been rated.
+    """
+    higher_is_better: bool = False
+
+    def __init__(self, k: int, popularity: Tensor) -> None:
+        super().__init__(k)
+
+        self.accum: Tensor
+        self.total: Tensor
+
+        if WITH_TORCHMETRICS:
+            self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
+            self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
+        else:
+            self.register_buffer('accum', torch.tensor(0.), persistent=False)
+            self.register_buffer('total', torch.tensor(0), persistent=False)
+
+        self.popularity: Tensor
+        self.register_buffer('popularity', popularity, persistent=False)
+
+    def update(
+        self,
+        pred_index_mat: Tensor,
+        edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]],
+        edge_label_weight: Optional[Tensor] = None,
+    ) -> None:
+        pred_index_mat = pred_index_mat[:, :self.k]
+        popularity = self.popularity[pred_index_mat]
+        popularity = popularity.to(self.accum.dtype).mean(dim=-1)
+        self.accum += popularity.sum()
+        self.total += popularity.numel()
 
     def compute(self) -> Tensor:
         if self.total == 0:

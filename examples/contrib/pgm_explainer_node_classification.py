@@ -42,7 +42,7 @@ if __name__ == "__main__":
         data.x, data.edge_index, data.edge_weight, data.y
 
     model.train()
-    for epoch in range(1, 500):
+    for _ in range(1, 500):
         optimizer.zero_grad()
         log_logits = model(x, edge_index, edge_weight)
         loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])

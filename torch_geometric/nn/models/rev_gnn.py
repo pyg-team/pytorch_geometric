@@ -249,7 +249,7 @@ class GroupAddRev(InvertibleModule):
         else:
             assert num_groups is not None, "Please specific 'num_groups'"
             self.convs = torch.nn.ModuleList([conv])
-            for i in range(num_groups - 1):
+            for _ in range(num_groups - 1):
                 conv = copy.deepcopy(self.convs[0])
                 if hasattr(conv, 'reset_parameters'):
                     conv.reset_parameters()

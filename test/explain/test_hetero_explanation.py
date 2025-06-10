@@ -120,7 +120,7 @@ def test_edge_mask():
                        torch.tensor([[1], [1]]))
 
 
-@withPackage('matplotlib')
+@withPackage('matplotlib', 'pandas')
 @pytest.mark.parametrize('top_k', [2, None])
 @pytest.mark.parametrize('node_mask_type', [None, 'attributes'])
 def test_visualize_feature_importance(
@@ -142,3 +142,51 @@ def test_visualize_feature_importance(
     else:
         explanation.visualize_feature_importance(path, top_k=top_k)
         assert osp.exists(path)
+
+
+@withPackage('matplotlib', 'networkx')
+def test_hetero_visualize_graph(tmp_path, hetero_data):
+    # Create explanation with both node and edge masks
+    explanation = create_random_explanation(hetero_data,
+                                            node_mask_type='object',
+                                            edge_mask_type='object')
+
+    path = osp.join(tmp_path, 'explanation_graph.png')
+
+    # Test with default parameters
+    explanation.visualize_graph(path=path)
+    assert osp.exists(path)
+
+    # Test with custom visualization parameters
+    explanation.visualize_graph(path=path, node_size_range=(20, 400),
+                                node_opacity_range=(0.3, 0.9),
+                                edge_width_range=(0.2, 3.0),
+                                edge_opacity_range=(0.3, 0.9))
+    assert osp.exists(path)
+
+    # Test with node labels
+    node_labels = {
+        'paper': [f'Paper {i}' for i in range(hetero_data['paper'].num_nodes)],
+        'author':
+        [f'Author {i}' for i in range(hetero_data['author'].num_nodes)],
+    }
+    explanation.visualize_graph(path=path, node_labels=node_labels)
+    assert osp.exists(path)
+
+    # Test with invalid number of labels
+    invalid_labels = {
+        'paper': ['Paper 0'],  # Too few labels
+        'author': ['Author 0', 'Author 1'],  # Too few labels
+    }
+    with pytest.raises(ValueError, match="Number of labels"):
+        explanation.visualize_graph(node_labels=invalid_labels)
+
+    # Test with invalid node type in labels
+    invalid_labels = {
+        'paper': [f'Paper {i}' for i in range(hetero_data['paper'].num_nodes)],
+        'author':
+        [f'Author {i}' for i in range(hetero_data['author'].num_nodes)],
+        'invalid_type': ['Invalid 0', 'Invalid 1'],  # Invalid node type
+    }
+    with pytest.raises(ValueError, match="Node type"):
+        explanation.visualize_graph(node_labels=invalid_labels)

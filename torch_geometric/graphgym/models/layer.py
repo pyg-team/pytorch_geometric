@@ -52,7 +52,7 @@ def new_layer_config(
     has_bias: bool,
     cfg,
 ) -> LayerConfig:
-    r"""Createa a layer configuration for a GNN layer.
+    r"""Create a layer configuration for a GNN layer.
 
     Args:
         dim_in (int): The input feature dimension.

@@ -160,7 +160,7 @@ class AttentiveFP(torch.nn.Module):
         edge_index = torch.stack([row, batch], dim=0)
 
         out = global_add_pool(x, batch).relu_()
-        for t in range(self.num_timesteps):
+        for _ in range(self.num_timesteps):
             h = F.elu_(self.mol_conv((x, out), edge_index))
             h = F.dropout(h, p=self.dropout, training=self.training)
             out = self.mol_gru(h, out).relu_()
