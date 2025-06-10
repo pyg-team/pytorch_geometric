@@ -22,7 +22,7 @@ def train_runtime(model, data, epochs, device):
         torch.mps.synchronize()
     t_start = time.perf_counter()
 
-    for epoch in range(epochs):
+    for _ in range(epochs):
         optimizer.zero_grad()
         out = model(x)
         loss = F.nll_loss(out[mask], y.view(-1))

@@ -29,7 +29,7 @@ methods = [
 ]
 
 
-@withPackage('captum')
+@withPackage('captum', 'sklearn')
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('method', methods)
 def test_captum_attribution_methods_hetero(mask_type, method, hetero_data,

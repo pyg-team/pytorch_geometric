@@ -276,7 +276,7 @@ class MessagePassing(torch.nn.Module):
                     f"{index.min().item()}). Please ensure that all "
                     f"indices in 'edge_index' point to valid indices "
                     f"in the interval [0, {src.size(self.node_dim)}) in "
-                    f"your node feature matrix and try again.")
+                    f"your node feature matrix and try again.") from e
 
             if (index.numel() > 0 and index.max() >= src.size(self.node_dim)):
                 raise IndexError(
@@ -285,7 +285,7 @@ class MessagePassing(torch.nn.Module):
                     f"{index.max().item()}). Please ensure that all "
                     f"indices in 'edge_index' point to valid indices "
                     f"in the interval [0, {src.size(self.node_dim)}) in "
-                    f"your node feature matrix and try again.")
+                    f"your node feature matrix and try again.") from e
 
             raise e
 
@@ -1029,6 +1029,7 @@ class MessagePassing(torch.nn.Module):
             :meth:`jittable` is deprecated and a no-op from :pyg:`PyG` 2.5
             onwards.
         """
-        warnings.warn(f"'{self.__class__.__name__}.jittable' is deprecated "
-                      f"and a no-op. Please remove its usage.")
+        warnings.warn(
+            f"'{self.__class__.__name__}.jittable' is deprecated "
+            f"and a no-op. Please remove its usage.", stacklevel=2)
         return self
