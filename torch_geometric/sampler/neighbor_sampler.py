@@ -25,7 +25,13 @@ from torch_geometric.sampler import (
     SamplerOutput,
 )
 from torch_geometric.sampler.base import DataType, NumNeighbors, SubgraphType
-from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
+from torch_geometric.sampler.utils import (
+    global_to_local_node_idx,
+    remap_keys,
+    reverse_edge_type,
+    to_csc,
+    to_hetero_csc,
+)
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
@@ -66,6 +72,13 @@ class NeighborSampler(BaseSampler):
         self.data_type = DataType.from_data(data)
         self.sample_direction = sample_direction
 
+        if self.sample_direction == 'backward':
+            # TODO(zaristei)
+            if time_attr is not None:
+                raise NotImplementedError(
+                    "Temporal Sampling not yet supported for backward sampling"
+                )
+
         if self.data_type == DataType.homogeneous:
             self.num_nodes = data.num_nodes
 
@@ -100,6 +113,17 @@ class NeighborSampler(BaseSampler):
 
         elif self.data_type == DataType.heterogeneous:
             self.node_types, self.edge_types = data.metadata()
+
+            # reverse edge types if sample_direction is backward
+            if self.sample_direction == 'backward':
+                self.edge_types = [
+                    reverse_edge_type(edge_type)
+                    for edge_type in self.edge_types
+                ]
+                self.to_restored_edge_type = {
+                    k: reverse_edge_type(k)
+                    for k in self.edge_types
+                }
 
             self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
 
@@ -142,7 +166,7 @@ class NeighborSampler(BaseSampler):
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time,
                 edge_time_dict=self.edge_time,
-                to_transpose=sample_direction == 'backward')
+                to_transpose=self.sample_direction == 'backward')
 
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
@@ -172,6 +196,21 @@ class NeighborSampler(BaseSampler):
 
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list({attr.edge_type for attr in edge_attrs})
+
+            # reverse edge types if sample_direction is backward
+            if self.sample_direction == 'backward':
+                self.edge_types = [
+                    reverse_edge_type(edge_type)
+                    for edge_type in self.edge_types
+                ]
+                self.to_restored_edge_type = {
+                    k: reverse_edge_type(k)
+                    for k in self.edge_types
+                }
+                self.to_backward_edge_type = {
+                    v: k
+                    for k, v in self.to_restored_edge_type.items()
+                }
 
             if weight_attr is not None:
                 raise NotImplementedError(
@@ -269,6 +308,13 @@ class NeighborSampler(BaseSampler):
                     row_dict, colptr_dict, self.perm = graph_store.csc()
                 elif self.sample_direction == 'backward':
                     colptr_dict, row_dict, self.perm = graph_store.csr()
+
+                    colptr_dict = remap_keys(colptr_dict,
+                                             self.to_backward_edge_type)
+                    row_dict = remap_keys(row_dict, self.to_backward_edge_type)
+                    self.perm = remap_keys(self.perm,
+                                           self.to_backward_edge_type)
+
                 self.row_dict = remap_keys(row_dict, self.to_rel_type)
                 self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
@@ -287,18 +333,41 @@ class NeighborSampler(BaseSampler):
         self.subgraph_type = SubgraphType(subgraph_type)
         self.disjoint = disjoint
         self.temporal_strategy = temporal_strategy
-        self.keep_orig_edges = False
 
     @property
     def num_neighbors(self) -> NumNeighbors:
+        if self.sample_direction == 'backward':
+            return self._input_num_neighbors \
+                if self._input_num_neighbors is not None \
+                else self._num_neighbors
         return self._num_neighbors
 
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
+        # only used if sample direction is backward and num_neighbors has edge
+        # keys
+        self._input_num_neighbors = None
+
         if isinstance(num_neighbors, NumNeighbors):
-            self._num_neighbors = num_neighbors
+            num_neighbors_values = num_neighbors.values
+            if isinstance(num_neighbors_values,
+                          dict) and self.sample_direction == 'backward':
+                # reverse the edge_types if sample_direction is backward
+                self._input_num_neighbors = num_neighbors
+                num_neighbors_values = remap_keys(num_neighbors_values,
+                                                  self.to_backward_edge_type)
+                self._num_neighbors = NumNeighbors(num_neighbors_values)
+            else:
+                self._num_neighbors = num_neighbors
         else:
-            self._num_neighbors = NumNeighbors(num_neighbors)
+            if isinstance(num_neighbors,
+                          dict) and self.sample_direction == 'backward':
+                # intentionally recursing here to make sure num_neighbors is
+                # set as expected for the user
+                self.num_neighbors = NumNeighbors(
+                    remap_keys(num_neighbors, self.to_backward_edge_type))
+            else:
+                self._num_neighbors = NumNeighbors(num_neighbors)
 
     @property
     def is_hetero(self) -> bool:
@@ -329,12 +398,8 @@ class NeighborSampler(BaseSampler):
         inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = node_sample(inputs, self._sample)
-        if self.sample_direction == 'backward':
-            row, col = out.row, out.col
-            out.row = col
-            out.col = row
         if self.subgraph_type == SubgraphType.bidirectional:
-            out = out.to_bidirectional(keep_orig_edges=self.keep_orig_edges)
+            out = out.to_bidirectional()
         return out
 
     # Edge-based sampling #####################################################
@@ -346,12 +411,8 @@ class NeighborSampler(BaseSampler):
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
                           self.node_time, neg_sampling)
-        if self.sample_direction == 'backward':
-            row, col = out.row, out.col
-            out.row = col
-            out.col = row
         if self.subgraph_type == SubgraphType.bidirectional:
-            out = out.to_bidirectional(keep_orig_edges=self.keep_orig_edges)
+            out = out.to_bidirectional()
         return out
 
     # Other Utilities #########################################################
@@ -448,17 +509,34 @@ class NeighborSampler(BaseSampler):
                 raise ImportError(f"'{self.__class__.__name__}' requires "
                                   f"either 'pyg-lib' or 'torch-sparse'")
 
+            if self.sample_direction == 'backward':
+                row, col = col, row
+
+            row = remap_keys(row, self.to_edge_type)
+            col = remap_keys(col, self.to_edge_type)
+            edge = remap_keys(edge, self.to_edge_type)
+
+            # In the case of backward sampling, we need to restore the edges
+            # keys to be forward facing in the HeteroSamplerOutput object.
+            if self.sample_direction == 'backward':
+                row = remap_keys(row, self.to_restored_edge_type)
+                col = remap_keys(col, self.to_restored_edge_type)
+                edge = remap_keys(edge, self.to_restored_edge_type)
+
             if num_sampled_edges is not None:
                 num_sampled_edges = remap_keys(
                     num_sampled_edges,
                     self.to_edge_type,
                 )
+                if self.sample_direction == 'backward':
+                    num_sampled_edges = remap_keys(num_sampled_edges,
+                                                   self.to_restored_edge_type)
 
             return HeteroSamplerOutput(
                 node=node,
-                row=remap_keys(row, self.to_edge_type),
-                col=remap_keys(col, self.to_edge_type),
-                edge=remap_keys(edge, self.to_edge_type),
+                row=row,
+                col=col,
+                edge=edge,
                 batch=batch,
                 num_sampled_nodes=num_sampled_nodes,
                 num_sampled_edges=num_sampled_edges,
@@ -525,6 +603,9 @@ class NeighborSampler(BaseSampler):
                 raise ImportError(f"'{self.__class__.__name__}' requires "
                                   f"either 'pyg-lib' or 'torch-sparse'")
 
+            if self.sample_direction == 'backward':
+                row, col = col, row
+
             return SamplerOutput(
                 node=node,
                 row=row,
@@ -536,15 +617,12 @@ class NeighborSampler(BaseSampler):
             )
 
 
-class BidirectionalNeighborSampler(BaseSampler):
+class BidirectionalNeighborSampler(NeighborSampler):
     """A sampler that allows for both upstream and downstream sampling."""
-
-    # NOTE: Designed to have the same interface as `NeighborSampler`
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighborsType,
-        num_backward_neighbors: Optional[NumNeighborsType] = None,
         subgraph_type: Union[SubgraphType, str] = 'directional',
         replace: bool = False,
         disjoint: bool = False,
@@ -556,38 +634,39 @@ class BidirectionalNeighborSampler(BaseSampler):
         # Deprecated:
         directed: bool = True,
     ):
-        self.backward_neighbors_explicitly_set = (num_backward_neighbors
-                                                  is not None)
-        if num_backward_neighbors is None:
-            num_backward_neighbors = num_neighbors
+
+        # TODO(zaristei)
+        if isinstance(num_neighbors, NumNeighbors) and isinstance(
+                num_neighbors.values, dict) or isinstance(num_neighbors, dict):
+            raise RuntimeError(
+                "BidirectionalNeighborSampler does not yet support edge "
+                "delimited sampling.")
 
         self.forward_sampler = NeighborSampler(
             data, num_neighbors, subgraph_type, replace, disjoint,
             temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
             sample_direction='forward', directed=directed)
         self.backward_sampler = NeighborSampler(
-            data, num_backward_neighbors, subgraph_type, replace, disjoint,
+            data, num_neighbors, subgraph_type, replace, disjoint,
             temporal_strategy, time_attr, weight_attr, is_sorted, share_memory,
             sample_direction='backward', directed=directed)
 
+        # Trigger warnings on init if number of hops is greater than 1
+        self.num_neighbors = num_neighbors
+        self.subgraph_type = subgraph_type
+
     @property
     def num_neighbors(self) -> NumNeighbors:
-        return self.forward_sampler.num_neighbors
+        return self._num_neighbors
 
     @num_neighbors.setter
     def num_neighbors(self, num_neighbors: NumNeighborsType):
-        self.forward_sampler.num_neighbors = num_neighbors
-        if not self.backward_neighbors_explicitly_set:
-            self.backward_sampler.num_neighbors = num_neighbors
-
-    @property
-    def num_backward_neighbors(self) -> NumNeighbors:
-        return self.backward_sampler.num_neighbors
-
-    @num_backward_neighbors.setter
-    def num_backward_neighbors(self, num_neighbors: NumNeighborsType):
-        self.backward_sampler.num_neighbors = num_neighbors
-        self.backward_neighbors_explicitly_set = True
+        if not isinstance(num_neighbors, NumNeighbors):
+            num_neighbors = NumNeighbors(num_neighbors)
+        if num_neighbors.num_hops > 1:
+            print("Warning: Number of hops is greater than 1, resulting in "
+                  "memory-expensive recursive calls.")
+        self._num_neighbors = num_neighbors
 
     @property
     def is_hetero(self) -> bool:
@@ -610,26 +689,104 @@ class BidirectionalNeighborSampler(BaseSampler):
         self,
         inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        forward_out = self.forward_sampler.sample_from_nodes(inputs)
-        backward_out = self.backward_sampler.sample_from_nodes(inputs)
-        out = forward_out.merge_with(backward_out)
-        return out
+        return super().sample_from_nodes(inputs)
 
     def sample_from_edges(
         self,
         inputs: EdgeSamplerInput,
         neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        forward_out = self.forward_sampler.sample_from_edges(
-            inputs, neg_sampling)
-        backward_out = self.backward_sampler.sample_from_edges(
-            inputs, neg_sampling)
-
-        return forward_out.merge_with(backward_out)
+        # TODO(zaristei) Figure out what exactly regular and negative sampling
+        # imply for bidirectional sampling case
+        if neg_sampling is not None:
+            raise RuntimeError(
+                "BidirectionalNeighborSampler does not yet support "
+                "negative sampling.")
+        # Not thoroughly tested yet!
+        return super().sample_from_edges(inputs)
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
         return self.forward_sampler.edge_permutation
+
+    def _sample(
+        self,
+        seed: Union[Tensor, Dict[NodeType, Tensor]],
+        seed_time: Optional[Union[Tensor, Dict[NodeType, Tensor]]] = None,
+        **kwargs,
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+
+        if seed_time is not None:
+            raise NotImplementedError(
+                "BidirectionalNeighborSampler does not yet support "
+                "temporal sampling.")
+
+        if self.is_hetero:
+            raise NotImplementedError(
+                "BidirectionalNeighborSampler does not yet support "
+                "heterogeneous sampling.")
+        else:
+            current_seed = seed
+            current_seed_batch = None
+            current_seed_time = seed_time
+            seen_seed_set = {int(node) for node in current_seed}
+            if self.disjoint:
+                current_seed_batch = torch.arange(len(current_seed))
+                seen_seed_set = {
+                    (int(node), int(batch))
+                    for node, batch in zip(current_seed, current_seed_batch)
+                }
+
+            iter_results = []
+
+            for n_neighbors in self.num_neighbors.values:
+                current_n_neighbors = [n_neighbors]
+                self.forward_sampler.num_neighbors = current_n_neighbors
+                self.backward_sampler.num_neighbors = current_n_neighbors
+
+                fwd_result = self.forward_sampler._sample(
+                    current_seed, current_seed_time, **kwargs)
+                bwd_result = self.backward_sampler._sample(
+                    current_seed, current_seed_time, **kwargs)
+                # The seeds for the next iteration will be the new nodes in
+                # this iteration
+                iter_result = fwd_result.merge_with(bwd_result)
+                iter_results.append(iter_result)
+
+                # Find the nodes not yet seen to set a seed for next iteration
+                if self.disjoint:
+                    iter_seed_global_batch = global_to_local_node_idx(
+                        current_seed_batch, iter_result.batch)
+                    iter_result.seed_node = seed[iter_seed_global_batch]
+
+                    keep_mask = torch.tensor([
+                        (int(node), int(batch)) not in seen_seed_set
+                        for node, batch in zip(iter_result.node,
+                                               iter_seed_global_batch)
+                    ])
+                    next_seed = [(int(node), int(batch))
+                                 for node, batch in zip(
+                                     iter_result.node[keep_mask],
+                                     iter_seed_global_batch[keep_mask])
+                                 ] if keep_mask.any() else []
+                    current_seed, current_seed_batch = torch.tensor(
+                        next_seed).reshape(-1, 2).transpose(0, 1).contiguous()
+                else:
+                    keep_mask = torch.tensor([
+                        int(node) not in seen_seed_set
+                        for node in iter_result.node
+                    ])
+                    next_seed = [
+                        int(node) for node in iter_result.node[keep_mask]
+                    ] if keep_mask.any() else []
+                    current_seed = torch.tensor(next_seed)
+
+                seen_seed_set |= set(next_seed)
+
+                # TODO(zaristei) figure out how to update seed times for
+                # temporal sampling
+
+            return SamplerOutput.collate(iter_results)
 
 
 # Sampling Utilities ##########################################################
