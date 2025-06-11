@@ -64,7 +64,10 @@ def train(
         return lr
 
     def get_clippable_params(params):
-        return [p for p in params if isinstance(p, torch.Tensor) and not hasattr(p, '_spec')]
+        return [
+            p for p in params
+            if isinstance(p, torch.Tensor) and not hasattr(p, '_spec')
+        ]
 
     start_time = time.time()
     # Load dataset ================================================
@@ -147,7 +150,8 @@ def train(
                          batch.edge_attr, batch.smiles, batch.instruction,
                          batch.y)
             loss.backward()
-            clip_grad_norm_(get_clippable_params(optimizer.param_groups[0]['params']), 0.1)
+            clip_grad_norm_(
+                get_clippable_params(optimizer.param_groups[0]['params']), 0.1)
 
             if (step + 1) % grad_steps == 0:
                 adjust_learning_rate(optimizer.param_groups[0], lr,
