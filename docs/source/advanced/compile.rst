@@ -53,12 +53,12 @@ The :meth:`torch.compile` method provides two important arguments to be aware of
 
       torch.compile(model, dynamic=True)
 
-  With this, :pytorch:`PyTorch` will up-front attempt to generate a kernel that is as dynamic as possible to avoid recompilations when sizes change across mini-batches changes.
-  Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, and thus only works when graph sizes are guaranteed to never change (*e.g.*, in full-batch training on small graphs).
-  By default, :obj:`dynamic` is set to :obj:`None` in :pytorch:`PyTorch` :obj:`>= 2.1.0`, and :pytorch:`PyTorch` will automatically detect if dynamism has occured.
+  With this, :pytorch:`PyTorch` will up-front attempt to generate a kernel that is as dynamic as possible to avoid recompilations when sizes change across mini-batches.
+  Note that when :obj:`dynamic` is set to :obj:`False`, :pytorch:`PyTorch` will *never* generate dynamic kernels, and thus only work when graph sizes are guaranteed to never change (*e.g.*, in full-batch training on small graphs).
+  By default, :obj:`dynamic` is set to :obj:`None` in :pytorch:`PyTorch` :obj:`>= 2.1.0`, and :pytorch:`PyTorch` will automatically detect if dynamism has occurred.
   Note that support for dynamic shape tracing requires :pytorch:`PyTorch` :obj:`>= 2.1.0` to be installed.
 
-* In order to maximize speedup, graphs breaks in the compiled model should be limited.
+* In order to maximize speedup, graph breaks in the compiled model should be limited.
   We can force compilation to raise an error upon the first graph break encountered by using the :obj:`fullgraph=True` argument:
 
   .. code-block:: python
@@ -66,15 +66,15 @@ The :meth:`torch.compile` method provides two important arguments to be aware of
       torch.compile(model, fullgraph=True)
 
   It is generally a good practice to confirm that your written model does not contain any graph breaks.
-  Importantly, there exists a few operations in :pyg:`PyG` that will currently lead to graph breaks (but workaround exists), *e.g.*:
+  Importantly, there exist a few operations in :pyg:`PyG` that will currently lead to graph breaks (but workarounds exist), *e.g.*:
 
   1. :meth:`~torch_geometric.nn.pool.global_mean_pool` (and other pooling operators) perform device synchronization in case the batch size :obj:`size` is not passed, leading to a graph break.
 
   2. :meth:`~torch_geometric.utils.remove_self_loops` and :meth:`~torch_geometric.utils.add_remaining_self_loops` mask the given :obj:`edge_index`, leading to a device synchronization to compute its final output shape.
-     As such, we recommend to augment your graph *before* inputting it into your GNN, *e.g.*, via the :class:`~torch_geometric.transforms.AddSelfLoops` or :class:`~torch_geometric.transforms.GCNNorm` transformations, and setting :obj:`add_self_loops=False`/:obj:`normalize=False` when initializing layers such as :class:`~torch_geometric.nn.conv.GCNConv`.
+     As such, we recommend augmenting your graph *before* inputting it into your GNN, *e.g.*, via the :class:`~torch_geometric.transforms.AddSelfLoops` or :class:`~torch_geometric.transforms.GCNNorm` transformations, and setting :obj:`add_self_loops=False`/:obj:`normalize=False` when initializing layers such as :class:`~torch_geometric.nn.conv.GCNConv`.
 
-Exampe Scripts
---------------
+Example Scripts
+---------------
 
 We have incorporated multiple examples in :obj:`examples/compile` that further show the practical usage of :meth:`torch.compile`:
 
@@ -88,7 +88,7 @@ Benchmark
 ---------
 
 :meth:`torch.compile` works **fantastically well** for many :pyg:`PyG` models.
-**Overall, we observe runtime improvements of nearly up to 300%.**
+**Overall, we observe runtime improvements of up to 300%.**
 
 Specifically, we benchmark :class:`~torch_geometric.nn.models.GCN`, :class:`~torch_geometric.nn.models.GraphSAGE` and :class:`~torch_geometric.nn.models.GIN` and compare runtimes obtained from traditional eager mode and :meth:`torch.compile`.
 We use a synthetic graph with 10,000 nodes and 200,000 edges, and a hidden feature dimensionality of 64.

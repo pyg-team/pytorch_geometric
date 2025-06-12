@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 from torch import Tensor
 
@@ -26,7 +28,6 @@ class SGFormerAttention(torch.nn.Module):
     ) -> None:
         super().__init__()
         assert channels % heads == 0
-        assert heads == 1, 'The number of heads are fixed as 1.'
         if head_channels is None:
             head_channels = channels // heads
 
@@ -38,34 +39,54 @@ class SGFormerAttention(torch.nn.Module):
         self.k = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
         self.v = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
 
-    def forward(self, x: Tensor) -> Tensor:
-        # feature transformation
-        qs = self.q(x).reshape(-1, self.heads, self.head_channels)
-        ks = self.k(x).reshape(-1, self.heads, self.head_channels)
-        vs = self.v(x).reshape(-1, self.heads, self.head_channels)
+    def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+        r"""Forward pass.
 
-        # normalize input
-        qs = qs / torch.norm(qs, p=2)  # [N, H, M]
-        ks = ks / torch.norm(ks, p=2)  # [L, H, M]
-        N = qs.shape[0]
+        Args:
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
+            mask (torch.Tensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+                the valid nodes for each graph. (default: :obj:`None`)
+        """
+        B, N, *_ = x.shape
+        qs, ks, vs = self.q(x), self.k(x), self.v(x)
+        # reshape and permute q, k and v to proper shape
+        # (b, n, num_heads * head_channels) to (b, n, num_heads, head_channels)
+        qs, ks, vs = map(
+            lambda t: t.reshape(B, N, self.heads, self.head_channels),
+            (qs, ks, vs))
+
+        if mask is not None:
+            mask = mask[:, :, None, None]
+            vs.masked_fill_(~mask, 0.)
+        # replace 0's with epsilon
+        epsilon = 1e-6
+        qs[qs == 0] = epsilon
+        ks[ks == 0] = epsilon
+        # normalize input, shape not changed
+        qs, ks = map(
+            lambda t: t / torch.linalg.norm(t, ord=2, dim=-1, keepdim=True),
+            (qs, ks))
 
         # numerator
-        kvs = torch.einsum("lhm,lhd->hmd", ks, vs)
-        attention_num = torch.einsum("nhm,hmd->nhd", qs, kvs)  # [N, H, D]
+        kvs = torch.einsum("blhm,blhd->bhmd", ks, vs)
+        attention_num = torch.einsum("bnhm,bhmd->bnhd", qs, kvs)
         attention_num += N * vs
 
         # denominator
-        all_ones = torch.ones([ks.shape[0]]).to(ks.device)
-        ks_sum = torch.einsum("lhm,l->hm", ks, all_ones)
-        attention_normalizer = torch.einsum("nhm,hm->nh", qs, ks_sum)  # [N, H]
-
+        all_ones = torch.ones([B, N]).to(ks.device)
+        ks_sum = torch.einsum("blhm,bl->bhm", ks, all_ones)
+        attention_normalizer = torch.einsum("bnhm,bhm->bnh", qs, ks_sum)
         # attentive aggregated results
-        attention_normalizer = torch.unsqueeze(
-            attention_normalizer, len(attention_normalizer.shape))  # [N, H, 1]
+        attention_normalizer = torch.unsqueeze(attention_normalizer,
+                                               len(attention_normalizer.shape))
         attention_normalizer += torch.ones_like(attention_normalizer) * N
-        attn_output = attention_num / attention_normalizer  # [N, H, D]
+        attn_output = attention_num / attention_normalizer
 
-        return attn_output.mean(dim=1)
+        return attn_output.mean(dim=2)
 
     def reset_parameters(self):
         self.q.reset_parameters()
