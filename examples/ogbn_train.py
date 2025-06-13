@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer
+from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -37,14 +37,16 @@ parser.add_argument(
     "--model",
     type=str.lower,
     default='SGFormer',
-    choices=['sage', 'gat', 'sgformer'],
+    choices=['sage', 'gat', 'sgformer', 'polynormer'],
     help="Model used for training",
 )
 
 parser.add_argument('-e', '--epochs', type=int, default=50)
+parser.add_argument('-le', '--local_epochs', type=int, default=50,
+                    help='warmup epochs for polynormer')
 parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=1,
-                    help='number of heads for GAT model.')
+                    help='number of heads for GAT or Graph Transformer model.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
@@ -73,11 +75,17 @@ if (args.dataset == 'ogbn-papers100M'
     print('Consider upgrading RAM if an error occurs.')
     print('Estimated RAM Needed: ~390GB.')
 
+if args.model == 'polynormer' and args.num_layers != 7:
+    print("The original polynormer paper recommends 7 layers, you have chosen",
+          args.num_layers, "which may effect results. See for details")
+
 print(f'Training {args.dataset} with {args.model} model.')
 
 seed_everything(123)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = args.epochs
+if args.model == 'polynormer':
+    num_epochs += args.local_epochs
 num_layers = args.num_layers
 num_workers = args.num_workers
 num_hidden_channels = args.hidden_channels
@@ -97,36 +105,23 @@ if args.add_self_loop:
 
 data.to(device, 'x', 'y')
 
-train_loader = NeighborLoader(
-    data,
-    input_nodes=split_idx['train'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
-    disjoint=args.model == "sgformer",
-)
-val_loader = NeighborLoader(
-    data,
-    input_nodes=split_idx['valid'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
-    disjoint=args.model == "sgformer",
-)
-test_loader = NeighborLoader(
-    data,
-    input_nodes=split_idx['test'],
-    num_neighbors=[args.fan_out] * num_layers,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers,
-    persistent_workers=True,
-    disjoint=args.model == "sgformer",
-)
+
+def get_loader(input_nodes: dict[str, Tensor]) -> NeighborLoader:
+    return NeighborLoader(
+        data,
+        input_nodes=input_nodes,
+        num_neighbors=[args.fan_out] * num_layers,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        persistent_workers=num_workers > 0,
+        disjoint=args.model in ['sgformer', 'polynormer'],
+    )
+
+
+train_loader = get_loader(split_idx['train'])
+val_loader = get_loader(split_idx['valid'])
+test_loader = get_loader(split_idx['test'])
 
 
 def train(epoch: int) -> tuple[Tensor, float]:
@@ -138,7 +133,10 @@ def train(epoch: int) -> tuple[Tensor, float]:
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        if args.model == "sgformer":
+        if args.model in ['sgformer', 'polynormer']:
+            if args.model == 'polynormer' and epoch == args.local_epochs:
+                print('start global attention')
+                model._global = True
             out = model(batch.x, batch.edge_index.to(device),
                         batch.batch.to(device))[:batch.batch_size]
         else:
@@ -167,7 +165,7 @@ def test(loader: NeighborLoader) -> float:
     for batch in loader:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
-        if args.model == "sgformer":
+        if args.model in ['sgformer', 'polynormer']:
             out = model(batch.x, batch.edge_index,
                         batch.batch)[:batch.batch_size]
         else:
@@ -208,6 +206,13 @@ def get_model(model_name: str) -> torch.nn.Module:
             trans_dropout=args.dropout,
             gnn_num_layers=num_layers,
             gnn_dropout=args.dropout,
+        )
+    elif model_name == 'polynormer':
+        model = Polynormer(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            out_channels=dataset.num_classes,
+            local_layers=num_layers,
         )
     else:
         raise ValueError(f'Unsupported model type: {model_name}')
