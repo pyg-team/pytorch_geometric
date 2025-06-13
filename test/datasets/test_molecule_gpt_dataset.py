@@ -3,7 +3,7 @@ from torch_geometric.testing import withPackage
 
 
 @withPackage('transformers', 'sentencepiece', 'accelerate', 'rdkit')
-def test_molecule_gpt_dataset():
+def test_molecule_gpt_dataset(cleanup_dist):
     dataset = MoleculeGPTDataset(root='./data/MoleculeGPT')
     assert str(dataset) == f'MoleculeGPTDataset({len(dataset)})'
     assert dataset.num_edge_features == 4
