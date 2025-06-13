@@ -192,7 +192,7 @@ class Explainer:
             if target is not None:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
-                    f"type '{self.explanation_type.value}'")
+                    f"type '{self.explanation_type.value}'", stacklevel=2)
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 

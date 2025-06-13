@@ -18,8 +18,9 @@ def get_stats():
     return params_count(model)
 
 
-def match_computation(stats_baseline, key=['gnn', 'dim_inner'], mode='sqrt'):
+def match_computation(stats_baseline, key=None, mode='sqrt'):
     """Match computation budget by modifying :obj:`cfg.gnn.dim_inner`."""
+    key = key or ['gnn', 'dim_inner']
     stats = get_stats()
     if stats != stats_baseline:
         # Phase 1: fast approximation
@@ -67,12 +68,12 @@ def dict_to_stats(cfg_dict):
 
 def match_baseline_cfg(cfg_dict, cfg_dict_baseline, verbose=True):
     """Match the computational budget of a given baseline model. The current
-    configuration dictionary will be modifed and returned.
+    configuration dictionary will be modified and returned.
 
     Args:
         cfg_dict (dict): Current experiment's configuration
         cfg_dict_baseline (dict): Baseline configuration
-        verbose (str, optional): If printing matched paramter conunts
+        verbose (str, optional): If printing matched parameter conunts
     """
     from yacs.config import CfgNode as CN
     stats_baseline = dict_to_stats(cfg_dict_baseline)

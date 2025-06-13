@@ -340,7 +340,7 @@ def train(
         eval_output = []
         model.eval()
         with torch.no_grad():
-            for step, batch in enumerate(val_loader):
+            for batch in val_loader:
                 loss = get_loss(model, batch, model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
@@ -368,7 +368,7 @@ def train(
     eval_output = []
     print("Final evaluation...")
     progress_bar_test = tqdm(range(len(test_loader)))
-    for step, batch in enumerate(test_loader):
+    for batch in test_loader:
         with torch.no_grad():
             pred = inference_step(model, batch, model_save_name)
             eval_data = {
