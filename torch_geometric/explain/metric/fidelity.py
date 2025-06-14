@@ -155,7 +155,7 @@ def fidelity_curve_auc(
             Needs to be sorted in ascending order.
     """
     if torch.any(neg_fidelity == 1):
-        raise ValueError("There exists negative fidelity values containing 1, "
+        raise ValueError("There exist negative fidelity values containing 1, "
                          "leading to a division by zero")
 
     y = pos_fidelity / (1. - neg_fidelity)
