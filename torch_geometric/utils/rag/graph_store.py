@@ -1,11 +1,14 @@
 from typing import Any, Dict, Optional, Union
 
 from torch import Tensor
+import torch
 
 from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
+from torch_geometric.utils import index_sort
 from torch_geometric.sampler import (
     BidirectionalNeighborSampler,
+    NeighborSampler,
     HeteroSamplerOutput,
     NodeSamplerInput,
     SamplerOutput,
@@ -72,7 +75,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
-        self.sampler = BidirectionalNeighborSampler(
+        self.sampler = NeighborSampler(
             data=(self.feature_store, self), num_neighbors=self.num_neighbors,
             **self.sample_kwargs)
         self._sampler_is_initialized = True
@@ -130,9 +133,13 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             edge_type=None,
             layout='coo',
             size=(num_nodes, num_nodes),
-            is_sorted=True,
+            is_sorted=False,
         )
-        self.put_edge_index(edge_index, **attr)
+        # edge index needs to be sorted here and the perm saved for later
+        col_sorted, self.perm = index_sort(edge_index[1], num_nodes, stable=True)
+        row_sorted = edge_index[0][self.perm]
+        edge_index_sorted = torch.stack([row_sorted, col_sorted], dim=0)
+        self.put_edge_index(edge_index_sorted, **attr)
 
     def sample_subgraph(
             self, seed_nodes: InputNodes
@@ -160,5 +167,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
         out = self.sampler.sample_from_nodes(node_sample_input)
+
+        # edge ids need to be remapped to the original indices
+        out.edge = self.perm[out.edge]
 
         return out

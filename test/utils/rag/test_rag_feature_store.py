@@ -108,13 +108,13 @@ class TestKNNRAGFeatureStore:
         
         # Create a mock SamplerOutput
         sample = SamplerOutput(
-            node=torch.tensor([7, 8, 9, 10]),
+            node=torch.tensor([6, 7, 8, 9]),
             row=torch.tensor([0, 1, 2]),
             col=torch.tensor([1, 2, 3]),
             edge=torch.tensor([0, 1, 2]),
             batch=None
         )
-        expected_edge_indices = torch.tensor([[7, 8, 9], [8, 9, 10]])
+        expected_edge_indices = torch.tensor([[6, 7, 8], [7, 8, 9]])
         
         result = store.load_subgraph(sample)
         
@@ -124,4 +124,4 @@ class TestKNNRAGFeatureStore:
         # Verify edge attributes are correctly extracted
         expected_edge_attr = self.sample_edge_attr[torch.tensor([0, 1, 2])]
         assert torch.equal(result.edge_attr, expected_edge_attr)
-        assert torch.equal(result.edge_idx, expected_edge_indices)
+        assert torch.equal(result.edge_index, expected_edge_indices)

@@ -1,3 +1,4 @@
+import os
 import torch
 import pytest
 from unittest.mock import Mock
@@ -6,7 +7,12 @@ from typing import Any, Dict
 from torch_geometric.data import Data
 from torch_geometric.loader.rag_loader import RAGQueryLoader
 from torch_geometric.sampler import SamplerOutput
+from torch_geometric.testing.decorators import onlyRAG
 from torch_geometric.utils.rag.vectorrag import VectorRetriever
+from torch_geometric.utils.rag.backend_utils import create_graph_from_triples, create_remote_backend_from_graph_data
+from torch_geometric.utils.rag.feature_store import KNNRAGFeatureStore
+from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+from torch_geometric.nn.nlp import SentenceTransformer
 
 
 class MockRAGFeatureStore:
@@ -125,14 +131,13 @@ class TestRAGQueryLoader:
         assert loader.augment_query is True
         assert loader.subgraph_filter == mock_subgraph_filter
         assert loader.config == self.sample_config
-    
 
     def test_bad_config(self):
         """Test bad config initialization."""
         with pytest.raises(ValueError):
-            loader = RAGQueryLoader(self.graph_data)
+            RAGQueryLoader(self.graph_data)
         with pytest.raises(ValueError):
-            loader = RAGQueryLoader(self.graph_data, config={'d': 'foobar'})
+            RAGQueryLoader(self.graph_data, config={'d': 'foobar'})
     
     def test_config_propagation(self):
         """Test that config is propagated during initialization."""
@@ -204,4 +209,62 @@ class TestRAGQueryLoader:
         # Verify result is the filtered result
         assert result == mock_filter_result
         assert hasattr(result, 'filtered')
-        assert result.filtered is True 
+        assert result.filtered is True
+
+
+
+# @onlyRAG
+def test_rag_loader_integration(tmp_path):
+    """Test RAGQueryLoader with real feature and graph stores from triples."""
+
+    # Define test triplets - simple knowledge graph about cities/countries
+    triplets = [
+        ["Paris", "capital_of", "France"],
+        ["London", "capital_of", "UK"],
+        ["Berlin", "capital_of", "Germany"],
+        ["France", "in_continent", "Europe"],
+        ["UK", "in_continent", "Europe"],
+        ["Germany", "in_continent", "Europe"],
+        ["Rome", "capital_of", "Italy"],
+        ["Italy", "in_continent", "Europe"],
+        ["Madrid", "capital_of", "Spain"],
+        ["Spain", "in_continent", "Europe"],
+    ]
+
+    encoder_model = SentenceTransformer('prajjwal1/bert-tiny')
+    # Create graph from triplets
+    graph_data = create_graph_from_triples(triplets, encoder_model.encode) 
+    
+    save_path = os.path.join(tmp_path, "test_graph.pt")
+    loader = create_remote_backend_from_graph_data(
+        graph_data=graph_data,
+        path=save_path,
+        n_parts=1,
+        graph_db=NeighborSamplingRAGGraphStore,
+        feature_db=KNNRAGFeatureStore
+    )
+    feature_store, graph_store = loader.load()
+
+
+    # Configuration
+    config = {
+        "k_nodes": 1,
+        "encoder_model": encoder_model,
+        "num_neighbors": [10]  # 10 neighbors only one hop
+    }
+
+    # Create RAG loader
+    rag_data = (feature_store, graph_store)
+    loader = RAGQueryLoader(rag_data, config=config)
+
+    # Test query about European capitals
+    query = "countries in Europe"
+    result = loader.query(query)
+
+    # Verify result structure
+    assert isinstance(result, Data)
+    assert torch.equal(result.edge_index, torch.tensor([[1,3,5,8,10], [6,6,6,6,6]]))
+    expected_x = encoder_model.encode(["Europe", "France", "UK", "Germany", "Italy", "Spain"]).cpu()
+    expected_edge_attr = encoder_model.encode(["in_continent"]*5).cpu()
+    assert torch.allclose(result.x, expected_x, atol=1e-6)
+    assert torch.allclose(result.edge_attr, expected_edge_attr, atol=1e-6)

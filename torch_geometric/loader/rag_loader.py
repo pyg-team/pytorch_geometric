@@ -146,9 +146,14 @@ class RAGQueryLoader:
         seed_nodes, query_enc = self.feature_store.retrieve_seed_nodes(query)
 
         subgraph_sample = self.graph_store.sample_subgraph(seed_nodes)
+        node_idx, edge_idx = subgraph_sample.node, subgraph_sample.edge
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample)
+        # Useful for tracking what subset of the graph was sampled
+        data.node_idx = node_idx
+        data.edge_idx = edge_idx
 
+        '''
         # need to use sampled edge_idx to index into original graph then reindex
         total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
         data.node_idx = torch.tensor(
@@ -170,6 +175,7 @@ class RAGQueryLoader:
             list_edge_index.append(
                 (remap_dict[int(src)], remap_dict[int(dst)]))
         data.edge_index = torch.tensor(list_edge_index).t()
+        '''
 
         # apply local filter
         if self.subgraph_filter:

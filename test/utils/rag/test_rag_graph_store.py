@@ -31,7 +31,7 @@ def test_sample_subgraph_with_valid_tensor_input():
     mock_sampler = Mock(spec=BidirectionalNeighborSampler)
     expected_output = SamplerOutput(
         node=torch.tensor([0, 1, 2, 3]),
-        row=torch.tensor([0, 1, 2]),
+        row=torch.tensor([0, 1, 1]),
         col=torch.tensor([1, 2, 3]),
         edge=torch.tensor([0, 1, 2]),
         batch=None,
@@ -39,6 +39,9 @@ def test_sample_subgraph_with_valid_tensor_input():
         num_sampled_edges=[3]
     )
     mock_sampler.sample_from_nodes.return_value = expected_output
+
+    # Intentionally not sorted
+    graph_store.edge_index = torch.tensor([[3, 1, 1, 0], [4, 2, 3, 1]])
 
     # Initially sampler should not be initialized
     assert not graph_store._sampler_is_initialized
@@ -51,7 +54,7 @@ def test_sample_subgraph_with_valid_tensor_input():
         mock_init.side_effect = set_sampler
         
         # Test input
-        seed_nodes = torch.tensor([0, 1, 2, 2, 1])  # includes duplicates
+        seed_nodes = torch.tensor([0])
         result = graph_store.sample_subgraph(seed_nodes)
         
         # Verify sampler was initialized

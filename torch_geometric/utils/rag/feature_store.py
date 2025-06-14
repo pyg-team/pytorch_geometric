@@ -136,9 +136,14 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         # NOTE: torch_geometric.loader.utils.filter_custom_store can be used here
         # if it supported edge features
         edge_id = sample.edge
+        x = self.x[sample.node]
         edge_attr = self.edge_attr[edge_id]
+        '''
+        return Data(edge_attr=edge_attr, edge_idx=edge_id)
+        '''
+
         edge_idx = torch.stack([sample.global_row, sample.global_col], dim=0)
-        return Data(edge_attr=edge_attr, edge_idx=edge_idx)
+        return Data(x=x, edge_attr=edge_attr, edge_index=edge_idx)
 
 
 # TODO: Refactor because composition >> inheritance
