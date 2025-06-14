@@ -116,7 +116,7 @@ export GLOO_SOCKET_IFNAME=$TP_SOCKET_IFNAME
 
 #### Option B: Launch Script
 
-There exists two methods to run the distributed example with one script in one terminal for multiple nodes:
+There exist two methods to run the distributed example with one script in one terminal for multiple nodes:
 
 1. [`launch.py`](./launch.py):
    ```bash

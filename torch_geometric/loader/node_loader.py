@@ -76,7 +76,7 @@ class NodeLoader(
             on whether data partially lives on the GPU
             (:obj:`filter_per_worker=True`) or entirely on the CPU
             (:obj:`filter_per_worker=False`).
-            There exists different trade-offs for setting this option.
+            There exist different trade-offs for setting this option.
             Specifically, setting this option to :obj:`True` for in-memory
             datasets will move all features to shared memory, which may result
             in too many open file handles. (default: :obj:`None`)
@@ -164,7 +164,7 @@ class NodeLoader(
 
         if isinstance(out, SamplerOutput):
             if isinstance(self.data, Data):
-                data = filter_data(  #
+                data = filter_data(
                     self.data, out.node, out.row, out.col, out.edge,
                     self.node_sampler.edge_permutation)
 
@@ -181,7 +181,7 @@ class NodeLoader(
                     data.y = out.metadata[-2]
                     data.edge_attr = out.metadata[-1]
                 else:
-                    data = filter_custom_store(  #
+                    data = filter_custom_store(
                         *self.data, out.node, out.row, out.col, out.edge,
                         self.custom_cls)
 
@@ -208,7 +208,7 @@ class NodeLoader(
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(  #
+                data = filter_hetero_data(
                     self.data, out.node, out.row, out.col, out.edge,
                     self.node_sampler.edge_permutation)
 
@@ -224,7 +224,7 @@ class NodeLoader(
                         self.custom_cls, out.metadata,
                         self.input_data.input_type)
                 else:
-                    data = filter_custom_hetero_store(  #
+                    data = filter_custom_hetero_store(
                         *self.data, out.node, out.row, out.col, out.edge,
                         self.custom_cls)
 
@@ -257,7 +257,7 @@ class NodeLoader(
             data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
+            raise TypeError(f"'{self.__class__.__name__}' found invalid "
                             f"type: '{type(out)}'")
 
         return data if self.transform is None else self.transform(data)

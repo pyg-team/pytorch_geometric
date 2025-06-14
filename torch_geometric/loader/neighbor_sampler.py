@@ -39,7 +39,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
     iteratively samples neighbors and constructs bipartite graphs that simulate
     the actual computation flow of GNNs.
 
-    More specifically, :obj:`sizes` denotes how much neighbors we want to
+    More specifically, :obj:`sizes` denotes how many neighbors we want to
     sample for each node in each layer.
     This module then takes in these :obj:`sizes` and iteratively samples
     :obj:`sizes[l]` for each node involved in layer :obj:`l`.

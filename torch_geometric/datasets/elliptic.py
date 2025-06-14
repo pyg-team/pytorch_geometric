@@ -17,7 +17,7 @@ class EllipticBitcoinDataset(InMemoryDataset):
     licit services, etc.) versus illicit ones (scams, malware, terrorist
     organizations, ransomware, Ponzi schemes, etc.)
 
-    There exists 203,769 node transactions and 234,355 directed edge payments
+    There exist 203,769 node transactions and 234,355 directed edge payments
     flows, with two percent of nodes (4,545) labelled as illicit, and
     twenty-one percent of nodes (42,019) labelled as licit.
     The remaining transactions are unknown.
@@ -101,7 +101,7 @@ class EllipticBitcoinDataset(InMemoryDataset):
 
         x = torch.from_numpy(feat_df.loc[:, 2:].values).to(torch.float)
 
-        # There exists 3 different classes in the dataset:
+        # There exist 3 different classes in the dataset:
         # 0=licit,  1=illicit, 2=unknown
         mapping = {'unknown': 2, '1': 1, '2': 0}
         class_df['class'] = class_df['class'].map(mapping)

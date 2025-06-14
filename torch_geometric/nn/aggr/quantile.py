@@ -80,7 +80,7 @@ class QuantileAggregation(Aggregation):
         count = torch.bincount(index, minlength=dim_size or 0)
         ptr = cumsum(count)[:-1]
 
-        # In case there exists dangling indices (`dim_size > index.max()`), we
+        # In case there exist dangling indices (`dim_size > index.max()`), we
         # need to clamp them to prevent out-of-bound issues:
         if dim_size is not None:
             ptr = ptr.clamp(max=x.size(dim) - 1)

@@ -14,7 +14,7 @@ class EllipticBitcoinTemporalDataset(EllipticBitcoinDataset):
     miners, licit services, etc.) versus illicit ones (scams, malware,
     terrorist organizations, ransomware, Ponzi schemes, etc.)
 
-    There exists 203,769 node transactions and 234,355 directed edge payments
+    There exist 203,769 node transactions and 234,355 directed edge payments
     flows, with two percent of nodes (4,545) labelled as illicit, and
     twenty-one percent of nodes (42,019) labelled as licit.
     The remaining transactions are unknown.

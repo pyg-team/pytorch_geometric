@@ -14,7 +14,7 @@ class LinkNeighborLoader(LinkLoader):
     where full-batch training is not feasible.
 
     More specifically, this loader first selects a sample of edges from the
-    set of input edges :obj:`edge_label_index` (which may or not be edges in
+    set of input edges :obj:`edge_label_index` (which may or may not be edges in
     the original graph) and then constructs a subgraph from all the nodes
     present in this list by sampling :obj:`num_neighbors` neighbors in each
     iteration.
@@ -110,7 +110,7 @@ class LinkNeighborLoader(LinkLoader):
             (default: :obj:`None`)
         edge_label (Tensor, optional): The labels of edge indices for
             which neighbors are sampled. Must be the same length as
-            the :obj:`edge_label_index`. If set to :obj:`None` its set to
+            the :obj:`edge_label_index`. If set to :obj:`None` it's set to
             `torch.zeros(...)` internally. (default: :obj:`None`)
         edge_label_time (Tensor, optional): The timestamps for edge indices
             for which neighbors are sampled. Must be the same length as
@@ -131,7 +131,7 @@ class LinkNeighborLoader(LinkLoader):
             If set to :obj:`"induced"`, the returned subgraph contains the
             induced subgraph of all sampled nodes.
             (default: :obj:`"directional"`)
-        disjoint (bool, optional): If set to :obj: `True`, each seed node will
+        disjoint (bool, optional): If set to :obj:`True`, each seed node will
             create its own disjoint subgraph.
             If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
             vector holding the mapping of nodes to their respective subgraph.
@@ -207,7 +207,7 @@ class LinkNeighborLoader(LinkLoader):
             on whether data partially lives on the GPU
             (:obj:`filter_per_worker=True`) or entirely on the CPU
             (:obj:`filter_per_worker=False`).
-            There exists different trade-offs for setting this option.
+            There exist different trade-offs for setting this option.
             Specifically, setting this option to :obj:`True` for in-memory
             datasets will move all features to shared memory, which may result
             in too many open file handles. (default: :obj:`None`)

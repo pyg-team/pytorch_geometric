@@ -176,7 +176,7 @@ class BaseData:
             node-level attributes.
             :pyg:`PyG` then *guesses* the number of nodes according to
             :obj:`edge_index.max().item() + 1`.
-            However, in case there exists isolated nodes, this number does not
+            However, in case there exist isolated nodes, this number does not
             have to be correct which can result in unexpected behavior.
             Thus, we recommend to set the number of nodes in your data object
             explicitly via :obj:`data.num_nodes = ...`.
