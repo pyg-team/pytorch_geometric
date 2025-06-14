@@ -1,8 +1,6 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
-import torch
-
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
@@ -18,13 +16,13 @@ class RAGFeatureStore(Protocol):
         for the RAG Sampler.
         """
         ...
-    
+
     @property
     @abstractmethod
     def config(self) -> Dict[str, Any]:
         """Get the config for the RAGFeatureStore."""
         ...
-    
+
     @config.setter
     @abstractmethod
     def config(self, config: Dict[str, Any]):
@@ -152,7 +150,6 @@ class RAGQueryLoader:
         # Useful for tracking what subset of the graph was sampled
         data.node_idx = node_idx
         data.edge_idx = edge_idx
-
         '''
         # need to use sampled edge_idx to index into original graph then reindex
         total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
