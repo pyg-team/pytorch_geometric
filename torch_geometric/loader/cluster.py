@@ -235,9 +235,9 @@ class ClusterData(torch.utils.data.Dataset):
 class ClusterLoader(torch.utils.data.DataLoader):
     r"""The data loader scheme from the `"Cluster-GCN: An Efficient Algorithm
     for Training Deep and Large Graph Convolutional Networks"
-    <https://arxiv.org/abs/1905.07953>`_ paper which merges partitioned subgraphs
-    and their between-cluster links from a large-scale graph data object to
-    form a mini-batch.
+    <https://arxiv.org/abs/1905.07953>`_ paper which merges partitioned
+    subgraphs and their between-cluster links from a large-scale graph data
+    object to form a mini-batch.
 
     .. note::
 

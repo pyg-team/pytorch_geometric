@@ -14,8 +14,8 @@ class LinkNeighborLoader(LinkLoader):
     where full-batch training is not feasible.
 
     More specifically, this loader first selects a sample of edges from the
-    set of input edges :obj:`edge_label_index` (which may or may not be edges in
-    the original graph) and then constructs a subgraph from all the nodes
+    set of input edges :obj:`edge_label_index` (which may or may not be edges
+    in the original graph) and then constructs a subgraph from all the nodes
     present in this list by sampling :obj:`num_neighbors` neighbors in each
     iteration.
 
