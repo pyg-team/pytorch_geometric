@@ -229,9 +229,9 @@ class LinkLoader(
 
         if isinstance(out, SamplerOutput):
             if isinstance(self.data, Data):
-                data = filter_data(
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.link_sampler.edge_permutation)
+                data = filter_data(self.data, out.node, out.row, out.col,
+                                   out.edge,
+                                   self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
 
@@ -246,9 +246,9 @@ class LinkLoader(
                     data.y = out.metadata[-2]
                     data.edge_attr = out.metadata[-1]
                 else:
-                    data = filter_custom_store(
-                        *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls)
+                    data = filter_custom_store(*self.data, out.node, out.row,
+                                               out.col, out.edge,
+                                               self.custom_cls)
 
             if 'n_id' not in data:
                 data.n_id = out.node
@@ -279,9 +279,9 @@ class LinkLoader(
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.link_sampler.edge_permutation)
+                data = filter_hetero_data(self.data, out.node, out.row,
+                                          out.col, out.edge,
+                                          self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
 
@@ -294,9 +294,10 @@ class LinkLoader(
                         self.custom_cls, out.metadata,
                         self.input_data.input_type)
                 else:
-                    data = filter_custom_hetero_store(
-                        *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls)
+                    data = filter_custom_hetero_store(*self.data, out.node,
+                                                      out.row, out.col,
+                                                      out.edge,
+                                                      self.custom_cls)
 
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
