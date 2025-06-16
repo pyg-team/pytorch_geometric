@@ -16,7 +16,7 @@
 /torch_geometric/sampler/ @mananshah99 @pyg-team/intel-team
 
 /torch_geometric/transforms/ @wsad1 @akihironitta @rusty1s
- 
+
 /torch_geometric/utils/ @wsad1 @akihironitta @rusty1s
 
 /torch_geometric/datasets/ @wsad1 @akihironitta @rusty1s
