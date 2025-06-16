@@ -73,7 +73,7 @@ class GeniePath(torch.nn.Module):
         x = self.lin1(x)
         h = torch.zeros(1, x.shape[0], lstm_hidden, device=x.device)
         c = torch.zeros(1, x.shape[0], lstm_hidden, device=x.device)
-        for i, l in enumerate(self.gplayers):
+        for i, _ in enumerate(self.gplayers):
             x, (h, c) = self.gplayers[i](x, edge_index, h, c)
         x = self.lin2(x)
         return x
@@ -94,10 +94,10 @@ class GeniePathLazy(torch.nn.Module):
         h = torch.zeros(1, x.shape[0], lstm_hidden, device=x.device)
         c = torch.zeros(1, x.shape[0], lstm_hidden, device=x.device)
         h_tmps = []
-        for i, l in enumerate(self.breadths):
+        for i, _ in enumerate(self.breadths):
             h_tmps.append(self.breadths[i](x, edge_index))
         x = x[None, :]
-        for i, l in enumerate(self.depths):
+        for i, _ in enumerate(self.depths):
             in_cat = torch.cat((h_tmps[i][None, :], x), -1)
             x, (h, c) = self.depths[i](in_cat, h, c)
         x = self.lin2(x[0])

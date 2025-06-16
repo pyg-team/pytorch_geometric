@@ -75,9 +75,9 @@
 
 <script>
   var torchList = [
+    ['torch-2.7.0', 'PyTorch 2.7.*'],
+    ['torch-2.6.0', 'PyTorch 2.6.*'],
     ['torch-2.5.0', 'PyTorch 2.5.*'],
-    ['torch-2.4.0', 'PyTorch 2.4.*'],
-    ['torch-2.3.0', 'PyTorch 2.3.*'],
   ];
 
   var osList = [
@@ -95,6 +95,8 @@
     ['cu118', '11.8'],
     ['cu121', '12.1'],
     ['cu124', '12.4'],
+    ['cu126', '12.6'],
+    ['cu128', '12.8'],
     ['cpu', 'CPU'],
   ];
 
@@ -113,16 +115,40 @@
       $("#command pre").text('# macOS binaries do not support CUDA');
     }
 
-    else if (torch == "torch-2.3.0" && cuda == "cu124") {
+    else if (torch == "torch-2.5.0" && cuda == "cu126") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.6');
+    }
+
+    else if (torch == "torch-2.5.0" && cuda == "cu128") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.8');
+    }
+
+    else if (torch == "torch-2.6.0" && cuda == "cu121") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.1');
+    }
+
+    else if (torch == "torch-2.6.0" && cuda == "cu128") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.8');
+    }
+
+    else if (torch == "torch-2.7.0" && cuda == "cu121") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.1');
+    }
+
+    else if (torch == "torch-2.7.0" && cuda == "cu124") {
       $("#command pre").text('# PyTorch version does not support CUDA 12.4');
+    }
+
+    else if (package == "conda" && torch == "torch-2.6.0") {
+      $("#command pre").text('NOTE: Conda packages are no longer available. Please use pip instead');
+    }
+
+    else if (package == "conda" && torch == "torch-2.7.0") {
+      $("#command pre").text('NOTE: Conda packages are no longer available. Please use pip instead');
     }
 
     else if (package == "conda") {
       $("#command pre").text('conda install pyg -c pyg');
-    }
-
-    else if ((os == "windows" || os == "mac") && (torch == "torch-2.1.0" || torch == "torch-2.2.0")) {
-      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
 
     else {

@@ -30,6 +30,7 @@ from .faust import FAUST
 from .dynamic_faust import DynamicFAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
+from .medshapenet import MedShapeNet
 from .coma import CoMA
 from .shrec2016 import SHREC2016
 from .tosca import TOSCA
@@ -82,6 +83,7 @@ from .molecule_gpt_dataset import MoleculeGPTDataset
 from .instruct_mol_dataset import InstructMolDataset
 from .tag_dataset import TAGDataset
 from .teeth3ds import Teeth3DS
+from .city import CityNetwork
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -147,6 +149,7 @@ homo_datasets = [
     'DynamicFAUST',
     'ShapeNet',
     'ModelNet',
+    'MedShapeNet',
     'CoMA',
     'SHREC2016',
     'TOSCA',
@@ -201,6 +204,7 @@ homo_datasets = [
     'InstructMolDataset',
     'TAGDataset',
     'Teeth3DS',
+    'CityNetwork',
 ]
 
 hetero_datasets = [

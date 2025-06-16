@@ -65,6 +65,3 @@ graphgym:
 benchmark:
   - changed-files:
       - any-glob-to-any-file: ["benchmark/**/*", "torch_geometric/profile/**/*"]
-
-auto-skip-changelog:
-  - head-branch: ['^skip', '^pre-commit-ci']

@@ -409,7 +409,7 @@ class FeatureStore(ABC):
     def update_tensor(self, tensor: FeatureTensorType, *args,
                       **kwargs) -> bool:
         r"""Updates a :obj:`tensor` in the :class:`FeatureStore` with a new
-        value. Returns whether the update was succesful.
+        value. Returns whether the update was successful.
 
         .. note::
             Implementor classes can choose to define more efficient update

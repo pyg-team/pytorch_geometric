@@ -7,6 +7,6 @@ import torch_geometric.contrib.explain  # noqa
 
 warnings.warn(
     "'torch_geometric.contrib' contains experimental code and is subject to "
-    "change. Please use with caution.")
+    "change. Please use with caution.", stacklevel=2)
 
 __all__ = []
