@@ -244,7 +244,7 @@ def test_rag_loader_integration(tmp_path):
     # Verify result structure
     assert isinstance(result, Data)
     assert torch.equal(result.edge_index,
-                       torch.tensor([[1, 3, 5, 8, 10], [6, 6, 6, 6, 6]]))
+                       torch.tensor([[1, 2, 3, 4, 5], [0, 0, 0, 0, 0]]))
     expected_x = encoder_model.encode(
         ["Europe", "France", "UK", "Germany", "Italy", "Spain"]).cpu()
     expected_edge_attr = encoder_model.encode(["in_continent"] * 5).cpu()

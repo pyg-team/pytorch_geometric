@@ -103,7 +103,8 @@ class TestKNNRAGFeatureStore:
             assert torch.equal(result, expected_indices)
             assert torch.equal(query_enc, mock_query_enc)
 
-    def test_load_subgraph_valid_sample(self):
+    @pytest.mark.parametrize("induced", [True, False])
+    def test_load_subgraph_valid_sample(self, induced):
         """Test load_subgraph with valid SamplerOutput."""
         store = self.create_feature_store()
 
@@ -112,9 +113,11 @@ class TestKNNRAGFeatureStore:
                                row=torch.tensor([0, 1, 2]),
                                col=torch.tensor([1, 2, 3]),
                                edge=torch.tensor([0, 1, 2]), batch=None)
-        expected_edge_indices = torch.tensor([[6, 7, 8], [7, 8, 9]])
 
-        result = store.load_subgraph(sample)
+        expected_edge_indices = torch.tensor([[0, 1, 2], [1, 2, 3]]) \
+            if induced else torch.tensor([[6, 7, 8], [7, 8, 9]])
+
+        result = store.load_subgraph(sample, induced=induced)
 
         # Verify result is a Data object
         assert isinstance(result, Data)
@@ -123,3 +126,6 @@ class TestKNNRAGFeatureStore:
         expected_edge_attr = self.sample_edge_attr[torch.tensor([0, 1, 2])]
         assert torch.equal(result.edge_attr, expected_edge_attr)
         assert torch.equal(result.edge_index, expected_edge_indices)
+        if induced:
+            assert torch.equal(result.node_idx, sample.node)
+            assert torch.equal(result.edge_idx, sample.edge)
