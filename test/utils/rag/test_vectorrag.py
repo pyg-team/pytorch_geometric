@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.utils.rag.vectorrag import DocumentRetriever
-
+from torch_geometric.testing import onlyRAG
 
 @pytest.fixture
 def sample_documents():
@@ -32,11 +32,6 @@ def sample_model():
 
 def test_save_load(sample_documents, sample_model, tmp_path):
     """Test whether saving and loading a DocumentRetriever maintains its state."""
-    # TODO: Implement test
-    # 1. Create a DocumentRetriever instance
-    # 2. Save it to a temporary path
-    # 3. Load it back
-    # 4. Verify that all attributes match the original instance
     retriever = DocumentRetriever(sample_documents, model=sample_model)
     retriever.save(tmp_path / "retriever.pth")
     loaded_retriever = DocumentRetriever.load(tmp_path / "retriever.pth",
@@ -48,12 +43,9 @@ def test_save_load(sample_documents, sample_model, tmp_path):
     assert retriever.model == loaded_retriever.model
 
 
+@onlyRAG
 def test_query(sample_documents, sample_model):
     """Test query functionality of DocumentRetriever."""
-    # TODO: Implement test
-    # 1. Create a DocumentRetriever instance
-    # 2. Perform a query
-    # 3. Verify the returned documents match expectations
     retriever = DocumentRetriever(sample_documents, model=sample_model)
     query = "What is the first test document?"
     retrieved_docs = retriever.query(query)
