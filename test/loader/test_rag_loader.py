@@ -51,6 +51,7 @@ class MockRAGFeatureStore:
         """Mock load_subgraph method."""
         data = Data()
         data.edge_idx = torch.tensor([0, 1, 2])
+        data.node_idx = torch.tensor([0, 1, 2, 3, 4])
         return data
 
 
