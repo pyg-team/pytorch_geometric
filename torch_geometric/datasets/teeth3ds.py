@@ -251,11 +251,3 @@ class Teeth3DS(InMemoryDataset):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '
                 f'mode={self.mode}, split={self.split})')
-
-
-if __name__ == '__main__':
-    dataset_train = Teeth3DS(root="./Teeth3DS", split="Teeth3DS")
-    print(dataset_train)
-    dataset_test = Teeth3DS(root="./Teeth3DS", split="Teeth3DS",
-                            is_train=False)
-    print(dataset_test)
