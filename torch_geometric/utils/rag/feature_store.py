@@ -120,7 +120,9 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         return batch_knn(query_enc, self.x, k_nodes)
 
     def load_subgraph(
-        self, sample: Union[SamplerOutput, HeteroSamplerOutput], induced=True,
+        self,
+        sample: Union[SamplerOutput, HeteroSamplerOutput],
+        induced=True,
     ) -> Union[Data, HeteroData]:
         """Loads a subgraph from the given sample.
 

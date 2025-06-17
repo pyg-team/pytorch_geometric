@@ -1,8 +1,9 @@
 import pytest
 import torch
 
-from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 from torch_geometric.testing import onlyRAG
+from torch_geometric.utils.rag.vectorrag import DocumentRetriever
+
 
 @pytest.fixture
 def sample_documents():
