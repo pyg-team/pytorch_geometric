@@ -634,15 +634,16 @@ def main():
 
     print("Preparing data loaders...")
     loader_dict = {}
+    num_neighbors_dict = {
+        edge_type: args.num_neighbors
+        for edge_type in data.edge_types
+    }
+
     for split in ["train", "val", "test"]:
         table = task.get_table(split)
         print(f"Creating '{split}' dataloader with columns: "
               f"{list(table.df.columns)}")
         table_input = get_train_table_input(split_table=table, task=task)
-        num_neighbors_dict = {
-            edge_type: args.num_neighbors
-            for edge_type in data.edge_types
-        }
         loader_dict[split] = NeighborLoader(
             data=data,
             num_neighbors=num_neighbors_dict,
