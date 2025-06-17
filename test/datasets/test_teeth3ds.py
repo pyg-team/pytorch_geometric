@@ -1,7 +1,13 @@
+import os
+
+import pytest
+
 from torch_geometric.data import Data
 from torch_geometric.datasets.teeth3ds import Teeth3DS
 
 
+@pytest.mark.skipif(
+    os.getenv("CI") is not None, reason="Skip large dataset test on CI")
 def test_teeth3ds():
     dataset = Teeth3DS(root="teeth3ds", split="Teeth3DS", is_train=True)
 
