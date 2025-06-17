@@ -32,7 +32,7 @@ from torch_geometric.typing import EdgeType, NodeType
 
 RemoteGraphBackend = Tuple[FeatureStore, GraphStore]
 
-# TODO: Make everything compatible with Hetero graphs aswell
+# TODO: Make everything compatible with Hetero graphs as well
 
 
 # Adapted from LocalGraphStore
@@ -161,7 +161,7 @@ def create_remote_backend_from_triplets(
         pre_transform (Callable[[TripletLike], TripletLike] | None, optional):
             optional preprocessing function for triplets. Defaults to None.
         path (str, optional): path to save resulting stores. Defaults to ''.
-        n_parts (int, optional): Number of partitons to store in.
+        n_parts (int, optional): Number of partitions to store in.
             Defaults to 1.
         node_method_kwargs (Optional[Dict[str, Any]], optional): args to pass
             into node encoding method. Defaults to None.
@@ -174,13 +174,13 @@ def create_remote_backend_from_triplets(
     """
     # Will return attribute errors for missing attributes
     if not issubclass(graph_db, ConvertableGraphStore):
-        getattr(graph_db, "from_data")
-        getattr(graph_db, "from_hetero_data")
-        getattr(graph_db, "from_partition")
+        graph_db.from_data  # noqa: B018
+        graph_db.from_hetero_data  # noqa: B018
+        graph_db.from_partition  # noqa: B018
     elif not issubclass(feature_db, ConvertableFeatureStore):
-        getattr(feature_db, "from_data")
-        getattr(feature_db, "from_hetero_data")
-        getattr(feature_db, "from_partition")
+        feature_db.from_data  # noqa: B018
+        feature_db.from_hetero_data  # noqa: B018
+        feature_db.from_partition  # noqa: B018
 
     # Resolve callable methods
     node_method_kwargs = node_method_kwargs \

@@ -21,7 +21,8 @@ def test_set_transformer_aggregation():
     assert out.isnan().sum() == 0
     if torch_geometric.typing.WITH_PT25:
         if not out[2].abs().sum() != 0:
-            warnings.warn("'SetTransformerAggregation' broken on PyTorch>2.4")
+            warnings.warn("'SetTransformerAggregation' broken on PyTorch>2.4",
+                          stacklevel=2)
     else:
         assert out[2].abs().sum() == 0
 

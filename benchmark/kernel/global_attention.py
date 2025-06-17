@@ -10,7 +10,7 @@ class GlobalAttentionNet(torch.nn.Module):
         super().__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             self.convs.append(SAGEConv(hidden, hidden))
         self.att = AttentionalAggregation(Linear(hidden, 1))
         self.lin1 = Linear(hidden, hidden)

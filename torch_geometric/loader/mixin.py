@@ -106,9 +106,9 @@ class MultithreadingMixin:
     def _mt_init_fn(self, worker_id: int) -> None:
         try:
             torch.set_num_threads(int(self._worker_threads))
-        except IndexError:
+        except IndexError as e:
             raise ValueError(f"Cannot set {self.worker_threads} threads "
-                             f"in worker {worker_id}")
+                             f"in worker {worker_id}") from e
 
         # Chain worker init functions:
         self._old_worker_init_fn(worker_id)
@@ -213,9 +213,9 @@ class AffinityMixin:
 
             psutil.Process().cpu_affinity(worker_cores)
 
-        except IndexError:
+        except IndexError as e:
             raise ValueError(f"Cannot use CPU affinity for worker ID "
-                             f"{worker_id} on CPU {self.loader_cores}")
+                             f"{worker_id} on CPU {self.loader_cores}") from e
 
         # Chain worker init functions:
         self._old_worker_init_fn(worker_id)
@@ -248,7 +248,8 @@ class AffinityMixin:
             warnings.warn(
                 "Due to conflicting parallelization methods it is not advised "
                 "to use affinitization with 'HeteroData' datasets. "
-                "Use `enable_multithreading` for better performance.")
+                "Use `enable_multithreading` for better performance.",
+                stacklevel=2)
 
         self.loader_cores = loader_cores[:] if loader_cores else None
         if self.loader_cores is None:

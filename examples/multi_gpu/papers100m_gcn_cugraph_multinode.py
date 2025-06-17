@@ -255,7 +255,7 @@ def run(global_rank, data, split_idx, world_size, device, model, epochs,
 
     with torch.no_grad():
         total_correct = total_examples = 0
-        for i, batch in enumerate(test_loader):
+        for batch in test_loader:
             batch = batch.to(device)
             batch_size = batch.batch_size
 
