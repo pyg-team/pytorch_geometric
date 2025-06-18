@@ -492,8 +492,8 @@ def test_repr_various_configs(config, substrings):
         (2, 0.5, 16, "relu", [], False, []),
 
         # bad num_heads
-        (0, 0.1, None, "gelu", [], True, ["embed_dim", "num_heads"]),
-        (-1, 0.1, None, "gelu", [], True, ["embed_dim", "num_heads"]),
+        (0, 0.1, None, "gelu", [], True, ["num_heads"]),
+        (-1, 0.1, None, "gelu", [], True, ["num_heads"]),
 
         # bad dropout
         (2, -0.1, None, "gelu", [], True, ["dropout", "[0,1)"]),

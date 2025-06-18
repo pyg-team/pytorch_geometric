@@ -122,37 +122,110 @@ class GraphTransformer(torch.nn.Module):
         gnn_block: Optional[Callable],
         gnn_position: str,
         positional_encoders: Sequence[BasePositionalEncoder],
-    ):
-        # ---- shape & type checks ----
+    ) -> None:
+        r"""Validates initialization arguments via specialized validators.
+
+        Args:
+            hidden_dim (int): Hidden representation dimension
+            num_class (int): Number of output classes
+            num_encoder_layers (int): Number of encoder layers
+            num_heads (int): Number of attention heads
+            dropout (float): Dropout rate
+            ffn_hidden_dim (Optional[int]): FFN hidden dimension
+            activation (str): Name of activation function
+            attn_bias_providers (Sequence[BaseBiasProvider]): Bias providers
+            gnn_block (Optional[Callable]): GNN block function
+            gnn_position (str): GNN block position
+            positional_encoders (Sequence[BasePositionalEncoder]): Pos encoders
+        """
+        self._validate_dimensions(hidden_dim, num_class, num_encoder_layers)
+        self._validate_transformer_params(
+            num_heads, dropout, ffn_hidden_dim, hidden_dim, activation
+        )
+        self._validate_bias_providers(attn_bias_providers, num_heads)
+        self._validate_gnn_config(gnn_block, gnn_position)
+        self._validate_positional_encoders(positional_encoders)
+
+    def _validate_dimensions(
+        self, hidden_dim: int, num_class: int, num_encoder_layers: int
+    ) -> None:
         if not isinstance(hidden_dim, int) or hidden_dim <= 0:
             raise ValueError(
-                "hidden_dim must be a positive int (got " + f"{hidden_dim})"
-            )
-        if not isinstance(num_class, int) or num_class <= 0:
-            raise ValueError(
-                "num_class must be a positive int (got " + f"{num_class})"
-            )
-        if not isinstance(num_encoder_layers, int) or num_encoder_layers < 0:
-            raise ValueError(
-                "num_encoder_layers must be ≥ 0 (got " +
-                f"{num_encoder_layers})"
+                f"hidden_dim must be a positive int (got {hidden_dim})"
             )
 
-        # ---- transformer hyper-params ----
+        if not isinstance(num_class, int) or num_class <= 0:
+            raise ValueError(
+                f"num_class must be a positive int (got {num_class})"
+            )
+
+        if not isinstance(num_encoder_layers, int) or num_encoder_layers < 0:
+            raise ValueError(
+                f"num_encoder_layers must be ≥ 0 (got {num_encoder_layers})"
+            )
+
+    def _validate_transformer_params(
+        self, num_heads: int, dropout: float, ffn_hidden_dim: Optional[int],
+        hidden_dim: int, activation: str
+    ) -> None:
+        self._validate_num_heads(num_heads)
+        self._validate_dropout(dropout)
+        self._validate_ffn_dim(ffn_hidden_dim, hidden_dim)
+        self._validate_activation(activation)
+
+    def _validate_num_heads(self, num_heads: int) -> None:
+        r"""Validates number of attention heads.
+
+        Args:
+            num_heads (int): Number of attention heads
+
+        Raises:
+            ValueError: If num_heads is not a positive integer
+        """
         if not isinstance(num_heads, int) or num_heads <= 0:
             raise ValueError(
-                "Invalid configuration: embed_dim and num_heads must be"
+                "Invalid configuration: num_heads must be"
                 f"positive (got num_heads={num_heads})"
             )
-        if not (isinstance(dropout, float) and 0.0 <= dropout < 1.0):
-            raise ValueError("dropout must be in [0,1) (got " + f"{dropout})")
-        if ffn_hidden_dim is not None:
-            if not (isinstance(ffn_hidden_dim, int)
-                    and ffn_hidden_dim >= hidden_dim):
-                raise ValueError(
-                    "ffn_hidden_dim must be ≥ hidden_dim (" +
-                    f"{hidden_dim}), got {ffn_hidden_dim}"
-                )
+
+    def _validate_dropout(self, dropout: float) -> None:
+        r"""Validates dropout rate.
+
+        Args:
+            dropout (float): Dropout rate
+
+        Raises:
+            ValueError: If dropout is not a float in [0,1)
+        """
+        if not isinstance(dropout, float):
+            raise ValueError(f"dropout must be float (got {type(dropout)})")
+        if not 0.0 <= dropout < 1.0:
+            raise ValueError(f"dropout must be in [0,1) (got {dropout})")
+
+    def _validate_ffn_dim(
+        self, ffn_hidden_dim: Optional[int], hidden_dim: int
+    ) -> None:
+        if ffn_hidden_dim is None:
+            return
+        if not isinstance(ffn_hidden_dim, int):
+            raise ValueError(
+                f"ffn_hidden_dim must be int (got {type(ffn_hidden_dim)})"
+            )
+        if ffn_hidden_dim < hidden_dim:
+            raise ValueError(
+                f"ffn_hidden_dim ({ffn_hidden_dim}) must be ≥ hidden_dim "
+                f"({hidden_dim})"
+            )
+
+    def _validate_activation(self, activation: str) -> None:
+        r"""Validates activation function name.
+
+        Args:
+            activation (str): Activation function name
+
+        Raises:
+            ValueError: If activation is not one of the supported functions
+        """
         allowed_acts = {
             'relu', 'leakyrelu', 'prelu', 'tanh', 'selu', 'elu', 'linear',
             'gelu'
@@ -163,33 +236,38 @@ class GraphTransformer(torch.nn.Module):
                 f"{allowed_acts} (got '{activation}', not supported)"
             )
 
-        # ---- bias providers ----
-        for prov in attn_bias_providers:
+    def _validate_bias_providers(
+        self, providers: Sequence[BaseBiasProvider], num_heads: int
+    ) -> None:
+        for prov in providers:
             if not isinstance(prov, BaseBiasProvider):
                 raise TypeError(f"{prov!r} is not a BaseBiasProvider")
             if prov.num_heads != num_heads:
-                msg = (
+                raise ValueError(
                     f"BiasProvider {prov.__class__.__name__} has "
                     f"num_heads={prov.num_heads}, but GraphTransformer is "
                     f"configured with num_heads={num_heads}"
                 )
-                raise ValueError(msg)
 
-        # ---- GNN block & position ----
+    def _validate_gnn_config(
+        self, gnn_block: Optional[Callable], gnn_position: str
+    ) -> None:
         valid_positions = {'pre', 'post', 'parallel'}
         if gnn_position not in valid_positions:
             raise ValueError(
-                "gnn_position must be one of " +
-                f"{valid_positions}, got '{gnn_position}'"
+                f"gnn_position must be one of {valid_positions}, "
+                f"got '{gnn_position}'"
             )
         if gnn_block is None and gnn_position != 'pre':
             raise ValueError(
-                "Cannot set gnn_position to 'post' or 'parallel' when " +
-                "gnn_block is None"
+                "Cannot set gnn_position to 'post' or 'parallel' "
+                "when gnn_block is None"
             )
 
-        # ---- positional encoders ----
-        for enc in positional_encoders:
+    def _validate_positional_encoders(
+        self, encoders: Sequence[BasePositionalEncoder]
+    ) -> None:
+        for enc in encoders:
             if not callable(getattr(enc, "forward", None)):
                 raise TypeError(
                     f"{enc!r} does not have a callable forward method"
