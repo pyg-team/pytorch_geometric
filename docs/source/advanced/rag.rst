@@ -76,10 +76,10 @@ WebQSPDataset.
     from torch_geometric.datasets import WebQSPDataset
 
     num_questions = 100
-    ds = WebQSPDataset('small_sample', 
+    ds = WebQSPDataset('small_sample',
                     load_dataset_kwargs={
-                        'split': {'train': f'train[:{num_questions}]', 
-                        'validation': f'validation[:{num_questions}]', 
+                        'split': {'train': f'train[:{num_questions}]',
+                        'validation': f'validation[:{num_questions}]',
                         'test': f'test[:{num_questions}]'}
                         })
 
@@ -371,10 +371,10 @@ experiment:
     from itertools import chain
 
     num_questions = 10
-    ds = WebQSPDataset('demo', 
+    ds = WebQSPDataset('demo',
                     load_dataset_kwargs={
-                        'split': {'train': f'train[:{num_questions}]', 
-                        'validation': f'validation[:{num_questions}]', 
+                        'split': {'train': f'train[:{num_questions}]',
+                        'validation': f'validation[:{num_questions}]',
                         'test': f'test[:{num_questions}]'}
                         })
 
