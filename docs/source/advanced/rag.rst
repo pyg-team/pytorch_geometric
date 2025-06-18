@@ -315,13 +315,6 @@ prepended graph information. Here’s a motivating example (credit to
 In this example, the question can only be answered by reasoning about
 the relationships between the entities in the knowledge graph.
 
-Building a Multi-Hop QA Dataset
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To see an example of encoding a large knowledge graph starting from an
-existing set of triplets, check out the multi-hop example in
-`examples/llm_plus_gnn/multihop_rag`.
-
 Question: How do we extract a contextual subgraph for a given query?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -424,7 +417,7 @@ With these questions and triplets, we want to:
 In order to create a remote backend, we need to define a FeatureStore
 and GraphStore locally, as well as a method for initializing its state
 from triplets. The code methods used in this tutorial can be found in
-`examples/llm_plus_gnn`.
+`examples/llm`.
 
 .. code:: python
 
