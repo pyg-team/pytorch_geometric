@@ -1,8 +1,9 @@
 import torch
 
-from torch_geometric.contrib.nn.layers.feedforward import (
-    PositionwiseFeedForward,
-)
+# Use alias import to avoid yapf/isort conflicts with long module names
+import torch_geometric.contrib.nn.layers.feedforward as _feedforward
+
+PositionwiseFeedForward = _feedforward.PositionwiseFeedForward
 
 
 def test_positionwise_feedforward():

@@ -1,8 +1,9 @@
 import torch.nn as nn
 
-from torch_geometric.contrib.nn.layers.activation import (
-    get_activation_function,
-)
+# Use alias import to avoid yapf/isort conflicts with long module names
+import torch_geometric.contrib.nn.layers.activation as _activation
+
+get_activation_function = _activation.get_activation_function
 
 
 class PositionwiseFeedForward(nn.Module):

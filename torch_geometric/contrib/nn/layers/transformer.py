@@ -4,13 +4,14 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from torch_geometric.contrib.nn.layers.feedforward import (
-    PositionwiseFeedForward,
-)
-from torch_geometric.contrib.utils.mask_utils import (
-    build_key_padding,
-    merge_masks,
-)
+# Use alias imports to avoid yapf/isort conflicts with long module names
+import torch_geometric.contrib.nn.layers.feedforward as _feedforward
+import torch_geometric.contrib.utils.mask_utils as _mask_utils
+
+# Extract classes/functions from alias imports
+PositionwiseFeedForward = _feedforward.PositionwiseFeedForward
+build_key_padding = _mask_utils.build_key_padding
+merge_masks = _mask_utils.merge_masks
 
 
 class GraphTransformerEncoderLayer(nn.Module):

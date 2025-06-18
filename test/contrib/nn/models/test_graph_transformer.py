@@ -3,21 +3,21 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from torch_geometric.contrib.nn.bias import (
-    GraphAttnEdgeBias,
-    GraphAttnSpatialBias,
-)
-from torch_geometric.contrib.nn.layers.transformer import (
-    GraphTransformerEncoderLayer,
-)
+# Use alias imports to avoid yapf/isort conflicts with long module names
+import torch_geometric.contrib.nn.bias as _bias
+import torch_geometric.contrib.nn.layers.transformer as _transformer
+import torch_geometric.contrib.nn.positional as _positional
 from torch_geometric.contrib.nn.models import GraphTransformer
-from torch_geometric.contrib.nn.positional import (
-    DegreeEncoder,
-    EigEncoder,
-    SVDEncoder,
-)
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import GATConv, GCNConv, SAGEConv
+
+# Extract classes from alias imports
+GraphAttnEdgeBias = _bias.GraphAttnEdgeBias
+GraphAttnSpatialBias = _bias.GraphAttnSpatialBias
+GraphTransformerEncoderLayer = _transformer.GraphTransformerEncoderLayer
+DegreeEncoder = _positional.DegreeEncoder
+EigEncoder = _positional.EigEncoder
+SVDEncoder = _positional.SVDEncoder
 
 CUDA = torch.cuda.is_available()
 

@@ -1,9 +1,9 @@
 import pytest
 import torch.nn as nn
 
-from torch_geometric.contrib.nn.layers.activation import (
-    get_activation_function,
-)
+import torch_geometric.contrib.nn.layers.activation as _act
+
+get_activation_function = _act.get_activation_function
 
 
 def test_get_activation_function_valid():

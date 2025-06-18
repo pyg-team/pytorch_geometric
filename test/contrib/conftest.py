@@ -5,15 +5,17 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
+# Use alias imports to avoid yapf/isort conflicts with long module names
+import torch_geometric.contrib.nn.layers.transformer as _transformer
 from torch_geometric.contrib.nn.bias import BaseBiasProvider
-from torch_geometric.contrib.nn.layers.transformer import (
-    GraphTransformerEncoderLayer,
-)
 from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.contrib.nn.positional.degree import DegreeEncoder
 from torch_geometric.contrib.nn.positional.eigen import EigEncoder
 from torch_geometric.contrib.nn.positional.svd import SVDEncoder
 from torch_geometric.data import Batch, Data
+
+# Extract classes from alias imports to avoid yapf/isort conflicts
+GraphTransformerEncoderLayer = _transformer.GraphTransformerEncoderLayer
 
 # ── Benchmark “constants” ────────────────────────────────────────────────────
 
