@@ -2,7 +2,6 @@ import torch
 
 from torch_geometric.datasets import KarateClub
 from torch_geometric.nn.models import BigClam
-from torch_geometric.utils import to_undirected
 
 
 def test_fit_converges_no_nan():
