@@ -63,6 +63,12 @@ def train(
         param_group['lr'] = lr
         return lr
 
+    def get_clippable_params(params):
+        return [
+            p for p in params
+            if isinstance(p, torch.Tensor) and not hasattr(p, '_spec')
+        ]
+
     start_time = time.time()
     # Load dataset ================================================
     path = osp.dirname(osp.realpath(__file__))
@@ -144,14 +150,15 @@ def train(
                          batch.edge_attr, batch.smiles, batch.instruction,
                          batch.y)
             loss.backward()
-            clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+            clip_grad_norm_(
+                get_clippable_params(optimizer.param_groups[0]['params']), 0.1)
 
             if (step + 1) % grad_steps == 0:
                 adjust_learning_rate(optimizer.param_groups[0], lr,
                                      step / len(train_loader) + epoch)
 
             optimizer.step()
-            epoch_loss += loss.item()
+            epoch_loss += loss.detach().item()
 
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]['lr']
