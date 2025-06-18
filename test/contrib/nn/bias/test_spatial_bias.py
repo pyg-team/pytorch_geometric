@@ -20,15 +20,10 @@ def test_spatial_bias_transformer_affects(spatial_batch):
     provider = GraphAttnSpatialBias(num_heads=4, num_spatial=8)
     batch = spatial_batch(1, 6, 8, feat_dim=16)
 
-    m0 = GraphTransformer(
-        hidden_dim=16, num_class=3, num_encoder_layers=1
-    ).eval()
-    m1 = GraphTransformer(
-        hidden_dim=16,
-        num_class=3,
-        num_encoder_layers=1,
-        attn_bias_providers=[provider]
-    ).eval()
+    m0 = GraphTransformer(hidden_dim=16, num_class=3,
+                          num_encoder_layers=1).eval()
+    m1 = GraphTransformer(hidden_dim=16, num_class=3, num_encoder_layers=1,
+                          attn_bias_providers=[provider]).eval()
 
     with torch.no_grad():
         o0 = m0(batch)
@@ -40,12 +35,8 @@ def test_spatial_bias_transformer_affects(spatial_batch):
 
 def test_spatial_bias_gradients(spatial_batch):
     provider = GraphAttnSpatialBias(num_heads=4, num_spatial=8)
-    model = GraphTransformer(
-        hidden_dim=16,
-        num_class=3,
-        num_encoder_layers=1,
-        attn_bias_providers=[provider]
-    )
+    model = GraphTransformer(hidden_dim=16, num_class=3, num_encoder_layers=1,
+                             attn_bias_providers=[provider])
     batch = spatial_batch(1, 5, 8, feat_dim=16)
     out = model(batch)
     out.sum().backward()
@@ -65,9 +56,8 @@ def test_spatial_bias_gradients(spatial_batch):
     ],
 )
 def test_spatial_bias_config(spatial_batch, num_heads, num_spatial, use_super):
-    bias = GraphAttnSpatialBias(
-        num_heads=num_heads, num_spatial=num_spatial, use_super_node=use_super
-    )
+    bias = GraphAttnSpatialBias(num_heads=num_heads, num_spatial=num_spatial,
+                                use_super_node=use_super)
     batch = spatial_batch(3, 7, num_spatial)
     out = bias(batch)
 
@@ -88,8 +78,7 @@ def test_spatial_bias_supports_variable_graph_sizes(hetero_spatial_batch):
 
 
 def test_spatial_bias_handles_heterogeneous_blockdiag_spatial_pos(
-    blockdiag_spatial_batch
-):
+        blockdiag_spatial_batch):
     """GraphAttnSpatialBias must pad per-graph masks before stacking."""
     provider = GraphAttnSpatialBias(num_heads=4, num_spatial=5)
     _ = provider(blockdiag_spatial_batch)
