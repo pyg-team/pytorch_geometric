@@ -51,20 +51,21 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
 class LLM(torch.nn.Module):
     r"""A wrapper around a Large Language Model (LLM) from HuggingFace.
 
-    model_name (str): The HuggingFace model name
-    num_params (float, optional): An integer representing how many params the
-        HuggingFace model has, in billions. This is used to automatically
-        allocate the correct number of GPUs needed (using a rough heuristic),
-        given the available GPU memory of your GPUs.
-        If not specified, the number of parameters
-        is determined using the `huggingface_hub` module.
-    n_gpus (int, optional): Number of GPUs to use. Designed for advanced users
-        to select how many GPU's they want to set this manually and override the
-        automatic set up mechanism.
-    dtype (torch.dtype, optional): The data type to use for the LLM.
-        (default :obj: `torch.bfloat16`)
-    sys_prompt (str, optional): A system prompt to use for the LLM.
-        (default: :obj: `None`)
+    Args:
+        model_name (str): The HuggingFace model name
+        num_params (float, optional): An integer representing how many params
+            the HuggingFace model has, in billions. This is used to 
+            automatically allocate the correct number of GPUs needed (using a 
+            rough heuristic), given the available GPU memory of your GPUs.  If 
+            not specified, the number of parameters is determined using the 
+            `huggingface_hub` module.
+        n_gpus (int, optional): Number of GPUs to use. Designed for advanced 
+            users to select how many GPU's they want to set this manually and 
+            override the automatic set up mechanism.
+        dtype (torch.dtype, optional): The data type to use for the LLM.
+            (default :obj: `torch.bfloat16`)
+        sys_prompt (str, optional): A system prompt to use for the LLM.
+            (default: :obj: `None`)
     """
     def __init__(
         self,
