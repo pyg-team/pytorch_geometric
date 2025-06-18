@@ -76,7 +76,14 @@ WebQSPDataset.
     from torch_geometric.datasets import WebQSPDataset
 
     num_questions = 100
-    ds = WebQSPDataset('small_sample', limit=num_questions)
+    ds = WebQSPDataset('small_sample', 
+                    load_dataset_kwargs={
+                        'split': {'train': f'train[:{num_questions}]', 
+                        'validation': f'validation[:{num_questions}]', 
+                        'test': f'test[:{num_questions}]'}
+                        })
+
+    ds.raw_dataset
 
 
 WebQSP is a dataset that is based off of a subset of the Freebase
@@ -92,7 +99,7 @@ needed to answer the question.
 
 .. code:: python
 
-    ds.raw_dataset
+    ds.raw_dataset['train']
 
     >>> Dataset({
         features: ['id', 'question', 'answer', 'q_entity', 'a_entity', 'graph', 'choices'],
@@ -103,7 +110,7 @@ needed to answer the question.
 
 .. code:: python
 
-    ds.raw_dataset[0]
+    ds.raw_dataset['train'][0]
 
 
     >>> {'id': 'WebQTrn-0',
@@ -144,7 +151,7 @@ be tried. We can do this with the LargeGraphIndexer class:
 
 .. code:: python
 
-    raw_dataset_graphs = [[tuple(trip) for trip in graph] for graph in ds.raw_dataset['graph']]
+    raw_dataset_graphs = [[tuple(trip) for trip in graph] for graph in ds.raw_dataset['train']['graph']]
     print(raw_dataset_graphs[0][:10])
 
     >>> [('P!nk', 'freebase.valuenotation.is_reviewed', 'Gender'), ('1Club.FM: Power', 'broadcast.content.artist', 'P!nk'), ...]
@@ -363,13 +370,19 @@ experiment:
     from torch_geometric.datasets import WebQSPDataset
     from itertools import chain
 
-    ds = WebQSPDataset(root='demo', limit=10)
+    num_questions = 10
+    ds = WebQSPDataset('demo', 
+                    load_dataset_kwargs={
+                        'split': {'train': f'train[:{num_questions}]', 
+                        'validation': f'validation[:{num_questions}]', 
+                        'test': f'test[:{num_questions}]'}
+                        })
 
 Let’s set up our set of questions and graph triplets:
 
 .. code:: python
 
-    questions = ds.raw_dataset['question']
+    questions = ds.raw_dataset['train']['question']
     questions
 
     >>> ['what is the name of justin bieber brother',
@@ -384,7 +397,7 @@ Let’s set up our set of questions and graph triplets:
      'which countries border the us']
 
 
-    ds.raw_dataset[:10]['graph'][0][:10]
+    ds.raw_dataset['train']['graph'][0][:10]
 
 
     >>> [['P!nk', 'freebase.valuenotation.is_reviewed', 'Gender'],
@@ -401,7 +414,7 @@ Let’s set up our set of questions and graph triplets:
      ['1.FM Top 40', 'broadcast.content.artist', 'Geri Halliwell']]
 
 
-    all_triplets = chain.from_iterable((row['graph'] for row in ds.raw_dataset))
+    all_triplets = chain.from_iterable((row['graph'] for row in ds.raw_dataset['train']))
 
 With these questions and triplets, we want to:
 1. Consolidate all the relations in these triplets into a Knowledge Graph
@@ -431,16 +444,20 @@ from triplets. The code methods used in this tutorial can be found in
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = SentenceTransformer(model_name="sentence-transformers/all-roberta-large-v1").to(device)
 
-    backend_loader: RemoteGraphBackendLoader = create_remote_backend_from_triplets(
-        triplets=all_triplets, # All the triplets to insert into the backend
-        node_embedding_model=model, # Embedding model to process triplets with
-        node_method_to_call="encode", # This method will encode the nodes/edges with 'model.encode' in this case.
-        path="backend", # Save path
+    knowledge_graph: Data = create_graph_from_triples(
+        triples=all_triplets, # All the triplets to insert into the backend
+        embedding_model=model.encode, # Embedding model to process triplets with
+        embedding_method_kwargs={'batch_size': 256}, # Keyword arguments to pass to the embedding model.
         pre_transform=preprocess_triplet, # Preprocessing function to apply to triplets before invoking embedding model.
-        node_method_kwargs={"batch_size": 256}, # Keyword arguments to pass to the node_method_to_call.
+    )
+
+    backend_loader: RemoteGraphBackendLoader = create_remote_backend_from_graph_data(
+        graph_data=knowledge_graph, # The graph data to insert into the backend
         graph_db=NeighborSamplingRAGGraphStore, # Graph Store to use
-        feature_db=SentenceTransformerFeatureStore # Feature Store to use
-        )
+        feature_db=KNNRAGFeatureStore, # Feature Store to use
+        path='backend', # Save path
+    )
+
     # This loader saves a copy of the processed data locally to be transformed into a graphstore and featurestore when load() is called.
     feature_store, graph_store = backend_loader.load()
 
@@ -459,19 +476,25 @@ diagram:
 
     from torch_geometric.loader import RAGQueryLoader
 
-    query_loader = RAGQueryLoader(
-        data=(feature_store, graph_store), # Remote Rag Graph Store and Feature Store
+    config_for_query = {
         # Arguments to pass into the seed node/edge retrieval methods for the FeatureStore.
         # In this case, it's k for the KNN on the nodes and edges.
-        seed_nodes_kwargs={"k_nodes": 10}, seed_edges_kwargs={"k_edges": 10},
+        'k_nodes': 10,
+        'k_edges': 10,
+        'encoder_model': model,
         # Arguments to pass into the GraphStore's Neighbor sampling method.
         # In this case, the GraphStore implements a NeighborLoader, so it takes the same arguments.
-        sampler_kwargs={"num_neighbors": [40]*3},
+        'num_neighbors': [40]*3,
         # Arguments to pass into the FeatureStore's feature loading method.
-        loader_kwargs={},
+        'loader_kwargs': {},
         # An optional local transform that can be applied on the returned subgraph.
-        local_filter=None,
-        )
+        'local_filter': None,
+    }
+
+    query_loader = RAGQueryLoader(
+        graph_data=(feature_store, graph_store), # Remote Rag Graph Store and Feature Store
+        config=config_for_query,
+    )
 
 To make better sense of this loader’s arguments, let’s take a closer
 look at the retrieval process for a remote backend:
@@ -538,7 +561,7 @@ method? Let’s compare some basics properties of the subgraphs:
         return len(subg_e & gt_e) / len(gt_e)
 
 
-    ground_truth_graphs = get_features_for_triplets_groups(ds.indexer, (d['graph'] for d in ds.raw_dataset), pre_transform=preprocess_triplet)
+    ground_truth_graphs = get_features_for_triplets_groups(ds.indexer, (d['graph'] for d in ds.raw_dataset['train']), pre_transform=preprocess_triplet)
     num_edges = len(ds.indexer._edges)
 
 
@@ -576,7 +599,7 @@ The method ``nvtxit`` allows for profiling the utilization and timings
 of any methods that get wrapped by it in a Python script.
 
 To see an example of this, check out
-``nvtx_examples/nvtx_rag_backend_example.py``.
+``examples/llm/nvtx_examples/nvtx_rag_backend_example.py``.
 
 This script mirrors this notebook’s functionality, but notably, it
 includes the following code snippet:
