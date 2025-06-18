@@ -9,8 +9,7 @@ from torch_geometric.utils import to_undirected
 
 
 class BigClam(torch.nn.Module):
-    r"""
-    Parallelized version of the original BigClam community detection
+    r"""Parallelized version of the original BigClam community detection
     algorithm as described in the paper:
     `BigClam: A Scalable and Parallelized
     Community Detection Algorithm <https://arxiv.org/abs/1303.4248>`_
@@ -25,7 +24,6 @@ class BigClam(torch.nn.Module):
         num_communities (int): Number of communities (default: 8).
         device (torch.device, optional): Computation device (CPU/GPU).
     """
-
     def __init__(
         self,
         edge_index: Tensor,
@@ -49,16 +47,13 @@ class BigClam(torch.nn.Module):
             ),
             requires_grad=False,
         )
-        self.sum_f = torch.empty(
-            (1, self.num_communities), device=self.device, requires_grad=False
-        )
+        self.sum_f = torch.empty((1, self.num_communities), device=self.device,
+                                 requires_grad=False)
         self.reset_parameters()
 
     def reset_parameters(self):
+        """Reset model parameters to initial state.
         """
-        Reset model parameters to initial state.
-        """
-
         # Locally minimal neighborhoods seeding heuristic
 
         edge_index = self.edge_index.cpu().numpy()
@@ -95,16 +90,16 @@ class BigClam(torch.nn.Module):
 
         self.sum_f = self.assignments.sum(dim=0, keepdim=True)
 
-    def forward(
-        self, node_idx: Optional[Tensor] = None, normalize: bool = False
-    ) -> Tensor:
-        """
-            Compute soft community assignments for nodes.
+    def forward(self, node_idx: Optional[Tensor] = None,
+                normalize: bool = False) -> Tensor:
+        """Compute soft community assignments for nodes.
+
         Args:
             node_idx (torch.Tensor, optional): Indices of nodes to return
             assignments for (default: None).
             normalize (bool): If True, apply softmax normalization
             (default: False).
+
         Returns:
             torch.Tensor: Community assignments for nodes,
             shape (N, num_communities).
@@ -120,8 +115,8 @@ class BigClam(torch.nn.Module):
         lr: float = 0.05,
         verbose: bool = False,
     ) -> None:
-        r"""
-            Fit the BigClam model using gradient descent.
+        r"""Fit the BigClam model using gradient descent.
+
         Args:
             iterations (int): Number of iterations for training (default: 100).
             lr (float): Learning rate for gradient descent (default: 0.05).
@@ -129,11 +124,8 @@ class BigClam(torch.nn.Module):
         """
         self.train()
         row, col = self.edge_index
-        for _ in (
-            tqdm(range(iterations), desc="BigClam Training")
-            if verbose
-            else range(iterations)
-        ):
+        for _ in (tqdm(range(iterations), desc="BigClam Training")
+                  if verbose else range(iterations)):
             F = torch.nn.functional.relu(self.assignments)
 
             dot = (F[row] * F[col]).sum(dim=1)
@@ -143,12 +135,10 @@ class BigClam(torch.nn.Module):
             denom = (1.0 - exp_neg).clamp(min=1e-6)
             scores = (exp_neg / denom).unsqueeze(1)
 
-            neb_grad = scatter_add(
-                scores * F[col], row, dim=0, dim_size=self.num_nodes
-            )
-            neighbor_sum = scatter_add(
-                F[col], row, dim=0, dim_size=self.num_nodes
-            )
+            neb_grad = scatter_add(scores * F[col], row, dim=0,
+                                   dim_size=self.num_nodes)
+            neighbor_sum = scatter_add(F[col], row, dim=0,
+                                       dim_size=self.num_nodes)
 
             without_grad = self.sum_f - F - neighbor_sum
             grad = neb_grad - without_grad
