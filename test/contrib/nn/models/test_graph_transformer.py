@@ -78,14 +78,18 @@ def test_forward_shape(simple_batch, num_graphs, num_nodes, feat_dim,
         for _ in range(num_graphs)
     ]
     batch = Batch.from_data_list(batches)
-    model = GraphTransformer(hidden_dim=feat_dim, num_class=num_classes)
+    encoder_cfg = dict()
+    model = GraphTransformer(hidden_dim=feat_dim, num_class=num_classes,
+                             encoder_cfg=encoder_cfg)
     out = model(batch)
     assert out.shape == (num_graphs, num_classes)
 
 
 def test_forward_without_gnn_hook(simple_batch):
     batch = simple_batch(feat_dim=8, num_nodes=2)
-    model = GraphTransformer(hidden_dim=8)
+    encoder_cfg = dict()
+    model = GraphTransformer(hidden_dim=8, num_class=1,
+                             encoder_cfg=encoder_cfg)
     out = model(batch)
     assert out.shape == (1, model.classifier.out_features)
 
@@ -96,8 +100,9 @@ def test_forward_without_gnn_hook(simple_batch):
 def test_super_node_readout(simple_batch):
     data = simple_batch(feat_dim=4, num_nodes=1)
     NUM_HEADS = 4
-    model = GraphTransformer(hidden_dim=4, num_heads=NUM_HEADS, num_class=2,
-                             use_super_node=True)
+    encoder_cfg = dict(num_heads=NUM_HEADS, use_super_node=True)
+    model = GraphTransformer(hidden_dim=4, num_class=2,
+                             encoder_cfg=encoder_cfg)
     model.encoder = IdentityEncoder(num_heads=NUM_HEADS)
     out = model(data)
     expected = model.classifier(model.cls_token.expand(1, -1))
@@ -106,8 +111,9 @@ def test_super_node_readout(simple_batch):
 
 def test_node_feature_encoder_identity(simple_batch):
     batch = simple_batch(feat_dim=16, num_nodes=10)
+    encoder_cfg = dict(node_feature_encoder=nn.Identity())
     model = GraphTransformer(hidden_dim=16, num_class=2,
-                             node_feature_encoder=nn.Identity())
+                             encoder_cfg=encoder_cfg)
     out1 = model(batch)
     batch.x = 2 * batch.x
     out2 = model(batch)
@@ -119,14 +125,18 @@ def test_node_feature_encoder_identity(simple_batch):
 
 def test_transformer_block_identity(simple_batch):
     batch = simple_batch(feat_dim=16, num_nodes=8)
-    model = GraphTransformer(hidden_dim=16, num_class=4, num_encoder_layers=1)
+    encoder_cfg = dict(num_encoder_layers=1)
+    model = GraphTransformer(hidden_dim=16, num_class=4,
+                             encoder_cfg=encoder_cfg)
     model.encoder[0] = AddOneLayer()
     out = model(batch)
     assert out.shape == (1, 4)
 
 
 def test_encoder_layer_type():
-    model = GraphTransformer(hidden_dim=16, num_encoder_layers=1)
+    encoder_cfg = dict(num_encoder_layers=1)
+    model = GraphTransformer(hidden_dim=16, num_class=1,
+                             encoder_cfg=encoder_cfg)
     assert isinstance(model.encoder[0], GraphTransformerEncoderLayer)
 
 
@@ -135,8 +145,9 @@ def test_torchscript_trace():
     x = torch.randn(G * N, F)
     batch = torch.arange(G).repeat_interleave(N)
     bias = torch.rand(G, 4, N, N)
+    encoder_cfg = dict(num_encoder_layers=2)
     model = GraphTransformer(hidden_dim=F, num_class=C,
-                             num_encoder_layers=2).eval()
+                             encoder_cfg=encoder_cfg).eval()
     wrapper = TraceableWrapper(model)
     traced = torch.jit.trace(wrapper, (x, batch, bias))
     assert torch.allclose(wrapper(x, batch, bias), traced(x, batch, bias),
@@ -145,8 +156,9 @@ def test_torchscript_trace():
 
 def test_backward(simple_batch):
     batch = simple_batch(feat_dim=8, num_nodes=5)
-    model = GraphTransformer(hidden_dim=8, num_class=3, use_super_node=True,
-                             num_encoder_layers=1)
+    encoder_cfg = dict(num_encoder_layers=1, use_super_node=True)
+    model = GraphTransformer(hidden_dim=8, num_class=3,
+                             encoder_cfg=encoder_cfg)
     model.encoder[0] = AddOneLayer()
     out = model(batch)
     loss = out.sum()
@@ -162,7 +174,9 @@ def test_backward(simple_batch):
 @pytest.mark.parametrize("num_heads", [1, 4])
 def test_attention_mask_changes_logits(simple_batch, num_heads):
     batch = simple_batch(feat_dim=8, num_nodes=5)
-    model = GraphTransformer(hidden_dim=8, num_class=3, num_encoder_layers=1)
+    encoder_cfg = dict(num_encoder_layers=1)
+    model = GraphTransformer(hidden_dim=8, num_class=3,
+                             encoder_cfg=encoder_cfg)
     model.encoder[0] = GraphTransformerEncoderLayer(hidden_dim=8,
                                                     num_heads=num_heads)
     out1 = model(batch)
@@ -174,8 +188,9 @@ def test_attention_mask_changes_logits(simple_batch, num_heads):
 
 def test_cls_token_transformation(simple_batch):
     batch = simple_batch(feat_dim=8, num_nodes=3)
-    model = GraphTransformer(hidden_dim=8, num_class=2, use_super_node=True,
-                             num_encoder_layers=1)
+    encoder_cfg = dict(num_encoder_layers=1, use_super_node=True)
+    model = GraphTransformer(hidden_dim=8, num_class=2,
+                             encoder_cfg=encoder_cfg)
     orig = model.cls_token.clone()
     x, bv = model._prepend_cls_token_flat(batch.x, batch.batch)
     enc = model.encoder(x, bv)
@@ -194,8 +209,9 @@ def test_spatial_bias_shifts_logits(spatial_batch, seq_len, num_spatial,
     bias = torch.zeros((1, num_spatial, seq_len, seq_len))
     bias[:, :, 0, 1] = 5.0
     batch1.bias = bias
+    encoder_cfg = dict(num_encoder_layers=1)
     model = GraphTransformer(hidden_dim=feat_dim, num_class=2,
-                             num_encoder_layers=1)
+                             encoder_cfg=encoder_cfg)
     out0 = model(batch0)
     out1 = model(batch1)
     assert not torch.allclose(out0, out1)
@@ -210,12 +226,12 @@ def test_multi_provider_fusion(spatial_edge_batch, use_super_node):
         GraphAttnSpatialBias(number_of_heads, 5, use_super_node),
         GraphAttnEdgeBias(number_of_heads, 6, use_super_node)
     ]
+    encoder_cfg = dict(use_super_node=use_super_node,
+                       attn_bias_providers=provs, num_heads=number_of_heads)
     model = GraphTransformer(
         hidden_dim=8,
         num_class=2,
-        use_super_node=use_super_node,
-        attn_bias_providers=provs,
-        num_heads=number_of_heads,
+        encoder_cfg=encoder_cfg,
     )
     fused = model._collect_attn_bias(batch)
     direct = sum(p(batch).to(fused.dtype).to(fused.device) for p in provs)
@@ -234,8 +250,10 @@ def test_gnn_hook_order(simple_batch, pos):
         seq.append("gnn")
         return x
 
-    model = GraphTransformer(hidden_dim=8, num_class=2, num_encoder_layers=1,
-                             gnn_block=gnn, gnn_position=pos)
+    encoder_cfg = dict(num_encoder_layers=1)
+    gnn_cfg = dict(gnn_block=gnn, gnn_position=pos)
+    model = GraphTransformer(hidden_dim=8, num_class=2,
+                             encoder_cfg=encoder_cfg, gnn_cfg=gnn_cfg)
     # patch the real encoder
     orig = model.encoder.layers[0].forward
 
@@ -264,13 +282,11 @@ def test_positional_encoders(simple_batch):
         ConstantDegreeEncoder(const_val1),
         ConstantDegreeEncoder(const_val2)
     ]
-
+    encoder_cfg = dict(positional_encoders=encoders)
     model = GraphTransformer(hidden_dim=8, num_class=2,
-                             positional_encoders=encoders)
-
+                             encoder_cfg=encoder_cfg)
     # Store original features
     orig_x = batch.x.clone()
-
     # Run model
     model(batch)
 
@@ -294,30 +310,25 @@ def test_combined_positional_encoders(simple_batch):
     batch.out_degree = torch.tensor([2, 1, 1, 2])
     batch.eig_pos_emb = torch.randn(4, 3)  # 3 eigenvectors
     batch.svd_pos_emb = torch.randn(4, 6)  # r=3 -> 6 features [U,V]
-
     # Create model with all three encoders
-
     encoders = [
         DegreeEncoder(num_in=3, num_out=3, hidden_dim=16),
         EigEncoder(num_eigvec=3, hidden_dim=16),
         SVDEncoder(r=3, hidden_dim=16)
     ]
-
+    encoder_cfg = dict(positional_encoders=encoders)
     model = GraphTransformer(hidden_dim=16, num_class=2,
-                             positional_encoders=encoders)
-
+                             encoder_cfg=encoder_cfg)
     # Verify basic shapes and execution
     out = model(batch)
     assert out.shape == (1, 2)
-
     # Verify encoders affect output
     # Remove one encoder and check outputs differ
+    reduced_encoder_cfg = dict(positional_encoders=encoders[:-1])
     reduced = GraphTransformer(hidden_dim=16, num_class=2,
-                               positional_encoders=encoders[:-1])
-
+                               encoder_cfg=reduced_encoder_cfg)
     out2 = reduced(batch)
     assert not torch.allclose(out, out2)
-
     # Verify gradients flow through encoders
     loss = out.sum()
     loss.backward()
@@ -332,15 +343,16 @@ def test_combined_positional_encoders(simple_batch):
 @pytest.mark.parametrize("conv,where", [(GCNConv, "pre"), (SAGEConv, "post"),
                                         (GATConv, "pre")])
 def test_gnn_block_real_convs(simple_batch, conv, where):
+    encoder_cfg = dict(num_encoder_layers=2)
     base_out = GraphTransformer(hidden_dim=16, num_class=4,
-                                num_encoder_layers=2)(simple_batch(16, 5))
+                                encoder_cfg=encoder_cfg)(simple_batch(16, 5))
 
     def gnn(data, x):
         return conv(x.size(-1), x.size(-1))(x, data.edge_index)
 
-    out = GraphTransformer(hidden_dim=16, num_class=4, num_encoder_layers=2,
-                           gnn_block=gnn,
-                           gnn_position=where)(simple_batch(16, 5))
+    gnn_cfg = dict(gnn_block=gnn, gnn_position=where)
+    out = GraphTransformer(hidden_dim=16, num_class=4, encoder_cfg=encoder_cfg,
+                           gnn_cfg=gnn_cfg)(simple_batch(16, 5))
     assert out.shape == base_out.shape
     assert not torch.allclose(out, base_out)
 
@@ -358,14 +370,22 @@ def dummy_gnn(data, x):
         (
             # default: no encoders
             {
-                "hidden_dim": 16,
-                "num_class": 3,
-                "use_super_node": False,
-                "num_encoder_layers": 0,
-                "attn_bias_providers": [],
-                "gnn_block": None,
-                "gnn_position": "pre",
-                "positional_encoders": [],
+                "hidden_dim":
+                16,
+                "num_class":
+                3,
+                "encoder_cfg":
+                dict(
+                    use_super_node=False,
+                    num_encoder_layers=0,
+                    attn_bias_providers=[],
+                    positional_encoders=[],
+                ),
+                "gnn_cfg":
+                dict(
+                    gnn_block=None,
+                    gnn_position="pre",
+                ),
             },
             [
                 "hidden_dim=16",
@@ -384,20 +404,22 @@ def dummy_gnn(data, x):
                 32,
                 "num_class":
                 5,
-                "use_super_node":
-                True,
-                "num_encoder_layers":
-                3,
-                "attn_bias_providers": [],
-                "gnn_block":
-                None,
-                "gnn_position":
-                "pre",
-                "positional_encoders": [
-                    DegreeEncoder(3, 3, 32),
-                    EigEncoder(4, 32),
-                    SVDEncoder(3, 32),
-                ],
+                "encoder_cfg":
+                dict(
+                    use_super_node=True,
+                    num_encoder_layers=3,
+                    attn_bias_providers=[],
+                    positional_encoders=[
+                        DegreeEncoder(3, 3, 32),
+                        EigEncoder(4, 32),
+                        SVDEncoder(3, 32),
+                    ],
+                ),
+                "gnn_cfg":
+                dict(
+                    gnn_block=None,
+                    gnn_position="pre",
+                ),
             },
             [
                 "hidden_dim=32",
@@ -412,14 +434,22 @@ def dummy_gnn(data, x):
         (
             # with single encoder and gnn hook
             {
-                "hidden_dim": 8,
-                "num_class": 2,
-                "use_super_node": False,
-                "num_encoder_layers": 1,
-                "attn_bias_providers": [],
-                "gnn_block": dummy_gnn,
-                "gnn_position": "post",
-                "positional_encoders": [DegreeEncoder(2, 2, 8)],
+                "hidden_dim":
+                8,
+                "num_class":
+                2,
+                "encoder_cfg":
+                dict(
+                    use_super_node=False,
+                    num_encoder_layers=1,
+                    attn_bias_providers=[],
+                    positional_encoders=[DegreeEncoder(2, 2, 8)],
+                ),
+                "gnn_cfg":
+                dict(
+                    gnn_block=dummy_gnn,
+                    gnn_position="post",
+                ),
             },
             [
                 "hidden_dim=8",
@@ -436,12 +466,8 @@ def test_repr_various_configs(config, substrings):
     model = GraphTransformer(
         hidden_dim=config["hidden_dim"],
         num_class=config["num_class"],
-        use_super_node=config["use_super_node"],
-        num_encoder_layers=config["num_encoder_layers"],
-        attn_bias_providers=config["attn_bias_providers"],
-        gnn_block=config["gnn_block"],
-        gnn_position=config["gnn_position"],
-        positional_encoders=config["positional_encoders"],
+        encoder_cfg=config["encoder_cfg"],
+        gnn_cfg=config["gnn_cfg"],
     )
     rep = repr(model)
     for sub in substrings:
@@ -455,21 +481,16 @@ def test_repr_various_configs(config, substrings):
         # valid
         (4, 0.0, None, "gelu", [], False, []),
         (2, 0.5, 16, "relu", [], False, []),
-
         # bad num_heads
         (0, 0.1, None, "gelu", [], True, ["num_heads"]),
         (-1, 0.1, None, "gelu", [], True, ["num_heads"]),
-
         # bad dropout
         (2, -0.1, None, "gelu", [], True, ["dropout", "[0,1)"]),
         (2, 1.0, None, "gelu", [], True, ["dropout", "[0,1)"]),
-
         # bad ffn_hidden_dim
         (2, 0.1, 4, "gelu", [], True, ["ffn_hidden_dim", "≥"]),
-
         # bad activation
         (2, 0.1, None, "invalid", [], True, ["not", "supported"]),
-
         # mismatched bias‐provider heads
         (2, 0.1, None, "gelu", [GraphAttnSpatialBias(3, 5)
                                 ], True, ["BiasProvider"]),
@@ -488,9 +509,7 @@ def test_repr_various_configs(config, substrings):
 def test_transformer_init_arg_validation(num_heads, dropout, ffn_hidden_dim,
                                          activation, providers, should_raise,
                                          err_keywords):
-    kwargs = {
-        "hidden_dim": 8,
-        "num_class": 2,
+    encoder_cfg = {
         "num_encoder_layers": 1,
         "num_heads": num_heads,
         "dropout": dropout,
@@ -498,24 +517,24 @@ def test_transformer_init_arg_validation(num_heads, dropout, ffn_hidden_dim,
         "activation": activation,
     }
     if providers:
-        kwargs["attn_bias_providers"] = providers
-
+        encoder_cfg["attn_bias_providers"] = providers
     if should_raise:
         with pytest.raises(ValueError) as exc:
-            GraphTransformer(**kwargs)
+            GraphTransformer(hidden_dim=8, num_class=2,
+                             encoder_cfg=encoder_cfg)
         msg = str(exc.value).lower()
         for kw in err_keywords:
             assert kw.lower() in msg
     else:
-        model = GraphTransformer(**kwargs)
+        model = GraphTransformer(hidden_dim=8, num_class=2,
+                                 encoder_cfg=encoder_cfg)
         # API‐level sanity
         assert model.num_heads == num_heads
         assert pytest.approx(model.dropout, rel=1e-6) == dropout
         expected_ffn = (ffn_hidden_dim if ffn_hidden_dim is not None else 4 *
-                        kwargs["hidden_dim"])
+                        8)
         assert model.ffn_hidden_dim == expected_ffn
         assert model.activation == activation
-
         # layer‐level sanity
         layer = (model.encoder
                  if not model.is_encoder_stack else model.encoder[0])
@@ -539,7 +558,6 @@ def test_parameters_and_buffers_on_same_device(
     # skip gpu if it's not actually there
     if device == 'cuda' and not CUDA:
         pytest.skip("CUDA not available")
-
     # build positional encoders
     pos_encoders = [
         degree_encoder(
@@ -556,7 +574,6 @@ def test_parameters_and_buffers_on_same_device(
             structural_config['feat_dim'],
         ),
     ]
-
     # build bias providers
     bias_providers = [
         GraphAttnSpatialBias(
@@ -570,29 +587,27 @@ def test_parameters_and_buffers_on_same_device(
             use_super_node=True,
         ),
     ]
-
-    # instantiate and move to target device
-    model = transformer_model(
-        hidden_dim=structural_config['feat_dim'],
-        num_class=3,
+    encoder_cfg = dict(
         use_super_node=True,
         num_encoder_layers=2,
         num_heads=2,
         positional_encoders=pos_encoders,
         attn_bias_providers=bias_providers,
+    )
+    # instantiate and move to target device
+    model = transformer_model(
+        hidden_dim=structural_config['feat_dim'],
+        num_class=3,
+        encoder_cfg=encoder_cfg,
     ).to(device)
-
     # build a batch that lives on the same device
     batch = full_feature_batch(device)
-
     # do one forward pass (in case any buffers are lazily created)
     _ = model(batch)
-
     # all parameters must be on `device`
     for name, param in model.named_parameters():
         assert param.device.type == device, (
             f"Parameter '{name}' is on {param.device}, expected {device}")
-
     # all buffers (e.g. cls_token, layernorm stats, embeddings, etc.) too
     for name, buf in model.named_buffers():
         assert buf.device.type == device, (
@@ -613,11 +628,10 @@ def test_graph_transformer_none_features_handled(simple_none_batch):
     simple_none_batch : Batch
         A batch containing data with x=None to simulate missing node features.
     """
-    node_feature_encoder = nn.Sequential(nn.Linear(10, 16), nn.ReLU())
-
+    encoder_cfg = dict(
+        node_feature_encoder=nn.Sequential(nn.Linear(10, 16), nn.ReLU()))
     model = GraphTransformer(hidden_dim=16, num_class=2,
-                             node_feature_encoder=node_feature_encoder)
-
+                             encoder_cfg=encoder_cfg)
     output = model(simple_none_batch)
     assert output.shape == (1, 2)
     assert torch.isfinite(output).all()
@@ -651,9 +665,9 @@ def test_graph_transformer_none_features_handled(simple_none_batch):
 def test_graph_transformer_feature_dim_mismatch(simple_batch, encoder_factory,
                                                 feat_dim, should_raise):
     batch = simple_batch(feat_dim=feat_dim, num_nodes=10)
-    node_feature_encoder = encoder_factory()
+    encoder_cfg = dict(node_feature_encoder=encoder_factory())
     model = GraphTransformer(hidden_dim=64, num_class=1,
-                             node_feature_encoder=node_feature_encoder)
+                             encoder_cfg=encoder_cfg)
     if should_raise:
         with pytest.raises(ValueError,
                            match="Node feature dimension mismatch"):

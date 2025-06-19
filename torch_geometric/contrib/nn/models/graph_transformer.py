@@ -1,4 +1,4 @@
-from typing import Callable, Literal, Optional, Sequence
+from typing import Callable, Dict, Literal, Optional, Sequence
 
 import torch
 import torch.nn as nn
@@ -14,6 +14,23 @@ from torch_geometric.contrib.utils.mask_utils import build_key_padding
 from torch_geometric.data import Data
 from torch_geometric.nn import global_mean_pool
 
+DEFAULT_ENCODER = dict(
+    num_encoder_layers=0,
+    num_heads=4,
+    dropout=0.1,
+    ffn_hidden_dim=None,
+    activation='gelu',
+    attn_bias_providers=(),
+    positional_encoders=(),
+    node_feature_encoder=None,
+    use_super_node=False,
+)
+
+DEFAULT_GNN = dict(
+    gnn_block=None,
+    gnn_position='pre',
+)
+
 
 class GraphTransformer(torch.nn.Module):
     r"""Graph Transformer model.
@@ -25,76 +42,150 @@ class GraphTransformer(torch.nn.Module):
     Args:
         hidden_dim (int): Dimension of hidden representations.
         num_class (int): Number of output classes.
-        use_super_node (bool, optional): Use learnable class token as a
-            super node. Defaults to False.
-        node_feature_encoder (nn.Module, optional): Module to encode node
-            features. Defaults to nn.Identity().
-        num_encoder_layers (int, optional): Number of encoder layers.
-            Defaults to 0 (single layer).
-        num_heads (int, optional): Number of attention heads.
-            Defaults to 4.
-        dropout (float, optional): Dropout rate. Defaults to 0.1.
-        ffn_hidden_dim (Optional[int], optional): Hidden dim of feedforward.
-            Defaults to 4 * hidden_dim.
-        activation (str, optional): Activation function.
-            Defaults to 'gelu'.
-        attn_bias_providers (Sequence[BaseBiasProvider], optional): Sequence of
-            bias providers that return attention bias masks.
-            Defaults to empty tuple.
-        gnn_block (Optional[Callable[[Data, torch.Tensor], torch.Tensor]],
-            optional): Function applying a GNN block. Defaults to None.
-        gnn_position (Literal['pre', 'post', 'parallel'], optional): Position
-            to apply the GNN block. Defaults to 'pre'.
-        positional_encoders (Sequence[BasePositionalEncoder], optional):
-        Sequence of positional encoders. Defaults to empty tuple.
+        encoder_cfg (dict, optional): Encoder configuration dictionary. Keys:
+            - use_super_node (bool, optional): Use learnable class token as a
+              super node. Defaults to False.
+            - node_feature_encoder (nn.Module, optional): Module to encode
+              node features. Defaults to nn.Identity().
+            - num_encoder_layers (int, optional): Number of encoder layers.
+              Defaults to 0 (single layer).
+            - num_heads (int, optional): Number of attention heads. Defaults
+              to 4.
+            - dropout (float, optional): Dropout rate. Defaults to 0.1.
+            - ffn_hidden_dim (Optional[int], optional): Hidden dim of
+              feedforward. Defaults to 4 * hidden_dim.
+            - activation (str, optional): Activation function. Defaults to
+              'gelu'.
+            - attn_bias_providers (Sequence[BaseBiasProvider], optional):
+              Sequence of bias providers that return attention bias masks.
+              Defaults to empty tuple.
+            - positional_encoders (Sequence[BasePositionalEncoder], optional):
+              Sequence of positional encoders. Defaults to empty tuple.
+        gnn_cfg (dict, optional): GNN configuration dictionary. Keys:
+            - gnn_block(Optional[Callable[[Data, torch.Tensor], torch.Tensor]],
+              optional): Function applying a GNN block. Defaults to None.
+            - gnn_position (Literal['pre', 'post', 'parallel'], optional):
+              Position to apply the GNN block. Defaults to 'pre'.
     """
     def __init__(
-        self, hidden_dim: int = 16, num_class: int = 2,
-        use_super_node: bool = False, node_feature_encoder=None,
-        num_encoder_layers: int = 0, num_heads: int = 4, dropout: float = 0.1,
-        ffn_hidden_dim: Optional[int] = None, activation: str = 'gelu',
-        attn_bias_providers: Sequence[BaseBiasProvider] = (),
-        gnn_block: Optional[Callable[[Data, torch.Tensor],
-                                     torch.Tensor]] = None,
-        gnn_position: Literal['pre', 'post', 'parallel'] = 'pre',
-        positional_encoders: Sequence[BasePositionalEncoder] = ()
+        self,
+        hidden_dim: int,
+        num_class: int,
+        *,
+        encoder_cfg: dict | None = None,
+        gnn_cfg: dict | None = None,
     ) -> None:
         super().__init__()
 
-        if num_heads is None and attn_bias_providers:
-            num_heads = attn_bias_providers[0].num_heads
+        cfg, gnn = self._parse_cfg(hidden_dim, encoder_cfg, gnn_cfg)
+        self._validate_cfg(hidden_dim, num_class, cfg, gnn)
+        self._build_modules(hidden_dim, num_class, cfg, gnn)
 
-        if node_feature_encoder is None:
-            node_feature_encoder = nn.Identity()
+    def _parse_cfg(self, hidden_dim: int, encoder_cfg: dict | None,
+                   gnn_cfg: dict | None) -> tuple[dict, dict]:
+        """Parse and merge configuration dictionaries, fill in defaults."""
+        cfg = {**DEFAULT_ENCODER, **(encoder_cfg or {})}
+        gnn = {**DEFAULT_GNN, **(gnn_cfg or {})}
+        if cfg["num_heads"] is None and cfg["attn_bias_providers"]:
+            cfg["num_heads"] = cfg["attn_bias_providers"][0].num_heads
+        if cfg["node_feature_encoder"] is None:
+            cfg["node_feature_encoder"] = nn.Identity()
+        if cfg["ffn_hidden_dim"] is None:
+            cfg["ffn_hidden_dim"] = 4 * hidden_dim
+        return cfg, gnn
 
-        num_heads = num_heads if num_heads is not None else 4
-        self._validate_init_args(hidden_dim, num_class, num_encoder_layers,
-                                 num_heads, dropout, ffn_hidden_dim,
-                                 activation, attn_bias_providers, gnn_block,
-                                 gnn_position, positional_encoders)
+    def forward(self, data: Data) -> torch.Tensor:
+        """Perform a forward pass of GraphTransformer.
 
+        Encodes node features, applies optional GNN blocks, runs the
+        transformer encoder, and performs readout to produce logits.
+
+        Args:
+            data (torch_geometric.data.Data): Input graph data.
+
+        Returns:
+            torch.Tensor: Output tensor (logits).
+        """
+        x = self._encode_and_apply_structural(data)
+        x = self._apply_gnn_if(position="pre", data=data, x=x)
+        x, batch_vec = self._prepare_batch(x, data.batch)
+        struct_mask = self._collect_attn_bias(data)
+        x_parallel_in = x if self._is_parallel() else None
+        x = self._run_encoder(x, batch_vec, struct_mask)
+        x = self._apply_gnn_if(position="post", data=data, x=x)
+
+        if x_parallel_in is not None:
+            x = x + self.gnn_block(data, x_parallel_in)
+
+        x = self._readout(x, batch_vec)
+        return self.classifier(x)
+
+    def _validate_cfg(self, hidden_dim: int, num_class: int, cfg: dict,
+                      gnn: dict) -> None:
+        """Validate configuration dictionaries.
+
+        Args:
+            hidden_dim (int): Hidden representation dimension.
+            num_class (int): Number of output classes.
+            cfg (dict): Encoder configuration dictionary.
+            gnn (dict): GNN configuration dictionary.
+        """
+        self._validate_init_args(
+            hidden_dim,
+            num_class,
+            cfg["num_encoder_layers"],
+            cfg["num_heads"],
+            cfg["dropout"],
+            cfg["ffn_hidden_dim"],
+            cfg["activation"],
+            cfg["attn_bias_providers"],
+            gnn["gnn_block"],
+            gnn["gnn_position"],
+            cfg["positional_encoders"],
+        )
+
+    def _build_modules(
+        self,
+        hidden_dim: int,
+        num_class: int,
+        cfg: Dict,
+        gnn: Dict,
+    ) -> None:
+        """Instantiate model modules from config.
+
+        Args:
+            hidden_dim (int): Hidden representation dimension.
+            num_class (int): Number of output classes.
+            cfg (dict): Encoder configuration dictionary.
+            gnn (dict): GNN configuration dictionary.
+        """
         self.classifier = nn.Linear(hidden_dim, num_class)
-        self.use_super_node = use_super_node
+        self.use_super_node = cfg["use_super_node"]
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
 
-        self.node_feature_encoder = node_feature_encoder
-        self.dropout = dropout
-        self.num_heads = num_heads
-        self.ffn_hidden_dim = ffn_hidden_dim or 4 * hidden_dim
-        self.activation = activation
+        self.node_feature_encoder = cfg["node_feature_encoder"]
+        self.dropout = cfg["dropout"]
+        self.num_heads = cfg["num_heads"]
+        self.ffn_hidden_dim = cfg["ffn_hidden_dim"]
+        self.activation = cfg["activation"]
 
-        encoder_layer = GraphTransformerEncoderLayer(
-            hidden_dim=hidden_dim, num_heads=num_heads, dropout=dropout,
-            ffn_hidden_dim=ffn_hidden_dim, activation=activation)
-        self.encoder = (GraphTransformerEncoder(encoder_layer,
-                                                num_encoder_layers)
-                        if num_encoder_layers > 0 else encoder_layer)
-        self.is_encoder_stack = num_encoder_layers > 0
-        self.attn_bias_providers = ModuleList(attn_bias_providers)
-        self.gnn_block = gnn_block
-        self.gnn_position = gnn_position
-        self.positional_encoders = ModuleList(positional_encoders)
+        layer = GraphTransformerEncoderLayer(
+            hidden_dim=hidden_dim,
+            num_heads=self.num_heads,
+            dropout=self.dropout,
+            ffn_hidden_dim=self.ffn_hidden_dim,
+            activation=self.activation,
+        )
+        self.encoder = (GraphTransformerEncoder(layer,
+                                                cfg["num_encoder_layers"])
+                        if cfg["num_encoder_layers"] > 0 else layer)
+        self.is_encoder_stack = cfg["num_encoder_layers"] > 0
+
+        self.attn_bias_providers = ModuleList(cfg["attn_bias_providers"])
+        self.positional_encoders = ModuleList(cfg["positional_encoders"])
+        self.gnn_block = gnn["gnn_block"]
+        self.gnn_position = gnn["gnn_position"]
 
     def _validate_init_args(
         self,
@@ -110,20 +201,21 @@ class GraphTransformer(torch.nn.Module):
         gnn_position: str,
         positional_encoders: Sequence[BasePositionalEncoder],
     ) -> None:
-        r"""Validates initialization arguments via specialized validators.
+        """Validates initialization arguments via specialized validators.
 
         Args:
-            hidden_dim (int): Hidden representation dimension
-            num_class (int): Number of output classes
-            num_encoder_layers (int): Number of encoder layers
-            num_heads (int): Number of attention heads
-            dropout (float): Dropout rate
-            ffn_hidden_dim (Optional[int]): FFN hidden dimension
-            activation (str): Name of activation function
-            attn_bias_providers (Sequence[BaseBiasProvider]): Bias providers
-            gnn_block (Optional[Callable]): GNN block function
-            gnn_position (str): GNN block position
-            positional_encoders (Sequence[BasePositionalEncoder]): Pos encoders
+            hidden_dim (int): Hidden representation dimension.
+            num_class (int): Number of output classes.
+            num_encoder_layers (int): Number of encoder layers.
+            num_heads (int): Number of attention heads.
+            dropout (float): Dropout rate.
+            ffn_hidden_dim (Optional[int]): FFN hidden dimension.
+            activation (str): Name of activation function.
+            attn_bias_providers (Sequence[BaseBiasProvider]): Bias providers.
+            gnn_block (Optional[Callable]): GNN block function.
+            gnn_position (str): GNN block position.
+            positional_encoders (Sequence[BasePositionalEncoder]):
+                Positional encoders.
         """
         self._validate_dimensions(hidden_dim, num_class, num_encoder_layers)
         self._validate_transformer_params(num_heads, dropout, ffn_hidden_dim,
@@ -213,6 +305,20 @@ class GraphTransformer(torch.nn.Module):
 
     def _validate_bias_providers(self, providers: Sequence[BaseBiasProvider],
                                  num_heads: int) -> None:
+        """Validates attention bias providers.
+        Ensures all providers are instances of BaseBiasProvider and that
+        their num_heads match the model's num_heads.
+
+        Args:
+            providers (Sequence[BaseBiasProvider]): Sequence of bias providers.
+            num_heads (int): Number of attention heads.
+
+        Returns:
+            None
+        Raises:
+            TypeError: If any provider is not a BaseBiasProvider.
+            ValueError: If any provider's num_heads does not match num_heads.
+        """
         for prov in providers:
             if not isinstance(prov, BaseBiasProvider):
                 raise TypeError(f"{prov!r} is not a BaseBiasProvider")
@@ -224,6 +330,20 @@ class GraphTransformer(torch.nn.Module):
 
     def _validate_gnn_config(self, gnn_block: Optional[Callable],
                              gnn_position: str) -> None:
+        """Validates GNN configuration.
+        Ensures gnn_block is callable if provided, and gnn_position is valid.
+
+        Args:
+            gnn_block (Optional[Callable]): GNN block function.
+            gnn_position (str): Position to apply the GNN block.
+
+        Returns:
+            None
+        Raises:
+            ValueError: If gnn_block is None and gnn_position is not 'pre'.
+            ValueError: If gnn_position is not one of
+            'pre', 'post', or 'parallel'.
+        """
         valid_positions = {'pre', 'post', 'parallel'}
         if gnn_position not in valid_positions:
             raise ValueError(f"gnn_position must be one of {valid_positions}, "
@@ -234,6 +354,19 @@ class GraphTransformer(torch.nn.Module):
 
     def _validate_positional_encoders(
             self, encoders: Sequence[BasePositionalEncoder]) -> None:
+        """Validates positional encoders.
+        Ensures all encoders are callable and have a forward method.
+
+        Args:
+            encoders (Sequence[BasePositionalEncoder]): Sequence of positional
+                encoders.
+
+        Returns:
+            None
+        Raises:
+            TypeError: If any encoder is not callable or does not have a
+                forward method.
+        """
         for enc in encoders:
             if not callable(getattr(enc, "forward", None)):
                 raise TypeError(
@@ -300,7 +433,16 @@ class GraphTransformer(torch.nn.Module):
 
     @staticmethod
     def _find_in_features(module):
-        """Recursively finds the in_features attribute in a module."""
+        """Recursively finds the in_features attribute in a module.
+        This is used to determine the expected input dimension for the
+        node feature encoder.
+
+        Args:
+            module (torch.nn.Module): The module to search.
+
+        Returns:
+            Optional[int]: The in_features attribute if found, else None.
+        """
         if hasattr(module, 'in_features'):
             return module.in_features
         if hasattr(module, 'children'):
@@ -346,32 +488,6 @@ class GraphTransformer(torch.nn.Module):
                 f"expected {in_features}. Please check your dataset and "
                 f"node_feature_encoder configuration.")
         return encoder(x)
-
-    def forward(self, data: Data) -> torch.Tensor:
-        """Perform a forward pass of GraphTransformer.
-
-        Encodes node features, applies optional GNN blocks, runs the
-        transformer encoder, and performs readout to produce logits.
-
-        Args:
-            data (torch_geometric.data.Data): Input graph data.
-
-        Returns:
-            torch.Tensor: Output tensor.
-        """
-        x = self._encode_and_apply_structural(data)
-        x = self._apply_gnn_if(position="pre", data=data, x=x)
-        x, batch_vec = self._prepare_batch(x, data.batch)
-        struct_mask = self._collect_attn_bias(data)
-        x_parallel_in = x if self._is_parallel() else None
-        x = self._run_encoder(x, batch_vec, struct_mask)
-        x = self._apply_gnn_if(position="post", data=data, x=x)
-
-        if x_parallel_in is not None:
-            x = x + self.gnn_block(data, x_parallel_in)
-
-        x = self._readout(x, batch_vec)
-        return self.classifier(x)
 
     def _encode_and_apply_structural(self, data: Data) -> torch.Tensor:
         """Encode node features and apply positional encodings.
