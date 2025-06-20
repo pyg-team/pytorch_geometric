@@ -72,6 +72,10 @@ class Teeth3DS(InMemoryDataset):
         "resources/xctdy/providers/osfstorage/?zip="
     }
 
+    sample_url = {
+        "teeth3ds_sample": "https://osf.io/download/vr38s/",
+    }
+
     landmarks_urls = {
         "3DTeethLand_landmarks_train.zip": 'https://osf.io/download/k5hbj/',
         "3DTeethLand_landmarks_test.zip": 'https://osf.io/download/sqw5e/',
@@ -106,7 +110,10 @@ class Teeth3DS(InMemoryDataset):
     @property
     def processed_file_names(self) -> List[str]:
         # Directory containing train/test split files
-        split_dir = osp.join(self.raw_dir, f'{self.split}_train_test_split')
+        split_subdir = "teeth3ds_sample" if self.split == "sample" else ""
+        split_dir = osp.join(self.raw_dir, split_subdir,
+                             f"{self.split}_train_test_split")
+
         split_files = glob(osp.join(split_dir, f'{self.mode}*.txt'))
 
         # Collect all file names from the split files
@@ -119,15 +126,21 @@ class Teeth3DS(InMemoryDataset):
         return [f"{file_name}.pt" for file_name in combined_list]
 
     def download(self) -> None:
-        for key, url in self.urls.items():
-            path = download_url(url, self.root, filename=key)
-            extract_zip(path, self.raw_dir)
-            os.unlink(path)
-        # download landmarks
-        for key, url in self.landmarks_urls.items():
-            path = download_url(url, self.root, filename=key)
-            extract_zip(path, self.raw_dir)  # Extract each downloaded part
-            os.unlink(path)
+        if self.split == "sample":
+            for key, url in self.sample_url.items():
+                path = download_url(url, self.root, filename=key)
+                extract_zip(path, self.raw_dir)
+                os.unlink(path)
+        else:
+            for key, url in self.urls.items():
+                path = download_url(url, self.root, filename=key)
+                extract_zip(path, self.raw_dir)
+                os.unlink(path)
+            # download landmarks
+            for key, url in self.landmarks_urls.items():
+                path = download_url(url, self.root, filename=key)
+                extract_zip(path, self.raw_dir)  # Extract each downloaded part
+                os.unlink(path)
 
     def process_file(self, file_path: str) -> Optional[Data]:
         """Processes the input file path to load mesh data, annotations,
@@ -245,7 +258,8 @@ class Teeth3DS(InMemoryDataset):
 
     def get(self, idx: int) -> Data:
         file = self.processed_file_names[idx]
-        data = torch.load(osp.join(self.processed_dir, file))
+        data = torch.load(osp.join(self.processed_dir, file),
+                          weights_only=False)
         return data
 
     def __repr__(self) -> str:
