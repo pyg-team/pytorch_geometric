@@ -248,7 +248,7 @@ class Teeth3DS(InMemoryDataset):
     def process(self) -> None:
         for file in tqdm(self.processed_file_names):
             file_name = file.split('.')[0]
-            file_path = glob(self.raw_dir + '/**/*/*' + file_name + '.obj')
+            file_path = glob(osp.join(self.raw_dir, '**', '*', '*', file_name + '.obj'))
             if len(file_path) == 1:
                 data = self.process_file(file_path[0])
                 torch.save(data, osp.join(self.processed_dir, file))
