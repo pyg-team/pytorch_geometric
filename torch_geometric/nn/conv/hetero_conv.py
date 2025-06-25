@@ -77,7 +77,8 @@ class HeteroConv(torch.nn.Module):
                 f"There exist node types ({src_node_types - dst_node_types}) "
                 f"whose representations do not get updated during message "
                 f"passing as they do not occur as destination type in any "
-                f"edge type. This may lead to unexpected behavior.")
+                f"edge type. This may lead to unexpected behavior.",
+                stacklevel=2)
 
         self.convs = ModuleDict(convs)
         self.aggr = aggr
