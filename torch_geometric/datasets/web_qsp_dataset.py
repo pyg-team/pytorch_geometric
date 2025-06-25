@@ -219,13 +219,13 @@ class KGQABaseDataset(InMemoryDataset):
         self.model: SentenceTransformer = SentenceTransformer(model_name).to(
             device)
         self.model.eval()
-        self.indexer_path = os.path.join(self.processed_dir, "large_graph_indexer")
+        self.indexer_path = os.path.join(self.processed_dir,
+                                         "large_graph_indexer")
         if self.force_reload or not os.path.exists(self.indexer_path):
             self._build_graph()
         else:
             print("Loading graph...")
-            self.indexer = LargeGraphIndexer.from_disk(
-                self.indexer_path)
+            self.indexer = LargeGraphIndexer.from_disk(self.indexer_path)
         self.textual_nodes = DataFrame.from_dict(
             {"node_attr": self.indexer.get_node_features()})
         self.textual_nodes["node_id"] = self.textual_nodes.index
