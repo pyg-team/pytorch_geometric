@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
+from torch_geometric.nn import GATv3Conv
 from torch_geometric.nn.models import GAT, GraphSAGE, SGFormer
 from torch_geometric.utils import (
     add_self_loops,
@@ -36,15 +37,14 @@ parser.add_argument(
 parser.add_argument(
     "--model",
     type=str.lower,
-    default='SGFormer',
-    choices=['sage', 'gat', 'sgformer'],
-    help="Model used for training",
+    default='sage',
+    choices=['sage', 'gat', 'sgformer', 'gatv3'],
+    help="Model used for training: sage, gat, sgformer, or gatv3.",
 )
-
-parser.add_argument('-e', '--epochs', type=int, default=50)
+parser.add_argument('-e', '--epochs', type=int, default=10)
 parser.add_argument('--num_layers', type=int, default=3)
 parser.add_argument('--num_heads', type=int, default=1,
-                    help='number of heads for GAT model.')
+                    help='number of heads for GAT models.')
 parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
@@ -209,6 +209,13 @@ def get_model(model_name: str) -> torch.nn.Module:
             gnn_num_layers=num_layers,
             gnn_dropout=args.dropout,
         )
+    elif model_name == 'gatv3':
+        model = GATv3Conv(
+            in_channels=dataset.num_features,
+            out_channels=dataset.num_classes,
+            heads=args.num_heads,
+            dropout=args.dropout,
+        )
     else:
         raise ValueError(f'Unsupported model type: {model_name}')
 
@@ -248,6 +255,7 @@ for epoch in range(1, num_epochs + 1):
 
     if val_acc > best_val:
         best_val = val_acc
+        best_model = args.model
     times.append(time.perf_counter() - train_start)
     for param_group in optimizer.param_groups:
         print('lr:')
