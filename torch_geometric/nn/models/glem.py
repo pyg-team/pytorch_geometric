@@ -380,7 +380,10 @@ class GLEM(torch.nn.Module):
 
         """
         def deal_nan(x):
-            return 0 if torch.isnan(x) else x
+            if isinstance(x, torch.Tensor):
+                x = x.clone()
+                x[torch.isnan(x)] = 0.0
+            return x
 
         if is_augmented and (sum(~is_gold) > 0):
             mle_loss = deal_nan(loss_func(logits[is_gold], labels[is_gold]))
