@@ -120,12 +120,15 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         return batch_knn(query_enc, self.x, k_nodes)
 
     def load_subgraph(
-        self, sample: Union[SamplerOutput, HeteroSamplerOutput]
+        self,
+        sample: Union[SamplerOutput, HeteroSamplerOutput],
+        induced=True,
     ) -> Union[Data, HeteroData]:
         """Loads a subgraph from the given sample.
 
         Args:
         - sample: The sample to load the subgraph from.
+        - induced: Whether to return the induced subgraph (resets node and edge ids).
 
         Returns:
         - The loaded subgraph.
@@ -136,8 +139,18 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         # NOTE: torch_geometric.loader.utils.filter_custom_store can be used here
         # if it supported edge features
         edge_id = sample.edge
+        x = self.x[sample.node]
         edge_attr = self.edge_attr[edge_id]
-        return Data(edge_attr=edge_attr, edge_idx=edge_id)
+
+        edge_idx = torch.stack([sample.row, sample.col], dim=0) \
+            if induced else torch.stack([sample.global_row, sample.global_col], dim=0)
+        result = Data(x=x, edge_attr=edge_attr, edge_index=edge_idx)
+
+        # useful for tracking what subset of the graph was sampled
+        result.node_idx = sample.node
+        result.edge_idx = edge_id
+
+        return result
 
 
 # TODO: Refactor because composition >> inheritance

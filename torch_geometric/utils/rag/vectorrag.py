@@ -45,6 +45,7 @@ class DocumentRetriever(VectorRetriever):
 
         if self.embedded_docs is None:
             assert self.model is not None, "Model must be provided if embedded_docs is not provided"
+            self.model_kwargs = model_kwargs or {}
             self.embedded_docs = self.encoder(self.raw_docs,
                                               **self.model_kwargs)
             # we don't want to print the verbose output in `query`

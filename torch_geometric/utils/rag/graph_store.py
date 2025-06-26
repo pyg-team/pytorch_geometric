@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data import FeatureStore
@@ -11,6 +12,7 @@ from torch_geometric.sampler import (
     SamplerOutput,
 )
 from torch_geometric.typing import EdgeTensorType, InputNodes
+from torch_geometric.utils import index_sort
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
@@ -130,9 +132,14 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             edge_type=None,
             layout='coo',
             size=(num_nodes, num_nodes),
-            is_sorted=True,
+            is_sorted=False,
         )
-        self.put_edge_index(edge_index, **attr)
+        # edge index needs to be sorted here and the perm saved for later
+        col_sorted, self.perm = index_sort(edge_index[1], num_nodes,
+                                           stable=True)
+        row_sorted = edge_index[0][self.perm]
+        edge_index_sorted = torch.stack([row_sorted, col_sorted], dim=0)
+        self.put_edge_index(edge_index_sorted, **attr)
 
     def sample_subgraph(
             self, seed_nodes: InputNodes
@@ -160,5 +167,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
         out = self.sampler.sample_from_nodes(node_sample_input)
+
+        # edge ids need to be remapped to the original indices
+        out.edge = self.perm[out.edge]
 
         return out
