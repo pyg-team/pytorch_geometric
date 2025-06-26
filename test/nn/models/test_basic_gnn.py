@@ -384,6 +384,7 @@ def test_basic_gnn_cache():
     assert torch.allclose(out1, out2)
 
 
+@withPackage('transformers')
 def test_glem_loss_handles_nan():
     model = GLEM()
 
