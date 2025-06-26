@@ -11,6 +11,7 @@ from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
+from torch_geometric.nn.models.glem import GLEM
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     onlyFullTest,
@@ -381,6 +382,30 @@ def test_basic_gnn_cache():
     out2 = model.inference(loader, cache=True)
 
     assert torch.allclose(out1, out2)
+
+
+def test_glem_loss_handles_nan():
+    model = GLEM()
+
+    logits = torch.tensor([[float('nan'), 0.0], [1.0, -1.0]], requires_grad=True)
+    labels = torch.tensor([0, 1])
+    is_gold = torch.tensor([True, False])
+    pseudo_labels = torch.tensor([1, 0])
+    loss_func = torch.nn.CrossEntropyLoss()
+
+    loss = model.loss(
+        logits=logits,
+        labels=labels,
+        loss_func=loss_func,
+        is_gold=is_gold,
+        pseudo_labels=pseudo_labels,
+        pl_weight=0.5,
+        is_augmented=True,
+    )
+
+    assert isinstance(loss, torch.Tensor)
+    assert not torch.isnan(loss)
+    assert loss.requires_grad
 
 
 if __name__ == '__main__':
