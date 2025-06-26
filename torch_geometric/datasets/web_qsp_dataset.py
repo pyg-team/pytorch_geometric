@@ -88,12 +88,8 @@ class KGQABaseDataset(InMemoryDataset):
         return ["raw.pt"]
 
     @property
-    def _processed_split_file_names(self) -> List[str]:
-        return ["train_data.pt", "val_data.pt", "test_data.pt"]
-
-    @property
     def processed_file_names(self) -> List[str]:
-        return self._processed_split_file_names + ["large_graph_indexer"]
+        return ["train_data.pt", "val_data.pt", "test_data.pt"]
 
     def download(self) -> None:
         import datasets
@@ -153,7 +149,7 @@ class KGQABaseDataset(InMemoryDataset):
         )
 
         print("\tSaving graph...")
-        self.indexer.save(self.processed_paths[-1])
+        self.indexer.save(self.indexer_path)
 
     def _retrieve_subgraphs(self) -> None:
         for split_name, dataset, path in zip(
@@ -223,12 +219,13 @@ class KGQABaseDataset(InMemoryDataset):
         self.model: SentenceTransformer = SentenceTransformer(model_name).to(
             device)
         self.model.eval()
-        if self.force_reload or not os.path.exists(self.processed_paths[-1]):
+        self.indexer_path = os.path.join(self.processed_dir,
+                                         "large_graph_indexer")
+        if self.force_reload or not os.path.exists(self.indexer_path):
             self._build_graph()
         else:
             print("Loading graph...")
-            self.indexer = LargeGraphIndexer.from_disk(
-                self.processed_paths[-1])
+            self.indexer = LargeGraphIndexer.from_disk(self.indexer_path)
         self.textual_nodes = DataFrame.from_dict(
             {"node_attr": self.indexer.get_node_features()})
         self.textual_nodes["node_id"] = self.textual_nodes.index

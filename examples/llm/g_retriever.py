@@ -284,8 +284,7 @@ def train(
     if model_save_name == 'llm':
         model = llm
     else:
-        model = GRetriever(llm=llm, gnn=gnn,
-                           mlp_out_channels=llm.word_embedding.embedding_dim)
+        model = GRetriever(llm=llm, gnn=gnn)
 
     # Create optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
