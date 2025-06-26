@@ -388,7 +388,8 @@ def test_basic_gnn_cache():
 def test_glem_loss_handles_nan():
     model = GLEM()
 
-    logits = torch.tensor([[float('nan'), 0.0], [1.0, -1.0]], requires_grad=True)
+    logits = torch.tensor([[float('nan'), 0.0], [1.0, -1.0]],
+                          requires_grad=True)
     labels = torch.tensor([0, 1])
     is_gold = torch.tensor([True, False])
     pseudo_labels = torch.tensor([1, 0])
