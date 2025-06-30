@@ -48,6 +48,7 @@ class oscillatorDataset(InMemoryDataset):
     cells in a beating heart, and the stable operation of power grids.
     However, exact numerical simulations of large systems of coupled
     oscillators are exceedingly expensive.
+
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (one of :obj:`"osc20"`,
@@ -99,7 +100,7 @@ class oscillatorDataset(InMemoryDataset):
         self.normalize_targets = normalize_targets
         self.task_name = "snbs"
         super().__init__(root, transform, pre_transform, pre_filter,
-            force_reload=force_reload)
+                         force_reload=force_reload)
         path = os.path.join(self.processed_dir, f"{split}.pt")
         if not os.path.exists(path) or force_reload:
             self.process()
@@ -124,10 +125,9 @@ class oscillatorDataset(InMemoryDataset):
     def download(self):
         raw_dir = self.raw_dir
         if all(
-            os.path.exists(os.path.join(raw_dir, split, file))
-            for split in ["train", "valid", "test"]
-            for file in self.raw_file_names
-        ):
+                os.path.exists(os.path.join(raw_dir, split, file))
+                for split in ["train", "valid", "test"]
+                for file in self.raw_file_names):
             print("Files already exist, skipping download.")
             return
         url = self.datasets[self.name]
@@ -148,8 +148,7 @@ class oscillatorDataset(InMemoryDataset):
         print(f"Unzipped {zip_path}")
         # Move files from nested directories to the correct location
         nested_dirs = [
-            d
-            for d in os.listdir(extract_to)
+            d for d in os.listdir(extract_to)
             if os.path.isdir(os.path.join(extract_to, d))
         ]
         for nested_dir in nested_dirs:
@@ -161,36 +160,38 @@ class oscillatorDataset(InMemoryDataset):
                 )
                 if self.single_grid:
                     if filename in [
-                        "train",
-                        "test",
-                        "tm.h5",
-                        "mfd.h5",
-                        "input_features.csv",
+                            "train",
+                            "test",
+                            "tm.h5",
+                            "mfd.h5",
+                            "input_features.csv",
                     ]:
                         os.remove(os.path.join(extract_to, filename))
                 else:
-                    for other_file in os.listdir(os.path.join(extract_to, filename)):
-                        if other_file in ["tm.h5", "mfd.h5", "input_features.csv"]:
-                            os.remove(os.path.join(extract_to, filename, other_file))
+                    for other_file in os.listdir(
+                            os.path.join(extract_to, filename)):
+                        if other_file in [
+                                "tm.h5", "mfd.h5", "input_features.csv"
+                        ]:
+                            os.remove(
+                                os.path.join(extract_to, filename, other_file))
             os.rmdir(nested_dir_path)
 
     def read_targets(self):
-        file_targets = os.path.join(self.raw_dir, self.split, f"{self.task_name}.h5")
-<<<<<<< HEAD
-=======
-        file_targets = os.path.join(self.raw_dir, self.split, f"{self.task_name}.h5")
->>>>>>> 9d130f8af (update format)
+        file_targets = os.path.join(self.raw_dir, self.split,
+                                    f"{self.task_name}.h5")
         if self.single_grid:
             file_targets = os.path.join(self.raw_dir, f"{self.task_name}.h5")
         print(f"Reading targets from {file_targets}")
         hf = h5py.File(file_targets, "r")
         int_keys = [int(x) for x in list(hf.keys())]
         self.slice_index = slice(
-            min(int_keys), max(int_keys)
-        )  # Automatically set slice_index based on the file
+            min(int_keys),
+            max(int_keys))  # Automatically set slice_index based on the file
         return {
             index_grid: np.array(hf.get(str(index_grid)), dtype="float32")
-            for index_grid in range(self.slice_index.start, self.slice_index.stop + 1)
+            for index_grid in range(self.slice_index.start,
+                                    self.slice_index.stop + 1)
         }
 
     def process(self):
@@ -203,17 +204,16 @@ class oscillatorDataset(InMemoryDataset):
         f = h5py.File(file_to_read, "r")
         dset_grids = f["grids"]
         data_list = []
-        for index_grid in range(self.slice_index.start, self.slice_index.stop + 1):
+        for index_grid in range(self.slice_index.start,
+                                self.slice_index.stop + 1):
             node_features = np.array(
-                dset_grids[str(index_grid)].get("node_features"), dtype="float32"
-            ).transpose()
-            edge_index = (
-                np.array(dset_grids[str(index_grid)].get("edge_index"), dtype="int64")
-                - 1
-            ).transpose()
-            edge_attr = np.array(
-                dset_grids[str(index_grid)].get("edge_attr"), dtype="float32"
-            )
+                dset_grids[str(index_grid)].get("node_features"),
+                dtype="float32").transpose()
+            edge_index = (np.array(
+                dset_grids[str(index_grid)].get("edge_index"), dtype="int64") -
+                          1).transpose()
+            edge_attr = np.array(dset_grids[str(index_grid)].get("edge_attr"),
+                                 dtype="float32")
             y = torch.tensor(targets[index_grid])
             data = gData(
                 x=(torch.tensor(node_features).unsqueeze(-1)),
@@ -229,8 +229,7 @@ class oscillatorDataset(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
 
         data, slices = self.collate(data_list)
-        torch.save((data, slices), os.path.join(self.processed_dir, f"{self.split}.pt"))
-        print(
-            f"Processed data saved to "
-            f"{os.path.join(self.processed_dir, f'{self.split}.pt')}"
-        )
+        torch.save((data, slices),
+                   os.path.join(self.processed_dir, f"{self.split}.pt"))
+        print(f"Processed data saved to "
+              f"{os.path.join(self.processed_dir, f'{self.split}.pt')}")
