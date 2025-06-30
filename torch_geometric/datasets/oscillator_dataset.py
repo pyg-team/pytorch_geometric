@@ -176,6 +176,10 @@ class oscillatorDataset(InMemoryDataset):
 
     def read_targets(self):
         file_targets = os.path.join(self.raw_dir, self.split, f"{self.task_name}.h5")
+<<<<<<< HEAD
+=======
+        file_targets = os.path.join(self.raw_dir, self.split, f"{self.task_name}.h5")
+>>>>>>> 9d130f8af (update format)
         if self.single_grid:
             file_targets = os.path.join(self.raw_dir, f"{self.task_name}.h5")
         print(f"Reading targets from {file_targets}")
