@@ -73,9 +73,16 @@ class LLM(torch.nn.Module):
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         if num_params is None:
-            from huggingface_hub import get_safetensors_metadata
-            safetensors_metadata = get_safetensors_metadata(model_name)
-            param_count = safetensors_metadata.parameter_count
+            import os
+            if os.path.isdir(model_name):
+                llm = AutoModelForCausalLM.from_pretrained(model_name)
+                param_count = {"n_params":sum([x.numel() for x in llm.parameters()])}
+                del llm
+            else:
+                from huggingface_hub import get_safetensors_metadata
+                safetensors_metadata = get_safetensors_metadata(model_name)
+                param_count = safetensors_metadata.parameter_count
+            
             num_params = list(param_count.values())[0] // 10**9
 
         # A rough heuristic on GPU memory requirements, e.g., we found that
