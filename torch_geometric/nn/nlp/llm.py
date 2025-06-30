@@ -135,7 +135,8 @@ class LLM(torch.nn.Module):
             self.sys_prompt = sys_prompt
 
         if 'max_memory' not in kwargs:  # Pure CPU:
-            warnings.warn("LLM is being used on CPU, which may be slow")
+            warnings.warn("LLM is being used on CPU, which may be slow",
+                          stacklevel=2)
             self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:

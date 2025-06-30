@@ -70,8 +70,9 @@ def dense_to_sparse(
                          f"three-dimensional (got {adj.dim()} dimensions)")
 
     if mask is not None and adj.dim() == 2:
-        warnings.warn("Mask should not be provided in case the dense "
-                      "adjacency matrix is two-dimensional")
+        warnings.warn(
+            "Mask should not be provided in case the dense "
+            "adjacency matrix is two-dimensional", stacklevel=2)
         mask = None
 
     if mask is not None and mask.dim() != 2:

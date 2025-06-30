@@ -45,7 +45,7 @@ class SignedGCN(torch.nn.Module):
         self.conv1 = SignedConv(in_channels, hidden_channels // 2,
                                 first_aggr=True)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             self.convs.append(
                 SignedConv(hidden_channels // 2, hidden_channels // 2,
                            first_aggr=False))

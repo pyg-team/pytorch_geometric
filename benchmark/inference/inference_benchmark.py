@@ -45,8 +45,9 @@ def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
     if args.write_csv == 'prof' and not args.profile:
-        warnings.warn("Cannot write profile data to CSV because profiling is "
-                      "disabled")
+        warnings.warn(
+            "Cannot write profile data to CSV because profiling is "
+            "disabled", stacklevel=2)
 
     if args.device == 'xpu':
         try:

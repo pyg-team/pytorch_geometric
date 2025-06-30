@@ -74,7 +74,7 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
              for i in range(num_edges)})
         triplets = []
 
-        for i in range(num_trips):
+        for _ in range(num_trips):
             h = random.randint(0, num_nodes - 1)
             t = random.randint(0, num_nodes - 1)
             r = random.randint(0, num_edge_types - 1)

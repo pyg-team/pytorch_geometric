@@ -163,8 +163,10 @@ def knn_graph(
     :rtype: :class:`torch.Tensor`
     """
     if batch is not None and x.device != batch.device:
-        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
-                      "in 'knn_graph'. Performing blocking device transfer")
+        warnings.warn(
+            "Input tensor 'x' and 'batch' are on different devices "
+            "in 'knn_graph'. Performing blocking device transfer",
+            stacklevel=2)
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
@@ -285,8 +287,10 @@ def radius_graph(
         inputs to GPU before proceeding.
     """
     if batch is not None and x.device != batch.device:
-        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
-                      "in 'radius_graph'. Performing blocking device transfer")
+        warnings.warn(
+            "Input tensor 'x' and 'batch' are on different devices "
+            "in 'radius_graph'. Performing blocking device transfer",
+            stacklevel=2)
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:

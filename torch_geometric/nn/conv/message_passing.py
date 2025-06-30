@@ -1029,6 +1029,7 @@ class MessagePassing(torch.nn.Module):
             :meth:`jittable` is deprecated and a no-op from :pyg:`PyG` 2.5
             onwards.
         """
-        warnings.warn(f"'{self.__class__.__name__}.jittable' is deprecated "
-                      f"and a no-op. Please remove its usage.")
+        warnings.warn(
+            f"'{self.__class__.__name__}.jittable' is deprecated "
+            f"and a no-op. Please remove its usage.", stacklevel=2)
         return self
