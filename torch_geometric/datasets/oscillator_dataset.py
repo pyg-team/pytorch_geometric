@@ -48,7 +48,6 @@ class oscillatorDataset(InMemoryDataset):
     cells in a beating heart, and the stable operation of power grids.
     However, exact numerical simulations of large systems of coupled
     oscillators are exceedingly expensive.
-
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (one of :obj:`"osc20"`,
