@@ -64,7 +64,7 @@ class GraphUNet(torch.nn.Module):
         in_channels = channels if sum_res else 2 * channels
 
         self.up_convs = torch.nn.ModuleList()
-        for i in range(depth - 1):
+        for _ in range(depth - 1):
             self.up_convs.append(GCNConv(in_channels, channels, improved=True))
         self.up_convs.append(GCNConv(in_channels, out_channels, improved=True))
 

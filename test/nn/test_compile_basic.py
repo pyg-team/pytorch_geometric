@@ -35,7 +35,7 @@ def gather_transform_scatter(x, edge_index, matrix, reduce='sum'):
     return scatter(x_j, col, dim_size=x.size(0), reduce=reduce)
 
 
-def fused_gather_scatter(x, edge_index, reduce=['sum', 'mean', 'max']):
+def fused_gather_scatter(x, edge_index, reduce=('sum', 'mean', 'max')):
     row, col = edge_index
     x_j = x[row]
     outs = [scatter(x_j, col, dim_size=x.size(0), reduce=r) for r in reduce]

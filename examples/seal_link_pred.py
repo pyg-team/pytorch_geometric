@@ -147,7 +147,7 @@ class DGCNN(torch.nn.Module):
 
         self.convs = ModuleList()
         self.convs.append(GNN(train_dataset.num_features, hidden_channels))
-        for i in range(0, num_layers - 1):
+        for _ in range(0, num_layers - 1):
             self.convs.append(GNN(hidden_channels, hidden_channels))
         self.convs.append(GNN(hidden_channels, 1))
 
