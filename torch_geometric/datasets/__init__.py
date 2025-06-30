@@ -82,7 +82,6 @@ from .git_mol_dataset import GitMolDataset
 from .molecule_gpt_dataset import MoleculeGPTDataset
 from .instruct_mol_dataset import InstructMolDataset
 from .tag_dataset import TAGDataset
-from .oscillator_dataset import oscillatorDataset
 from .city import CityNetwork
 from .oscillator_dataset import oscillatorDataset
 
