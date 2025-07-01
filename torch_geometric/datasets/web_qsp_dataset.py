@@ -168,7 +168,7 @@ class KGQABaseDataset(InMemoryDataset):
     def _retrieve_subgraphs(self) -> None:
         for split_name, dataset, path in zip(
                 self.required_splits,
-            [self.raw_dataset[split] for split in self.required_splits],
+            [self.raw_dataset[split] for split in self.required_splits], # noqa
                 self.processed_paths,
         ):
             print(f"Processing {split_name} split...")
@@ -277,7 +277,8 @@ class WebQSPDataset(KGQABaseDataset):
             Keyword arguments for the `datasets.load_dataset` function.
             (default: :obj:`{}`)
         retrieval_kwargs (dict, optional):
-            Keyword arguments for the `get_features_for_triplets_groups` function.
+            Keyword arguments for the
+            `get_features_for_triplets_groups` function.
             (default: :obj:`{}`)
     """
     def __init__(
