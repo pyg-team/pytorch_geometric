@@ -32,8 +32,10 @@ class DocumentRetriever(VectorRetriever):
             raw_docs: List[str]: List of raw documents.
             embedded_docs: Optional[Tensor]: Embedded documents.
             k_for_docs: int: Number of documents to retrieve.
-            model: Optional[Union[SentenceTransformer, torch.nn.Module]]: Model to use for encoding.
-            model_kwargs: Optional[Dict[str, Any]]: Keyword arguments to pass to the model.
+            model: Optional[Union[SentenceTransformer, torch.nn.Module]]:
+                Model to use for encoding.
+            model_kwargs: Optional[Dict[str, Any]]: 
+                Keyword arguments to pass to the model.
         """
         self.raw_docs = raw_docs
         self.embedded_docs = embedded_docs
@@ -45,7 +47,8 @@ class DocumentRetriever(VectorRetriever):
             self.model_kwargs = model_kwargs
 
         if self.embedded_docs is None:
-            assert self.model is not None, "Model must be provided if embedded_docs is not provided"
+            assert self.model is not None, \
+                "Model must be provided if embedded_docs is not provided"
             self.model_kwargs = model_kwargs or {}
             self.embedded_docs = self.encoder(self.raw_docs,
                                               **self.model_kwargs)
@@ -97,7 +100,8 @@ class DocumentRetriever(VectorRetriever):
         Args:
             path: str: Path to the saved retriever.
             model: Union[SentenceTransformer, torch.nn.Module, Callable]:
-                Model to use for encoding. If None, the saved model will be used if available.
+                Model to use for encoding. 
+                If None, the saved model will be used if available.
 
         Returns:
             DocumentRetriever: The loaded retriever.
