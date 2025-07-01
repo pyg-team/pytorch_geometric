@@ -34,7 +34,7 @@ class DocumentRetriever(VectorRetriever):
             k_for_docs: int: Number of documents to retrieve.
             model: Optional[Union[SentenceTransformer, torch.nn.Module]]:
                 Model to use for encoding.
-            model_kwargs: Optional[Dict[str, Any]]: 
+            model_kwargs: Optional[Dict[str, Any]]:
                 Keyword arguments to pass to the model.
         """
         self.raw_docs = raw_docs
@@ -100,7 +100,7 @@ class DocumentRetriever(VectorRetriever):
         Args:
             path: str: Path to the saved retriever.
             model: Union[SentenceTransformer, torch.nn.Module, Callable]:
-                Model to use for encoding. 
+                Model to use for encoding.
                 If None, the saved model will be used if available.
 
         Returns:
