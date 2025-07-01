@@ -185,7 +185,7 @@ class TXT2KG():
                                 "/tmp/outs_for_proc_" + str(rank))
                             os.remove("/tmp/outs_for_proc_" + str(rank))
                         break
-                    except: # noqa
+                    except:  # noqa
                         pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
