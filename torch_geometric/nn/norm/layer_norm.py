@@ -30,11 +30,13 @@ class LayerNorm(torch.nn.Module):
         affine (bool, optional): If set to :obj:`True`, this module has
             learnable affine parameters :math:`\gamma` and :math:`\beta`.
             (default: :obj:`True`)
-        mode (str, optinal): The normalization mode to use for layer
+        mode (str, optional): The normalization mode to use for layer
             normalization (:obj:`"graph"` or :obj:`"node"`). If :obj:`"graph"`
             is used, each graph will be considered as an element to be
             normalized. If `"node"` is used, each node will be considered as
             an element to be normalized. (default: :obj:`"graph"`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -42,6 +44,7 @@ class LayerNorm(torch.nn.Module):
         eps: float = 1e-5,
         affine: bool = True,
         mode: str = 'graph',
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
 
@@ -51,8 +54,8 @@ class LayerNorm(torch.nn.Module):
         self.mode = mode
 
         if affine:
-            self.weight = Parameter(torch.empty(in_channels))
-            self.bias = Parameter(torch.empty(in_channels))
+            self.weight = Parameter(torch.empty(in_channels, device=device))
+            self.bias = Parameter(torch.empty(in_channels, device=device))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
@@ -108,7 +111,7 @@ class LayerNorm(torch.nn.Module):
             return F.layer_norm(x, (self.in_channels, ), self.weight,
                                 self.bias, self.eps)
 
-        raise ValueError(f"Unknow normalization mode: {self.mode}")
+        raise ValueError(f"Unknownn normalization mode: {self.mode}")
 
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
@@ -130,10 +133,12 @@ class HeteroLayerNorm(torch.nn.Module):
         affine (bool, optional): If set to :obj:`True`, this module has
             learnable affine parameters :math:`\gamma` and :math:`\beta`.
             (default: :obj:`True`)
-        mode (str, optinal): The normalization mode to use for layer
+        mode (str, optional): The normalization mode to use for layer
             normalization (:obj:`"node"`). If `"node"` is used, each node will
             be considered as an element to be normalized.
             (default: :obj:`"node"`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -142,6 +147,7 @@ class HeteroLayerNorm(torch.nn.Module):
         eps: float = 1e-5,
         affine: bool = True,
         mode: str = 'node',
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
         assert mode == 'node'
@@ -152,8 +158,10 @@ class HeteroLayerNorm(torch.nn.Module):
         self.affine = affine
 
         if affine:
-            self.weight = Parameter(torch.empty(num_types, in_channels))
-            self.bias = Parameter(torch.empty(num_types, in_channels))
+            self.weight = Parameter(
+                torch.empty(num_types, in_channels, device=device))
+            self.bias = Parameter(
+                torch.empty(num_types, in_channels, device=device))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)

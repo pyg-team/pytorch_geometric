@@ -45,14 +45,16 @@ def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
     if args.write_csv == 'prof' and not args.profile:
-        warnings.warn("Cannot write profile data to CSV because profiling is "
-                      "disabled")
+        warnings.warn(
+            "Cannot write profile data to CSV because profiling is "
+            "disabled", stacklevel=2)
 
     if args.device == 'xpu':
         try:
             import intel_extension_for_pytorch as ipex
-        except ImportError:
-            raise RuntimeError('XPU device requires IPEX to be installed')
+        except ImportError as e:
+            raise RuntimeError(
+                'XPU device requires IPEX to be installed') from e
 
     if ((args.device == 'cuda' and not torch.cuda.is_available())
             or (args.device == 'xpu' and not torch.xpu.is_available())):

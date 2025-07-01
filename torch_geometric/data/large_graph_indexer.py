@@ -141,7 +141,7 @@ class LargeGraphIndexer:
                 self.edge_attr[default_key] = list()
             self.edge_attr[EDGE_PID] = edges
 
-            for i, tup in enumerate(edges):
+            for tup in edges:
                 h, r, t = tup
                 self.edge_attr[EDGE_HEAD].append(h)
                 self.edge_attr[EDGE_RELATION].append(r)
@@ -230,9 +230,9 @@ class LargeGraphIndexer:
                     "Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_node_features(feature_name))
 
-        except KeyError:
+        except KeyError as e:
             raise AttributeError(
-                f"Nodes do not have a feature called {feature_name}")
+                f"Nodes do not have a feature called {feature_name}") from e
 
     def add_node_feature(
         self,
@@ -354,9 +354,9 @@ class LargeGraphIndexer:
                 raise IndexError(
                     "Only non-mapped features can be retrieved uniquely.")
             return ordered_set(self.get_edge_features(feature_name))
-        except KeyError:
+        except KeyError as e:
             raise AttributeError(
-                f"Edges do not have a feature called {feature_name}")
+                f"Edges do not have a feature called {feature_name}") from e
 
     def add_edge_feature(
         self,

@@ -20,7 +20,7 @@ def test_node_encoder():
     out = encoder(x, edge_index, edge_time, seed_time)
     # Node 0 aggregates information from node 2 (excluding node 1).
     # Node 1 aggregates information from node 0.
-    # Node 2 aggregates information from node 0 and node 1 (exluding node 3).
+    # Node 2 aggregates information from node 0 and node 1 (excluding node 3).
     # Node 3 aggregates no information.
     expected = torch.tensor([
         [0 + 2],
