@@ -559,12 +559,15 @@ def train(args, train_loader, val_loader):
     model = GRetriever(llm=llm, gnn=gnn,
                        use_lora=args.llm_generator_mode == "lora")
 
+
+
+    save_name = os.path.join(args.dataset, "model.pt")
+
     if args.llm_generator_mode == "frozen" and args.num_gnn_layers == 0:
         if not args.dont_save_model:
             save_params_dict(model, save_path=save_name)
         return model
 
-    save_name = os.path.join(args.dataset, "model.pt")
     if os.path.exists(save_name) and not args.regenerate_dataset:
         print("Re-using saved G-retriever model for testing...")
         model = load_params_dict(model, save_name)
