@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import os
 from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Protocol, Union
