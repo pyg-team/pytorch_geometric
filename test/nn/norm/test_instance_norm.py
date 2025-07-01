@@ -2,18 +2,21 @@ import pytest
 import torch
 
 from torch_geometric.nn import InstanceNorm
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withDevice
 
 
+@withDevice
 @pytest.mark.parametrize('conf', [True, False])
-def test_instance_norm(conf):
-    batch = torch.zeros(100, dtype=torch.long)
+def test_instance_norm(conf, device):
+    batch = torch.zeros(100, dtype=torch.long, device=device)
 
-    x1 = torch.randn(100, 16)
-    x2 = torch.randn(100, 16)
+    x1 = torch.randn(100, 16, device=device)
+    x2 = torch.randn(100, 16, device=device)
 
-    norm1 = InstanceNorm(16, affine=conf, track_running_stats=conf)
-    norm2 = InstanceNorm(16, affine=conf, track_running_stats=conf)
+    norm1 = InstanceNorm(16, affine=conf, track_running_stats=conf,
+                         device=device)
+    norm2 = InstanceNorm(16, affine=conf, track_running_stats=conf,
+                         device=device)
     assert str(norm1) == 'InstanceNorm(16)'
 
     if is_full_test():
