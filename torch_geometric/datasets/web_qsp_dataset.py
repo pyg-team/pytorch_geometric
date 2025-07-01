@@ -85,7 +85,6 @@ class KGQABaseDataset(InMemoryDataset):
         self.verbose = verbose
         self.force_reload = force_reload
         super().__init__(root, force_reload=force_reload)
-
         """
         NOTE: Current behavior is to process the entire dataset,
         and only return the split specified by the user.
