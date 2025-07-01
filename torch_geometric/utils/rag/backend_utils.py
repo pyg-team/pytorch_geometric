@@ -173,7 +173,7 @@ def retrieval_via_pcst(
         x=data.x[selected_nodes],
         edge_index=torch.tensor([src, dst]).to(torch.long),
         edge_attr=data.edge_attr[selected_edges],
-        # HACK Added so that the subset of nodes and edges selected can be tracked
+        # HACK: track subset of selected nodes/edges
         node_idx=node_idx,
         edge_idx=edge_idx,
     )
@@ -368,12 +368,16 @@ def create_remote_backend_from_graph_data(
 def make_pcst_filter(triples: List[Tuple[str, str,
                                          str]], model: SentenceTransformer,
                      topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
-                     num_clusters: int = 1) -> None:
+                     num_clusters: int = 1):
     """Creates a PCST (Prize Collecting Tree) filter.
 
-    :param triples: List of triples (head, relation, tail) representing knowledge graph data
-    :param model: SentenceTransformer model for generating semantic representations
-    :return: None
+    :param triples: List of triples (head, relation, tail) representing KG data
+    :param model: SentenceTransformer model for embedding text
+    :param topk: Number of top-K results to return (default: 5)
+    :param topk_e: Number of top-K entity results to return (default: 5)
+    :param cost_e: Cost of edges (default: 0.5)
+    :param num_clusters: Number of connected components in the PCST output.
+    :return: PCST Filter function
     """
     if DataFrame is None:
         raise Exception("PCST requires `pip install pandas`"
@@ -405,10 +409,6 @@ def make_pcst_filter(triples: List[Tuple[str, str,
 
         :param graph: Input graph data
         :param query: Search query
-        :param topk: Number of top-K results to return (default: 5)
-        :param topk_e: Number of top-K entity results to return (default: 5)
-        :param cost_e: Cost of edges (default: 0.5)
-        :param num_clusters: the number of connected components in the PCST output.
         :return: Retrieved graph data and query result
         """
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
