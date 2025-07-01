@@ -60,7 +60,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """Set the config for the feature store.
 
         Args:
-            config (Dict[str, Any]): 
+            config (Dict[str, Any]):
                 Config dictionary containing required parameters
 
         Raises:
