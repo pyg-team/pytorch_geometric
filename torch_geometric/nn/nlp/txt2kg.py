@@ -152,10 +152,8 @@ class TXT2KG():
                 try:
                     pass
                 except ImportError:
-                    print(
-                        "Failed to import `openai` package, please install it and rerun the script"
-                    )
-                    sys.exit(1)
+                    quit("Failed to import `openai` package, please install it and rerun the script") # noqa
+                    
                 # Process chunks in parallel using multiple processes
                 num_procs = min(len(chunks), _get_num_procs())
                 meta_chunk_size = int(len(chunks) / num_procs)
