@@ -13,7 +13,7 @@ from torch_geometric.utils.rag.backend_utils import batch_knn
 class VectorRetriever(Protocol):
     """Protocol for VectorRAG."""
     @abstractmethod
-    def query(self, query: Any, **kwargs) -> Data:
+    def query(self, query: Any, **kwargs: Optional[Dict[str, Any]]) -> Data:
         """Retrieve a context for a given query."""
         ...
 
