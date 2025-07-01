@@ -593,10 +593,13 @@ def get_features_for_triplets_groups(
         pre_transform (Callable[[TripletLike], TripletLike]):
             Optional preprocessing to perform on triplets.
             Defaults to None.
-        verbose (bool, optional): Whether to print progress. Defaults to False.
-        max_batch_size (int, optional): Maximum batch size for fetching features.
+        verbose (bool, optional): Whether to print progress.
+            Defaults to False.
+        max_batch_size (int, optional):
+            Maximum batch size for fetching features.
             Defaults to 250.
-        num_workers (int, optional): Number of workers to use for fetching features.
+        num_workers (int, optional):
+            Number of workers to use for fetching features.
             Defaults to None (all available).
 
     Yields:
@@ -624,7 +627,10 @@ def get_features_for_triplets_groups(
     for kg_triplets in tqdm(triplet_groups, disable=not verbose):
         kg_triplets_nodes, kg_triplets_edge_keys, kg_triplets_edge_index = tee(
             kg_triplets, 3)
-        # Don't apply pre_transform here, because it has already been applied on the triplet groups
+        """
+        Don't apply pre_transform here,
+        because it has already been applied on the triplet groups/
+        """
         small_graph_indexer = LargeGraphIndexer.from_triplets(
             kg_triplets_nodes)
 
