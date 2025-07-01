@@ -168,7 +168,8 @@ class KGQABaseDataset(InMemoryDataset):
     def _retrieve_subgraphs(self) -> None:
         for split_name, dataset, path in zip(
                 self.required_splits,
-            [self.raw_dataset[split] for split in self.required_splits], # noqa
+            [self.raw_dataset[split]
+             for split in self.required_splits],  # noqa
                 self.processed_paths,
         ):
             print(f"Processing {split_name} split...")
