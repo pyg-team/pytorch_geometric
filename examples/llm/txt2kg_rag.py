@@ -77,10 +77,9 @@ def parse_args():
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, help="NVIDIA API key")
     parser.add_argument(
-        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL, 
+        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL,
         help="The URL hosting your model, \
-        in case you are not using the public NIM."
-    )
+        in case you are not using the public NIM.")
     parser.add_argument(
         '--kg_chunk_size', type=int, default=KG_CHUNK_SIZE_DEFAULT,
         help="When splitting context documents for txt2kg,\
@@ -183,6 +182,7 @@ def parse_args():
 
     return args
 
+
 sys_prompt = (
     "You are an expert assistant that can answer "
     "any question from its knowledge, given a knowledge graph embedding and "
@@ -202,9 +202,9 @@ prompt_template = """
 def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     full_chunks = []
     """
-    Some corpora of docs are grouped into chunked files, 
+    Some corpora of docs are grouped into chunked files,
     typically by paragraph.
-    Only split into individual documents 
+    Only split into individual documents
     if multiple paragraphs are detected.
     """
     if doc_parsing_mode == "paragraph":
@@ -305,10 +305,9 @@ def index_kg(args, context_docs):
     print(
         "Note that if the TXT2KG process is too slow for you're liking using"
         "the public NIM, consider deploying yourself using local_lm flag of"
-        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct" # noqa
+        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct"  # noqa
         "to deploy to a private endpoint, which you can pass to this script"
-        "w/ --ENDPOINT_URL flag."
-    )
+        "w/ --ENDPOINT_URL flag.")
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
     checkpoint_path = os.path.join(args.dataset, "checkpoint_kg.pt")
