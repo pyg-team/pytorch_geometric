@@ -149,13 +149,6 @@ class TXT2KG():
                     chunks, _parse_n_check_triples,
                     self._chunk_to_triples_str_local)
             else:
-                try:
-                    pass
-                except ImportError:
-                    quit(
-                        "Failed to import `openai` package, please install it and rerun the script"
-                    )  # noqa
-
                 # Process chunks in parallel using multiple processes
                 num_procs = min(len(chunks), _get_num_procs())
                 meta_chunk_size = int(len(chunks) / num_procs)
@@ -204,7 +197,12 @@ def _chunk_to_triples_str_cloud(
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
-        from openai import OpenAI
+        try:
+            from openai import OpenAI
+        except ImportError:
+            quit(
+                "Failed to import `openai` package, please install it and rerun the script" # noqa
+            )           
         global CLIENT
         CLIENT = OpenAI(base_url=ENDPOINT_URL, api_key=GLOBAL_NIM_KEY)
         CLIENT_INITD = True
