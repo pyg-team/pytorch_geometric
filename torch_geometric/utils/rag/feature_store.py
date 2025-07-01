@@ -129,7 +129,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         Args:
         - sample: The sample to load the subgraph from.
-        - induced: Whether to return the induced subgraph (resets node and edge ids).
+        - induced: Whether to return the induced subgraph.
+            Resets node and edge ids.
 
         Returns:
         - The loaded subgraph.
