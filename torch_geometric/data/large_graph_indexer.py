@@ -616,7 +616,6 @@ def get_features_for_triplets_groups(
     node_keys = []
     edge_keys = []
     edge_index = []
-
     """
     For each KG, we gather the node_indices, edge_keys,
     and edge_indices needed to construct each Data object
@@ -631,17 +630,12 @@ def get_features_for_triplets_groups(
 
         node_keys.append(small_graph_indexer.get_node_features())
         edge_keys.append(
-            small_graph_indexer.get_edge_features(
-                    pids=kg_triplets_edge_keys
-            )
-        )
+            small_graph_indexer.get_edge_features(pids=kg_triplets_edge_keys))
         edge_index.append(
             small_graph_indexer.get_edge_features(
                 EDGE_INDEX,
                 kg_triplets_edge_index,
-            )
-        )
-
+            ))
     """
     We get the embeddings for each node and edge key in the KG,
     but we need to do so in batches.
@@ -650,6 +644,7 @@ def get_features_for_triplets_groups(
     Batches that are too large waste memory,
     as we need to store all the result embeddings in memory.
     """
+
     def _fetch_feature_batch(batches):
         node_key_batch, edge_key_batch, edge_index_batch = batches
         node_feats = indexer.get_node_features(
