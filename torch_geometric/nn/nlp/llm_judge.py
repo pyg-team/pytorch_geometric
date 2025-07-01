@@ -55,10 +55,10 @@ class LLMJudge():
     This whole class is an adaptation of Gilberto's work for PyG.
 
     Args:
-        NVIDIA_NIM_MODEL : (str, optional) 
+        NVIDIA_NIM_MODEL : (str, optional)
             The name of the NVIDIA NIM model to use.
             (default: "nvidia/llama-3.1-nemotron-70b-instruct").
-        NVIDIA_API_KEY : (str, optional) 
+        NVIDIA_API_KEY : (str, optional)
             The API key for accessing NVIDIA's NIM models.
             (default: "").
         ENDPOINT_URL : (str, optional)
