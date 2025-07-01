@@ -66,7 +66,6 @@ class KGQABaseDataset(InMemoryDataset):
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
         self.load_dataset_kwargs = load_dataset_kwargs
-
         """
         NOTE: If running into memory issues,
         try reducing this batch size
@@ -75,13 +74,11 @@ class KGQABaseDataset(InMemoryDataset):
 
         # Caching custom subsets of the dataset results in unsupported behavior
         if 'split' in load_dataset_kwargs:
-            print(
-                "WARNING: Caching custom subsets of the dataset \
+            print("WARNING: Caching custom subsets of the dataset \
                 results in unsupported behavior.\
                 Please specify a separate root directory for each split,\
                 or set force_reload=True on subsequent instantiations\
-                of the dataset."
-            )
+                of the dataset.")
 
         self.required_splits = ['train', 'validation', 'test']
 
@@ -146,10 +143,7 @@ class KGQABaseDataset(InMemoryDataset):
             nodes,  # type: ignore
             batch_size=256,
             output_device='cpu')
-        self.indexer.add_node_feature(
-            new_feature_name="x",
-            new_feature_vals=x
-        )
+        self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
         print("\tEncoding edges...")
