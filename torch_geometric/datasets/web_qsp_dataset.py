@@ -86,7 +86,10 @@ class KGQABaseDataset(InMemoryDataset):
         self.force_reload = force_reload
         super().__init__(root, force_reload=force_reload)
 
-        # NOTE: Current behavior is to process the entire dataset, and only return the split specified by the user
+        """
+        NOTE: Current behavior is to process the entire dataset,
+        and only return the split specified by the user.
+        """
         if f'{split}_data.pt' not in set(self.processed_file_names):
             raise ValueError(f"Invalid 'split' argument (got {split})")
         if split == 'val':
@@ -112,7 +115,8 @@ class KGQABaseDataset(InMemoryDataset):
 
         # Assert that the dataset contains the required splits
         assert all(split in raw_dataset for split in self.required_splits), \
-            f"Dataset '{self.dataset_name}' is missing required splits: {self.required_splits}"
+            f"Dataset '{self.dataset_name}' is missing required splits: \
+            {self.required_splits}"
 
         raw_dataset.save_to_disk(self.raw_paths[0])
 
@@ -270,8 +274,12 @@ class WebQSPDataset(KGQABaseDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
-        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
+        load_dataset_kwargs (dict, optional):
+            Keyword arguments for the `datasets.load_dataset` function.
+            (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional):
+            Keyword arguments for the `get_features_for_triplets_groups` function.
+            (default: :obj:`{}`)
     """
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
@@ -307,8 +315,13 @@ class CWQDataset(KGQABaseDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
-        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
+        load_dataset_kwargs (dict, optional):
+            Keyword arguments for the `datasets.load_dataset` function.
+            (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional):
+            Keyword arguments for the
+            `get_features_for_triplets_groups` function.
+            (default: :obj:`{}`)
     """
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
