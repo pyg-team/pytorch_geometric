@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Enable Sampling both forwards and reverse edges on `NeighborSampler` ([#10126](https://github.com/pyg-team/pytorch_geometric/pull/10126))
 - Added ability to merge together `SamplerOutput` objects ([#10126](https://github.com/pyg-team/pytorch_geometric/pull/10126))
 - Added ability to get global row and col ids from `SamplerOutput` ([#10200](https://github.com/pyg-team/pytorch_geometric/pull/10200))
+- Added `torch.device` to `PatchTransformerAggregation` [#10342](https://github.com/pyg-team/pytorch_geometric/pull/10342)
+- Added `torch.device` to normalization layers [#10341](https://github.com/pyg-team/pytorch_geometric/pull/10341)
 - Added `total_influence` for quantifying long-range dependency ([#10263](https://github.com/pyg-team/pytorch_geometric/pull/10263))
 - Added `MedShapeNet` Dataset ([#9823](https://github.com/pyg-team/pytorch_geometric/pull/9823))
 - Added RelBench example ([#10230](https://github.com/pyg-team/pytorch_geometric/pull/10230))

@@ -35,6 +35,8 @@ class LayerNorm(torch.nn.Module):
             is used, each graph will be considered as an element to be
             normalized. If `"node"` is used, each node will be considered as
             an element to be normalized. (default: :obj:`"graph"`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -42,6 +44,7 @@ class LayerNorm(torch.nn.Module):
         eps: float = 1e-5,
         affine: bool = True,
         mode: str = 'graph',
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
 
@@ -51,8 +54,8 @@ class LayerNorm(torch.nn.Module):
         self.mode = mode
 
         if affine:
-            self.weight = Parameter(torch.empty(in_channels))
-            self.bias = Parameter(torch.empty(in_channels))
+            self.weight = Parameter(torch.empty(in_channels, device=device))
+            self.bias = Parameter(torch.empty(in_channels, device=device))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
@@ -134,6 +137,8 @@ class HeteroLayerNorm(torch.nn.Module):
             normalization (:obj:`"node"`). If `"node"` is used, each node will
             be considered as an element to be normalized.
             (default: :obj:`"node"`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -142,6 +147,7 @@ class HeteroLayerNorm(torch.nn.Module):
         eps: float = 1e-5,
         affine: bool = True,
         mode: str = 'node',
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
         assert mode == 'node'
@@ -152,8 +158,10 @@ class HeteroLayerNorm(torch.nn.Module):
         self.affine = affine
 
         if affine:
-            self.weight = Parameter(torch.empty(num_types, in_channels))
-            self.bias = Parameter(torch.empty(num_types, in_channels))
+            self.weight = Parameter(
+                torch.empty(num_types, in_channels, device=device))
+            self.bias = Parameter(
+                torch.empty(num_types, in_channels, device=device))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
