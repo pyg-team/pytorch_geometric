@@ -16,7 +16,7 @@ from torch_geometric.utils.rag.backend_utils import batch_knn
 
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
-    """A feature store that uses a KNN-based approach to retrieve seed nodes and edges.
+    """A feature store that uses a KNN-based retrieval.
     """
     def __init__(self, *args, **kwargs):
         """Initializes the feature store.
@@ -60,7 +60,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Set the config for the feature store.
 
         Args:
-            config (Dict[str, Any]): Config dictionary containing required parameters
+            config (Dict[str, Any]): 
+                Config dictionary containing required parameters
 
         Raises:
             ValueError: If required parameters missing from config
@@ -122,7 +123,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
     def load_subgraph(
         self,
         sample: Union[SamplerOutput, HeteroSamplerOutput],
-        induced=True,
+        induced: bool = True,
     ) -> Union[Data, HeteroData]:
         """Loads a subgraph from the given sample.
 
@@ -136,14 +137,15 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         if isinstance(sample, HeteroSamplerOutput):
             raise NotImplementedError
 
-        # NOTE: torch_geometric.loader.utils.filter_custom_store can be used here
-        # if it supported edge features
+        """
+        NOTE: torch_geometric.loader.utils.filter_custom_store
+        can be used here if it supported edge features.
+        """
         edge_id = sample.edge
         x = self.x[sample.node]
         edge_attr = self.edge_attr[edge_id]
 
-        edge_idx = torch.stack([sample.row, sample.col], dim=0) \
-            if induced else torch.stack([sample.global_row, sample.global_col], dim=0)
+        edge_idx = torch.stack([sample.row, sample.col], dim=0) if induced else torch.stack([sample.global_row, sample.global_col], dim=0)
         result = Data(x=x, edge_attr=edge_attr, edge_index=edge_idx)
 
         # useful for tracking what subset of the graph was sampled
