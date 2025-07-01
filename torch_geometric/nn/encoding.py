@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 import torch
 from torch import Tensor
@@ -23,12 +24,15 @@ class PositionalEncoding(torch.nn.Module):
         granularity (float, optional): The granularity of the positions. If
             set to smaller value, the encoder will capture more fine-grained
             changes in positions. (default: :obj:`1.0`)
+        device (torch.device, optional): The device of the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
         out_channels: int,
         base_freq: float = 1e-4,
         granularity: float = 1.0,
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
 
@@ -40,7 +44,8 @@ class PositionalEncoding(torch.nn.Module):
         self.base_freq = base_freq
         self.granularity = granularity
 
-        frequency = torch.logspace(0, 1, out_channels // 2, base_freq)
+        frequency = torch.logspace(0, 1, out_channels // 2, base_freq,
+                                   device=device)
         self.register_buffer('frequency', frequency)
 
         self.reset_parameters()
@@ -75,13 +80,17 @@ class TemporalEncoding(torch.nn.Module):
 
     Args:
         out_channels (int): Size :math:`d` of each output sample.
+        device (torch.device, optional): The device of the module.
+            (default: :obj:`None`)
     """
-    def __init__(self, out_channels: int):
+    def __init__(self, out_channels: int,
+                 device: Optional[torch.device] = None):
         super().__init__()
         self.out_channels = out_channels
 
         sqrt = math.sqrt(out_channels)
-        weight = 1.0 / sqrt**torch.linspace(0, sqrt, out_channels).view(1, -1)
+        weight = 1.0 / sqrt**torch.linspace(0, sqrt, out_channels,
+                                            device=device).view(1, -1)
         self.register_buffer('weight', weight)
 
         self.reset_parameters()
