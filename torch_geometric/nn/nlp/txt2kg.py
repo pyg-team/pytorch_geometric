@@ -163,7 +163,8 @@ class TXT2KG():
                     try:
                         for retry in range(200):
                             try:
-                                # Spawn multiple processes, process chunks in parallel
+                                # Spawn multiple processes
+                                # process chunks in parallel
                                 mp.spawn(
                                     _multiproc_helper,
                                     args=(in_chunks_per_proc,
@@ -173,7 +174,8 @@ class TXT2KG():
                                           self.ENDPOINT_URL), nprocs=num_procs)
                                 break
                             except:  # noqa
-                                # keep retrying, txt2kg is costly -> stoppage is costly
+                                # keep retrying...
+                                # txt2kg is costly -> stoppage is costly
                                 pass
 
                         # Collect the results from each process
@@ -183,7 +185,7 @@ class TXT2KG():
                                 "/tmp/outs_for_proc_" + str(rank))
                             os.remove("/tmp/outs_for_proc_" + str(rank))
                         break
-                    except:
+                    except: # noqa
                         pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
