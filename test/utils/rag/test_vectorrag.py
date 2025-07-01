@@ -32,7 +32,7 @@ def sample_model():
 
 
 def test_save_load(sample_documents, sample_model, tmp_path):
-    """Test whether saving and loading a DocumentRetriever maintains its state."""
+    """Test whether saving/loading a DocumentRetriever maintains state."""
     retriever = DocumentRetriever(sample_documents, model=sample_model)
     retriever.save(tmp_path / "retriever.pth")
     loaded_retriever = DocumentRetriever.load(tmp_path / "retriever.pth",
