@@ -77,8 +77,9 @@ def parse_args():
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, help="NVIDIA API key")
     parser.add_argument(
-        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL, help=
-        "The URL hosting your model, in case you are not using the public NIM."
+        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL, 
+        help="The URL hosting your model, \
+        in case you are not using the public NIM."
     )
     parser.add_argument(
         '--kg_chunk_size', type=int, default=KG_CHUNK_SIZE_DEFAULT,
@@ -153,7 +154,8 @@ def parse_args():
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
-    assert args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus > 0, "Please provide a value in (0,100]"
+    assert args.use_x_percent_corpus <= 100 and \
+        args.use_x_percent_corpus > 0, "Please provide a value in (0,100]"
     if args.skip_graph_rag:
         print("Skipping graph RAG step, setting GNN layers to 0...")
         args.num_gnn_layers = 0
@@ -181,9 +183,6 @@ def parse_args():
 
     return args
 
-
-# Answer this question based on retrieved contexts. Just give the answer without explanation.
-
 sys_prompt = (
     "You are an expert assistant that can answer "
     "any question from its knowledge, given a knowledge graph embedding and "
@@ -202,8 +201,12 @@ prompt_template = """
 
 def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     full_chunks = []
-    # Some corpora of docs are grouped into chunked files, typically by paragraph.
-    # Only split into individual documents if many paragraphs are detected
+    """
+    Some corpora of docs are grouped into chunked files, 
+    typically by paragraph.
+    Only split into individual documents 
+    if multiple paragraphs are detected.
+    """
     if doc_parsing_mode == "paragraph":
         paragraphs = re.split(r'\n{2,}', text)
     else:
@@ -302,9 +305,10 @@ def index_kg(args, context_docs):
     print(
         "Note that if the TXT2KG process is too slow for you're liking using"
         "the public NIM, consider deploying yourself using local_lm flag of"
-        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct"
+        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct" # noqa
         "to deploy to a private endpoint, which you can pass to this script"
-        "w/ --ENDPOINT_URL flag.")  # noqa
+        "w/ --ENDPOINT_URL flag."
+    )
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
     checkpoint_path = os.path.join(args.dataset, "checkpoint_kg.pt")
