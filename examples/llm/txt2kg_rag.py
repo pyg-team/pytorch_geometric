@@ -559,8 +559,6 @@ def train(args, train_loader, val_loader):
     model = GRetriever(llm=llm, gnn=gnn,
                        use_lora=args.llm_generator_mode == "lora")
 
-
-
     save_name = os.path.join(args.dataset, "model.pt")
 
     if args.llm_generator_mode == "frozen" and args.num_gnn_layers == 0:
