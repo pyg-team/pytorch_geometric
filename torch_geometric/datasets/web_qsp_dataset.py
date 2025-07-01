@@ -39,9 +39,16 @@ class KGQABaseDataset(InMemoryDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
-        use_cwq (bool, optional): Whether to load the ComplexWebQuestions dataset. (default: :obj:`True`)
-        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_kwargs (dict, optional): Keyword arguments for the the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
+        use_cwq (bool, optional):
+            Whether to load the ComplexWebQuestions dataset.
+            (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional):
+            Keyword arguments for the `datasets.load_dataset` function.
+            (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional):
+            Keyword arguments for the
+            `get_features_for_triplets_groups` function.
+            (default: :obj:`{}`)
     """
     def __init__(
             self,
@@ -60,13 +67,20 @@ class KGQABaseDataset(InMemoryDataset):
         self.use_pcst = use_pcst
         self.load_dataset_kwargs = load_dataset_kwargs
 
-        # NOTE: If running into memory issues, try reducing this batch size
+        """
+        NOTE: If running into memory issues,
+        try reducing this batch size
+        """
         self.retrieval_kwargs = retrieval_kwargs
 
         # Caching custom subsets of the dataset results in unsupported behavior
         if 'split' in load_dataset_kwargs:
             print(
-                "WARNING: Caching custom subsets of the dataset results in unsupported behavior. Please specify a separate root directory for each split, or set force_reload=True on subsequent instantiations of the dataset."
+                "WARNING: Caching custom subsets of the dataset \
+                results in unsupported behavior.\
+                Please specify a separate root directory for each split,\
+                or set force_reload=True on subsequent instantiations\
+                of the dataset."
             )
 
         self.required_splits = ['train', 'validation', 'test']
@@ -132,7 +146,10 @@ class KGQABaseDataset(InMemoryDataset):
             nodes,  # type: ignore
             batch_size=256,
             output_device='cpu')
-        self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
+        self.indexer.add_node_feature(
+            new_feature_name="x",
+            new_feature_vals=x
+        )
 
         # Edges:
         print("\tEncoding edges...")
