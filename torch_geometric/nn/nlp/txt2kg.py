@@ -201,8 +201,8 @@ def _chunk_to_triples_str_cloud(
             from openai import OpenAI
         except ImportError:
             quit(
-                "Failed to import `openai` package, please install it and rerun the script" # noqa
-            )           
+                "Failed to import `openai` package, please install it and rerun the script"  # noqa
+            )
         global CLIENT
         CLIENT = OpenAI(base_url=ENDPOINT_URL, api_key=GLOBAL_NIM_KEY)
         CLIENT_INITD = True
