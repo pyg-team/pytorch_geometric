@@ -16,12 +16,14 @@ from torch_geometric.utils import index_sort
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
-    """A graph store that uses neighbor sampling to store and retrieve graph data.
+    """A graph store using neighbor sampling to store & retrieve graph data.
     """
     def __init__(self, feature_store: Optional[FeatureStore] = None, **kwargs):
-        """Initializes the graph store with an optional feature store and neighbor sampling settings.
+        """Initializes the graph store.
+        Optional feature store and neighbor sampling settings.
 
-        :param feature_store: The feature store to use, or None if not yet registered.
+        :param feature_store: The feature store to use.
+            None if not yet registered.
         :param kwargs: Additional keyword arguments for neighbor sampling.
         """
         self.feature_store = feature_store
@@ -58,7 +60,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """Set the config for the feature store.
 
         Args:
-            config (Dict[str, Any]): Config dictionary containing required parameters
+            config (Dict[str, Any]): 
+                Config dictionary containing required parameters
 
         Raises:
             ValueError: If required parameters missing from config
