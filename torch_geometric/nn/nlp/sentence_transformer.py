@@ -131,7 +131,7 @@ class SentenceTransformer(torch.nn.Module):
                 ).to(output_device)
 
                 embs.append(emb)
-            except: # noqa
+            except:  # noqa
                 # fallback to using CPU for huge strings that cause OOMs
                 print("Sentence Transformer failed on cuda, trying w/ cpu...")
                 previous_device = self.device
