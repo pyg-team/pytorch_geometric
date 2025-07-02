@@ -1,12 +1,15 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.sampler import (
     BaseSampler,
+    EdgeSamplerInput,
     HeteroSamplerOutput,
+    NegativeSampling,
     NodeSamplerInput,
+    SamplerOutput,
 )
 from torch_geometric.sampler.utils import remap_keys, to_hetero_csc
 from torch_geometric.typing import (
@@ -75,6 +78,13 @@ class HGTSampler(BaseSampler):
             batch=None,
             metadata=(inputs.input_id, inputs.time),
         )
+
+    def sample_from_edges(
+        self,
+        index: EdgeSamplerInput,
+        neg_sampling: Optional[NegativeSampling] = None,
+    ) -> Union[HeteroSamplerOutput, SamplerOutput]:
+        pass
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:

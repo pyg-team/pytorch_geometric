@@ -178,7 +178,7 @@ class GENConv(MessagePassing):
             self.lin_dst = Linear(in_channels[1], out_channels, bias=bias)
 
         channels = [out_channels]
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             channels.append(out_channels * expansion)
         channels.append(out_channels)
         self.mlp = MLP(channels, norm=norm, bias=bias)

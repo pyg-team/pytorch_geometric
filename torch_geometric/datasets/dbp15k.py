@@ -73,7 +73,7 @@ class DBP15K(InMemoryDataset):
     def process(self) -> None:
         embs = {}
         with open(osp.join(self.raw_dir, 'sub.glove.300d')) as f:
-            for i, line in enumerate(f):
+            for line in f:
                 info = line.strip().split(' ')
                 if len(info) > 300:
                     embs[info[0]] = torch.tensor([float(x) for x in info[1:]])

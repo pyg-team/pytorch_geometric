@@ -190,7 +190,7 @@ def to_captum_input(
 
     Args:
         x (torch.Tensor or Dict[NodeType, torch.Tensor]): The node features.
-            For heterogeneous graphs this is a dictionary holding node featues
+            For heterogeneous graphs this is a dictionary holding node features
             for each node type.
         edge_index(torch.Tensor or Dict[EdgeType, torch.Tensor]): The edge
             indices. For heterogeneous graphs this is a dictionary holding the

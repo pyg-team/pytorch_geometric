@@ -109,7 +109,7 @@ class APPNP(MessagePassing):
                     edge_index = cache
 
         h = x
-        for k in range(self.K):
+        for _ in range(self.K):
             if self.dropout > 0 and self.training:
                 if isinstance(edge_index, Tensor):
                     if is_torch_sparse_tensor(edge_index):

@@ -6,15 +6,19 @@ from torch_geometric.nn.aggr.utils import (
     PoolingByMultiheadAttention,
     SetAttentionBlock,
 )
+from torch_geometric.testing import withCUDA
 
 
-def test_multihead_attention_block():
-    x = torch.randn(2, 4, 8)
-    y = torch.randn(2, 3, 8)
-    x_mask = torch.tensor([[1, 1, 1, 1], [1, 1, 0, 0]], dtype=torch.bool)
-    y_mask = torch.tensor([[1, 1, 0], [1, 1, 1]], dtype=torch.bool)
+@withCUDA
+def test_multihead_attention_block(device: torch.device):
+    x = torch.randn(2, 4, 8, device=device)
+    y = torch.randn(2, 3, 8, device=device)
+    x_mask = torch.tensor([[1, 1, 1, 1], [1, 1, 0, 0]], dtype=torch.bool,
+                          device=device)
+    y_mask = torch.tensor([[1, 1, 0], [1, 1, 1]], dtype=torch.bool,
+                          device=device)
 
-    block = MultiheadAttentionBlock(8, heads=2)
+    block = MultiheadAttentionBlock(8, heads=2, device=device)
     block.reset_parameters()
     assert str(block) == ('MultiheadAttentionBlock(8, heads=2, '
                           'layer_norm=True, dropout=0.0)')
@@ -26,10 +30,11 @@ def test_multihead_attention_block():
     assert torch.allclose(jit(x, y, x_mask, y_mask), out)
 
 
-def test_multihead_attention_block_dropout():
-    x = torch.randn(2, 4, 8)
+@withCUDA
+def test_multihead_attention_block_dropout(device: torch.device):
+    x = torch.randn(2, 4, 8, device=device)
 
-    block = MultiheadAttentionBlock(8, dropout=0.5)
+    block = MultiheadAttentionBlock(8, dropout=0.5, device=device)
     assert not torch.allclose(block(x, x), block(x, x))
 
 
