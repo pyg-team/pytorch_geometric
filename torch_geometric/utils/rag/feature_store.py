@@ -12,19 +12,12 @@ from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputNodes
 from torch_geometric.utils.rag.backend_utils import batch_knn
-# noqa: D417
 
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based retrieval."""
-    def __init__(self, *args, **kwargs):
-        """Initializes the feature store.
-
-        Args:
-        - encoder_model: The model to use for encoding queries.
-        - args: Additional arguments to pass to the parent class.
-        - kwargs: Keyword arguments  to pass to the parent class.
-        """
+    def __init__(self):
+        """Initializes the feature store."""
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
 
@@ -86,7 +79,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
-        - query: The query or list of queries to search for.
+        - query (Any): The query or list of queries to search for.
 
         Returns:
         - The indices of the most similar nodes.
