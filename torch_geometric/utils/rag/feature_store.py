@@ -16,8 +16,7 @@ from torch_geometric.utils.rag.backend_utils import batch_knn
 
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
-    """A feature store that uses a KNN-based retrieval.
-    """
+    """A feature store that uses a KNN-based retrieval."""
     def __init__(self, *args, **kwargs):
         """Initializes the feature store.
 
@@ -36,8 +35,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
     @property
     def config(self):
-        """Get the config for the feature store.
-        """
+        """Get the config for the feature store."""
         return self._config
 
     def _set_from_config(self, config: Dict[str, Any], attr_name: str):
@@ -75,14 +73,12 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
     @property
     def x(self) -> Tensor:
-        """Returns the node features.
-        """
+        """Returns the node features."""
         return self.get_tensor(group_name=None, attr_name='x')
 
     @property
     def edge_attr(self) -> Tensor:
-        """Returns the edge attributes.
-        """
+        """Returns the edge attributes."""
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
     def retrieve_seed_nodes(self, query: Any) -> InputNodes:
