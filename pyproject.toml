@@ -48,6 +48,11 @@ graphgym=[
     "pytorch-lightning",
     "yacs",
 ]
+graphgym-lightning=[
+    "protobuf<4.21",
+    "lightning>=2.4.0",
+    "yacs",
+]
 modelhub=[
     "huggingface_hub"
 ]
@@ -100,7 +105,7 @@ full = [
     "statsmodels",
     "sympy",
     "tabulate",
-    "torch_geometric[graphgym, modelhub]",
+    "torch_geometric[graphgym, graphgym-lightning, modelhub]",
     "torchmetrics",
     "trimesh",
 ]
