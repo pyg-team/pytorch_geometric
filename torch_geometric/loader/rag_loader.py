@@ -111,15 +111,13 @@ class RAGQueryLoader:
         self.config = config
 
     def _propagate_config(self, config: Dict[str, Any]):
-        """Propagate the config the relevant components.
-        """
+        """Propagate the config the relevant components."""
         self.feature_store.config = config
         self.graph_store.config = config
 
     @property
     def config(self):
-        """Get the config for the RAGQueryLoader.
-        """
+        """Get the config for the RAGQueryLoader."""
         return self._config
 
     @config.setter
