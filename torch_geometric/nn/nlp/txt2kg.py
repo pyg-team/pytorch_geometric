@@ -159,7 +159,7 @@ class TXT2KG():
                                                meta_chunk_size, len(chunks))]
                     for j in range(num_procs)
                 }
-                for retry_j in range(5):
+                for _retry_j in range(5):
                     try:
                         for _retry_i in range(200):
                             try:
