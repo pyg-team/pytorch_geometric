@@ -32,6 +32,8 @@ class PatchTransformerAggregation(Aggregation):
         aggr (str or list[str], optional): The aggregation module, *e.g.*,
             :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"var"`, :obj:`"std"`. (default: :obj:`"mean"`)
+        device (torch.device, optional): The device of the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -43,6 +45,7 @@ class PatchTransformerAggregation(Aggregation):
         heads: int = 1,
         dropout: float = 0.0,
         aggr: Union[str, List[str]] = 'mean',
+        device: Optional[torch.device] = None,
     ) -> None:
         super().__init__()
 
@@ -55,12 +58,13 @@ class PatchTransformerAggregation(Aggregation):
         for aggr in self.aggrs:
             assert aggr in ['sum', 'mean', 'min', 'max', 'var', 'std']
 
-        self.lin = torch.nn.Linear(in_channels, hidden_channels)
+        self.lin = torch.nn.Linear(in_channels, hidden_channels, device=device)
         self.pad_projector = torch.nn.Linear(
             patch_size * hidden_channels,
             hidden_channels,
+            device=device,
         )
-        self.pe = PositionalEncoding(hidden_channels)
+        self.pe = PositionalEncoding(hidden_channels, device=device)
 
         self.blocks = torch.nn.ModuleList([
             MultiheadAttentionBlock(
@@ -68,12 +72,14 @@ class PatchTransformerAggregation(Aggregation):
                 heads=heads,
                 layer_norm=True,
                 dropout=dropout,
+                device=device,
             ) for _ in range(num_transformer_blocks)
         ])
 
         self.fc = torch.nn.Linear(
             hidden_channels * len(self.aggrs),
             out_channels,
+            device=device,
         )
 
     def reset_parameters(self) -> None:

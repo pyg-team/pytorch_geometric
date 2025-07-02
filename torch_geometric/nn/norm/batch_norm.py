@@ -39,6 +39,8 @@ class BatchNorm(torch.nn.Module):
             with only a single element will work as during in evaluation.
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -48,6 +50,7 @@ class BatchNorm(torch.nn.Module):
         affine: bool = True,
         track_running_stats: bool = True,
         allow_single_element: bool = False,
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
 
@@ -56,7 +59,7 @@ class BatchNorm(torch.nn.Module):
                              "'track_running_stats' to be set to `True`")
 
         self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
-                                           track_running_stats)
+                                           track_running_stats, device=device)
         self.in_channels = in_channels
         self.allow_single_element = allow_single_element
 
@@ -114,6 +117,8 @@ class HeteroBatchNorm(torch.nn.Module):
             :obj:`False`, this module does not track such statistics and always
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -123,6 +128,7 @@ class HeteroBatchNorm(torch.nn.Module):
         momentum: Optional[float] = 0.1,
         affine: bool = True,
         track_running_stats: bool = True,
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
 
@@ -134,17 +140,21 @@ class HeteroBatchNorm(torch.nn.Module):
         self.track_running_stats = track_running_stats
 
         if self.affine:
-            self.weight = Parameter(torch.empty(num_types, in_channels))
-            self.bias = Parameter(torch.empty(num_types, in_channels))
+            self.weight = Parameter(
+                torch.empty(num_types, in_channels, device=device))
+            self.bias = Parameter(
+                torch.empty(num_types, in_channels, device=device))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
 
         if self.track_running_stats:
-            self.register_buffer('running_mean',
-                                 torch.empty(num_types, in_channels))
-            self.register_buffer('running_var',
-                                 torch.empty(num_types, in_channels))
+            self.register_buffer(
+                'running_mean',
+                torch.empty(num_types, in_channels, device=device))
+            self.register_buffer(
+                'running_var',
+                torch.empty(num_types, in_channels, device=device))
             self.register_buffer('num_batches_tracked', torch.tensor(0))
         else:
             self.register_buffer('running_mean', None)

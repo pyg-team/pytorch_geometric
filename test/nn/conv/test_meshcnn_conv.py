@@ -43,7 +43,8 @@ def test_meshcnn_conv(in_channels: int, out_channels: int):
         Sequential(Linear(in_channels, out_channels), Sigmoid())
         for _ in range(5)
     ])
-    conv = MeshCNNConv(in_channels, out_channels, kernels)
+    with pytest.warns(UserWarning, match="does not have attribute"):
+        conv = MeshCNNConv(in_channels, out_channels, kernels)
     # WARN: For now we do not account for the 5 kernels in the
     # representation
     assert str(conv) == f"MeshCNNConv({in_channels}, {out_channels})"

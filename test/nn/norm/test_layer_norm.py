@@ -12,7 +12,7 @@ def test_layer_norm(device, affine, mode):
     x = torch.randn(100, 16, device=device)
     batch = torch.zeros(100, dtype=torch.long, device=device)
 
-    norm = LayerNorm(16, affine=affine, mode=mode).to(device)
+    norm = LayerNorm(16, affine=affine, mode=mode, device=device)
     assert str(norm) == f'LayerNorm(16, affine={affine}, mode={mode})'
 
     if is_full_test():
@@ -31,13 +31,13 @@ def test_layer_norm(device, affine, mode):
 @pytest.mark.parametrize('affine', [False, True])
 def test_hetero_layer_norm(device, affine):
     x = torch.randn((100, 16), device=device)
-    expected = LayerNorm(16, affine=affine, mode='node').to(device)(x)
+    expected = LayerNorm(16, affine=affine, mode='node', device=device)(x)
 
     # Test single type:
     type_vec = torch.zeros(100, dtype=torch.long, device=device)
     type_ptr = [0, 100]
 
-    norm = HeteroLayerNorm(16, num_types=1, affine=affine).to(device)
+    norm = HeteroLayerNorm(16, num_types=1, affine=affine, device=device)
     assert str(norm) == 'HeteroLayerNorm(16, num_types=1)'
 
     out = norm(x, type_vec)
@@ -55,7 +55,7 @@ def test_hetero_layer_norm(device, affine):
     type_vec = type_vec.view(-1, 1).repeat(1, 20).view(-1)
     type_ptr = [0, 20, 40, 60, 80, 100]
 
-    norm = HeteroLayerNorm(16, num_types=5, affine=affine).to(device)
+    norm = HeteroLayerNorm(16, num_types=5, affine=affine, device=device)
     assert str(norm) == 'HeteroLayerNorm(16, num_types=5)'
 
     out = norm(x, type_vec)
