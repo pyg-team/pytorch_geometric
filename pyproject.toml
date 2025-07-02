@@ -43,9 +43,6 @@ dependencies=[
 ]
 
 [project.optional-dependencies]
-teeth3ds=[
-    "fpsample>=0.3.3"
-]
 graphgym=[
     "protobuf<4.21",
     "pytorch-lightning",
