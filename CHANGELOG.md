@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Added `Polynormer` model and example ([#9908](https://github.com/pyg-team/pytorch_geometric/pull/9908))
+- Added `ProteinMPNN` model and example ([#10289](https://github.com/pyg-team/pytorch_geometric/pull/10289))
 - Added the `Teeth3DS` dataset, an extended benchmark for intraoral 3D scan analysis ([#9833](https://github.com/pyg-team/pytorch_geometric/pull/9833))
 - Added `torch.device` to `PatchTransformerAggregation` [#10342](https://github.com/pyg-team/pytorch_geometric/pull/10342)
 - Added `torch.device` to normalization layers [#10341](https://github.com/pyg-team/pytorch_geometric/pull/10341)
@@ -70,6 +71,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed conversion to/from `cuGraph` graph objects by ensuring `cudf` column names are correctly specified ([#10343](https://github.com/pyg-team/pytorch_geometric/pull/10343))
 - Fixed `_recursive_config()` for `torch.nn.ModuleList` and `torch.nn.ModuleDict` ([#10124](https://github.com/pyg-team/pytorch_geometric/pull/10124), [#10129](https://github.com/pyg-team/pytorch_geometric/pull/10129))
 - Fixed the `k_hop_subgraph()` method for directed graphs ([#9756](https://github.com/pyg-team/pytorch_geometric/pull/9756))
 - Fixed `utils.group_cat` concatenating dimension ([#9766](https://github.com/pyg-team/pytorch_geometric/pull/9766))
