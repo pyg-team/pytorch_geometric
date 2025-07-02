@@ -22,7 +22,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         Args:
         - encoder_model: The model to use for encoding queries.
-        - args and kwargs: Additional arguments to pass to the parent class.
+        - args: Additional arguments to pass to the parent class.
+        - kwargs: Keyword arguments  to pass to the parent class.
         """
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
@@ -86,7 +87,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         Args:
         - query: The query or list of queries to search for.
-        - k_nodes: The number of nodes to retrieve (default: 5).
 
         Returns:
         - The indices of the most similar nodes.
