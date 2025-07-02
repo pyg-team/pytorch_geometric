@@ -1,5 +1,6 @@
-import torch
 import pytest
+import torch
+
 from torch_geometric.nn.models.glem import deal_nan
 
 
@@ -28,7 +29,8 @@ def test_deal_nan_tensor_dtypes(dtype):
 
     # `bfloat16` doesn't support `allclose` directly on CPU, so we cast to float32 for comparison
     if dtype == torch.bfloat16:
-        assert torch.allclose(result.to(torch.float32), expected.to(torch.float32), atol=1e-2)
+        assert torch.allclose(result.to(torch.float32),
+                              expected.to(torch.float32), atol=1e-2)
     else:
         assert torch.allclose(result, expected, equal_nan=True)
 
