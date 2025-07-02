@@ -368,8 +368,7 @@ def make_pcst_filter(triples: List[Tuple[str, str,
                                          str]], model: SentenceTransformer,
                      topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
                      num_clusters: int = 1):
-    """
-    Creates a PCST (Prize Collecting Tree) filter.
+    """Creates a PCST (Prize Collecting Tree) filter.
 
     :param triples: List of triples (head, relation, tail) representing KG data
     :param model: SentenceTransformer model for embedding text
@@ -404,8 +403,7 @@ def make_pcst_filter(triples: List[Tuple[str, str,
             graph: Data,  # Input graph data
             query: str,  # Search query
     ) -> Tuple[Data, str]:
-        """
-        Applies PCST filtering for retrieval.
+        """Applies PCST filtering for retrieval.
 
         :param graph: Input graph data
         :param query: Search query
