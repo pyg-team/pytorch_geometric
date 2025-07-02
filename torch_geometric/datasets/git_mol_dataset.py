@@ -102,7 +102,7 @@ class GitMolDataset(InMemoryDataset):
 
         try:
             from rdkit import Chem, RDLogger
-            RDLogger.DisableLog('rdApp.*')  # type: ignore
+            RDLogger.DisableLog('rdApp.*')
             WITH_RDKIT = True
 
         except ImportError:
