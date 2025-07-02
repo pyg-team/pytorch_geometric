@@ -7,11 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `ProteinMPNN` model and example ([#10289](https://github.com/pyg-team/pytorch_geometric/pull/10289))
+- Added the `Teeth3DS` dataset, an extended benchmark for intraoral 3D scan analysis ([#9833](https://github.com/pyg-team/pytorch_geometric/pull/9833))
+- Added `torch.device` to `PatchTransformerAggregation` [#10342](https://github.com/pyg-team/pytorch_geometric/pull/10342)
+- Added `torch.device` to normalization layers [#10341](https://github.com/pyg-team/pytorch_geometric/pull/10341)
 - Added `total_influence` for quantifying long-range dependency ([#10263](https://github.com/pyg-team/pytorch_geometric/pull/10263))
 - Added `MedShapeNet` Dataset ([#9823](https://github.com/pyg-team/pytorch_geometric/pull/9823))
 - Added RelBench example ([#10230](https://github.com/pyg-team/pytorch_geometric/pull/10230))
 - Added `CityNetwork` dataset ([#10115](https://github.com/pyg-team/pytorch_geometric/pull/10115))
-- Added visualize_graph to HeteroExplanation ([#10207](https://github.com/pyg-team/pytorch_geometric/pull/10207))
+- Added `visualize_graph` to HeteroExplanation ([#10207](https://github.com/pyg-team/pytorch_geometric/pull/10207))
 - Added PyTorch 2.6 support ([#10170](https://github.com/pyg-team/pytorch_geometric/pull/10170))
 - Added support for heterogenous graphs in `AttentionExplainer` ([#10169](https://github.com/pyg-team/pytorch_geometric/pull/10169))
 - Added support for heterogenous graphs in `PGExplainer` ([#10168](https://github.com/pyg-team/pytorch_geometric/pull/10168))
@@ -66,6 +70,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed conversion to/from `cuGraph` graph objects by ensuring `cudf` column names are correctly specified ([#10343](https://github.com/pyg-team/pytorch_geometric/pull/10343))
 - Fixed `_recursive_config()` for `torch.nn.ModuleList` and `torch.nn.ModuleDict` ([#10124](https://github.com/pyg-team/pytorch_geometric/pull/10124), [#10129](https://github.com/pyg-team/pytorch_geometric/pull/10129))
 - Fixed the `k_hop_subgraph()` method for directed graphs ([#9756](https://github.com/pyg-team/pytorch_geometric/pull/9756))
 - Fixed `utils.group_cat` concatenating dimension ([#9766](https://github.com/pyg-team/pytorch_geometric/pull/9766))

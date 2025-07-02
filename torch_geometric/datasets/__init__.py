@@ -81,8 +81,10 @@ from .web_qsp_dataset import WebQSPDataset, CWQDataset
 from .git_mol_dataset import GitMolDataset
 from .molecule_gpt_dataset import MoleculeGPTDataset
 from .instruct_mol_dataset import InstructMolDataset
+from .protein_mpnn_dataset import ProteinMPNNDataset
 from .tag_dataset import TAGDataset
 from .city import CityNetwork
+from .teeth3ds import Teeth3DS
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -201,8 +203,10 @@ homo_datasets = [
     'GitMolDataset',
     'MoleculeGPTDataset',
     'InstructMolDataset',
+    'ProteinMPNNDataset',
     'TAGDataset',
     'CityNetwork',
+    'Teeth3DS',
 ]
 
 hetero_datasets = [

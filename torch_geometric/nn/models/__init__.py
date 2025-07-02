@@ -32,6 +32,7 @@ from .visnet import ViSNet
 from .g_retriever import GRetriever
 from .git_mol import GITMol
 from .molecule_gpt import MoleculeGPT
+from .protein_mpnn import ProteinMPNN
 from .glem import GLEM
 from .sgformer import SGFormer
 # Deprecated:
@@ -86,6 +87,7 @@ __all__ = classes = [
     'GRetriever',
     'GITMol',
     'MoleculeGPT',
+    'ProteinMPNN',
     'GLEM',
     'SGFormer',
     'ARLinkPredictor',
