@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added the `KerGNNConv` layer and an corresponding example ([#8189](https://github.com/pyg-team/pytorch_geometric/pull/8189))
 - Added `ProteinMPNN` model and example ([#10289](https://github.com/pyg-team/pytorch_geometric/pull/10289))
 - Added the `Teeth3DS` dataset, an extended benchmark for intraoral 3D scan analysis ([#9833](https://github.com/pyg-team/pytorch_geometric/pull/9833))
 - Added `torch.device` to `PatchTransformerAggregation` [#10342](https://github.com/pyg-team/pytorch_geometric/pull/10342)
