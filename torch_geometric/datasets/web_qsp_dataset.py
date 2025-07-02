@@ -51,16 +51,16 @@ class KGQABaseDataset(InMemoryDataset):
             (default: :obj:`{}`)
     """
     def __init__(
-            self,
-            dataset_name: str,
-            root: str,
-            split: str = "train",
-            force_reload: bool = False,
-            verbose: bool = False,
-            use_pcst: bool = True,
-            use_cwq: bool = True,
-            load_dataset_kwargs: Dict[str, Any] = {},
-            retrieval_kwargs: Dict[str, Any] = {},
+        self,
+        dataset_name: str,
+        root: str,
+        split: str = "train",
+        force_reload: bool = False,
+        verbose: bool = False,
+        use_pcst: bool = True,
+        use_cwq: bool = True,
+        load_dataset_kwargs: Dict[str, Any] = {},
+        retrieval_kwargs: Dict[str, Any] = {},
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
@@ -166,11 +166,13 @@ class KGQABaseDataset(InMemoryDataset):
         self.indexer.save(self.indexer_path)
 
     def _retrieve_subgraphs(self) -> None:
-        raw_splits = [self.raw_dataset[split] for split in self.required_splits]
+        raw_splits = [
+            self.raw_dataset[split] for split in self.required_splits
+        ]
         zip = zip(
-                self.required_splits,
-                raw_splits,  # noqa
-                self.processed_paths,
+            self.required_splits,
+            raw_splits,  # noqa
+            self.processed_paths,
         )
         for split_name, dataset, path in zipped:
             print(f"Processing {split_name} split...")
@@ -284,8 +286,12 @@ class WebQSPDataset(KGQABaseDataset):
             (default: :obj:`{}`)
     """
     def __init__(
-        self, root: str, split: str = "train", force_reload: bool = False,
-        verbose: bool = False, use_pcst: bool = True,
+        self,
+        root: str,
+        split: str = "train",
+        force_reload: bool = False,
+        verbose: bool = False,
+        use_pcst: bool = True,
         load_dataset_kwargs: Dict[str, Any] = {},
         retrieval_kwargs: Dict[str, Any] = {},
     ) -> None:
@@ -326,8 +332,12 @@ class CWQDataset(KGQABaseDataset):
             (default: :obj:`{}`)
     """
     def __init__(
-        self, root: str, split: str = "train", force_reload: bool = False,
-        verbose: bool = False, use_pcst: bool = True,
+        self,
+        root: str,
+        split: str = "train",
+        force_reload: bool = False,
+        verbose: bool = False,
+        use_pcst: bool = True,
         load_dataset_kwargs: Dict[str, Any] = {},
         retrieval_kwargs: Dict[str, Any] = {},
     ) -> None:
