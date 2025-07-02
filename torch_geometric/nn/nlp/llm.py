@@ -315,7 +315,7 @@ class LLM(torch.nn.Module):
                 f"HuggingFace model {self.model_name} is not using a "
                 "chat template, using Llama 2 style prompting. Please "
                 "consider using a more recent model and initialize the "
-                "LLM with `sys_prompt`.", stack_level=2)
+                "LLM with `sys_prompt`.", stacklevel=2)
             return self._get_embeds_old(question, context, embedding, answer)
         batch_label_input_ids = None
         if answer is not None:
