@@ -180,13 +180,14 @@ def inference_step(model, batch, model_save_name="gnn+llm"):
                                batch.batch, batch.edge_attr, batch.desc)
 
 
-def adjust_learning_rate(param_group, LR, epoch, num_epochs):
+def adjust_learning_rate(param_group: dict, LR: float, epoch: int, num_epochs: int):
     """Decay learning rate with half-cycle cosine after warmup.
 
     Args:
         param_group (dict): Parameter group.
         LR (float): Learning rate.
-        num_epochs (int): Current epoch.
+        epoch (int): current epoch
+        num_epochs (int): total epochs
 
     Returns:
         float: Adjusted learning rate.
