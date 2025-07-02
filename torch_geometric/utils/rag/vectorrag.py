@@ -102,6 +102,8 @@ class DocumentRetriever(VectorRetriever):
             model: Union[SentenceTransformer, torch.nn.Module, Callable]:
                 Model to use for encoding.
                 If None, the saved model will be used if available.
+            model_kwargs: Optional[Dict[str, Any]]
+                Key word args to be passed to model
 
         Returns:
             DocumentRetriever: The loaded retriever.
