@@ -1,5 +1,6 @@
-import torch
 import pytest
+import torch
+
 from torch_geometric.nn.models.glem import deal_nan
 
 
