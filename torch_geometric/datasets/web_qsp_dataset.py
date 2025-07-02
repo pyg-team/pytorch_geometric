@@ -59,8 +59,8 @@ class KGQABaseDataset(InMemoryDataset):
             verbose: bool = False,
             use_pcst: bool = True,
             use_cwq: bool = True,
-            load_dataset_kwargs: Dict[str, Any] = dict(),
-            retrieval_kwargs: Dict[str, Any] = dict(),
+            load_dataset_kwargs: Dict[str, Any] = {},
+            retrieval_kwargs: Dict[str, Any] = {},
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
@@ -166,12 +166,13 @@ class KGQABaseDataset(InMemoryDataset):
         self.indexer.save(self.indexer_path)
 
     def _retrieve_subgraphs(self) -> None:
-        for split_name, dataset, path in zip(
+        raw_splits = [self.raw_dataset[split] for split in self.required_splits]
+        zip = zip(
                 self.required_splits,
-            [self.raw_dataset[split]
-             for split in self.required_splits],  # noqa
+                raw_splits,  # noqa
                 self.processed_paths,
-        ):
+        )
+        for split_name, dataset, path in zipped:
             print(f"Processing {split_name} split...")
 
             print("\tEncoding questions...")
@@ -285,8 +286,8 @@ class WebQSPDataset(KGQABaseDataset):
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
         verbose: bool = False, use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict(),
-        retrieval_kwargs: Dict[str, Any] = dict()
+        load_dataset_kwargs: Dict[str, Any] = {},
+        retrieval_kwargs: Dict[str, Any] = {},
     ) -> None:
         # Modify these paramters if running into memory/compute issues
         default_retrieval_kwargs = {
@@ -327,8 +328,8 @@ class CWQDataset(KGQABaseDataset):
     def __init__(
         self, root: str, split: str = "train", force_reload: bool = False,
         verbose: bool = False, use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict(),
-        retrieval_kwargs: Dict[str, Any] = dict()
+        load_dataset_kwargs: Dict[str, Any] = {},
+        retrieval_kwargs: Dict[str, Any] = {},
     ) -> None:
         dataset_name = 'rmanluo/RoG-cwq'
         super().__init__(dataset_name, root, split, force_reload, verbose,
