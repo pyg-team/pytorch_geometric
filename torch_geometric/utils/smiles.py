@@ -148,7 +148,7 @@ def from_smiles(
     """
     from rdkit import Chem, RDLogger
 
-    RDLogger.DisableLog('rdApp.*')  # type: ignore
+    RDLogger.DisableLog('rdApp.*')
 
     mol = Chem.MolFromSmiles(smiles)
 

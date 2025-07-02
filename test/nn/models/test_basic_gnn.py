@@ -279,7 +279,7 @@ def test_onnx(tmp_path):
         (x, edge_index),
         path,
         input_names=('x', 'edge_index'),
-        opset_version=16,
+        opset_version=18,
         dynamo=True,  # False is deprecated by PyTorch
     )
 
