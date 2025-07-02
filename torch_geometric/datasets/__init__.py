@@ -83,6 +83,7 @@ from .molecule_gpt_dataset import MoleculeGPTDataset
 from .instruct_mol_dataset import InstructMolDataset
 from .tag_dataset import TAGDataset
 from .city import CityNetwork
+from .teeth3ds import Teeth3DS
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -203,6 +204,7 @@ homo_datasets = [
     'InstructMolDataset',
     'TAGDataset',
     'CityNetwork',
+    'Teeth3DS',
 ]
 
 hetero_datasets = [
