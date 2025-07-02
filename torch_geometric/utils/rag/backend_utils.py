@@ -295,8 +295,7 @@ def create_graph_from_triples(
     embedding_method_kwargs: Optional[Dict[str, Any]] = None,
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
 ) -> Data:
-    """Utility function that can be used to create a graph from triples.
-    """
+    """Utility function that can be used to create a graph from triples."""
     # Resolve callable methods
     embedding_method_kwargs = embedding_method_kwargs \
         if embedding_method_kwargs is not None else dict()
@@ -369,7 +368,8 @@ def make_pcst_filter(triples: List[Tuple[str, str,
                                          str]], model: SentenceTransformer,
                      topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
                      num_clusters: int = 1):
-    """Creates a PCST (Prize Collecting Tree) filter.
+    """
+    Creates a PCST (Prize Collecting Tree) filter.
 
     :param triples: List of triples (head, relation, tail) representing KG data
     :param model: SentenceTransformer model for embedding text
@@ -404,8 +404,8 @@ def make_pcst_filter(triples: List[Tuple[str, str,
             graph: Data,  # Input graph data
             query: str,  # Search query
     ) -> Tuple[Data, str]:
-        """Applies PCST filtering for retrieval.
-        PCST = Prize Collecting Steiner Tree
+        """
+        Applies PCST filtering for retrieval.
 
         :param graph: Input graph data
         :param query: Search query
