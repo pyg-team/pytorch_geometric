@@ -13,6 +13,7 @@ from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputNodes
 from torch_geometric.utils.rag.backend_utils import batch_knn
 
+
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based retrieval."""
