@@ -16,7 +16,8 @@ from torch_geometric.utils import index_sort
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
-    """A graph store using neighbor sampling to store & retrieve graph data.
+    """
+    A graph store using neighbor sampling to store & retrieve graph data.
     """
     def __init__(self, feature_store: Optional[FeatureStore] = None, **kwargs):
         """Initializes the graph store.
@@ -36,8 +37,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     @property
     def config(self):
-        """Get the config for the feature store.
-        """
+        """Get the config for the feature store."""
         return self._config
 
     def _set_from_config(self, config: Dict[str, Any], attr_name: str):
@@ -73,8 +73,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._config = config
 
     def _init_sampler(self):
-        """Initializes the neighbor sampler with the registered feature store.
-        """
+        """Initializes the neighbor sampler with the registered feature store."""
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
         self.sampler = BidirectionalNeighborSampler(
