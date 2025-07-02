@@ -293,7 +293,7 @@ class SamplerOutput(CastMixin):
         has_num_sampled_edges = out.num_sampled_edges is not None
 
         try:
-            for i, sample_output in enumerate(outputs):
+            for i, sample_output in enumerate(outputs): # noqa
                 assert not has_edge == (sample_output.edge is None)
                 assert not has_orig_row == (sample_output.orig_row is None)
                 assert not has_orig_col == (sample_output.orig_col is None)
@@ -304,7 +304,7 @@ class SamplerOutput(CastMixin):
                     sample_output.num_sampled_edges is None)
         except AssertionError:
             raise ValueError(
-                f"Output {i+1} has a different field than the first output")
+                f"Output {i+1} has a different field than the first output") # noqa
 
         for other in outputs[1:]:
             out = out.merge_with(other, replace=replace)
