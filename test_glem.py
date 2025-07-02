@@ -1,7 +1,9 @@
 import torch
+
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.nn.models.glem import GLEM
 from torch_geometric.testing import withPackage
+
 
 @withPackage('transformers')
 def test_glem_loss_handles_nan():
