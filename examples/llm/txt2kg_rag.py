@@ -637,7 +637,7 @@ def train(args, train_loader, val_loader):
             val_loss = 0
             model.eval()
             with torch.no_grad():
-                for step, batch in enumerate(val_loader):
+                for batch in val_loader:
                     new_qs = []
                     for i, q in enumerate(batch["question"]):
                         # insert VectorRAG context
