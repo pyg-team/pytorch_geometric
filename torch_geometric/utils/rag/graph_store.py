@@ -16,8 +16,7 @@ from torch_geometric.utils import index_sort
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
-    """
-    A graph store using neighbor sampling to store & retrieve graph data.
+    """A graph store using neighbor sampling to store & retrieve graph data.
     """
     def __init__(self, feature_store: Optional[FeatureStore] = None, **kwargs):
         """Initializes the graph store.
