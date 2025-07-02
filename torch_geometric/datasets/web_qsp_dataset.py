@@ -59,18 +59,18 @@ class KGQABaseDataset(InMemoryDataset):
         verbose: bool = False,
         use_pcst: bool = True,
         use_cwq: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = {},
-        retrieval_kwargs: Dict[str, Any] = {},
+        load_dataset_kwargs: Dict[str, Any] = None,
+        retrieval_kwargs: Dict[str, Any] = None,
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
-        self.load_dataset_kwargs = load_dataset_kwargs
+        self.load_dataset_kwargs = load_dataset_kwargs or {}
         """
         NOTE: If running into memory issues,
         try reducing this batch size
         """
-        self.retrieval_kwargs = retrieval_kwargs
+        self.retrieval_kwargs = retrieval_kwargs or {}
 
         # Caching custom subsets of the dataset results in unsupported behavior
         if 'split' in load_dataset_kwargs:
@@ -292,9 +292,11 @@ class WebQSPDataset(KGQABaseDataset):
         force_reload: bool = False,
         verbose: bool = False,
         use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = {},
-        retrieval_kwargs: Dict[str, Any] = {},
+        load_dataset_kwargs: Dict[str, Any] = None,
+        retrieval_kwargs: Dict[str, Any] = None,
     ) -> None:
+        load_dataset_kwargs = load_dataset_kwargs or {}
+        retrieval_kwargs = retrieval_kwargs or {}
         # Modify these paramters if running into memory/compute issues
         default_retrieval_kwargs = {
             'max_batch_size': 250,  # Lower batch size to reduce memory usage
@@ -338,9 +340,11 @@ class CWQDataset(KGQABaseDataset):
         force_reload: bool = False,
         verbose: bool = False,
         use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = {},
-        retrieval_kwargs: Dict[str, Any] = {},
+        load_dataset_kwargs: Dict[str, Any] = None,
+        retrieval_kwargs: Dict[str, Any] = None,
     ) -> None:
+        load_dataset_kwargs = load_dataset_kwargs or {}
+        retrieval_kwargs = retrieval_kwargs or {}
         dataset_name = 'rmanluo/RoG-cwq'
         super().__init__(dataset_name, root, split, force_reload, verbose,
                          use_pcst, load_dataset_kwargs=load_dataset_kwargs,
