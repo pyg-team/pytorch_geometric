@@ -26,9 +26,11 @@ def test_deal_nan_tensor_dtypes(dtype):
 
     expected = torch.tensor([1.0, 0.0, 3.0], dtype=dtype)
 
-    # `bfloat16` doesn't support `allclose` directly on CPU, so we cast to float32 for comparison
+    # `bfloat16` doesn't support `allclose` directly on CPU,
+    # so we cast to float32 for comparison
     if dtype == torch.bfloat16:
-        assert torch.allclose(result.to(torch.float32), expected.to(torch.float32), atol=1e-2)
+        assert torch.allclose(result.to(torch.float32),
+                              expected.to(torch.float32), atol=1e-2)
     else:
         assert torch.allclose(result, expected, equal_nan=True)
 
