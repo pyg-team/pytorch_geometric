@@ -159,9 +159,9 @@ class TXT2KG():
                                                meta_chunk_size, len(chunks))]
                     for j in range(num_procs)
                 }
-                for retry in range(5):
+                for retry_j in range(5):
                     try:
-                        for retry in range(200):
+                        for _retry_i in range(200):
                             try:
                                 # Spawn multiple processes
                                 # process chunks in parallel
