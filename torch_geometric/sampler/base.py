@@ -303,7 +303,7 @@ class SamplerOutput(CastMixin):
                 assert not has_num_sampled_edges == (
                     sample_output.num_sampled_edges is None)
         except AssertionError:
-            error_str = f"Output {i+1} has a different field than the first output" # noqa
+            error_str = f"Output {i+1} has a different field than the first output"  # noqa
             raise ValueError(error_str)  # noqa
 
         for other in outputs[1:]:
