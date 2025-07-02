@@ -73,7 +73,7 @@ class KGQABaseDataset(InMemoryDataset):
         self.retrieval_kwargs = retrieval_kwargs or {}
 
         # Caching custom subsets of the dataset results in unsupported behavior
-        if 'split' in load_dataset_kwargs:
+        if 'split' in self.load_dataset_kwargs:
             print("WARNING: Caching custom subsets of the dataset \
                 results in unsupported behavior.\
                 Please specify a separate root directory for each split,\
