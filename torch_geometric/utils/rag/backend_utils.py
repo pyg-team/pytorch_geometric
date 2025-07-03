@@ -182,7 +182,7 @@ def retrieval_via_pcst(
 
 
 def batch_knn(query_enc: Tensor, embeds: Tensor,
-              k: int) -> Iterator[Tensor, Tensor]:
+              k: int) -> Iterator[Tuple[Tensor, Tensor]]:
     from torchmetrics.functional import pairwise_cosine_similarity
     prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
     topk = min(k, len(embeds))
