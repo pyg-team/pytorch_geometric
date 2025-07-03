@@ -182,7 +182,7 @@ def retrieval_via_pcst(
 
 
 def batch_knn(query_enc: Tensor, embeds: Tensor,
-              k: int) -> Iterator[InputNodes]:
+              k: int) -> Iterator[Tensor, Tensor]:
     from torchmetrics.functional import pairwise_cosine_similarity
     prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
     topk = min(k, len(embeds))
@@ -284,7 +284,7 @@ class RemoteGraphBackendLoader:
             raise NotImplementedError
         return (feature_store, graph_store)
 
-    def __del__(self):
+    def __del__(self) -> None:
         if os.path.exists(self.path):
             os.remove(self.path)
 
@@ -367,7 +367,7 @@ def create_remote_backend_from_graph_data(
 def make_pcst_filter(triples: List[Tuple[str, str,
                                          str]], model: SentenceTransformer,
                      topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
-                     num_clusters: int = 1):
+                     num_clusters: int = 1) -> Callable[[Data, str], Data]:
     """Creates a PCST (Prize Collecting Tree) filter.
 
     :param triples: List of triples (head, relation, tail) representing KG data
