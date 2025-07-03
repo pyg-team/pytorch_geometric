@@ -143,7 +143,7 @@ class KGQABaseDataset(InMemoryDataset):
         print("\tEncoding nodes...")
         nodes = self.indexer.get_unique_node_features()
         x = self.model.encode(
-            nodes,  # type: ignore
+            nodes,
             batch_size=256,
             output_device='cpu')
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
@@ -153,7 +153,7 @@ class KGQABaseDataset(InMemoryDataset):
         edges = self.indexer.get_unique_edge_features(
             feature_name=EDGE_RELATION)
         edge_attr = self.model.encode(
-            edges,  # type: ignore
+            edges,
             batch_size=256,
             output_device='cpu')
         self.indexer.add_edge_feature(
