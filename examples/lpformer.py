@@ -1,13 +1,11 @@
 import random
-import numpy as np
-from tqdm import tqdm
 from argparse import ArgumentParser
 from collections import defaultdict
 
+import numpy as np
 import torch
+from ogb.linkproppred import Evaluator, PygLinkPropPredDataset
 from torch.utils.data import DataLoader
-
-from ogb.linkproppred import PygLinkPropPredDataset, Evaluator
 
 from torch_geometric.nn.models import LPFormer
 
@@ -15,8 +13,8 @@ parser = ArgumentParser()
 parser.add_argument('--data_name', type=str, default='ogbl-ppa')
 parser.add_argument('--lr', type=float, default=1e-3)
 parser.add_argument('--epochs', type=int, default=100)
-parser.add_argument('--runs', help="# random seeds to run over", 
-                    type=int, default=5)
+parser.add_argument('--runs', help="# random seeds to run over", type=int,
+                    default=5)
 parser.add_argument('--batch_size', type=int, default=32768)
 parser.add_argument('--hidden_channels', type=int, default=64)
 parser.add_argument('--gnn_layers', type=int, default=3)
@@ -71,6 +69,7 @@ model = LPFormer(data.x.size(-1), args.hidden_channels,
 # Get PPR matrix in sparse format
 ppr_matrix = model.calc_sparse_ppr(data.edge_index, data.num_nodes,
                                    eps=args.eps).to(device)
+
 
 def train_epoch():
     model.train()
@@ -194,8 +193,7 @@ for run in range(1, args.runs + 1):
                 best_valid_test = eval_test
 
     print(
-        f"\nBest Performance:\n  Valid={best_valid}\n  Test={best_valid_test}"
-    )
+        f"\nBest Performance:\n  Valid={best_valid}\n  Test={best_valid_test}")
     val_perf_runs.append(best_valid)
     test_perf_runs.append(best_valid_test)
 
