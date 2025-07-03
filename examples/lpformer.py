@@ -2,8 +2,9 @@ import random
 from argparse import ArgumentParser
 from collections import defaultdict
 
-import numpy as np
 import torch
+import numpy as np
+from tqdm import tqdm
 from ogb.linkproppred import Evaluator, PygLinkPropPredDataset
 from torch.utils.data import DataLoader
 
