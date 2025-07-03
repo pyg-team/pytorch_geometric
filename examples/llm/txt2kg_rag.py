@@ -179,7 +179,7 @@ def parse_args():
         if args.dataset == "techqa":
             if args.doc_chunk_size is None:
                 args.doc_chunk_size = 1024
-            if args.k_for_docs is None
+            if args.k_for_docs is None:
                 args.k_for_docs = 14
 
     assert args.doc_chunk_size is not None, "doc_chunk_size has not been set"
