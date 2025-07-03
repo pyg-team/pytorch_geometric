@@ -9,6 +9,8 @@ Requirements:
 
 Example repo for integration with Neo4j Graph DB:
 https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
+Example blog showing 2x accuracy over LLM on real medical data:
+https://developer.nvidia.com/blog/boosting-qa-accuracy-with-graphrag-using-pyg-and-graph-databases/
 """
 import argparse
 import gc
@@ -24,7 +26,7 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.datasets import WebQSPDataset
+from torch_geometric.datasets import CWQDataset, WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
@@ -89,7 +91,7 @@ def compute_metrics(eval_output):
     f1 = sum(all_f1) / len(all_f1)
 
     # Print metrics to console
-    print(f'Hit: {hit:.4f}')
+    print(f'Hit@1: {hit:.4f}')
     print(f'Precision: {precision:.4f}')
     print(f'Recall: {recall:.4f}')
     print(f'F1: {f1:.4f}')
@@ -193,9 +195,10 @@ def train(
         lr,  # Initial learning rate
         llm_model_name,  # `transformers` model name
         checkpointing=False,  # Whether to checkpoint model
+        cwq=False,  # Whether to train on the CWQ dataset
         tiny_llama=False,  # Whether to use tiny LLaMA model
 ):
-    """Train a GNN+LLM model on WebQSP dataset.
+    """Train a GNN+LLM model on WebQSP or CWQ dataset.
 
     Args:
         num_epochs (int): Total number of training epochs.
@@ -207,6 +210,8 @@ def train(
         llm_model_name (str): The name of the LLM to use.
         checkpointing (bool, optional): Whether to checkpoint model.
             Defaults to False.
+        cwq (bool, optional): Whether to train on the CWQ dataset
+            instead of WebQSP.
         tiny_llama (bool, optional): Whether to use tiny LLaMA model.
             Defaults to False.
 
@@ -240,10 +245,16 @@ def train(
 
     # Load dataset and create data loaders
     path = osp.dirname(osp.realpath(__file__))
-    path = osp.join(path, '..', '..', 'data', 'WebQSPDataset')
-    train_dataset = WebQSPDataset(path, split='train')
-    val_dataset = WebQSPDataset(path, split='val')
-    test_dataset = WebQSPDataset(path, split='test')
+    if not cwq:
+        path = osp.join(path, '..', '..', 'data', 'WebQSPDataset')
+        train_dataset = WebQSPDataset(path, split='train')
+        val_dataset = WebQSPDataset(path, split='val')
+        test_dataset = WebQSPDataset(path, split='test')
+    else:
+        path = osp.join(path, '..', '..', 'data', 'CWQDataset')
+        train_dataset = CWQDataset(path, split='train')
+        val_dataset = CWQDataset(path, split='val')
+        test_dataset = CWQDataset(path, split='test')
 
     seed_everything(42)
 
@@ -272,13 +283,14 @@ def train(
         llm = LLM(model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1', )
     else:
         llm = LLM(model_name=llm_model_name)
-    model = GRetriever(llm=llm, gnn=gnn,
-                       mlp_out_channels=llm.word_embedding.embedding_dim)
 
     # Set model save name
     model_save_name = 'gnn_llm' if num_gnn_layers != 0 else 'llm'
     if model_save_name == 'llm':
         model = llm
+    else:
+        model = GRetriever(llm=llm, gnn=gnn,
+                           mlp_out_channels=llm.word_embedding.embedding_dim)
 
     # Create optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -328,7 +340,7 @@ def train(
         eval_output = []
         model.eval()
         with torch.no_grad():
-            for step, batch in enumerate(val_loader):
+            for batch in val_loader:
                 loss = get_loss(model, batch, model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
@@ -356,7 +368,7 @@ def train(
     eval_output = []
     print("Final evaluation...")
     progress_bar_test = tqdm(range(len(test_loader)))
-    for step, batch in enumerate(test_loader):
+    for batch in test_loader:
         with torch.no_grad():
             pred = inference_step(model, batch, model_save_name)
             eval_data = {
@@ -388,6 +400,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--eval_batch_size', type=int, default=16)
     parser.add_argument('--checkpointing', action='store_true')
+    parser.add_argument('--cwq', action='store_true')
     parser.add_argument('--tiny_llama', action='store_true')
     parser.add_argument('--llm_model_name', type=str,
                         default="meta-llama/Meta-Llama-3.1-8B-Instruct")
@@ -404,5 +417,6 @@ if __name__ == '__main__':
         args.llm_model_name,
         checkpointing=args.checkpointing,
         tiny_llama=args.tiny_llama,
+        cwq=args.cwq,
     )
     print(f"Total Time: {time.time() - start_time:2f}s")

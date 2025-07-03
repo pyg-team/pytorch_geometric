@@ -105,7 +105,7 @@ def test_hgt_conv_different_dimensions():
             ).t()
         out_dict3 = conv(x_dict, adj_t_dict2)
         assert len(out_dict1) == len(out_dict3)
-        for node_type in out_dict1.keys():
+        for key in out_dict1.keys():
             assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 

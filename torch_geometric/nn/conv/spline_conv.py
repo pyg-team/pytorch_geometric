@@ -132,7 +132,8 @@ class SplineConv(MessagePassing):
         if not x[0].is_cuda:
             warnings.warn(
                 'We do not recommend using the non-optimized CPU version of '
-                '`SplineConv`. If possible, please move your data to GPU.')
+                '`SplineConv`. If possible, please move your data to GPU.',
+                stacklevel=2)
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)

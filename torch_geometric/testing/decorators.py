@@ -10,8 +10,14 @@ from packaging.requirements import Requirement
 from packaging.version import Version
 
 import torch_geometric
+import torch_geometric.typing
 from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
+
+
+def is_rag_test() -> bool:
+    r"""Whether to run the RAG test suite."""
+    return os.getenv('RAG_TEST', '0') == '1'
 
 
 def is_full_test() -> bool:
@@ -32,8 +38,8 @@ def onlyFullTest(func: Callable) -> Callable:
 
 def is_distributed_test() -> bool:
     r"""Whether to run the distributed test suite."""
-    return ((is_full_test() or os.getenv('DIST_TEST', '0') == '1')
-            and sys.platform == 'linux' and has_package('pyg_lib'))
+    return (os.getenv('DIST_TEST', '0') == '1' and sys.platform == 'linux'
+            and has_package('pyg_lib'))
 
 
 def onlyDistributedTest(func: Callable) -> Callable:
@@ -203,6 +209,18 @@ def withPackage(*args: str) -> Callable:
     return decorator
 
 
+def onlyRAG(func: Callable) -> Callable:
+    r"""A decorator to specify that this function belongs to the RAG test
+    suite.
+    """
+    import pytest
+    func = pytest.mark.rag(func)
+    return pytest.mark.skipif(
+        not is_rag_test(),
+        reason="RAG tests are disabled",
+    )(func)
+
+
 def withCUDA(func: Callable) -> Callable:
     r"""A decorator to test both on CPU and CUDA (if available)."""
     import pytest
@@ -234,8 +252,9 @@ def withDevice(func: Callable) -> Callable:
     if device:
         backend = os.getenv('TORCH_BACKEND')
         if backend is None:
-            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
-                          f"order to test against '{device}'")
+            warnings.warn(
+                f"Please specify the backend via 'TORCH_BACKEND' in"
+                f"order to test against '{device}'", stacklevel=2)
         else:
             import_module(backend)
             devices.append(pytest.param(torch.device(device), id=device))
@@ -250,7 +269,7 @@ def withMETIS(func: Callable) -> Callable:
     with_metis = WITH_METIS
 
     if with_metis:
-        try:  # Test that METIS can succesfully execute:
+        try:  # Test that METIS can successfully execute:
             # TODO Using `pyg-lib` metis partitioning leads to some weird bugs
             # in the # CI. As such, we require `torch-sparse` for now.
             rowptr = torch.tensor([0, 2, 4, 6])
@@ -262,6 +281,17 @@ def withMETIS(func: Callable) -> Callable:
     return pytest.mark.skipif(
         not with_metis,
         reason="METIS not enabled",
+    )(func)
+
+
+def withHashTensor(func: Callable) -> Callable:
+    r"""A decorator to only test in case :class:`HashTensor` is available."""
+    import pytest
+
+    return pytest.mark.skipif(
+        not torch_geometric.typing.WITH_CPU_HASH_MAP
+        and not has_package('pandas'),
+        reason="HashTensor dependencies not available",
     )(func)
 
 
