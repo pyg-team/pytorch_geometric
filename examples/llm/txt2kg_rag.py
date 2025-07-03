@@ -308,10 +308,10 @@ def index_kg(args, context_docs):
                       ENDPOINT_URL=args.ENDPOINT_URL,
                       chunk_size=args.kg_chunk_size)
     print(
-        "Note that if the TXT2KG process is too slow for you're liking using"
-        "the public NIM, consider deploying yourself using local_lm flag of"
-        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct"  # noqa
-        "to deploy to a private endpoint, which you can pass to this script"
+        "Note that if the TXT2KG process is too slow for you're liking using "
+        "the public NIM, consider deploying yourself using local_lm flag of "
+        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct "  # noqa
+        "to deploy to a private endpoint, which you can pass to this script "
         "w/ --ENDPOINT_URL flag.")
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
