@@ -1,8 +1,7 @@
 import torch
 
-from torch_geometric.testing import withPackage
 from torch_geometric.nn import LPFormer
-
+from torch_geometric.testing import withPackage
 from torch_geometric.utils import to_undirected
 
 
@@ -30,9 +29,7 @@ def test_lpformer():
     assert out.size() == (10, )
 
     # Test with sparse edge_index
-    adj = torch.sparse_coo_tensor(
-        edge_index, torch.ones(edge_index.size(1)),
-        [num_nodes, num_nodes])
+    adj = torch.sparse_coo_tensor(edge_index, torch.ones(edge_index.size(1)),
+                                  [num_nodes, num_nodes])
     out2 = model(test_edges, x, adj, ppr_matrix)
-    assert out2.size() == (10,)
-
+    assert out2.size() == (10, )

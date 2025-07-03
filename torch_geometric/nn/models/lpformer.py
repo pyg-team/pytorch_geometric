@@ -7,14 +7,11 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
-from ...utils import softmax, get_ppr, scatter, is_sparse
-from ...typing import OptTensor, Tuple, Adj
-
 from ...nn.conv import MessagePassing
 from ...nn.dense.linear import Linear
 from ...nn.inits import glorot, zeros
 from ...typing import Adj, OptTensor, Tuple
-from ...utils import get_ppr, scatter, softmax
+from ...utils import get_ppr, is_sparse, scatter, softmax
 from .basic_gnn import GCN
 
 
@@ -174,12 +171,12 @@ class LPFormer(nn.Module):
         # Checks if SparseTensor, if so the convert
         if is_sparse(edge_index) and not edge_index.is_sparse:
             edge_index = edge_index.to_torch_sparse_coo_tensor()
-            
+
         # Ensure {0, 1}
         edge_index = edge_index.coalesce().bool().int()
 
-        pairwise_feats = self.calc_pairwise(batch, X_node, 
-                                            edge_index, ppr_matrix)
+        pairwise_feats = self.calc_pairwise(batch, X_node, edge_index,
+                                            ppr_matrix)
         combined_feats = torch.cat((elementwise_edge_feats, pairwise_feats),
                                    dim=-1)
 

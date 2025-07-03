@@ -2,11 +2,11 @@ import random
 from argparse import ArgumentParser
 from collections import defaultdict
 
-import torch
 import numpy as np
-from tqdm import tqdm
+import torch
 from ogb.linkproppred import Evaluator, PygLinkPropPredDataset
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 from torch_geometric.nn.models import LPFormer
 
@@ -56,9 +56,8 @@ else:
 # adj_prop = SparseTensor.from_edge_index(
 #     data.edge_index, edge_weight.squeeze(-1),
 #     [data.num_nodes, data.num_nodes]).to(device)
-adj_prop = torch.sparse_coo_tensor(
-      data.edge_index, edge_weight.squeeze(-1),
-      [data.num_nodes, data.num_nodes]).to(device)
+adj_prop = torch.sparse_coo_tensor(data.edge_index, edge_weight.squeeze(-1),
+                                   [data.num_nodes, data.num_nodes]).to(device)
 
 evaluator_hit = Evaluator(name=args.data_name)
 
@@ -92,9 +91,10 @@ def train_epoch():
         # masked_adj_prop = masked_adj_prop.to_symmetric()
 
         # Ensure symmetric
-        edge2keep = torch.cat((edge2keep, edge2keep[[1,0]]),dim=1)
+        edge2keep = torch.cat((edge2keep, edge2keep[[1, 0]]), dim=1)
         masked_adj_prop = torch.sparse_coo_tensor(
-            edge2keep, torch.ones(edge2keep.size(1)).to(device),
+            edge2keep,
+            torch.ones(edge2keep.size(1)).to(device),
             (data['num_nodes'], data['num_nodes'])).to(device)
 
         # For next batch
