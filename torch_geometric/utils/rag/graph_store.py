@@ -71,7 +71,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self._config = config
 
     def _init_sampler(self):
-        """Initializes the neighbor sampler with the registered feature store."""
+        """Initializes neighbor sampler with the registered feature store."""
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
         self.sampler = BidirectionalNeighborSampler(
