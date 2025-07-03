@@ -2,7 +2,7 @@
 import gc
 import os
 from itertools import chain
-from typing import Any, Dict, Iterator, List
+from typing import Any, Dict, Iterator, List, Optional
 
 import torch
 from tqdm import tqdm
@@ -59,8 +59,8 @@ class KGQABaseDataset(InMemoryDataset):
         verbose: bool = False,
         use_pcst: bool = True,
         use_cwq: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = None,
-        retrieval_kwargs: Dict[str, Any] = None,
+        load_dataset_kwargs: Optional[Dict[str, Any]] = None,
+        retrieval_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
@@ -292,8 +292,8 @@ class WebQSPDataset(KGQABaseDataset):
         force_reload: bool = False,
         verbose: bool = False,
         use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = None,
-        retrieval_kwargs: Dict[str, Any] = None,
+        load_dataset_kwargs: Optional[Dict[str, Any]] = None,
+        retrieval_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
         load_dataset_kwargs = load_dataset_kwargs or {}
         retrieval_kwargs = retrieval_kwargs or {}
@@ -340,8 +340,8 @@ class CWQDataset(KGQABaseDataset):
         force_reload: bool = False,
         verbose: bool = False,
         use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = None,
-        retrieval_kwargs: Dict[str, Any] = None,
+        load_dataset_kwargs: Optional[Dict[str, Any]] = None,
+        retrieval_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
         load_dataset_kwargs = load_dataset_kwargs or {}
         retrieval_kwargs = retrieval_kwargs or {}
