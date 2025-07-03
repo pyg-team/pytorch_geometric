@@ -93,10 +93,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         torch.cuda.empty_cache()
         return result, query_enc
 
-    def _retrieve_seed_nodes_batch( # noqa
-            self,
-            query: Iterable[Any],
-            k_nodes: int) -> Iterator[InputNodes]:
+    def _retrieve_seed_nodes_batch(  # noqa
+            self, query: Iterable[Any], k_nodes: int) -> Iterator[InputNodes]:
         """Retrieves the k_nodes most similar nodes to each query in the batch.
 
         Args:
