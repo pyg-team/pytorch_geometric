@@ -76,7 +76,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Returns the edge attributes."""
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
-    def retrieve_seed_nodes(self, query: Any) -> InputNodes:
+    def retrieve_seed_nodes(self, query: Any) -> InputNodes: # noqa
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
@@ -93,8 +93,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         torch.cuda.empty_cache()
         return result, query_enc
 
-    def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
-                                   k_nodes: int) -> Iterator[InputNodes]:
+    def _retrieve_seed_nodes_batch(self, query: Iterable[Any], # noqa
+                                   k_nodes: int) -> Iterator[InputNodes]: # noqa
         """Retrieves the k_nodes most similar nodes to each query in the batch.
 
         Args:
@@ -110,7 +110,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         query_enc = self.encoder_model.encode(query).to(self.device)
         return batch_knn(query_enc, self.x, k_nodes)
 
-    def load_subgraph(
+    def load_subgraph( # noqa
         self,
         sample: Union[SamplerOutput, HeteroSamplerOutput],
         induced: bool = True,
