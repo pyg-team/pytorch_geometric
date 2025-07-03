@@ -147,7 +147,7 @@ def parse_args():
         help="Skip the graph RAG step. "
         "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
     parser.add_argument(
-        '--use_x_percent_corpus', default=100, type=int,
+        '--use_x_percent_corpus', default=100.0, type=float,
         help="Debug flag that allows user to only use a random percentage "
         "of available knowledge base corpus for RAG")
     args = parser.parse_args()
