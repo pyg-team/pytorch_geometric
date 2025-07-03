@@ -402,7 +402,7 @@ def make_pcst_filter(triples: List[Tuple[str, str,
     def apply_retrieval_via_pcst(
             graph: Data,  # Input graph data
             query: str,  # Search query
-    ) -> Tuple[Data]:
+    ) -> Data:
         """Applies PCST filtering for retrieval.
 
         :param graph: Input graph data
