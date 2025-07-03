@@ -6,9 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_geometric.typing import SparseTensor
 
-from ...utils import softmax, get_ppr, scatter
+from ...utils import softmax, get_ppr, scatter, is_sparse
 from ...typing import OptTensor, Tuple, Adj
 from ...nn.conv import MessagePassing
 from ...nn.dense.linear import Linear
@@ -164,18 +163,20 @@ class LPFormer(nn.Module):
         # Ensure in sparse format
         # Need as native torch.sparse for later computations
         # (necessary operations are not supported by PyG SparseTensor)
-        if isinstance(edge_index, SparseTensor):
-            adj_mask = edge_index.to_torch_sparse_coo_tensor()
-            adj_mask = adj_mask.coalesce().bool().int()
-        elif not edge_index.is_sparse:
+        if not edge_index.is_sparse:
             num_nodes = ppr_matrix.size(1)
             vals = torch.ones(len(edge_index[0]), device=edge_index.device)
-            adj_mask = torch.sparse_coo_tensor(edge_index, vals,
-                                               [num_nodes, num_nodes])
-            adj_mask = adj_mask.coalesce().bool().int()
+            edge_index = torch.sparse_coo_tensor(edge_index, vals,
+                                                 [num_nodes, num_nodes])
+        # Checks if SparseTensor, if so the convert
+        if is_sparse(edge_index) and not edge_index.is_sparse:
+            edge_index = edge_index.to_torch_sparse_coo_tensor()
+            
+        # Ensure {0, 1}
+        edge_index = edge_index.coalesce().bool().int()
 
-        pairwise_feats = self.calc_pairwise(batch, X_node, adj_mask,
-                                            ppr_matrix)
+        pairwise_feats = self.calc_pairwise(batch, X_node, 
+                                            edge_index, ppr_matrix)
         combined_feats = torch.cat((elementwise_edge_feats, pairwise_feats),
                                    dim=-1)
 

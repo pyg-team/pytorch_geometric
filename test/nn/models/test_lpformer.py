@@ -1,9 +1,7 @@
 import torch
 
-import torch_geometric.typing
 from torch_geometric.testing import withPackage
 from torch_geometric.nn import LPFormer
-from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_undirected
 
 
@@ -30,8 +28,8 @@ def test_lpformer():
     assert out.size() == (10,)
 
     # Test with sparse edge_index
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj = SparseTensor.from_edge_index(edge_index, 
-                                           sparse_sizes=(num_nodes, num_nodes))
-        out2 = model(test_edges, x, adj, ppr_matrix)
-        assert out2.size() == (10,)
+    adj = torch.sparse_coo_tensor(
+        edge_index, torch.ones(edge_index.size(1)),
+        [num_nodes, num_nodes])
+    out2 = model(test_edges, x, adj, ppr_matrix)
+    assert out2.size() == (10,)

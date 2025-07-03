@@ -6,7 +6,6 @@ from collections import defaultdict
 
 import torch
 from torch.utils.data import DataLoader
-from torch_sparse import SparseTensor
 
 from ogb.linkproppred import PygLinkPropPredDataset, Evaluator
 
@@ -55,9 +54,12 @@ else:
     edge_weight = torch.ones(data.edge_index.size(1)).to(device).float()
 
 # Convert edge_index to SparseTensor for efficiency
-adj_prop = SparseTensor.from_edge_index(
-    data.edge_index, edge_weight.squeeze(-1),
-    [data.num_nodes, data.num_nodes]).to(device)
+# adj_prop = SparseTensor.from_edge_index(
+#     data.edge_index, edge_weight.squeeze(-1),
+#     [data.num_nodes, data.num_nodes]).to(device)
+adj_prop = torch.sparse_coo_tensor(
+      data.edge_index, edge_weight.squeeze(-1),
+      [data.num_nodes, data.num_nodes]).to(device)
 
 evaluator_hit = Evaluator(name=args.data_name)
 
@@ -83,11 +85,18 @@ def train_epoch():
 
         # Mask positive input samples - Common strategy during training
         adjt_mask[perm] = 0
-        edge2keep = train_pos[adjt_mask, :]
-        masked_adj_prop = SparseTensor.from_edge_index(
-            edge2keep.t(), sparse_sizes=(data['num_nodes'],
-                                         data['num_nodes'])).to_device(device)
-        masked_adj_prop = masked_adj_prop.to_symmetric()
+        edge2keep = train_pos[adjt_mask, :].t()
+        # masked_adj_prop = SparseTensor.from_edge_index(
+        #     edge2keep.t(), sparse_sizes=(data['num_nodes'],
+        #                                  data['num_nodes'])).to_device(device)
+        # masked_adj_prop = masked_adj_prop.to_symmetric()
+
+        # Ensure symmetric
+        edge2keep = torch.cat((edge2keep, edge2keep[[1,0]]),dim=1)
+        masked_adj_prop = torch.sparse_coo_tensor(
+            edge2keep, torch.ones(edge2keep.size(1)).to(device),
+            (data['num_nodes'], data['num_nodes'])).to(device)
+
         # For next batch
         adjt_mask[perm] = 1
 
@@ -120,6 +129,7 @@ def test():
     # NOTE: Eval for ogbl-citation2 is different
     # See `train.py` in https://github.com/HarryShomer/LPFormer/ for more
     # Also see there for how to eval under the HeaRT setting
+    # HeaRT = https://arxiv.org/abs/2306.10453
     model.eval()
     all_preds = defaultdict(list)
 
