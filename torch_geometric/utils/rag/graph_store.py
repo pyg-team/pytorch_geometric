@@ -16,12 +16,13 @@ from torch_geometric.utils import index_sort
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
-    """A graph store that uses neighbor sampling to store and retrieve graph data.
-    """
+    """Neighbor sampling based graph-store to store & retrieve graph data."""
     def __init__(self, feature_store: Optional[FeatureStore] = None, **kwargs):
-        """Initializes the graph store with an optional feature store and neighbor sampling settings.
+        """Initializes the graph store.
+        Optional feature store and neighbor sampling settings.
 
-        :param feature_store: The feature store to use, or None if not yet registered.
+        :param feature_store: The feature store to use.
+            None if not yet registered.
         :param kwargs: Additional keyword arguments for neighbor sampling.
         """
         self.feature_store = feature_store
@@ -33,12 +34,11 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         super().__init__()
 
     @property
-    def config(self):
-        """Get the config for the feature store.
-        """
+    def config(self) -> Dict[str, Any]:
+        """Get the config for the feature store."""
         return self._config
 
-    def _set_from_config(self, config: Dict[str, Any], attr_name: str):
+    def _set_from_config(self, config: Dict[str, Any], attr_name: str) -> None:
         """Set an attribute from the config.
 
         Args:
@@ -54,11 +54,12 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         setattr(self, attr_name, config[attr_name])
 
     @config.setter
-    def config(self, config: Dict[str, Any]):
+    def config(self, config: Dict[str, Any]) -> None:
         """Set the config for the feature store.
 
         Args:
-            config (Dict[str, Any]): Config dictionary containing required parameters
+            config (Dict[str, Any]):
+                Config dictionary containing required parameters
 
         Raises:
             ValueError: If required parameters missing from config
@@ -69,9 +70,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
         self._config = config
 
-    def _init_sampler(self):
-        """Initializes the neighbor sampler with the registered feature store.
-        """
+    def _init_sampler(self) -> None:
+        """Initializes neighbor sampler with the registered feature store."""
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
         self.sampler = BidirectionalNeighborSampler(
@@ -79,7 +79,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             **self.sample_kwargs)
         self._sampler_is_initialized = True
 
-    def register_feature_store(self, feature_store: FeatureStore):
+    def register_feature_store(self, feature_store: FeatureStore) -> None:
         """Registers a feature store with the graph store.
 
         :param feature_store: The feature store to register.

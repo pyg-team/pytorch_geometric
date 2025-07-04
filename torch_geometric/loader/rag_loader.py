@@ -86,16 +86,17 @@ class RAGQueryLoader:
         """Loader meant for making queries from a remote backend.
 
         Args:
-            graph_data (Tuple[RAGFeatureStore, RAGGraphStore]): Remote FeatureStore
-                and GraphStore to load from. Assumed to conform to the
-                protocols listed above.
+            graph_data (Tuple[RAGFeatureStore, RAGGraphStore]):
+                Remote FeatureStore and GraphStore to load from.
+                Assumed to conform to the protocols listed above.
             subgraph_filter (Optional[Callable[[Data, Any], Data]], optional):
                 Optional local transform to apply to data after retrieval.
                 Defaults to None.
             augment_query (bool, optional): Whether to augment the query with
                 retrieved documents. Defaults to False.
-            vector_retriever (Optional[VectorRetriever], optional): VectorRetriever to use for
-                retrieving documents. Defaults to None.
+            vector_retriever (Optional[VectorRetriever], optional):
+                VectorRetriever to use for retrieving documents.
+                Defaults to None.
             config (Optional[Dict[str, Any]], optional): Config to pass into
                 the RAGQueryLoader. Defaults to None.
         """
@@ -110,15 +111,13 @@ class RAGQueryLoader:
         self.config = config
 
     def _propagate_config(self, config: Dict[str, Any]):
-        """Propagate the config the relevant components.
-        """
+        """Propagate the config the relevant components."""
         self.feature_store.config = config
         self.graph_store.config = config
 
     @property
     def config(self):
-        """Get the config for the RAGQueryLoader.
-        """
+        """Get the config for the RAGQueryLoader."""
         return self._config
 
     @config.setter

@@ -401,8 +401,10 @@ def test_homogeneous_neighbor_sampler_temporal_backwards(
 
     assert torch.equal(sampler_output.node, torch.tensor([1, 0]))
     assert torch.equal(reverse_sampler_output.node, torch.tensor([0, 1]))
-
-    # TODO (zaristei) Negative cases for temporal sampling, then verify that the output is correct for backwards sampling
+    """
+    TODO (zaristei) Negative cases for temporal sampling,
+    then verify that the output is correct for backwards sampling.
+    """
     pytest.skip("still TODO")
 
 

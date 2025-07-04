@@ -16,15 +16,9 @@ from torch_geometric.utils.rag.backend_utils import batch_knn
 
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
-    """A feature store that uses a KNN-based approach to retrieve seed nodes and edges.
-    """
-    def __init__(self, *args, **kwargs):
-        """Initializes the feature store.
-
-        Args:
-        - encoder_model: The model to use for encoding queries.
-        - args and kwargs: Additional arguments to pass to the parent class.
-        """
+    """A feature store that uses a KNN-based retrieval."""
+    def __init__(self):
+        """Initializes the feature store."""
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
 
@@ -36,8 +30,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
     @property
     def config(self):
-        """Get the config for the feature store.
-        """
+        """Get the config for the feature store."""
         return self._config
 
     def _set_from_config(self, config: Dict[str, Any], attr_name: str):
@@ -60,7 +53,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Set the config for the feature store.
 
         Args:
-            config (Dict[str, Any]): Config dictionary containing required parameters
+            config (Dict[str, Any]):
+                Config dictionary containing required parameters
 
         Raises:
             ValueError: If required parameters missing from config
@@ -74,22 +68,19 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
     @property
     def x(self) -> Tensor:
-        """Returns the node features.
-        """
+        """Returns the node features."""
         return self.get_tensor(group_name=None, attr_name='x')
 
     @property
     def edge_attr(self) -> Tensor:
-        """Returns the edge attributes.
-        """
+        """Returns the edge attributes."""
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
-    def retrieve_seed_nodes(self, query: Any) -> InputNodes:
+    def retrieve_seed_nodes(self, query: Any) -> InputNodes:  # noqa
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
-        - query: The query or list of queries to search for.
-        - k_nodes: The number of nodes to retrieve (default: 5).
+        - query (Any): The query or list of queries to search for.
 
         Returns:
         - The indices of the most similar nodes.
@@ -102,8 +93,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         torch.cuda.empty_cache()
         return result, query_enc
 
-    def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
-                                   k_nodes: int) -> Iterator[InputNodes]:
+    def _retrieve_seed_nodes_batch(  # noqa
+            self, query: Iterable[Any], k_nodes: int) -> Iterator[InputNodes]:
         """Retrieves the k_nodes most similar nodes to each query in the batch.
 
         Args:
@@ -119,31 +110,34 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         query_enc = self.encoder_model.encode(query).to(self.device)
         return batch_knn(query_enc, self.x, k_nodes)
 
-    def load_subgraph(
+    def load_subgraph(  # noqa
         self,
         sample: Union[SamplerOutput, HeteroSamplerOutput],
-        induced=True,
+        induced: bool = True,
     ) -> Union[Data, HeteroData]:
         """Loads a subgraph from the given sample.
 
         Args:
         - sample: The sample to load the subgraph from.
-        - induced: Whether to return the induced subgraph (resets node and edge ids).
+        - induced: Whether to return the induced subgraph.
+            Resets node and edge ids.
 
         Returns:
         - The loaded subgraph.
         """
         if isinstance(sample, HeteroSamplerOutput):
             raise NotImplementedError
-
-        # NOTE: torch_geometric.loader.utils.filter_custom_store can be used here
-        # if it supported edge features
+        """
+        NOTE: torch_geometric.loader.utils.filter_custom_store
+        can be used here if it supported edge features.
+        """
         edge_id = sample.edge
         x = self.x[sample.node]
         edge_attr = self.edge_attr[edge_id]
 
-        edge_idx = torch.stack([sample.row, sample.col], dim=0) \
-            if induced else torch.stack([sample.global_row, sample.global_col], dim=0)
+        edge_idx = torch.stack(
+            [sample.row, sample.col], dim=0) if induced else torch.stack(
+                [sample.global_row, sample.global_col], dim=0)
         result = Data(x=x, edge_attr=edge_attr, edge_index=edge_idx)
 
         # useful for tracking what subset of the graph was sampled

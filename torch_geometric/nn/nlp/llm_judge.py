@@ -55,11 +55,13 @@ class LLMJudge():
     This whole class is an adaptation of Gilberto's work for PyG.
 
     Args:
-        NVIDIA_NIM_MODEL : (str, optional) The name of the NVIDIA NIM model to use.
+        NVIDIA_NIM_MODEL : (str, optional)
+            The name of the NVIDIA NIM model to use.
             (default: "nvidia/llama-3.1-nemotron-70b-instruct").
-        NVIDIA_API_KEY : (str, optional) The API key for accessing NVIDIA's NIM models
+        NVIDIA_API_KEY : (str, optional)
+            The API key for accessing NVIDIA's NIM models.
             (default: "").
-        ENDPOINT_URL : (str, optional) The URL hosting your model, in case you are not using
+        ENDPOINT_URL : (str, optional)
             The URL hosting your model, in case you are not using
             the public NIM.
             (default: "https://integrate.api.nvidia.com/v1").
@@ -130,7 +132,7 @@ class LLMJudge():
                                          correct_answer=correct_answer)
         score1 = float("nan")
         score2 = float("nan")
-        for retry in range(200):
+        for _retry in range(200):
             try:
                 score1 = self._process_score(
                     call_NIM(prompt1, self.NVIDIA_API_KEY, self.NIM_MODEL,
@@ -141,7 +143,7 @@ class LLMJudge():
                 raise
             except:  # noqa
                 pass
-        for retry in range(20):
+        for _retry in range(20):
             try:
                 score2 = self._process_score(
                     call_NIM(prompt2, self.NVIDIA_API_KEY, self.NIM_MODEL,

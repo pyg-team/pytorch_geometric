@@ -36,7 +36,7 @@ from torch_geometric.distributed import (
     Partitioner,
 )
 from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.typing import EdgeType, InputNodes, NodeType
+from torch_geometric.typing import EdgeType, NodeType
 
 try:
     from pandas import DataFrame
@@ -173,7 +173,7 @@ def retrieval_via_pcst(
         x=data.x[selected_nodes],
         edge_index=torch.tensor([src, dst]).to(torch.long),
         edge_attr=data.edge_attr[selected_edges],
-        # HACK Added so that the subset of nodes and edges selected can be tracked
+        # HACK: track subset of selected nodes/edges
         node_idx=node_idx,
         edge_idx=edge_idx,
     )
@@ -182,7 +182,7 @@ def retrieval_via_pcst(
 
 
 def batch_knn(query_enc: Tensor, embeds: Tensor,
-              k: int) -> Iterator[InputNodes]:
+              k: int) -> Iterator[Tuple[Tensor, Tensor]]:
     from torchmetrics.functional import pairwise_cosine_similarity
     prizes = pairwise_cosine_similarity(query_enc, embeds.to(query_enc.device))
     topk = min(k, len(embeds))
@@ -284,7 +284,7 @@ class RemoteGraphBackendLoader:
             raise NotImplementedError
         return (feature_store, graph_store)
 
-    def __del__(self):
+    def __del__(self) -> None:
         if os.path.exists(self.path):
             os.remove(self.path)
 
@@ -295,8 +295,7 @@ def create_graph_from_triples(
     embedding_method_kwargs: Optional[Dict[str, Any]] = None,
     pre_transform: Optional[Callable[[TripletLike], TripletLike]] = None,
 ) -> Data:
-    """Utility function that can be used to create a graph from triples.
-    """
+    """Utility function that can be used to create a graph from triples."""
     # Resolve callable methods
     embedding_method_kwargs = embedding_method_kwargs \
         if embedding_method_kwargs is not None else dict()
@@ -345,13 +344,13 @@ def create_remote_backend_from_graph_data(
     """
     # Will return attribute errors for missing attributes
     if not issubclass(graph_db, ConvertableGraphStore):
-        graph_db.from_data
-        graph_db.from_hetero_data
-        graph_db.from_partition
+        _ = graph_db.from_data
+        _ = graph_db.from_hetero_data
+        _ = graph_db.from_partition
     elif not issubclass(feature_db, ConvertableFeatureStore):
-        feature_db.from_data
-        feature_db.from_hetero_data
-        feature_db.from_partition
+        _ = feature_db.from_data
+        _ = feature_db.from_hetero_data
+        _ = feature_db.from_partition
 
     if n_parts == 1:
         torch.save(graph_data, path)
@@ -368,12 +367,16 @@ def create_remote_backend_from_graph_data(
 def make_pcst_filter(triples: List[Tuple[str, str,
                                          str]], model: SentenceTransformer,
                      topk: int = 5, topk_e: int = 5, cost_e: float = 0.5,
-                     num_clusters: int = 1) -> None:
+                     num_clusters: int = 1) -> Callable[[Data, str], Data]:
     """Creates a PCST (Prize Collecting Tree) filter.
 
-    :param triples: List of triples (head, relation, tail) representing knowledge graph data
-    :param model: SentenceTransformer model for generating semantic representations
-    :return: None
+    :param triples: List of triples (head, relation, tail) representing KG data
+    :param model: SentenceTransformer model for embedding text
+    :param topk: Number of top-K results to return (default: 5)
+    :param topk_e: Number of top-K entity results to return (default: 5)
+    :param cost_e: Cost of edges (default: 0.5)
+    :param num_clusters: Number of connected components in the PCST output.
+    :return: PCST Filter function
     """
     if DataFrame is None:
         raise Exception("PCST requires `pip install pandas`"
@@ -399,17 +402,12 @@ def make_pcst_filter(triples: List[Tuple[str, str,
     def apply_retrieval_via_pcst(
             graph: Data,  # Input graph data
             query: str,  # Search query
-    ) -> Tuple[Data, str]:
+    ) -> Data:
         """Applies PCST filtering for retrieval.
-        PCST = Prize Collecting Steiner Tree
 
         :param graph: Input graph data
         :param query: Search query
-        :param topk: Number of top-K results to return (default: 5)
-        :param topk_e: Number of top-K entity results to return (default: 5)
-        :param cost_e: Cost of edges (default: 0.5)
-        :param num_clusters: the number of connected components in the PCST output.
-        :return: Retrieved graph data and query result
+        :return: Retrieved graph/query data
         """
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
         q_emb = model.encode([query]).to("cpu")

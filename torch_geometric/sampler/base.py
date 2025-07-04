@@ -293,7 +293,7 @@ class SamplerOutput(CastMixin):
         has_num_sampled_edges = out.num_sampled_edges is not None
 
         try:
-            for i, sample_output in enumerate(outputs):
+            for i, sample_output in enumerate(outputs):  # noqa
                 assert not has_edge == (sample_output.edge is None)
                 assert not has_orig_row == (sample_output.orig_row is None)
                 assert not has_orig_col == (sample_output.orig_col is None)
@@ -303,8 +303,8 @@ class SamplerOutput(CastMixin):
                 assert not has_num_sampled_edges == (
                     sample_output.num_sampled_edges is None)
         except AssertionError:
-            raise ValueError(
-                f"Output {i+1} has a different field than the first output")
+            error_str = f"Output {i+1} has a different field than the first output"  # noqa
+            raise ValueError(error_str)  # noqa
 
         for other in outputs[1:]:
             out = out.merge_with(other, replace=replace)
@@ -742,7 +742,7 @@ class NumNeighbors:
             elif isinstance(self.values, dict):
                 default = self.default
             else:
-                assert False
+                raise AssertionError("invalid edge_types passed")
 
             # Confirm that `values` only hold valid edge types:
             if isinstance(self.values, dict):

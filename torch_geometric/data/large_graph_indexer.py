@@ -593,9 +593,14 @@ def get_features_for_triplets_groups(
         pre_transform (Callable[[TripletLike], TripletLike]):
             Optional preprocessing to perform on triplets.
             Defaults to None.
-        verbose (bool, optional): Whether to print progress. Defaults to False.
-        max_batch_size (int, optional): Maximum batch size for fetching features. Defaults to 250.
-        num_workers (int, optional): Number of workers to use for fetching features. Defaults to None (all available).
+        verbose (bool, optional): Whether to print progress.
+            Defaults to False.
+        max_batch_size (int, optional):
+            Maximum batch size for fetching features.
+            Defaults to 250.
+        num_workers (int, optional):
+            Number of workers to use for fetching features.
+            Defaults to None (all available).
 
     Yields:
         Iterator[Data]: For each triplet group, yield a data object containing
@@ -614,12 +619,18 @@ def get_features_for_triplets_groups(
     node_keys = []
     edge_keys = []
     edge_index = []
+    """
+    For each KG, we gather the node_indices, edge_keys,
+    and edge_indices needed to construct each Data object
+    """
 
-    # For each KG, we gather the node_indices, edge_keys, and edge_indices needed to construct each Data object
     for kg_triplets in tqdm(triplet_groups, disable=not verbose):
         kg_triplets_nodes, kg_triplets_edge_keys, kg_triplets_edge_index = tee(
             kg_triplets, 3)
-        # Don't apply pre_transform here, because it has already been applied on the triplet groups
+        """
+        Don't apply pre_transform here,
+        because it has already been applied on the triplet groups/
+        """
         small_graph_indexer = LargeGraphIndexer.from_triplets(
             kg_triplets_nodes)
 
@@ -627,12 +638,19 @@ def get_features_for_triplets_groups(
         edge_keys.append(
             small_graph_indexer.get_edge_features(pids=kg_triplets_edge_keys))
         edge_index.append(
-            small_graph_indexer.get_edge_features(EDGE_INDEX,
-                                                  kg_triplets_edge_index))
+            small_graph_indexer.get_edge_features(
+                EDGE_INDEX,
+                kg_triplets_edge_index,
+            ))
+    """
+    We get the embeddings for each node and edge key in the KG,
+    but we need to do so in batches.
+    Batches that are too small waste compute time,
+    as each call to get features has an upfront cost.
+    Batches that are too large waste memory,
+    as we need to store all the result embeddings in memory.
+    """
 
-    # We get the embeddings for each node and edge key in the KG, but we need to do so in batches.
-    # Batches that are too small waste compute time, as each call to get features has an upfront cost.
-    # Batches that are too large waste memory, as we need to store all the result embeddings in memory.
     def _fetch_feature_batch(batches):
         node_key_batch, edge_key_batch, edge_index_batch = batches
         node_feats = indexer.get_node_features(
