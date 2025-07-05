@@ -1,7 +1,8 @@
 from torch_geometric.datasets import MoleculeGPTDataset
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import onlyOnline, withPackage
 
 
+@onlyOnline
 @withPackage('transformers', 'sentencepiece', 'accelerate', 'rdkit')
 def test_molecule_gpt_dataset():
     dataset = MoleculeGPTDataset(root='./data/MoleculeGPT')
