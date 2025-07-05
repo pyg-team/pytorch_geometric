@@ -127,6 +127,7 @@ class GRetriever(torch.nn.Module):
                 to give to the LLM, such as textified knowledge graphs.
                 (default: :obj:`None`)
         """
+        edge_index = edge_index.to(torch.int64)
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
         xs = x.split(1, dim=0)
@@ -186,6 +187,7 @@ class GRetriever(torch.nn.Module):
             max_out_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: :obj:`32`)
         """
+        edge_index = edge_index.to(torch.int64)
         x = self.encode(x, edge_index, batch, edge_attr)
         x = self.projector(x)
         xs = x.split(1, dim=0)
