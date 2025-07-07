@@ -178,9 +178,9 @@ def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex,
 
 
 class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
-    def __init__(self, encoder_model: Type[Module], *args, **kwargs):
+    def __init__(self) -> None:
         # TODO: Add kwargs for approx KNN to parameters here.
-        super().__init__(encoder_model, *args, **kwargs)
+        super().__init__()
         self.node_knn_index = None
         self.edge_knn_index = None
 
