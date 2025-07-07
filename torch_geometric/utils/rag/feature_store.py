@@ -10,14 +10,15 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
-from torch_geometric.typing import InputNodes
+from torch_geometric.typing import InputNodes, FeatureTensorType
+
 from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
 # NOTE: Only compatible with Homogeneous graphs for now
 class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based retrieval."""
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the feature store."""
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
@@ -29,11 +30,11 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         super().__init__()
 
     @property
-    def config(self):
+    def config(self) -> None:
         """Get the config for the feature store."""
         return self._config
 
-    def _set_from_config(self, config: Dict[str, Any], attr_name: str):
+    def _set_from_config(self, config: Dict[str, Any], attr_name: str) -> None:
         """Set an attribute from the config.
 
         Args:
@@ -49,7 +50,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         setattr(self, attr_name, config[attr_name])
 
     @config.setter
-    def config(self, config: Dict[str, Any]):
+    def config(self, config: Dict[str, Any]) -> None:
         """Set the config for the feature store.
 
         Args:
@@ -67,12 +68,12 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         self._config = config
 
     @property
-    def x(self) -> Tensor:
+    def x(self) -> FeatureTensorType:
         """Returns the node features."""
         return self.get_tensor(group_name=None, attr_name='x')
 
     @property
-    def edge_attr(self) -> Tensor:
+    def edge_attr(self) -> FeatureTensorType:
         """Returns the edge attributes."""
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
@@ -151,7 +152,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
 
 def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
-                               device: torch.device, batch_size: int = 2**20):
+                               device: torch.device, batch_size: int = 2**20) -> None:
     """Add new features to the existing KNN index in batches.
 
     Args:
