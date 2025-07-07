@@ -61,9 +61,9 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         self._set_from_config(config, "k_nodes")
         self._set_from_config(config, "encoder_model")
-        if self.encoder_model is not None:
-            self.encoder_model = self.encoder_model.to(self.device)
-            self.encoder_model.eval()
+        assert self.encoder_model is not None, "Need to define encoder model from config"
+        self.encoder_model = self.encoder_model.to(self.device)
+        self.encoder_model.eval()
 
         self._config = config
 
@@ -155,14 +155,14 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 # TODO: Refactor because composition >> inheritance
 
 
-def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
+def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: FeatureTensorType,
                                device: torch.device,
                                batch_size: int = 2**20) -> None:
     """Add new features to the existing KNN index in batches.
 
     Args:
         knn_index (ApproxMIPSKNNIndex): Index to add features to.
-        emb (Tensor): Embeddings to add.
+        emb (FeatureTensorType): Embeddings to add.
         device (torch.device): Device to store in
         batch_size (int, optional): Batch size to iterate by.
             Defaults to 2**20, which equates to 4GB if working with
@@ -187,7 +187,7 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
                                    k_nodes: int) -> Iterator[InputNodes]:
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
-
+        assert self.encoder_model is not None, "Need to define encoder model from config"
         encoder_model = self.encoder_model.to(self.device)
         query_enc = encoder_model.encode(query).to(self.device)
         del encoder_model
@@ -201,6 +201,6 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
             # Need to add in batches to avoid OOM
             _add_features_to_knn_index(self.node_knn_index, self.x,
                                        self.device)
-
+        assert self.node_knn_index it not None, "KNN index creation failed, should not be None"
         output = self.node_knn_index.search(query_enc, k=k_nodes)
         yield from output.index
