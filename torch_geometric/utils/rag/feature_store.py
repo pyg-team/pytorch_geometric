@@ -29,7 +29,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         super().__init__()
 
     @property
-    def config(self) -> None:
+    def config(self) -> Dict[str, Any]:
         """Get the config for the feature store."""
         return self._config
 
