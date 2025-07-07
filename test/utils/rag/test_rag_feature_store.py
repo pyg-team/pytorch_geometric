@@ -29,9 +29,12 @@ class TestKNNRAGFeatureStore:
             store = KNNRAGFeatureStore()
             store.config = {}
 
-    def create_feature_store(self):
-        """Create a KNNRAGFeatureStore with mocked dependencies."""
-        store = KNNRAGFeatureStore()
+    def create_feature_store(self, approx=False):
+        """Create a FeatureStore with mocked dependencies."""
+        if approx:
+            store = ApproxKNNRAGFeatureStore()
+        else:
+            store = KNNRAGFeatureStore()
         store.config = self.config
 
         # Mock the tensor storage
@@ -41,9 +44,10 @@ class TestKNNRAGFeatureStore:
 
         return store
 
-    def test_retrieve_seed_nodes_single_query(self):
+    @pytest.mark.parametrize("approx", [True, False])
+    def test_retrieve_seed_nodes_single_query(self, approx=False):
         """Test retrieve_seed_nodes with a single query."""
-        store = self.create_feature_store()
+        store = self.create_feature_store(approx)
 
         # Mock the encoder output and batch_knn
         query_text = "test query"
@@ -76,9 +80,10 @@ class TestKNNRAGFeatureStore:
             assert torch.equal(result, expected_indices)
             assert torch.equal(query_enc, mock_query_enc)
 
-    def test_retrieve_seed_nodes_multiple_queries(self):
+    @pytest.mark.parametrize("approx", [True, False])
+    def test_retrieve_seed_nodes_multiple_queries(self, approx=False):
         """Test retrieve_seed_nodes with multiple queries."""
-        store = self.create_feature_store()
+        store = self.create_feature_store(approx)
 
         queries = ["query 1", "query 2"]
         mock_query_enc = torch.randn(2, 128)
