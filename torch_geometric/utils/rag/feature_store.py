@@ -61,8 +61,9 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         self._set_from_config(config, "k_nodes")
         self._set_from_config(config, "encoder_model")
-        self.encoder_model = self.encoder_model.to(self.device)
-        self.encoder_model.eval()
+        if self.encoder_model is not None:
+            self.encoder_model = self.encoder_model.to(self.device)
+            self.encoder_model.eval()
 
         self._config = config
 
@@ -76,14 +77,14 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Returns the edge attributes."""
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
-    def retrieve_seed_nodes(self, query: Any) -> InputNodes:  # noqa
+    def retrieve_seed_nodes(self, query: Union[str, List[str], Tuple[str]]) -> Tuple[InputNodes, Tensor]:  # noqa
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
         - query (Any): The query or list of queries to search for.
 
         Returns:
-        - The indices of the most similar nodes.
+        - The indices of the most similar nodes and the encoded query
         """
         if not isinstance(query, (list, tuple)):
             query = [query]
@@ -94,7 +95,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         return result, query_enc
 
     def _retrieve_seed_nodes_batch(  # noqa
-            self, query: Iterable[Any], k_nodes: int) -> Iterator[InputNodes]:
+            self, query: Iterable[Any], k_nodes: int) -> Iterator[Tuple[InputNodes, Tensor]]:
         """Retrieves the k_nodes most similar nodes to each query in the batch.
 
         Args:
