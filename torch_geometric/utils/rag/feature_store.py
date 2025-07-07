@@ -1,10 +1,9 @@
 import gc
 from collections.abc import Iterable, Iterator
-from typing import Any, Dict, List, Tuple, Type, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch.nn import Module
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
