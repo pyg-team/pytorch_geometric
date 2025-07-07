@@ -201,6 +201,6 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
             # Need to add in batches to avoid OOM
             _add_features_to_knn_index(self.node_knn_index, self.x,
                                        self.device)
-        assert self.node_knn_index it not None, "KNN index creation failed, should not be None"
+        assert self.node_knn_index is not None, "KNN index creation failed, should not be None"
         output = self.node_knn_index.search(query_enc, k=k_nodes)
         yield from output.index
