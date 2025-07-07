@@ -77,9 +77,9 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Returns the edge attributes."""
         return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
 
-    def retrieve_seed_nodes( # noqa: D417
-        self, query: Union[str, List[str], Tuple[str]]
-    ) -> Tuple[InputNodes, Tensor]:
+    def retrieve_seed_nodes(  # noqa: D417
+            self, query: Union[str, List[str],
+                               Tuple[str]]) -> Tuple[InputNodes, Tensor]:
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
