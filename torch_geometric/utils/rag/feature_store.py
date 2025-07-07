@@ -1,6 +1,6 @@
 import gc
 from collections.abc import Iterable, Iterator
-from typing import Any, Dict, Type, Union
+from typing import Any, Dict, Type, Union, List
 
 import torch
 from torch import Tensor
