@@ -155,8 +155,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 # TODO: Refactor because composition >> inheritance
 
 
-def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: FeatureTensorType,
-                               device: torch.device,
+def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex,
+                               emb: FeatureTensorType, device: torch.device,
                                batch_size: int = 2**20) -> None:
     """Add new features to the existing KNN index in batches.
 
