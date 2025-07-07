@@ -61,7 +61,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         self._set_from_config(config, "k_nodes")
         self._set_from_config(config, "encoder_model")
-        assert self.encoder_model is not None, "Need to define encoder model from config"
+        assert self.encoder_model is not None, \
+            "Need to define encoder model from config"
         self.encoder_model = self.encoder_model.to(self.device)
         self.encoder_model.eval()
 
@@ -187,7 +188,8 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
                                    k_nodes: int) -> Iterator[InputNodes]:
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
-        assert self.encoder_model is not None, "Need to define encoder model from config"
+        assert self.encoder_model is not None, \
+            "Need to define encoder model from config"
         encoder_model = self.encoder_model.to(self.device)
         query_enc = encoder_model.encode(query).to(self.device)
         del encoder_model
@@ -201,6 +203,7 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
             # Need to add in batches to avoid OOM
             _add_features_to_knn_index(self.node_knn_index, self.x,
                                        self.device)
-        assert self.node_knn_index is not None, "KNN index creation failed, should not be None"
+        assert self.node_knn_index is not None, \
+            "KNN index creation failed, self.node_knn_index should not be None"
         output = self.node_knn_index.search(query_enc, k=k_nodes)
         yield from output.index
