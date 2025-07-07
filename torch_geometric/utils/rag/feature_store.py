@@ -10,8 +10,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
-from torch_geometric.typing import InputNodes, FeatureTensorType
-
+from torch_geometric.typing import FeatureTensorType, InputNodes
 from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
@@ -152,7 +151,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
 
 def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
-                               device: torch.device, batch_size: int = 2**20) -> None:
+                               device: torch.device,
+                               batch_size: int = 2**20) -> None:
     """Add new features to the existing KNN index in batches.
 
     Args:
