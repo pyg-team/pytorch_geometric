@@ -19,14 +19,14 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     def __init__(
         self,
         feature_store: Optional[FeatureStore] = None,
-        **kwargs: Dict[str, Any],
+        **kwargs,
     ):
         """Initializes the graph store.
         Optional feature store and neighbor sampling settings.
-
-        :param feature_store: The feature store to use.
+        Args:
+        feature_store (optional): The feature store to use.
             None if not yet registered.
-        :param kwargs: Additional keyword arguments for neighbor sampling.
+        **kwargs (optional): Additional keyword arguments for neighbor sampling.
         """
         self.feature_store = feature_store
         self.sample_kwargs = kwargs
