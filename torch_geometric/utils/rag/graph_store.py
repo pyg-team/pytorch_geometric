@@ -27,7 +27,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         Args:
         feature_store (optional): The feature store to use.
             None if not yet registered.
-        **kwargs (optional): Additional keyword arguments for neighbor sampling.
+        **kwargs (optional):
+            Additional keyword arguments for neighbor sampling.
         """
         self.feature_store = feature_store
         self.sample_kwargs = kwargs
