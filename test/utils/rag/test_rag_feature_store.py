@@ -5,8 +5,8 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.sampler import SamplerOutput
+
 try:
-    import faiss
     WITH_FAISS = True
 except ImportError:
     WITH_FAISS = False
