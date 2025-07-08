@@ -155,8 +155,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.put_edge_index(edge_index_sorted, **attr)
 
     def sample_subgraph(
-            self, seed_nodes: InputNodes
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+            self, seed_nodes: Tensor,
+    ) -> SamplerOutput:
         """Sample the graph starting from the given nodes using the
         in-built NeighborSampler.
 
@@ -170,10 +170,11 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             Union[SamplerOutput, HeteroSamplerOutput]: NeighborSamplerOutput
                 for the input.
         """
+        # TODO add support for Hetero
         if not self._sampler_is_initialized:
             self._init_sampler()
 
-        seed_nodes = Tensor(seed_nodes).unique().contiguous()
+        seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
         out = self.sampler.sample_from_nodes(node_sample_input)
 
