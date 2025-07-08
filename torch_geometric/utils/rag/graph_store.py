@@ -139,7 +139,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
                 and isinstance(edge_index[0], Tensor) \
                 and isinstance(edge_index[1], Tensor) \
                 "edge_index must be a Tensor of [2, num_edges] \
-                or a tuple of Tensors, (row, col)."                
+                or a tuple of Tensors, (row, col)."
 
             num_nodes = int(edge_index[0].max()) + 1
         attr = dict(
