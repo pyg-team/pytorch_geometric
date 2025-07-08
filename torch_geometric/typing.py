@@ -404,7 +404,6 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 # A representation of a feature tensor
 FeatureTensorType = Union[Tensor, np.ndarray]
-
 """
 A representation of an edge index, following the possible formats:
    * default: Tensor, size = [2, num_edges]
