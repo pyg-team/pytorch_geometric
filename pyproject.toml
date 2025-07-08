@@ -66,6 +66,7 @@ rag=[
     "sentencepiece",
     "accelerate",
     "torchmetrics",
+    "faiss",
 ]
 test=[
     "onnx",
