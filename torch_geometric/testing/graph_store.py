@@ -9,7 +9,7 @@ from torch_geometric.typing import EdgeTensorType
 class MyGraphStore(GraphStore):
     def __init__(self) -> None:
         super().__init__()
-        self.store: Dict[Tuple, Union[Tensor, Tuple[Tensor, Tensor]]] = {}
+        self.store: Dict[Tuple, EdgeTensorType] = {}
 
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
@@ -17,7 +17,7 @@ class MyGraphStore(GraphStore):
 
     def _put_edge_index(
         self,
-        edge_index: Tensor,
+        edge_index: EdgeTensorType,
         edge_attr: EdgeAttr,
     ) -> bool:
         self.store[self.key(edge_attr)] = edge_index
