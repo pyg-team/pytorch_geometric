@@ -5,7 +5,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.sampler import SamplerOutput
-from torch_geometric.testing.decorators import has_package
+from torch_geometric.testing.decorators import has_package, onlyRAG
 from torch_geometric.utils.rag.feature_store import (
     ApproxKNNRAGFeatureStore,
     KNNRAGFeatureStore,
@@ -49,6 +49,7 @@ class TestKNNRAGFeatureStore:
         return store
 
     @pytest.mark.parametrize("approx", [True, False])
+    @onlyRAG()
     def test_retrieve_seed_nodes_single_query(self, approx):
         """Test retrieve_seed_nodes with a single query."""
         if approx and not has_package("faiss"):
@@ -87,6 +88,7 @@ class TestKNNRAGFeatureStore:
             assert torch.equal(query_enc, mock_query_enc)
 
     @pytest.mark.parametrize("approx", [True, False])
+    @onlyRAG()
     def test_retrieve_seed_nodes_multiple_queries(self, approx):
         """Test retrieve_seed_nodes with multiple queries."""
         if approx and not has_package("faiss"):
