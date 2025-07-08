@@ -17,7 +17,10 @@ from torch_geometric.utils import index_sort
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     """Neighbor sampling based graph-store to store & retrieve graph data."""
-    def __init__(self, feature_store: Optional[FeatureStore] = None, **kwargs):
+    def __init__(self,
+                 feature_store: Optional[FeatureStore] = None,
+                 **kwargs: Dict[str, Any],
+        ):
         """Initializes the graph store.
         Optional feature store and neighbor sampling settings.
 
@@ -121,13 +124,19 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     # HACKY
     @edge_index.setter
-    def edge_index(self, edge_index: EdgeTensorType):
+    def edge_index(self, edge_index: EdgeTensorType) -> None:
         """Sets the edge index of the graph.
 
         :param edge_index: The edge index to set.
         """
         # correct since we make node list from triples
-        num_nodes = edge_index.max() + 1
+        if isinstance(edge_index, Tensor):
+            num_nodes = edge_index.max() + 1
+        else:
+            assert isinstance(edge_index, Tuple[Tensor, Tensor]), \
+                "edge_index must be a Tensor of [2, num_edges] \
+                or a tuple of Tensors, (row, col)."
+            num_nodes = edge_index[0].max() + 1
         attr = dict(
             edge_type=None,
             layout='coo',
