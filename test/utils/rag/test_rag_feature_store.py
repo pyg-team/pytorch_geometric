@@ -11,10 +11,10 @@ from torch_geometric.utils.rag.feature_store import (
 )
 
 try:
-    import faiss
     WITH_FAISS = True
 except ImportError:
     WITH_FAISS = False
+
 
 class TestKNNRAGFeatureStore:
     """Test suite for KNNRAGFeatureStore methods."""
