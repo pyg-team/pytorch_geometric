@@ -1,7 +1,5 @@
 from typing import Dict, List, Optional, Tuple
 
-from torch import Tensor
-
 from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.typing import EdgeTensorType
 
