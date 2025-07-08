@@ -5,11 +5,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.sampler import SamplerOutput
-
-try:
-    WITH_FAISS = True
-except ImportError:
-    WITH_FAISS = False
+from torch_geometric.nn.pool.knn import WITH_FAISS
 from torch_geometric.utils.rag.feature_store import (
     ApproxKNNRAGFeatureStore,
     KNNRAGFeatureStore,
