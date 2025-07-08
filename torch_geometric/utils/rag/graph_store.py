@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 import torch
 from torch import Tensor
@@ -23,6 +23,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     ):
         """Initializes the graph store.
         Optional feature store and neighbor sampling settings.
+
         Args:
         feature_store (optional): The feature store to use.
             None if not yet registered.
