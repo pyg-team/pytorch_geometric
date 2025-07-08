@@ -24,7 +24,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         # to be set by the config
         self.encoder_model = None
         self.k_nodes = None
-
+        self._config = {}
         super().__init__()
 
     @property
@@ -68,14 +68,14 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         self._config = config
 
     @property
-    def x(self) -> FeatureTensorType:
+    def x(self) -> Tensor:
         """Returns the node features."""
-        return self.get_tensor(group_name=None, attr_name='x')
+        return Tensor(self.get_tensor(group_name=None, attr_name='x'))
 
     @property
-    def edge_attr(self) -> FeatureTensorType:
+    def edge_attr(self) -> Tensor:
         """Returns the edge attributes."""
-        return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
+        return Tensor(self.get_tensor(group_name=(None, None), attr_name='edge_attr'))
 
     def retrieve_seed_nodes(  # noqa: D417
             self, query: Union[str, List[str],
@@ -91,6 +91,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         if not isinstance(query, (list, tuple)):
             query = [query]
+        assert self.k_nodes is not None, "please set k_nodes via config"
         result, query_enc = next(
             self._retrieve_seed_nodes_batch(query, self.k_nodes))
         gc.collect()
@@ -111,7 +112,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
-
+        assert self.encoder_model is not None, \
+            "Need to define encoder model from config"
         query_enc = self.encoder_model.encode(query).to(self.device)
         return batch_knn(query_enc, self.x, k_nodes)
 
@@ -168,6 +170,7 @@ def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex,
             Defaults to 2**20, which equates to 4GB if working with
             1024 dim floats.
     """
+    emb = Tensor(emb)
     for i in range(0, emb.size(0), batch_size):
         if emb.size(0) - i >= batch_size:
             emb_batch = emb[i:i + batch_size].to(device)
