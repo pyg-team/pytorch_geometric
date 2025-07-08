@@ -20,7 +20,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     def __init__(
         self,
         feature_store: Optional[FeatureStore] = None,
-        **kwargs: Dict[str, Any],
+        **kwargs: Optional[Dict[str, Any]] = None,
     ):
         """Initializes the graph store.
         Optional feature store and neighbor sampling settings.
@@ -30,7 +30,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         :param kwargs: Additional keyword arguments for neighbor sampling.
         """
         self.feature_store = feature_store
-        self.sample_kwargs = kwargs
+        self.sample_kwargs = kwargs or {}
         self._sampler_is_initialized = False
 
         # to be set by the config
@@ -78,6 +78,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """Initializes neighbor sampler with the registered feature store."""
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
+        assert self.num_neighbors is not None, \
+            "Please set num_neighbors through config"
         self.sampler = BidirectionalNeighborSampler(
             data=(self.feature_store, self), num_neighbors=self.num_neighbors,
             **self.sample_kwargs)
