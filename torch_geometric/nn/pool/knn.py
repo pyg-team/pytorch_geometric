@@ -5,7 +5,11 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import cumsum, degree, to_dense_batch
-
+try:
+    import faiss
+    WITH_FAISS = True
+except ImportError:
+    WITH_FAISS = False
 
 class KNNOutput(NamedTuple):
     score: Tensor
@@ -317,7 +321,8 @@ class ApproxMIPSKNNIndex(KNNIndex):
         super().__init__(index_factory=None, emb=emb, reserve=reserve)
 
     def _create_index(self, channels: int):
-        import faiss
+        if not WITH_FAISS:
+            raise ImportError("ApproxMIPSKNNIndex requires faiss")
         index = faiss.IndexIVFPQ(
             faiss.IndexFlatIP(channels),
             channels,
