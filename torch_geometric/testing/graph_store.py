@@ -17,7 +17,7 @@ class MyGraphStore(GraphStore):
 
     def _put_edge_index(
         self,
-        edge_index: EdgeTensorType,
+        edge_index: Tensor,
         edge_attr: EdgeAttr,
     ) -> bool:
         self.store[self.key(edge_attr)] = edge_index
