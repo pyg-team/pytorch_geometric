@@ -52,7 +52,7 @@ class TestKNNRAGFeatureStore:
         """Test retrieve_seed_nodes with a single query."""
         if approx:
             try:
-                import faiss
+                pass
             except ImportError:
                 pytest.skip("Need Faiss to test Approx KNN")
         store = self.create_feature_store(approx)
@@ -93,7 +93,7 @@ class TestKNNRAGFeatureStore:
         """Test retrieve_seed_nodes with multiple queries."""
         if approx:
             try:
-                import faiss
+                pass
             except ImportError:
                 pytest.skip("Need Faiss to test Approx KNN")
         store = self.create_feature_store(approx)
