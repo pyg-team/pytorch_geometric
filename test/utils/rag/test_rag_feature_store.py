@@ -50,6 +50,11 @@ class TestKNNRAGFeatureStore:
     @pytest.mark.parametrize("approx", [True, False])
     def test_retrieve_seed_nodes_single_query(self, approx):
         """Test retrieve_seed_nodes with a single query."""
+        if approx:
+            try:
+                import faiss
+            except ImportError:
+                pytest.skip("Need Faiss to test Approx KNN")
         store = self.create_feature_store(approx)
 
         # Mock the encoder output and batch_knn
@@ -86,6 +91,11 @@ class TestKNNRAGFeatureStore:
     @pytest.mark.parametrize("approx", [True, False])
     def test_retrieve_seed_nodes_multiple_queries(self, approx):
         """Test retrieve_seed_nodes with multiple queries."""
+        if approx:
+            try:
+                import faiss
+            except ImportError:
+                pytest.skip("Need Faiss to test Approx KNN")
         store = self.create_feature_store(approx)
 
         queries = ["query 1", "query 2"]
