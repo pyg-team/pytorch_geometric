@@ -75,7 +75,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
     @property
     def edge_attr(self) -> Tensor:
         """Returns the edge attributes."""
-        return Tensor(self.get_tensor(group_name=(None, None), attr_name='edge_attr'))
+        return Tensor(
+            self.get_tensor(group_name=(None, None), attr_name='edge_attr'))
 
     def retrieve_seed_nodes(  # noqa: D417
             self, query: Union[str, List[str],
