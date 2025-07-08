@@ -20,7 +20,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
     def __init__(
         self,
         feature_store: Optional[FeatureStore] = None,
-        **kwargs: [Dict[str, Any]],
+        **kwargs: Dict[str, Any],
     ):
         """Initializes the graph store.
         Optional feature store and neighbor sampling settings.
@@ -173,11 +173,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         if not self._sampler_is_initialized:
             self._init_sampler()
 
-        # FIXME: Right now, only input nodes/edges as tensors are be supported
-        if not isinstance(seed_nodes, Tensor):
-            raise NotImplementedError
-
-        seed_nodes = seed_nodes.unique().contiguous()
+        seed_nodes = Tensor(seed_nodes).unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
         out = self.sampler.sample_from_nodes(node_sample_input)
 
