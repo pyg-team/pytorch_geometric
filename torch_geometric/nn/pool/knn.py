@@ -5,11 +5,13 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import cumsum, degree, to_dense_batch
+
 try:
     import faiss
     WITH_FAISS = True
 except ImportError:
     WITH_FAISS = False
+
 
 class KNNOutput(NamedTuple):
     score: Tensor
