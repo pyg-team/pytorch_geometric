@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -7,11 +7,10 @@ from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.sampler import (
     BidirectionalNeighborSampler,
-    HeteroSamplerOutput,
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.typing import EdgeTensorType, InputNodes
+from torch_geometric.typing import EdgeTensorType
 from torch_geometric.utils import index_sort
 
 
@@ -155,7 +154,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.put_edge_index(edge_index_sorted, **attr)
 
     def sample_subgraph(
-            self, seed_nodes: Tensor,
+        self,
+        seed_nodes: Tensor,
     ) -> SamplerOutput:
         """Sample the graph starting from the given nodes using the
         in-built NeighborSampler.
