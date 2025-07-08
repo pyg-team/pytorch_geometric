@@ -103,7 +103,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         return ret
 
     @property
-    def edge_index(self):
+    def edge_index(self) -> None:
         """Gets the edge index of the graph.
 
         :return: The edge index as a tensor.
@@ -133,13 +133,15 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         # correct since we make node list from triples
         if isinstance(edge_index, Tensor):
-            num_nodes = edge_index.max() + 1
+            num_nodes = int(edge_index.max()) + 1
         else:
-            assert isinstance(edge_index, Tuple[Tensor, Tensor]), \
+            assert isinstance(edge_index, tuple) \
+                and isinstance(edge_index[0], Tensor) \
+                and isinstance(edge_index[1], Tensor) \
                 "edge_index must be a Tensor of [2, num_edges] \
-                or a tuple of Tensors, (row, col)."
+                or a tuple of Tensors, (row, col)."                
 
-            num_nodes = edge_index[0].max() + 1
+            num_nodes = int(edge_index[0].max()) + 1
         attr = dict(
             edge_type=None,
             layout='coo',
