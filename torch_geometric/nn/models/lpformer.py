@@ -56,10 +56,14 @@ class LPFormer(nn.Module):
         num_transformer_layers: int = 1,
         num_heads: int = 1,
         transformer_dropout: float = 0.1,
-        ppr_thresholds: dict = [0, 1e-4, 1e-2],
+        ppr_thresholds: list = None,
         gcn_cache=False,
     ):
         super().__init__()
+
+        # Default thresholds
+        if ppr_thresholds is None:
+            ppr_thresholds = [0, 1e-4, 1e-2]
 
         if len(ppr_thresholds) == 3:
             self.thresh_cn = ppr_thresholds[0]
@@ -768,7 +772,7 @@ class MLP(nn.Module):
             self.norm.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        for i, lin in enumerate(self.linears[:-1]):
+        for lin in self.linears[:-1]:
             x = lin(x)
             x = self.norm(x) if self.norm is not None else x
             x = F.relu(x)
