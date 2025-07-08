@@ -6,12 +6,6 @@ from torch import Tensor
 
 from torch_geometric.utils import cumsum, degree, to_dense_batch
 
-try:
-    import faiss
-    WITH_FAISS = True
-except ImportError:
-    WITH_FAISS = False
-
 
 class KNNOutput(NamedTuple):
     score: Tensor
@@ -50,8 +44,7 @@ class KNNIndex:
     ):
         warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
-        if not WITH_FAISS:
-            raise ImportError("KNNIndex requires faiss")
+        import faiss
 
         self.index_factory = index_factory
         self.index: Optional[faiss.Index] = None
@@ -68,8 +61,7 @@ class KNNIndex:
         return self.index.ntotal
 
     def _create_index(self, channels: int):
-        if not WITH_FAISS:
-            raise ImportError("KNNIndex requires faiss")
+        import faiss
         return faiss.index_factory(channels, self.index_factory)
 
     def add(self, emb: Tensor):
@@ -78,8 +70,7 @@ class KNNIndex:
         Args:
             emb (torch.Tensor): The data points to add.
         """
-        if not WITH_FAISS:
-            raise ImportError("KNNIndex requires faiss")
+        import faiss
         import faiss.contrib.torch_utils
 
         if emb.dim() != 2:
@@ -233,8 +224,7 @@ class L2KNNIndex(KNNIndex):
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
-        if not WITH_FAISS:
-            raise ImportError("L2KNNIndex requires faiss")
+        import faiss
         return faiss.IndexFlatL2(channels)
 
 
@@ -250,8 +240,7 @@ class MIPSKNNIndex(KNNIndex):
         super().__init__(index_factory=None, emb=emb)
 
     def _create_index(self, channels: int):
-        if not WITH_FAISS:
-            raise ImportError("MIPSKNNIndex requires faiss")
+        import faiss
         return faiss.IndexFlatIP(channels)
 
 
@@ -285,8 +274,7 @@ class ApproxL2KNNIndex(KNNIndex):
         super().__init__(index_factory=None, emb=emb, reserve=reserve)
 
     def _create_index(self, channels: int):
-        if not WITH_FAISS:
-            raise ImportError("ApproxL2KNNIndex requires faiss")
+        import faiss
         index = faiss.IndexIVFPQ(
             faiss.IndexFlatL2(channels),
             channels,
@@ -329,8 +317,7 @@ class ApproxMIPSKNNIndex(KNNIndex):
         super().__init__(index_factory=None, emb=emb, reserve=reserve)
 
     def _create_index(self, channels: int):
-        if not WITH_FAISS:
-            raise ImportError("ApproxMIPSKNNIndex requires faiss")
+        import faiss
         index = faiss.IndexIVFPQ(
             faiss.IndexFlatIP(channels),
             channels,
