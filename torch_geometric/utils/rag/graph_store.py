@@ -16,7 +16,7 @@ from torch_geometric.utils import index_sort
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     """Neighbor sampling based graph-store to store & retrieve graph data."""
-    def __init__( # type: ignore[no-untyped-def]
+    def __init__(  # type: ignore[no-untyped-def]
         self,
         feature_store: Optional[FeatureStore] = None,
         **kwargs,
@@ -72,9 +72,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         self._set_from_config(config, "num_neighbors")
         if hasattr(self, 'sampler'):
-            self.sampler.num_neighbors = ( # type: ignore[has-type]
-                self.num_neighbors  
-            )
+            self.sampler.num_neighbors = (  # type: ignore[has-type]
+                self.num_neighbors)
 
         self._config = config
 
@@ -97,8 +96,11 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.feature_store = feature_store
         self._sampler_is_initialized = False
 
-    def put_edge_id(self, edge_id: Tensor, *args,  # type: ignore[no-untyped-def]
-                    **kwargs) -> bool: 
+    def put_edge_id(
+            self,
+            edge_id: Tensor,
+            *args,  # type: ignore[no-untyped-def]
+            **kwargs) -> bool:
         """Stores an edge ID in the graph store.
 
         :param edge_id: The edge ID to store.
