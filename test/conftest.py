@@ -5,6 +5,7 @@ from typing import Callable
 
 import pytest
 import torch
+import torch.distributed as dist
 
 import torch_geometric.typing
 from torch_geometric.data import Dataset
@@ -95,3 +96,10 @@ def without_extensions(request):
 def spawn_context():
     torch.multiprocessing.set_start_method('spawn', force=True)
     logging.info("Setting torch.multiprocessing context to 'spawn'")
+
+
+@pytest.fixture
+def cleanup_dist():
+    yield
+    if dist.is_available() and dist.is_initialized():
+        dist.destroy_process_group()
