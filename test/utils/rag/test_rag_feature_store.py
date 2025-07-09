@@ -39,7 +39,7 @@ class TestKNNRAGFeatureStore:
             store = ApproxKNNRAGFeatureStore()
         else:
             store = KNNRAGFeatureStore()
-            
+
         store.config = self.config
 
         # Mock the tensor storage
