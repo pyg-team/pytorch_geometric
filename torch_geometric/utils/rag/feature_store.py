@@ -161,7 +161,9 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
 """
 TODO: make class CuVSKNNRAGFeatureStore(KNNRAGFeatureStore)
-include a approximate knn flag for the CuVS. Connect this with a CuGraphGraphStore
+include a approximate knn flag for the CuVS.
+Connect this with a CuGraphGraphStore
 for enabling a accelerated boolean flag for RAGQueryLoader.
-On by default if cugraph+cuvs avail, if not raise note mentioning its speedup
+On by default if CuGraph+CuVS avail.
+If not raise note mentioning its speedup.
 """
