@@ -93,8 +93,13 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         if not isinstance(query, (list, tuple)):
             query = [query]
         assert self.k_nodes is not None, "please set k_nodes via config"
-        result, query_enc = next(
-            self._retrieve_seed_nodes_batch(query, self.k_nodes))
+        if len(query) == 1:
+            result, query_enc = next(
+                self._retrieve_seed_nodes_batch(query, self.k_nodes))
+        else:
+            out_dict 
+            for i, (result, query_enc) in  self._retrieve_seed_nodes_batch(query, self.k_nodes):
+                
         gc.collect()
         torch.cuda.empty_cache()
         return result, query_enc
@@ -179,37 +184,10 @@ def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex,
             emb_batch = emb[i:].to(device)
         knn_index.add(emb_batch)
 
+"""
+TODO: make class CuVSKNNRAGFeatureStore(KNNRAGFeatureStore)
+include a approximate knn flag for the CuVS. Connect this with a CuGraphGraphStore
+for enabling a accelerated boolean flag for RAGQueryLoader.
+On by default if cugraph+cuvs avail, if not raise note mentioning its speedup
+"""
 
-class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
-    def __init__(self) -> None:
-        # TODO: Add kwargs for approx KNN to parameters here.
-        super().__init__()
-        self.node_knn_index = None
-
-    def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
-                                   k_nodes: int) -> Iterator[InputNodes]:
-        if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
-            raise NotImplementedError
-        assert self.encoder_model is not None, \
-            "Need to define encoder model from config"
-        encoder_model = self.encoder_model.to(self.device)
-        query_enc = encoder_model.encode(query).to(self.device)
-        del encoder_model
-        gc.collect()
-        torch.cuda.empty_cache()
-
-        if self.node_knn_index is None:
-            if self.x.size(0) < 100:
-                num_cells = 10
-            else:
-                num_cells = 100
-            self.node_knn_index = ApproxMIPSKNNIndex(
-                num_cells=num_cells, num_cells_to_visit=num_cells,
-                bits_per_vector=4)
-            # Need to add in batches to avoid OOM
-            _add_features_to_knn_index(self.node_knn_index, self.x,
-                                       self.device)
-        assert self.node_knn_index is not None, \
-            "KNN index creation failed, self.node_knn_index should not be None"
-        output = self.node_knn_index.search(query_enc, k=k_nodes)
-        yield from output.index
