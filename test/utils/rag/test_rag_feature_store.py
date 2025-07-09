@@ -11,7 +11,7 @@ from torch_geometric.utils.rag.feature_store import (
     KNNRAGFeatureStore,
 )
 
-
+WITH_FAISS = has_package("faiss")
 class TestKNNRAGFeatureStore:
     """Test suite for KNNRAGFeatureStore methods."""
     def setup_method(self):
@@ -52,7 +52,7 @@ class TestKNNRAGFeatureStore:
     @onlyRAG
     def test_retrieve_seed_nodes_single_query(self, approx):
         """Test retrieve_seed_nodes with a single query."""
-        if approx and not has_package("faiss"):
+        if approx and not WITH_FAISS:
             pytest.skip("Need Faiss to test Approx KNN")
         store = self.create_feature_store(approx)
 
@@ -91,7 +91,7 @@ class TestKNNRAGFeatureStore:
     @onlyRAG
     def test_retrieve_seed_nodes_multiple_queries(self, approx):
         """Test retrieve_seed_nodes with multiple queries."""
-        if approx and not has_package("faiss"):
+        if approx and not WITH_FAISS:
             pytest.skip("Need Faiss to test Approx KNN")
         store = self.create_feature_store(approx)
 
