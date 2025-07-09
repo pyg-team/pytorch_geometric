@@ -26,9 +26,8 @@ class TestKNNRAGFeatureStore:
         self.config = {"k_nodes": 5, "encoder_model": self.mock_encoder}
 
         # Sample node features and edge attributes
-        self.sample_x = torch.randn(4000, 128)  # 4000 nodes, 128 features
-        self.sample_edge_attr = torch.randn(4000,
-                                            64)  # 4000 edges, 64 features
+        self.sample_x = torch.randn(40, 128)  # 40 nodes, 128 features
+        self.sample_edge_attr = torch.randn(40, 64)  # 4000 edges, 64 features
 
     def test_bad_config(self):
         """Test bad config initialization."""
@@ -57,14 +56,19 @@ class TestKNNRAGFeatureStore:
         """Test retrieve_seed_nodes with a single query."""
         if approx and not WITH_FAISS:
             pytest.skip("Need Faiss to test Approx KNN")
+        else:
+            if approx:
+                device = "cuda"
+            else:
+                device = "cpu"
         store = self.create_feature_store(approx)
 
         # Mock the encoder output and batch_knn
         query_text = "test query"
-        mock_query_enc = torch.randn(1, 128)
+        mock_query_enc = torch.randn(1, 128).to(device)
         self.mock_encoder.encode.return_value = mock_query_enc
 
-        expected_indices = torch.tensor([0, 3, 7, 2, 9])
+        expected_indices = torch.tensor([0, 3, 7, 2, 9]).to(device)
 
         with patch('torch_geometric.utils.rag.feature_store.batch_knn'
                    ) as mock_batch_knn:
@@ -96,13 +100,18 @@ class TestKNNRAGFeatureStore:
         """Test retrieve_seed_nodes with multiple queries."""
         if approx and not WITH_FAISS:
             pytest.skip("Need Faiss to test Approx KNN")
+        else:
+            if approx:
+                device = "cuda"
+            else:
+                device = "cpu"
         store = self.create_feature_store(approx)
 
         queries = ["query 1", "query 2"]
-        mock_query_enc = torch.randn(2, 128)
+        mock_query_enc = torch.randn(2, 128).to(device)
         self.mock_encoder.encode.return_value = mock_query_enc
 
-        expected_indices = torch.tensor([1, 4, 6, 8, 0])
+        expected_indices = torch.tensor([1, 4, 6, 8, 0]).to(device)
 
         with patch('torch_geometric.utils.rag.feature_store.batch_knn'
                    ) as mock_batch_knn:
