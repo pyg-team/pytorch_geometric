@@ -95,7 +95,8 @@ class TestKNNRAGFeatureStore:
                    ) as mock_batch_knn:
 
             def mock_generator():
-                yield (expected_indices, mock_query_enc)
+                for i in range(len(expected_indices):
+                    yield (expected_indices[i], mock_query_enc[i])
 
             mock_batch_knn.return_value = mock_generator()
 
