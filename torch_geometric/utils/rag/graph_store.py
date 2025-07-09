@@ -72,7 +72,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         self._set_from_config(config, "num_neighbors")
         if hasattr(self, 'sampler'):
-            self.sampler.num_neighbors = self.num_neighbors  # type: ignore[has-type]
+            self.sampler.num_neighbors = \ # type: ignore[has-type]
+                self.num_neighbors  
 
         self._config = config
 
