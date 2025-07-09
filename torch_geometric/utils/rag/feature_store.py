@@ -101,7 +101,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             return result, query_enc
         else:
             out_dict = {}
-            for i, out in enumerate(self._retrieve_seed_nodes_batch(query, self.k_nodes)):
+            for i, out in enumerate(
+                    self._retrieve_seed_nodes_batch(query, self.k_nodes)):
                 out_dict[query[i]] = out
             gc.collect()
             torch.cuda.empty_cache()

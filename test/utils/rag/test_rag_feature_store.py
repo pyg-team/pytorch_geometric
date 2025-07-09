@@ -5,7 +5,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.sampler import SamplerOutput
-from torch_geometric.testing.decorators import has_package, onlyRAG
+from torch_geometric.testing.decorators import onlyRAG
 from torch_geometric.utils.rag.feature_store import KNNRAGFeatureStore
 
 
