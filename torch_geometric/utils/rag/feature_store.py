@@ -185,7 +185,6 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         # TODO: Add kwargs for approx KNN to parameters here.
         super().__init__()
         self.node_knn_index = None
-        self.edge_knn_index = None
 
     def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
                                    k_nodes: int) -> Iterator[InputNodes]:
@@ -200,8 +199,12 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         torch.cuda.empty_cache()
 
         if self.node_knn_index is None:
-            self.node_knn_index = ApproxMIPSKNNIndex(num_cells=100,
-                                                     num_cells_to_visit=100,
+            if self.x.size(1) < 100:
+                num_cells = 10
+            else:
+                num_cells = 100
+            self.node_knn_index = ApproxMIPSKNNIndex(num_cells=num_cells,
+                                                     num_cells_to_visit=num_cells,
                                                      bits_per_vector=4)
             # Need to add in batches to avoid OOM
             _add_features_to_knn_index(self.node_knn_index, self.x,
