@@ -1,5 +1,4 @@
-"""
-RelBench GNN+LLM Integration Example.
+"""RelBench GNN+LLM Integration Example.
 
 This example demonstrates how to use PyTorch Geometric's existing GNN+LLM
 infrastructure with RelBench datasets for data warehouse applications.
@@ -53,7 +52,6 @@ except ImportError:
 
     class PyGSentenceTransformer(nn.Module):
         """Fallback SentenceTransformer wrapper for PyG compatibility."""
-
         def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
             super().__init__()
             self.model_name = model_name
@@ -72,8 +70,7 @@ except ImportError:
 
 
 def main():
-    """
-    Main function demonstrating RelBench + GNN + LLM integration.
+    """Main function demonstrating RelBench + GNN + LLM integration.
 
     This example shows how to:
     1. Load RelBench datasets
@@ -104,11 +101,8 @@ def main():
         print("Converting to PyG HeteroData with SBERT embeddings...")
         if EXTENSIONS_AVAILABLE:
             hetero_data = create_relbench_hetero_data(
-                args.dataset,
-                sbert_model=args.sbert_model,
-                sample_size=args.sample_size,
-                batch_size=args.batch_size
-            )
+                args.dataset, sbert_model=args.sbert_model,
+                sample_size=args.sample_size, batch_size=args.batch_size)
         else:
             hetero_data = HeteroData()
             sbert = PyGSentenceTransformer(args.sbert_model)

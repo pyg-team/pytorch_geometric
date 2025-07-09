@@ -1,5 +1,4 @@
-"""
-Tests for RelBench Integration Utilities.
+"""Tests for RelBench Integration Utilities.
 
 Test suite for torch_geometric.utils.relbench module.
 
@@ -29,7 +28,6 @@ except ImportError:
                     reason="RelBench utilities not available")
 class TestRelBenchProcessor:
     """Test suite for RelBenchProcessor class."""
-
     def test_processor_initialization(self):
         """Test RelBenchProcessor initialization."""
         processor = RelBenchProcessor()
@@ -65,8 +63,8 @@ class TestRelBenchProcessor:
     def test_warehouse_labels(self):
         """Test warehouse task label generation."""
         processor = RelBenchProcessor()
-        hetero_data = processor.process_dataset(
-            'rel-trial', sample_size=5, add_warehouse_labels=True)
+        hetero_data = processor.process_dataset('rel-trial', sample_size=5,
+                                                add_warehouse_labels=True)
 
         # Check warehouse labels
         for node_type in hetero_data.node_types:
@@ -166,7 +164,6 @@ def test_get_warehouse_task_info():
                     reason="RelBench utilities not available")
 class TestEdgeCreation:
     """Test edge creation functionality."""
-
     def test_sample_edges(self):
         """Test sample edge creation."""
         processor = RelBenchProcessor()
@@ -177,8 +174,8 @@ class TestEdgeCreation:
         hetero_data['conditions_studies'].num_nodes = 15
 
         # Add sample edges
-        processor._add_sample_edges(
-            hetero_data, 'studies', 'has_condition', 'conditions_studies')
+        processor._add_sample_edges(hetero_data, 'studies', 'has_condition',
+                                    'conditions_studies')
 
         # Check edges were created
         assert ('studies', 'has_condition',
@@ -193,8 +190,8 @@ class TestEdgeCreation:
         assert edge_index.shape[1] <= 20  # Maximum 20 edges
 
         # Check reverse edges
-        rev_edge_index = hetero_data['conditions_studies',
-                                     'rev_has_condition', 'studies'].edge_index
+        rev_edge_index = hetero_data['conditions_studies', 'rev_has_condition',
+                                     'studies'].edge_index
         assert torch.equal(edge_index, rev_edge_index.flip(0))
 
 
