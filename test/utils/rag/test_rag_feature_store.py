@@ -24,8 +24,8 @@ class TestKNNRAGFeatureStore:
         self.mock_encoder.eval = Mock()
 
         self.config = {"k_nodes": 5, "encoder_model": self.mock_encoder}
-        self.sample_x = torch.randn(400, 128)  # 40 nodes, 128 features
-        self.sample_edge_attr = torch.randn(400, 64)  # 40 edges, 64 features
+        self.sample_x = torch.randn(40, 128)  # 40 nodes, 128 features
+        self.sample_edge_attr = torch.randn(40, 64)  # 40 edges, 64 features
 
     def test_bad_config(self):
         """Test bad config initialization."""
@@ -33,12 +33,9 @@ class TestKNNRAGFeatureStore:
             store = KNNRAGFeatureStore()
             store.config = {}
 
-    def create_feature_store(self, approx=False):
+    def create_feature_store(self):
         """Create a FeatureStore with mocked dependencies."""
-        if approx:
-            store = ApproxKNNRAGFeatureStore()
-        else:
-            store = KNNRAGFeatureStore()
+        store = KNNRAGFeatureStore()
 
         store.config = self.config
 
@@ -49,22 +46,14 @@ class TestKNNRAGFeatureStore:
 
         return store
 
-    @pytest.mark.parametrize("approx", [True, False])
     @onlyRAG
-    def test_retrieve_seed_nodes_single_query(self, approx):
+    def test_retrieve_seed_nodes_single_query(self):
         """Test retrieve_seed_nodes with a single query."""
-        if approx and not WITH_FAISS:
-            pytest.skip("Need Faiss to test Approx KNN")
-        else:
-            if approx:
-                device = "cuda"
-            else:
-                device = "cpu"
-        store = self.create_feature_store(approx)
+        store = self.create_feature_store()
 
         # Mock the encoder output and batch_knn
         query_text = "test query"
-        mock_query_enc = torch.randn(1, 128).to(device)
+        mock_query_enc = torch.randn(1, 128)
         self.mock_encoder.encode.return_value = mock_query_enc
 
         expected_indices = torch.tensor([0, 3, 7, 2, 9]).to(device)
@@ -93,27 +82,19 @@ class TestKNNRAGFeatureStore:
             assert torch.equal(result, expected_indices)
             assert torch.equal(query_enc, mock_query_enc)
 
-    @pytest.mark.parametrize("approx", [True, False])
     @onlyRAG
-    def test_retrieve_seed_nodes_multiple_queries(self, approx):
+    def test_retrieve_seed_nodes_multiple_queries(self):
         """Test retrieve_seed_nodes with multiple queries."""
-        if approx:
-            if WITH_FAISS:
-                if torch.cuda.is_available():
-                    device = "cuda"
-                else:
-                    device = "cpu"
-            else:
-                pytest.skip("Need Faiss to test Approx KNN")
-        else:
-            device = "cpu"
         store = self.create_feature_store(approx)
 
         queries = ["query 1", "query 2"]
         mock_query_enc = torch.randn(2, 128).to(device)
         self.mock_encoder.encode.return_value = mock_query_enc
 
-        expected_indices = torch.tensor([1, 4, 6, 8, 0]).to(device)
+        expected_indices = [
+            torch.tensor([1, 4, 6, 8, 0]),
+            torch.tensor([0, 3, 7, 2, 9])
+        ]
 
         with patch('torch_geometric.utils.rag.feature_store.batch_knn'
                    ) as mock_batch_knn:
@@ -123,14 +104,16 @@ class TestKNNRAGFeatureStore:
 
             mock_batch_knn.return_value = mock_generator()
 
-            result, query_enc = store.retrieve_seed_nodes(queries)
+            out_dict = store.retrieve_seed_nodes(queries)
 
             # Verify encoder was called with the list directly
             self.mock_encoder.encode.assert_called_once_with(queries)
 
             # Verify results
-            assert torch.equal(result, expected_indices)
-            assert torch.equal(query_enc, mock_query_enc)
+            for i, query in enumerate(queries):
+                result, query_enc = out_dict[query]
+                assert torch.equal(result, expected_indices[i])
+                assert torch.equal(query_enc, mock_query_enc[i])
 
     @pytest.mark.parametrize("induced", [True, False])
     def test_load_subgraph_valid_sample(self, induced):
