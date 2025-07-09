@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 from torch import Tensor
 from torch.nn import BatchNorm1d, Linear
@@ -39,6 +41,8 @@ class DiffGroupNorm(torch.nn.Module):
             :obj:`False`, this module does not track such statistics and always
             uses batch statistics in both training and eval modes.
             (default: :obj:`True`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -49,6 +53,7 @@ class DiffGroupNorm(torch.nn.Module):
         momentum: float = 0.1,
         affine: bool = True,
         track_running_stats: bool = True,
+        device: Optional[torch.device] = None,
     ):
         super().__init__()
 
@@ -56,9 +61,9 @@ class DiffGroupNorm(torch.nn.Module):
         self.groups = groups
         self.lamda = lamda
 
-        self.lin = Linear(in_channels, groups, bias=False)
+        self.lin = Linear(in_channels, groups, bias=False, device=device)
         self.norm = BatchNorm1d(groups * in_channels, eps, momentum, affine,
-                                track_running_stats)
+                                track_running_stats, device=device)
 
         self.reset_parameters()
 

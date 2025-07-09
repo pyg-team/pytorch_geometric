@@ -15,7 +15,8 @@ def test_patch_transformer_aggregation(device: torch.device) -> None:
         heads=2,
         dropout=0.2,
         aggr=['sum', 'mean', 'min', 'max', 'var', 'std'],
-    ).to(device)
+        device=device,
+    )
     aggr.reset_parameters()
     assert str(aggr) == 'PatchTransformerAggregation(16, 32, patch_size=2)'
 

@@ -8,6 +8,13 @@ from torch_geometric.loader import DataLoader, NeighborLoader
 from torch_geometric.nn.models import GraphSAGE, basic_gnn
 
 
+def deal_nan(x):
+    if isinstance(x, torch.Tensor):
+        x = x.clone()
+        x[torch.isnan(x)] = 0.0
+    return x
+
+
 class GLEM(torch.nn.Module):
     r"""This GNN+LM co-training model is based on GLEM from the `"Learning on
     Large-scale Text-attributed Graphs via Variational Inference"
@@ -379,9 +386,6 @@ class GLEM(torch.nn.Module):
             is_augmented: use EM or just train GNN and LM with gold data
 
         """
-        def deal_nan(x):
-            return 0 if torch.isnan(x) else x
-
         if is_augmented and (sum(~is_gold) > 0):
             mle_loss = deal_nan(loss_func(logits[is_gold], labels[is_gold]))
             # all other labels beside from ground truth(gold labels)
