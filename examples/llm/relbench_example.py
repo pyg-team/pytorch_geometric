@@ -1,9 +1,8 @@
 """
-RelBench GNN+LLM Integration Example
-====================================
+RelBench GNN+LLM Integration Example.
 
-This example demonstrates how to use PyTorch Geometric's existing GNN+LLM infrastructure
-with RelBench datasets for data warehouse applications.
+This example demonstrates how to use PyTorch Geometric's existing GNN+LLM
+infrastructure with RelBench datasets for data warehouse applications.
 
 Key Features:
 - Uses PyG's existing torch_geometric.nn.nlp module (PyG 2.6.0+)
@@ -22,7 +21,8 @@ Requirements:
     - transformers>=4.20.0
 
 Author: Ahmed Gamal (aka AJamal27891)
-Reference: GitHub Issue #9839 - Integrating GNNs and LLMs for Enhanced Data Warehouse Understanding
+Reference: GitHub Issue #9839 - Integrating GNNs and LLMs for Enhanced Data
+Warehouse Understanding.
 """
 
 import torch
@@ -42,7 +42,8 @@ try:
     EXTENSIONS_AVAILABLE = True
 except ImportError:
     EXTENSIONS_AVAILABLE = False
-    print("PyG 2.6.0+ NLP infrastructure not available, using fallback implementations")
+    print("PyG 2.6.0+ NLP infrastructure not available, "
+          "using fallback implementations")
 
 # Fallback implementation if PyG 2.6.0+ not available
 if not EXTENSIONS_AVAILABLE:
@@ -55,7 +56,8 @@ if not EXTENSIONS_AVAILABLE:
             super().__init__()
             self.model_name = model_name
             self.sentence_transformer = SentenceTransformer(model_name)
-            self.embedding_dim = self.sentence_transformer.get_sentence_embedding_dimension()
+            self.embedding_dim = (
+                self.sentence_transformer.get_sentence_embedding_dimension())
 
         def encode(self, texts: List[str]) -> torch.Tensor:
             """Encode texts to embeddings."""
@@ -92,7 +94,7 @@ def main():
 
     try:
         print(f"Loading RelBench dataset: {args.dataset}")
-        dataset = get_dataset(name=args.dataset, download=True)
+        get_dataset(name=args.dataset, download=True)
         print("Dataset loaded successfully")
 
         print("Converting to PyG HeteroData with SBERT embeddings...")

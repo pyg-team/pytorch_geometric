@@ -1,11 +1,11 @@
 """
-Tests for RelBench Integration Utilities
-========================================
+Tests for RelBench Integration Utilities.
 
 Test suite for torch_geometric.utils.relbench module.
 
-Author: PyTorch Geometric Contributors
-Reference: GitHub Issue #9839 - Integrating GNNs and LLMs for Enhanced Data Warehouse Understanding
+Author: Ahmed Gamal (aka AJamal27891)
+Reference: GitHub Issue #9839 - Integrating GNNs and LLMs for Enhanced Data
+Warehouse Understanding.
 """
 
 import pytest
