@@ -18,8 +18,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based retrieval."""
     def __init__(self) -> None:
         """Initializes the feature store."""
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
 
         # to be set by the config
         self.encoder_model = None
@@ -62,7 +60,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         self._set_from_config(config, "encoder_model")
         assert self.encoder_model is not None, \
             "Need to define encoder model from config"
-        self.encoder_model = self.encoder_model.to(self.device)
         self.encoder_model.eval()
 
         self._config = config
@@ -124,7 +121,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             raise NotImplementedError
         assert self.encoder_model is not None, \
             "Need to define encoder model from config"
-        query_enc = self.encoder_model.encode(query).to(self.device)
+        query_enc = self.encoder_model.encode(query)
         return batch_knn(query_enc, self.x, k_nodes)
 
     def load_subgraph(  # noqa
@@ -163,30 +160,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
 
         return result
 
-
-# TODO: Refactor because composition >> inheritance
-
-
-def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex,
-                               emb: FeatureTensorType, device: torch.device,
-                               batch_size: int = 2**20) -> None:
-    """Add new features to the existing KNN index in batches.
-
-    Args:
-        knn_index (ApproxMIPSKNNIndex): Index to add features to.
-        emb (FeatureTensorType): Embeddings to add.
-        device (torch.device): Device to store in
-        batch_size (int, optional): Batch size to iterate by.
-            Defaults to 2**20, which equates to 4GB if working with
-            1024 dim floats.
-    """
-    emb = Tensor(emb)
-    for i in range(0, emb.size(0), batch_size):
-        if emb.size(0) - i >= batch_size:
-            emb_batch = emb[i:i + batch_size].to(device)
-        else:
-            emb_batch = emb[i:].to(device)
-        knn_index.add(emb_batch)
 
 
 """
