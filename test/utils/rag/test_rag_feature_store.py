@@ -26,8 +26,8 @@ class TestKNNRAGFeatureStore:
         self.config = {"k_nodes": 5, "encoder_model": self.mock_encoder}
 
         # Sample node features and edge attributes
-        self.sample_x = torch.randn(200, 128)  # 200 nodes, 128 features
-        self.sample_edge_attr = torch.randn(200, 64)  # 200 edges, 64 features
+        self.sample_x = torch.randn(4000, 128)  # 4000 nodes, 128 features
+        self.sample_edge_attr = torch.randn(4000, 64)  # 4000 edges, 64 features
 
     def test_bad_config(self):
         """Test bad config initialization."""
