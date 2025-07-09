@@ -43,7 +43,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
                 f"Required config parameter '{attr_name}' not found")
         setattr(self, attr_name, config[attr_name])
 
-    @config.setter
+    @config.setter # type: ignore
     def config(self, config: Dict[str, Any]) -> None:
         """Set the config for the feature store.
 
