@@ -33,6 +33,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.feature_store = feature_store
         self.sample_kwargs = kwargs
         self._sampler_is_initialized = False
+        self.config: Dict[str, Any] = {}
 
         # to be set by the config
         self.num_neighbors = None
@@ -105,7 +106,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         return ret
 
     @property
-    def edge_index(self) -> None:
+    def edge_index(self) -> EdgeTensorType:
         """Gets the edge index of the graph.
 
         :return: The edge index as a tensor.
