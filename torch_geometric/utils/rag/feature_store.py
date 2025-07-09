@@ -7,9 +7,8 @@ from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
-from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
-from torch_geometric.typing import FeatureTensorType, InputNodes
+from torch_geometric.typing import InputNodes
 from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
@@ -18,7 +17,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based retrieval."""
     def __init__(self) -> None:
         """Initializes the feature store."""
-
         # to be set by the config
         self.encoder_model = None
         self.k_nodes = None
@@ -159,7 +157,6 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         result.edge_idx = edge_id
 
         return result
-
 
 
 """
