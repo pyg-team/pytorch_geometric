@@ -51,7 +51,7 @@ class TestKNNRAGFeatureStore:
         mock_query_enc = torch.randn(1, 128)
         self.mock_encoder.encode.return_value = mock_query_enc
 
-        expected_indices = torch.tensor([0, 3, 7, 2, 9]).to(device)
+        expected_indices = torch.tensor([0, 3, 7, 2, 9])
 
         with patch('torch_geometric.utils.rag.feature_store.batch_knn'
                    ) as mock_batch_knn:
@@ -69,7 +69,7 @@ class TestKNNRAGFeatureStore:
             # Verify batch_knn was called correctly
             mock_batch_knn.assert_called_once()
             args = mock_batch_knn.call_args[0]
-            assert torch.equal(args[0], mock_query_enc.to(store.device))
+            assert torch.equal(args[0], mock_query_enc)
             assert torch.equal(args[1], self.sample_x)
             assert args[2] == 5  # k_nodes
 
@@ -80,10 +80,10 @@ class TestKNNRAGFeatureStore:
     @onlyRAG
     def test_retrieve_seed_nodes_multiple_queries(self):
         """Test retrieve_seed_nodes with multiple queries."""
-        store = self.create_feature_store(approx)
+        store = self.create_feature_store()
 
         queries = ["query 1", "query 2"]
-        mock_query_enc = torch.randn(2, 128).to(device)
+        mock_query_enc = torch.randn(2, 128)
         self.mock_encoder.encode.return_value = mock_query_enc
 
         expected_indices = [
