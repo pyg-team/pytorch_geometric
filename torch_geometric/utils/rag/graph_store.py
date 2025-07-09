@@ -59,7 +59,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
                 f"Required config parameter '{attr_name}' not found")
         setattr(self, attr_name, config[attr_name])
 
-    @config.setter # type: ignore
+    @config.setter  # type: ignore
     def config(self, config: Dict[str, Any]) -> None:
         """Set the config for the feature store.
 
@@ -72,7 +72,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         self._set_from_config(config, "num_neighbors")
         if hasattr(self, 'sampler'):
-            self.sampler.num_neighbors = self.num_neighbors # type: ignore[has-type]
+            self.sampler.num_neighbors = self.num_neighbors  # type: ignore[has-type]
 
         self._config = config
 
@@ -95,7 +95,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.feature_store = feature_store
         self._sampler_is_initialized = False
 
-    def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool: # type: ignore[no-untyped-def]
+    def put_edge_id(self, edge_id: Tensor, *args,
+                    **kwargs) -> bool:  # type: ignore[no-untyped-def]
         """Stores an edge ID in the graph store.
 
         :param edge_id: The edge ID to store.
@@ -113,8 +114,11 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         return self.get_edge_index(*self.edge_idx_args, **self.edge_idx_kwargs)
 
-    def put_edge_index(self, edge_index: EdgeTensorType, *args, # type: ignore[no-untyped-def]
-                       **kwargs) -> bool:
+    def put_edge_index(
+            self,
+            edge_index: EdgeTensorType,
+            *args,  # type: ignore[no-untyped-def]
+            **kwargs) -> bool:
         """Stores an edge index in the graph store.
 
         :param edge_index: The edge index to store.
@@ -128,7 +132,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         return ret
 
     # HACKY
-    @edge_index.setter # type: ignore
+    @edge_index.setter  # type: ignore
     def edge_index(self, edge_index: EdgeTensorType) -> None:
         """Sets the edge index of the graph.
 
@@ -181,7 +185,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
         seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
-        out = self.sampler.sample_from_nodes(node_sample_input) # type: ignore[has-type]
+        out = self.sampler.sample_from_nodes(
+            node_sample_input)  # type: ignore[has-type]
 
         # edge ids need to be remapped to the original indices
         out.edge = self.perm[out.edge]
