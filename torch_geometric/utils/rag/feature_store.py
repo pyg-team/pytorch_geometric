@@ -20,7 +20,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         # to be set by the config
         self.encoder_model = None
         self.k_nodes = None
-        self._config = {}
+        self._config: Dict[str, Any] = {}
         super().__init__()
 
     @property
