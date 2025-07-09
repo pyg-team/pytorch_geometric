@@ -101,15 +101,11 @@ class KNNRAGFeatureStore(LocalFeatureStore):
             return result, query_enc
         else:
             out_dict = {}
-            for i, out in  self._retrieve_seed_nodes_batch(query, self.k_nodes):
+            for i, out in self._retrieve_seed_nodes_batch(query, self.k_nodes):
                 out_dict[query[i]] = out
             gc.collect()
             torch.cuda.empty_cache()
             return out_dict
-            
-                
-        
-        
 
     def _retrieve_seed_nodes_batch(  # noqa: D417
             self, query: Iterable[Any],
@@ -191,10 +187,10 @@ def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex,
             emb_batch = emb[i:].to(device)
         knn_index.add(emb_batch)
 
+
 """
 TODO: make class CuVSKNNRAGFeatureStore(KNNRAGFeatureStore)
 include a approximate knn flag for the CuVS. Connect this with a CuGraphGraphStore
 for enabling a accelerated boolean flag for RAGQueryLoader.
 On by default if cugraph+cuvs avail, if not raise note mentioning its speedup
 """
-
