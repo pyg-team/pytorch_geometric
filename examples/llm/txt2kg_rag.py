@@ -353,7 +353,7 @@ def update_data_lists(args, data_lists):
     # creating the embedding model
     sent_trans_batch_size = 256
     model = SentenceTransformer(
-        model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
+        model_name=ENCODER_MODEL_NAME_DEFAULT).to(device).eval()
     model_kwargs = {
         "output_device": device,
         "batch_size": int(sent_trans_batch_size / 4),
