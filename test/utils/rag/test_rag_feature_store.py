@@ -12,6 +12,8 @@ from torch_geometric.utils.rag.feature_store import (
 )
 
 WITH_FAISS = has_package("faiss")
+
+
 class TestKNNRAGFeatureStore:
     """Test suite for KNNRAGFeatureStore methods."""
     def setup_method(self):
