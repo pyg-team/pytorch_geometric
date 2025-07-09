@@ -98,13 +98,16 @@ class TestKNNRAGFeatureStore:
     @onlyRAG
     def test_retrieve_seed_nodes_multiple_queries(self, approx):
         """Test retrieve_seed_nodes with multiple queries."""
-        if approx and not WITH_FAISS:
-            pytest.skip("Need Faiss to test Approx KNN")
-        else:
-            if approx:
-                device = "cuda"
+        if approx:
+            if WITH_FAISS:
+                if torch.cuda.is_available():
+                    device = "cuda"
+                else:
+                    device = "cpu"
             else:
-                device = "cpu"
+                pytest.skip("Need Faiss to test Approx KNN")
+        else:
+            device = "cpu"
         store = self.create_feature_store(approx)
 
         queries = ["query 1", "query 2"]
