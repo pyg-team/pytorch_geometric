@@ -438,7 +438,7 @@ class MoleculeGPTDataset(InMemoryDataset):
         for mol in tqdm(suppl):
             if mol.HasProp('PUBCHEM_COMPOUND_CID'):
                 CID = mol.GetProp("PUBCHEM_COMPOUND_CID")
-                CAN_SMILES = mol.GetProp("PUBCHEM_OPENEYE_CAN_SMILES")
+                CAN_SMILES = mol.GetProp("PUBCHEM_SMILES")
 
                 m: Chem.Mol = Chem.MolFromSmiles(CAN_SMILES)
                 if m is None:
