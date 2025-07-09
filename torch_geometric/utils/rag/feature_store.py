@@ -203,9 +203,9 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
                 num_cells = 10
             else:
                 num_cells = 100
-            self.node_knn_index = ApproxMIPSKNNIndex(num_cells=num_cells,
-                                                     num_cells_to_visit=num_cells,
-                                                     bits_per_vector=4)
+            self.node_knn_index = ApproxMIPSKNNIndex(
+                num_cells=num_cells, num_cells_to_visit=num_cells,
+                bits_per_vector=4)
             # Need to add in batches to avoid OOM
             _add_features_to_knn_index(self.node_knn_index, self.x,
                                        self.device)
