@@ -25,19 +25,22 @@ Reference: GitHub Issue #9839 - Integrating GNNs and LLMs for Enhanced Data
 Warehouse Understanding.
 """
 
-import torch
-import torch.nn as nn
-from torch_geometric.data import HeteroData
-import relbench
-from relbench.datasets import get_dataset
-from typing import List
 import argparse
 import warnings
+from typing import List
+
+import torch
+import torch.nn as nn
+from relbench.datasets import get_dataset
+
+from torch_geometric.data import HeteroData
+
 warnings.filterwarnings('ignore')
 
 # Use PyG's existing NLP infrastructure (PyG 2.6.0+)
 try:
-    from torch_geometric.nn.nlp import SentenceTransformer as PyGSentenceTransformer
+    from torch_geometric.nn.nlp import \
+        SentenceTransformer as PyGSentenceTransformer
     from torch_geometric.utils.relbench import create_relbench_hetero_data
     EXTENSIONS_AVAILABLE = True
 except ImportError:
@@ -45,8 +48,7 @@ except ImportError:
     print("PyG 2.6.0+ NLP infrastructure not available, "
           "using fallback implementations")
 
-# Fallback implementation if PyG 2.6.0+ not available
-if not EXTENSIONS_AVAILABLE:
+    # Fallback implementation if PyG 2.6.0+ not available
     from sentence_transformers import SentenceTransformer
 
     class PyGSentenceTransformer(nn.Module):
@@ -68,6 +70,7 @@ if not EXTENSIONS_AVAILABLE:
             """Forward pass for PyG compatibility."""
             return self.encode(texts)
 
+
 def main():
     """
     Main function demonstrating RelBench + GNN + LLM integration.
@@ -77,15 +80,16 @@ def main():
     2. Convert to PyG HeteroData with SBERT embeddings
     3. Use existing PyG infrastructure for GNN+LLM applications
     """
-    parser = argparse.ArgumentParser(description='RelBench GNN+LLM Integration Example')
+    parser = argparse.ArgumentParser(
+        description='RelBench GNN+LLM Integration Example')
     parser.add_argument('--dataset', type=str, default='rel-trial',
-                       help='RelBench dataset name')
+                        help='RelBench dataset name')
     parser.add_argument('--sample-size', type=int, default=50,
-                       help='Sample size per table')
+                        help='Sample size per table')
     parser.add_argument('--sbert-model', type=str, default='all-MiniLM-L6-v2',
-                       help='SBERT model for embeddings')
+                        help='SBERT model for embeddings')
     parser.add_argument('--batch-size', type=int, default=32,
-                       help='Batch size for embedding generation')
+                        help='Batch size for embedding generation')
 
     args = parser.parse_args()
 
@@ -112,24 +116,28 @@ def main():
             embeddings = sbert.encode(sample_texts)
             hetero_data['sample'].x = embeddings
 
-        print(f"HeteroData created with {len(hetero_data.node_types)} node types")
+        print(f"HeteroData created with "
+              f"{len(hetero_data.node_types)} node types")
 
         print("HeteroData Summary:")
         print(f"  Node types: {list(hetero_data.node_types)}")
         for node_type in hetero_data.node_types:
             if hasattr(hetero_data[node_type], 'x'):
                 x = hetero_data[node_type].x
-                print(f"  {node_type}: {x.shape[0]} nodes, {x.shape[1]} features")
+                print(f"  {node_type}: {x.shape[0]} nodes, "
+                      f"{x.shape[1]} features")
 
         if len(hetero_data.edge_types) > 0:
             print(f"  Edge types: {list(hetero_data.edge_types)}")
 
         print("RelBench + GNN + LLM integration completed successfully")
-        print("Ready for downstream GNN tasks with semantic understanding")
+        print("Ready for downstream GNN tasks with semantic "
+              "understanding")
 
     except Exception as e:
         print(f"Error: {e}")
         print("Make sure RelBench is installed: pip install relbench[full]")
+
 
 if __name__ == "__main__":
     main()
