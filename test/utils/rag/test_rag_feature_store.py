@@ -25,9 +25,6 @@ class TestKNNRAGFeatureStore:
 
         self.config = {"k_nodes": 5, "encoder_model": self.mock_encoder}
 
-        # Sample node features and edge attributes
-        self.sample_x = torch.randn(40, 128)  # 40 nodes, 128 features
-        self.sample_edge_attr = torch.randn(40, 64)  # 4000 edges, 64 features
 
     def test_bad_config(self):
         """Test bad config initialization."""
@@ -39,13 +36,18 @@ class TestKNNRAGFeatureStore:
         """Create a FeatureStore with mocked dependencies."""
         if approx:
             store = ApproxKNNRAGFeatureStore()
+            # Sample node features and edge attributes
+            sample_x = torch.randn(400, 128)  # 400 nodes, 128 features
+            sample_edge_attr = torch.randn(400, 64)  # 400 edges, 64 features
         else:
             store = KNNRAGFeatureStore()
+            sample_x = torch.randn(40, 128)  # 40 nodes, 128 features
+            sample_edge_attr = torch.randn(40, 64)  # 40 edges, 64 features
         store.config = self.config
 
         # Mock the tensor storage
-        store.put_tensor(self.sample_x, group_name=None, attr_name='x')
-        store.put_tensor(self.sample_edge_attr, group_name=(None, None),
+        store.put_tensor(sample_x, group_name=None, attr_name='x')
+        store.put_tensor(sample_edge_attr, group_name=(None, None),
                          attr_name='edge_attr')
 
         return store
