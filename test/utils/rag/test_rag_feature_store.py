@@ -39,12 +39,12 @@ class TestKNNRAGFeatureStore:
             store = ApproxKNNRAGFeatureStore()
         else:
             store = KNNRAGFeatureStore()
-
+            
         store.config = self.config
 
         # Mock the tensor storage
-        store.put_tensor(sample_x, group_name=None, attr_name='x')
-        store.put_tensor(sample_edge_attr, group_name=(None, None),
+        store.put_tensor(self.sample_x, group_name=None, attr_name='x')
+        store.put_tensor(self.sample_edge_attr, group_name=(None, None),
                          attr_name='edge_attr')
 
         return store
