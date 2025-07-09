@@ -199,7 +199,7 @@ class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
         torch.cuda.empty_cache()
 
         if self.node_knn_index is None:
-            if self.x.size(1) < 100:
+            if self.x.size(0) < 100:
                 num_cells = 10
             else:
                 num_cells = 100
