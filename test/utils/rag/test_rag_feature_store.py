@@ -25,7 +25,6 @@ class TestKNNRAGFeatureStore:
 
         self.config = {"k_nodes": 5, "encoder_model": self.mock_encoder}
 
-
     def test_bad_config(self):
         """Test bad config initialization."""
         with pytest.raises(ValueError, match="Required config parameter"):
