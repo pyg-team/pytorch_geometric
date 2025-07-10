@@ -196,9 +196,8 @@ class MoleculeGPTDataset(InMemoryDataset):
             (default: :obj:`10`)
         total_block_num (int, optional): The blocks of SDF files from PubChem.
             (default: :obj:`1`)
-        skip_generate_instruction (bool, optional): Whether to skip generating
-            instructions for the molecules by LLM.
-            (default: :obj:`False`)
+        num_units (int, optional): Number of units of the sample.
+            (default: :obj:`-1`, which means all units will be used)
     """
     description_url = (
         'https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/annotations/'
@@ -216,11 +215,11 @@ class MoleculeGPTDataset(InMemoryDataset):
         force_reload: bool = False,
         total_page_num: int = 10,
         total_block_num: int = 1,
-        skip_generate_instruction: bool = False,
+        num_units: int = -1,
     ):
         self.total_page_num = total_page_num
         self.total_block_num = total_block_num
-        self.skip_generate_instruction = skip_generate_instruction
+        self.num_units = num_units
 
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
@@ -452,11 +451,7 @@ class MoleculeGPTDataset(InMemoryDataset):
 
                 ground_truth = CID2text_data[CID][0]
 
-                if self.skip_generate_instruction:
-                    instruction = "What is the property of this molecule?"
-                else:
-                    instruction = llm.inference([prompt.format(ground_truth)
-                                                 ])[0]
+                instruction = llm.inference([prompt.format(ground_truth)])[0]
 
                 x: torch.Tensor = torch.tensor([
                     types[atom.GetSymbol()] if atom.GetSymbol() in types else 5
@@ -490,5 +485,8 @@ class MoleculeGPTDataset(InMemoryDataset):
                     data = self.pre_transform(data)
 
                 data_list.append(data)
+
+                if self.num_units > 0 and len(data_list) >= self.num_units:
+                    break
 
         self.save(data_list, self.processed_paths[0])
