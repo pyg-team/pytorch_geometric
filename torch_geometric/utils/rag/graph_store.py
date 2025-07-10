@@ -96,11 +96,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.feature_store = feature_store
         self._sampler_is_initialized = False
 
-    def put_edge_id( # type: ignore[no-untyped-def]
-            self,
-            edge_id: Tensor,
-            *args,
-            **kwargs) -> bool:
+    def put_edge_id(  # type: ignore[no-untyped-def]
+            self, edge_id: Tensor, *args, **kwargs) -> bool:
         """Stores an edge ID in the graph store.
 
         :param edge_id: The edge ID to store.
@@ -118,11 +115,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         return self.get_edge_index(*self.edge_idx_args, **self.edge_idx_kwargs)
 
-    def put_edge_index( # type: ignore[no-untyped-def]
-            self,
-            edge_index: EdgeTensorType,
-            *args,
-            **kwargs) -> bool:
+    def put_edge_index(  # type: ignore[no-untyped-def]
+            self, edge_index: EdgeTensorType, *args, **kwargs) -> bool:
         """Stores an edge index in the graph store.
 
         :param edge_index: The edge index to store.
@@ -189,9 +183,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
         seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
-        out = self.sampler.sample_from_nodes( # type: ignore[has-type]
-            node_sample_input
-        )  
+        out = self.sampler.sample_from_nodes(  # type: ignore[has-type]
+            node_sample_input)
 
         # edge ids need to be remapped to the original indices
         out.edge = self.perm[out.edge]
