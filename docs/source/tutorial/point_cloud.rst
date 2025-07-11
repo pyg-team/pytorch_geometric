@@ -116,7 +116,7 @@ The PointNet++ layer follows a simple neural message passing scheme defined via
 where
 
     * :math:`\mathbf{h}_i^{(\ell)} \in \mathbb{R}^d` denotes the hidden features of point :math:`i` in layer :math:`\ell`, and
-    * :math:`\mathbf{p}_i \in \mathbf{R}^3$` denotes the position of point :math:`i`.
+    * :math:`\mathbf{p}_i \in \mathbb{R}^3` denotes the position of point :math:`i`.
 
 We can make use of the :class:`~torch_geometric.nn.conv.MessagePassing` interface in :pyg:`PyG` to implement this layer from scratch.
 The :class:`~torch_geometric.nn.conv.MessagePassing` interface helps us in **creating message passing graph neural networks** by automatically taking care of message propagation.

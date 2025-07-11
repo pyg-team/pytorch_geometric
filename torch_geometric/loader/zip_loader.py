@@ -23,7 +23,7 @@ class ZipLoader(torch.utils.data.DataLoader):
             on whether data partially lives on the GPU
             (:obj:`filter_per_worker=True`) or entirely on the CPU
             (:obj:`filter_per_worker=False`).
-            There exists different trade-offs for setting this option.
+            There exist different trade-offs for setting this option.
             Specifically, setting this option to :obj:`True` for in-memory
             datasets will move all features to shared memory, which may result
             in too many open file handles. (default: :obj:`None`)

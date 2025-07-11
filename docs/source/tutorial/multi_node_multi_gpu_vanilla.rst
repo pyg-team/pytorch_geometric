@@ -24,7 +24,7 @@ The following is a minimal example which works with a quite unrestricted configu
 
     #!/bin/bash
     #SBATCH --job-name=pyg-multinode-tutorial # identifier for the job listings
-    #SBATCH --output=pyg-multinode.log        # outputfile
+    #SBATCH --output=pyg-multinode.log        # output file
     #SBATCH --partition=gpucloud              # ADJUST this to your system
     #SBATCH -N 2                              # number of nodes you want to use
     #SBATCH --ntasks=4                        # number of processes to be run
