@@ -42,7 +42,7 @@ def extract_zip(path: str, folder: str, log: bool = True) -> None:
     """
     maybe_log(path, log)
     with zipfile.ZipFile(path, 'r') as f:
-        f.extractall(folder, filter='data')
+        f.extractall(folder)
 
 
 def extract_bz2(path: str, folder: str, log: bool = True) -> None:
