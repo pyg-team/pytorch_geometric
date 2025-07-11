@@ -1,13 +1,25 @@
-from torch.serialization import add_safe_globals
-
-from torch_geometric.datasets.snap_dataset import EgoData
 from torch_geometric.testing import onlyFullTest, onlyOnline
-
 
 @onlyOnline
 @onlyFullTest
 def test_ego_facebook_snap_dataset(get_dataset):
-    add_safe_globals([EgoData])
+    import torch
+    from packaging import version
+    import warnings
+
+    if version.parse(torch.__version__) >= version.parse("2.2.0"):
+        try:
+            from torch.serialization import add_safe_globals
+            from torch_geometric.datasets.snap_dataset import EgoData
+
+            add_safe_globals([EgoData])
+        except ImportError:
+                warnings.warn("add_safe_globals is expected but not found in "
+                              "torch.serialization.")
+    else:
+        warnings.warn("add_safe_globals is not available in this version "
+                        "of PyTorch; continuing without it.")
+
     dataset = get_dataset(name='ego-facebook')
     assert str(dataset) == 'SNAP-ego-facebook(10)'
     assert len(dataset) == 10
