@@ -1,6 +1,8 @@
-from torch_geometric.testing import onlyFullTest, onlyOnline
 from torch.serialization import add_safe_globals
+
 from torch_geometric.datasets.snap_dataset import EgoData
+from torch_geometric.testing import onlyFullTest, onlyOnline
+
 
 @onlyOnline
 @onlyFullTest
