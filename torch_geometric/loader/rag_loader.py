@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
+from torch_geometric.utils.rag.vectorrag import VectorRetriever
 
 
 class RAGFeatureStore(Protocol):
@@ -14,6 +15,18 @@ class RAGFeatureStore(Protocol):
         the closest nodes. Return the indices of the nodes that are to be seeds
         for the RAG Sampler.
         """
+        ...
+
+    @property
+    @abstractmethod
+    def config(self) -> Dict[str, Any]:
+        """Get the config for the RAGFeatureStore."""
+        ...
+
+    @config.setter
+    @abstractmethod
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the RAGFeatureStore."""
         ...
 
     @abstractmethod
@@ -40,6 +53,18 @@ class RAGGraphStore(Protocol):
         """Sample a subgraph using the seeded nodes and edges."""
         ...
 
+    @property
+    @abstractmethod
+    def config(self) -> Dict[str, Any]:
+        """Get the config for the RAGGraphStore."""
+        ...
+
+    @config.setter
+    @abstractmethod
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the RAGGraphStore."""
+        ...
+
     @abstractmethod
     def register_feature_store(self, feature_store: FeatureStore):
         """Register a feature store to be used with the sampler. Samplers need
@@ -53,55 +78,77 @@ class RAGGraphStore(Protocol):
 
 class RAGQueryLoader:
     """Loader meant for making RAG queries from a remote backend."""
-    def __init__(self, data: Tuple[RAGFeatureStore, RAGGraphStore],
-                 local_filter: Optional[Callable[[Data, Any], Data]] = None,
-                 seed_nodes_kwargs: Optional[Dict[str, Any]] = None,
-                 seed_edges_kwargs: Optional[Dict[str, Any]] = None,
-                 sampler_kwargs: Optional[Dict[str, Any]] = None,
-                 loader_kwargs: Optional[Dict[str, Any]] = None):
+    def __init__(self, graph_data: Tuple[RAGFeatureStore, RAGGraphStore],
+                 subgraph_filter: Optional[Callable[[Data, Any], Data]] = None,
+                 augment_query: bool = False,
+                 vector_retriever: Optional[VectorRetriever] = None,
+                 config: Optional[Dict[str, Any]] = None):
         """Loader meant for making queries from a remote backend.
 
         Args:
-            data (Tuple[RAGFeatureStore, RAGGraphStore]): Remote FeatureStore
-                and GraphStore to load from. Assumed to conform to the
-                protocols listed above.
-            local_filter (Optional[Callable[[Data, Any], Data]], optional):
+            graph_data (Tuple[RAGFeatureStore, RAGGraphStore]):
+                Remote FeatureStore and GraphStore to load from.
+                Assumed to conform to the protocols listed above.
+            subgraph_filter (Optional[Callable[[Data, Any], Data]], optional):
                 Optional local transform to apply to data after retrieval.
                 Defaults to None.
-            seed_nodes_kwargs (Optional[Dict[str, Any]], optional): Parameters
-                to pass into process for fetching seed nodes. Defaults to None.
-            seed_edges_kwargs (Optional[Dict[str, Any]], optional): Parameters
-                to pass into process for fetching seed edges. Defaults to None.
-            sampler_kwargs (Optional[Dict[str, Any]], optional): Parameters to
-                pass into process for sampling graph. Defaults to None.
-            loader_kwargs (Optional[Dict[str, Any]], optional): Parameters to
-                pass into process for loading graph features. Defaults to None.
+            augment_query (bool, optional): Whether to augment the query with
+                retrieved documents. Defaults to False.
+            vector_retriever (Optional[VectorRetriever], optional):
+                VectorRetriever to use for retrieving documents.
+                Defaults to None.
+            config (Optional[Dict[str, Any]], optional): Config to pass into
+                the RAGQueryLoader. Defaults to None.
         """
-        fstore, gstore = data
+        fstore, gstore = graph_data
+        self.vector_retriever = vector_retriever
+        self.augment_query = augment_query
         self.feature_store = fstore
         self.graph_store = gstore
+        self.graph_store.edge_index = self.graph_store.edge_index.contiguous()
         self.graph_store.register_feature_store(self.feature_store)
-        self.local_filter = local_filter
-        self.seed_nodes_kwargs = seed_nodes_kwargs or {}
-        self.seed_edges_kwargs = seed_edges_kwargs or {}
-        self.sampler_kwargs = sampler_kwargs or {}
-        self.loader_kwargs = loader_kwargs or {}
+        self.subgraph_filter = subgraph_filter
+        self.config = config
+
+    def _propagate_config(self, config: Dict[str, Any]):
+        """Propagate the config the relevant components."""
+        self.feature_store.config = config
+        self.graph_store.config = config
+
+    @property
+    def config(self):
+        """Get the config for the RAGQueryLoader."""
+        return self._config
+
+    @config.setter
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the RAGQueryLoader.
+
+        Args:
+            config (Dict[str, Any]): The config to set.
+        """
+        self._propagate_config(config)
+        self._config = config
 
     def query(self, query: Any) -> Data:
         """Retrieve a subgraph associated with the query with all its feature
         attributes.
         """
-        seed_nodes = self.feature_store.retrieve_seed_nodes(
-            query, **self.seed_nodes_kwargs)
-        seed_edges = self.feature_store.retrieve_seed_edges(
-            query, **self.seed_edges_kwargs)
+        if self.vector_retriever:
+            retrieved_docs = self.vector_retriever.query(query)
 
-        subgraph_sample = self.graph_store.sample_subgraph(
-            seed_nodes, seed_edges, **self.sampler_kwargs)
+        if self.augment_query:
+            query = [query] + retrieved_docs
 
-        data = self.feature_store.load_subgraph(sample=subgraph_sample,
-                                                **self.loader_kwargs)
+        seed_nodes, query_enc = self.feature_store.retrieve_seed_nodes(query)
 
-        if self.local_filter:
-            data = self.local_filter(data, query)
+        subgraph_sample = self.graph_store.sample_subgraph(seed_nodes)
+
+        data = self.feature_store.load_subgraph(sample=subgraph_sample)
+
+        # apply local filter
+        if self.subgraph_filter:
+            data = self.subgraph_filter(data, query)
+        if self.vector_retriever:
+            data.text_context = retrieved_docs
         return data
