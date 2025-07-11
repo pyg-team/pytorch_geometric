@@ -1,16 +1,14 @@
 import gc
 from collections.abc import Iterable, Iterator
-from typing import Any, Dict, List, Tuple, Type, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch.nn import Module
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
-from torch_geometric.nn.pool import ApproxMIPSKNNIndex
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
-from torch_geometric.typing import FeatureTensorType, InputNodes
+from torch_geometric.typing import InputNodes
 from torch_geometric.utils.rag.backend_utils import batch_knn
 
 
@@ -19,13 +17,10 @@ class KNNRAGFeatureStore(LocalFeatureStore):
     """A feature store that uses a KNN-based retrieval."""
     def __init__(self) -> None:
         """Initializes the feature store."""
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
-
         # to be set by the config
         self.encoder_model = None
         self.k_nodes = None
-
+        self._config: Dict[str, Any] = {}
         super().__init__()
 
     @property
@@ -48,7 +43,7 @@ class KNNRAGFeatureStore(LocalFeatureStore):
                 f"Required config parameter '{attr_name}' not found")
         setattr(self, attr_name, config[attr_name])
 
-    @config.setter
+    @config.setter  # type: ignore
     def config(self, config: Dict[str, Any]) -> None:
         """Set the config for the feature store.
 
@@ -61,21 +56,22 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         self._set_from_config(config, "k_nodes")
         self._set_from_config(config, "encoder_model")
-        if self.encoder_model is not None:
-            self.encoder_model = self.encoder_model.to(self.device)
-            self.encoder_model.eval()
+        assert self.encoder_model is not None, \
+            "Need to define encoder model from config"
+        self.encoder_model.eval()
 
         self._config = config
 
     @property
-    def x(self) -> FeatureTensorType:
+    def x(self) -> Tensor:
         """Returns the node features."""
-        return self.get_tensor(group_name=None, attr_name='x')
+        return Tensor(self.get_tensor(group_name=None, attr_name='x'))
 
     @property
-    def edge_attr(self) -> FeatureTensorType:
+    def edge_attr(self) -> Tensor:
         """Returns the edge attributes."""
-        return self.get_tensor(group_name=(None, None), attr_name='edge_attr')
+        return Tensor(
+            self.get_tensor(group_name=(None, None), attr_name='edge_attr'))
 
     def retrieve_seed_nodes(  # noqa: D417
             self, query: Union[str, List[str],
@@ -91,11 +87,21 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         if not isinstance(query, (list, tuple)):
             query = [query]
-        result, query_enc = next(
-            self._retrieve_seed_nodes_batch(query, self.k_nodes))
-        gc.collect()
-        torch.cuda.empty_cache()
-        return result, query_enc
+        assert self.k_nodes is not None, "please set k_nodes via config"
+        if len(query) == 1:
+            result, query_enc = next(
+                self._retrieve_seed_nodes_batch(query, self.k_nodes))
+            gc.collect()
+            torch.cuda.empty_cache()
+            return result, query_enc
+        else:
+            out_dict = {}
+            for i, out in enumerate(
+                    self._retrieve_seed_nodes_batch(query, self.k_nodes)):
+                out_dict[query[i]] = out
+            gc.collect()
+            torch.cuda.empty_cache()
+            return out_dict
 
     def _retrieve_seed_nodes_batch(  # noqa: D417
             self, query: Iterable[Any],
@@ -111,8 +117,9 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """
         if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
             raise NotImplementedError
-
-        query_enc = self.encoder_model.encode(query).to(self.device)
+        assert self.encoder_model is not None, \
+            "Need to define encoder model from config"
+        query_enc = self.encoder_model.encode(query)
         return batch_knn(query_enc, self.x, k_nodes)
 
     def load_subgraph(  # noqa
@@ -152,55 +159,11 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         return result
 
 
-# TODO: Refactor because composition >> inheritance
-
-
-def _add_features_to_knn_index(knn_index: ApproxMIPSKNNIndex, emb: Tensor,
-                               device: torch.device,
-                               batch_size: int = 2**20) -> None:
-    """Add new features to the existing KNN index in batches.
-
-    Args:
-        knn_index (ApproxMIPSKNNIndex): Index to add features to.
-        emb (Tensor): Embeddings to add.
-        device (torch.device): Device to store in
-        batch_size (int, optional): Batch size to iterate by.
-            Defaults to 2**20, which equates to 4GB if working with
-            1024 dim floats.
-    """
-    for i in range(0, emb.size(0), batch_size):
-        if emb.size(0) - i >= batch_size:
-            emb_batch = emb[i:i + batch_size].to(device)
-        else:
-            emb_batch = emb[i:].to(device)
-        knn_index.add(emb_batch)
-
-
-class ApproxKNNRAGFeatureStore(KNNRAGFeatureStore):
-    def __init__(self, encoder_model: Type[Module], *args, **kwargs):
-        # TODO: Add kwargs for approx KNN to parameters here.
-        super().__init__(encoder_model, *args, **kwargs)
-        self.node_knn_index = None
-        self.edge_knn_index = None
-
-    def _retrieve_seed_nodes_batch(self, query: Iterable[Any],
-                                   k_nodes: int) -> Iterator[InputNodes]:
-        if isinstance(self.meta, dict) and self.meta.get("is_hetero", False):
-            raise NotImplementedError
-
-        encoder_model = self.encoder_model.to(self.device)
-        query_enc = encoder_model.encode(query).to(self.device)
-        del encoder_model
-        gc.collect()
-        torch.cuda.empty_cache()
-
-        if self.node_knn_index is None:
-            self.node_knn_index = ApproxMIPSKNNIndex(num_cells=100,
-                                                     num_cells_to_visit=100,
-                                                     bits_per_vector=4)
-            # Need to add in batches to avoid OOM
-            _add_features_to_knn_index(self.node_knn_index, self.x,
-                                       self.device)
-
-        output = self.node_knn_index.search(query_enc, k=k_nodes)
-        yield from output.index
+"""
+TODO: make class CuVSKNNRAGFeatureStore(KNNRAGFeatureStore)
+include a approximate knn flag for the CuVS.
+Connect this with a CuGraphGraphStore
+for enabling a accelerated boolean flag for RAGQueryLoader.
+On by default if CuGraph+CuVS avail.
+If not raise note mentioning its speedup.
+"""

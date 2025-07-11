@@ -5,6 +5,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.sampler import SamplerOutput
+from torch_geometric.testing.decorators import onlyRAG
 from torch_geometric.utils.rag.feature_store import KNNRAGFeatureStore
 
 
@@ -18,10 +19,8 @@ class TestKNNRAGFeatureStore:
         self.mock_encoder.eval = Mock()
 
         self.config = {"k_nodes": 5, "encoder_model": self.mock_encoder}
-
-        # Sample node features and edge attributes
-        self.sample_x = torch.randn(10, 128)  # 10 nodes, 128 features
-        self.sample_edge_attr = torch.randn(8, 64)  # 8 edges, 64 features
+        self.sample_x = torch.randn(40, 128)  # 40 nodes, 128 features
+        self.sample_edge_attr = torch.randn(40, 64)  # 40 edges, 64 features
 
     def test_bad_config(self):
         """Test bad config initialization."""
@@ -30,8 +29,9 @@ class TestKNNRAGFeatureStore:
             store.config = {}
 
     def create_feature_store(self):
-        """Create a KNNRAGFeatureStore with mocked dependencies."""
+        """Create a FeatureStore with mocked dependencies."""
         store = KNNRAGFeatureStore()
+
         store.config = self.config
 
         # Mock the tensor storage
@@ -41,6 +41,7 @@ class TestKNNRAGFeatureStore:
 
         return store
 
+    @onlyRAG
     def test_retrieve_seed_nodes_single_query(self):
         """Test retrieve_seed_nodes with a single query."""
         store = self.create_feature_store()
@@ -68,7 +69,7 @@ class TestKNNRAGFeatureStore:
             # Verify batch_knn was called correctly
             mock_batch_knn.assert_called_once()
             args = mock_batch_knn.call_args[0]
-            assert torch.equal(args[0], mock_query_enc.to(store.device))
+            assert torch.equal(args[0], mock_query_enc)
             assert torch.equal(args[1], self.sample_x)
             assert args[2] == 5  # k_nodes
 
@@ -76,6 +77,7 @@ class TestKNNRAGFeatureStore:
             assert torch.equal(result, expected_indices)
             assert torch.equal(query_enc, mock_query_enc)
 
+    @onlyRAG
     def test_retrieve_seed_nodes_multiple_queries(self):
         """Test retrieve_seed_nodes with multiple queries."""
         store = self.create_feature_store()
@@ -84,24 +86,30 @@ class TestKNNRAGFeatureStore:
         mock_query_enc = torch.randn(2, 128)
         self.mock_encoder.encode.return_value = mock_query_enc
 
-        expected_indices = torch.tensor([1, 4, 6, 8, 0])
+        expected_indices = [
+            torch.tensor([1, 4, 6, 8, 0]),
+            torch.tensor([0, 3, 7, 2, 9])
+        ]
 
         with patch('torch_geometric.utils.rag.feature_store.batch_knn'
                    ) as mock_batch_knn:
 
             def mock_generator():
-                yield (expected_indices, mock_query_enc)
+                for i in range(len(expected_indices)):
+                    yield (expected_indices[i], mock_query_enc[i])
 
             mock_batch_knn.return_value = mock_generator()
 
-            result, query_enc = store.retrieve_seed_nodes(queries)
+            out_dict = store.retrieve_seed_nodes(queries)
 
             # Verify encoder was called with the list directly
             self.mock_encoder.encode.assert_called_once_with(queries)
 
             # Verify results
-            assert torch.equal(result, expected_indices)
-            assert torch.equal(query_enc, mock_query_enc)
+            for i, query in enumerate(queries):
+                result, query_enc = out_dict[query]
+                assert torch.equal(result, expected_indices[i])
+                assert torch.equal(query_enc, mock_query_enc[i])
 
     @pytest.mark.parametrize("induced", [True, False])
     def test_load_subgraph_valid_sample(self, induced):

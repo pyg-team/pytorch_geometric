@@ -1,7 +1,5 @@
 from typing import Dict, List, Optional, Tuple
 
-from torch import Tensor
-
 from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.typing import EdgeTensorType
 
@@ -9,7 +7,7 @@ from torch_geometric.typing import EdgeTensorType
 class MyGraphStore(GraphStore):
     def __init__(self) -> None:
         super().__init__()
-        self.store: Dict[Tuple, Tuple[Tensor, Tensor]] = {}
+        self.store: Dict[Tuple, EdgeTensorType] = {}
 
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:

@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 import torch
 from torch import Tensor
@@ -7,27 +7,33 @@ from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.sampler import (
     BidirectionalNeighborSampler,
-    HeteroSamplerOutput,
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.typing import EdgeTensorType, InputNodes
+from torch_geometric.typing import EdgeTensorType
 from torch_geometric.utils import index_sort
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     """Neighbor sampling based graph-store to store & retrieve graph data."""
-    def __init__(self, feature_store: Optional[FeatureStore] = None, **kwargs):
+    def __init__(  # type: ignore[no-untyped-def]
+        self,
+        feature_store: Optional[FeatureStore] = None,
+        **kwargs,
+    ):
         """Initializes the graph store.
         Optional feature store and neighbor sampling settings.
 
-        :param feature_store: The feature store to use.
+        Args:
+        feature_store (optional): The feature store to use.
             None if not yet registered.
-        :param kwargs: Additional keyword arguments for neighbor sampling.
+        **kwargs (optional):
+            Additional keyword arguments for neighbor sampling.
         """
         self.feature_store = feature_store
         self.sample_kwargs = kwargs
         self._sampler_is_initialized = False
+        self._config: Dict[str, Any] = {}
 
         # to be set by the config
         self.num_neighbors = None
@@ -53,7 +59,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
                 f"Required config parameter '{attr_name}' not found")
         setattr(self, attr_name, config[attr_name])
 
-    @config.setter
+    @config.setter  # type: ignore
     def config(self, config: Dict[str, Any]) -> None:
         """Set the config for the feature store.
 
@@ -66,7 +72,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """
         self._set_from_config(config, "num_neighbors")
         if hasattr(self, 'sampler'):
-            self.sampler.num_neighbors = self.num_neighbors
+            self.sampler.num_neighbors = (  # type: ignore[has-type]
+                self.num_neighbors)
 
         self._config = config
 
@@ -74,6 +81,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         """Initializes neighbor sampler with the registered feature store."""
         if self.feature_store is None:
             raise AttributeError("Feature store not registered yet.")
+        assert self.num_neighbors is not None, \
+            "Please set num_neighbors through config"
         self.sampler = BidirectionalNeighborSampler(
             data=(self.feature_store, self), num_neighbors=self.num_neighbors,
             **self.sample_kwargs)
@@ -87,7 +96,8 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.feature_store = feature_store
         self._sampler_is_initialized = False
 
-    def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
+    def put_edge_id(  # type: ignore[no-untyped-def]
+            self, edge_id: Tensor, *args, **kwargs) -> bool:
         """Stores an edge ID in the graph store.
 
         :param edge_id: The edge ID to store.
@@ -98,15 +108,15 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         return ret
 
     @property
-    def edge_index(self):
+    def edge_index(self) -> EdgeTensorType:
         """Gets the edge index of the graph.
 
         :return: The edge index as a tensor.
         """
         return self.get_edge_index(*self.edge_idx_args, **self.edge_idx_kwargs)
 
-    def put_edge_index(self, edge_index: EdgeTensorType, *args,
-                       **kwargs) -> bool:
+    def put_edge_index(  # type: ignore[no-untyped-def]
+            self, edge_index: EdgeTensorType, *args, **kwargs) -> bool:
         """Stores an edge index in the graph store.
 
         :param edge_index: The edge index to store.
@@ -120,14 +130,23 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         return ret
 
     # HACKY
-    @edge_index.setter
-    def edge_index(self, edge_index: EdgeTensorType):
+    @edge_index.setter  # type: ignore
+    def edge_index(self, edge_index: EdgeTensorType) -> None:
         """Sets the edge index of the graph.
 
         :param edge_index: The edge index to set.
         """
         # correct since we make node list from triples
-        num_nodes = edge_index.max() + 1
+        if isinstance(edge_index, Tensor):
+            num_nodes = int(edge_index.max()) + 1
+        else:
+            assert isinstance(edge_index, tuple) \
+                and isinstance(edge_index[0], Tensor) \
+                and isinstance(edge_index[1], Tensor), \
+                "edge_index must be a Tensor of [2, num_edges] \
+                or a tuple of Tensors, (row, col)."
+
+            num_nodes = int(edge_index[0].max()) + 1
         attr = dict(
             edge_type=None,
             layout='coo',
@@ -142,8 +161,9 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         self.put_edge_index(edge_index_sorted, **attr)
 
     def sample_subgraph(
-            self, seed_nodes: InputNodes
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        self,
+        seed_nodes: Tensor,
+    ) -> SamplerOutput:
         """Sample the graph starting from the given nodes using the
         in-built NeighborSampler.
 
@@ -157,16 +177,14 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
             Union[SamplerOutput, HeteroSamplerOutput]: NeighborSamplerOutput
                 for the input.
         """
+        # TODO add support for Hetero
         if not self._sampler_is_initialized:
             self._init_sampler()
 
-        # FIXME: Right now, only input nodes/edges as tensors are be supported
-        if not isinstance(seed_nodes, Tensor):
-            raise NotImplementedError
-
         seed_nodes = seed_nodes.unique().contiguous()
         node_sample_input = NodeSamplerInput(input_id=None, node=seed_nodes)
-        out = self.sampler.sample_from_nodes(node_sample_input)
+        out = self.sampler.sample_from_nodes(  # type: ignore[has-type]
+            node_sample_input)
 
         # edge ids need to be remapped to the original indices
         out.edge = self.perm[out.edge]
