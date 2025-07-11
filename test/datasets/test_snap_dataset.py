@@ -1,9 +1,11 @@
 from torch_geometric.testing import onlyFullTest, onlyOnline
-
+from torch.serialization import add_safe_globals
+from torch_geometric.datasets.snap_dataset import EgoData
 
 @onlyOnline
 @onlyFullTest
 def test_ego_facebook_snap_dataset(get_dataset):
+    add_safe_globals([EgoData])
     dataset = get_dataset(name='ego-facebook')
     assert str(dataset) == 'SNAP-ego-facebook(10)'
     assert len(dataset) == 10
