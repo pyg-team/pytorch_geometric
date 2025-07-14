@@ -59,6 +59,7 @@ from .ppr import get_ppr
 from ._train_test_split_edges import train_test_split_edges
 from .influence import total_influence
 
+
 __all__ = [
     'scatter',
     'group_argsort',
@@ -152,6 +153,7 @@ __all__ = [
     'train_test_split_edges',
     'total_influence',
 ]
+
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
 # documentation rendering. We remove it for now from the documentation:
