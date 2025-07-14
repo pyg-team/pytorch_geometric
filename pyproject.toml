@@ -66,6 +66,11 @@ rag=[
     "accelerate",
     "torchmetrics",
 ]
+relbench=[
+    "relbench[full]",
+    "sentence-transformers",
+    "pandas",
+]
 test=[
     "onnx",
     "onnxruntime",
