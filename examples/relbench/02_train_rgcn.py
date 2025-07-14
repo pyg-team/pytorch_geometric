@@ -1,5 +1,4 @@
-"""
-RelBench R-GCN Training Example.
+"""RelBench R-GCN Training Example.
 
 This example demonstrates how to train an R-GCN model on RelBench data
 for data warehouse lineage prediction tasks.

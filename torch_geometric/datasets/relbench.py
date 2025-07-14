@@ -258,8 +258,7 @@ class RelBenchProcessor:
                               create_silo_labels: bool = True,
                               create_anomaly_labels: bool = True,
                               use_dummy_fallback: bool = False) -> None:
-        """
-        Add warehouse task labels with 'Ready-for-Real-Data' pattern.
+        """Add warehouse task labels with 'Ready-for-Real-Data' pattern.
 
         Precedence order: Real Data > Structural Inference > Dummy
         Fallback > None
@@ -274,7 +273,6 @@ class RelBenchProcessor:
             create_anomaly_labels: Whether to create anomaly detection labels
             use_dummy_fallback: Whether to use dummy data as last resort
         """
-
         # ETL Lineage Labels
         if create_lineage_labels:
             lineage_labels = self._get_lineage_labels(table_name, db,
@@ -299,8 +297,8 @@ class RelBenchProcessor:
             self, table_name: Optional[str], db: Any, num_nodes: int,
             use_dummy_fallback: bool) -> Optional[torch.Tensor]:
         """Get ETL lineage labels with precedence: real > inferred >
-        dummy > None."""
-
+        dummy > None.
+        """
         # Method 1: Check for real lineage data
         if self._has_real_lineage(db, table_name):
             return self._load_real_lineage(db, table_name)
@@ -326,8 +324,8 @@ class RelBenchProcessor:
                          num_nodes: int,
                          use_dummy_fallback: bool) -> Optional[torch.Tensor]:
         """Get silo detection labels with precedence: real > inferred >
-        dummy > None."""
-
+        dummy > None.
+        """
         # Method 1: Check for real silo data
         if self._has_real_silo_data(db, table_name):
             return self._load_real_silo_labels(db, table_name)
@@ -341,8 +339,8 @@ class RelBenchProcessor:
             self, table_name: Optional[str], db: Any, num_nodes: int,
             use_dummy_fallback: bool) -> Optional[torch.Tensor]:
         """Get anomaly detection labels with precedence: real > inferred >
-        dummy > None."""
-
+        dummy > None.
+        """
         # Method 1: Check for real anomaly data
         if self._has_real_anomaly_data(db, table_name):
             return self._load_real_anomaly_labels(db, table_name)
@@ -366,8 +364,7 @@ class RelBenchProcessor:
 
     # Real data checking methods
     def _has_real_lineage(self, db: Any, table_name: Optional[str]) -> bool:
-        """
-        Check if real ETL lineage data is available.
+        """Check if real ETL lineage data is available.
 
         Args:
             db: RelBench database object
@@ -381,8 +378,7 @@ class RelBenchProcessor:
                 and 'etl_stages' in db.lineage_metadata[table_name])
 
     def _has_real_silo_data(self, db: Any, table_name: Optional[str]) -> bool:
-        """
-        Check if real silo detection data is available.
+        """Check if real silo detection data is available.
 
         Args:
             db: RelBench database object
@@ -396,8 +392,7 @@ class RelBenchProcessor:
 
     def _has_real_anomaly_data(self, db: Any,
                                table_name: Optional[str]) -> bool:
-        """
-        Check if real anomaly detection data is available.
+        """Check if real anomaly detection data is available.
 
         Args:
             db: RelBench database object
@@ -481,7 +476,6 @@ class RelBenchProcessor:
     def _infer_silo_from_connectivity(self, table_name: str, db: Any,
                                       num_nodes: int) -> torch.Tensor:
         """Infer silo detection labels from table connectivity."""
-
         # Count connections to other tables
         connections = 0
 
@@ -524,9 +518,8 @@ class RelBenchProcessor:
 
                 if IQR > 0:  # Avoid division by zero
                     # Mark outliers as anomalies
-                    outlier_mask = ((values <
-                                     (Q1 - 1.5 * IQR)) | (values >
-                                                          (Q3 + 1.5 * IQR)))
+                    outlier_mask = ((values < (Q1 - 1.5 * IQR)) |
+                                    (values > (Q3 + 1.5 * IQR)))
 
                     # Update anomaly labels for outlier rows
                     outlier_indices = table_df[col].index[table_df[col].isin(
