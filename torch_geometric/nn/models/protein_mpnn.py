@@ -156,6 +156,35 @@ class Decoder(MessagePassing):
 
 
 class ProteinMPNN(torch.nn.Module):
+    r"""The ProteinMPNN model from the `"Robust deep learning--based
+    protein sequence design using ProteinMPNN"
+    <https://www.biorxiv.org/content/10.1101/2022.06.03.494563v1>`_ paper.
+
+    Args:
+        hidden_dim (int): Hidden channels.
+            (default: :obj:`128`)
+        num_encoder_layers (int): Number of encode layers.
+            (default: :obj:`3`)
+        num_decoder_layers (int): Number of decode layers.
+            (default: :obj:`3`)
+        num_neighbors (int): Number of neighbors for each atom.
+            (default: :obj:`30`)
+        num_rbf (int): Number of radial basis functions.
+            (default: :obj:`16`)
+        dropout (float): Dropout rate.
+            (default: :obj:`0.1`)
+        augment_eps (float): Augmentation epsilon for input coordinates.
+            (default: :obj:`0.2`)
+        num_positional_embedding (int): Number of positional embeddings.
+            (default: :obj:`16`)
+        vocab_size (int): Number of vocabulary.
+            (default: :obj:`21`)
+
+    .. note::
+        For an example of using :class:`ProteinMPNN`, see
+        `examples/llm/protein_mpnn.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/llm/protein_mpnn.py>`_.
+    """
     def __init__(
         self,
         hidden_dim: int = 128,
