@@ -1,6 +1,7 @@
 """RelBench integration example for PyTorch Geometric."""
 
 import argparse
+
 from torch_geometric.utils.relbench import create_relbench_hetero_data
 
 
@@ -18,8 +19,8 @@ def main():
 
     try:
         print(f"Loading RelBench dataset: {args.dataset}")
-        hetero_data = create_relbench_hetero_data(
-            args.dataset, sample_size=args.sample_size)
+        hetero_data = create_relbench_hetero_data(args.dataset,
+                                                  sample_size=args.sample_size)
         print("Dataset loaded successfully")
 
         print("HeteroData Summary:")
