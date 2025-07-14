@@ -196,6 +196,8 @@ class MoleculeGPTDataset(InMemoryDataset):
             (default: :obj:`10`)
         total_block_num (int, optional): The blocks of SDF files from PubChem.
             (default: :obj:`1`)
+        num_units (int, optional): Number of units of the sample.
+            (default: :obj:`-1`, which means all units will be used)
     """
     description_url = (
         'https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/annotations/'
@@ -213,9 +215,11 @@ class MoleculeGPTDataset(InMemoryDataset):
         force_reload: bool = False,
         total_page_num: int = 10,
         total_block_num: int = 1,
+        num_units: int = -1,
     ):
         self.total_page_num = total_page_num
         self.total_block_num = total_block_num
+        self.num_units = num_units
 
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
@@ -438,7 +442,7 @@ class MoleculeGPTDataset(InMemoryDataset):
         for mol in tqdm(suppl):
             if mol.HasProp('PUBCHEM_COMPOUND_CID'):
                 CID = mol.GetProp("PUBCHEM_COMPOUND_CID")
-                CAN_SMILES = mol.GetProp("PUBCHEM_OPENEYE_CAN_SMILES")
+                CAN_SMILES = mol.GetProp("PUBCHEM_SMILES")
 
                 m: Chem.Mol = Chem.MolFromSmiles(CAN_SMILES)
                 if m is None:
@@ -481,5 +485,8 @@ class MoleculeGPTDataset(InMemoryDataset):
                     data = self.pre_transform(data)
 
                 data_list.append(data)
+
+                if self.num_units > 0 and len(data_list) >= self.num_units:
+                    break
 
         self.save(data_list, self.processed_paths[0])
