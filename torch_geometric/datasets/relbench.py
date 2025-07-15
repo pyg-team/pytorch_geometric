@@ -1,11 +1,11 @@
 """RelBench integration utilities for PyTorch Geometric.
 
 Provides utilities for converting RelBench datasets to PyG HeteroData objects
-with semantic embeddings and graph structure for reverse engineering tasks.
+with semantic embeddings and graph structure for warehouse applications.
 
-TODO: Add subgraph sampling utilities for few-shot inference
-TODO: Implement more sophisticated edge weighting schemes
-TODO: Add support for temporal lineage tracking
+TODO: Add subgraph sampling utilities for inference
+TODO: Implement configurable edge weighting schemes
+TODO: Add support for lineage tracking
 """
 
 import warnings
@@ -69,7 +69,7 @@ except ImportError:
 
 
 class RelBenchProcessor:
-    """Converts RelBench datasets to PyG HeteroData with unified records."""
+    """Utility for converting RelBench datasets to PyG HeteroData format."""
     def __init__(self, sbert_model: str = 'all-MiniLM-L6-v2') -> None:
         """Initialize processor with SBERT model."""
         if not RELBENCH_AVAILABLE:
@@ -500,7 +500,7 @@ class RelBenchProcessor:
     # Structural inference methods
     def _infer_lineage_from_structure(self, table_name: str,
                                       db: Any) -> torch.Tensor:
-        """Infer ETL lineage stage from table structure."""
+        """Generate lineage labels using table metadata."""
         table_df = db.table_dict[table_name].df
 
         # Count foreign key columns
@@ -535,7 +535,7 @@ class RelBenchProcessor:
 
     def _infer_silo_from_connectivity(self, table_name: str, db: Any,
                                       num_nodes: int) -> torch.Tensor:
-        """Infer silo detection labels from table connectivity."""
+        """Generate silo labels using connectivity information."""
         # Count connections to other tables
         connections = 0
 
@@ -559,7 +559,7 @@ class RelBenchProcessor:
 
     def _infer_anomalies_from_statistics(self, table_name: str,
                                          db: Any) -> torch.Tensor:
-        """Infer anomaly detection labels from statistical analysis."""
+        """Generate anomaly labels using statistical methods."""
         table_df = db.table_dict[table_name].df
         num_nodes = len(table_df)
 
@@ -590,7 +590,7 @@ class RelBenchProcessor:
 
     def _infer_record_lineage(self, table_name: str, db: Any,
                               num_records: int) -> torch.Tensor:
-        """Infer lineage labels: 0=source, 1=intermediate, 2=target."""
+        """Generate lineage labels for individual records."""
         table_df = db.table_dict[table_name].df
 
         # Count foreign keys in this table
@@ -616,7 +616,7 @@ class RelBenchProcessor:
 
     def _infer_record_silo(self, table_name: str, db: Any,
                            num_records: int) -> torch.Tensor:
-        """Infer silo labels for individual records."""
+        """Generate silo labels for individual records."""
         # Check table connectivity
         has_connections = False
         if hasattr(db, 'fkey_dict'):
@@ -631,12 +631,12 @@ class RelBenchProcessor:
 
     def _infer_record_anomaly(self, table_name: str, db: Any,
                               num_records: int) -> torch.Tensor:
-        """Infer anomaly labels for individual records."""
+        """Generate anomaly labels for individual records."""
         # Use existing statistical inference but return per-record labels
         return self._infer_anomalies_from_statistics(table_name, db)
 
     def _create_edges(self, hetero_data: HeteroData, db: Any) -> None:
-        """Create edges for unified record space."""
+        """Create graph edges between records."""
         if 'record' not in hetero_data.node_types:
             warnings.warn('No record nodes found for edge creation',
                           stacklevel=2)
@@ -649,7 +649,7 @@ class RelBenchProcessor:
         self._add_value_similarity_edges(hetero_data)
 
     def _add_fk_edges_unified(self, hetero_data: HeteroData, db: Any) -> None:
-        """Add FK-based edges between records in unified space."""
+        """Add relationship-based edges between records."""
         if not hasattr(db, 'fkey_dict') or not db.fkey_dict:
             return
 
@@ -697,7 +697,7 @@ class RelBenchProcessor:
                         'record'].edge_index = fk_edge_index
 
     def _add_value_similarity_edges(self, hetero_data: HeteroData) -> None:
-        """Add value similarity edges using existing embeddings."""
+        """Add similarity-based edges between nodes."""
         if 'record' not in hetero_data.node_types:
             return
 
@@ -772,7 +772,7 @@ class RelBenchProcessor:
     def _discover_real_relationships(
             self, db: Any,
             node_types: List[str]) -> List[Tuple[str, str, str]]:
-        """Discover real relationships from RelBench metadata."""
+        """Extract relationships from RelBench metadata."""
         relationships = []
 
         # Method 1: Try to use edge_df if available
@@ -810,7 +810,7 @@ class RelBenchProcessor:
     def _infer_relationships_from_columns(
             self, db: Any,
             node_types: List[str]) -> List[Tuple[str, str, str]]:
-        """Infer relationships from foreign key column patterns."""
+        """Extract relationships from column patterns."""
         relationships = []
 
         for table_name, table_obj in db.table_dict.items():
@@ -847,7 +847,7 @@ class RelBenchProcessor:
         dst_table: str,
         db: Any,
     ) -> None:
-        """Create real edges based on actual foreign key values."""
+        """Create edges using available relationship data."""
         try:
             src_df = db.table_dict[src_table].df
             dst_df = db.table_dict[dst_table].df
@@ -919,10 +919,10 @@ def create_relbench_hetero_data(
     use_dummy_fallback: bool = False,
     batch_size: int = 64,
 ) -> HeteroData:
-    """Create HeteroData from RelBench dataset with unified record nodes.
+    """Create HeteroData from RelBench dataset.
 
     TODO: Add support for custom edge types and weights
-    TODO: Implement temporal lineage tracking
+    TODO: Implement lineage tracking
     """
     processor = RelBenchProcessor(sbert_model)
 
@@ -968,21 +968,17 @@ def get_warehouse_task_info() -> Dict[str, Dict[str, Any]]:
             'data_availability':
             'real_data',
             'notes':
-            'Based on actual foreign key connectivity analysis '
+            'Based on connectivity information '
             'from RelBench metadata.',
         },
         'anomaly': {
-            'num_classes':
-            2,
+            'num_classes': 2,
             'classes': ['normal', 'anomaly'],
-            'description':
-            'Anomaly detection - identify unusual patterns '
+            'description': 'Anomaly detection - identify unusual patterns '
             'in data warehouse',
-            'data_availability':
-            'statistical_inference',
-            'notes':
-            'Based on statistical outlier detection using IQR '
-            'method on numeric columns.',
+            'data_availability': 'statistical_inference',
+            'notes': 'Based on statistical methods '
+            'applied to numeric columns.',
         },
     }
 

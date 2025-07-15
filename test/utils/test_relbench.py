@@ -1,7 +1,7 @@
 """Tests for RelBench Integration Utilities.
 
 This test suite uses local fixtures to avoid network dependencies in CI.
-Validates row-level lineage prediction and GNN model training capabilities.
+Tests basic functionality of RelBench integration utilities.
 """
 
 # Import the module under test
