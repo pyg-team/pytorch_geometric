@@ -73,9 +73,8 @@ class RelBenchProcessor:
     def __init__(self, sbert_model: str = 'all-MiniLM-L6-v2') -> None:
         """Initialize processor with SBERT model."""
         if not RELBENCH_AVAILABLE:
-            raise ImportError(
-                'RelBench is required. Install with: pip install relbench[full]'
-            )
+            raise ImportError('RelBench is required. Install with: '
+                              'pip install relbench[full]')
 
         if not (PYG_NLP_AVAILABLE or SENTENCE_TRANSFORMERS_AVAILABLE):
             raise ImportError(
@@ -346,8 +345,8 @@ class RelBenchProcessor:
             return self._load_real_lineage(db, table_name)
 
         # Method 2: Structural inference
-        elif table_name is not None and self._can_infer_lineage(
-                table_name, db):
+        elif (table_name is not None
+              and self._can_infer_lineage(table_name, db)):
             return self._infer_lineage_from_structure(table_name, db)
 
         # Method 3: Dummy fallback (with warning)
