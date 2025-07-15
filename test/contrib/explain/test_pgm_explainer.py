@@ -91,7 +91,6 @@ def test_pgm_explainer_classification(node_idx, task_level, perturbation_mode):
     assert explanation.node_mask.max() <= 1
 
 
-    # Dummy GNN model that outputs fixed logits
 class DummyModel(torch.nn.Module):
     def forward(self, x, edge_index, **kwargs):
         return torch.tensor([[0.2, 0.8]], requires_grad=True)
