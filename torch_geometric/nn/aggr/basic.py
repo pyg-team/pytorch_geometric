@@ -240,7 +240,7 @@ class PowerMeanAggregation(Aggregation):
             If set to a value greater than :obj:`1`, :math:`p` will be learned
             per input feature channel. This requires compatible shapes for the
             input to the forward calculation. (default: :obj:`1`)
-        clamp_min (float, optional): Lower-bound of the range to be clamped 
+        clamp_min (float, optional): Lower-bound of the range to be clamped
             to. There is no lower bound if set to None.
         clamp_max (float, optional): Upper-bound of the range to be clamped
             to. There is no upper bound if set to None.
