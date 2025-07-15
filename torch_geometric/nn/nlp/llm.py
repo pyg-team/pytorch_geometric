@@ -95,7 +95,7 @@ class LLM(torch.nn.Module):
             gpu_memory: List[int] = []
             for i in range(n_gpus):
                 gpu_memory.append(torch.cuda.mem_get_info(i)[0] // 1024**3)
-            kwargs = {}
+            kwargs = dict(revision='main')
             kwargs['max_memory'] = {
                 i: f'{memory}GiB'
                 for i, memory in enumerate(gpu_memory)
