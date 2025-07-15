@@ -7,12 +7,13 @@ Validates row-level lineage prediction and GNN model training capabilities.
 # Import the module under test
 try:
     from torch_geometric.datasets.relbench import get_warehouse_task_info
+
     RELBENCH_UTILS_AVAILABLE = True
 except ImportError:
     RELBENCH_UTILS_AVAILABLE = False
 
 
-def test_get_warehouse_task_info():
+def test_get_warehouse_task_info() -> None:
     """Test warehouse task info function."""
     if not RELBENCH_UTILS_AVAILABLE:
         return  # Skip test if module not available
@@ -34,6 +35,6 @@ def test_get_warehouse_task_info():
         assert isinstance(task_data['description'], str)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     test_get_warehouse_task_info()
-    print("All tests passed!")
+    print('All tests passed!')
