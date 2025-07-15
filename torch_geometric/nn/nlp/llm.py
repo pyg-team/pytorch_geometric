@@ -133,7 +133,8 @@ class LLM(torch.nn.Module):
         self.word_embedding = self.llm.model.get_input_embeddings()
         if sys_prompt is not None:
             self.sys_prompt = sys_prompt
-
+        else:
+            self.sys_prompt = ""
         if 'max_memory' not in kwargs:  # Pure CPU:
             warnings.warn("LLM is being used on CPU, which may be slow",
                           stacklevel=2)
