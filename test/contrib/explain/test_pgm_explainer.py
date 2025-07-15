@@ -1,5 +1,5 @@
-import pytest
 import numpy as np
+import pytest
 import torch
 
 from torch_geometric.contrib.explain import PGMExplainer
@@ -103,22 +103,19 @@ def test_batch_perturb_features_on_node():
     # Minimal graph data with 1 node and 2 features
     x = torch.randn(1, 2)
     edge_index = torch.tensor([[0], [0]])  # dummy self-loop
-    indices_to_perturb = np.array([0])     # only node 0 can be perturbed
+    indices_to_perturb = np.array([0])  # only node 0 can be perturbed
 
     # Simulate kwargs that would include prediction details
     kwargs = {
-        "soft_pred": torch.tensor([0.4, 0.6]),  # soft prediction of original input
+        "soft_pred": torch.tensor([0.4,
+                                   0.6]),  # soft prediction of original input
         "pred_label": 1,
         "num_nodes": 1,
     }
 
     samples = explainer._batch_perturb_features_on_node(
-        model=model,
-        x=x,
-        edge_index=edge_index,
-        indices_to_perturb=indices_to_perturb,
-        **kwargs
-    )
+        model=model, x=x, edge_index=edge_index,
+        indices_to_perturb=indices_to_perturb, **kwargs)
 
     assert isinstance(samples, torch.Tensor)
     assert samples.shape == (1, 2)
