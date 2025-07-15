@@ -26,7 +26,6 @@ def test_g_retriever() -> None:
     model = GRetriever(
         llm=llm,
         gnn=gnn,
-        mlp_out_channels=2048,
     )
     assert str(model) == ('GRetriever(\n'
                           '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
@@ -74,7 +73,6 @@ def test_g_retriever_many_tokens() -> None:
     model = GRetriever(
         llm=llm,
         gnn=gnn,
-        mlp_out_channels=2048,
         mlp_out_tokens=2,
     )
     assert str(model) == ('GRetriever(\n'
