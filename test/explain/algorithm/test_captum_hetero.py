@@ -1,8 +1,10 @@
 import pytest
 
-from torch_geometric.explain.algorithm.captum import (CaptumHeteroModel,
-                                                      captum_output_to_dicts,
-                                                      to_captum_input)
+from torch_geometric.explain.algorithm.captum import (
+    CaptumHeteroModel,
+    captum_output_to_dicts,
+    to_captum_input,
+)
 from torch_geometric.nn import to_captum_model
 from torch_geometric.testing import withPackage
 

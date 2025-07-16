@@ -3,8 +3,19 @@ import pickle as pkl
 import shutil
 from dataclasses import dataclass
 from itertools import chain
-from typing import (Any, Callable, Dict, Iterable, Iterator, List, Optional,
-                    Sequence, Set, Tuple, Union)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+)
 
 import torch
 from torch import Tensor

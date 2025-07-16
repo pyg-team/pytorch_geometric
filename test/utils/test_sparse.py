@@ -8,10 +8,16 @@ from torch_geometric.io import fs
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import is_full_test, withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import (dense_to_sparse, is_sparse,
-                                   is_torch_sparse_tensor, to_edge_index,
-                                   to_torch_coo_tensor, to_torch_csc_tensor,
-                                   to_torch_csr_tensor, to_torch_sparse_tensor)
+from torch_geometric.utils import (
+    dense_to_sparse,
+    is_sparse,
+    is_torch_sparse_tensor,
+    to_edge_index,
+    to_torch_coo_tensor,
+    to_torch_csc_tensor,
+    to_torch_csr_tensor,
+    to_torch_sparse_tensor,
+)
 from torch_geometric.utils.sparse import cat
 
 

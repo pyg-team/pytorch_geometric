@@ -8,9 +8,13 @@ import torch
 from torch_geometric import EdgeIndex, Index
 from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.testing import (get_random_edge_index,
-                                     get_random_tensor_frame, onlyLinux,
-                                     withDevice, withPackage)
+from torch_geometric.testing import (
+    get_random_edge_index,
+    get_random_tensor_frame,
+    onlyLinux,
+    withDevice,
+    withPackage,
+)
 
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]

@@ -7,9 +7,15 @@ from torch import Tensor
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import (add_self_loops, coalesce, get_ppr,
-                                   is_undirected, scatter, sort_edge_index,
-                                   to_dense_adj)
+from torch_geometric.utils import (
+    add_self_loops,
+    coalesce,
+    get_ppr,
+    is_undirected,
+    scatter,
+    sort_edge_index,
+    to_dense_adj,
+)
 
 
 @functional_transform('gdc')

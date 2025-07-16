@@ -10,16 +10,30 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.sampler.base import SubgraphType
-from torch_geometric.testing import (MyFeatureStore, MyGraphStore,
-                                     get_random_edge_index,
-                                     get_random_tensor_frame, onlyLinux,
-                                     onlyNeighborSampler, onlyOnline, withCUDA,
-                                     withPackage)
-from torch_geometric.typing import (WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
-                                    WITH_PYG_LIB, WITH_TORCH_SPARSE,
-                                    WITH_WEIGHTED_NEIGHBOR_SAMPLE, TensorFrame)
-from torch_geometric.utils import (is_undirected, sort_edge_index,
-                                   to_torch_csr_tensor, to_undirected)
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    get_random_edge_index,
+    get_random_tensor_frame,
+    onlyLinux,
+    onlyNeighborSampler,
+    onlyOnline,
+    withCUDA,
+    withPackage,
+)
+from torch_geometric.typing import (
+    WITH_EDGE_TIME_NEIGHBOR_SAMPLE,
+    WITH_PYG_LIB,
+    WITH_TORCH_SPARSE,
+    WITH_WEIGHTED_NEIGHBOR_SAMPLE,
+    TensorFrame,
+)
+from torch_geometric.utils import (
+    is_undirected,
+    sort_edge_index,
+    to_torch_csr_tensor,
+    to_undirected,
+)
 
 DTYPES = [
     pytest.param(torch.int64, id='int64'),

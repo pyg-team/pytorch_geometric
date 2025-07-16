@@ -5,14 +5,24 @@ from contextlib import nullcontext
 
 import torch
 
-from benchmark.utils import (emit_itt, get_dataset_with_transformation,
-                             get_model, get_split_masks, save_benchmark_data,
-                             test, write_to_csv)
+from benchmark.utils import (
+    emit_itt,
+    get_dataset_with_transformation,
+    get_model,
+    get_split_masks,
+    save_benchmark_data,
+    test,
+    write_to_csv,
+)
 from torch_geometric.io import fs
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.profile import (rename_profile_file, timeit,
-                                     torch_profile, xpu_profile)
+from torch_geometric.profile import (
+    rename_profile_file,
+    timeit,
+    torch_profile,
+    xpu_profile,
+)
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],

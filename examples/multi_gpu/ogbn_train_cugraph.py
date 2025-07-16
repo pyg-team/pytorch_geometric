@@ -11,15 +11,21 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
-from cugraph.gnn import (cugraph_comms_create_unique_id, cugraph_comms_init,
-                         cugraph_comms_shutdown)
+from cugraph.gnn import (
+    cugraph_comms_create_unique_id,
+    cugraph_comms_init,
+    cugraph_comms_shutdown,
+)
 from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric
 from torch_geometric import seed_everything
-from torch_geometric.utils import (add_self_loops, remove_self_loops,
-                                   to_undirected)
+from torch_geometric.utils import (
+    add_self_loops,
+    remove_self_loops,
+    to_undirected,
+)
 
 # Allow computation on objects that are larger than GPU memory
 # https://docs.rapids.ai/api/cudf/stable/developer_guide/library_design/#spilling-to-host-memory

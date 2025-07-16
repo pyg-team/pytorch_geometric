@@ -4,8 +4,13 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import Adj
-from torch_geometric.utils import (degree, is_sparse, scatter, sort_edge_index,
-                                   to_edge_index)
+from torch_geometric.utils import (
+    degree,
+    is_sparse,
+    scatter,
+    sort_edge_index,
+    to_edge_index,
+)
 
 
 class WLConv(torch.nn.Module):

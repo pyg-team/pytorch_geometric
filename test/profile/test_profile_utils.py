@@ -2,13 +2,19 @@ import torch
 from torch.nn import Linear
 
 from torch_geometric.data import Data
-from torch_geometric.profile import (count_parameters, get_cpu_memory_from_gc,
-                                     get_data_size, get_gpu_memory_from_gc,
-                                     get_gpu_memory_from_ipex,
-                                     get_gpu_memory_from_nvidia_smi,
-                                     get_model_size)
-from torch_geometric.profile.utils import (byte_to_megabyte,
-                                           medibyte_to_megabyte)
+from torch_geometric.profile import (
+    count_parameters,
+    get_cpu_memory_from_gc,
+    get_data_size,
+    get_gpu_memory_from_gc,
+    get_gpu_memory_from_ipex,
+    get_gpu_memory_from_nvidia_smi,
+    get_model_size,
+)
+from torch_geometric.profile.utils import (
+    byte_to_megabyte,
+    medibyte_to_megabyte,
+)
 from torch_geometric.testing import onlyCUDA, onlyXPU, withPackage
 from torch_geometric.typing import SparseTensor
 

@@ -5,8 +5,11 @@ import intel_extension_for_pytorch as ipex
 import oneccl_bindings_for_pytorch  # noqa
 import torch.distributed as dist
 
-from benchmark.multi_gpu.training.common import (get_predefined_args, run,
-                                                 supported_sets)
+from benchmark.multi_gpu.training.common import (
+    get_predefined_args,
+    run,
+    supported_sets,
+)
 from benchmark.utils import get_dataset
 
 

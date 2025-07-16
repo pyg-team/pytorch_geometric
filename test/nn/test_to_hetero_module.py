@@ -3,8 +3,10 @@ import torch
 
 from torch_geometric.nn.conv import SAGEConv
 from torch_geometric.nn.dense import Linear
-from torch_geometric.nn.to_hetero_module import (ToHeteroLinear,
-                                                 ToHeteroMessagePassing)
+from torch_geometric.nn.to_hetero_module import (
+    ToHeteroLinear,
+    ToHeteroMessagePassing,
+)
 
 
 @pytest.mark.parametrize('LinearCls', [torch.nn.Linear, Linear])

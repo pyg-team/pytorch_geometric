@@ -3,8 +3,13 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import MLPAggregation, SAGEConv
-from torch_geometric.testing import (assert_module, is_full_test, onlyLinux,
-                                     withDevice, withPackage)
+from torch_geometric.testing import (
+    assert_module,
+    is_full_test,
+    onlyLinux,
+    withDevice,
+    withPackage,
+)
 from torch_geometric.typing import SparseTensor
 
 

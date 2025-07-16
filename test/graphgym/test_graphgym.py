@@ -8,16 +8,24 @@ import torch
 from torch_geometric import seed_everything
 from torch_geometric.graphgym import register
 from torch_geometric.graphgym.checkpoint import get_ckpt_dir
-from torch_geometric.graphgym.config import (cfg, dump_cfg, load_cfg,
-                                             set_out_dir, set_run_dir)
+from torch_geometric.graphgym.config import (
+    cfg,
+    dump_cfg,
+    load_cfg,
+    set_out_dir,
+    set_run_dir,
+)
 from torch_geometric.graphgym.loader import create_loader
 from torch_geometric.graphgym.logger import LoggerCallback, set_printing
 from torch_geometric.graphgym.model_builder import create_model
 from torch_geometric.graphgym.models.gnn import FeatureEncoder, GNNStackStage
 from torch_geometric.graphgym.models.head import GNNNodeHead
 from torch_geometric.graphgym.train import GraphGymDataModule, train
-from torch_geometric.graphgym.utils import (agg_runs, auto_select_device,
-                                            params_count)
+from torch_geometric.graphgym.utils import (
+    agg_runs,
+    auto_select_device,
+    params_count,
+)
 from torch_geometric.testing import onlyLinux, onlyOnline, withPackage
 
 num_trivial_metric_calls = 0

@@ -31,8 +31,11 @@ from datetime import timedelta
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
-from cugraph.gnn import (cugraph_comms_create_unique_id, cugraph_comms_init,
-                         cugraph_comms_shutdown)
+from cugraph.gnn import (
+    cugraph_comms_create_unique_id,
+    cugraph_comms_init,
+    cugraph_comms_shutdown,
+)
 from ogb.nodeproppred import PygNodePropPredDataset
 from pylibwholegraph.torch.initialize import finalize as wm_finalize
 from pylibwholegraph.torch.initialize import init as wm_init

@@ -10,8 +10,13 @@ from torch_geometric import is_compiling
 from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import (Adj, OptTensor, SparseTensor, pyg_lib,
-                                    torch_sparse)
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    SparseTensor,
+    pyg_lib,
+    torch_sparse,
+)
 from torch_geometric.utils import index_sort, one_hot, scatter, spmm
 
 

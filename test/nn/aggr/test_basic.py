@@ -2,10 +2,17 @@ import pytest
 import torch
 
 import torch_geometric.typing
-from torch_geometric.nn import (MaxAggregation, MeanAggregation,
-                                MinAggregation, MulAggregation,
-                                PowerMeanAggregation, SoftmaxAggregation,
-                                StdAggregation, SumAggregation, VarAggregation)
+from torch_geometric.nn import (
+    MaxAggregation,
+    MeanAggregation,
+    MinAggregation,
+    MulAggregation,
+    PowerMeanAggregation,
+    SoftmaxAggregation,
+    StdAggregation,
+    SumAggregation,
+    VarAggregation,
+)
 
 
 def test_validate():

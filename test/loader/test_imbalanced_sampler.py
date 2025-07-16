@@ -4,8 +4,11 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
-from torch_geometric.loader import (DataLoader, ImbalancedSampler,
-                                    NeighborLoader)
+from torch_geometric.loader import (
+    DataLoader,
+    ImbalancedSampler,
+    NeighborLoader,
+)
 from torch_geometric.testing import onlyNeighborSampler
 
 

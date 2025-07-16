@@ -4,8 +4,11 @@ import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.sampler.base import NodeSamplerInput, SamplerOutput
 from torch_geometric.sampler.neighbor_sampler import NeighborSampler
-from torch_geometric.testing import (MyFeatureStore, MyGraphStore,
-                                     onlyNeighborSampler)
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    onlyNeighborSampler,
+)
 
 
 def _init_sample_graph(hetero=False):

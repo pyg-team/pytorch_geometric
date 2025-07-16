@@ -7,8 +7,12 @@ import torch
 from torch import Tensor
 from tqdm import tqdm
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, scatter
 

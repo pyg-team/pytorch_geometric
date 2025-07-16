@@ -30,8 +30,13 @@ from tqdm import tqdm
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import (MLP, HeteroConv, LayerNorm, PositionalEncoding,
-                                SAGEConv)
+from torch_geometric.nn import (
+    MLP,
+    HeteroConv,
+    LayerNorm,
+    PositionalEncoding,
+    SAGEConv,
+)
 from torch_geometric.seed import seed_everything
 from torch_geometric.typing import EdgeType, NodeType
 

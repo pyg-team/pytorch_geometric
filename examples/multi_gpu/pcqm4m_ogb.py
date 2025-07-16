@@ -19,9 +19,14 @@ from torch_geometric.data import Data
 from torch_geometric.datasets import PCQM4Mv2
 from torch_geometric.io import fs
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import (GlobalAttention, MessagePassing, Set2Set,
-                                global_add_pool, global_max_pool,
-                                global_mean_pool)
+from torch_geometric.nn import (
+    GlobalAttention,
+    MessagePassing,
+    Set2Set,
+    global_add_pool,
+    global_max_pool,
+    global_mean_pool,
+)
 from torch_geometric.utils import degree
 
 try:

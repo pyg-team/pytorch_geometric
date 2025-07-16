@@ -9,8 +9,12 @@ from torch import Tensor
 from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
 from torch_geometric.distributed.partition import load_partition_info
-from torch_geometric.distributed.rpc import (RPCCallBase, RPCRouter, rpc_async,
-                                             rpc_register)
+from torch_geometric.distributed.rpc import (
+    RPCCallBase,
+    RPCRouter,
+    rpc_async,
+    rpc_register,
+)
 from torch_geometric.io import fs
 from torch_geometric.typing import EdgeType, NodeOrEdgeType, NodeType
 

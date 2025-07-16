@@ -8,8 +8,10 @@ import torch
 import tqdm
 
 from torch_geometric.data import Data
-from torch_geometric.datasets.web_qsp_dataset import (preprocess_triplet,
-                                                      retrieval_via_pcst)
+from torch_geometric.datasets.web_qsp_dataset import (
+    preprocess_triplet,
+    retrieval_via_pcst,
+)
 from torch_geometric.loader import RAGQueryLoader
 from torch_geometric.nn.nlp import SentenceTransformer
 

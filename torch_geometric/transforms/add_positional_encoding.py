@@ -8,10 +8,16 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import (get_laplacian, get_self_loop_attr,
-                                   is_torch_sparse_tensor, scatter,
-                                   to_edge_index, to_scipy_sparse_matrix,
-                                   to_torch_coo_tensor, to_torch_csr_tensor)
+from torch_geometric.utils import (
+    get_laplacian,
+    get_self_loop_attr,
+    is_torch_sparse_tensor,
+    scatter,
+    to_edge_index,
+    to_scipy_sparse_matrix,
+    to_torch_coo_tensor,
+    to_torch_csr_tensor,
+)
 
 
 def add_node_attr(

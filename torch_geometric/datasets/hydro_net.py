@@ -11,8 +11,12 @@ import numpy as np
 import torch
 from torch.utils.data import ConcatDataset, Subset
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.data.data import BaseData
 
 

@@ -2,8 +2,18 @@ import os.path as osp
 import warnings
 from abc import abstractmethod
 from inspect import Parameter
-from typing import (Any, Callable, Dict, Final, List, Optional, OrderedDict,
-                    Set, Tuple, Union)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Final,
+    List,
+    Optional,
+    OrderedDict,
+    Set,
+    Tuple,
+    Union,
+)
 
 import torch
 from torch import Tensor
@@ -16,8 +26,11 @@ from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.template import module_from_template
 from torch_geometric.typing import Adj, Size, SparseTensor
-from torch_geometric.utils import (is_sparse, is_torch_sparse_tensor,
-                                   to_edge_index)
+from torch_geometric.utils import (
+    is_sparse,
+    is_torch_sparse_tensor,
+    to_edge_index,
+)
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 HookDict = OrderedDict[int, Callable]

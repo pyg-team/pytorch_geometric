@@ -9,13 +9,23 @@ from torch import Tensor, tensor
 
 import torch_geometric
 from torch_geometric import EdgeIndex, Index
-from torch_geometric.edge_index import (ReduceType, SortReturnType,
-                                        _scatter_spmm, _torch_sparse_spmm,
-                                        _TorchSPMM, set_tuple_item)
+from torch_geometric.edge_index import (
+    ReduceType,
+    SortReturnType,
+    _scatter_spmm,
+    _torch_sparse_spmm,
+    _TorchSPMM,
+    set_tuple_item,
+)
 from torch_geometric.io import fs
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import (onlyCUDA, onlyLinux, withCUDA,
-                                     withoutExtensions, withPackage)
+from torch_geometric.testing import (
+    onlyCUDA,
+    onlyLinux,
+    withCUDA,
+    withoutExtensions,
+    withPackage,
+)
 from torch_geometric.typing import INDEX_DTYPES, SparseTensor
 from torch_geometric.utils import scatter
 

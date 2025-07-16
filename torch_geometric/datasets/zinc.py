@@ -6,8 +6,12 @@ from typing import Callable, List, Optional
 import torch
 from tqdm import tqdm
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import fs
 
 

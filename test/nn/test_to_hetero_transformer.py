@@ -8,11 +8,22 @@ from torch.nn import Linear, ReLU, Sequential
 
 import torch_geometric.typing
 from torch_geometric.datasets import FakeHeteroDataset
-from torch_geometric.nn import (GAT, BatchNorm, GATv2Conv, GCNConv, GINEConv,
-                                GraphSAGE)
+from torch_geometric.nn import (
+    GAT,
+    BatchNorm,
+    GATv2Conv,
+    GCNConv,
+    GINEConv,
+    GraphSAGE,
+)
 from torch_geometric.nn import Linear as LazyLinear
-from torch_geometric.nn import (MeanAggregation, MessagePassing, RGCNConv,
-                                SAGEConv, to_hetero)
+from torch_geometric.nn import (
+    MeanAggregation,
+    MessagePassing,
+    RGCNConv,
+    SAGEConv,
+    to_hetero,
+)
 from torch_geometric.testing import onlyCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import dropout_edge

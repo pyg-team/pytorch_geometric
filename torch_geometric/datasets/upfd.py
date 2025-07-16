@@ -5,8 +5,12 @@ from typing import Callable, List, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_google_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_google_url,
+    extract_zip,
+)
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import coalesce, cumsum
 

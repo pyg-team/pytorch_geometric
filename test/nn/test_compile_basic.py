@@ -1,8 +1,12 @@
 import torch
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import (onlyFullTest, onlyLinux, withDevice,
-                                     withPackage)
+from torch_geometric.testing import (
+    onlyFullTest,
+    onlyLinux,
+    withDevice,
+    withPackage,
+)
 from torch_geometric.utils import scatter
 
 

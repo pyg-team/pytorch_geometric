@@ -5,8 +5,13 @@ import torch
 
 from torch_geometric.explain import Explainer, Explanation
 from torch_geometric.explain.algorithm import CaptumExplainer
-from torch_geometric.explain.config import (MaskType, ModelConfig, ModelMode,
-                                            ModelReturnType, ModelTaskLevel)
+from torch_geometric.explain.config import (
+    MaskType,
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+    ModelTaskLevel,
+)
 from torch_geometric.nn import GCNConv, global_add_pool
 from torch_geometric.testing import withPackage
 

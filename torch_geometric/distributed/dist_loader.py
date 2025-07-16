@@ -8,8 +8,11 @@ import torch.multiprocessing as mp
 
 from torch_geometric.distributed import DistNeighborSampler
 from torch_geometric.distributed.dist_context import DistContext
-from torch_geometric.distributed.rpc import (global_barrier, init_rpc,
-                                             shutdown_rpc)
+from torch_geometric.distributed.rpc import (
+    global_barrier,
+    init_rpc,
+    shutdown_rpc,
+)
 from torch_geometric.loader.base import DataLoaderIterator
 
 

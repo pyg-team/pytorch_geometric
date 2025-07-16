@@ -3,8 +3,18 @@ import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from itertools import chain
-from typing import (Any, Callable, Dict, Iterable, List, NamedTuple, Optional,
-                    Tuple, Union, overload)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+    overload,
+)
 
 import numpy as np
 import torch
@@ -14,13 +24,23 @@ from typing_extensions import Self
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
 from torch_geometric.data.graph_store import EdgeLayout
-from torch_geometric.data.storage import (BaseStorage, EdgeStorage,
-                                          GlobalStorage, NodeStorage)
+from torch_geometric.data.storage import (
+    BaseStorage,
+    EdgeStorage,
+    GlobalStorage,
+    NodeStorage,
+)
 from torch_geometric.deprecation import deprecated
 from torch_geometric.index import Index
-from torch_geometric.typing import (EdgeTensorType, EdgeType,
-                                    FeatureTensorType, NodeType, OptTensor,
-                                    SparseTensor, TensorFrame)
+from torch_geometric.typing import (
+    EdgeTensorType,
+    EdgeType,
+    FeatureTensorType,
+    NodeType,
+    OptTensor,
+    SparseTensor,
+    TensorFrame,
+)
 from torch_geometric.utils import is_sparse, select, subgraph
 
 

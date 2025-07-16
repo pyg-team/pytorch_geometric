@@ -6,11 +6,13 @@ from torch import Tensor
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from torch_geometric.nn.lr_scheduler import (ConstantWithWarmupLR,
-                                             CosineWithWarmupLR,
-                                             CosineWithWarmupRestartsLR,
-                                             LinearWithWarmupLR,
-                                             PolynomialWithWarmupLR)
+from torch_geometric.nn.lr_scheduler import (
+    ConstantWithWarmupLR,
+    CosineWithWarmupLR,
+    CosineWithWarmupRestartsLR,
+    LinearWithWarmupLR,
+    PolynomialWithWarmupLR,
+)
 from torch_geometric.resolver import normalize_string, resolver
 
 try:

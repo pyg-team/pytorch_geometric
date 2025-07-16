@@ -7,11 +7,16 @@ from torch.nn import ReLU, Sequential
 
 from torch_geometric.explain import Explanation, HeteroExplanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.algorithm.utils import (clear_masks,
-                                                     set_hetero_masks,
-                                                     set_masks)
-from torch_geometric.explain.config import (ExplanationType, ModelMode,
-                                            ModelTaskLevel)
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
+from torch_geometric.explain.config import (
+    ExplanationType,
+    ModelMode,
+    ModelTaskLevel,
+)
 from torch_geometric.nn import HANConv, HeteroConv, HGTConv, Linear
 from torch_geometric.nn.inits import reset
 from torch_geometric.typing import EdgeType, NodeType

@@ -3,8 +3,11 @@ import os.path as osp
 import torch
 
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
-from torch_geometric.distributed import (LocalFeatureStore, LocalGraphStore,
-                                         Partitioner)
+from torch_geometric.distributed import (
+    LocalFeatureStore,
+    LocalGraphStore,
+    Partitioner,
+)
 from torch_geometric.io import fs
 from torch_geometric.testing import onlyDistributedTest, withMETIS
 from torch_geometric.typing import EdgeTypeStr

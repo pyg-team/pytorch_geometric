@@ -3,8 +3,16 @@ import inspect
 import os.path as osp
 import random
 import sys
-from typing import (Any, Callable, Dict, List, NamedTuple, Optional, Tuple,
-                    Union)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 from torch import Tensor

@@ -6,8 +6,11 @@ from torch import Tensor
 from torch_geometric.nn import GCNConv, TopKPooling
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import OptTensor, PairTensor
-from torch_geometric.utils import (add_self_loops, remove_self_loops,
-                                   to_torch_csr_tensor)
+from torch_geometric.utils import (
+    add_self_loops,
+    remove_self_loops,
+    to_torch_csr_tensor,
+)
 from torch_geometric.utils.repeat import repeat
 
 

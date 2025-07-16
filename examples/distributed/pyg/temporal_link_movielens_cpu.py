@@ -10,8 +10,12 @@ from torch.nn import Linear
 from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
-from torch_geometric.distributed import (DistContext, DistLinkNeighborLoader,
-                                         LocalFeatureStore, LocalGraphStore)
+from torch_geometric.distributed import (
+    DistContext,
+    DistLinkNeighborLoader,
+    LocalFeatureStore,
+    LocalGraphStore,
+)
 from torch_geometric.io import fs
 from torch_geometric.nn import SAGEConv, to_hetero
 

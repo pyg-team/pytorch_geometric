@@ -5,8 +5,12 @@ from torch import Tensor
 from torch_geometric import EdgeIndex
 from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import (onlyFullTest, onlyLinux, withDevice,
-                                     withPackage)
+from torch_geometric.testing import (
+    onlyFullTest,
+    onlyLinux,
+    withDevice,
+    withPackage,
+)
 from torch_geometric.utils import scatter
 
 

@@ -10,10 +10,19 @@ from torch.nn import Linear
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
 from torch_geometric.nn import GATConv, MessagePassing, aggr
-from torch_geometric.typing import (Adj, OptPairTensor, OptTensor, Size,
-                                    SparseTensor)
-from torch_geometric.utils import (add_self_loops, scatter, spmm,
-                                   to_torch_csc_tensor)
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+)
+from torch_geometric.utils import (
+    add_self_loops,
+    scatter,
+    spmm,
+    to_torch_csc_tensor,
+)
 
 
 class MyConv(MessagePassing):

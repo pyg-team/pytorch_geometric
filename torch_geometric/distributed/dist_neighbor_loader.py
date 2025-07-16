@@ -2,9 +2,13 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.distributed import (DistContext, DistLoader,
-                                         DistNeighborSampler,
-                                         LocalFeatureStore, LocalGraphStore)
+from torch_geometric.distributed import (
+    DistContext,
+    DistLoader,
+    DistNeighborSampler,
+    LocalFeatureStore,
+    LocalGraphStore,
+)
 from torch_geometric.loader import NodeLoader
 from torch_geometric.sampler.base import SubgraphType
 from torch_geometric.typing import EdgeType, InputNodes, OptTensor

@@ -3,8 +3,14 @@ import os.path as osp
 from typing import Any, Dict, Optional
 
 import torch
-from torch.nn import (BatchNorm1d, Embedding, Linear, ModuleList, ReLU,
-                      Sequential)
+from torch.nn import (
+    BatchNorm1d,
+    Embedding,
+    Linear,
+    ModuleList,
+    ReLU,
+    Sequential,
+)
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 import torch_geometric.transforms as T
