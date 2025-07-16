@@ -10,12 +10,8 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.utils.data import DataLoader
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_tar,
-)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar)
 from torch_geometric.io import fs
 
 

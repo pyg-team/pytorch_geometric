@@ -3,13 +3,8 @@ import random
 import torch
 from torch import Tensor
 
-from torch_geometric.testing import (
-    get_random_edge_index,
-    onlyFullTest,
-    onlyLinux,
-    withDevice,
-    withPackage,
-)
+from torch_geometric.testing import (get_random_edge_index, onlyFullTest,
+                                     onlyLinux, withDevice, withPackage)
 from torch_geometric.utils import scatter
 
 

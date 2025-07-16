@@ -3,11 +3,8 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.nn import DimeNet, DimeNetPlusPlus
-from torch_geometric.nn.models.dimenet import (
-    BesselBasisLayer,
-    Envelope,
-    ResidualLayer,
-)
+from torch_geometric.nn.models.dimenet import (BesselBasisLayer, Envelope,
+                                               ResidualLayer)
 from torch_geometric.testing import is_full_test, withPackage
 
 

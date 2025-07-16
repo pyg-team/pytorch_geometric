@@ -17,11 +17,8 @@ from itertools import chain, tee
 
 import torch
 from torch.utils.data import IterDataPipe
-from torch.utils.data.datapipes.iter import (
-    FileLister,
-    FileOpener,
-    IterableWrapper,
-)
+from torch.utils.data.datapipes.iter import (FileLister, FileOpener,
+                                             IterableWrapper)
 
 from torch_geometric.data import Data, download_url, extract_zip
 

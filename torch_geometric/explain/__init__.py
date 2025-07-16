@@ -1,7 +1,7 @@
-from .config import ExplainerConfig, ModelConfig, ThresholdConfig
-from .explanation import Explanation, HeteroExplanation
 from .algorithm import *  # noqa
+from .config import ExplainerConfig, ModelConfig, ThresholdConfig
 from .explainer import Explainer
+from .explanation import Explanation, HeteroExplanation
 from .metric import *  # noqa
 
 __all__ = [

@@ -1,12 +1,8 @@
 import os.path as osp
 from typing import Callable, Optional
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_tar,
-)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar)
 from torch_geometric.io import fs
 
 

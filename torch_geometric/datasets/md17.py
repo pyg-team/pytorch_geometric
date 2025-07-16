@@ -5,13 +5,8 @@ from typing import Callable, List, Optional, Union
 import numpy as np
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_tar,
-    extract_zip,
-)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar, extract_zip)
 
 
 class MD17(InMemoryDataset):

@@ -4,13 +4,8 @@ from typing import Callable, Dict, List, Optional
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_tar,
-    extract_zip,
-)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar, extract_zip)
 from torch_geometric.io import fs
 
 

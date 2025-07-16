@@ -1,10 +1,7 @@
 import pytest
 
-from torch_geometric import (
-    experimental_mode,
-    is_experimental_mode_enabled,
-    set_experimental_mode,
-)
+from torch_geometric import (experimental_mode, is_experimental_mode_enabled,
+                             set_experimental_mode)
 
 
 @pytest.mark.parametrize('options', ['disable_dynamic_shapes'])

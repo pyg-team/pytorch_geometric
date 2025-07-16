@@ -5,12 +5,8 @@ from typing import Callable, List, Optional, Union
 
 import torch
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 from torch_geometric.io import fs, read_txt_array
 
 

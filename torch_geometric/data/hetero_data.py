@@ -15,25 +15,12 @@ from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
-from torch_geometric.typing import (
-    DEFAULT_REL,
-    EdgeTensorType,
-    EdgeType,
-    FeatureTensorType,
-    NodeOrEdgeType,
-    NodeType,
-    QueryType,
-    SparseTensor,
-    TensorFrame,
-    torch_frame,
-)
-from torch_geometric.utils import (
-    bipartite_subgraph,
-    contains_isolated_nodes,
-    is_sparse,
-    is_undirected,
-    mask_select,
-)
+from torch_geometric.typing import (DEFAULT_REL, EdgeTensorType, EdgeType,
+                                    FeatureTensorType, NodeOrEdgeType,
+                                    NodeType, QueryType, SparseTensor,
+                                    TensorFrame, torch_frame)
+from torch_geometric.utils import (bipartite_subgraph, contains_isolated_nodes,
+                                   is_sparse, is_undirected, mask_select)
 
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 

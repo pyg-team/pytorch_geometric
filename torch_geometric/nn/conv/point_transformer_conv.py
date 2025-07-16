@@ -5,13 +5,8 @@ from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import reset
-from torch_geometric.typing import (
-    Adj,
-    OptTensor,
-    PairTensor,
-    SparseTensor,
-    torch_sparse,
-)
+from torch_geometric.typing import (Adj, OptTensor, PairTensor, SparseTensor,
+                                    torch_sparse)
 from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 

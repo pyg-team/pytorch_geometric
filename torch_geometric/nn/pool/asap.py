@@ -7,15 +7,9 @@ from torch.nn import Linear
 
 from torch_geometric.nn import LEConv
 from torch_geometric.nn.pool.select import SelectTopK
-from torch_geometric.utils import (
-    add_remaining_self_loops,
-    remove_self_loops,
-    scatter,
-    softmax,
-    to_edge_index,
-    to_torch_coo_tensor,
-    to_torch_csr_tensor,
-)
+from torch_geometric.utils import (add_remaining_self_loops, remove_self_loops,
+                                   scatter, softmax, to_edge_index,
+                                   to_torch_coo_tensor, to_torch_csr_tensor)
 
 
 class ASAPooling(torch.nn.Module):

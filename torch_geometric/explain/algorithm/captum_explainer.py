@@ -8,13 +8,11 @@ from torch import Tensor
 
 from torch_geometric.explain import Explanation, HeteroExplanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.algorithm.captum import (
-    CaptumHeteroModel,
-    CaptumModel,
-    MaskLevelType,
-    convert_captum_output,
-    to_captum_input,
-)
+from torch_geometric.explain.algorithm.captum import (CaptumHeteroModel,
+                                                      CaptumModel,
+                                                      MaskLevelType,
+                                                      convert_captum_output,
+                                                      to_captum_input)
 from torch_geometric.explain.config import MaskType, ModelMode, ModelReturnType
 from torch_geometric.typing import EdgeType, NodeType
 

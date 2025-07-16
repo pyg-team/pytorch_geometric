@@ -5,20 +5,10 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.explain import Explanation, HeteroExplanation
-from torch_geometric.explain.config import (
-    MaskType,
-    ModelConfig,
-    ModelMode,
-    ModelReturnType,
-    ModelTaskLevel,
-)
-from torch_geometric.nn import (
-    HANConv,
-    HGTConv,
-    SAGEConv,
-    global_add_pool,
-    to_hetero,
-)
+from torch_geometric.explain.config import (MaskType, ModelConfig, ModelMode,
+                                            ModelReturnType, ModelTaskLevel)
+from torch_geometric.nn import (HANConv, HGTConv, SAGEConv, global_add_pool,
+                                to_hetero)
 from torch_geometric.nn.conv import GCNConv, HeteroConv
 from torch_geometric.testing import get_random_edge_index
 

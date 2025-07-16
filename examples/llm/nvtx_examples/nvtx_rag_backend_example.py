@@ -8,10 +8,8 @@ import torch
 
 from torch_geometric.data import Data, get_features_for_triplets_groups
 from torch_geometric.datasets import WebQSPDataset
-from torch_geometric.datasets.web_qsp_dataset import (
-    preprocess_triplet,
-    retrieval_via_pcst,
-)
+from torch_geometric.datasets.web_qsp_dataset import (preprocess_triplet,
+                                                      retrieval_via_pcst)
 from torch_geometric.loader import rag_loader
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.profile.nvtx import nvtxit

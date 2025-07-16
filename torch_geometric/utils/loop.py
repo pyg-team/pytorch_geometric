@@ -7,12 +7,9 @@ from torch import Tensor
 from torch_geometric import EdgeIndex
 from torch_geometric.utils import scatter
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_geometric.utils.sparse import (
-    is_torch_sparse_tensor,
-    to_edge_index,
-    to_torch_coo_tensor,
-    to_torch_csr_tensor,
-)
+from torch_geometric.utils.sparse import (is_torch_sparse_tensor,
+                                          to_edge_index, to_torch_coo_tensor,
+                                          to_torch_csr_tensor)
 
 if typing.TYPE_CHECKING:
     from typing import overload

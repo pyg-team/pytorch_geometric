@@ -1,32 +1,31 @@
 from collections import defaultdict
 
 import torch
+
+import torch_geometric.data
+import torch_geometric.datasets
+import torch_geometric.explain
+import torch_geometric.loader
+import torch_geometric.nn
+import torch_geometric.profile
+import torch_geometric.sampler
+import torch_geometric.transforms
 import torch_geometric.typing
+import torch_geometric.utils
 
 from ._compile import compile, is_compiling
 from ._onnx import is_in_onnx_export
-from .index import Index
+from .debug import debug, is_debug_enabled, set_debug
+from .device import device, is_mps_available, is_xpu_available
 from .edge_index import EdgeIndex
-from .hash_tensor import HashTensor
-from .seed import seed_everything
-from .home import get_home_dir, set_home_dir
-from .device import is_mps_available, is_xpu_available, device
-from .isinstance import is_torch_instance
-from .debug import is_debug_enabled, debug, set_debug
-
-import torch_geometric.utils
-import torch_geometric.data
-import torch_geometric.sampler
-import torch_geometric.loader
-import torch_geometric.transforms
-import torch_geometric.datasets
-import torch_geometric.nn
-import torch_geometric.explain
-import torch_geometric.profile
-
-from .experimental import (is_experimental_mode_enabled, experimental_mode,
+from .experimental import (experimental_mode, is_experimental_mode_enabled,
                            set_experimental_mode)
+from .hash_tensor import HashTensor
+from .home import get_home_dir, set_home_dir
+from .index import Index
+from .isinstance import is_torch_instance
 from .lazy_loader import LazyLoader
+from .seed import seed_everything
 
 contrib = LazyLoader('contrib', globals(), 'torch_geometric.contrib')
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')

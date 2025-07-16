@@ -9,12 +9,8 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import (
-    coalesce,
-    index_to_mask,
-    remove_self_loops,
-    to_torch_csr_tensor,
-)
+from torch_geometric.utils import (coalesce, index_to_mask, remove_self_loops,
+                                   to_torch_csr_tensor)
 
 try:
     import cPickle as pickle

@@ -55,11 +55,8 @@ class GRetriever(torch.nn.Module):
         self.word_embedding = self.llm.word_embedding
         self.llm_generator = self.llm.llm
         if use_lora:
-            from peft import (
-                LoraConfig,
-                get_peft_model,
-                prepare_model_for_kbit_training,
-            )
+            from peft import (LoraConfig, get_peft_model,
+                              prepare_model_for_kbit_training)
             self.llm_generator = prepare_model_for_kbit_training(
                 self.llm_generator)
             lora_r: int = 8

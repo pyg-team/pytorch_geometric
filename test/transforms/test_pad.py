@@ -7,13 +7,9 @@ import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.transforms import Pad
-from torch_geometric.transforms.pad import (
-    AttrNamePadding,
-    EdgeTypePadding,
-    NodeTypePadding,
-    Padding,
-    UniformPadding,
-)
+from torch_geometric.transforms.pad import (AttrNamePadding, EdgeTypePadding,
+                                            NodeTypePadding, Padding,
+                                            UniformPadding)
 from torch_geometric.typing import EdgeType, NodeType
 
 

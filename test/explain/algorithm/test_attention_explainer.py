@@ -1,24 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.explain import (
-    AttentionExplainer,
-    Explainer,
-    HeteroExplanation,
-)
-from torch_geometric.explain.config import (
-    ExplanationType,
-    MaskType,
-    ModelConfig,
-    ModelMode,
-)
-from torch_geometric.nn import (
-    AttentiveFP,
-    GATConv,
-    GATv2Conv,
-    TransformerConv,
-    to_hetero,
-)
+from torch_geometric.explain import (AttentionExplainer, Explainer,
+                                     HeteroExplanation)
+from torch_geometric.explain.config import (ExplanationType, MaskType,
+                                            ModelConfig, ModelMode)
+from torch_geometric.nn import (AttentiveFP, GATConv, GATv2Conv,
+                                TransformerConv, to_hetero)
 from torch_geometric.nn.conv import HeteroConv
 
 
