@@ -10,12 +10,8 @@ from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
 from torch_geometric.data import HeteroData
-from torch_geometric.distributed import (
-    DistContext,
-    DistNeighborLoader,
-    LocalFeatureStore,
-    LocalGraphStore,
-)
+from torch_geometric.distributed import (DistContext, DistNeighborLoader,
+                                         LocalFeatureStore, LocalGraphStore)
 from torch_geometric.io import fs
 from torch_geometric.nn import GraphSAGE, to_hetero
 

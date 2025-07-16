@@ -8,36 +8,19 @@ import torch
 import torch.multiprocessing as mp
 from torch import Tensor
 
-from torch_geometric.distributed import (
-    DistContext,
-    LocalFeatureStore,
-    LocalGraphStore,
-)
-from torch_geometric.distributed.event_loop import (
-    ConcurrentEventLoop,
-    to_asyncio_future,
-)
-from torch_geometric.distributed.rpc import (
-    RPCCallBase,
-    RPCRouter,
-    rpc_async,
-    rpc_partition_to_workers,
-    rpc_register,
-)
-from torch_geometric.distributed.utils import (
-    BatchDict,
-    DistEdgeHeteroSamplerInput,
-    NodeDict,
-    remove_duplicates,
-)
-from torch_geometric.sampler import (
-    EdgeSamplerInput,
-    HeteroSamplerOutput,
-    NegativeSampling,
-    NeighborSampler,
-    NodeSamplerInput,
-    SamplerOutput,
-)
+from torch_geometric.distributed import (DistContext, LocalFeatureStore,
+                                         LocalGraphStore)
+from torch_geometric.distributed.event_loop import (ConcurrentEventLoop,
+                                                    to_asyncio_future)
+from torch_geometric.distributed.rpc import (RPCCallBase, RPCRouter, rpc_async,
+                                             rpc_partition_to_workers,
+                                             rpc_register)
+from torch_geometric.distributed.utils import (BatchDict,
+                                               DistEdgeHeteroSamplerInput,
+                                               NodeDict, remove_duplicates)
+from torch_geometric.sampler import (EdgeSamplerInput, HeteroSamplerOutput,
+                                     NegativeSampling, NeighborSampler,
+                                     NodeSamplerInput, SamplerOutput)
 from torch_geometric.sampler.base import NumNeighbors, SubgraphType
 from torch_geometric.sampler.neighbor_sampler import neg_sample
 from torch_geometric.sampler.utils import remap_keys

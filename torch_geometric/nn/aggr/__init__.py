@@ -1,31 +1,23 @@
-from .base import Aggregation
-from .multi import MultiAggregation
-from .basic import (
-    MeanAggregation,
-    SumAggregation,
-    MaxAggregation,
-    MinAggregation,
-    MulAggregation,
-    VarAggregation,
-    StdAggregation,
-    SoftmaxAggregation,
-    PowerMeanAggregation,
-)
-from .quantile import MedianAggregation, QuantileAggregation
-from .lstm import LSTMAggregation
-from .gru import GRUAggregation
-from .set2set import Set2Set
-from .scaler import DegreeScalerAggregation
-from .equilibrium import EquilibriumAggregation
-from .sort import SortAggregation
-from .gmt import GraphMultisetTransformer
 from .attention import AttentionalAggregation
-from .mlp import MLPAggregation
+from .base import Aggregation
+from .basic import (MaxAggregation, MeanAggregation, MinAggregation,
+                    MulAggregation, PowerMeanAggregation, SoftmaxAggregation,
+                    StdAggregation, SumAggregation, VarAggregation)
 from .deep_sets import DeepSetsAggregation
-from .set_transformer import SetTransformerAggregation
+from .equilibrium import EquilibriumAggregation
+from .gmt import GraphMultisetTransformer
+from .gru import GRUAggregation
 from .lcm import LCMAggregation
-from .variance_preserving import VariancePreservingAggregation
+from .lstm import LSTMAggregation
+from .mlp import MLPAggregation
+from .multi import MultiAggregation
 from .patch_transformer import PatchTransformerAggregation
+from .quantile import MedianAggregation, QuantileAggregation
+from .scaler import DegreeScalerAggregation
+from .set2set import Set2Set
+from .set_transformer import SetTransformerAggregation
+from .sort import SortAggregation
+from .variance_preserving import VariancePreservingAggregation
 
 __all__ = classes = [
     'Aggregation',

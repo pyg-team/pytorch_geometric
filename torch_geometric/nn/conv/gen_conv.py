@@ -1,14 +1,8 @@
 from typing import List, Optional, Tuple, Union
 
 from torch import Tensor
-from torch.nn import (
-    BatchNorm1d,
-    Dropout,
-    InstanceNorm1d,
-    LayerNorm,
-    ReLU,
-    Sequential,
-)
+from torch.nn import (BatchNorm1d, Dropout, InstanceNorm1d, LayerNorm, ReLU,
+                      Sequential)
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing

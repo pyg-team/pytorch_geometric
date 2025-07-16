@@ -1,8 +1,8 @@
 from .base import MotifGenerator
 from .custom import CustomMotif
-from .house import HouseMotif
 from .cycle import CycleMotif
 from .grid import GridMotif
+from .house import HouseMotif
 
 __all__ = classes = [
     'MotifGenerator',

@@ -3,11 +3,8 @@ import torch
 
 from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
 from torch_geometric.testing import MyGraphStore, get_random_edge_index
-from torch_geometric.utils import (
-    to_torch_coo_tensor,
-    to_torch_csc_tensor,
-    to_torch_csr_tensor,
-)
+from torch_geometric.utils import (to_torch_coo_tensor, to_torch_csc_tensor,
+                                   to_torch_csr_tensor)
 
 
 def test_graph_store():

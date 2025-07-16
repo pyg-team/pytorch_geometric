@@ -1,16 +1,7 @@
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import (Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar,
+                    Union)
 
 import torch
 from torch import Tensor
@@ -20,12 +11,8 @@ from torch_geometric import EdgeIndex, Index
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
 from torch_geometric.edge_index import SortOrder
-from torch_geometric.typing import (
-    SparseTensor,
-    TensorFrame,
-    torch_frame,
-    torch_sparse,
-)
+from torch_geometric.typing import (SparseTensor, TensorFrame, torch_frame,
+                                    torch_sparse)
 from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 

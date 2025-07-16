@@ -3,13 +3,8 @@ from typing import Union
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import (
-    Adj,
-    OptPairTensor,
-    OptTensor,
-    Size,
-    SparseTensor,
-)
+from torch_geometric.typing import (Adj, OptPairTensor, OptTensor, Size,
+                                    SparseTensor)
 from torch_geometric.utils import scatter, spmm
 
 

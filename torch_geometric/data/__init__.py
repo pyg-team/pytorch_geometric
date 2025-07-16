@@ -1,24 +1,26 @@
 # flake8: noqa
 
 import torch
+
 import torch_geometric.typing
-
-from .feature_store import FeatureStore, TensorAttr
-from .graph_store import GraphStore, EdgeAttr, EdgeLayout
-from .data import Data
-from .hetero_data import HeteroData
-from .batch import Batch
-from .temporal import TemporalData
-from .database import Database, SQLiteDatabase, RocksDatabase
-from .dataset import Dataset
-from .in_memory_dataset import InMemoryDataset
-from .on_disk_dataset import OnDiskDataset
-from .makedirs import makedirs
-from .download import download_url, download_google_url
-from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
-from .large_graph_indexer import LargeGraphIndexer, TripletLike, get_features_for_triplets, get_features_for_triplets_groups
-
 from torch_geometric.lazy_loader import LazyLoader
+
+from .batch import Batch
+from .data import Data
+from .database import Database, RocksDatabase, SQLiteDatabase
+from .dataset import Dataset
+from .download import download_google_url, download_url
+from .extract import extract_bz2, extract_gz, extract_tar, extract_zip
+from .feature_store import FeatureStore, TensorAttr
+from .graph_store import EdgeAttr, EdgeLayout, GraphStore
+from .hetero_data import HeteroData
+from .in_memory_dataset import InMemoryDataset
+from .large_graph_indexer import (LargeGraphIndexer, TripletLike,
+                                  get_features_for_triplets,
+                                  get_features_for_triplets_groups)
+from .makedirs import makedirs
+from .on_disk_dataset import OnDiskDataset
+from .temporal import TemporalData
 
 data_classes = [
     'Data',
@@ -63,18 +65,13 @@ lightning = LazyLoader('lightning', globals(),
                        'torch_geometric.data.lightning')
 
 from torch_geometric.deprecation import deprecated
-from torch_geometric.loader import NeighborSampler
-from torch_geometric.loader import ClusterData
-from torch_geometric.loader import ClusterLoader
-from torch_geometric.loader import GraphSAINTSampler
-from torch_geometric.loader import GraphSAINTNodeSampler
-from torch_geometric.loader import GraphSAINTEdgeSampler
-from torch_geometric.loader import GraphSAINTRandomWalkSampler
-from torch_geometric.loader import ShaDowKHopSampler
-from torch_geometric.loader import RandomNodeLoader
-from torch_geometric.loader import DataLoader
-from torch_geometric.loader import DataListLoader
-from torch_geometric.loader import DenseDataLoader
+from torch_geometric.loader import (ClusterData, ClusterLoader, DataListLoader,
+                                    DataLoader, DenseDataLoader,
+                                    GraphSAINTEdgeSampler,
+                                    GraphSAINTNodeSampler,
+                                    GraphSAINTRandomWalkSampler,
+                                    GraphSAINTSampler, NeighborSampler,
+                                    RandomNodeLoader, ShaDowKHopSampler)
 
 # Serialization ###############################################################
 

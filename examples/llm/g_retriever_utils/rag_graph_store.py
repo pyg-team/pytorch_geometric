@@ -5,12 +5,8 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore
 from torch_geometric.distributed import LocalGraphStore
-from torch_geometric.sampler import (
-    HeteroSamplerOutput,
-    NeighborSampler,
-    NodeSamplerInput,
-    SamplerOutput,
-)
+from torch_geometric.sampler import (HeteroSamplerOutput, NeighborSampler,
+                                     NodeSamplerInput, SamplerOutput)
 from torch_geometric.sampler.neighbor_sampler import NumNeighborsType
 from torch_geometric.typing import EdgeTensorType, InputEdges, InputNodes
 

@@ -9,10 +9,8 @@ from torch.nn import Dropout, Linear, Sequential
 from torch_geometric.nn.attention import PerformerAttention
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
-from torch_geometric.nn.resolver import (
-    activation_resolver,
-    normalization_resolver,
-)
+from torch_geometric.nn.resolver import (activation_resolver,
+                                         normalization_resolver)
 from torch_geometric.typing import Adj
 from torch_geometric.utils import to_dense_batch
 

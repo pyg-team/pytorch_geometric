@@ -3,12 +3,8 @@ import torch
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import GPSE, GPSENodeEncoder
-from torch_geometric.nn.models.gpse import (
-    IdentityHead,
-    gpse_loss,
-    gpse_process,
-    process_batch_idx,
-)
+from torch_geometric.nn.models.gpse import (IdentityHead, gpse_loss,
+                                            gpse_process, process_batch_idx)
 from torch_geometric.testing import is_full_test
 from torch_geometric.transforms import VirtualNode
 

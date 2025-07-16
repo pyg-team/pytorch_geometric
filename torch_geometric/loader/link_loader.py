@@ -5,26 +5,16 @@ from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.loader.mixin import (
-    AffinityMixin,
-    LogMemoryMixin,
-    MultithreadingMixin,
-)
-from torch_geometric.loader.utils import (
-    filter_custom_hetero_store,
-    filter_custom_store,
-    filter_data,
-    filter_hetero_data,
-    get_edge_label_index,
-    infer_filter_per_worker,
-)
-from torch_geometric.sampler import (
-    BaseSampler,
-    EdgeSamplerInput,
-    HeteroSamplerOutput,
-    NegativeSampling,
-    SamplerOutput,
-)
+from torch_geometric.loader.mixin import (AffinityMixin, LogMemoryMixin,
+                                          MultithreadingMixin)
+from torch_geometric.loader.utils import (filter_custom_hetero_store,
+                                          filter_custom_store, filter_data,
+                                          filter_hetero_data,
+                                          get_edge_label_index,
+                                          infer_filter_per_worker)
+from torch_geometric.sampler import (BaseSampler, EdgeSamplerInput,
+                                     HeteroSamplerOutput, NegativeSampling,
+                                     SamplerOutput)
 from torch_geometric.typing import InputEdges, OptTensor
 
 

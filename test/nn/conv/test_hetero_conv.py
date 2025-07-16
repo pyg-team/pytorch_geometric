@@ -5,22 +5,11 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.datasets import FakeHeteroDataset
-from torch_geometric.nn import (
-    GATConv,
-    GCN2Conv,
-    GCNConv,
-    HeteroConv,
-    Linear,
-    MessagePassing,
-    SAGEConv,
-)
+from torch_geometric.nn import (GATConv, GCN2Conv, GCNConv, HeteroConv, Linear,
+                                MessagePassing, SAGEConv)
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import (
-    get_random_edge_index,
-    onlyLinux,
-    withDevice,
-    withPackage,
-)
+from torch_geometric.testing import (get_random_edge_index, onlyLinux,
+                                     withDevice, withPackage)
 
 
 @pytest.mark.parametrize('aggr', ['sum', 'mean', 'min', 'max', 'cat', None])

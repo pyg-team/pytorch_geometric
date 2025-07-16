@@ -5,14 +5,8 @@ from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import (
-    Adj,
-    OptPairTensor,
-    OptTensor,
-    Size,
-    SparseTensor,
-    torch_sparse,
-)
+from torch_geometric.typing import (Adj, OptPairTensor, OptTensor, Size,
+                                    SparseTensor, torch_sparse)
 from torch_geometric.utils import add_self_loops, spmm
 
 

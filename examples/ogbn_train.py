@@ -12,11 +12,8 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
-from torch_geometric.utils import (
-    add_self_loops,
-    remove_self_loops,
-    to_undirected,
-)
+from torch_geometric.utils import (add_self_loops, remove_self_loops,
+                                   to_undirected)
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter, )

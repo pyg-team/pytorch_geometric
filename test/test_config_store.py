@@ -1,15 +1,11 @@
 from typing import Any, Dict, List, Tuple
 
-from torch_geometric.config_store import (
-    class_from_dataclass,
-    clear_config_store,
-    dataclass_from_class,
-    fill_config_store,
-    get_config_store,
-    map_annotation,
-    register,
-    to_dataclass,
-)
+from torch_geometric.config_store import (class_from_dataclass,
+                                          clear_config_store,
+                                          dataclass_from_class,
+                                          fill_config_store, get_config_store,
+                                          map_annotation, register,
+                                          to_dataclass)
 from torch_geometric.testing import minPython, withPackage
 from torch_geometric.transforms import AddSelfLoops
 

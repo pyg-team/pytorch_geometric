@@ -3,11 +3,8 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.remote_backend_utils import num_nodes, size
-from torch_geometric.testing import (
-    MyFeatureStore,
-    MyGraphStore,
-    get_random_edge_index,
-)
+from torch_geometric.testing import (MyFeatureStore, MyGraphStore,
+                                     get_random_edge_index)
 
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])

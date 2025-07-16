@@ -1,21 +1,7 @@
 import functools
 from enum import Enum
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Literal,
-    NamedTuple,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    Union,
-    get_args,
-    overload,
-)
+from typing import (Any, Callable, Dict, Iterable, List, Literal, NamedTuple,
+                    Optional, Sequence, Tuple, Type, Union, get_args, overload)
 
 import numpy as np
 import torch

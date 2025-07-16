@@ -1,20 +1,8 @@
 import copy
 import os.path as osp
 import warnings
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    MutableSequence,
-    Optional,
-    Sequence,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import (Any, Callable, Dict, Iterable, List, Mapping,
+                    MutableSequence, Optional, Sequence, Tuple, Type, Union)
 
 import torch
 from torch import Tensor

@@ -7,14 +7,8 @@ from torch.nn import Linear as Lin
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import (
-    MLP,
-    PointTransformerConv,
-    fps,
-    global_mean_pool,
-    knn,
-    knn_graph,
-)
+from torch_geometric.nn import (MLP, PointTransformerConv, fps,
+                                global_mean_pool, knn, knn_graph)
 from torch_geometric.typing import WITH_TORCH_CLUSTER
 from torch_geometric.utils import scatter
 

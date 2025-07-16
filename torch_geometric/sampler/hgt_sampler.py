@@ -3,21 +3,12 @@ from typing import Dict, List, Optional, Union
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.sampler import (
-    BaseSampler,
-    EdgeSamplerInput,
-    HeteroSamplerOutput,
-    NegativeSampling,
-    NodeSamplerInput,
-    SamplerOutput,
-)
+from torch_geometric.sampler import (BaseSampler, EdgeSamplerInput,
+                                     HeteroSamplerOutput, NegativeSampling,
+                                     NodeSamplerInput, SamplerOutput)
 from torch_geometric.sampler.utils import remap_keys, to_hetero_csc
-from torch_geometric.typing import (
-    WITH_TORCH_SPARSE,
-    EdgeType,
-    NodeType,
-    OptTensor,
-)
+from torch_geometric.typing import (WITH_TORCH_SPARSE, EdgeType, NodeType,
+                                    OptTensor)
 
 
 class HGTSampler(BaseSampler):

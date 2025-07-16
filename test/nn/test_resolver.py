@@ -3,13 +3,11 @@ import torch
 from torch.optim.lr_scheduler import ConstantLR, LambdaLR, ReduceLROnPlateau
 
 import torch_geometric
-from torch_geometric.nn.resolver import (
-    activation_resolver,
-    aggregation_resolver,
-    lr_scheduler_resolver,
-    normalization_resolver,
-    optimizer_resolver,
-)
+from torch_geometric.nn.resolver import (activation_resolver,
+                                         aggregation_resolver,
+                                         lr_scheduler_resolver,
+                                         normalization_resolver,
+                                         optimizer_resolver)
 
 
 def test_activation_resolver():

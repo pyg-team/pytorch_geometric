@@ -7,12 +7,8 @@ from torch.nn import Linear, ReLU, Sequential
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataListLoader
-from torch_geometric.nn import (
-    DataParallel,
-    NNConv,
-    SplineConv,
-    global_mean_pool,
-)
+from torch_geometric.nn import (DataParallel, NNConv, SplineConv,
+                                global_mean_pool)
 from torch_geometric.typing import WITH_TORCH_SPLINE_CONV
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data', 'MNIST')

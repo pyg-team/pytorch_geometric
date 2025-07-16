@@ -3,14 +3,10 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import LinkNeighborLoader
-from torch_geometric.testing import (
-    MyFeatureStore,
-    MyGraphStore,
-    get_random_edge_index,
-    onlyNeighborSampler,
-    withCUDA,
-    withPackage,
-)
+from torch_geometric.testing import (MyFeatureStore, MyGraphStore,
+                                     get_random_edge_index,
+                                     onlyNeighborSampler, withCUDA,
+                                     withPackage)
 
 
 def unique_edge_pairs(edge_index):

@@ -1,9 +1,7 @@
 import torch
 
-from torch_geometric.explain.algorithm.utils import (
-    clear_masks,
-    set_hetero_masks,
-)
+from torch_geometric.explain.algorithm.utils import (clear_masks,
+                                                     set_hetero_masks)
 from torch_geometric.nn import GCNConv, HeteroConv, SAGEConv, to_hetero
 
 
