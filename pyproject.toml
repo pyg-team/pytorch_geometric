@@ -123,6 +123,7 @@ blank_line_before_nested_class_or_def = false
 files = ["torch_geometric"]
 install_types = true
 non_interactive = true
+incremental = False
 ignore_missing_imports = true
 show_error_codes = true
 warn_redundant_casts = true
