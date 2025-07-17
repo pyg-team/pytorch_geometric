@@ -241,9 +241,9 @@ class PowerMeanAggregation(Aggregation):
             per input feature channel. This requires compatible shapes for the
             input to the forward calculation. (default: :obj:`1`)
         clamp_min (float, optional): Lower-bound of the range to be clamped
-            to. There is no lower bound if set to None.
+            to. There is no lower bound if set to :obj:`None`.
         clamp_max (float, optional): Upper-bound of the range to be clamped
-            to. There is no upper bound if set to None.
+            to. There is no upper bound if set to :obj:`None`.
     """
     def __init__(self, p: float = 1.0, learn: bool = False, channels: int = 1,
                  clamp_min: Optional[float] = 1e-4,
