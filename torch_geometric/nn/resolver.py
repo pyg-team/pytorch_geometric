@@ -23,8 +23,9 @@ except ImportError:  # PyTorch < 2.0
 # Activation Resolver #########################################################
 
 
-def swish(x: Tensor) -> Tensor:
-    return x * x.sigmoid()
+class Swish(torch.nn.Module):
+    def forward(self, x: Tensor) -> Tensor:
+        return x * x.sigmoid()
 
 
 def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
@@ -35,7 +36,7 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
         if isinstance(act, type) and issubclass(act, base_cls)
     ]
     acts += [
-        swish,
+        Swish,
     ]
     act_dict = {}
     return resolver(acts, act_dict, query, base_cls, base_cls_repr, *args,
