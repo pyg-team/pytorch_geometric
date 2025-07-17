@@ -101,7 +101,7 @@ class LinkLoader(
         neg_sampling_ratio (int or float, optional): The ratio of sampled
             negative edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
-            (default: :obj:`None`).
+            (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -116,7 +116,7 @@ class LinkLoader(
             on whether data partially lives on the GPU
             (:obj:`filter_per_worker=True`) or entirely on the CPU
             (:obj:`filter_per_worker=False`).
-            There exists different trade-offs for setting this option.
+            There exist different trade-offs for setting this option.
             Specifically, setting this option to :obj:`True` for in-memory
             datasets will move all features to shared memory, which may result
             in too many open file handles. (default: :obj:`None`)
@@ -178,7 +178,7 @@ class LinkLoader(
             raise ValueError("'edge_label' needs to be undefined for "
                              "'triplet'-based negative sampling. Please use "
                              "`src_index`, `dst_pos_index` and "
-                             "`neg_pos_index` of the returned mini-batch "
+                             "`dst_neg_index` of the returned mini-batch "
                              "instead to differentiate between positive and "
                              "negative samples.")
 
@@ -229,9 +229,9 @@ class LinkLoader(
 
         if isinstance(out, SamplerOutput):
             if isinstance(self.data, Data):
-                data = filter_data(  #
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.link_sampler.edge_permutation)
+                data = filter_data(self.data, out.node, out.row, out.col,
+                                   out.edge,
+                                   self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
 
@@ -246,9 +246,9 @@ class LinkLoader(
                     data.y = out.metadata[-2]
                     data.edge_attr = out.metadata[-1]
                 else:
-                    data = filter_custom_store(  #
-                        *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls)
+                    data = filter_custom_store(*self.data, out.node, out.row,
+                                               out.col, out.edge,
+                                               self.custom_cls)
 
             if 'n_id' not in data:
                 data.n_id = out.node
@@ -279,9 +279,9 @@ class LinkLoader(
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
-                data = filter_hetero_data(  #
-                    self.data, out.node, out.row, out.col, out.edge,
-                    self.link_sampler.edge_permutation)
+                data = filter_hetero_data(self.data, out.node, out.row,
+                                          out.col, out.edge,
+                                          self.link_sampler.edge_permutation)
 
             else:  # Tuple[FeatureStore, GraphStore]
 
@@ -294,9 +294,10 @@ class LinkLoader(
                         self.custom_cls, out.metadata,
                         self.input_data.input_type)
                 else:
-                    data = filter_custom_hetero_store(  #
-                        *self.data, out.node, out.row, out.col, out.edge,
-                        self.custom_cls)
+                    data = filter_custom_hetero_store(*self.data, out.node,
+                                                      out.row, out.col,
+                                                      out.edge,
+                                                      self.custom_cls)
 
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
