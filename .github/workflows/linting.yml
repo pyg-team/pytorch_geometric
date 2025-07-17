@@ -47,7 +47,7 @@ jobs:
           uv pip install mypy
           uv pip install -e ".[full,test]"
           uv pip install types-requests
-          
+
       - name: Check type hints
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
