@@ -247,7 +247,7 @@ class PowerMeanAggregation(Aggregation):
     """
     def __init__(self, p: float = 1.0, learn: bool = False, channels: int = 1,
                  clamp_min: Optional[float] = 1e-4,
-                 clamp_max: Optional[float] = 100.):
+                 clamp_max: Optional[float] = 100., ) -> None:
         super().__init__()
 
         if not learn and channels != 1:
