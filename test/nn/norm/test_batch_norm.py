@@ -10,7 +10,7 @@ from torch_geometric.testing import is_full_test, withDevice
 def test_batch_norm(device, conf):
     x = torch.randn(100, 16, device=device)
 
-    norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
+    norm = BatchNorm(16, affine=conf, track_running_stats=conf, device=device)
     norm.reset_running_stats()
     norm.reset_parameters()
     assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
@@ -45,12 +45,12 @@ def test_hetero_batch_norm(device, conf):
     x = torch.randn((100, 16), device=device)
 
     # Test single type:
-    norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
+    norm = BatchNorm(16, affine=conf, track_running_stats=conf, device=device)
     expected = norm(x)
 
     type_vec = torch.zeros(100, dtype=torch.long, device=device)
     norm = HeteroBatchNorm(16, num_types=1, affine=conf,
-                           track_running_stats=conf).to(device)
+                           track_running_stats=conf, device=device)
     norm.reset_running_stats()
     norm.reset_parameters()
     assert str(norm) == 'HeteroBatchNorm(16, num_types=1)'
@@ -62,7 +62,7 @@ def test_hetero_batch_norm(device, conf):
     # Test multiple types:
     type_vec = torch.randint(5, (100, ), device=device)
     norm = HeteroBatchNorm(16, num_types=5, affine=conf,
-                           track_running_stats=conf).to(device)
+                           track_running_stats=conf, device=device)
     out = norm(x, type_vec)
     assert out.size() == (100, 16)
 

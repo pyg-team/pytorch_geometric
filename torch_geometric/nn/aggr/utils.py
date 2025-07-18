@@ -26,9 +26,11 @@ class MultiheadAttentionBlock(torch.nn.Module):
             normalization. (default: :obj:`True`)
         dropout (float, optional): Dropout probability of attention weights.
             (default: :obj:`0`)
+        device (torch.device, optional): The device of the module.
+            (default: :obj:`None`)
     """
     def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True,
-                 dropout: float = 0.0):
+                 dropout: float = 0.0, device: Optional[torch.device] = None):
         super().__init__()
 
         self.channels = channels
@@ -40,10 +42,13 @@ class MultiheadAttentionBlock(torch.nn.Module):
             heads,
             batch_first=True,
             dropout=dropout,
+            device=device,
         )
-        self.lin = Linear(channels, channels)
-        self.layer_norm1 = LayerNorm(channels) if layer_norm else None
-        self.layer_norm2 = LayerNorm(channels) if layer_norm else None
+        self.lin = Linear(channels, channels, device=device)
+        self.layer_norm1 = LayerNorm(channels,
+                                     device=device) if layer_norm else None
+        self.layer_norm2 = LayerNorm(channels,
+                                     device=device) if layer_norm else None
 
     def reset_parameters(self):
         self.attn._reset_parameters()

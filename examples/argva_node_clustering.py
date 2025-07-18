@@ -84,7 +84,7 @@ def train():
     loss = loss + (1 / train_data.num_nodes) * model.kl_loss()
     loss.backward()
     encoder_optimizer.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()
