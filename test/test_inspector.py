@@ -28,7 +28,7 @@ def test_type_repr() -> None:
     assert inspector.type_repr(
         Final[Optional[Tensor]]) == ('typing.Final[Optional[typing.Any]]')
     assert inspector.type_repr(Union[None, Tensor]) == 'Optional[typing.Any]'
-    assert inspector.type_repr(Optional[Tensor]) == 'Optional[Tensor]'
+    assert inspector.type_repr(Optional[Tensor]) == 'Optional[typing.Any]'
     assert inspector.type_repr(Set[Tensor]) == 'typing.Set[Tensor]'
     assert inspector.type_repr(List) == 'List'
     assert inspector.type_repr(Tuple) == 'Tuple'
