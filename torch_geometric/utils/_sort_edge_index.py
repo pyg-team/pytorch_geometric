@@ -52,6 +52,16 @@ def sort_edge_index(  # noqa: F811
 @overload
 def sort_edge_index(  # noqa: F811
     edge_index: Tensor,
+    edge_attr: Optional[Any],
+    num_nodes: Optional[int] = None,
+    sort_by_row: bool = True,
+) -> Tuple[Tensor, OptTensor]:
+    pass
+
+
+@overload
+def sort_edge_index(  # noqa: F811
+    edge_index: Tensor,
     edge_attr: List[Tensor],
     num_nodes: Optional[int] = None,
     sort_by_row: bool = True,
