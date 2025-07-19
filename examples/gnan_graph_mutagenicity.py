@@ -19,22 +19,22 @@ matrix fits comfortably in memory and can be coqmputed on the fly.
 
 from __future__ import annotations
 
+import pickle
 import random
 from pathlib import Path
-from typing import Tuple
 
 import networkx as nx
 import torch
 from torch import nn
-from torch_geometric.datasets import TUDataset
-from torch_geometric.nn.models import TensorGNAN
-from torch_geometric.loader.gnan_dataloader import GNANDataLoader
-from torch_geometric.utils import to_networkx
 from tqdm import tqdm
-import pickle
+
+from torch_geometric.datasets import TUDataset
+from torch_geometric.loader.gnan_dataloader import GNANDataLoader
+from torch_geometric.nn.models import TensorGNAN
+from torch_geometric.utils import to_networkx
 
 
-def compute_dist_and_norm(data) -> Tuple[torch.Tensor, torch.Tensor]:
+def compute_dist_and_norm(data) -> tuple[torch.Tensor, torch.Tensor]:
     """Return (distance_matrix, normalisation_matrix) for a PyG Data graph."""
     def norm_from_dist(dist: torch.Tensor) -> torch.Tensor:
         N = dist.size(0)

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import torch
 from torch import nn
+
+from torch_geometric.data import Batch, Data
 from torch_geometric.typing import OptTensor
-from torch_geometric.data import Data, Batch
 from torch_geometric.utils import scatter
 
 __all__ = [

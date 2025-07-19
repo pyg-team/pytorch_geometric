@@ -1,4 +1,5 @@
 import torch
+
 from torch_geometric.data import Data
 from torch_geometric.nn.models import TensorGNAN
 

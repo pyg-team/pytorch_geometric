@@ -67,10 +67,9 @@ class GNANCollater:
 
         for i, data in enumerate(data_list):
             if has_node_distances:
-                setattr(data, 'node_distances', node_distances_list[i])
+                data.node_distances = node_distances_list[i]
             if has_normalization_matrix:
-                setattr(data, 'normalization_matrix',
-                        normalization_matrix_list[i])
+                data.normalization_matrix = normalization_matrix_list[i]
 
         if node_distances_list:
             batch.node_distances = _create_block_diagonal_matrix(
