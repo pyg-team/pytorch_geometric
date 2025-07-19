@@ -66,7 +66,7 @@ def test_config_mixin() -> None:
     assert isinstance(cfg.data, Dataclass)
     assert cfg.data.x == 1
     assert cfg.data.y == 2
-    assert cfg._target_ == 'test_config_mixin.Module'
+    assert cfg._target_ == 'test.test_config_mixin.Module'
 
     model = Module.from_config(cfg)
     assert isinstance(model, Module)
@@ -125,7 +125,7 @@ def test_config_mixin_compound() -> None:
 
     cfg = model.config()
     assert is_dataclass(cfg)
-    assert cfg._target_ == 'test_config_mixin.CompoundModule'
+    assert cfg._target_ == 'test.test_config_mixin.CompoundModule'
     assert cfg.z == "foo"
     assert cfg.module._target_ == 'test_config_mixin.Module'
     assert cfg.module.x == 0

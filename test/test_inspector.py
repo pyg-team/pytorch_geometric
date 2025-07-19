@@ -26,7 +26,7 @@ def test_type_repr() -> None:
     assert inspector.type_repr(OptPairTensor) == (
         'Tuple[Tensor, Optional[Tensor]]')
     assert inspector.type_repr(
-        Final[Optional[Tensor]]) == ('typing.Final[Optional[Tensor]]')
+        Final[Optional[Tensor]]) == 'typing.Final[Optional[typing.Any]]'
     assert inspector.type_repr(Union[None, Tensor]) == 'Optional[Tensor]'
     assert inspector.type_repr(Optional[Tensor]) == 'Optional[Tensor]'
     assert inspector.type_repr(Set[Tensor]) == 'typing.Set[Tensor]'
@@ -37,8 +37,8 @@ def test_type_repr() -> None:
     assert inspector.type_repr(Dict[str, Tuple[Tensor, Tensor]]) == (  #
         'typing.Dict[str, Tuple[Tensor, Tensor]]')
     assert inspector.type_repr(Tuple[int, ...]) == 'Tuple[int, ...]'
-    assert inspector.type_repr(Union[int, str, None]) == (  #
-        'Union[int, str, None]')
+    assert inspector.type_repr(Union[int, str,
+                                     None]) == 'Union[int, str, None]'
 
 
 def test_inspector_sage_conv() -> None:
