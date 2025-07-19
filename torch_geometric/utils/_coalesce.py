@@ -58,18 +58,6 @@ def coalesce(  # noqa: F811
 @overload
 def coalesce(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Optional[Any],
-    num_nodes: Optional[int] = None,
-    reduce: str = 'sum',
-    is_sorted: bool = False,
-    sort_by_row: bool = True,
-) -> Tuple[Tensor, OptTensor]:
-    pass
-
-
-@overload
-def coalesce(  # noqa: F811
-    edge_index: Tensor,
     edge_attr: List[Tensor],
     num_nodes: Optional[int] = None,
     reduce: str = 'sum',
