@@ -1,5 +1,5 @@
 import typing
-from typing import List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -69,7 +69,7 @@ def coalesce(  # noqa: F811
 
 def coalesce(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
+    edge_attr: Union[OptTensor, List[Tensor], Optional[Any], str] = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'sum',
     is_sorted: bool = False,
