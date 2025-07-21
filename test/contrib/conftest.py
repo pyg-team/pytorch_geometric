@@ -267,6 +267,15 @@ def dummy_provider():
     return DummyBias()
 
 
+@pytest.fixture
+def basic_encoder_config(dummy_provider):
+    """Provides a basic encoder configuration for GraphTransformer."""
+    return {
+        "attn_bias_providers": [dummy_provider],
+        "num_encoder_layers": 2,
+    }
+
+
 # ── Positional encoder classes (for GraphTransformer tests) ──────────────────
 
 
