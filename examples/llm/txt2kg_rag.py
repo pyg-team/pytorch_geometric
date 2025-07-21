@@ -53,7 +53,7 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 
 # Define constants for better readability
-NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
+NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
 KG_CHUNK_SIZE_DEFAULT = 512
