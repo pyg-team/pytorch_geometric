@@ -504,13 +504,16 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
     edge_list = graph.view_edge_list()
     assert edge_list is not None
 
-    edge_list = edge_list.sort_values(by=[0, 1])
+    edge_list = edge_list.sort_values(
+        by=[graph.source_columns, graph.destination_columns])
 
-    cu_edge_index = edge_list[[0, 1]].to_pandas().values
+    cu_edge_index = edge_list[[
+        graph.source_columns, graph.destination_columns
+    ]].to_pandas().values
     cu_edge_index = torch.from_numpy(cu_edge_index).t()
     cu_edge_weight = None
     if edge_weight is not None:
-        cu_edge_weight = edge_list['2'].to_pandas().values
+        cu_edge_weight = edge_list[graph.weight_column].to_pandas().values
         cu_edge_weight = torch.from_numpy(cu_edge_weight)
 
     cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
@@ -539,15 +542,20 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
         edge_weight = edge_weight[:edge_index.size(1)]
 
     G = cugraph.Graph(directed=directed)
-    df = cudf.from_dlpack(to_dlpack(edge_index.t()))
+    df = cudf.DataFrame({
+        'source':
+        cudf.from_dlpack(to_dlpack(edge_index[0])),
+        'destination':
+        cudf.from_dlpack(to_dlpack(edge_index[1])),
+    })
     if edge_weight is not None:
-        df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
+        df['weight'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
     G.from_cudf_edgelist(
         df,
-        source=0,
-        destination=1,
-        edge_attr='2' if edge_weight is not None else None,
+        source='source',
+        destination='destination',
+        edge_attr='weight' if edge_weight is not None else None,
         renumber=relabel_nodes,
     )
 
