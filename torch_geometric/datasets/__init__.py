@@ -26,7 +26,7 @@ from .rel_link_pred_dataset import RelLinkPredDataset
 
 # RelBench integration utilities (optional dependencies)
 try:
-    from .relbench import RelBenchDataset, RelBenchProcessor, create_relbench_hetero_data, get_warehouse_task_info  # noqa: F401
+    from .relbench import RelBenchDataset, RelBenchProcessor, create_relbench_hetero_data, get_warehouse_task_info, prepare_for_gretriever  # noqa: F401
     _relbench_available = True
 except ImportError:
     _relbench_available = False
@@ -260,4 +260,5 @@ if _relbench_available:
         "RelBenchProcessor",
         "create_relbench_hetero_data",
         "get_warehouse_task_info",
+        "prepare_for_gretriever",
     ])

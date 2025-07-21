@@ -1,11 +1,9 @@
 """RelBench integration utilities for PyTorch Geometric.
 
 Provides utilities for converting RelBench datasets to PyG HeteroData objects
-with semantic embeddings and graph structure for warehouse applications.
+with semantic embeddings and warehouse-specific enhancements.
 
-TODO: Add subgraph sampling utilities for inference
-TODO: Implement configurable edge weighting schemes
-TODO: Add support for lineage tracking
+Complements examples/rdl.py with G-Retriever preparation and warehouse tasks.
 """
 
 import warnings
@@ -1042,6 +1040,35 @@ class RelBenchDataset(InMemoryDataset):
         data_list = [data]
         collated_data, slices = self.collate(data_list)
         torch.save((collated_data, slices), self.processed_paths[0])
+
+
+def prepare_for_gretriever(
+        hetero_data: HeteroData) -> Tuple[HeteroData, Dict[str, Any]]:
+    """Prepare RelBench HeteroData for G-Retriever training.
+
+    Enhances HeteroData with G-Retriever-specific attributes and metadata.
+
+    Args:
+        hetero_data: HeteroData object from RelBench integration
+
+    Returns:
+        Tuple of (enhanced_hetero_data, metadata_dict)
+    """
+    metadata = {
+        'embedding_dim': getattr(hetero_data, 'embedding_dim', 384),
+        'node_types': list(hetero_data.node_types),
+        'edge_types': list(hetero_data.edge_types),
+        'warehouse_tasks': ['lineage', 'silo', 'anomaly'],
+        'recommended_qa_pairs': get_warehouse_task_info(),
+        'conversion_ready': True,
+    }
+
+    # Add G-Retriever specific attributes
+    hetero_data.gretriever_ready = True
+    hetero_data.embedding_type = 'sbert'  # Indicates SBERT embeddings
+    hetero_data.warehouse_enhanced = True
+
+    return hetero_data, metadata
 
 
 # Backward compatibility aliases
