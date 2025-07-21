@@ -193,7 +193,7 @@ class TXT2KG():
 
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
-        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+        NIM_MODEL="nvidia/llama-3.1-nemotron-ultra-253b-v1",
         ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
         post_text=SYSTEM_PROMPT) -> str:
     global CLIENT_INITD
@@ -211,11 +211,16 @@ def _chunk_to_triples_str_cloud(
     txt_input = txt
     if post_text != "":
         txt_input += '\n' + post_text
-    completion = CLIENT.chat.completions.create(
-        model=NIM_MODEL, messages=[{
+    messages = []
+    if NIM_MODEL == "nvidia/llama-3.1-nemotron-ultra-253b-v1"
+        messages.append({"role": "system", "content": "detailed thinking off"})
+    messages.append({
             "role": "user",
             "content": txt_input
-        }], temperature=0, top_p=1, max_tokens=1024, stream=True)
+        }
+    )
+    completion = CLIENT.chat.completions.create(
+        model=NIM_MODEL, messages=messages, temperature=0, top_p=1, max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
