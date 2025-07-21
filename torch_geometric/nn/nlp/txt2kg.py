@@ -214,13 +214,11 @@ def _chunk_to_triples_str_cloud(
     messages = []
     if "llama-3.1-nemotron-ultra-253b-v1" in NIM_MODEL:
         messages.append({"role": "system", "content": "detailed thinking on"})
-    messages.append({
-            "role": "user",
-            "content": txt_input
-        }
-    )
-    completion = CLIENT.chat.completions.create(
-        model=NIM_MODEL, messages=messages, temperature=0, top_p=1, max_tokens=1024, stream=True)
+    messages.append({"role": "user", "content": txt_input})
+    completion = CLIENT.chat.completions.create(model=NIM_MODEL,
+                                                messages=messages,
+                                                temperature=0, top_p=1,
+                                                max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
