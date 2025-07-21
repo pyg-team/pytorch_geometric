@@ -212,8 +212,8 @@ def _chunk_to_triples_str_cloud(
     if post_text != "":
         txt_input += '\n' + post_text
     messages = []
-    if NIM_MODEL == "nvidia/llama-3.1-nemotron-ultra-253b-v1"
-        messages.append({"role": "system", "content": "detailed thinking off"})
+    if "llama-3.1-nemotron-ultra-253b-v1" in NIM_MODEL:
+        messages.append({"role": "system", "content": "detailed thinking on"})
     messages.append({
             "role": "user",
             "content": txt_input
