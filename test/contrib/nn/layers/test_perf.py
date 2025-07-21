@@ -16,8 +16,10 @@ from torch_geometric.contrib.nn.positional import (
     SVDEncoder,
 )
 from torch_geometric.nn import GCNConv
+from torch_geometric.testing import onlyFullTest
 
 
+@onlyFullTest
 def test_encoder_speed(benchmark, make_perf_batch):
     # -------- config ----------
     NUM_GRAPHS, NODES, HIDDEN_DIM = 32, 128, 64
@@ -46,6 +48,7 @@ def test_encoder_speed(benchmark, make_perf_batch):
         f">(baseline {BASELINE*1e3:.1f} ms ×1.10)")
 
 
+@onlyFullTest
 def test_encoder_with_bias_speed(benchmark, make_perf_batch_with_spatial):
     # -------- config ----------
     NUM_GRAPHS, NODES, HIDDEN_DIM = 32, 128, 64
@@ -85,6 +88,7 @@ def test_encoder_with_bias_speed(benchmark, make_perf_batch_with_spatial):
         f">(baseline {BASELINE*1e3:.1f} ms ×1.10)")
 
 
+@onlyFullTest
 @pytest.mark.parametrize(
     "gnn_position",
     ["pre", "post", "parallel"],
