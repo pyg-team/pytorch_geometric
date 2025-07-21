@@ -19,11 +19,15 @@ def test_spatial_bias_transformer_affects(spatial_batch):
     torch.manual_seed(12345)
     provider = GraphAttnSpatialBias(num_heads=4, num_spatial=8)
     batch = spatial_batch(1, 6, 8, feat_dim=16)
-
+    encoder_cfg_with_bias = {
+        'attn_bias_providers': [provider],
+        'num_encoder_layers': 1
+    }
+    encoder_cfg_without_bias = {'num_encoder_layers': 1}
     m0 = GraphTransformer(hidden_dim=16, num_class=3,
-                          num_encoder_layers=1).eval()
-    m1 = GraphTransformer(hidden_dim=16, num_class=3, num_encoder_layers=1,
-                          attn_bias_providers=[provider]).eval()
+                          encoder_cfg=encoder_cfg_without_bias).eval()
+    m1 = GraphTransformer(hidden_dim=16, num_class=3,
+                          encoder_cfg=encoder_cfg_with_bias).eval()
 
     with torch.no_grad():
         o0 = m0(batch)
@@ -35,8 +39,9 @@ def test_spatial_bias_transformer_affects(spatial_batch):
 
 def test_spatial_bias_gradients(spatial_batch):
     provider = GraphAttnSpatialBias(num_heads=4, num_spatial=8)
-    model = GraphTransformer(hidden_dim=16, num_class=3, num_encoder_layers=1,
-                             attn_bias_providers=[provider])
+    encoder_cfg = {'attn_bias_providers': [provider], 'num_encoder_layers': 1}
+    model = GraphTransformer(hidden_dim=16, num_class=3,
+                             encoder_cfg=encoder_cfg)
     batch = spatial_batch(1, 5, 8, feat_dim=16)
     out = model(batch)
     out.sum().backward()

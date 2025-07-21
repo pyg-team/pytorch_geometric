@@ -35,17 +35,17 @@ def test_hop_bias_affects_transformer(hop_batch):
         num_hops=num_hops,
     )
     batch = hop_batch(1, seq_len, num_hops, feature_dim)
-
-    model_plain = GraphTransformer(
-        hidden_dim=feature_dim,
-        num_class=3,
-        num_encoder_layers=1,
-    )
+    encoder_cfg_with_bias = {
+        'attn_bias_providers': [bias_provider],
+        'num_encoder_layers': 1
+    }
+    encoder_cfg_without_bias = {'num_encoder_layers': 1}
+    model_plain = GraphTransformer(hidden_dim=feature_dim, num_class=3,
+                                   encoder_cfg=encoder_cfg_without_bias)
     model_biased = GraphTransformer(
         hidden_dim=feature_dim,
         num_class=3,
-        num_encoder_layers=1,
-        attn_bias_providers=[bias_provider],
+        encoder_cfg=encoder_cfg_with_bias,
     )
 
     model_plain.eval()
@@ -68,11 +68,14 @@ def test_hop_bias_gradients(hop_batch):
         num_heads=num_heads,
         num_hops=num_hops,
     )
+    encoder_cfg = {
+        'attn_bias_providers': [bias_provider],
+        'num_encoder_layers': 1
+    }
     model = GraphTransformer(
         hidden_dim=feature_dim,
         num_class=3,
-        num_encoder_layers=1,
-        attn_bias_providers=[bias_provider],
+        encoder_cfg=encoder_cfg,
     )
     batch = hop_batch(1, seq_len, num_hops, feature_dim)
 

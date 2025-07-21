@@ -27,11 +27,10 @@ def test_encoder_speed(benchmark, make_perf_batch):
     # -------- setup -----------
     batch = make_perf_batch(NUM_GRAPHS, NODES, HIDDEN_DIM, device)
     model = GraphTransformer(
-        hidden_dim=HIDDEN_DIM,
-        num_class=10,
-        num_encoder_layers=4,
-        use_super_node=True,
-    ).to(device)
+        hidden_dim=HIDDEN_DIM, num_class=10, encoder_cfg={
+            "num_encoder_layers": 4,
+            "use_super_node": True,
+        }).to(device)
     model.eval()
 
     # -------- benchmark --------
@@ -58,14 +57,19 @@ def test_encoder_with_bias_speed(benchmark, make_perf_batch_with_spatial):
     batch = make_perf_batch_with_spatial(NUM_GRAPHS, NODES, HIDDEN_DIM,
                                          NUM_SPATIAL, device)
     model = GraphTransformer(
-        hidden_dim=HIDDEN_DIM, num_class=10, num_encoder_layers=4,
-        use_super_node=True, attn_bias_providers=[
-            GraphAttnSpatialBias(
-                num_heads=NUM_HEADS,
-                num_spatial=NUM_SPATIAL,
-                use_super_node=True,
-            )
-        ]).to(device)
+        hidden_dim=HIDDEN_DIM, num_class=10, encoder_cfg={
+            "num_encoder_layers":
+            4,
+            "use_super_node":
+            True,
+            "attn_bias_providers": [
+                GraphAttnSpatialBias(
+                    num_heads=NUM_HEADS,
+                    num_spatial=NUM_SPATIAL,
+                    use_super_node=True,
+                )
+            ]
+        }).to(device)
     model.eval()
 
     # -------- benchmark --------
@@ -116,28 +120,33 @@ def test_encoder_full_feature_speed(
         return conv(x, data.edge_index)
 
     model = GraphTransformer(
-        hidden_dim=HIDDEN_DIM,
-        num_class=NUM_CLASSES,
-        num_encoder_layers=NUM_LAYERS,
-        use_super_node=True,
-        num_heads=NUM_HEADS,
-        node_feature_encoder=nn.Linear(HIDDEN_DIM, HIDDEN_DIM),
-        positional_encoders=[
-            DegreeEncoder(MAX_DEGREE, MAX_DEGREE, HIDDEN_DIM),
-            EigEncoder(num_eigvec=NUM_EIGVEC, hidden_dim=HIDDEN_DIM),
-            SVDEncoder(r=NUM_SING_VEC, hidden_dim=HIDDEN_DIM),
-        ],
-        attn_bias_providers=[
-            GraphAttnSpatialBias(num_heads=NUM_HEADS, num_spatial=NUM_SPATIAL,
+        hidden_dim=HIDDEN_DIM, num_class=NUM_CLASSES, encoder_cfg={
+            "num_encoder_layers":
+            NUM_LAYERS,
+            "use_super_node":
+            True,
+            "num_heads":
+            NUM_HEADS,
+            "node_feature_encoder":
+            nn.Linear(HIDDEN_DIM, HIDDEN_DIM),
+            "positional_encoders": [
+                DegreeEncoder(MAX_DEGREE, MAX_DEGREE, HIDDEN_DIM),
+                EigEncoder(num_eigvec=NUM_EIGVEC, hidden_dim=HIDDEN_DIM),
+                SVDEncoder(r=NUM_SING_VEC, hidden_dim=HIDDEN_DIM),
+            ],
+            "attn_bias_providers": [
+                GraphAttnSpatialBias(num_heads=NUM_HEADS,
+                                     num_spatial=NUM_SPATIAL,
+                                     use_super_node=True),
+                GraphAttnEdgeBias(num_heads=NUM_HEADS, num_edges=NUM_EDGES,
+                                  use_super_node=True),
+                GraphAttnHopBias(num_heads=NUM_HEADS, num_hops=NUM_HOPS,
                                  use_super_node=True),
-            GraphAttnEdgeBias(num_heads=NUM_HEADS, num_edges=NUM_EDGES,
-                              use_super_node=True),
-            GraphAttnHopBias(num_heads=NUM_HEADS, num_hops=NUM_HOPS,
-                             use_super_node=True),
-        ],
-        gnn_block=gcn_hook,
-        gnn_position=gnn_position,
-    ).to(device).eval()
+            ],
+        }, gnn_cfg={
+            "gnn_block": gcn_hook,
+            "gnn_position": gnn_position,
+        }).to(device).eval()
 
     # ─── benchmark ───────────────────────────────────────────────────────────
     def run():

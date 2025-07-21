@@ -21,14 +21,20 @@ def test_edge_bias_shape_dtype(edge_batch, num_heads, num_edges, seq_len,
 
 
 def test_edge_bias_transformer_affects(edge_batch):
+    """Outputs differ when edge bias is applied."""
     torch.manual_seed(0)
     provider = GraphAttnEdgeBias(num_heads=4, num_edges=8)
     batch = edge_batch(1, 6, 8, feat_dim=16)
-
+    encoder_cfg_with_bias = {
+        'attn_bias_providers': [provider],
+        'num_encoder_layers': 1
+    }
+    encoder_cfg_without_bias = {'num_encoder_layers': 1}
     m0 = GraphTransformer(hidden_dim=16, num_class=2,
-                          num_encoder_layers=1).eval()
-    m1 = GraphTransformer(hidden_dim=16, num_class=2, num_encoder_layers=1,
-                          attn_bias_providers=[provider]).eval()
+                          encoder_cfg=encoder_cfg_with_bias).eval()
+    torch.manual_seed(0)
+    m1 = GraphTransformer(hidden_dim=16, num_class=2,
+                          encoder_cfg=encoder_cfg_without_bias).eval()
 
     with torch.no_grad():
         out0 = m0(batch)
@@ -40,8 +46,9 @@ def test_edge_bias_transformer_affects(edge_batch):
 
 def test_edge_bias_gradients(edge_batch):
     provider = GraphAttnEdgeBias(num_heads=4, num_edges=7)
-    model = GraphTransformer(hidden_dim=16, num_class=2, num_encoder_layers=1,
-                             attn_bias_providers=[provider])
+    encoder_cfg = {'attn_bias_providers': [provider], 'num_encoder_layers': 1}
+    model = GraphTransformer(hidden_dim=16, num_class=2,
+                             encoder_cfg=encoder_cfg)
     batch = edge_batch(1, 5, 7, feat_dim=16)
 
     out = model(batch)
@@ -107,18 +114,13 @@ def test_edge_bias_changes_transformer_without_dist(simple_batch):
     batch = Batch.from_data_list(g.to_data_list() + g.to_data_list())
 
     provider = GraphAttnEdgeBias(num_heads=N_heads, num_edges=7)
-
+    encoder_cfg = {'attn_bias_providers': [provider], 'num_encoder_layers': 2}
     base = GraphTransformer(
         hidden_dim=8,
         num_class=2,
-        num_encoder_layers=1,
     ).eval()
-    biased = GraphTransformer(
-        hidden_dim=8,
-        num_class=2,
-        num_encoder_layers=2,
-        attn_bias_providers=[provider],
-    ).eval()
+    biased = GraphTransformer(hidden_dim=8, num_class=2,
+                              encoder_cfg=encoder_cfg).eval()
 
     with torch.no_grad():
         out_base = base(batch)
