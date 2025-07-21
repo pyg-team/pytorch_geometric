@@ -22,3 +22,17 @@ class BasePositionalEncoder(nn.Module, ABC):
             Tensor: Positional encodings aligned with data.x
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def reset_parameters(self) -> None:
+        """Reset parameters of the positional encoder.
+
+        This method should reset all learnable parameters of the module.
+        It is called during initialization and can be overridden by subclasses.
+
+        Args:
+            None
+        Returns:
+            None
+        """
+        ...

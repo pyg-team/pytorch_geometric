@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 
 from torch_geometric.data import Data
+from torch_geometric.nn.inits import reset
 
 from .base import BasePositionalEncoder
 
@@ -24,6 +25,7 @@ class EigEncoder(BasePositionalEncoder):
         self.proj = nn.Linear(num_eigvec, hidden_dim)
         sign = 2 * torch.randint(0, 2, (1, )) - 1
         self.register_buffer("sign", sign)
+        self.reset_parameters()
 
     def forward(self, data: Data) -> torch.Tensor:
         """Project eigenvector embeddings to hidden dimension.
@@ -36,3 +38,7 @@ class EigEncoder(BasePositionalEncoder):
         """
         pos = data.eig_pos_emb
         return self.proj(pos * self.sign)
+
+    def reset_parameters(self) -> None:
+        """Reset parameters of the positional encoder."""
+        reset(self.proj)

@@ -65,6 +65,20 @@ class BaseBiasProvider(nn.Module):
         return bias.permute(0, 3, 1, 2)
 
     @abstractmethod
+    def reset_parameters(self) -> None:
+        """Reset parameters of the bias provider.
+
+        This method should reset all learnable parameters of the module.
+        It is called during initialization and can be overridden by subclasses.
+
+        Args:
+            None
+        Returns:
+            None
+        """
+        ...
+
+    @abstractmethod
     def _extract_raw_distances(self, data: Data) -> torch.LongTensor:
         """Extract node-to-node distance matrix.
 

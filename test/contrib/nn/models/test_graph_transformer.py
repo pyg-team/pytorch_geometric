@@ -674,3 +674,18 @@ def test_graph_transformer_feature_dim_mismatch(simple_batch, encoder_factory,
             model(batch)
     else:
         model(batch)
+
+
+def _clone_learnable(model):
+    return [p.detach().clone() for p in model.parameters() if p.requires_grad]
+
+
+def test_reset_parameters_changes_weights():
+    torch.manual_seed(42)
+    model = GraphTransformer(hidden_dim=8, num_class=2)
+    old_params = _clone_learnable(model)
+    torch.manual_seed(43)
+    model.reset_parameters()
+    new_params = _clone_learnable(model)
+    # At least one parameter should have changed
+    assert any((o != n).any() for o, n in zip(old_params, new_params))

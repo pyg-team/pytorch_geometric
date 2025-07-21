@@ -2,6 +2,7 @@ import torch.nn as nn
 
 # Use alias import to avoid yapf/isort conflicts with long module names
 import torch_geometric.contrib.nn.layers.activation as _activation
+from torch_geometric.nn.inits import reset
 
 get_activation_function = _activation.get_activation_function
 
@@ -33,3 +34,17 @@ class PositionwiseFeedForward(nn.Module):
         x = x + residual
         x = self.ffn_layer_norm(x)
         return x
+
+    def reset_parameters(self) -> None:
+        """Reset parameters of the feedforward layer.
+
+        This method should reset all learnable parameters of the module.
+        It is called during initialization and can be overridden by subclasses.
+
+        Args:
+            None
+        Returns:
+            None
+        """
+        for module in [self.fc1, self.fc2, self.ffn_layer_norm]:
+            reset(module)

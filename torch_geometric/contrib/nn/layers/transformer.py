@@ -7,6 +7,7 @@ from torch import Tensor
 # Use alias imports to avoid yapf/isort conflicts with long module names
 import torch_geometric.contrib.nn.layers.feedforward as _feedforward
 import torch_geometric.contrib.utils.mask_utils as _mask_utils
+from torch_geometric.nn.inits import reset
 
 # Extract classes/functions from alias imports
 PositionwiseFeedForward = _feedforward.PositionwiseFeedForward
@@ -45,6 +46,7 @@ class GraphTransformerEncoderLayer(nn.Module):
                                            dropout, activation)
         self.self_attn = nn.MultiheadAttention(hidden_dim, num_heads, dropout,
                                                batch_first=True)
+        self.reset_parameters()
 
     def _pad_to_dense(
             self, x: torch.Tensor,
@@ -134,6 +136,22 @@ class GraphTransformerEncoderLayer(nn.Module):
 
         return x
 
+    def reset_parameters(self) -> None:
+        """Reset parameters of the layer.
+
+        This method resets the parameters of the self-attention,
+        normalization layers, and the feedforward network.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        self.self_attn._reset_parameters()
+        for module in [self.norm1, self.norm2, self.ffn]:
+            reset(module)
+
 
 class GraphTransformerEncoder(nn.Module):
     """A stack of N encoder layers."""
@@ -156,6 +174,7 @@ class GraphTransformerEncoder(nn.Module):
         ])
         self.num_layers = num_layers
         self.num_heads = encoder_layer.num_heads
+        self.reset_parameters()
 
     def forward(self, x, batch, struct_mask: Optional[Tensor] = None):
         """Apply all encoder layers in sequence.
@@ -179,6 +198,19 @@ class GraphTransformerEncoder(nn.Module):
                 current_h = layer.num_heads
             x = layer(x, batch, struct_mask, key_pad)
         return x
+
+    def reset_parameters(self) -> None:
+        """Reset parameters of all layers.
+
+        This method resets the parameters of all layers in the encoder.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        reset(self.layers)
 
     def __len__(self):
         return self.num_layers

@@ -19,10 +19,10 @@ from typing import List
 import torch
 import torch.nn as nn
 from torch import Tensor
-from torch.nn import init
 
 from torch_geometric.contrib.nn.bias.base import BaseBiasProvider
 from torch_geometric.data import Data
+from torch_geometric.nn.inits import reset
 
 
 class GraphAttnSpatialBias(BaseBiasProvider):
@@ -51,7 +51,20 @@ class GraphAttnSpatialBias(BaseBiasProvider):
         total_tokens = num_spatial + (1 if use_super_node else 0)
         self.super_idx = total_tokens - 1 if use_super_node else None
         self.spatial_embeddings = nn.Embedding(total_tokens, num_heads)
-        init.xavier_uniform_(self.spatial_embeddings.weight)
+        self.reset_parameters()
+
+    def reset_parameters(self) -> None:
+        """Reset parameters of the bias provider.
+
+        This method should reset all learnable parameters of the module.
+        It is called during initialization and can be overridden by subclasses.
+
+        Args:
+            None
+        Returns:
+            None
+        """
+        reset(self.spatial_embeddings.weight)
 
     def _extract_raw_distances(self, data: Data) -> List[Tensor]:
         """Extract per-graph distance blocks from a block-diagonal matrix.

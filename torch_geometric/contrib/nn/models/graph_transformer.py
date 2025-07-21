@@ -13,6 +13,7 @@ from torch_geometric.contrib.nn.positional.base import BasePositionalEncoder
 from torch_geometric.contrib.utils.mask_utils import build_key_padding
 from torch_geometric.data import Data
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.nn.inits import reset
 
 DEFAULT_ENCODER = dict(
     num_encoder_layers=0,
@@ -80,6 +81,7 @@ class GraphTransformer(torch.nn.Module):
         cfg, gnn = self._parse_cfg(hidden_dim, encoder_cfg, gnn_cfg)
         self._validate_cfg(hidden_dim, num_class, cfg, gnn)
         self._build_modules(hidden_dim, num_class, cfg, gnn)
+        self.reset_parameters()
 
     def _parse_cfg(self, hidden_dim: int, encoder_cfg: dict | None,
                    gnn_cfg: dict | None) -> tuple[dict, dict]:
@@ -614,6 +616,30 @@ class GraphTransformer(torch.nn.Module):
             return None
         return torch.stack(masks,
                            dim=0).sum(dim=0).to(data.x.dtype).to(data.x.device)
+
+    def reset_parameters(self) -> None:
+        """Reinitialize all learnable parameters.
+
+        This method resets the parameters of the classifier, encoder,
+        node feature encoder, attention bias providers, and positional
+        encoders. It also resets the parameters of the GNN block if it exists.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        for module in [
+                self.classifier, self.encoder, self.node_feature_encoder,
+                *self.attn_bias_providers, *self.positional_encoders
+        ]:
+            reset(module)
+
+        if isinstance(self.gnn_block, nn.Module):
+            reset(self.gnn_block)
+        if self.use_super_node:
+            nn.init.zeros_(self.cls_token)
 
     def __repr__(self):
         """Return a string representation of GraphTransformer.

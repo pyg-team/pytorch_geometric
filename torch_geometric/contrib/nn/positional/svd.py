@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 
 from torch_geometric.data import Data
+from torch_geometric.nn.inits import reset
 
 from .base import BasePositionalEncoder
 
@@ -25,6 +26,7 @@ class SVDEncoder(BasePositionalEncoder):
         self.proj = nn.Linear(2 * r, hidden_dim)
         sign = 2 * torch.randint(0, 2, (1, )) - 1
         self.register_buffer("sign", sign)
+        self.reset_parameters()
 
     def forward(self, data: Data) -> torch.Tensor:
         """Forward pass.
@@ -42,3 +44,7 @@ class SVDEncoder(BasePositionalEncoder):
 
         u, v = pos[:, :self.r], pos[:, self.r:]
         return self.proj(torch.cat([u * self.sign, v * (-self.sign)], dim=-1))
+
+    def reset_parameters(self) -> None:
+        """Reset parameters of the positional encoder."""
+        reset(self.proj)
