@@ -42,7 +42,7 @@ class GraphTransformer(torch.nn.Module):
 
     Args:
         hidden_dim (int): Dimension of hidden representations.
-        num_class (int): Number of output classes.
+        out_channels (int | None): Number of output channels.
         encoder_cfg (dict, optional): Encoder configuration dictionary. Keys:
             - use_super_node (bool, optional): Use learnable class token as a
               super node. Defaults to False.
@@ -74,7 +74,7 @@ class GraphTransformer(torch.nn.Module):
     def __init__(
         self,
         hidden_dim: int,
-        num_class: int,
+        out_channels: int | None = None,
         *,
         encoder_cfg: dict | None = None,
         gnn_cfg: dict | None = None,
@@ -89,8 +89,8 @@ class GraphTransformer(torch.nn.Module):
             self._mask_cache = None
 
         cfg, gnn = self._parse_cfg(hidden_dim, encoder_cfg, gnn_cfg)
-        self._validate_cfg(hidden_dim, num_class, cfg, gnn)
-        self._build_modules(hidden_dim, num_class, cfg, gnn)
+        self._validate_cfg(hidden_dim, out_channels, cfg, gnn)
+        self._build_modules(hidden_dim, out_channels, cfg, gnn)
         self.reset_parameters()
 
     def _parse_cfg(self, hidden_dim: int, encoder_cfg: dict | None,
@@ -132,19 +132,19 @@ class GraphTransformer(torch.nn.Module):
         x = self._readout(x, batch_vec)
         return self.classifier(x)
 
-    def _validate_cfg(self, hidden_dim: int, num_class: int, cfg: dict,
-                      gnn: dict) -> None:
+    def _validate_cfg(self, hidden_dim: int, out_channels: int | None,
+                      cfg: dict, gnn: dict) -> None:
         """Validate configuration dictionaries.
 
         Args:
             hidden_dim (int): Hidden representation dimension.
-            num_class (int): Number of output classes.
+            out_channels (int | None): Number of output channels.
             cfg (dict): Encoder configuration dictionary.
             gnn (dict): GNN configuration dictionary.
         """
         self._validate_init_args(
             hidden_dim,
-            num_class,
+            out_channels,
             cfg["num_encoder_layers"],
             cfg["num_heads"],
             cfg["dropout"],
@@ -159,7 +159,7 @@ class GraphTransformer(torch.nn.Module):
     def _build_modules(
         self,
         hidden_dim: int,
-        num_class: int,
+        out_channels: int | None,
         cfg: Dict,
         gnn: Dict,
     ) -> None:
@@ -167,11 +167,14 @@ class GraphTransformer(torch.nn.Module):
 
         Args:
             hidden_dim (int): Hidden representation dimension.
-            num_class (int): Number of output classes.
+            out_channels (int | None): Number of output channels.
             cfg (dict): Encoder configuration dictionary.
             gnn (dict): GNN configuration dictionary.
         """
-        self.classifier = nn.Linear(hidden_dim, num_class)
+        if out_channels is None:
+            self.classifier = None
+        else:
+            self.classifier = nn.Linear(hidden_dim, out_channels)
         self.use_super_node = cfg["use_super_node"]
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
@@ -202,7 +205,7 @@ class GraphTransformer(torch.nn.Module):
     def _validate_init_args(
         self,
         hidden_dim: int,
-        num_class: int,
+        out_channels: int,
         num_encoder_layers: int,
         num_heads: int,
         dropout: float,
@@ -217,7 +220,7 @@ class GraphTransformer(torch.nn.Module):
 
         Args:
             hidden_dim (int): Hidden representation dimension.
-            num_class (int): Number of output classes.
+            out_channels (int): Number of output classes.
             num_encoder_layers (int): Number of encoder layers.
             num_heads (int): Number of attention heads.
             dropout (float): Dropout rate.
@@ -229,22 +232,22 @@ class GraphTransformer(torch.nn.Module):
             positional_encoders (Sequence[BasePositionalEncoder]):
                 Positional encoders.
         """
-        self._validate_dimensions(hidden_dim, num_class, num_encoder_layers)
+        self._validate_dimensions(hidden_dim, out_channels, num_encoder_layers)
         self._validate_transformer_params(num_heads, dropout, ffn_hidden_dim,
                                           hidden_dim, activation)
         self._validate_bias_providers(attn_bias_providers, num_heads)
         self._validate_gnn_config(gnn_block, gnn_position)
         self._validate_positional_encoders(positional_encoders)
 
-    def _validate_dimensions(self, hidden_dim: int, num_class: int,
+    def _validate_dimensions(self, hidden_dim: int, out_channels: int,
                              num_encoder_layers: int) -> None:
         if not isinstance(hidden_dim, int) or hidden_dim <= 0:
             raise ValueError(
                 f"hidden_dim must be a positive int (got {hidden_dim})")
 
-        if not isinstance(num_class, int) or num_class <= 0:
+        if not isinstance(out_channels, int) or out_channels <= 0:
             raise ValueError(
-                f"num_class must be a positive int (got {num_class})")
+                f"out_channels must be a positive int (got {out_channels})")
 
         if not isinstance(num_encoder_layers, int) or num_encoder_layers < 0:
             raise ValueError(
@@ -715,7 +718,7 @@ class GraphTransformer(torch.nn.Module):
 
         return ("GraphTransformer("
                 f"hidden_dim={self.classifier.in_features}, "
-                f"num_class={self.classifier.out_features}, "
+                f"out_channels={self.classifier.out_features}, "
                 f"use_super_node={self.use_super_node}, "
                 f"num_encoder_layers={n_layers}, "
                 f"bias_providers={providers}, "

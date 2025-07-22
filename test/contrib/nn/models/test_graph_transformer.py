@@ -68,29 +68,29 @@ class TraceableWrapper(nn.Module):
 # ── Core Forward‐Shape Tests ─────────────────────────────────────────────────
 
 
-@pytest.mark.parametrize("num_graphs,num_nodes,feat_dim,num_classes", [
+@pytest.mark.parametrize("num_graphs,num_nodes,feat_dim,out_channels", [
     (1, 10, 16, 2),
     (5, 20, 32, 3),
     (3, 15, 64, 4),
 ], ids=["single", "multi_diff", "multi_same"])
 def test_forward_shape(simple_batch, num_graphs, num_nodes, feat_dim,
-                       num_classes):
+                       out_channels):
     batches = [
         simple_batch(feat_dim, num_nodes).to_data_list()[0]
         for _ in range(num_graphs)
     ]
     batch = Batch.from_data_list(batches)
     encoder_cfg = {}
-    model = GraphTransformer(hidden_dim=feat_dim, num_class=num_classes,
+    model = GraphTransformer(hidden_dim=feat_dim, out_channels=out_channels,
                              encoder_cfg=encoder_cfg)
     out = model(batch)
-    assert out.shape == (num_graphs, num_classes)
+    assert out.shape == (num_graphs, out_channels)
 
 
 def test_forward_without_gnn_hook(simple_batch):
     batch = simple_batch(feat_dim=8, num_nodes=2)
     encoder_cfg = {}
-    model = GraphTransformer(hidden_dim=8, num_class=1,
+    model = GraphTransformer(hidden_dim=8, out_channels=1,
                              encoder_cfg=encoder_cfg)
     out = model(batch)
     assert out.shape == (1, model.classifier.out_features)
@@ -106,7 +106,7 @@ def test_super_node_readout(simple_batch):
         **DEFAULT_ENCODER, "num_heads": NUM_HEADS,
         "use_super_node": True
     }
-    model = GraphTransformer(hidden_dim=4, num_class=2,
+    model = GraphTransformer(hidden_dim=4, out_channels=2,
                              encoder_cfg=encoder_cfg)
     model.encoder = IdentityEncoder(num_heads=NUM_HEADS)
     out = model(data)
@@ -117,7 +117,7 @@ def test_super_node_readout(simple_batch):
 def test_node_feature_encoder_identity(simple_batch):
     batch = simple_batch(feat_dim=16, num_nodes=10)
     encoder_cfg = {**DEFAULT_ENCODER, "node_feature_encoder": nn.Identity()}
-    model = GraphTransformer(hidden_dim=16, num_class=2,
+    model = GraphTransformer(hidden_dim=16, out_channels=2,
                              encoder_cfg=encoder_cfg)
     out1 = model(batch)
     batch.x = 2 * batch.x
@@ -131,7 +131,7 @@ def test_node_feature_encoder_identity(simple_batch):
 def test_transformer_block_identity(simple_batch):
     batch = simple_batch(feat_dim=16, num_nodes=8)
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
-    model = GraphTransformer(hidden_dim=16, num_class=4,
+    model = GraphTransformer(hidden_dim=16, out_channels=4,
                              encoder_cfg=encoder_cfg)
     model.encoder[0] = AddOneLayer()
     out = model(batch)
@@ -140,7 +140,7 @@ def test_transformer_block_identity(simple_batch):
 
 def test_encoder_layer_type():
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
-    model = GraphTransformer(hidden_dim=16, num_class=1,
+    model = GraphTransformer(hidden_dim=16, out_channels=1,
                              encoder_cfg=encoder_cfg)
     assert isinstance(model.encoder[0], GraphTransformerEncoderLayer)
 
@@ -151,7 +151,7 @@ def test_torchscript_trace():
     batch = torch.arange(G).repeat_interleave(N)
     bias = torch.rand(G, 4, N, N)
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 2}
-    model = GraphTransformer(hidden_dim=F, num_class=C,
+    model = GraphTransformer(hidden_dim=F, out_channels=C,
                              encoder_cfg=encoder_cfg).eval()
     wrapper = TraceableWrapper(model)
     traced = torch.jit.trace(wrapper, (x, batch, bias))
@@ -165,7 +165,7 @@ def test_backward(simple_batch):
         **DEFAULT_ENCODER, "num_encoder_layers": 1,
         "use_super_node": True
     }
-    model = GraphTransformer(hidden_dim=8, num_class=3,
+    model = GraphTransformer(hidden_dim=8, out_channels=3,
                              encoder_cfg=encoder_cfg)
     model.encoder[0] = AddOneLayer()
     out = model(batch)
@@ -183,7 +183,7 @@ def test_backward(simple_batch):
 def test_attention_mask_changes_logits(simple_batch, num_heads):
     batch = simple_batch(feat_dim=8, num_nodes=5)
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
-    model = GraphTransformer(hidden_dim=8, num_class=3,
+    model = GraphTransformer(hidden_dim=8, out_channels=3,
                              encoder_cfg=encoder_cfg)
     model.encoder[0] = GraphTransformerEncoderLayer(hidden_dim=8,
                                                     num_heads=num_heads)
@@ -200,7 +200,7 @@ def test_cls_token_transformation(simple_batch):
         **DEFAULT_ENCODER, "num_encoder_layers": 1,
         "use_super_node": True
     }
-    model = GraphTransformer(hidden_dim=8, num_class=2,
+    model = GraphTransformer(hidden_dim=8, out_channels=2,
                              encoder_cfg=encoder_cfg)
     orig = model.cls_token.clone()
     x, bv = model._prepend_cls_token_flat(batch.x, batch.batch)
@@ -221,7 +221,7 @@ def test_spatial_bias_shifts_logits(spatial_batch, seq_len, num_spatial,
     bias[:, :, 0, 1] = 5.0
     batch1.bias = bias
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
-    model = GraphTransformer(hidden_dim=feat_dim, num_class=2,
+    model = GraphTransformer(hidden_dim=feat_dim, out_channels=2,
                              encoder_cfg=encoder_cfg)
     out0 = model(batch0)
     out1 = model(batch1)
@@ -244,7 +244,7 @@ def test_multi_provider_fusion(spatial_edge_batch, use_super_node):
     }
     model = GraphTransformer(
         hidden_dim=8,
-        num_class=2,
+        out_channels=2,
         encoder_cfg=encoder_cfg,
     )
     fused = model._collect_attn_bias(batch)
@@ -266,7 +266,7 @@ def test_gnn_hook_order(simple_batch, pos):
 
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
     gnn_cfg = {"gnn_block": gnn, "gnn_position": pos}
-    model = GraphTransformer(hidden_dim=8, num_class=2,
+    model = GraphTransformer(hidden_dim=8, out_channels=2,
                              encoder_cfg=encoder_cfg, gnn_cfg=gnn_cfg)
     # patch the real encoder
     orig = model.encoder.layers[0].forward
@@ -297,7 +297,7 @@ def test_positional_encoders(simple_batch):
         ConstantDegreeEncoder(const_val2)
     ]
     encoder_cfg = {**DEFAULT_ENCODER, "positional_encoders": encoders}
-    model = GraphTransformer(hidden_dim=8, num_class=2,
+    model = GraphTransformer(hidden_dim=8, out_channels=2,
                              encoder_cfg=encoder_cfg)
     # Store original features
     orig_x = batch.x.clone()
@@ -331,7 +331,7 @@ def test_combined_positional_encoders(simple_batch):
         SVDEncoder(r=3, hidden_dim=16)
     ]
     encoder_cfg = {**DEFAULT_ENCODER, "positional_encoders": encoders}
-    model = GraphTransformer(hidden_dim=16, num_class=2,
+    model = GraphTransformer(hidden_dim=16, out_channels=2,
                              encoder_cfg=encoder_cfg)
     # Verify basic shapes and execution
     out = model(batch)
@@ -341,7 +341,7 @@ def test_combined_positional_encoders(simple_batch):
     reduced_encoder_cfg = {
         **DEFAULT_ENCODER, "positional_encoders": encoders[:-1]
     }
-    reduced = GraphTransformer(hidden_dim=16, num_class=2,
+    reduced = GraphTransformer(hidden_dim=16, out_channels=2,
                                encoder_cfg=reduced_encoder_cfg)
     out2 = reduced(batch)
     assert not torch.allclose(out, out2)
@@ -360,14 +360,15 @@ def test_combined_positional_encoders(simple_batch):
                                         (GATConv, "pre")])
 def test_gnn_block_real_convs(simple_batch, conv, where):
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 2}
-    base_out = GraphTransformer(hidden_dim=16, num_class=4,
+    base_out = GraphTransformer(hidden_dim=16, out_channels=4,
                                 encoder_cfg=encoder_cfg)(simple_batch(16, 5))
 
     def gnn(data, x):
         return conv(x.size(-1), x.size(-1))(x, data.edge_index)
 
     gnn_cfg = {**DEFAULT_GNN, "gnn_block": gnn, "gnn_position": where}
-    out = GraphTransformer(hidden_dim=16, num_class=4, encoder_cfg=encoder_cfg,
+    out = GraphTransformer(hidden_dim=16, out_channels=4,
+                           encoder_cfg=encoder_cfg,
                            gnn_cfg=gnn_cfg)(simple_batch(16, 5))
     assert out.shape == base_out.shape
     assert not torch.allclose(out, base_out)
@@ -387,7 +388,7 @@ def dummy_gnn(data, x):
             # default: no encoders
             {
                 "hidden_dim": 16,
-                "num_class": 3,
+                "out_channels": 3,
                 "encoder_cfg": {
                     **DEFAULT_ENCODER,
                     "use_super_node": False,
@@ -402,7 +403,7 @@ def dummy_gnn(data, x):
             },
             [
                 "hidden_dim=16",
-                "num_class=3",
+                "out_channels=3",
                 "use_super_node=False",
                 "num_encoder_layers=0",
                 "bias_providers=[]",
@@ -414,7 +415,7 @@ def dummy_gnn(data, x):
             # with all types of encoders
             {
                 "hidden_dim": 32,
-                "num_class": 5,
+                "out_channels": 5,
                 "encoder_cfg": {
                     **DEFAULT_ENCODER,
                     "use_super_node":
@@ -436,7 +437,7 @@ def dummy_gnn(data, x):
             },
             [
                 "hidden_dim=32",
-                "num_class=5",
+                "out_channels=5",
                 "use_super_node=True",
                 "num_encoder_layers=3",
                 "bias_providers=[]",
@@ -448,7 +449,7 @@ def dummy_gnn(data, x):
             # with single encoder and gnn hook
             {
                 "hidden_dim": 8,
-                "num_class": 2,
+                "out_channels": 2,
                 "encoder_cfg": {
                     **DEFAULT_ENCODER,
                     "use_super_node": False,
@@ -463,7 +464,7 @@ def dummy_gnn(data, x):
             },
             [
                 "hidden_dim=8",
-                "num_class=2",
+                "out_channels=2",
                 "use_super_node=False",
                 "num_encoder_layers=1",
                 "bias_providers=[]",
@@ -475,7 +476,7 @@ def dummy_gnn(data, x):
 def test_repr_various_configs(config, substrings):
     model = GraphTransformer(
         hidden_dim=config["hidden_dim"],
-        num_class=config["num_class"],
+        out_channels=config["out_channels"],
         encoder_cfg=config["encoder_cfg"],
         gnn_cfg=config["gnn_cfg"],
     )
@@ -530,13 +531,13 @@ def test_transformer_init_arg_validation(num_heads, dropout, ffn_hidden_dim,
         encoder_cfg["attn_bias_providers"] = providers
     if should_raise:
         with pytest.raises(ValueError) as exc:
-            GraphTransformer(hidden_dim=8, num_class=2,
+            GraphTransformer(hidden_dim=8, out_channels=2,
                              encoder_cfg=encoder_cfg)
         msg = str(exc.value).lower()
         for kw in err_keywords:
             assert kw.lower() in msg
     else:
-        model = GraphTransformer(hidden_dim=8, num_class=2,
+        model = GraphTransformer(hidden_dim=8, out_channels=2,
                                  encoder_cfg=encoder_cfg)
         # API‐level sanity
         assert model.num_heads == num_heads
@@ -607,7 +608,7 @@ def test_parameters_and_buffers_on_same_device(
     # instantiate and move to target device
     model = transformer_model(
         hidden_dim=structural_config['feat_dim'],
-        num_class=3,
+        out_channels=3,
         encoder_cfg=encoder_cfg,
     ).to(device)
     # build a batch that lives on the same device
@@ -641,7 +642,7 @@ def test_graph_transformer_none_features_handled(simple_none_batch):
     encoder_cfg = {
         "node_feature_encoder": nn.Sequential(nn.Linear(10, 16), nn.ReLU())
     }
-    model = GraphTransformer(hidden_dim=16, num_class=2,
+    model = GraphTransformer(hidden_dim=16, out_channels=2,
                              encoder_cfg=encoder_cfg)
     output = model(simple_none_batch)
     assert output.shape == (1, 2)
@@ -677,7 +678,7 @@ def test_graph_transformer_feature_dim_mismatch(simple_batch, encoder_factory,
                                                 feat_dim, should_raise):
     batch = simple_batch(feat_dim=feat_dim, num_nodes=10)
     encoder_cfg = {"node_feature_encoder": encoder_factory()}
-    model = GraphTransformer(hidden_dim=64, num_class=1,
+    model = GraphTransformer(hidden_dim=64, out_channels=1,
                              encoder_cfg=encoder_cfg)
     if should_raise:
         with pytest.raises(ValueError,
@@ -693,7 +694,7 @@ def _clone_learnable(model):
 
 def test_reset_parameters_changes_weights():
     torch.manual_seed(42)
-    model = GraphTransformer(hidden_dim=8, num_class=2)
+    model = GraphTransformer(hidden_dim=8, out_channels=2)
     old_params = _clone_learnable(model)
     torch.manual_seed(43)
     model.reset_parameters()
@@ -716,7 +717,7 @@ def test_attention_mask_caching(simple_batch, cache_masks, expected_calls,
 
     model = GraphTransformer(
         hidden_dim=8,
-        num_class=2,
+        out_channels=2,
         encoder_cfg={"num_encoder_layers": 1},
         cache_masks=cache_masks,
     )
@@ -812,7 +813,7 @@ def test_attention_mask_cache_edge_cases(simple_batch, case_id, model_kwargs,
     to `build_key_padding` function.
     """
     batch_maker = simple_batch
-    model = GraphTransformer(hidden_dim=8, num_class=2, **model_kwargs)
+    model = GraphTransformer(hidden_dim=8, out_channels=2, **model_kwargs)
     _ = run_fn(model, batch_maker)
 
     assert (patched_build_key_padding.call_count == expected_calls

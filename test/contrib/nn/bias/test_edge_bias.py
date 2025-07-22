@@ -30,10 +30,10 @@ def test_edge_bias_transformer_affects(edge_batch):
         'num_encoder_layers': 1
     }
     encoder_cfg_without_bias = {'num_encoder_layers': 1}
-    m0 = GraphTransformer(hidden_dim=16, num_class=2,
+    m0 = GraphTransformer(hidden_dim=16, out_channels=2,
                           encoder_cfg=encoder_cfg_with_bias).eval()
     torch.manual_seed(0)
-    m1 = GraphTransformer(hidden_dim=16, num_class=2,
+    m1 = GraphTransformer(hidden_dim=16, out_channels=2,
                           encoder_cfg=encoder_cfg_without_bias).eval()
 
     with torch.no_grad():
@@ -47,7 +47,7 @@ def test_edge_bias_transformer_affects(edge_batch):
 def test_edge_bias_gradients(edge_batch):
     provider = GraphAttnEdgeBias(num_heads=4, num_edges=7)
     encoder_cfg = {'attn_bias_providers': [provider], 'num_encoder_layers': 1}
-    model = GraphTransformer(hidden_dim=16, num_class=2,
+    model = GraphTransformer(hidden_dim=16, out_channels=2,
                              encoder_cfg=encoder_cfg)
     batch = edge_batch(1, 5, 7, feat_dim=16)
 
@@ -117,9 +117,9 @@ def test_edge_bias_changes_transformer_without_dist(simple_batch):
     encoder_cfg = {'attn_bias_providers': [provider], 'num_encoder_layers': 2}
     base = GraphTransformer(
         hidden_dim=8,
-        num_class=2,
+        out_channels=2,
     ).eval()
-    biased = GraphTransformer(hidden_dim=8, num_class=2,
+    biased = GraphTransformer(hidden_dim=8, out_channels=2,
                               encoder_cfg=encoder_cfg).eval()
 
     with torch.no_grad():

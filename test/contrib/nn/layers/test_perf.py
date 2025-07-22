@@ -29,7 +29,7 @@ def test_encoder_speed(benchmark, make_perf_batch):
     # -------- setup -----------
     batch = make_perf_batch(NUM_GRAPHS, NODES, HIDDEN_DIM, device)
     model = GraphTransformer(
-        hidden_dim=HIDDEN_DIM, num_class=10, encoder_cfg={
+        hidden_dim=HIDDEN_DIM, out_channels=10, encoder_cfg={
             "num_encoder_layers": 4,
             "use_super_node": True,
         }).to(device)
@@ -60,7 +60,7 @@ def test_encoder_with_bias_speed(benchmark, make_perf_batch_with_spatial):
     batch = make_perf_batch_with_spatial(NUM_GRAPHS, NODES, HIDDEN_DIM,
                                          NUM_SPATIAL, device)
     model = GraphTransformer(
-        hidden_dim=HIDDEN_DIM, num_class=10, encoder_cfg={
+        hidden_dim=HIDDEN_DIM, out_channels=10, encoder_cfg={
             "num_encoder_layers":
             4,
             "use_super_node":
@@ -111,7 +111,7 @@ def test_encoder_full_feature_speed(
     NUM_SING_VEC = positional_config["num_sing_vec"]
     NUM_HEADS = 4
     NUM_LAYERS = 4
-    NUM_CLASSES = 10
+    OUT_CHANNELS = 10
 
     BASELINE = float(os.getenv("GT_BENCH_BASE_FULL_MS", 60)) / 1000
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -124,7 +124,7 @@ def test_encoder_full_feature_speed(
         return conv(x, data.edge_index)
 
     model = GraphTransformer(
-        hidden_dim=HIDDEN_DIM, num_class=NUM_CLASSES, encoder_cfg={
+        hidden_dim=HIDDEN_DIM, out_channels=OUT_CHANNELS, encoder_cfg={
             "num_encoder_layers":
             NUM_LAYERS,
             "use_super_node":
