@@ -15,8 +15,7 @@ jobs:
 
   minimal_pytest:
     runs-on: ubuntu-latest
-    env:
-      COREDUMPY_DUMP_DIR: ${{ github.workspace }}/coredumpy_data
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -62,11 +61,3 @@ jobs:
         timeout-minutes: 15
         run: |
           uv run --no-project pytest --durations 10
-
-      - name: Upload coredumpy data if applicable
-        uses: gaogaotiantian/upload-coredumpy@v0.1
-        if: failure()
-        with:
-          name: coredumpy_data_ubuntu-latest_3.9
-          path: ${{ env.COREDUMPY_DUMP_DIR }}
-          retention-days: 7

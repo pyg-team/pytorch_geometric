@@ -64,7 +64,7 @@ def test_coalesce_jit():
         edge_attr: Optional[Tensor],
     ) -> Tuple[Tensor, Optional[Tensor]]:
         if edge_attr is None:
-            return coalesce(edge_index)
+            return coalesce(edge_index), None
         return coalesce(edge_index, edge_attr)
 
     @torch.jit.script
