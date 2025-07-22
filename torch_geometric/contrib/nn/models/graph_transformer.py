@@ -67,6 +67,9 @@ class GraphTransformer(torch.nn.Module):
               optional): Function applying a GNN block. Defaults to None.
             - gnn_position (Literal['pre', 'post', 'parallel'], optional):
               Position to apply the GNN block. Defaults to 'pre'.
+        cache_masks (bool, optional): If True, caches masks for reuse.
+            This can improve performance for large batches with the same
+            number of nodes and heads. Defaults to False.
     """
     def __init__(
         self,
@@ -75,10 +78,16 @@ class GraphTransformer(torch.nn.Module):
         *,
         encoder_cfg: dict | None = None,
         gnn_cfg: dict | None = None,
+        cache_masks: bool = False,
     ) -> None:
         super().__init__()
         # batch-aware mask cache keyed by (num_graphs, num_nodes, num_heads)
-        self._mask_cache: dict[tuple[int, int, int], torch.Tensor] = {}
+        self.cache_masks = cache_masks
+        if cache_masks:
+            self._mask_cache: dict[tuple[int, int, int], torch.Tensor] = {}
+        else:
+            self._mask_cache = None
+
         cfg, gnn = self._parse_cfg(hidden_dim, encoder_cfg, gnn_cfg)
         self._validate_cfg(hidden_dim, num_class, cfg, gnn)
         self._build_modules(hidden_dim, num_class, cfg, gnn)
@@ -612,6 +621,9 @@ class GraphTransformer(torch.nn.Module):
         attention is only applied to valid nodes in the batch.
 
         """
+        if not self.cache_masks:
+            return build_key_padding(batch_vec, num_heads=num_heads)
+
         if batch_vec.numel() == 0:
             return torch.empty((0, num_heads, 0, 0), dtype=torch.bool,
                                device=batch_vec.device)
@@ -676,7 +688,7 @@ class GraphTransformer(torch.nn.Module):
         if self.use_super_node:
             nn.init.zeros_(self.cls_token)
 
-        self._mask_cache.clear()
+        self._mask_cache.clear() if self.cache_masks else None
 
     def __repr__(self):
         """Return a string representation of GraphTransformer.
