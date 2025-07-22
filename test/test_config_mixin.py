@@ -66,7 +66,7 @@ def test_config_mixin() -> None:
     assert isinstance(cfg.data, Dataclass)
     assert cfg.data.x == 1
     assert cfg.data.y == 2
-    assert cfg._target_ == 'test.test_config_mixin.Module'
+    assert cfg._target_ == 'test_config_mixin.Module'
 
     model = Module.from_config(cfg)
     assert isinstance(model, Module)
@@ -125,9 +125,9 @@ def test_config_mixin_compound() -> None:
 
     cfg = model.config()
     assert is_dataclass(cfg)
-    assert cfg._target_ == 'test.test_config_mixin.CompoundModule'
+    assert cfg._target_ == 'test_config_mixin.CompoundModule'
     assert cfg.z == "foo"
-    assert cfg.module._target_ == 'test.test_config_mixin.Module'
+    assert cfg.module._target_ == 'test_config_mixin.Module'
     assert cfg.module.x == 0
     assert isinstance(cfg.module.data, Dataclass)
     assert cfg.module.data.x == 1
@@ -135,20 +135,19 @@ def test_config_mixin_compound() -> None:
 
     assert len(cfg.submodules) == 2
     assert isinstance(cfg.submodules, Sequence)
-    assert cfg.submodules[0]._target_ == 'test.test_config_mixin.SubModule'
+    assert cfg.submodules[0]._target_ == 'test_config_mixin.SubModule'
     assert cfg.submodules[0].p == 1.41
-    assert cfg.submodules[1]._target_ == 'test.test_config_mixin.SubModule'
+    assert cfg.submodules[1]._target_ == 'test_config_mixin.SubModule'
     assert cfg.submodules[1].p == 3.14
 
     assert len(cfg.key_modules) == 2
-    assert cfg.key_modules["key1"]._target_ == 'test.test_config_mixin.Module'
+    assert cfg.key_modules["key1"]._target_ == 'test_config_mixin.Module'
     assert cfg.key_modules["key1"].x == 10
     assert isinstance(cfg.key_modules["key1"].data, Dataclass)
     assert cfg.key_modules["key1"].data.x == 11
     assert cfg.key_modules["key1"].data.y == 12
 
-    assert cfg.key_modules[
-        "key2"]._target_ == 'test.test_config_mixin.SubModule'
+    assert cfg.key_modules["key2"]._target_ == 'test_config_mixin.SubModule'
     assert cfg.key_modules["key2"].p == 2.71
 
     model = CompoundModule.from_config(cfg)
