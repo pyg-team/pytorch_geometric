@@ -732,3 +732,111 @@ def test_attention_mask_caching(simple_batch, cache_masks, expected_calls):
         model(batch)
 
         assert mock_build.call_count == expected_calls
+
+
+@pytest.mark.parametrize(
+    "case_id, model_kwargs, run_fn, expected_calls",
+    [
+        # 1) same batch twice  → only first call builds the mask
+        (
+            "same_shape_cached",
+            {
+                "cache_masks": True,
+                "encoder_cfg": {
+                    "num_encoder_layers": 1
+                }
+            },
+            lambda m, make: [m(make(8, 5)), m(make(8, 5))],
+            1,
+        ),
+        # 2) different #nodes between passes → needs a new mask
+        (
+            "diff_shape_cached",
+            {
+                "cache_masks": True,
+                "encoder_cfg": {
+                    "num_encoder_layers": 1
+                }
+            },
+            lambda m, make: [m(make(8, 5)), m(make(8, 7))],
+            2,
+        ),
+        # 3) two encoder layers with different head counts (4 & 8) in one pass
+        (
+            "diff_heads_layer",
+            {
+                "cache_masks": True,
+                "encoder_cfg": {
+                    "num_encoder_layers": 2
+                }
+            },
+            lambda m, make: [
+                # re-wire second layer to have 8 heads
+                setattr(
+                    m.encoder[1],
+                    "__dict__",
+                    GraphTransformerEncoderLayer(hidden_dim=8, num_heads=8,
+                                                 dropout=0.0).__dict__,
+                ),
+                m(make(8, 5)),
+            ],
+            2,
+        ),
+        # 4) cache cleared via reset_parameters()
+        (
+            "reset_clears_cache",
+            {
+                "cache_masks": True,
+                "encoder_cfg": {
+                    "num_encoder_layers": 1
+                }
+            },
+            lambda m, make:
+            [m(make(8, 5)), m.reset_parameters(),
+             m(make(8, 5))],
+            2,
+        ),
+        # 5) super-node path should still respect caching
+        (
+            "super_node",
+            {
+                "cache_masks": True,
+                "encoder_cfg": {
+                    "num_encoder_layers": 1,
+                    "use_super_node": True
+                }
+            },
+            lambda m, make: [m(make(8, 5)), m(make(8, 5))],
+            1,
+        ),
+    ],
+)
+def test_attention_mask_cache_edge_cases(simple_batch, case_id, model_kwargs,
+                                         run_fn, expected_calls):
+    """One parametrised test that validates attention-mask caching behaviour:
+    * shape change, head change, reset(), super-node branch.
+    """
+    batch_maker = simple_batch  # factory: (feat_dim, num_nodes) -> Batch
+    model = GraphTransformer(hidden_dim=8, num_class=2, **model_kwargs)
+
+    with patch(
+        "torch_geometric.contrib.nn.models.graph_transformer.build_key_padding"
+    ) as mock_build, \
+        patch(
+            "torch_geometric.contrib.utils.mask_utils.build_key_padding",
+            new=mock_build,
+    ):
+
+        def fake_build(batch_vec, num_heads):
+            B = int(batch_vec.max().item()) + 1 if batch_vec.numel() else 0
+            L = batch_vec.size(0)
+            return batch_vec.new_zeros((B, num_heads, L, L), dtype=torch.bool)
+
+        mock_build.side_effect = fake_build
+
+        # run the scenario-specific calls
+        _ = run_fn(model, batch_maker)
+
+        assert (
+            mock_build.call_count == expected_calls
+        ), f"{case_id}: expected {expected_calls}, got {mock_build.call_count}"
