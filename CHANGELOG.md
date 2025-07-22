@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- Fix `detach()` warnings in example scripts involving tensor conversions. ([#10370](https://github.com/pyg-team/pytorch_geometric/pull/10370))
+- Fix `detach()` warnings in example scripts involving tensor conversions. ([#10357](https://github.com/pyg-team/pytorch_geometric/pull/10357))
 
 ### Added
 
