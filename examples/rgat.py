@@ -41,7 +41,7 @@ def train():
     loss = F.nll_loss(out[data.train_idx], data.train_y)
     loss.backward()
     optimizer.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()

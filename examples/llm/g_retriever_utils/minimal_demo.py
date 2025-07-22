@@ -212,7 +212,7 @@ def train(
             best_epoch = epoch
             save_params_dict(model, f'{model_save_name}_best_val_loss_ckpt.pt')
     torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_peak_memory_stats()
 
     if checkpointing and best_epoch != num_epochs - 1:
         print("Loading best checkpoint...")
@@ -343,7 +343,7 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
                                                  model=pure_llm,
                                                  dataset=dataset)
             torch.cuda.empty_cache()
-            torch.cuda.reset_max_memory_allocated()
+            torch.cuda.reset_peak_memory_stats()
             gc.collect()
             e2e_time = round(time.time() - since, 2)
             model_log["tuned_llm"]["prep_time"] = prep_time
@@ -386,7 +386,7 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
                 tiny_llama=tiny_llama, dataset=dataset,
                 model_save_name=root_dir + '/' + name, model=model)
             torch.cuda.empty_cache()
-            torch.cuda.reset_max_memory_allocated()
+            torch.cuda.reset_peak_memory_stats()
             gc.collect()
             e2e_time = round(time.time() - since, 2)
             model_log[name]["prep_time"] = prep_time

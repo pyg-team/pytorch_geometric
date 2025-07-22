@@ -328,7 +328,7 @@ def train(
                                      step / len(train_loader) + epoch)
 
             optimizer.step()
-            epoch_loss = epoch_loss + float(loss)
+            epoch_loss = epoch_loss + float(loss.detach())
 
             if (step + 1) % 2 == 0:
                 lr = optimizer.param_groups[0]['lr']
@@ -353,7 +353,7 @@ def train(
 
     # Clean up memory
     torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_peak_memory_stats()
 
     # Load best checkpoint if necessary
     if checkpointing and best_epoch != num_epochs - 1:

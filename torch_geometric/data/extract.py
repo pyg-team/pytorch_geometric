@@ -28,7 +28,7 @@ def extract_tar(
     """
     maybe_log(path, log)
     with tarfile.open(path, mode) as f:
-        f.extractall(folder)
+        f.extractall(folder, filter='data')
 
 
 def extract_zip(path: str, folder: str, log: bool = True) -> None:

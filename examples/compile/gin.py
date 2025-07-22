@@ -73,7 +73,7 @@ def train():
         loss = F.cross_entropy(out, data.y)
         loss.backward()
         optimizer.step()
-        total_loss += float(loss) * data.num_graphs
+        total_loss += float(loss.detach()) * data.num_graphs
     return total_loss / len(train_loader.dataset)
 
 

@@ -63,7 +63,7 @@ def train():
     loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()
