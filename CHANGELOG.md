@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.7.0] - 2025-MM-DD
 
+### Fixed
+
+- Fix `detach()` warnings in example scripts involving tensor conversions. ([#10357](https://github.com/pyg-team/pytorch_geometric/pull/10357))
+
 ### Added
 
 - Added ability to get global row and col ids from `SamplerOutput` ([#10200](https://github.com/pyg-team/pytorch_geometric/pull/10200))
