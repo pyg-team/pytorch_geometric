@@ -1,4 +1,5 @@
 from typing import Callable, List, Sequence
+from unittest.mock import patch
 
 import pytest
 import torch
@@ -13,7 +14,6 @@ from torch_geometric.contrib.nn.positional.degree import DegreeEncoder
 from torch_geometric.contrib.nn.positional.eigen import EigEncoder
 from torch_geometric.contrib.nn.positional.svd import SVDEncoder
 from torch_geometric.data import Batch, Data
-from unittest.mock import patch
 
 # Extract classes from alias imports to avoid yapf/isort conflicts
 GraphTransformerEncoderLayer = _transformer.GraphTransformerEncoderLayer
@@ -228,9 +228,12 @@ def simple_none_batch():
     Returns:
         Batch: A batch containing one graph with None node features
     """
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], dtype=torch.long)
+    num_nodes = int(edge_index.max()) + 1
     data = Data(
-        x=None,  # No node features - this triggers the error
-        edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]]),
+        x=None,
+        edge_index=edge_index,
+        num_nodes=num_nodes,
     )
     return Batch.from_data_list([data])
 
