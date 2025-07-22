@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 import torch
 import torch.nn as nn
@@ -689,3 +691,35 @@ def test_reset_parameters_changes_weights():
     new_params = _clone_learnable(model)
     # At least one parameter should have changed
     assert any((o != n).any() for o, n in zip(old_params, new_params))
+
+
+def test_attention_mask_caching(simple_batch):
+    batch = simple_batch(feat_dim=8, num_nodes=5)
+    model = GraphTransformer(
+        hidden_dim=8,
+        num_class=2,
+        encoder_cfg={"num_encoder_layers": 1},
+    )
+
+    with patch(
+        "torch_geometric.contrib.nn.models.graph_transformer.build_key_padding"
+    ) as mock_build, \
+            patch(
+                "torch_geometric.contrib.utils.mask_utils.build_key_padding",
+                new=mock_build
+            ):
+
+        def fake_build(batch_vec, num_heads):
+            """Mock function to return a square mask."""
+            B = int(batch_vec.max().item()) + 1 if batch_vec.numel() else 0
+            L = batch_vec.size(0)
+            return batch_vec.new_zeros((B, num_heads, L, L), dtype=torch.bool)
+
+        mock_build.side_effect = fake_build
+
+        # First forward pass
+        model(batch)
+        # Second forward pass
+        model(batch)
+        # Ensure the build_key_padding was called only once
+        assert mock_build.call_count == 1

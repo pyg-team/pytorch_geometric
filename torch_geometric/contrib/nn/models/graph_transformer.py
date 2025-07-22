@@ -77,7 +77,8 @@ class GraphTransformer(torch.nn.Module):
         gnn_cfg: dict | None = None,
     ) -> None:
         super().__init__()
-
+        # batch-aware mask cache keyed by (num_graphs, num_nodes, num_heads)
+        self._mask_cache: dict[tuple[int, int, int], torch.Tensor] = {}
         cfg, gnn = self._parse_cfg(hidden_dim, encoder_cfg, gnn_cfg)
         self._validate_cfg(hidden_dim, num_class, cfg, gnn)
         self._build_modules(hidden_dim, num_class, cfg, gnn)
@@ -580,14 +581,48 @@ class GraphTransformer(torch.nn.Module):
         layers = self.encoder if self.is_encoder_stack else [self.encoder]
         key_pad = None
         current_heads = None
+
         for layer in layers:
             if key_pad is None or layer.num_heads != current_heads:
-                key_pad = build_key_padding(batch_vec,
-                                            num_heads=layer.num_heads)
+                key_pad = self._get_key_pad(batch_vec, layer.num_heads)
                 current_heads = layer.num_heads
 
             x = layer(x, batch_vec, struct_mask, key_pad)
         return x
+
+    @torch.no_grad()
+    def _get_key_pad(self, batch_vec: torch.Tensor,
+                     num_heads: int) -> torch.Tensor:
+        """Get or build the key padding mask for the given batch vector.
+
+        Args:
+            batch_vec (torch.Tensor): Batch indices for each node.
+            num_heads (int): Number of attention heads.
+
+        Returns:
+            torch.Tensor: Key padding mask of shape (B, num_heads, L, L).
+
+        Note:
+        This mask is used to prevent attention to padding tokens in the input.
+        If the mask is already cached, it is returned; otherwise, it is built
+        using the `build_key_padding` function and cached for future use.
+        The mask is a square tensor where the first dimension is the batch size
+        and the second dimension is the number of attention heads. The mask
+        is expanded to match the number of heads and is used to ensure that
+        attention is only applied to valid nodes in the batch.
+
+        """
+        if batch_vec.numel() == 0:
+            return torch.empty((0, num_heads, 0, 0), dtype=torch.bool,
+                               device=batch_vec.device)
+        B, L = int(batch_vec.max()) + 1, batch_vec.size(0)
+        key = (B, L, num_heads)
+        cached = self._mask_cache.get(key)
+        if cached is None or cached.device != batch_vec.device \
+                or cached.dtype != torch.bool:
+            self._mask_cache[key] = build_key_padding(batch_vec,
+                                                      num_heads=num_heads)
+        return self._mask_cache[key]
 
     @torch.jit.ignore
     def _collect_attn_bias(self, data: Data) -> Optional[torch.Tensor]:
@@ -640,6 +675,8 @@ class GraphTransformer(torch.nn.Module):
             reset(self.gnn_block)
         if self.use_super_node:
             nn.init.zeros_(self.cls_token)
+
+        self._mask_cache.clear()
 
     def __repr__(self):
         """Return a string representation of GraphTransformer.
