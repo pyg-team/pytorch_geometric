@@ -212,7 +212,7 @@ def _chunk_to_triples_str_cloud(
     if post_text != "":
         txt_input += '\n' + post_text
     messages = []
-    if "llama-3.1-nemotron-ultra-253b-v1" in NIM_MODEL:
+    if "llama-3.1-nemotron-ultra-253b-v1" in NIM_MODEL or "kimi-k2-instruct" in NIM_MODEL:
         messages.append({"role": "system", "content": "detailed thinking on"})
     messages.append({"role": "user", "content": txt_input})
     completion = CLIENT.chat.completions.create(model=NIM_MODEL,
