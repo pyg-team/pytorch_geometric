@@ -15,22 +15,22 @@ from torch_geometric.data import Data
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.inits import reset
 
-DEFAULT_ENCODER = dict(
-    num_encoder_layers=0,
-    num_heads=4,
-    dropout=0.1,
-    ffn_hidden_dim=None,
-    activation='gelu',
-    attn_bias_providers=(),
-    positional_encoders=(),
-    node_feature_encoder=None,
-    use_super_node=False,
-)
+DEFAULT_ENCODER = {
+    "num_encoder_layers": 0,
+    "num_heads": 4,
+    "dropout": 0.1,
+    "ffn_hidden_dim": None,
+    "activation": 'gelu',
+    "attn_bias_providers": (),
+    "positional_encoders": (),
+    "node_feature_encoder": None,
+    "use_super_node": False,
+}
 
-DEFAULT_GNN = dict(
-    gnn_block=None,
-    gnn_position='pre',
-)
+DEFAULT_GNN = {
+    "gnn_block": None,
+    "gnn_position": 'pre',
+}
 
 
 class GraphTransformer(torch.nn.Module):
