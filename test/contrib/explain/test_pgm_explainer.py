@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 import torch
 
@@ -88,3 +89,34 @@ def test_pgm_explainer_classification(node_idx, task_level, perturbation_mode):
     assert explanation.node_mask.size(0) == explanation.num_nodes
     assert explanation.node_mask.min() >= 0
     assert explanation.node_mask.max() <= 1
+
+
+class DummyModel(torch.nn.Module):
+    def forward(self, x, edge_index, **kwargs):
+        return torch.tensor([[0.2, 0.8]], requires_grad=True)
+
+
+def test_batch_perturb_features_on_node():
+    model = DummyModel()
+    explainer = PGMExplainer(num_samples=1)  # just one sample for testing
+
+    # Minimal graph data with 1 node and 2 features
+    x = torch.randn(1, 2)
+    edge_index = torch.tensor([[0], [0]])  # dummy self-loop
+    indices_to_perturb = np.array([0])  # only node 0 can be perturbed
+
+    # Simulate kwargs that would include prediction details
+    kwargs = {
+        "soft_pred": torch.tensor([0.4,
+                                   0.6]),  # soft prediction of original input
+        "pred_label": 1,
+        "num_nodes": 1,
+    }
+
+    samples = explainer._batch_perturb_features_on_node(
+        model=model, x=x, edge_index=edge_index,
+        indices_to_perturb=indices_to_perturb, **kwargs)
+
+    assert isinstance(samples, torch.Tensor)
+    assert samples.shape == (1, 2)
+    assert torch.all(samples[0] >= 0)  # pred_change should be non-negative
