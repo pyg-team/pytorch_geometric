@@ -48,6 +48,8 @@ def test_sort_edge_index_jit():
         edge_index: Tensor,
         edge_attr: Optional[Tensor],
     ) -> Tuple[Tensor, Optional[Tensor]]:
+        if edge_attr is None:
+            return sort_edge_index(edge_index)
         return sort_edge_index(edge_index, edge_attr)
 
     @torch.jit.script
