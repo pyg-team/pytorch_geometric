@@ -99,8 +99,9 @@ class GraphAttnEdgeBias(BaseBiasProvider):
 
         if edge_dist is None:
             for i in range(len(ptr) - 1):
-                Ni = int(ptr[i + 1] - ptr[i])
-                blocks.append(data.x.new_zeros(Ni, Ni, dtype=torch.long))
+                num_nodes = int(ptr[i + 1] - ptr[i])
+                blocks.append(
+                    data.x.new_zeros(num_nodes, num_nodes, dtype=torch.long))
             return blocks
 
         if edge_dist.dim() != 2:
