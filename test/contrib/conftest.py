@@ -13,6 +13,7 @@ from torch_geometric.contrib.nn.positional.degree import DegreeEncoder
 from torch_geometric.contrib.nn.positional.eigen import EigEncoder
 from torch_geometric.contrib.nn.positional.svd import SVDEncoder
 from torch_geometric.data import Batch, Data
+from unittest.mock import patch
 
 # Extract classes from alias imports to avoid yapf/isort conflicts
 GraphTransformerEncoderLayer = _transformer.GraphTransformerEncoderLayer
@@ -583,3 +584,28 @@ def blockdiag_edge_batch() -> Callable[[Sequence[int], int, int], Data]:
         )
 
     return make
+
+
+@pytest.fixture
+def patched_build_key_padding():
+    """Yields a mock object that replaces *both* import-paths of
+    `build_key_padding` used inside GraphTransformer.
+
+    The mock’s side-effect always returns a (B, H, L, L) all-False mask so
+    test logic can count calls deterministically.
+    """
+    with patch(
+        "torch_geometric.contrib.nn.models.graph_transformer.build_key_padding"
+    ) as mock_build, \
+        patch(
+        "torch_geometric.contrib.utils.mask_utils.build_key_padding",
+        new=mock_build,
+    ):
+
+        def fake_build(batch_vec, num_heads):
+            B = int(batch_vec.max().item()) + 1 if batch_vec.numel() else 0
+            L = batch_vec.size(0)
+            return batch_vec.new_zeros((B, num_heads, L, L), dtype=torch.bool)
+
+        mock_build.side_effect = fake_build
+        yield mock_build
