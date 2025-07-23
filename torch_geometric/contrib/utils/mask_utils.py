@@ -53,6 +53,43 @@ def _to_additive(mask: Tensor, *, dtype: torch.dtype) -> Tensor:
                     f"got dtype {mask.dtype}")
 
 
+def _expand_key_pad(key_pad: Tensor, *, num_heads: int) -> Tensor:
+    """Ensure key_pad is 4-D, expanding 2-D masks along heads.
+
+    Args:
+        key_pad (Tensor): 2-D (B, L) or 4-D (B, H, L, L) tensor.
+        num_heads (int): Number of attention heads.
+
+    Returns:
+        Tensor: 4-D key padding mask.
+    """
+    if key_pad.dim() == 4:
+        return key_pad
+    if key_pad.dim() == 2:
+        return build_key_padding(key_pad, num_heads=num_heads)
+    raise ValueError("key_pad must be rank 2 or 4")
+
+
+def _combine_additive(
+    key_add: Optional[Tensor],
+    attn_add: Optional[Tensor],
+) -> Optional[Tensor]:
+    """Sum two additive masks, handling ``None`` inputs.
+
+    Args:
+        key_add (Optional[Tensor]): Additive key-padding mask.
+        attn_add (Optional[Tensor]): Additive structural mask.
+
+    Returns:
+        Optional[Tensor]: Combined additive mask or ``None``.
+    """
+    if key_add is None:
+        return attn_add
+    if attn_add is None:
+        return key_add
+    return key_add + attn_add
+
+
 def merge_masks(
     *,
     key_pad: Optional[Tensor] = None,
@@ -61,42 +98,33 @@ def merge_masks(
     dtype: torch.dtype = torch.float32,
     detach: bool = True,
 ) -> Optional[Tensor]:
-    """Merge key-padding and attention masks, convert them to additive form,
-    and flatten the head dimension.
+    """Merge key-padding and structural masks into an additive form.
 
     Args:
-        key_pad (Optional[Tensor]): Either a 2-D tensor (B, L) as a padding
-        mask or a 4-D tensor (B, H, L, L). If 2-D, num_heads must be provided.
-        attn (Optional[Tensor]): Additional structural mask. Same accepted
-        shapes as key_pad but 2-D is unsupported.
-        num_heads (Optional[int]): Required when key_pad is a 2-D tensor.
-        dtype (torch.dtype): Floating point type for the output mask.
-        Defaults to torch.float32.
-        detach (bool): If True, the returned mask is detached from the graph.
+        key_pad (Optional[Tensor]): 2-D (B, L) or 4-D (B, H, L, L) mask.
+        attn (Optional[Tensor]): 4-D (B, H, L, L) mask.
+        num_heads (Optional[int]): Required if ``key_pad`` is 2-D.
+        dtype (torch.dtype): Output dtype. Defaults to ``torch.float32``.
+        detach (bool): If True, the result is detached.
 
     Returns:
-        Optional[Tensor]: Additive mask of shape (B * H, L, L). Valid positions
-        are 0 and masked ones are -inf, or None if both inputs are None.
+        Optional[Tensor]: Additive mask of shape (B*H, L, L) or ``None``.
     """
     if key_pad is None and attn is None:
         return None
 
-    if key_pad is not None and key_pad.dim() == 2:
-        if num_heads is None:
-            raise ValueError(
-                "num_heads=... is required when key_pad has shape (B, L)")
-        key_pad = build_key_padding(key_pad, num_heads=num_heads)
-
-    merged = None
+    key_add = None
     if key_pad is not None:
-        merged = _to_additive(key_pad, dtype=dtype)
-    if attn is not None:
-        additive = _to_additive(attn, dtype=dtype)
-        merged = additive if merged is None else merged + additive
+        if key_pad.dim() == 2 and num_heads is None:
+            raise ValueError("num_heads must be provided for 2-D key_pad")
+        key_pad = _expand_key_pad(key_pad, num_heads=num_heads or 1)
+        key_add = _to_additive(key_pad, dtype=dtype)
 
-    if merged is None:  # pragma: no cover – sanity guard
+    attn_add = _to_additive(attn, dtype=dtype) if attn is not None else None
+    merged = _combine_additive(key_add, attn_add)
+
+    if merged is None:
         return None
     b, h, l, _ = merged.shape
     merged = merged.reshape(b * h, l, l)
-
     return merged.detach() if detach else merged
