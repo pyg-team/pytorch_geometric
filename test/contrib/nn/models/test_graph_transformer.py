@@ -6,10 +6,12 @@ from torch import Tensor
 # Use alias imports to avoid yapf/isort conflicts with long module names
 import torch_geometric.contrib.nn.bias as _bias
 import torch_geometric.contrib.nn.layers.transformer as _transformer
-from torch_geometric.contrib.nn.models.graph_transformer import (
-    DEFAULT_ENCODER, DEFAULT_GNN)
 import torch_geometric.contrib.nn.positional as _positional
 from torch_geometric.contrib.nn.models import GraphTransformer
+from torch_geometric.contrib.nn.models.graph_transformer import (
+    DEFAULT_ENCODER,
+    DEFAULT_GNN,
+)
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import GATConv, GCNConv, SAGEConv
 
@@ -84,16 +86,21 @@ def test_forward_shape(simple_batch, num_graphs, num_nodes, feat_dim,
     model = GraphTransformer(hidden_dim=feat_dim, out_channels=out_channels,
                              encoder_cfg=encoder_cfg)
     out = model(batch)
-    assert out.shape == (num_graphs, out_channels)
+    total_nodes = num_graphs * num_nodes
+    assert out.shape == (total_nodes, out_channels)
 
 
 def test_forward_without_gnn_hook(simple_batch):
-    batch = simple_batch(feat_dim=8, num_nodes=2)
+    num_nodes = 5
+    feat_dim = 8
+    hidden_dim = 8  # keep in-dim == hidden_dim when using Identity
+    out_channels = 3
+    batch = simple_batch(feat_dim=feat_dim, num_nodes=num_nodes)
     encoder_cfg = {}
-    model = GraphTransformer(hidden_dim=8, out_channels=1,
+    model = GraphTransformer(hidden_dim=hidden_dim, out_channels=out_channels,
                              encoder_cfg=encoder_cfg)
     out = model(batch)
-    assert out.shape == (1, model.classifier.out_features)
+    assert out.shape == (num_nodes, out_channels)
 
 
 # ── Feature & Structural Encoder Tests ───────────────────────────────────────
@@ -110,8 +117,9 @@ def test_super_node_readout(simple_batch):
                              encoder_cfg=encoder_cfg)
     model.encoder = IdentityEncoder(num_heads=NUM_HEADS)
     out = model(data)
-    expected = model.classifier(model.cls_token.expand(1, -1))
-    assert torch.allclose(out, expected)
+    expected = model.output_projection(model.cls_token)
+    assert torch.allclose(out[0:1], expected)
+    assert out.shape[0] == data.num_nodes + 1
 
 
 def test_node_feature_encoder_identity(simple_batch):
@@ -129,13 +137,17 @@ def test_node_feature_encoder_identity(simple_batch):
 
 
 def test_transformer_block_identity(simple_batch):
-    batch = simple_batch(feat_dim=16, num_nodes=8)
+    num_nodes = 5
+    feat_dim = 8
+    hidden_dim = 16
+    out_channels = 3
+    batch = simple_batch(feat_dim=feat_dim, num_nodes=num_nodes)
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
-    model = GraphTransformer(hidden_dim=16, out_channels=4,
+    model = GraphTransformer(hidden_dim=hidden_dim, out_channels=out_channels,
                              encoder_cfg=encoder_cfg)
     model.encoder[0] = AddOneLayer()
     out = model(batch)
-    assert out.shape == (1, 4)
+    assert out.shape == (num_nodes, out_channels)
 
 
 def test_encoder_layer_type():
@@ -215,16 +227,20 @@ def test_cls_token_transformation(simple_batch):
 @pytest.mark.parametrize("seq_len,num_spatial,feat_dim", [(10, 4, 16)])
 def test_spatial_bias_shifts_logits(spatial_batch, seq_len, num_spatial,
                                     feat_dim):
+    out_channels = 2
     batch0 = spatial_batch(1, seq_len, num_spatial, feat_dim)
     batch1 = spatial_batch(1, seq_len, num_spatial, feat_dim)
     bias = torch.zeros((1, num_spatial, seq_len, seq_len))
     bias[:, :, 0, 1] = 5.0
     batch1.bias = bias
     encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
-    model = GraphTransformer(hidden_dim=feat_dim, out_channels=2,
+    model = GraphTransformer(hidden_dim=feat_dim, out_channels=out_channels,
                              encoder_cfg=encoder_cfg)
     out0 = model(batch0)
     out1 = model(batch1)
+    seq_len = batch0.x.size(0)
+    assert out0.shape == (seq_len, out_channels)
+    assert out1.shape == (seq_len, out_channels)
     assert not torch.allclose(out0, out1)
 
 
@@ -319,29 +335,34 @@ def test_positional_encoders(simple_batch):
 def test_combined_positional_encoders(simple_batch):
     """Test GraphTransformer with degree, eigen and SVD positional encoders."""
     # Create a test batch with known structural features
-    batch = simple_batch(feat_dim=16, num_nodes=4)
+    num_nodes = 4
+    out_channels = 2
+    hidden_dim = 16
+    batch = simple_batch(feat_dim=16, num_nodes=num_nodes)
     batch.in_degree = torch.tensor([1, 2, 2, 1])
     batch.out_degree = torch.tensor([2, 1, 1, 2])
-    batch.eig_pos_emb = torch.randn(4, 3)  # 3 eigenvectors
-    batch.svd_pos_emb = torch.randn(4, 6)  # r=3 -> 6 features [U,V]
+    batch.eig_pos_emb = torch.randn(num_nodes, 3)  # 3 eigenvectors
+    batch.svd_pos_emb = torch.randn(num_nodes, 6)  # r=3 -> 6 features [U,V]
     # Create model with all three encoders
     encoders = [
-        DegreeEncoder(num_in=3, num_out=3, hidden_dim=16),
-        EigEncoder(num_eigvec=3, hidden_dim=16),
-        SVDEncoder(r=3, hidden_dim=16)
+        DegreeEncoder(num_in=3, num_out=3, hidden_dim=hidden_dim),
+        EigEncoder(num_eigvec=3, hidden_dim=hidden_dim),
+        SVDEncoder(r=3, hidden_dim=hidden_dim)
     ]
     encoder_cfg = {**DEFAULT_ENCODER, "positional_encoders": encoders}
-    model = GraphTransformer(hidden_dim=16, out_channels=2,
+    model = GraphTransformer(hidden_dim=hidden_dim, out_channels=out_channels,
                              encoder_cfg=encoder_cfg)
     # Verify basic shapes and execution
     out = model(batch)
-    assert out.shape == (1, 2)
+
+    assert out.shape == (num_nodes, out_channels)
     # Verify encoders affect output
     # Remove one encoder and check outputs differ
     reduced_encoder_cfg = {
         **DEFAULT_ENCODER, "positional_encoders": encoders[:-1]
     }
-    reduced = GraphTransformer(hidden_dim=16, out_channels=2,
+    reduced = GraphTransformer(hidden_dim=hidden_dim,
+                               out_channels=out_channels,
                                encoder_cfg=reduced_encoder_cfg)
     out2 = reduced(batch)
     assert not torch.allclose(out, out2)
@@ -639,13 +660,19 @@ def test_graph_transformer_none_features_handled(simple_none_batch):
     simple_none_batch : Batch
         A batch containing data with x=None to simulate missing node features.
     """
+    hidden_dim = 16
+    out_channels = 2
+    input_feat_dim = 10
+
     encoder_cfg = {
-        "node_feature_encoder": nn.Sequential(nn.Linear(10, 16), nn.ReLU())
+        "node_feature_encoder":
+        nn.Sequential(nn.Linear(input_feat_dim, hidden_dim), nn.ReLU())
     }
-    model = GraphTransformer(hidden_dim=16, out_channels=2,
+    model = GraphTransformer(hidden_dim=hidden_dim, out_channels=out_channels,
                              encoder_cfg=encoder_cfg)
     output = model(simple_none_batch)
-    assert output.shape == (1, 2)
+    num_nodes = simple_none_batch.num_nodes
+    assert output.shape == (num_nodes, out_channels)
     assert torch.isfinite(output).all()
     assert not torch.isnan(output).any()
 
@@ -819,3 +846,20 @@ def test_attention_mask_cache_edge_cases(simple_batch, case_id, model_kwargs,
     assert (patched_build_key_padding.call_count == expected_calls
             ), f"{case_id}: expected {expected_calls}, got \
         {patched_build_key_padding.call_count}"
+
+
+def test_no_head_output_hidden_dim(simple_batch):
+    """Test that the output hidden dimension matches the model's hidden_dim."""
+    feat_dim = 8
+    hidden_dim = 16
+    out_channels = None
+    num_nodes = 5
+    batch = simple_batch(feat_dim=feat_dim, num_nodes=num_nodes)
+    encoder_cfg = {**DEFAULT_ENCODER, "num_encoder_layers": 1}
+    model = GraphTransformer(hidden_dim=hidden_dim, out_channels=out_channels,
+                             encoder_cfg=encoder_cfg)
+    out = model(batch)
+    assert out.shape[0] == num_nodes, (
+        f"Expected output batch size {num_nodes}, got {out.shape[0]}")
+    assert out.shape[1] == model.hidden_dim, (
+        f"Expected output hidden dim {model.hidden_dim}, got {out.shape[1]}")

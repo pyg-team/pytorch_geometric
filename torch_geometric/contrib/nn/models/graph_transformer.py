@@ -12,7 +12,6 @@ from torch_geometric.contrib.nn.layers.transformer import (
 from torch_geometric.contrib.nn.positional.base import BasePositionalEncoder
 from torch_geometric.contrib.utils.mask_utils import build_key_padding
 from torch_geometric.data import Data
-from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.inits import reset
 
 DEFAULT_ENCODER = {
@@ -40,9 +39,14 @@ class GraphTransformer(torch.nn.Module):
     "Transformer for Graphs: An Overview from Architecture Perspective"
     (https://arxiv.org/pdf/2202.08455).
 
-    Args:
+    Attributes:
         hidden_dim (int): Dimension of hidden representations.
         out_channels (int | None): Number of output channels.
+        output_projection (nn.Module | None): Output projection layer.
+        node_feature_encoder (nn.Module): Module to encode node features.
+        dropout (float): Dropout rate.
+        num_heads (int): Number of attention heads.
+        ffn_hidden_dim (int): Hidden dimension of the feedforward network.
         encoder_cfg (dict, optional): Encoder configuration dictionary. Keys:
             - use_super_node (bool, optional): Use learnable class token as a
               super node. Defaults to False.
@@ -81,6 +85,13 @@ class GraphTransformer(torch.nn.Module):
         cache_masks: bool = False,
     ) -> None:
         super().__init__()
+        self.hidden_dim = hidden_dim
+        self.out_channels = out_channels
+        self._user_supplied_encoder = (
+            encoder_cfg is not None and "node_feature_encoder" in encoder_cfg
+            and encoder_cfg["node_feature_encoder"] is not None)
+        self.encoder_cfg = encoder_cfg or {}
+        self.gnn_cfg = gnn_cfg or {}
         # batch-aware mask cache keyed by (num_graphs, num_nodes, num_heads)
         self.cache_masks = cache_masks
         if cache_masks:
@@ -110,13 +121,16 @@ class GraphTransformer(torch.nn.Module):
         """Perform a forward pass of GraphTransformer.
 
         Encodes node features, applies optional GNN blocks, runs the
-        transformer encoder, and performs readout to produce logits.
+        transformer encoder, and (optionally) projects to output channels.
 
         Args:
             data (torch_geometric.data.Data): Input graph data.
 
         Returns:
-            torch.Tensor: Output tensor (logits).
+            torch.Tensor: Output tensor of shape (N_total, C), where:
+                - C = hidden_dim if out_channels is None,
+                - C = out_channels otherwise.
+                - N_total = sum of nodes in all graphs in the batch.
         """
         x = self._encode_and_apply_structural(data)
         x = self._apply_gnn_if(position="pre", data=data, x=x)
@@ -129,8 +143,9 @@ class GraphTransformer(torch.nn.Module):
         if x_parallel_in is not None:
             x = x + self.gnn_block(data, x_parallel_in)
 
-        x = self._readout(x, batch_vec)
-        return self.classifier(x)
+        if self.output_projection is not None:
+            x = self.output_projection(x)
+        return x
 
     def _validate_cfg(self, hidden_dim: int, out_channels: int | None,
                       cfg: dict, gnn: dict) -> None:
@@ -172,9 +187,9 @@ class GraphTransformer(torch.nn.Module):
             gnn (dict): GNN configuration dictionary.
         """
         if out_channels is None:
-            self.classifier = None
+            self.output_projection: nn.Module | None = None
         else:
-            self.classifier = nn.Linear(hidden_dim, out_channels)
+            self.output_projection = nn.Linear(hidden_dim, out_channels)
         self.use_super_node = cfg["use_super_node"]
         if self.use_super_node:
             self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
@@ -244,8 +259,10 @@ class GraphTransformer(torch.nn.Module):
         if not isinstance(hidden_dim, int) or hidden_dim <= 0:
             raise ValueError(
                 f"hidden_dim must be a positive int (got {hidden_dim})")
-
-        if not isinstance(out_channels, int) or out_channels <= 0:
+        if not isinstance(out_channels, (int, type(None))):
+            raise ValueError(
+                f"out_channels must be int or None (got {type(out_channels)})")
+        if isinstance(out_channels, int) and out_channels <= 0:
             raise ValueError(
                 f"out_channels must be a positive int (got {out_channels})")
 
@@ -387,27 +404,6 @@ class GraphTransformer(torch.nn.Module):
                 raise TypeError(
                     f"{enc!r} does not have a callable forward method")
 
-    @torch.jit.ignore
-    def _readout(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
-        """Readout node features.
-
-        If use_super_node is True, return the CLS token; else perform global
-        mean pooling.
-
-        Args:
-            x (torch.Tensor): Node features.
-            batch (torch.Tensor): Batch indices.
-
-        Returns:
-            torch.Tensor: Readout features.
-        """
-        if self.use_super_node:
-            graph_sizes = torch.bincount(batch)
-            first_idx = torch.cumsum(graph_sizes, 0) - graph_sizes
-            return x[first_idx]
-        else:
-            return global_mean_pool(x, batch)
-
     def _prepend_cls_token_flat(
             self, x: torch.Tensor,
             batch: torch.Tensor) -> tuple[torch.Tensor, torch.LongTensor]:
@@ -487,15 +483,24 @@ class GraphTransformer(torch.nn.Module):
                 "Input node features are None. Please ensure your dataset "
                 "provides node features or supply a suitable "
                 "node_feature_encoder that can handle None input.")
+
         if isinstance(encoder, nn.Identity):
-            expected_dim = self.classifier.in_features
-            if x.size(-1) != expected_dim:
+            expected_dim = self.hidden_dim
+            if x.size(-1) == expected_dim:
+                return x
+
+            if self._user_supplied_encoder:
                 raise ValueError(
                     f"Node feature dimension mismatch: got {x.size(-1)}, "
-                    f"expected {expected_dim} for nn.Identity encoder. "
-                    "Please ensure your input features match hidden_dim or "
-                    "use a node_feature_encoder that projects to hidden_dim.")
-            return x
+                    f"expected {expected_dim} for nn.Identity encoder.")
+            if not hasattr(self, "_input_proj"):
+                self._input_proj = nn.Linear(
+                    x.size(-1),
+                    self.hidden_dim,
+                    bias=False,
+                ).to(x.device)
+            return self._input_proj(x)
+
         in_features = self._find_in_features(encoder)
         if in_features is not None and x.size(-1) != in_features:
             raise ValueError(
@@ -523,7 +528,7 @@ class GraphTransformer(torch.nn.Module):
             else:
                 first_layer = self.node_feature_encoder
             input_dim = getattr(first_layer, 'in_features',
-                                self.classifier.in_features)
+                                self.output_projection.in_features)
 
             num_nodes = data.num_nodes
             device = next(self.parameters()).device
@@ -681,8 +686,9 @@ class GraphTransformer(torch.nn.Module):
             None
         """
         for module in [
-                self.classifier, self.encoder, self.node_feature_encoder,
-                *self.attn_bias_providers, *self.positional_encoders
+                self.output_projection, self.encoder,
+                self.node_feature_encoder, *self.attn_bias_providers,
+                *self.positional_encoders
         ]:
             reset(module)
 
@@ -717,8 +723,8 @@ class GraphTransformer(torch.nn.Module):
         ]
 
         return ("GraphTransformer("
-                f"hidden_dim={self.classifier.in_features}, "
-                f"out_channels={self.classifier.out_features}, "
+                f"hidden_dim={self.hidden_dim}, "
+                f"out_channels={self.out_channels}, "
                 f"use_super_node={self.use_super_node}, "
                 f"num_encoder_layers={n_layers}, "
                 f"bias_providers={providers}, "
