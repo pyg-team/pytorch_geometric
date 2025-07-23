@@ -687,6 +687,7 @@ def test(model, test_loader, args):
     eval_tuples = []
     for test_batch in tqdm(test_loader, desc="Testing"):
         new_qs = []
+        raw_qs = test_batch["question"]
         for i, q in enumerate(test_batch["question"]):
             # insert VectorRAG context
             new_qs.append(
@@ -696,7 +697,7 @@ def test(model, test_loader, args):
         if args.skip_graph_rag:
             test_batch.desc = ""
         preds = (inference_step(model, test_batch))
-        for question, pred, label in zip(test_batch.question, preds,
+        for question, pred, label in zip(raw_qs, preds,
                                          test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
