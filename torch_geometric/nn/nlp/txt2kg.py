@@ -25,8 +25,7 @@ class TXT2KG():
     inference a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'.
     Smaller LLMs did not work at all in testing.
     Note this 14B model requires a considerable amount of GPU memory.
-    See examples/llm/hotpot_qa.py for example usage on converting
-    HotPotQA context documents into a knowledge graph.
+    See examples/llm/txt2kg_rag.py for an example.
 
     Args:
         NVIDIA_NIM_MODEL : str, optional
@@ -40,7 +39,10 @@ class TXT2KG():
             (default: "https://integrate.api.nvidia.com/v1").
         local_LM : bool, optional
             A flag indicating whether a local Language Model (LM)
-            should be used (default: False).
+            should be used. This uses HuggingFace and will be slower
+            than deploying your own private NIM endpoint. This flag
+            is mainly recommended for dev/debug.
+            (default: False).
         chunk_size : int, optional
             The size of the chunks in which the text data is processed
             (default: 512).
