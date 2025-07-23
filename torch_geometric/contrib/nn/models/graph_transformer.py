@@ -532,7 +532,7 @@ class GraphTransformer(torch.nn.Module):
 
             num_nodes = data.num_nodes
             device = next(self.parameters()).device
-            x = torch.zeros(num_nodes, input_dim, device=device)
+            x = torch.ones(num_nodes, input_dim, device=device)
 
         x = self._encode_nodes(x)
         if self.positional_encoders:
