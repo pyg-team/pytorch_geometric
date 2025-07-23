@@ -313,7 +313,9 @@ def index_kg(args, context_docs):
         "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct "  # noqa
         "to deploy to a private endpoint, which you can pass to this script "
         "w/ --ENDPOINT_URL flag.")
-    print("Guide for deploying NIM: https://developer.nvidia.com/blog/a-simple-guide-to-deploying-generative-ai-with-nvidia-nim/") # noqa
+    print(
+        "Guide for deploying NIM: https://developer.nvidia.com/blog/a-simple-guide-to-deploying-generative-ai-with-nvidia-nim/"
+    )  # noqa
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
     checkpoint_path = os.path.join(args.dataset, "checkpoint_kg.pt")
