@@ -26,7 +26,6 @@ from typing import Type
 
 # Import SentenceTransformer types
 PyGSentenceTransformer: Optional[Type[Any]] = None
-STSentenceTransformer: Optional[Type[Any]] = None
 
 try:
     from torch_geometric.nn.nlp import \
@@ -44,7 +43,7 @@ try:
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
-    STSentenceTransformer = None
+    STSentenceTransformer = None  # type: ignore
 
 # Check if any SBERT implementation is available
 if not PYG_NLP_AVAILABLE and not SENTENCE_TRANSFORMERS_AVAILABLE:
@@ -68,7 +67,9 @@ except ImportError:
 
 class RelBenchProcessor:
     """Utility for converting RelBench datasets to PyG HeteroData format."""
-    def __init__(self, sbert_model: str = 'all-MiniLM-L6-v2') -> None:
+    def __init__(
+        self, sbert_model: str = 'sentence-transformers/all-MiniLM-L6-v2'
+    ) -> None:  # noqa: E501
         """Initialize processor with SBERT model."""
         if not RELBENCH_AVAILABLE:
             raise ImportError('RelBench is required. Install with: '
@@ -215,23 +216,64 @@ class RelBenchProcessor:
             table_record_count = table_mask.sum().item()
 
             if table_record_count > 0:
-                # Get table-level inference
-                table_lineage = self._infer_record_lineage(
-                    table_name, db, table_record_count)
-                table_silo = self._infer_record_silo(table_name, db,
-                                                     table_record_count)
-                table_anomaly = self._infer_record_anomaly(
-                    table_name, db, table_record_count)
+                # Get table-level inference (returns single values per table)
+                table_lineage_value = self._infer_table_lineage_value(
+                    table_name, db)
+                table_silo_value = self._infer_table_silo_value(table_name, db)
+                table_anomaly_value = self._infer_table_anomaly_value(
+                    table_name, db)
 
-                # Apply to records
-                lineage_labels[table_mask] = table_lineage
-                silo_labels[table_mask] = table_silo
-                anomaly_labels[table_mask] = table_anomaly
+                # Apply to all records from this table
+                lineage_labels[table_mask] = table_lineage_value
+                silo_labels[table_mask] = table_silo_value
+                anomaly_labels[table_mask] = table_anomaly_value
 
         # Store labels
         node_store.lineage_label = lineage_labels
         node_store.silo_label = silo_labels
         node_store.anomaly_label = anomaly_labels
+
+    def _infer_table_lineage_value(self, table_name: str, db: Any) -> int:
+        """Get lineage label value for a table."""
+        table_df = db.table_dict[table_name].df
+
+        # Count foreign keys in this table
+        fk_count = 0
+        if hasattr(db, 'fkey_dict') and table_name in db.fkey_dict:
+            fk_count = len(db.fkey_dict[table_name])
+
+        # Check for aggregated columns (sum, count, avg patterns)
+        has_aggregated = any(col.lower().startswith(('sum_', 'count_', 'avg_',
+                                                     'total_'))
+                             for col in table_df.columns)
+
+        # Inference logic
+        if fk_count >= 3 or has_aggregated:
+            return 2  # Target/mart
+        elif fk_count == 0:
+            return 0  # Source
+        else:
+            return 1  # Intermediate
+
+    def _infer_table_silo_value(self, table_name: str, db: Any) -> int:
+        """Get silo label value for a table."""
+        # Check table connectivity
+        has_connections = False
+        if hasattr(db, 'fkey_dict'):
+            has_connections = (table_name in db.fkey_dict
+                               and len(db.fkey_dict[table_name]) > 0)
+
+        # Simple silo detection based on connectivity
+        return 0 if has_connections else 1
+
+    def _infer_table_anomaly_value(self, table_name: str, db: Any) -> int:
+        """Get anomaly label value for a table."""
+        # Simple anomaly detection - tables with very few or many columns
+        table_df = db.table_dict[table_name].df
+        col_count = len(table_df.columns)
+
+        # Anomaly if too few (<3) or too many (>20) columns
+        return 1 if col_count < 3 or col_count > 20 else 0
 
     def _generate_embeddings(self, texts: List[str],
                              batch_size: int = 64) -> torch.Tensor:
@@ -908,7 +950,7 @@ class RelBenchProcessor:
 
 def create_relbench_hetero_data(
     dataset_name: str,
-    sbert_model: str = 'all-MiniLM-L6-v2',
+    sbert_model: str = 'sentence-transformers/all-MiniLM-L6-v2',
     sample_size: Optional[int] = None,
     add_warehouse_labels: bool = False,
     create_lineage_labels: bool = False,
