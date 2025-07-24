@@ -13,6 +13,7 @@ from torch_geometric.contrib.nn.positional.base import BasePositionalEncoder
 from torch_geometric.contrib.utils.mask_utils import build_key_padding
 from torch_geometric.data import Data
 from torch_geometric.nn.inits import reset
+from torch_geometric.utils import to_dense_batch
 
 DEFAULT_ENCODER = {
     "num_encoder_layers": 0,
@@ -589,7 +590,8 @@ class GraphTransformer(torch.nn.Module):
                      struct_mask: Optional[torch.Tensor]) -> torch.Tensor:
         """Run the transformer encoder.
 
-        Iterates over encoder layers and rebuilds key padding masks as needed.
+        Encodes the node features using the transformer encoder, applying
+        structural attention masks and padding caches as needed.
 
         Args:
             x (torch.Tensor): Node features.
@@ -599,17 +601,19 @@ class GraphTransformer(torch.nn.Module):
         Returns:
             torch.Tensor: Node features after encoding.
         """
-        layers = self.encoder if self.is_encoder_stack else [self.encoder]
-        key_pad = None
-        current_heads = None
+        x_dense, mask = to_dense_batch(x, batch_vec, fill_value=0.0)
+        if self.is_encoder_stack:
+            head_counts = {layer.num_heads for layer in self.encoder.layers}
+        else:
+            head_counts = {self.encoder.num_heads}
 
-        for layer in layers:
-            if key_pad is None or layer.num_heads != current_heads:
-                key_pad = self._get_key_pad(batch_vec, layer.num_heads)
-                current_heads = layer.num_heads
-
-            x = layer(x, batch_vec, struct_mask, key_pad)
-        return x
+        pad_cache = {h: self._get_key_pad(batch_vec, h) for h in head_counts}
+        if self.is_encoder_stack:
+            x_dense = self.encoder(x_dense, struct_mask, pad_cache)
+        else:
+            x_dense = self.encoder(x_dense, struct_mask,
+                                   pad_cache[self.encoder.num_heads])
+        return x_dense[mask]
 
     @torch.no_grad()
     def _get_key_pad(self, batch_vec: torch.Tensor,

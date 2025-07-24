@@ -206,22 +206,29 @@ def test_attention_mask_changes_logits(simple_batch, num_heads):
     assert not torch.allclose(out1, out2)
 
 
-def test_cls_token_transformation(simple_batch):
-    batch = simple_batch(feat_dim=8, num_nodes=3)
-    encoder_cfg = {
-        **DEFAULT_ENCODER, "num_encoder_layers": 1,
-        "use_super_node": True
-    }
-    model = GraphTransformer(hidden_dim=8, out_channels=2,
-                             encoder_cfg=encoder_cfg)
-    orig = model.cls_token.clone()
-    x, bv = model._prepend_cls_token_flat(batch.x, batch.batch)
-    enc = model.encoder(x, bv)
-    # first positions are the CLS tokens
-    sizes = torch.bincount(bv)
-    idx = torch.cumsum(sizes, 0) - sizes
-    transformed = enc[idx]
-    assert not torch.allclose(transformed, orig.expand(2, -1))
+def test_cls_token_transformation(simple_batch, transformer_model):
+    """A learnable CLS token (`use_super_node`) must be *updated* by the first
+    encoder layer.  We check that the value coming out of the full forward
+    pass is no longer identical to the parameter that was fed in.
+    """
+    # ----- build graph & model ---------------------------------------------
+    data = simple_batch(feat_dim=8, num_nodes=3)  # one graph → cls @ 0
+    model = transformer_model(
+        hidden_dim=8,
+        encoder_cfg={
+            **DEFAULT_ENCODER, "num_encoder_layers": 1,
+            "use_super_node": True
+        },
+    )
+
+    original_cls = model.cls_token.clone().squeeze(0)  # (C,)
+
+    # ----- full forward pass -----------------------------------------------
+    out = model(data)  # (N+1, C); cls is row 0
+    cls_after = out[0]
+
+    # ----- assertion --------------------------------------------------------
+    assert not torch.allclose(cls_after, original_cls)
 
 
 @pytest.mark.parametrize("seq_len,num_spatial,feat_dim", [(10, 4, 16)])
@@ -287,9 +294,9 @@ def test_gnn_hook_order(simple_batch, pos):
     # patch the real encoder
     orig = model.encoder.layers[0].forward
 
-    def track(x, b, mask, kp):
+    def track(x, mask, kp):
         seq.append("enc")
-        return orig(x, b, mask, kp)
+        return orig(x, mask, kp)
 
     model.encoder.layers[0].forward = track
 

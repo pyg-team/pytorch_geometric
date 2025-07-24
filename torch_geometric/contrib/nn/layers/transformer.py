@@ -7,7 +7,6 @@ from torch import Tensor
 import torch_geometric.contrib.nn.layers.feedforward as _feedforward
 import torch_geometric.contrib.utils.mask_utils as _mask_utils
 from torch_geometric.nn.inits import reset
-from torch_geometric.utils import to_dense_batch
 
 # Extract classes/functions from alias imports
 PositionwiseFeedForward = _feedforward.PositionwiseFeedForward
@@ -51,38 +50,43 @@ class GraphTransformerEncoderLayer(nn.Module):
                                                batch_first=True)
         self.reset_parameters()
 
-    def forward(self, x: Tensor, batch: Tensor, struct_mask: Optional[Tensor],
-                key_pad: Tensor):
+    def forward(self, x: Tensor, struct_mask: Optional[Tensor],
+                key_pad: Tensor) -> Tensor:
         """Forward pass through transformer encoder layer.
 
         This method applies self-attention and a position-wise feedforward
         network to the input features.
 
         Args:
-            x (Tensor): Node features (total_nodes, hidden_dim)
-            batch (Tensor): Batch indices (total_nodes,)
+            x (Tensor): Padded node features
+                (batch_size, max_nodes, hidden_dim)
             struct_mask (Optional[Tensor]): mask for structure-aware attention.
             key_pad (Tensor): Pre-computed key padding mask
 
         Returns:
-            Tensor: Transformed features (total_nodes, hidden_dim)
+            Tensor: Transformed features (batch_size, max_nodes, hidden_dim)
         """
-        assert x.dim() == 2, \
-            f"Expected 2D input tensor (N,C), got shape {x.shape}"
-        x_batch, mask = to_dense_batch(x, batch, fill_value=0.0)
+        # self attention block
         additive = merge_masks(key_pad=key_pad, attn=struct_mask,
                                num_heads=self.num_heads, dtype=x.dtype,
                                detach=struct_mask is None)
 
-        x = self.norm1(x_batch)
-        attn_out, _ = self.self_attn(x, x, x, attn_mask=additive,
-                                     need_weights=False)
-        x = x_batch + self.dropout_layer(attn_out)
-        x_flat = x[mask]
-        src2 = x_flat
-        x = self.norm2(x_flat)
+        residual = x
+        x = self.norm1(x)
+        attn_out, _ = self.self_attn(
+            x,
+            x,
+            x,
+            attn_mask=additive,
+            need_weights=False,
+        )
+        x = residual + self.dropout_layer(attn_out)
+
+        # feedforward block
+        residual = x
+        x = self.norm2(x)
         ffn_out = self.ffn(x)
-        x = src2 + self.dropout_layer(ffn_out)
+        x = residual + self.dropout_layer(ffn_out)
 
         return x
 
@@ -126,7 +130,8 @@ class GraphTransformerEncoder(nn.Module):
         self.num_heads = encoder_layer.num_heads
         self.reset_parameters()
 
-    def forward(self, x, batch, struct_mask: Optional[Tensor] = None):
+    def forward(self, x: Tensor, struct_mask: Optional[Tensor] = None,
+                pad_cache: Optional[dict] = None):
         """Apply all encoder layers in sequence.
 
         If all layers share the same num_heads, build the pad once;
@@ -134,19 +139,21 @@ class GraphTransformerEncoder(nn.Module):
 
         Args:
             x (torch.Tensor): Node feature tensor
-            batch (torch.Tensor): Batch vector
+                (batch_size, max_nodes, hidden_dim)
             struct_mask (torch.Tensor, optional):Structure-aware attention mask
+                (batch_size, num_heads, max_nodes, max_nodes)
+            pad_cache (dict, optional): Pre-computed key padding masks for each
+                number of heads. If None, it will be built from the input.
 
         Returns:
             torch.Tensor: Output after passing through all encoder layers.
         """
-        current_h = None
-        key_pad = None
         for layer in self.layers:
-            if key_pad is None or layer.num_heads != current_h:
-                key_pad = build_key_padding(batch, num_heads=layer.num_heads)
-                current_h = layer.num_heads
-            x = layer(x, batch, struct_mask, key_pad)
+            x = layer(
+                x,
+                struct_mask,
+                pad_cache[layer.num_heads],
+            )
         return x
 
     def reset_parameters(self) -> None:

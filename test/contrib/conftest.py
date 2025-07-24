@@ -13,7 +13,9 @@ from torch_geometric.contrib.nn.models import GraphTransformer
 from torch_geometric.contrib.nn.positional.degree import DegreeEncoder
 from torch_geometric.contrib.nn.positional.eigen import EigEncoder
 from torch_geometric.contrib.nn.positional.svd import SVDEncoder
+from torch_geometric.contrib.utils.mask_utils import build_key_padding
 from torch_geometric.data import Batch, Data
+from torch_geometric.utils import to_dense_batch
 
 # Extract classes from alias imports to avoid yapf/isort conflicts
 GraphTransformerEncoderLayer = _transformer.GraphTransformerEncoderLayer
@@ -612,3 +614,32 @@ def patched_build_key_padding():
 
         mock_build.side_effect = fake_build
         yield mock_build
+
+
+@pytest.fixture
+def dense_input(input_batch):
+    """Return a padded node-feature tensor.
+
+    Returns:
+    -------
+    x_dense (Tensor) : (B, L, C) – padded features
+    """
+    x_flat, batch = input_batch
+    x_dense, _ = to_dense_batch(x_flat, batch, fill_value=0.0)
+    return x_dense
+
+
+@pytest.fixture
+def key_pad_mask(input_batch) -> Callable[[int], torch.Tensor]:
+    """Factory that returns the key-padding mask for any given number of heads.
+
+    Example:
+    -------
+    key_pad = key_pad_mask(num_heads=4)
+    """
+    _, batch = input_batch
+
+    def make(num_heads: int):
+        return build_key_padding(batch, num_heads=num_heads)
+
+    return make
