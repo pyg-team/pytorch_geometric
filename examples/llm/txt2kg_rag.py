@@ -706,7 +706,9 @@ def test(model, test_loader, args):
         scores.append(eval(question, pred, label))
     avg_scores = sum(scores) / len(scores)
     print("Avg marlin accuracy=", avg_scores)
-
+    print("*" * 5 + "NOTE" + "*" * 5)
+    print("Marlin Accuracy is Estimated by LLM as a Judge!")
+    print("Improvement of this estimation process is WIP...")
 
 if __name__ == '__main__':
     # for reproducibility
