@@ -78,10 +78,12 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
 
         if LEGACY_MODE:
             out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                             self.negative_slope, False, self.concat, edge_feat=edge_attr)
+                             self.negative_slope, False, self.concat,
+                             edge_feat=edge_attr)
         else:
             out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                             self.negative_slope, self.concat, edge_feat=edge_attr)
+                             self.negative_slope, self.concat,
+                             edge_feat=edge_attr)
 
         if self.bias is not None:
             out = out + self.bias
