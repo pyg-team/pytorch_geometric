@@ -26,6 +26,8 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
     :class:`~torch_geometric.nn.conv.GATConv` based on the :obj:`cugraph-ops`
     package that fuses message passing computation for accelerated execution
     and lower memory footprint.
+    The easiest way to enable :obj:`cugraph-ops` is to use
+    https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg
     """
     def __init__(
         self,
@@ -67,6 +69,7 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         self,
         x: Tensor,
         edge_index: EdgeIndex,
+        edge_attr: Tensor,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
         graph = self.get_cugraph(edge_index, max_num_neighbors)
@@ -75,10 +78,10 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
 
         if LEGACY_MODE:
             out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                             self.negative_slope, False, self.concat)
+                             self.negative_slope, False, self.concat, edge_feat=edge_attr)
         else:
             out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                             self.negative_slope, self.concat)
+                             self.negative_slope, self.concat, edge_feat=edge_attr)
 
         if self.bias is not None:
             out = out + self.bias
