@@ -23,16 +23,14 @@ SYSTEM_PROMPT_1 = (
 SYSTEM_PROMPT_2 = (
     "I will rate the User Answer in comparison to the Reference " +
     "Answer for a given Question.\n" +
-    "A rating of 4 means that the User Answer completely answers the Question and is equivalent to the Reference Answer. This means that it contains the exact same terms and topics as the Reference Answer\n" +
+    "A rating of 4 means that the User Answer completely answers the Question and is equivalent to the Reference Answer. This means that it contains the exact same terms and topics as the Reference Answer\n"
+    +
     "A rating of 2 indicates that the User Answer is partially correct but is not entirely equivalent to the Reference Answer. This means that it only matches some of the terms and topics as the Reference Answer, but not all.\n"
-    "A rating of 0 indicates that the User Answer is incomplete and/or incorrect. The answer does not resemble the Reference Answer at all.\n" +
-    "Do not explain or justify my rating. My rating must" +
-    " be only 4, 2 or 0 only.\n\n" + 
-    "Question: \"{question}\"\n\n" +
+    "A rating of 0 indicates that the User Answer is incomplete and/or incorrect. The answer does not resemble the Reference Answer at all.\n"
+    + "Do not explain or justify my rating. My rating must" +
+    " be only 4, 2 or 0 only.\n\n" + "Question: \"{question}\"\n\n" +
     "Reference Answer: \"{model_pred}\"\n\n" +
-    "User Answer: \"{correct_answer}\"\n\n" + 
-    "Rating: "
-)
+    "User Answer: \"{correct_answer}\"\n\n" + "Rating: ")
 
 
 # TODO: add support for Local LM
