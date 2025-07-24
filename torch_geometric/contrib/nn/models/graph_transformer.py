@@ -196,7 +196,7 @@ class GraphTransformer(torch.nn.Module):
             self.output_projection = nn.Linear(hidden_dim, out_channels)
         self.use_super_node = cfg["use_super_node"]
         if self.use_super_node:
-            self.cls_token = nn.Parameter(torch.zeros(1, hidden_dim))
+            self.cls_token = nn.Parameter(torch.empty(1, hidden_dim))
 
         self.node_feature_encoder = cfg["node_feature_encoder"]
         self.dropout = cfg["dropout"]
@@ -702,7 +702,7 @@ class GraphTransformer(torch.nn.Module):
         if isinstance(self.gnn_block, nn.Module):
             reset(self.gnn_block)
         if self.use_super_node:
-            nn.init.zeros_(self.cls_token)
+            torch.nn.init.trunc_normal_(self.cls_token, std=1e-2)
 
         self._mask_cache.clear() if self.cache_masks else None
 
