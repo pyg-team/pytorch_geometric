@@ -177,7 +177,8 @@ def inference_step(model, batch, model_save_name="gnn+llm"):
         return model.inference(batch.question, batch.desc)
     else:  # (GNN+LLM)
         return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr, batch.desc)
+                               batch.batch, batch.edge_attr, batch.desc,
+                               max_out_tokens=400)
 
 
 def adjust_learning_rate(param_group: dict, LR: float, epoch: int,

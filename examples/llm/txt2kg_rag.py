@@ -680,6 +680,7 @@ def train(args, train_loader, val_loader):
 
 
 def test(model, test_loader, args):
+    print(f"LLMJudge using {args.NV_NIM_MODEL}")
     llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
@@ -688,8 +689,14 @@ def test(model, test_loader, args):
 
     scores = []
     eval_tuples = []
-    for test_batch in tqdm(test_loader, desc="Testing"):
+    for ii, test_batch in enumerate(tqdm(test_loader, desc="Testing")):
+        # early termination to evaluate scoring
+        if ii > 20:
+            break
         new_qs = []
+        ###
+        ### REMOVE PROMPT AND USING RAW QUESTIONS
+        ###
         raw_qs = test_batch["question"]
         for i, q in enumerate(test_batch["question"]):
             # insert VectorRAG context
@@ -702,8 +709,21 @@ def test(model, test_loader, args):
         preds = (inference_step(model, test_batch))
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
-    for question, pred, label in tqdm(eval_tuples, desc="Eval"):
-        scores.append(eval(question, pred, label))
+            # breakpoint()
+            
+    data = {"timestamp": datetime.now().strftime('%Y-%m-%d_%H:%M')}
+    for i, (question, pred, label) in enumerate(tqdm(eval_tuples, desc="Eval")):
+        summary, avg_score = eval(question, pred, label)
+        
+        print(f"Iteration {i}: score = {avg_score}. Answer length: {len(pred)}")
+        data[i] = summary
+        scores.append(avg_score)
+
+    
+    filename = '/wd/SynthQA/evals.json'
+    Path(filename).touch(exist_ok=True)
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=2)
     avg_scores = sum(scores) / len(scores)
     print("Avg marlin accuracy=", avg_scores)
 
