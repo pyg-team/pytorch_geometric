@@ -14,11 +14,12 @@ SYSTEM_PROMPT_1 = (
     +
     "Say 2, if User Answer is partially contained and almost equivalent to Reference Answer in all terms, topics, numbers, metrics, dates and units. A score of 2 represents an incomplete answer due to lack of reasoning or explanation with supporting evidence.\n"
     +
-    "Say 0, if User Answer is not contained in Reference Answer or not accurate in all terms, topics, numbers, metrics, dates and units or the User Answer does not answer the question.\n"
+    "Say 0, if User Answer is not contained in Reference Answer or not accurate in all terms, topics, numbers, metrics, dates and units or the User Answer does not answer the question. If the User Answer is an incomplete thought, it should be given a score of 0.\n"
     +
     "Do not explain or justify your rating. Your rating must be only 0, 2, or 4.\n"
     + "Question: \"{question}\"\n" + "User Answer: \"{model_pred}\"\n" +
-    "Reference Answer: \"{correct_answer}\"\n" + "The rating is:\n")
+    "Reference Answer: \"{correct_answer}\"\n"
+)
 
 SYSTEM_PROMPT_2 = (
     "I will rate the User Answer in comparison to the Reference " +
