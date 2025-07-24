@@ -712,16 +712,17 @@ def test(model, test_loader, args):
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
             # breakpoint()
-            
+
     data = {"timestamp": datetime.now().strftime('%Y-%m-%d_%H:%M')}
-    for i, (question, pred, label) in enumerate(tqdm(eval_tuples, desc="Eval")):
+    for i, (question, pred, label) in enumerate(tqdm(eval_tuples,
+                                                     desc="Eval")):
         summary, avg_score = eval(question, pred, label)
-        
-        print(f"Iteration {i}: score = {avg_score}. Answer length: {len(pred)}")
+
+        print(
+            f"Iteration {i}: score = {avg_score}. Answer length: {len(pred)}")
         data[i] = summary
         scores.append(avg_score)
 
-    
     filename = '/wd/SynthQA/evals.json'
     Path(filename).touch(exist_ok=True)
     with open(filename, 'w') as f:
