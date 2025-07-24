@@ -8,24 +8,16 @@ from torch_geometric.nn.nlp.txt2kg import \
 # Gilberto Titericz (NVIDIA)
 # This work is an adaptation of his for PyG
 SYSTEM_PROMPT_1 = (
-    "Instruction: You are a world class state of the art " +
-    "assistant for rating " +
-    "a User Answer given a Question. The Question is completely" +
-    " answered by the Reference Answer.\n" +
-    "Say 4, if User Answer is full contained and equivalent to" +
-    " Reference Answer" +
-    "in all terms, topics, numbers, metrics, dates and units.\n" +
-    "Say 2, if User Answer is partially contained and almost " +
-    "equivalent to Reference Answer" +
-    "in all terms, topics, numbers, metrics, dates and units.\n" +
-    "Say 0, if User Answer is not contained in Reference Answer" +
-    " or not accurate in all terms, topics," +
-    "numbers, metrics, dates and units or the User Answer do not" +
-    " answer the question.\n" +
-    "Do not explain or justify your rating. Your rating must be " +
-    "only 4, 2 or 0 according to the instructions above.\n" +
-    "### Question: \"{question}\"\n" + "### User Answer: \"{model_pred}\"\n" +
-    "### Reference Answer: \"{correct_answer}\"\n" + "The rating is:\n")
+    "Instruction: You are an assistant for rating a User's Answer given a Question. The Question is completely answered by the Reference Answer, which you will compare the User's answer to and give it a score of 0, 2, or 4.\n" + 
+    "Say 4, if User Answer is full, contained, and equivalent to the Reference Answer in all terms, topics, numbers, metrics, dates, and units. A score of 4 represents a complete and correct answer with proper reasoning\n." + 
+    "Say 2, if User Answer is partially contained and almost equivalent to Reference Answer in all terms, topics, numbers, metrics, dates and units. A score of 2 represents an incomplete answer due to lack of reasoning or explanation with supporting evidence.\n" +
+    "Say 0, if User Answer is not contained in Reference Answer or not accurate in all terms, topics, numbers, metrics, dates and units or the User Answer does not answer the question.\n" +
+    "Do not explain or justify your rating. Your rating must be only 0, 2, or 4.\n" +
+    "Question: \"{question}\"\n" + 
+    "User Answer: \"{model_pred}\"\n" +
+    "Reference Answer: \"{correct_answer}\"\n" + 
+    "The rating is:\n"
+)
 
 SYSTEM_PROMPT_2 = (
     "I will rate the User Answer in comparison to the Reference " +
@@ -155,4 +147,12 @@ class LLMJudge():
             except:  # noqa
                 pass
 
-        return self._average_scores(score1, score2)
+        summary = {
+            "score_1": score1,
+            "score_2": score2,
+            "Q": question,
+            "A": model_pred,
+            "GROUND": correct_answer
+        }
+        
+        return summary, self._average_scores(score1, score2)
