@@ -706,9 +706,7 @@ def test(model, test_loader, args):
         test_batch.question = new_qs
         if args.skip_graph_rag:
             test_batch.desc = ""
-        preds = (inference_step(model=model,
-                                batch=test_batch,
-                                max_tokens=400))
+        preds = (inference_step(model=model, batch=test_batch, max_tokens=400))
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
             # breakpoint()
