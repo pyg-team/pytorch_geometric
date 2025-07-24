@@ -187,6 +187,8 @@ class SGFormer(torch.nn.Module):
         self.params2 = list(self.graph_conv.parameters())
         self.params2.extend(list(self.fc.parameters()))
 
+        self.out_channels = out_channels
+
     def reset_parameters(self) -> None:
         self.trans_conv.reset_parameters()
         self.graph_conv.reset_parameters()
