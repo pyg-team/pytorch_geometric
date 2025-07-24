@@ -74,6 +74,8 @@ class GraphTransformer(torch.nn.Module):
         cache_masks (bool, optional): If True, caches masks for reuse.
             This can improve performance for large batches with the same
             number of nodes and heads. Defaults to False.
+        cast_bias (bool, optional): If True, casts attention bias to the
+            same dtype as node features. Defaults to False.
     """
     def __init__(
         self,
@@ -83,10 +85,12 @@ class GraphTransformer(torch.nn.Module):
         encoder_cfg: dict | None = None,
         gnn_cfg: dict | None = None,
         cache_masks: bool = False,
+        cast_bias: bool = False,
     ) -> None:
         super().__init__()
         self.hidden_dim = hidden_dim
         self.out_channels = out_channels
+        self.cast_bias = cast_bias
         self._user_supplied_encoder = (
             encoder_cfg is not None and "node_feature_encoder" in encoder_cfg
             and encoder_cfg["node_feature_encoder"] is not None)
@@ -669,8 +673,11 @@ class GraphTransformer(torch.nn.Module):
 
         if not masks:
             return None
-        return torch.stack(masks,
-                           dim=0).sum(dim=0).to(data.x.dtype).to(data.x.device)
+
+        bias = torch.stack(masks, dim=0).sum(dim=0)
+        if data.x.dtype == torch.float32 or self.cast_bias:
+            bias = bias.to(data.x.dtype)
+        return bias.to(data.x.device)
 
     def reset_parameters(self) -> None:
         """Reinitialize all learnable parameters.

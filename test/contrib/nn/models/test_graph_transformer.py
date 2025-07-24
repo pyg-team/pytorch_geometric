@@ -863,3 +863,59 @@ def test_no_head_output_hidden_dim(simple_batch):
         f"Expected output batch size {num_nodes}, got {out.shape[0]}")
     assert out.shape[1] == model.hidden_dim, (
         f"Expected output hidden dim {model.hidden_dim}, got {out.shape[1]}")
+
+
+def test_collect_attn_bias_dtype_behavior(simple_batch):
+    """Test _collect_attn_bias returns correct dtype based on cast_bias."""
+    # Prepare a batch with a simple bias mask
+    batch = simple_batch(feat_dim=8, num_nodes=4)
+    batch.bias = torch.ones((1, 1, 4, 4), dtype=torch.float32)
+
+    # Default: cast_bias=False → always float32
+    model = GraphTransformer(hidden_dim=8, out_channels=2, cast_bias=False)
+    bias_out = model._collect_attn_bias(batch)
+    assert bias_out.dtype == torch.float32
+
+    # Explicit cast_bias=True on float32 x still yields float32
+    model.cast_bias = True
+    bias_out2 = model._collect_attn_bias(batch)
+    assert bias_out2.dtype == torch.float32
+
+    # Simulate float16 features
+    batch.x = batch.x.to(torch.float16)
+    model.cast_bias = False
+    bias_out3 = model._collect_attn_bias(batch)
+    assert bias_out3.dtype == torch.float32
+
+    # With cast_bias=True on float16 x, we get float16
+    model.cast_bias = True
+    bias_out4 = model._collect_attn_bias(batch)
+    assert bias_out4.dtype == torch.float16
+
+
+@pytest.mark.skipif(not CUDA,
+                    reason="CUDA required for mixed-precision AMP test")
+def test_mixed_precision_amp_stability(simple_batch):
+    """Ensure forward/backward under AMP float16 runs without NaNs."""
+    batch = simple_batch(feat_dim=8, num_nodes=5).to('cuda')
+    batch.bias = torch.zeros((1, 1, 5, 5), device='cuda')
+
+    model = GraphTransformer(hidden_dim=8, out_channels=2, cast_bias=False)
+    model = model.to('cuda').train()
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-2, momentum=0.9,
+                                weight_decay=1e-4)
+
+    with torch.amp.autocast("cuda", dtype=torch.float16):
+        out = model(batch)
+        loss = out.sum()
+
+    optimizer.zero_grad()
+    loss.backward()
+
+    # No NaNs/Infs in output
+    assert torch.isfinite(out).all()
+
+    # No NaNs/Infs in any gradient
+    for p in model.parameters():
+        if p.grad is not None:
+            assert torch.isfinite(p.grad).all()
