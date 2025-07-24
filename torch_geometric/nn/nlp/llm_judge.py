@@ -18,8 +18,7 @@ SYSTEM_PROMPT_1 = (
     +
     "Do not explain or justify your rating. Your rating must be only 0, 2, or 4.\n"
     + "Question: \"{question}\"\n" + "User Answer: \"{model_pred}\"\n" +
-    "Reference Answer: \"{correct_answer}\"\n"
-)
+    "Reference Answer: \"{correct_answer}\"\n")
 
 SYSTEM_PROMPT_2 = (
     "I will rate the User Answer in comparison to the Reference " +
