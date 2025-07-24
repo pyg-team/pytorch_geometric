@@ -410,42 +410,46 @@ class GraphTransformer(torch.nn.Module):
                     f"{enc!r} does not have a callable forward method")
 
     def _prepend_cls_token_flat(
-            self, x: torch.Tensor,
-            batch: torch.Tensor) -> tuple[torch.Tensor, torch.LongTensor]:
-        """Prepend a learnable CLS token to each graph's nodes.
+        self,
+        x: torch.Tensor,
+        batch: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.LongTensor]:
+        r"""Prepend a learnable CLS token to every graph.
 
-        Inserts one classification token per graph without loops or
-        non-TorchScript features.
+        Builds the output solely with ``torch.cat`` and ``torch.argsort`` –
+        no full-size zero tensor or ``scatter`` kernel is launched.
 
         Args:
-            x (torch.Tensor): Node features of shape (N, C).
-            batch (torch.Tensor): Graph indices of shape (N,).
+            x (Tensor): Node features of shape *(N, C)*.
+            batch (LongTensor): Graph indices of shape *(N,)*.
 
         Returns:
-            tuple[torch.Tensor, torch.LongTensor]: New node features of shape
-            (N + B, C) and updated batch indices.
+            (Tensor, LongTensor):
+            • Node features of shape *(N + B, C)* with each CLS token
+            placed *before* its graph’s nodes.
+            • Updated batch vector of shape *(N + B,)*.
         """
-        B = batch.max() + 1
-        N, C = x.size(0), x.size(1)
+        # ---- size bookkeeping -----------------------------------------------
+        B: int = int(batch.max()) + 1  # number of graphs
+        N, C = x.size()  # nodes, feature dim
         lengths = torch.bincount(batch, minlength=B)
-        new_lengths = lengths + 1
-        graph_ids = torch.arange(B, device=x.device)
-        new_batch = graph_ids.repeat_interleave(new_lengths)
-        offsets = new_lengths.cumsum(0) - new_lengths
-        cls_positions = offsets
-        node_positions = torch.arange(N, device=x.device) + batch + 1
-        all_positions = torch.cat([cls_positions, node_positions], dim=0)
-        cls_tokens = self.cls_token.expand(B, C)
-        all_features = torch.cat([cls_tokens, x], dim=0)
-        total = N + B
-        new_x = x.new_zeros((total, C))
-        new_x = new_x.scatter(
-            0,
-            all_positions.unsqueeze(1).expand(-1, C),
-            all_features,
-        )
+        new_lengths = lengths + 1  # +1 for the CLS token
 
-        return new_x, new_batch
+        # ---- build new batch vector via repeat_interleave -------------------
+        graph_ids = torch.arange(B, device=x.device)
+        new_batch = graph_ids.repeat_interleave(new_lengths)  # (N+B,)
+
+        # ---- concatenate CLS tokens and node features -----------------------
+        cls_tokens = self.cls_token.expand(B, C)  # (B, C)
+        feats = torch.cat((cls_tokens, x), dim=0)  # (N+B, C)
+
+        # ---- determine the target order (no scatter) ------------------------
+        offsets = new_lengths.cumsum(0) - new_lengths
+        cls_pos = offsets
+        node_pos = torch.arange(N, device=x.device) + batch + 1
+        order = torch.cat((cls_pos, node_pos)).argsort()
+
+        return feats[order], new_batch
 
     @staticmethod
     def _find_in_features(module):
