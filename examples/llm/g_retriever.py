@@ -30,6 +30,7 @@ from torch_geometric.datasets import CWQDataset, WebQSPDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models import GAT, GRetriever
 from torch_geometric.nn.nlp import LLM
+from torch_geometric.nn.nlp.llm import MAX_NEW_TOKENS
 
 
 def compute_metrics(eval_output):
@@ -160,7 +161,7 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         )
 
 
-def inference_step(model, batch, model_save_name="gnn+llm"):
+def inference_step(model, batch, model_save_name="gnn+llm", max_tokens=MAX_NEW_TOKENS):
     """Performs inference on a given batch of data using the provided model.
 
     Args:
@@ -178,7 +179,7 @@ def inference_step(model, batch, model_save_name="gnn+llm"):
     else:  # (GNN+LLM)
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.edge_attr, batch.desc,
-                               max_out_tokens=400)
+                               max_out_tokens=max_tokens)
 
 
 def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
