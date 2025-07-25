@@ -643,3 +643,12 @@ def key_pad_mask(input_batch) -> Callable[[int], torch.Tensor]:
         return build_key_padding(batch, num_heads=num_heads)
 
     return make
+
+
+@pytest.fixture
+def no_batch_data():
+    """Creates a Data object with no batch information."""
+    return Data(
+        x=torch.randn(10, 8),
+        edge_index=torch.empty((2, 0), dtype=torch.long),
+    )

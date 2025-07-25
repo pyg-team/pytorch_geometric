@@ -128,6 +128,17 @@ class GraphTransformer(torch.nn.Module):
         Encodes node features, applies optional GNN blocks, runs the
         transformer encoder, and (optionally) projects to output channels.
 
+        Notes:
+        -----
+        If `use_super_node` is True, a learnable class token is prepended
+        to the node features, and the batch vector is updated accordingly.
+
+        If `gnn_block` is provided, it is applied either before or after
+        the transformer encoder, depending on `gnn_position`.
+
+        If no batch vector is provided in `data`, a default batch vector
+        of zeros is created.
+
         Args:
             data (torch_geometric.data.Data): Input graph data.
 
@@ -139,7 +150,8 @@ class GraphTransformer(torch.nn.Module):
         """
         x = self._encode_and_apply_structural(data)
         x = self._apply_gnn_if(position="pre", data=data, x=x)
-        x, batch_vec = self._prepare_batch(x, data.batch)
+        batch = getattr(data, 'batch', None)
+        x, batch_vec = self._prepare_batch(x, batch)
         struct_mask = self._collect_attn_bias(data)
         x_parallel_in = x if self._is_parallel() else None
         x = self._run_encoder(x, batch_vec, struct_mask)
@@ -567,17 +579,25 @@ class GraphTransformer(torch.nn.Module):
 
     def _prepare_batch(
             self, x: torch.Tensor,
-            batch: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+            batch: torch.Tensor | None) -> tuple[torch.Tensor, torch.Tensor]:
         """Prepare the batch vector and optionally prepend the CLS token.
+
+        If `use_super_node` is True, a learnable class token is prepended
+        to the node features, and the batch vector is updated accordingly.
+
+
 
         Args:
             x (torch.Tensor): Node features.
-            batch (torch.Tensor): Batch indices for each node.
+            batch (torch.Tensor | None): Batch indices for each node.
+                If None, a default batch vector of zeros is created.
 
         Returns:
             x (torch.Tensor): Node features, potentially with prepended CLS.
             batch (torch.Tensor): Updated batch indices.
         """
+        if batch is None:
+            batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
         if self.use_super_node:
             x, batch = self._prepend_cls_token_flat(x, batch)
         return x, batch

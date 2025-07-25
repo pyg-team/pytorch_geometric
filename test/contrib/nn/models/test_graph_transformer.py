@@ -1014,3 +1014,14 @@ def test_mixed_precision_amp_stability(simple_batch):
     for p in model.parameters():
         if p.grad is not None:
             assert torch.isfinite(p.grad).all()
+
+
+def test_forward_accepts_data_without_batch(no_batch_data):
+    """Test GraphTransformer can process data without batch information."""
+    num_nodes, feat_dim = no_batch_data.x.size()
+    out_channels = 3
+    # keep in_dim == hidden_dim so we don’t need any feature encoder
+    model = GraphTransformer(hidden_dim=feat_dim, out_channels=out_channels,
+                             encoder_cfg={})
+    out = model(no_batch_data)
+    assert out.shape == (num_nodes, out_channels)
