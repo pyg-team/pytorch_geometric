@@ -53,7 +53,7 @@ from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 
 # Define constants for better readability
-NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
+NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
 KG_CHUNK_SIZE_DEFAULT = 512
@@ -680,6 +680,7 @@ def train(args, train_loader, val_loader):
 
 
 def test(model, test_loader, args):
+    print(f"LLMJudge using {args.NV_NIM_MODEL}")
     llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
@@ -702,8 +703,20 @@ def test(model, test_loader, args):
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
             eval_tuples.append((question, pred, label))
-    for question, pred, label in tqdm(eval_tuples, desc="Eval"):
-        scores.append(eval(question, pred, label))
+
+    data = {"timestamp": datetime.now().strftime('%Y-%m-%d_%H:%M')}
+    for i, (question, pred, label) in enumerate(tqdm(eval_tuples,
+                                                     desc="Eval")):
+        summary, avg_score = eval(question, pred, label)
+
+        print(f"Iteration {i}: score = {avg_score}")
+        data[i] = summary
+        scores.append(avg_score)
+
+    filename = '/wd/SynthQA/evals.json'
+    Path(filename).touch(exist_ok=True)
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=2)
     avg_scores = sum(scores) / len(scores)
     print("Avg marlin accuracy=", avg_scores)
     print("*" * 5 + "NOTE" + "*" * 5)
