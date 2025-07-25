@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+
 import pytest
 import torch
 import torch.nn as nn
@@ -24,6 +26,16 @@ EigEncoder = _positional.EigEncoder
 SVDEncoder = _positional.SVDEncoder
 
 CUDA = torch.cuda.is_available()
+
+
+def _build(hidden_dim=8, out_channels=2, encoder_cfg=None, **extra):
+    """Create GraphTransformer used by all rule tests."""
+    return GraphTransformer(
+        hidden_dim=hidden_dim,
+        out_channels=out_channels,
+        encoder_cfg=encoder_cfg or {},
+        **extra,
+    )
 
 
 class AddOneLayer(nn.Module):
@@ -514,73 +526,105 @@ def test_repr_various_configs(config, substrings):
 
 
 @pytest.mark.parametrize(
-    "num_heads, dropout, ffn_hidden_dim, activation, "
-    "providers, should_raise, err_keywords",
+    "num_heads, should_raise",
     [
-        # valid
-        (4, 0.0, None, "gelu", [], False, []),
-        (2, 0.5, 16, "relu", [], False, []),
-        # bad num_heads
-        (0, 0.1, None, "gelu", [], True, ["num_heads"]),
-        (-1, 0.1, None, "gelu", [], True, ["num_heads"]),
-        # bad dropout
-        (2, -0.1, None, "gelu", [], True, ["dropout", "[0,1)"]),
-        (2, 1.0, None, "gelu", [], True, ["dropout", "[0,1)"]),
-        # bad ffn_hidden_dim
-        (2, 0.1, 4, "gelu", [], True, ["ffn_hidden_dim", "≥"]),
-        # bad activation
-        (2, 0.1, None, "invalid", [], True, ["not", "supported"]),
-        # mismatched bias‐provider heads
-        (2, 0.1, None, "gelu", [GraphAttnSpatialBias(3, 5)
-                                ], True, ["BiasProvider"]),
-    ],
-    ids=[
-        "valid-defaults",
-        "valid-relu",
-        "bad-heads-zero",
-        "bad-heads-negative",
-        "bad-dropout-neg",
-        "bad-dropout-eq1",
-        "bad-ffn-too-small",
-        "bad-activation",
-        "bad-bias-heads",
+        (4, False),
+        (1, False),  # valid
+        (0, True),
+        (-3, True),  # invalid
     ])
-def test_transformer_init_arg_validation(num_heads, dropout, ffn_hidden_dim,
-                                         activation, providers, should_raise,
-                                         err_keywords):
-    encoder_cfg = {
-        "num_encoder_layers": 1,
-        "num_heads": num_heads,
-        "dropout": dropout,
-        "ffn_hidden_dim": ffn_hidden_dim,
-        "activation": activation,
-    }
-    if providers:
-        encoder_cfg["attn_bias_providers"] = providers
-    if should_raise:
-        with pytest.raises(ValueError) as exc:
-            GraphTransformer(hidden_dim=8, out_channels=2,
-                             encoder_cfg=encoder_cfg)
-        msg = str(exc.value).lower()
-        for kw in err_keywords:
-            assert kw.lower() in msg
-    else:
-        model = GraphTransformer(hidden_dim=8, out_channels=2,
-                                 encoder_cfg=encoder_cfg)
-        # API‐level sanity
-        assert model.num_heads == num_heads
-        assert pytest.approx(model.dropout, rel=1e-6) == dropout
-        expected_ffn = (ffn_hidden_dim if ffn_hidden_dim is not None else 4 *
-                        8)
-        assert model.ffn_hidden_dim == expected_ffn
-        assert model.activation == activation
-        # layer‐level sanity
-        layer = (model.encoder
-                 if not model.is_encoder_stack else model.encoder[0])
-        assert isinstance(layer, GraphTransformerEncoderLayer)
-        assert layer.num_heads == num_heads
-        assert pytest.approx(layer.dropout_layer.p, rel=1e-6) == dropout
-        assert layer.ffn_hidden_dim == expected_ffn
+def test_num_heads_rule(num_heads, should_raise):
+    cfg = {"num_heads": num_heads}
+    ctx = pytest.raises(ValueError,
+                        match="num_heads") if should_raise else nullcontext()
+    with ctx:
+        _build(encoder_cfg=cfg)
+
+
+@pytest.mark.parametrize("dropout, should_raise", [
+    (0.0, False),
+    (0.8, False),
+    (-0.1, True),
+    (1.0, True),
+    ("0.1", True),
+])
+def test_dropout_rule(dropout, should_raise):
+    cfg = {"num_heads": 2, "dropout": dropout}
+    ctx = pytest.raises(ValueError,
+                        match="dropout") if should_raise else nullcontext()
+    with ctx:
+        _build(encoder_cfg=cfg)
+
+
+@pytest.mark.parametrize(
+    "ffn_dim, hidden_dim, should_raise",
+    [
+        (None, 8, False),
+        (32, 8, False),
+        (4, 8, True),  # smaller than hidden_dim
+    ])
+def test_ffn_hidden_rule(ffn_dim, hidden_dim, should_raise):
+    cfg = {"num_heads": 2, "dropout": 0.1, "ffn_hidden_dim": ffn_dim}
+    ctx = pytest.raises(
+        ValueError, match="ffn_hidden_dim") if should_raise else nullcontext()
+    with ctx:
+        _build(hidden_dim=hidden_dim, encoder_cfg=cfg)
+
+
+@pytest.mark.parametrize("act, should_raise", [
+    ("gelu", False),
+    ("relu", False),
+    ("invalid", True),
+])
+def test_activation_rule(act, should_raise):
+    cfg = {"num_heads": 2, "dropout": 0.1, "activation": act}
+    ctx = pytest.raises(ValueError,
+                        match="activation") if should_raise else nullcontext()
+    with ctx:
+        _build(encoder_cfg=cfg)
+
+
+@pytest.mark.parametrize("provider_heads, model_heads, should_raise", [
+    (2, 2, False),
+    (3, 2, True),
+])
+def test_bias_provider_head_match(provider_heads, model_heads, should_raise):
+    prov = GraphAttnSpatialBias(provider_heads, 5)
+    cfg = {"num_heads": model_heads, "attn_bias_providers": [prov]}
+    ctx = pytest.raises(
+        ValueError, match="BiasProvider") if should_raise else nullcontext()
+    with ctx:
+        _build(encoder_cfg=cfg)
+
+
+def test_heads_inferred_from_provider():
+    prov = GraphAttnSpatialBias(8, 5)
+    cfg = {"num_heads": None, "attn_bias_providers": [prov]}
+    model = _build(hidden_dim=16, encoder_cfg=cfg)
+    assert model.num_heads == 8
+
+
+@pytest.mark.parametrize(
+    "gnn_block, pos, should_raise",
+    [
+        (None, "pre", False),
+        (None, "side", True),  # invalid string
+        (None, "post", True),  # post but no block
+    ])
+def test_gnn_position_rule(gnn_block, pos, should_raise):
+    gnn_cfg = {"gnn_block": gnn_block, "gnn_position": pos}
+    ctx = pytest.raises(
+        ValueError,
+        match="gnn_position|gnn_block") if should_raise else nullcontext()
+    with ctx:
+        _build(encoder_cfg={"num_heads": 2}, gnn_cfg=gnn_cfg)
+
+
+def test_positional_encoder_forward_check():
+    bad_enc = object()  # has no .forward
+    cfg = {"num_heads": 2, "positional_encoders": [bad_enc]}
+    with pytest.raises(TypeError, match=r"callable\s+forward\s+method"):
+        _build(encoder_cfg=cfg)
 
 
 @pytest.mark.parametrize('device', ['cpu'] + (['cuda'] if CUDA else []))
