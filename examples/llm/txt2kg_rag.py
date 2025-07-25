@@ -152,11 +152,10 @@ def parse_args():
         "of available knowledge base corpus for RAG")
     parser.add_argument(
         '--store_eval_tuples', action="store_true",
-        help="Store tuple answers from test step to .pkl file for evaluation"
-    )
+        help="Store tuple answers from test step to .pkl file for evaluation")
     parser.add_argument(
-        '--use_stored_eval_tuples', action="store_true",
-        help="Retrieve previously saved tuples for eval instead of generating new ones"
+        '--use_stored_eval_tuples', action="store_true", help=
+        "Retrieve previously saved tuples for eval instead of generating new ones"
     )
     args = parser.parse_args()
 
@@ -240,13 +239,16 @@ def _store_tuples(eval_tuples):
     with open('tuples.pkl', 'wb') as f:
         pickle.dump(eval_tuples, f)
 
+
 def _get_stored_tuples():
     tuples = None
     with open('tuples.pkl', 'rb') as f:
         tuples = pickle.load(f)
 
     if tuples is None:
-        raise FileNotFoundError(f"Error: Could not open stored tuples. Have you checked that tuples.pkl exists?")
+        raise FileNotFoundError(
+            f"Error: Could not open stored tuples. Have you checked that tuples.pkl exists?"
+        )
 
     return tuples
 
@@ -723,11 +725,13 @@ def test(model, test_loader, args):
                 # insert VectorRAG context
                 new_qs.append(
                     prompt_template.format(
-                        question=q, context="\n".join(test_batch.text_context[i])))
+                        question=q,
+                        context="\n".join(test_batch.text_context[i])))
             test_batch.question = new_qs
             if args.skip_graph_rag:
                 test_batch.desc = ""
-            preds = (inference_step(model=model, batch=test_batch, max_tokens=400))
+            preds = (inference_step(model=model, batch=test_batch,
+                                    max_tokens=400))
             for question, pred, label in zip(raw_qs, preds, test_batch.label):
                 eval_tuples.append((question, pred, label))
     else:
