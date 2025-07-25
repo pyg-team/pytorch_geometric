@@ -2,6 +2,7 @@ import argparse
 import gc
 import json
 import os
+import pickle
 import random
 import re
 import sys
@@ -150,6 +151,13 @@ def parse_args():
         '--use_x_percent_corpus', default=100.0, type=float,
         help="Debug flag that allows user to only use a random percentage "
         "of available knowledge base corpus for RAG")
+    parser.add_argument(
+        '--store_eval_tuples', action="store_true",
+        help="Store tuple answers from test step to .pkl file for evaluation")
+    parser.add_argument(
+        '--use_stored_eval_tuples', action="store_true", help=
+        "Retrieve previously saved tuples for eval instead of generating new ones"
+    )
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
@@ -226,6 +234,24 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
             chunks = _chunk_text(paragraph)
         full_chunks.extend(chunks)
     return full_chunks
+
+
+def _store_tuples(eval_tuples):
+    with open('tuples.pkl', 'wb') as f:
+        pickle.dump(eval_tuples, f)
+
+
+def _get_stored_tuples():
+    tuples = None
+    with open('tuples.pkl', 'rb') as f:
+        tuples = pickle.load(f)
+
+    if tuples is None:
+        raise FileNotFoundError(
+            f"Error: Could not open stored tuples. Have you checked that tuples.pkl exists?"
+        )
+
+    return tuples
 
 
 def get_data(args):
@@ -686,24 +712,34 @@ def test(model, test_loader, args):
         # calculate the score based on pred and correct answer
         return llm_judge.score(question, pred, correct_answer)
 
-    scores = []
     eval_tuples = []
-    for test_batch in tqdm(test_loader, desc="Testing"):
-        new_qs = []
-        for i, q in enumerate(test_batch["question"]):
-            # insert VectorRAG context
-            new_qs.append(
-                prompt_template.format(
-                    question=q, context="\n".join(test_batch.text_context[i])))
-        test_batch.question = new_qs
-        if args.skip_graph_rag:
-            test_batch.desc = ""
-        preds = (inference_step(model, test_batch))
-        for question, pred, label in zip(test_batch.question, preds,
-                                         test_batch.label):
-            eval_tuples.append((question, pred, label))
+    if not args.use_stored_eval_tuples:
+        for test_batch in enumerate(tqdm(test_loader, desc="Testing")):
+            new_qs = []
+            for i, q in enumerate(test_batch["question"]):
+                # insert VectorRAG context
+                new_qs.append(
+                    prompt_template.format(
+                        question=q,
+                        context="\n".join(test_batch.text_context[i])))
+            test_batch.question = new_qs
+            if args.skip_graph_rag:
+                test_batch.desc = ""
+            preds = (inference_step(model=model, batch=test_batch,
+                                    max_tokens=400))
+            for question, pred, label in zip(new_qs, preds, test_batch.label):
+                eval_tuples.append((question, pred, label))
+
+        if args.store_eval_tuples:
+            _store_tuples(eval_tuples)
+
+    else:
+        eval_tuples = _get_stored_tuples()
+
+    scores = []
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
         scores.append(eval(question, pred, label))
+
     avg_scores = sum(scores) / len(scores)
     print("Avg marlin accuracy=", avg_scores)
     print("*" * 5 + "NOTE" + "*" * 5)
