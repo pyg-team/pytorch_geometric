@@ -138,3 +138,10 @@ def test_merge_masks_only_attn():
 
     assert merged.shape == (batch_size * num_heads, seq_length, seq_length)
     assert torch.isinf(merged[0, 0, 1])
+
+
+def test_merge_masks_invalid_mask_dtype_raises():
+    """Test that `merge_masks` raises TypeError for non-float `attn`."""
+    attn_int = torch.zeros((1, 1, 2, 2), dtype=torch.int32)
+    with pytest.raises(TypeError):
+        merge_masks(attn=attn_int)
