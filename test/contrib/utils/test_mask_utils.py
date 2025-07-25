@@ -1,11 +1,11 @@
 import pytest
 import torch
-from torch_geometric.data import Batch
 
 from torch_geometric.contrib.utils.mask_utils import (
     build_key_padding,
     merge_masks,
 )
+from torch_geometric.data import Batch
 
 
 def test_merge_masks_boolean_padding_to_additive(simple_batch):
