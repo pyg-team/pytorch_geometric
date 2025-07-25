@@ -8,41 +8,26 @@ from torch_geometric.nn.nlp.txt2kg import \
 # Gilberto Titericz (NVIDIA)
 # This work is an adaptation of his for PyG
 SYSTEM_PROMPT_1 = (
-    "Instruction: You are a world class state of the art " +
-    "assistant for rating " +
-    "a User Answer given a Question. The Question is completely" +
-    " answered by the Reference Answer.\n" +
-    "Say 4, if User Answer is full contained and equivalent to" +
-    " Reference Answer" +
-    "in all terms, topics, numbers, metrics, dates and units.\n" +
-    "Say 2, if User Answer is partially contained and almost " +
-    "equivalent to Reference Answer" +
-    "in all terms, topics, numbers, metrics, dates and units.\n" +
-    "Say 0, if User Answer is not contained in Reference Answer" +
-    " or not accurate in all terms, topics," +
-    "numbers, metrics, dates and units or the User Answer do not" +
-    " answer the question.\n" +
-    "Do not explain or justify your rating. Your rating must be " +
-    "only 4, 2 or 0 according to the instructions above.\n" +
-    "### Question: \"{question}\"\n" + "### User Answer: \"{model_pred}\"\n" +
-    "### Reference Answer: \"{correct_answer}\"\n" + "The rating is:\n")
+    "Instruction: You are an assistant for rating a User's Answer given a Question. The Question is completely answered by the Reference Answer, which you will compare the User's answer to and give it a score of 0, 2, or 4.\n"
+    +
+    "Say 4, if User Answer is full, contained, and equivalent to the Reference Answer in all terms, topics, numbers, metrics, dates, and units. A score of 4 represents a complete and correct answer with proper reasoning\n."
+    +
+    "Say 2, if User Answer is partially contained and almost equivalent to Reference Answer in all terms, topics, numbers, metrics, dates and units. A score of 2 represents an incomplete answer due to lack of reasoning or explanation with supporting evidence.\n"
+    +
+    "Say 0, if User Answer is not contained in Reference Answer or not accurate in all terms, topics, numbers, metrics, dates and units or the User Answer does not answer the question. If the User Answer is an incomplete thought, it should be given a score of 0.\n"
+    +
+    "Do not explain or justify your rating. Your rating must be only 0, 2, or 4.\n"
+    + "Question: \"{question}\"\n" + "User Answer: \"{model_pred}\"\n" +
+    "Reference Answer: \"{correct_answer}\"\n")
 
 SYSTEM_PROMPT_2 = (
     "I will rate the User Answer in comparison to the Reference " +
     "Answer for a given Question.\n" +
-    "A rating of 4 indicates that the User Answer is entirely " +
-    "consistent with the Reference Answer, covering all aspects," +
-    " topics, numbers, metrics, dates, and units.\n" +
-    "A rating of 2 signifies that the User Answer is mostly " +
-    "aligned with the Reference Answer, with minor discrepancies" +
-    " in some areas.\n" +
-    "A rating of 0 means that the User Answer is either " +
-    "inaccurate, incomplete, or unrelated to the Reference " +
-    "Answer, or it fails to address the Question.\n" +
-    "I will provide the rating without any explanation or " +
-    "justification, adhering to the following scale: " +
-    "0 (no match), 2 (partial match), 4 (exact match).\n" +
-    "Do not explain or justify my rating. My rating must" +
+    "A rating of 4 means that the User Answer completely answers the Question and is equivalent to the Reference Answer. This means that it contains the exact same terms and topics as the Reference Answer\n"
+    +
+    "A rating of 2 indicates that the User Answer is partially correct but is not entirely equivalent to the Reference Answer. This means that it only matches some of the terms and topics as the Reference Answer, but not all.\n"
+    "A rating of 0 indicates that the User Answer is incomplete and/or incorrect. The answer does not resemble the Reference Answer at all.\n"
+    + "Do not explain or justify my rating. My rating must" +
     " be only 4, 2 or 0 only.\n\n" + "Question: \"{question}\"\n\n" +
     "Reference Answer: \"{model_pred}\"\n\n" +
     "User Answer: \"{correct_answer}\"\n\n" + "Rating: ")
@@ -155,4 +140,12 @@ class LLMJudge():
             except:  # noqa
                 pass
 
-        return self._average_scores(score1, score2)
+        summary = {
+            "score_1": score1,
+            "score_2": score2,
+            "Q": question,
+            "A": model_pred,
+            "GROUND": correct_answer
+        }
+
+        return summary, self._average_scores(score1, score2)
