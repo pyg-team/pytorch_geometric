@@ -525,6 +525,7 @@ def test_repr_various_configs(config, substrings):
         assert sub in rep, f"{sub!r} not found in repr: {rep}"
 
 
+# ── Input Validation Rules ────────────────────────────────────────────
 @pytest.mark.parametrize(
     "num_heads, should_raise",
     [
@@ -627,6 +628,49 @@ def test_positional_encoder_forward_check():
         _build(encoder_cfg=cfg)
 
 
+@pytest.mark.parametrize(
+    "hidden_dim, out_channels, num_layers, should_raise, msg",
+    [
+        (8, 2, 1, False, ""),  # all valid
+        (-1, 2, 1, True, "hidden_dim"),  # hidden_dim ≤ 0
+        (8, 0, 1, True, "out_channels"),  # out_channels ≤ 0
+        (8, 2, -3, True, "num_encoder_layers"),  # layers < 0
+    ],
+)
+def test_dimension_rule(hidden_dim, out_channels, num_layers, should_raise,
+                        msg):
+    cfg = {"num_heads": 2, "num_encoder_layers": num_layers}
+    ctx = pytest.raises(ValueError,
+                        match=msg) if should_raise else nullcontext()
+    with ctx:
+        _build(hidden_dim=hidden_dim, out_channels=out_channels,
+               encoder_cfg=cfg)
+
+
+@pytest.mark.parametrize(
+    "ffn_dim, should_raise, msg",
+    [
+        ("32", True, "ffn_hidden_dim"),  # wrong type (str)
+        (4, True, "ffn_hidden_dim"),  # smaller than hidden_dim=8
+        (None, False, ""),  # default OK
+    ],
+)
+def test_ffn_hidden_type_and_size(ffn_dim, should_raise, msg):
+    cfg = {"num_heads": 2, "dropout": 0.1, "ffn_hidden_dim": ffn_dim}
+    ctx = pytest.raises(ValueError,
+                        match=msg) if should_raise else nullcontext()
+    with ctx:
+        _build(hidden_dim=8, encoder_cfg=cfg)
+
+
+def test_bias_provider_type_enforced():
+    wrong_provider = nn.Identity()  # not a BaseBiasProvider
+    cfg = {"num_heads": 2, "attn_bias_providers": [wrong_provider]}
+    with pytest.raises(TypeError, match="BaseBiasProvider"):
+        _build(encoder_cfg=cfg)
+
+
+# ── Device Tests ───────────────────────────────────────────────────────────
 @pytest.mark.parametrize('device', ['cpu'] + (['cuda'] if CUDA else []))
 def test_parameters_and_buffers_on_same_device(
     transformer_model,
