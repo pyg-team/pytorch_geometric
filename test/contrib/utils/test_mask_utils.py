@@ -8,14 +8,6 @@ from torch_geometric.contrib.utils.mask_utils import (
 )
 
 
-def _mixed_batch(simple_batch):
-    """Build a two‑graph batch of sizes [2, 1] via existing fixture."""
-    return Batch.from_data_list([
-        simple_batch(1, 2).to_data_list()[0],
-        simple_batch(1, 1).to_data_list()[0],
-    ]).batch
-
-
 def test_merge_masks_boolean_padding_to_additive(simple_batch):
     """Test merging boolean key padding into an additive mask."""
     # Mixed‑length batch: graph‑0 has 2 nodes, graph‑1 has 1 node → padding
