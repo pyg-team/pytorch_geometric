@@ -399,7 +399,10 @@ def update_data_lists(args, data_lists):
     torch.save(data_lists, dataset_path)
     return data_lists
 
+
 max_chars_in_train_answer = 0
+
+
 def make_dataset(args):
     qa_pairs, context_docs = get_data(args)
     print("Number of Docs in our VectorDB =", len(context_docs))
@@ -501,7 +504,7 @@ def make_dataset(args):
             continue
         QA_pair = (data_point["question"], data_point["answer"])
         q = QA_pair[0]
-        max_chars_in_train_answer = max(len(QA_pair[1]), max_chars_in_train_answer)
+        max(len(QA_pair[1]), max_chars_in_train_answer)
         subgraph = query_loader.query(q)
         subgraph.label = QA_pair[1]
         total_data_list.append(subgraph)
@@ -699,7 +702,8 @@ def test(model, test_loader, args):
         test_batch.question = new_qs
         if args.skip_graph_rag:
             test_batch.desc = ""
-        preds = (inference_step(model, test_batch, max_out_tokens=max_chars_in_train_answer))
+        preds = (inference_step(model, test_batch,
+                                max_out_tokens=max_chars_in_train_answer))
         for question, pred, label in zip(test_batch.question, preds,
                                          test_batch.label):
             eval_tuples.append((question, pred, label))
