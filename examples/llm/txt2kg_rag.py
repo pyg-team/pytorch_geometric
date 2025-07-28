@@ -736,7 +736,6 @@ if __name__ == '__main__':
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
     if os.path.exists(dataset_path) and not args.regenerate_dataset:
         print(f"Re-using Saved {dataset_name} KG-RAG Dataset...")
-        global max_chars_in_train_answer
         data_lists, max_chars_in_train_answer = torch.load(
             dataset_path, weights_only=False)
         doc_retriever_path = os.path.join(args.dataset,
