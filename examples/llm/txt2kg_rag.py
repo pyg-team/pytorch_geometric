@@ -401,8 +401,6 @@ def update_data_lists(args, data_lists):
     return data_lists
 
 
-
-
 def make_dataset(args):
     qa_pairs, context_docs = get_data(args)
     print("Number of Docs in our VectorDB =", len(context_docs))
@@ -505,7 +503,8 @@ def make_dataset(args):
             continue
         QA_pair = (data_point["question"], data_point["answer"])
         q = QA_pair[0]
-        max_chars_in_train_answer = max(len(QA_pair[1]), max_chars_in_train_answer)
+        max_chars_in_train_answer = max(len(QA_pair[1]),
+                                        max_chars_in_train_answer)
         subgraph = query_loader.query(q)
         subgraph.label = QA_pair[1]
         total_data_list.append(subgraph)
@@ -738,7 +737,8 @@ if __name__ == '__main__':
     if os.path.exists(dataset_path) and not args.regenerate_dataset:
         print(f"Re-using Saved {dataset_name} KG-RAG Dataset...")
         global max_chars_in_train_answer
-        data_lists, max_chars_in_train_answer = torch.load(dataset_path, weights_only=False)
+        data_lists, max_chars_in_train_answer = torch.load(
+            dataset_path, weights_only=False)
         doc_retriever_path = os.path.join(args.dataset,
                                           "document_retriever.pt")
         if os.path.exists(doc_retriever_path):
