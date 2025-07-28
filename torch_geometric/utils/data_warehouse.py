@@ -269,7 +269,7 @@ class WarehouseConversationSystem:
             'predicted':
             "Impact analysis across {num_nodes} entities:\n"
             "• High impact entities: {high_impact}\n"
-            "• Impact distribution: Low({low}), Medium({medium}), High({high})\n"
+            "• Impact: Low({low}), Medium({medium}), High({high})\n"
             "• Risk assessment: {risk_level}"
         },
         'quality': {
@@ -394,7 +394,7 @@ class WarehouseConversationSystem:
 
             # Create integrated response combining LLM + Analytics
             if llm_text and len(llm_text.strip()) > 10:
-                # Use LLM response as primary answer with analytics as supporting data
+                # Use LLM response as primary answer with analytics support
                 answer = self._create_integrated_response(
                     llm_text, data, query_type, has_labels)
             else:
@@ -402,8 +402,7 @@ class WarehouseConversationSystem:
                 template_key = 'with_labels' if has_labels else 'predicted'
                 template = self.RESPONSE_TEMPLATES.get(query_type, {}).get(
                     template_key,
-                    "Analyzed {num_nodes} entities with confidence {confidence:.3f}"
-                )
+                    "Analyzed {num_nodes} entities (conf {confidence:.3f})")
                 answer = template.format(**data)
 
             # Store in conversation history
@@ -437,7 +436,7 @@ class WarehouseConversationSystem:
 
     def _create_integrated_response(self, llm_text: str, data: dict,
                                     query_type: str, has_labels: bool) -> str:
-        """Create integrated response combining LLM text with analytics data."""
+        """Create integrated response combining LLM text with analytics."""
         # Clean and process LLM response
         llm_clean = self._clean_llm_response(llm_text)
         if len(llm_clean) > 300:
@@ -446,38 +445,38 @@ class WarehouseConversationSystem:
         # Create analytics summary based on query type
         if query_type == "lineage":
             analytics_summary = (
-                f"Analytics: {data.get('predicted_lineage', 'Unknown')} lineage detected "
+                f"{data.get('predicted_lineage', 'Unknown')} lineage detected"
                 f"across {data.get('num_nodes', 0)} entities "
                 f"(confidence: {data.get('confidence', 0):.3f})")
         elif query_type == "silo":
             analytics_summary = (
-                f"Analytics: {data.get('isolated_silos', 0)} isolated silos found "
+                f"Analytics: {data.get('isolated_silos', 0)} isolated silos"
                 f"out of {data.get('num_nodes', 0)} entities "
                 f"({data.get('silo_ratio', 0):.1%} isolation rate)")
         elif query_type == "quality":
             analytics_summary = (
-                f"Analytics: Average quality score {data.get('avg_quality', 0):.3f} "
+                f"Analytics: Quality score {data.get('avg_quality', 0):.3f}"
                 f"({data.get('status', 'UNKNOWN')} overall status)")
         elif query_type == "impact":
             analytics_summary = (
-                f"Analytics: {data.get('high_impact', 0)} high-impact entities "
+                f"Analytics: {data.get('high_impact', 0)} high-impact entities"
                 f"detected ({data.get('risk_level', 'UNKNOWN')} risk)")
         else:
-            analytics_summary = f"Analytics: Processed {data.get('num_nodes', 0)} entities"
+            analytics_summary = f"{data.get('num_nodes', 0)} entities analyzed"
 
         # Create coherent integrated response
         if llm_clean and len(llm_clean.strip()) > 20:
             # Use LLM response as primary content with analytics as validation
             integrated_response = f"""{llm_clean}
 
-📊 Quantitative Analysis: {analytics_summary}"""
+Quantitative Analysis: {analytics_summary}"""
         else:
             # Fallback to analytics-focused response
-            integrated_response = f"""Based on the warehouse structure analysis:
-
-{analytics_summary}
-
-The system shows typical patterns for this type of data warehouse configuration."""
+            integrated_response = (
+                f"Based on the warehouse structure analysis:\n\n"
+                f"{analytics_summary}\n\n"
+                f"The system shows typical patterns for this type of "
+                f"data warehouse configuration.")
 
         return integrated_response
 
@@ -505,20 +504,28 @@ The system shows typical patterns for this type of data warehouse configuration.
         domain_context = ""
         if context and 'node_types' in context:
             node_types = context['node_types']
-            domain_context = f"The data contains {len(node_types)} entity types: {', '.join(node_types[:5])}."
+            domain_context = (
+                f"The data contains {len(node_types)} entity types: "
+                f"{', '.join(node_types[:5])}.")
         else:
             # Infer domain from graph characteristics
             if num_nodes > 300 and connectivity == "sparsely connected":
-                domain_context = "This appears to be a large-scale relational database with multiple entity types."
+                domain_context = (
+                    "This appears to be a large-scale relational database "
+                    "with multiple entity types.")
             elif avg_degree > 10:
-                domain_context = "This appears to be a highly interconnected system with complex relationships."
+                domain_context = (
+                    "This appears to be a highly interconnected system with "
+                    "complex relationships.")
             else:
-                domain_context = "This appears to be a structured data warehouse with defined relationships."
+                domain_context = (
+                    "This appears to be a structured data warehouse with "
+                    "defined relationships.")
 
         # Create task-specific prompt
         if query_type == "lineage":
             task_context = """
-Data lineage analysis focuses on tracing data flow and transformations through the system.
+Data lineage analysis focuses on tracing data flow and transformations.
 Key aspects to consider:
 - Direct connections (raw data sources)
 - Staged data (intermediate processing)
@@ -557,7 +564,8 @@ Key aspects to consider:
             task_context = "General warehouse intelligence analysis."
 
         # Construct the contextual prompt
-        contextual_prompt = f"""You are a data warehouse intelligence expert analyzing a specific data warehouse.
+        contextual_prompt = f"""You are a data warehouse intelligence expert
+analyzing a specific data warehouse.
 
 WAREHOUSE CONTEXT:
 - Graph structure: {num_nodes} entities, {num_edges} relationships
@@ -569,7 +577,9 @@ ANALYSIS TASK:
 
 USER QUESTION: {query}
 
-Please provide a specific analysis of this warehouse based on the graph structure and relationships. Focus on concrete insights rather than general definitions. Be concise and actionable."""
+Please provide a specific analysis of this warehouse based on the graph
+structure and relationships. Focus on concrete insights rather than general
+definitions. Be concise and actionable."""
 
         return contextual_prompt
 
@@ -675,7 +685,12 @@ Please provide a specific analysis of this warehouse based on the graph structur
                 silo_count = (labels > SILO_THRESHOLD).sum().item()
                 connected_count = num_nodes - silo_count
                 silo_ratio = silo_count / num_nodes
-                status = 'CRITICAL' if silo_ratio > SILO_CRITICAL_RATIO else 'MODERATE' if silo_ratio > SILO_MODERATE_RATIO else 'GOOD'
+                if silo_ratio > SILO_CRITICAL_RATIO:
+                    status = 'CRITICAL'
+                elif silo_ratio > SILO_MODERATE_RATIO:
+                    status = 'MODERATE'
+                else:
+                    status = 'GOOD'
 
                 return {
                     'num_nodes': num_nodes,
@@ -693,7 +708,12 @@ Please provide a specific analysis of this warehouse based on the graph structur
         silo_ratio = silo_count / num_nodes
         confidence = silo_probs.mean().item()
 
-        status = 'CRITICAL' if silo_ratio > SILO_CRITICAL_RATIO else 'MODERATE' if silo_ratio > SILO_MODERATE_RATIO else 'GOOD'
+        if silo_ratio > SILO_CRITICAL_RATIO:
+            status = 'CRITICAL'
+        elif silo_ratio > SILO_MODERATE_RATIO:
+            status = 'MODERATE'
+        else:
+            status = 'GOOD'
 
         return {
             'num_nodes': num_nodes,
@@ -722,7 +742,12 @@ Please provide a specific analysis of this warehouse based on the graph structur
         medium_impact = (predicted_labels == 1).sum().item()
         high_impact = (predicted_labels == 2).sum().item()
 
-        risk_level = 'HIGH' if high_impact > num_nodes * IMPACT_HIGH_RATIO else 'MEDIUM' if high_impact > num_nodes * IMPACT_MEDIUM_RATIO else 'LOW'
+        if high_impact > num_nodes * IMPACT_HIGH_RATIO:
+            risk_level = 'HIGH'
+        elif high_impact > num_nodes * IMPACT_MEDIUM_RATIO:
+            risk_level = 'MEDIUM'
+        else:
+            risk_level = 'LOW'
 
         return {
             'num_nodes': num_nodes,

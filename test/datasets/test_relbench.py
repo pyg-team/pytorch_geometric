@@ -8,11 +8,15 @@ from torch_geometric.data import HeteroData
 
 class TestRelBenchCore:
     """Test core RelBench functionality."""
-    def test_create_relbench_hetero_data(self):
+    def test_create_relbench_hetero_data(self) -> None:
         """Test RelBench data creation with real database."""
         try:
-            from torch_geometric.datasets.relbench import \
-                create_relbench_hetero_data  # noqa: E501
+            # yapf: disable
+            from torch_geometric.datasets.relbench import (
+                create_relbench_hetero_data,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("RelBench not available")
 
@@ -36,7 +40,7 @@ class TestRelBenchCore:
             assert edge_index.dim() == 2
             assert edge_index.size(0) == 2
 
-    def test_relbench_dataset_class(self):
+    def test_relbench_dataset_class(self) -> None:
         """Test RelBenchDataset wrapper class."""
         try:
             from torch_geometric.datasets.relbench import RelBenchDataset
@@ -55,7 +59,7 @@ class TestRelBenchCore:
 
 class TestHeuristicLabeler:
     """Test heuristic labeling system."""
-    def test_labeler_initialization(self):
+    def test_labeler_initialization(self) -> None:
         """Test HeuristicLabeler initialization."""
         try:
             from torch_geometric.datasets.relbench import HeuristicLabeler
@@ -65,7 +69,7 @@ class TestHeuristicLabeler:
         labeler = HeuristicLabeler()
         assert labeler is not None
 
-    def test_generate_labels_all_tasks(self):
+    def test_generate_labels_all_tasks(self) -> None:
         """Test label generation for all warehouse tasks."""
         try:
             from torch_geometric.datasets.relbench import HeuristicLabeler
@@ -90,7 +94,7 @@ class TestHeuristicLabeler:
             assert label_tensor.shape[0] == 10  # Should match number of nodes
             assert label_tensor.dim() >= 1  # At least 1D tensor
 
-    def test_foreign_key_analysis(self):
+    def test_foreign_key_analysis(self) -> None:
         """Test foreign key depth analysis."""
         try:
             from torch_geometric.datasets.relbench import HeuristicLabeler
@@ -107,7 +111,7 @@ class TestHeuristicLabeler:
 
 class TestRelBenchProcessor:
     """Test RelBench data processing."""
-    def test_processor_initialization(self):
+    def test_processor_initialization(self) -> None:
         """Test RelBenchProcessor initialization."""
         try:
             from torch_geometric.datasets.relbench import RelBenchProcessor
@@ -117,7 +121,7 @@ class TestRelBenchProcessor:
         processor = RelBenchProcessor()
         assert processor is not None
 
-    def test_relbench_data_processing(self):
+    def test_relbench_data_processing(self) -> None:
         """Test RelBench data processing."""
         try:
             from torch_geometric.datasets.relbench import RelBenchProcessor
@@ -134,11 +138,15 @@ class TestRelBenchProcessor:
         assert embeddings.shape[0] == 2
         assert embeddings.shape[1] == 384  # EMBEDDING_DIM
 
-    def test_warehouse_labels_integration(self):
+    def test_warehouse_labels_integration(self) -> None:
         """Test warehouse label integration."""
         try:
-            from torch_geometric.datasets.relbench import \
-                _add_warehouse_labels_to_hetero_data  # noqa: E501
+            # yapf: disable
+            from torch_geometric.datasets.relbench import (
+                _add_warehouse_labels_to_hetero_data,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("RelBench not available")
 
@@ -157,7 +165,7 @@ class TestRelBenchProcessor:
 
 class TestRelBenchError:
     """Test custom exception handling."""
-    def test_relbench_error(self):
+    def test_relbench_error(self) -> None:
         """Test RelBenchError exception."""
         try:
             from torch_geometric.datasets.relbench import RelBenchError

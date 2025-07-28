@@ -6,7 +6,7 @@ import torch
 
 class TestWarehouseTaskHead:
     """Test multi-task head functionality."""
-    def test_task_head_initialization(self):
+    def test_task_head_initialization(self) -> None:
         """Test WarehouseTaskHead initialization."""
         try:
             from torch_geometric.utils.data_warehouse import WarehouseTaskHead
@@ -21,7 +21,7 @@ class TestWarehouseTaskHead:
         assert 'quality' in task_head.heads
         assert 'impact' in task_head.heads
 
-    def test_all_task_predictions(self):
+    def test_all_task_predictions(self) -> None:
         """Test predictions for all warehouse tasks."""
         try:
             from torch_geometric.utils.data_warehouse import WarehouseTaskHead
@@ -39,7 +39,7 @@ class TestWarehouseTaskHead:
             pred = task_head(x, task=task)
             assert pred.shape == expected_shape
 
-    def test_invalid_task_handling(self):
+    def test_invalid_task_handling(self) -> None:
         """Test handling of invalid task types."""
         try:
             from torch_geometric.utils.data_warehouse import WarehouseTaskHead
@@ -55,11 +55,15 @@ class TestWarehouseTaskHead:
 
 class TestWarehouseGRetriever:
     """Test G-Retriever integration."""
-    def test_gretriever_initialization(self):
+    def test_gretriever_initialization(self) -> None:
         """Test WarehouseGRetriever initialization."""
         try:
-            from torch_geometric.utils.data_warehouse import \
-                WarehouseGRetriever  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -70,11 +74,15 @@ class TestWarehouseGRetriever:
         assert hasattr(model, 'g_retriever')
         assert hasattr(model, 'task_head')
 
-    def test_inference_functionality(self):
+    def test_inference_functionality(self) -> None:
         """Test LLM inference functionality."""
         try:
-            from torch_geometric.utils.data_warehouse import \
-                WarehouseGRetriever  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -91,11 +99,15 @@ class TestWarehouseGRetriever:
         assert len(result) == 1
         assert isinstance(result[0], str)
 
-    def test_task_prediction_functionality(self):
+    def test_task_prediction_functionality(self) -> None:
         """Test task-specific predictions."""
         try:
-            from torch_geometric.utils.data_warehouse import \
-                WarehouseGRetriever  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -112,13 +124,16 @@ class TestWarehouseGRetriever:
 
 class TestWarehouseConversationSystem:
     """Test conversation system functionality."""
-    def test_conversation_system_initialization(self):
+    def test_conversation_system_initialization(self) -> None:
         """Test WarehouseConversationSystem initialization."""
         try:
-            from torch_geometric.utils.data_warehouse import (  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -130,13 +145,16 @@ class TestWarehouseConversationSystem:
         assert hasattr(conversation_system, 'conversation_history')
         assert len(conversation_system.conversation_history) == 0
 
-    def test_query_processing_all_types(self):
+    def test_query_processing_all_types(self) -> None:
         """Test processing of all query types."""
         try:
-            from torch_geometric.utils.data_warehouse import (  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -160,13 +178,16 @@ class TestWarehouseConversationSystem:
             assert 'predictions' in result
             assert result['query_type'] == expected_type
 
-    def test_conversation_history_tracking(self):
+    def test_conversation_history_tracking(self) -> None:
         """Test conversation history functionality."""
         try:
-            from torch_geometric.utils.data_warehouse import (  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -194,11 +215,15 @@ class TestWarehouseConversationSystem:
 
 class TestSimpleWarehouseModel:
     """Test simplified warehouse model."""
-    def test_simple_model_initialization(self):
+    def test_simple_model_initialization(self) -> None:
         """Test SimpleWarehouseModel initialization."""
         try:
-            from torch_geometric.utils.data_warehouse import \
-                SimpleWarehouseModel  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -207,11 +232,15 @@ class TestSimpleWarehouseModel:
         assert hasattr(model, 'gnn')
         assert hasattr(model, 'task_head')
 
-    def test_simple_model_forward_pass(self):
+    def test_simple_model_forward_pass(self) -> None:
         """Test forward pass functionality."""
         try:
-            from torch_geometric.utils.data_warehouse import \
-                SimpleWarehouseModel  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -224,11 +253,15 @@ class TestSimpleWarehouseModel:
         assert result is not None
         assert 'pred' in result
 
-    def test_simple_model_predict_task(self):
+    def test_simple_model_predict_task(self) -> None:
         """Test predict_task method."""
         try:
-            from torch_geometric.utils.data_warehouse import \
-                SimpleWarehouseModel  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -243,11 +276,15 @@ class TestSimpleWarehouseModel:
 
 class TestWarehouseDemo:
     """Test warehouse demo functionality."""
-    def test_create_warehouse_demo(self):
+    def test_create_warehouse_demo(self) -> None:
         """Test create_warehouse_demo function."""
         try:
-            from torch_geometric.utils.data_warehouse import \
-                create_warehouse_demo  # noqa: E501
+            # yapf: disable
+            from torch_geometric.utils.data_warehouse import (
+                create_warehouse_demo,
+            )
+
+            # yapf: enable
         except ImportError:
             pytest.skip("Data warehouse not available")
 

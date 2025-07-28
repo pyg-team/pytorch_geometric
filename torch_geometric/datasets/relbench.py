@@ -1,6 +1,6 @@
 """RelBench dataset integration for PyTorch Geometric.
 
-Converts RelBench datasets to PyG HeteroData with optional warehouse task labels.
+Converts RelBench datasets to PyG HeteroData with warehouse task labels.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from torch_geometric.data import HeteroData, InMemoryDataset
+from torch_geometric.data import Data, HeteroData, InMemoryDataset
 
 # Constants
 DEFAULT_SBERT_MODEL = 'sentence-transformers/all-MiniLM-L6-v2'
@@ -48,8 +48,11 @@ except ImportError:
 
 # Import SentenceTransformer with fallbacks
 try:
+    # yapf: disable
     from torch_geometric.nn.nlp import \
-        SentenceTransformer as PyGSentenceTransformer
+        SentenceTransformer as PyGSentenceTransformer  # isort: skip
+
+    # yapf: enable
     PYG_NLP_AVAILABLE = True
 except ImportError:
     logger.debug("PyG NLP not available")
@@ -57,8 +60,11 @@ except ImportError:
     PyGSentenceTransformer = None
 
 try:
+    # yapf: disable
     from sentence_transformers import \
-        SentenceTransformer as STSentenceTransformer
+        SentenceTransformer as STSentenceTransformer  # isort: skip
+
+    # yapf: enable
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
     logger.debug("sentence-transformers not available")
@@ -102,19 +108,22 @@ class RelBenchError(Exception):
 
 
 class HeuristicLabeler:
-    """Generate warehouse task labels from foreign key relationships and graph connectivity."""
-    def __init__(self):
+    """Generate warehouse task labels from foreign keys and graph structure."""
+    def __init__(self) -> None:
         self.use_networkx = NETWORKX_AVAILABLE
         self.use_graph_analysis = GRAPH_ANALYSIS_AVAILABLE
 
     def generate_labels(self, hetero_data: HeteroData, db: Any,
                         tasks: list[str] | None = None) -> dict[str, Tensor]:
-        """Generate warehouse task labels from database structure and graph connectivity."""
+        """Generate warehouse task labels from database and graph structure."""
         if tasks is None:
             tasks = ['lineage', 'silo', 'anomaly']
         labels = {}
         homo_data = hetero_data.to_homogeneous()
         num_nodes = homo_data.num_nodes
+
+        if num_nodes is None:
+            raise ValueError("Cannot generate labels: graph has no nodes")
 
         if 'lineage' in tasks:
             labels['lineage'] = self._generate_lineage_labels(
@@ -148,8 +157,7 @@ class HeuristicLabeler:
 
         return lineage_labels
 
-    def _generate_silo_labels(self, homo_data: HeteroData,
-                              num_nodes: int) -> Tensor:
+    def _generate_silo_labels(self, homo_data: Data, num_nodes: int) -> Tensor:
         """Generate silo labels based on graph connectivity."""
         if homo_data.num_edges == 0:
             return torch.ones(num_nodes, dtype=torch.float)
@@ -184,7 +192,7 @@ class HeuristicLabeler:
         degree_threshold = node_degrees.mean() * DEGREE_THRESHOLD_MULTIPLIER
         return (node_degrees < degree_threshold).float()
 
-    def _generate_quality_labels(self, homo_data: HeteroData,
+    def _generate_quality_labels(self, homo_data: Data,
                                  num_nodes: int) -> Tensor:
         """Generate anomaly labels based on node centrality."""
         if homo_data.num_edges == 0:
@@ -209,8 +217,9 @@ class HeuristicLabeler:
                     if node in G:
                         deg_cent = degree_centrality.get(node, 0)
                         bet_cent = betweenness_centrality.get(node, 0)
-                        quality_scores[
-                            node] = CENTRALITY_DEGREE_WEIGHT * deg_cent + CENTRALITY_BETWEENNESS_WEIGHT * bet_cent
+                        quality_scores[node] = (
+                            CENTRALITY_DEGREE_WEIGHT * deg_cent +
+                            CENTRALITY_BETWEENNESS_WEIGHT * bet_cent)
 
                 quality_threshold = quality_scores.mean() - quality_scores.std(
                 )
@@ -252,7 +261,7 @@ class HeuristicLabeler:
             depth_cache[table] = depth
             return depth
 
-        depth_cache = {}
+        depth_cache: dict[str, int] = {}
         fk_depth = {}
         for table_name in db.table_dict.keys():
             fk_depth[table_name] = calculate_depth(table_name, set(),
@@ -320,10 +329,9 @@ class RelBenchProcessor:
         try:
             if PYG_NLP_AVAILABLE and isinstance(self.encoder,
                                                 PyGSentenceTransformer):
-                # PyG encoder expects input_ids and attention_mask, use fallback
+                # PyG encoder expects input_ids and attention_mask
                 logger.warning(
-                    "PyG SentenceTransformer requires tokenized input, using fallback"
-                )
+                    "PyG SentenceTransformer requires tokenized input")
                 embeddings = torch.randn(len(texts), EMBEDDING_DIM)
             else:
                 # sentence-transformers returns numpy array
@@ -352,7 +360,7 @@ class RelBenchProcessor:
             sample_size: Optional sample size for large datasets
 
         Returns:
-            Tuple of (HeteroData object with embeddings and metadata, RelBench database object)
+            Tuple of (HeteroData with embeddings, RelBench database)
 
         Raises:
             RelBenchError: If processing fails
@@ -366,7 +374,7 @@ class RelBenchProcessor:
             dataset = get_dataset(dataset_name)
             db = dataset.get_db()
 
-            # Convert to HeteroData with sampling during processing (original approach)
+            # Convert to HeteroData with sampling during processing
             hetero_data = self._convert_to_hetero_data(db, sample_size)
 
             # Add metadata
@@ -387,18 +395,18 @@ class RelBenchProcessor:
 
     def _convert_to_hetero_data(self, db: Any,
                                 sample_size: int | None = None) -> HeteroData:
-        """Convert RelBench database to HeteroData with sampling during processing.
+        """Convert RelBench database to HeteroData with sampling.
 
         Args:
             db: RelBench database object
-            sample_size: Optional sample size per table (using original approach)
+            sample_size: Optional sample size per table
 
         Returns:
             HeteroData object with node and edge data
         """
         hetero_data = HeteroData()
 
-        # Process tables as node types - keep all tables to preserve warehouse structure
+        # Process tables as node types - preserve warehouse structure
         table_names = list(db.table_dict.keys())
         logger.info(
             f"Processing {len(table_names)} tables: {table_names[:5]}...")
@@ -415,7 +423,7 @@ class RelBenchProcessor:
                 if sample_size is not None:
                     table_df = table_df.head(min(sample_size, len(table_df)))
                     logger.debug(
-                        f"  Sampled {table_name}: {len(table_obj.df)} -> {len(table_df)}"
+                        f"  {table_name}: {len(table_obj.df)}->{len(table_df)}"
                     )
 
                 # Create text representations for embedding
@@ -506,8 +514,8 @@ class RelBenchProcessor:
                     continue
 
                 # Process each foreign key relationship
-                for fkey_col, target_table in table_obj.fkey_col_to_pkey_table.items(
-                ):
+                for fkey_col, target_table in (
+                        table_obj.fkey_col_to_pkey_table.items()):
                     if target_table not in hetero_data.node_types:
                         continue
 
@@ -699,7 +707,7 @@ def _add_warehouse_labels_to_hetero_data(
             else:
                 # Fallback to random labels if no database provided
                 logger.warning(
-                    "No database provided for heuristic labeling, using random labels"
+                    "No database provided for heuristic labeling, using random"
                 )
                 if create_lineage_labels:
                     homo_data.lineage_label = torch.randint(
@@ -757,7 +765,8 @@ def create_relbench_hetero_data(
             dataset_name, sample_size)
 
         # Add warehouse labels if requested - use heuristics with database
-        if create_lineage_labels or create_silo_labels or create_anomaly_labels:
+        if (create_lineage_labels or create_silo_labels
+                or create_anomaly_labels):
             hetero_data = _add_warehouse_labels_to_hetero_data(
                 hetero_data, db=db, external_labels=external_labels,
                 create_lineage_labels=create_lineage_labels,

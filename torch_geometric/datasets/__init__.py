@@ -26,7 +26,7 @@ from .rel_link_pred_dataset import RelLinkPredDataset
 
 # RelBench integration utilities (optional dependencies)
 try:
-    from .relbench import RelBenchDataset, create_relbench_hetero_data  # noqa: F401
+    from .relbench import RelBenchDataset, create_relbench_hetero_data
     _relbench_available = True
 except ImportError:
     _relbench_available = False
