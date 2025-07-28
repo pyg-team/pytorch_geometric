@@ -156,8 +156,9 @@ def parse_args():
         '--store_eval_tuples', action="store_true",
         help="Store tuple answers from test step to .pkl file for evaluation")
     parser.add_argument(
-        '--use_stored_eval_tuples', action="store_true", help=
-        "Retrieve previously saved tuples for eval instead of generating new ones"
+        '--use_stored_eval_tuples', action="store_true", 
+        help="Retrieve previously saved tuples for eval instead of generating"
+        "new ones"
     )
     args = parser.parse_args()
 
@@ -249,7 +250,8 @@ def _get_stored_tuples():
 
     if tuples is None:
         raise FileNotFoundError(
-            f"Error: Could not open stored tuples. Have you checked that tuples.pkl exists?"
+            "Error: Could not open stored tuples. Have you checked that "
+            "tuples.pkl exists?"
         )
 
     return tuples
