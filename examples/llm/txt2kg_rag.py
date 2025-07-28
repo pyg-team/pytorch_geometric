@@ -65,6 +65,7 @@ BATCH_SIZE_DEFAULT = 1
 EVAL_BATCH_SIZE_DEFAULT = 2
 LLM_GEN_MODE_DEFAULT = "full"
 DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
+max_chars_in_train_answer = 128
 
 
 def parse_args():
@@ -400,7 +401,6 @@ def update_data_lists(args, data_lists):
     return data_lists
 
 
-max_chars_in_train_answer = 0
 
 
 def make_dataset(args):
@@ -499,12 +499,13 @@ def make_dataset(args):
     # pre-process the dataset
     total_data_list = []
     extracted_triple_sizes = []
+    global max_chars_in_train_answer
     for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
         if data_point["is_impossible"]:
             continue
         QA_pair = (data_point["question"], data_point["answer"])
         q = QA_pair[0]
-        max(len(QA_pair[1]), max_chars_in_train_answer)
+        max_chars_in_train_answer = max(len(QA_pair[1]), max_chars_in_train_answer)
         subgraph = query_loader.query(q)
         subgraph.label = QA_pair[1]
         total_data_list.append(subgraph)
@@ -526,7 +527,7 @@ def make_dataset(args):
 
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
-    torch.save(data_lists, dataset_path)
+    torch.save((data_lists, max_chars_in_train_answer), dataset_path)
     del model
     gc.collect()
     torch.cuda.empty_cache()
@@ -736,7 +737,8 @@ if __name__ == '__main__':
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
     if os.path.exists(dataset_path) and not args.regenerate_dataset:
         print(f"Re-using Saved {dataset_name} KG-RAG Dataset...")
-        data_lists = torch.load(dataset_path, weights_only=False)
+        global max_chars_in_train_answer
+        data_lists, max_chars_in_train_answer = torch.load(dataset_path, weights_only=False)
         doc_retriever_path = os.path.join(args.dataset,
                                           "document_retriever.pt")
         if os.path.exists(doc_retriever_path):
