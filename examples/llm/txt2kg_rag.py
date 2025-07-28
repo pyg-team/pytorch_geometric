@@ -156,10 +156,9 @@ def parse_args():
         '--store_eval_tuples', action="store_true",
         help="Store tuple answers from test step to .pkl file for evaluation")
     parser.add_argument(
-        '--use_stored_eval_tuples', action="store_true", 
+        '--use_stored_eval_tuples', action="store_true",
         help="Retrieve previously saved tuples for eval instead of generating"
-        "new ones"
-    )
+        "new ones")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
@@ -251,8 +250,7 @@ def _get_stored_tuples():
     if tuples is None:
         raise FileNotFoundError(
             "Error: Could not open stored tuples. Have you checked that "
-            "tuples.pkl exists?"
-        )
+            "tuples.pkl exists?")
 
     return tuples
 
