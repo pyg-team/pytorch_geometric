@@ -725,7 +725,7 @@ def test(model, test_loader, args):
                 break
             new_qs = []
             ### Removing Retrieved Contexts
-            raw_qs = test_batch["question"]
+            test_batch["question"]
             for i, q in enumerate(test_batch["question"]):
                 # insert VectorRAG context
                 new_qs.append(

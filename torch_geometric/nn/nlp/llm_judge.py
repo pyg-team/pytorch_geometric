@@ -155,11 +155,11 @@ class LLMJudge():
             except:  # noqa
                 pass
         summary = {
-                    "score_1": score1,
-                    "score_2": score2,
-                    "Q": question,
-                    "A": model_pred,
-                    "GROUND": correct_answer
-                }
-        
+            "score_1": score1,
+            "score_2": score2,
+            "Q": question,
+            "A": model_pred,
+            "GROUND": correct_answer
+        }
+
         return summary, self._average_scores(score1, score2)
