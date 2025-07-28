@@ -684,6 +684,7 @@ def train(args, train_loader, val_loader):
 
 
 def test(model, test_loader, args):
+    print(f"LLMJudge using {args.NV_NIM_MODEL}")
     llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
@@ -692,23 +693,45 @@ def test(model, test_loader, args):
 
     scores = []
     eval_tuples = []
-    for test_batch in tqdm(test_loader, desc="Testing"):
-        new_qs = []
-        raw_qs = test_batch["question"]
-        for i, q in enumerate(test_batch["question"]):
-            # insert VectorRAG context
-            new_qs.append(
-                prompt_template.format(
-                    question=q, context="\n".join(test_batch.text_context[i])))
-        test_batch.question = new_qs
-        if args.skip_graph_rag:
-            test_batch.desc = ""
-        preds = (inference_step(model, test_batch,
-                                max_out_tokens=max_chars_in_train_answer))
-        for question, pred, label in zip(raw_qs, preds, test_batch.label):
-            eval_tuples.append((question, pred, label))
-    for question, pred, label in tqdm(eval_tuples, desc="Eval"):
-        scores.append(eval(question, pred, label))
+    if not args.use_stored_eval_tuples:
+        for ii, test_batch in enumerate(tqdm(test_loader, desc="Testing")):
+            # early termination to evaluate scoring
+            if ii > 20:
+                break
+            new_qs = []
+            ### Removing Retrieved Contexts
+            raw_qs = test_batch["question"]
+            for i, q in enumerate(test_batch["question"]):
+                # insert VectorRAG context
+                new_qs.append(
+                    prompt_template.format(
+                        question=q,
+                        context="\n".join(test_batch.text_context[i])))
+            test_batch.question = new_qs
+            if args.skip_graph_rag:
+                test_batch.desc = ""
+            preds = (inference_step(model=model, batch=test_batch,
+                                    max_tokens=400))
+            for question, pred, label in zip(raw_qs, preds, test_batch.label):
+                eval_tuples.append((question, pred, label))
+    else:
+        eval_tuples = _get_stored_tuples()
+
+    scores = []
+    data = {"timestamp": datetime.now().strftime('%Y-%m-%d_%H:%M')}
+    for i, (question, pred, label) in enumerate(tqdm(eval_tuples,
+                                                     desc="Eval")):
+        summary, avg_score = eval(question, pred, label)
+
+        print(
+            f"Iteration {i}: score = {avg_score}. Answer length: {len(pred)}")
+        data[i] = summary
+        scores.append(avg_score)
+
+    filename = '/wd/SynthQA/evals.json'
+    Path(filename).touch(exist_ok=True)
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=2)
     avg_scores = sum(scores) / len(scores)
     print("Avg marlin accuracy=", avg_scores)
     print("*" * 5 + "NOTE" + "*" * 5)
