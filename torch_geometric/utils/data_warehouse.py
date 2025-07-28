@@ -1,30 +1,149 @@
-"""Data Warehouse Intelligence utilities for PyTorch Geometric.
+"""Data warehouse utilities for PyTorch Geometric with G-Retriever integration.
 
-Neural components for warehouse graph analysis with multi-task learning
-for lineage detection, silo analysis, and quality assessment.
+Provides warehouse graph analysis using G-Retriever for multi-task learning
+on lineage, silo, and quality prediction tasks.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from __future__ import annotations
+
+import logging
+from typing import Any
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import Tensor
 
-# PyG components
+# Constants
+EMBEDDING_DIM = 384
+HIDDEN_DIM = 256
+NUM_LINEAGE_TYPES = 5
+NUM_SILO_TYPES = 2
+NUM_ANOMALY_TYPES = 2
+DROPOUT = 0.1
+DEFAULT_MAX_TOKENS = 32
+SILO_THRESHOLD = 0.5
+SILO_CRITICAL_RATIO = 0.5
+SILO_MODERATE_RATIO = 0.2
+QUALITY_THRESHOLD = 0.5
+EXCELLENCE_THRESHOLD = 0.8
+IMPACT_HIGH_RATIO = 0.3
+IMPACT_MEDIUM_RATIO = 0.1
+QUALITY_ATTENTION_RATIO = 0.2
+
+# Response templates for different tasks
+RESPONSE_TEMPLATES = {
+    "lineage": {
+        "predicted": ("Model Lineage Analysis of {num_nodes} entities:\n"
+                      "• Predicted lineage: {prediction}\n"
+                      "• Distribution: {distribution}\n"
+                      "• Average confidence: {confidence:.3f}")
+    },
+    "silo": {
+        "predicted": ("Model Silo Analysis of {num_nodes} entities:\n"
+                      "• Predicted isolated silos: {isolated_count}\n"
+                      "• Connected entities: {connected_count}\n"
+                      "• Predicted silo ratio: {silo_ratio:.2f}%\n"
+                      "• Average silo confidence: {confidence:.3f}")
+    },
+    "quality": {
+        "predicted": ("Data quality assessment for {num_nodes} entities:\n"
+                      "• Average quality score: {avg_score:.3f}\n"
+                      "• Poor quality entities: {poor_count}\n"
+                      "• High quality entities: {high_count}\n"
+                      "• Overall status: {status}")
+    },
+    "impact": {
+        "predicted": ("Impact analysis across {num_nodes} entities:\n"
+                      "• High impact entities: {high_impact}\n"
+                      "• Impact distribution: Low({low}), "
+                      "Medium({medium}), High({high})\n"
+                      "• Risk assessment: {risk_level}")
+    }
+}
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# PyG imports with fallbacks
 try:
-    from torch_geometric.nn import GAT, GRetriever
+    from torch_geometric.nn import GAT
+    from torch_geometric.nn.models import GRetriever
     from torch_geometric.nn.nlp import LLM
-    _HAS_PYG_COMPONENTS = True
+    HAS_GRETRIEVER = True
 except ImportError:
-    # Fallback for missing components
-    GAT = Any
-    GRetriever = Any
-    LLM = Any
-    _HAS_PYG_COMPONENTS = False
-try:
-    from torch_geometric.typing import Tensor
-except ImportError:
-    from torch import Tensor
+    logger.warning("G-Retriever not available, using fallback")
+    HAS_GRETRIEVER = False
+    GAT = None
+    GRetriever = None
+    LLM = None
+
+
+class WarehouseGRetriever(nn.Module):
+    """Warehouse analysis using G-Retriever architecture."""
+    def __init__(self,
+                 llm_model_name: str = "TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+                 gnn_hidden_channels: int = HIDDEN_DIM,
+                 gnn_num_layers: int = 2, gnn_heads: int = 4,
+                 dropout: float = DROPOUT):
+        super().__init__()
+
+        if not HAS_GRETRIEVER:
+            raise ImportError("G-Retriever not available")
+
+        # GNN for graph encoding (output must match LLM embedding dimension)
+        llm_embedding_dim = 2048  # TinyLlama embedding dimension
+        self.gnn = GAT(
+            in_channels=EMBEDDING_DIM,
+            hidden_channels=gnn_hidden_channels,
+            out_channels=llm_embedding_dim,  # Match LLM embedding
+            num_layers=gnn_num_layers,
+            heads=gnn_heads,
+            dropout=dropout)
+
+        # LLM for text generation (following PyG standards)
+        self.llm = LLM(
+            model_name=llm_model_name,
+            num_params=1,  # TinyLlama is ~1B parameters
+            dtype=torch.float16,  # Standard for PyG LLM tests
+        )
+
+        # G-Retriever combining GNN + LLM (match LLM embedding dimension)
+        self.g_retriever = GRetriever(
+            llm=self.llm,
+            gnn=self.gnn,
+            mlp_out_channels=llm_embedding_dim  # Match LLM embedding dimension
+        )
+
+        # Task-specific heads (input dimension matches GNN output)
+        self.task_head = WarehouseTaskHead(hidden_dim=llm_embedding_dim,
+                                           dropout=dropout)
+
+    def forward(self, question: list[str], x: Tensor, edge_index: Tensor,
+                batch: Tensor, label: list[str], **kwargs) -> Tensor:
+        """Training forward pass following G-Retriever pattern."""
+        return self.g_retriever(question=question, x=x, edge_index=edge_index,
+                                batch=batch, label=label, **kwargs)
+
+    def inference(self, question: list[str], x: Tensor, edge_index: Tensor,
+                  batch: Tensor, max_out_tokens: int = DEFAULT_MAX_TOKENS,
+                  **kwargs) -> list[str]:
+        """Inference following G-Retriever pattern."""
+        return self.g_retriever.inference(question=question, x=x,
+                                          edge_index=edge_index, batch=batch,
+                                          max_out_tokens=max_out_tokens,
+                                          **kwargs)
+
+    def predict_task(self, x: Tensor, edge_index: Tensor, task: str) -> Tensor:
+        """Predict specific warehouse task."""
+        # Encode graph with GNN
+        node_emb = self.gnn(x, edge_index)
+
+        # Global pooling for graph-level prediction
+        graph_emb = torch.mean(node_emb, dim=0, keepdim=True)
+
+        # Task-specific prediction
+        return self.task_head(graph_emb, task)
 
 
 class WarehouseTaskHead(nn.Module):
@@ -32,404 +151,646 @@ class WarehouseTaskHead(nn.Module):
 
     Supports various warehouse tasks including lineage prediction,
     impact analysis, and data quality assessment.
+
+    Args:
+        hidden_dim: Hidden dimension size for task heads
+        num_lineage_types: Number of lineage categories
+        num_impact_levels: Number of impact severity levels
+        dropout: Dropout probability for regularization
     """
     def __init__(
         self,
-        hidden_dim: int = 256,
-        num_lineage_types: int = 5,
+        hidden_dim: int = HIDDEN_DIM,
+        num_lineage_types: int = NUM_LINEAGE_TYPES,
         num_impact_levels: int = 3,
-        dropout: float = 0.1,
-    ):
+        dropout: float = DROPOUT,
+    ) -> None:
         super().__init__()
         self.hidden_dim = hidden_dim
 
-        # Task-specific heads
-        self.lineage_head = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim // 2), nn.ReLU(),
-            nn.Dropout(dropout), nn.Linear(hidden_dim // 2, num_lineage_types))
+        # Create task heads with factory method
+        self.heads = nn.ModuleDict({
+            'lineage':
+            self._create_head(hidden_dim, num_lineage_types, dropout),
+            'impact':
+            self._create_head(hidden_dim, num_impact_levels, dropout),
+            'quality':
+            self._create_head(hidden_dim, 1, dropout, sigmoid=True),
+            'silo':
+            self._create_head(hidden_dim, 1, dropout, sigmoid=True),
+        })
 
-        self.impact_head = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim // 2), nn.ReLU(),
-            nn.Dropout(dropout), nn.Linear(hidden_dim // 2, num_impact_levels))
-
-        self.quality_head = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim // 2), nn.ReLU(),
-            nn.Dropout(dropout), nn.Linear(hidden_dim // 2, 1))
-
-        # Silo detection head (binary classification)
-        self.silo_head = nn.Sequential(nn.Linear(hidden_dim, hidden_dim // 2),
-                                       nn.ReLU(), nn.Dropout(dropout),
-                                       nn.Linear(hidden_dim // 2, 1))
-
-    def forward(self, x: Tensor, task: str = "lineage") -> Tensor:
-        """Forward pass for specific warehouse task.
+    def _create_head(self, in_dim: int, out_dim: int, dropout: float,
+                     sigmoid: bool = False) -> nn.Module:
+        """Create a task-specific head.
 
         Args:
-            x: Node embeddings [num_nodes, hidden_dim]
-            task: Task type ("lineage", "impact", "quality", "silo")
+            in_dim: Input dimension
+            out_dim: Output dimension
+            dropout: Dropout probability
+            sigmoid: Whether to apply sigmoid activation
+
+        Returns:
+            Task-specific neural network head
+        """
+        layers = [
+            nn.Linear(in_dim, in_dim // 2),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(in_dim // 2, out_dim)
+        ]
+
+        if sigmoid:
+            layers.append(nn.Sigmoid())
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x: Tensor, task: str = "lineage") -> Tensor:
+        """Forward pass for specific task.
+
+        Args:
+            x: Input node embeddings [num_nodes, hidden_dim]
+            task: Task type ('lineage', 'impact', 'quality', 'silo')
 
         Returns:
             Task-specific predictions
+
+        Raises:
+            ValueError: If task is not supported
         """
-        if task == "lineage":
-            return self.lineage_head(x)
-        elif task == "impact":
-            return self.impact_head(x)
-        elif task == "quality":
-            return torch.sigmoid(self.quality_head(x))
-        elif task == "silo":
-            return torch.sigmoid(self.silo_head(x))
-        else:
-            raise ValueError(f"Unknown task: {task}")
+        if task not in self.heads:
+            raise ValueError(f"Unsupported task: {task}. "
+                             f"Available tasks: {list(self.heads.keys())}")
 
-
-class WarehouseGRetriever(nn.Module):
-    """Warehouse Graph Retriever for data analysis.
-
-    Graph neural network with warehouse-specific task heads for
-    lineage tracking, impact analysis, and quality assessment.
-    """
-    def __init__(self, hidden_channels: int = 256, num_gnn_layers: int = 4,
-                 llm_model_name: str = 'TinyLlama/TinyLlama-1.1B-Chat-v0.1',
-                 **kwargs: Any) -> None:
-        super().__init__()
-
-        # Create GNN component
-        if _HAS_PYG_COMPONENTS:
-            self.gnn = GAT(
-                in_channels=1024,
-                hidden_channels=hidden_channels,
-                out_channels=1024,
-                num_layers=num_gnn_layers,
-                heads=4,
-            )
-        else:
-            self.gnn = None
-
-        # Create LLM component
-        if _HAS_PYG_COMPONENTS:
-            self.llm = LLM(
-                model_name=llm_model_name,
-                num_params=1,  # For TinyLlama
-            )
-        else:
-            self.llm = None
-
-        # Core GRetriever
-        if _HAS_PYG_COMPONENTS:
-            self.gretriever = GRetriever(llm=self.llm, gnn=self.gnn, **kwargs)
-        else:
-            self.gretriever = None
-
-        # Warehouse-specific components
-        self.task_head = WarehouseTaskHead(hidden_dim=hidden_channels,
-                                           dropout=0.1)
-
-        # Lineage-specific embeddings
-        self.lineage_encoder = nn.Embedding(
-            10, hidden_channels)  # Common lineage types
-        self.temporal_encoder = nn.Linear(1, hidden_channels)  # Time encoding
-
-    def forward(self, question: List[str], x: Tensor, edge_index: Tensor,
-                batch: Optional[Tensor] = None,
-                edge_attr: Optional[Tensor] = None, task: str = "lineage",
-                **kwargs: Any) -> Dict[str, Tensor]:
-        """Forward pass with warehouse intelligence.
-
-        Args:
-            question: Natural language queries
-            x: Node features
-            edge_index: Graph connectivity
-            batch: Batch assignment for nodes
-            edge_attr: Edge attributes
-            task: Warehouse task type
-            **kwargs: Additional keyword arguments
-
-        Returns:
-            Dictionary containing:
-            - 'pred': Task predictions
-            - 'node_emb': Node embeddings
-            - 'graph_emb': Graph-level embeddings
-        """
-        # Get base GRetriever embeddings
-        out = self.gretriever(question=question, x=x, edge_index=edge_index,
-                              batch=batch, edge_attr=edge_attr, **kwargs)
-
-        # Extract embeddings
-        if isinstance(out, dict):
-            node_emb = out.get('node_emb', out.get('pred', x))
-            graph_emb = out.get('graph_emb', None)
-        else:
-            node_emb = out
-            graph_emb = None
-
-        # Apply warehouse-specific task head
-        task_pred = self.task_head(node_emb, task=task)
-
-        return {
-            'pred':
-            task_pred,
-            'node_emb':
-            node_emb,
-            'graph_emb':
-            (graph_emb if graph_emb is not None else task_pred.mean(dim=0)),
-            'base_out':
-            out
-        }
-
-    def encode_lineage(self, lineage_types: Tensor,
-                       timestamps: Optional[Tensor] = None) -> Tensor:
-        """Encode lineage information.
-
-        Args:
-            lineage_types: Lineage type indices [num_nodes]
-            timestamps: Optional timestamps [num_nodes, 1]
-
-        Returns:
-            Lineage embeddings [num_nodes, hidden_channels]
-        """
-        lineage_emb = self.lineage_encoder(lineage_types)
-
-        if timestamps is not None:
-            temporal_emb = self.temporal_encoder(timestamps)
-            lineage_emb = lineage_emb + temporal_emb
-
-        return lineage_emb
+        return self.heads[task](x)
 
 
 class WarehouseConversationSystem:
-    """Natural language interface for warehouse queries.
+    """Conversation system for warehouse intelligence queries.
 
-    Processes warehouse intelligence queries and generates
-    structured analysis responses.
+    Provides natural language interface for warehouse analysis tasks
+    including lineage tracing, silo detection, and quality assessment.
+
+    Args:
+        model: Warehouse model for predictions
+        device: Computing device ('cpu' or 'cuda')
     """
-    def __init__(self, model: Union[WarehouseGRetriever, Any],
-                 device: str = "cpu"):
+
+    # Response templates for different query types
+    RESPONSE_TEMPLATES = {
+        'lineage': {
+            'with_labels':
+            "RelBench Lineage Analysis of {num_nodes} entities:\n"
+            "• Real lineage pattern: {lineage_type}\n"
+            "• Actual distribution: {distribution}\n"
+            "• Data source: RelBench warehouse labels",
+            'predicted':
+            "Model Lineage Analysis of {num_nodes} entities:\n"
+            "• Predicted lineage: {lineage_type}\n"
+            "• Distribution: {distribution}\n"
+            "• Average confidence: {confidence:.3f}"
+        },
+        'silo': {
+            'with_labels':
+            "RelBench Silo Analysis of {num_nodes} entities:\n"
+            "• Isolated silos detected: {silo_count}\n"
+            "• Connected entities: {connected_count}\n"
+            "• Silo ratio: {silo_ratio:.2%}\n"
+            "• Status: {status}\n"
+            "• Data source: RelBench silo labels",
+            'predicted':
+            "Model Silo Analysis of {num_nodes} entities:\n"
+            "• Predicted isolated silos: {silo_count}\n"
+            "• Connected entities: {connected_count}\n"
+            "• Predicted silo ratio: {silo_ratio:.2%}\n"
+            "• Average silo confidence: {confidence:.3f}"
+        },
+        'impact': {
+            'predicted':
+            "Impact analysis across {num_nodes} entities:\n"
+            "• High impact entities: {high_impact}\n"
+            "• Impact distribution: Low({low}), Medium({medium}), High({high})\n"
+            "• Risk assessment: {risk_level}"
+        },
+        'quality': {
+            'predicted':
+            "Data quality assessment for {num_nodes} entities:\n"
+            "• Average quality score: {avg_quality:.3f}\n"
+            "• Poor quality entities: {poor_quality}\n"
+            "• High quality entities: {high_quality}\n"
+            "• Overall status: {status}"
+        }
+    }
+
+    def __init__(self, model: WarehouseGRetriever | Any,
+                 device: str = "cpu") -> None:
         self.model = model
         self.device = device
-        self.conversation_history: List[Dict[str, str]] = []
+        self.conversation_history: list[dict[str, str]] = []
 
-        # Common warehouse query templates
-        self.query_templates = {
-            "lineage": [
-                "What is the lineage of {table}?",
-                "Show me the data flow for {table}",
-                "Where does {table} get its data from?"
-            ],
-            "impact": [
-                "What would be impacted if {table} changes?",
-                "Show me downstream dependencies of {table}",
-                "What tables depend on {table}?"
-            ],
-            "quality": [
-                "What is the data quality of {table}?",
-                "Are there any quality issues with {table}?",
-                "How reliable is the data in {table}?"
-            ]
+        # Query classification keywords
+        self.query_keywords = {
+            "lineage": ["lineage", "source", "origin", "flow"],
+            "silo": ["silo", "isolated", "disconnect", "separate"],
+            "impact": ["impact", "downstream", "depend", "affect"],
+            "quality": ["quality", "reliable", "issue", "problem"]
         }
 
-    def process_query(
-            self, query: str, graph_data: Dict[str, Tensor],
-            context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Process a natural language warehouse query.
+    def classify_query(self, query: str) -> str:
+        """Classify query type based on keywords.
 
         Args:
-            query: Natural language question
-            graph_data: Graph data dictionary with x, edge_index, etc.
-            context: Optional context information
+            query: Natural language query
 
         Returns:
-            Response dictionary with answer and metadata
+            Query type ('lineage', 'silo', 'impact', 'quality', or 'general')
         """
-        # Determine query type
-        query_type = self._classify_query(query)
-
-        # Prepare model inputs
-        question = [query]
-        x = graph_data['x'].to(self.device)
-        edge_index = graph_data['edge_index'].to(self.device)
-        batch = graph_data.get('batch', None)
-        if batch is not None:
-            batch = batch.to(self.device)
-
-        # Get model predictions
-        with torch.no_grad():
-            output = self.model(question=question, x=x, edge_index=edge_index,
-                                batch=batch, task=query_type)
-
-        # Format response
-        response = self._format_response(query, output, query_type, context)
-
-        # Update conversation history
-        self.conversation_history.append({
-            "query": query,
-            "response": response["answer"],
-            "type": query_type
-        })
-
-        return response
-
-    def _classify_query(self, query: str) -> str:
-        """Classify query type based on keywords."""
         query_lower = query.lower()
 
-        if any(word in query_lower
-               for word in ["lineage", "source", "origin", "flow"]):
-            return "lineage"
-        elif any(word in query_lower
-                 for word in ["silo", "isolated", "disconnect", "separate"]):
-            return "silo"
-        elif any(word in query_lower
-                 for word in ["impact", "downstream", "depend", "affect"]):
-            return "impact"
-        elif any(word in query_lower
-                 for word in ["quality", "reliable", "issue", "problem"]):
-            return "quality"
-        else:
-            return "lineage"  # Default
+        for query_type, keywords in self.query_keywords.items():
+            if any(keyword in query_lower for keyword in keywords):
+                return query_type
 
-    def _format_response(
-            self, query: str, output: Dict[str, Tensor], query_type: str,
-            context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Format model output into conversational response."""
-        pred = output['pred']
+        return "general"
 
-        # Get basic statistics
-        node_emb = output['node_emb']
-        num_nodes = node_emb.shape[0]
-        avg_confidence = pred.mean().item()
+    def process_query(self, query: str, graph_data: dict[str, Any],
+                      context: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Process a warehouse intelligence query.
 
-        if query_type == "lineage":
-            # Check if we have real RelBench labels
+        Args:
+            query: Natural language query
+            graph_data: Graph data dictionary with x, edge_index, etc.
+            context: Optional context with labels and metadata
+
+        Returns:
+            Dictionary with answer and metadata
+
+        Raises:
+            ValueError: If required graph data is missing
+            RuntimeError: If model prediction fails
+        """
+        if 'x' not in graph_data or 'edge_index' not in graph_data:
+            raise ValueError("Graph data must contain 'x' and 'edge_index'")
+
+        try:
+            # Classify query type
+            query_type = self.classify_query(query)
+
+            # Get model predictions
+            x = graph_data['x']
+            edge_index = graph_data['edge_index']
+            batch = graph_data.get('batch')
+
+            # Get integrated LLM + Analytics response with proper context
+            if hasattr(self.model, 'g_retriever'):
+                # Ensure batch is properly formatted
+                if batch is None:
+                    batch = torch.zeros(x.size(0), dtype=torch.long)
+
+                # Create context-aware prompt
+                contextual_prompt = self._create_contextual_prompt(
+                    query, x, edge_index, query_type, context)
+
+                # Use full G-Retriever integration (LLM + GNN) with context
+                llm_response = self.model.inference(
+                    question=[contextual_prompt], x=x, edge_index=edge_index,
+                    batch=batch, max_out_tokens=150)
+
+                # Also get analytics predictions for structured data
+                pred = self.model.predict_task(
+                    x=x, edge_index=edge_index,
+                    task=query_type if query_type != "general" else "lineage")
+
+                # Combine LLM response with analytics
+                llm_text = llm_response[0] if llm_response else ""
+            else:
+                # Fallback to analytics only
+                pred = self.model.predict_task(
+                    x=x, edge_index=edge_index,
+                    task=query_type if query_type != "general" else "lineage")
+                llm_text = ""
+            num_nodes = x.size(0)
+
+            # Check for real labels
             has_labels = (context is not None
-                          and context.get('warehouse_labels') is not None
-                          and context['warehouse_labels'].get('lineage')
-                          is not None)
-            if has_labels:
-                # Use real labels from RelBench
-                real_labels = context['warehouse_labels']['lineage']
-                lineage_counts = torch.bincount(real_labels, minlength=5)
-                dominant_type = int(torch.argmax(lineage_counts).item())
+                          and context.get('warehouse_labels') is not None)
 
-                lineage_names = [
-                    "Direct", "Derived", "Aggregated", "Joined", "Transformed"
-                ]
-
-                answer = (
-                    f"RelBench Analysis of {num_nodes} entities:\n"
-                    f"• Real lineage pattern: {lineage_names[dominant_type]}\n"
-                    f"• Actual distribution: {lineage_counts.tolist()}\n"
-                    f"• Data source: RelBench warehouse labels")
+            # Extract data based on query type
+            if query_type == "lineage":
+                data = self._extract_lineage_data(
+                    pred, num_nodes, context if has_labels else None)
+            elif query_type == "silo":
+                data = self._extract_silo_data(pred, num_nodes,
+                                               context if has_labels else None)
+            elif query_type == "impact":
+                data = self._extract_impact_data(pred, num_nodes)
+            elif query_type == "quality":
+                data = self._extract_quality_data(pred, num_nodes)
             else:
-                # Use model predictions
-                lineage_scores = F.softmax(pred, dim=-1)
-                top_lineage = torch.argmax(lineage_scores, dim=-1)
+                data = {
+                    "num_nodes": num_nodes,
+                    "confidence": pred.mean().item()
+                }
 
-                lineage_counts = torch.bincount(top_lineage, minlength=5)
-                dominant_type = int(torch.argmax(lineage_counts).item())
+            # Create integrated response combining LLM + Analytics
+            if llm_text and len(llm_text.strip()) > 10:
+                # Use LLM response as primary answer with analytics as supporting data
+                answer = self._create_integrated_response(
+                    llm_text, data, query_type, has_labels)
+            else:
+                # Fallback to template-based response
+                template_key = 'with_labels' if has_labels else 'predicted'
+                template = self.RESPONSE_TEMPLATES.get(query_type, {}).get(
+                    template_key,
+                    "Analyzed {num_nodes} entities with confidence {confidence:.3f}"
+                )
+                answer = template.format(**data)
 
-                lineage_names = [
-                    "Direct", "Derived", "Aggregated", "Joined", "Transformed"
-                ]
+            # Store in conversation history
+            import datetime
+            self.conversation_history.append({
+                'query':
+                query,
+                'answer':
+                answer,
+                'query_type':
+                query_type,
+                'has_labels':
+                has_labels,
+                'timestamp':
+                datetime.datetime.now().isoformat()
+            })
 
-                answer = (
-                    f"Model Analysis of {num_nodes} entities:\n"
-                    f"• Predicted lineage: {lineage_names[dominant_type]}\n"
-                    f"• Distribution: {lineage_counts.tolist()}\n"
-                    f"• Average confidence: {avg_confidence:.3f}")
+            return {
+                'answer': answer,
+                'query_type': query_type,
+                'data': data,
+                'predictions': pred,
+                'has_labels': has_labels,
+                'llm_response': llm_text if 'llm_text' in locals() else None
+            }
 
+        except Exception as e:
+            logger.error(f"Query processing failed: {e}")
+            raise RuntimeError(
+                f"Failed to process query '{query}': {e}") from e
+
+    def _create_integrated_response(self, llm_text: str, data: dict,
+                                    query_type: str, has_labels: bool) -> str:
+        """Create integrated response combining LLM text with analytics data."""
+        # Clean and process LLM response
+        llm_clean = self._clean_llm_response(llm_text)
+        if len(llm_clean) > 300:
+            llm_clean = llm_clean[:300] + "..."
+
+        # Create analytics summary based on query type
+        if query_type == "lineage":
+            analytics_summary = (
+                f"Analytics: {data.get('predicted_lineage', 'Unknown')} lineage detected "
+                f"across {data.get('num_nodes', 0)} entities "
+                f"(confidence: {data.get('confidence', 0):.3f})")
         elif query_type == "silo":
-            # Check if we have real RelBench silo labels
-            has_silo_labels = (context is not None
-                               and context.get('warehouse_labels') is not None
-                               and context['warehouse_labels'].get('silo')
-                               is not None)
-            if has_silo_labels:
-                # Use real silo labels from RelBench
-                real_silo_labels = context['warehouse_labels']['silo']
-                silo_count = (real_silo_labels == 1).sum().item()
-                connected_count = (real_silo_labels == 0).sum().item()
-
-                threshold = num_nodes * 0.2
-                status = 'CRITICAL' if silo_count > threshold else 'ACCEPTABLE'
-                answer = (f"RelBench Silo Analysis of {num_nodes} entities:\n"
-                          f"• Isolated silos detected: {silo_count}\n"
-                          f"• Connected entities: {connected_count}\n"
-                          f"• Silo ratio: {silo_count/num_nodes:.2%}\n"
-                          f"• Status: {status}\n"
-                          f"• Data source: RelBench silo labels")
-            else:
-                # Use model predictions for silo detection
-                silo_scores = torch.sigmoid(pred).squeeze()
-                silo_predictions = (silo_scores > 0.5).long()
-                silo_count = silo_predictions.sum().item()
-
-                connected_count = num_nodes - silo_count
-                answer = (
-                    f"Model Silo Analysis of {num_nodes} entities:\n"
-                    f"• Predicted isolated silos: {silo_count}\n"
-                    f"• Connected entities: {connected_count}\n"
-                    f"• Predicted silo ratio: {silo_count/num_nodes:.2%}\n"
-                    f"• Average silo confidence: {silo_scores.mean():.3f}")
-
-        elif query_type == "impact":
-            # Format impact predictions with risk assessment
-            impact_scores = F.softmax(pred, dim=-1)
-            impact_levels = torch.argmax(impact_scores, dim=-1)
-
-            # Count impact levels
-            impact_counts = torch.bincount(impact_levels, minlength=3)
-            high_impact = (impact_levels == 2).sum().item()
-
-            threshold = num_nodes * 0.3
-            risk_level = 'HIGH' if high_impact > threshold else 'MODERATE'
-            answer = (f"Impact analysis across {num_nodes} entities:\n"
-                      f"• High impact entities: {high_impact}\n"
-                      f"• Impact distribution: Low({impact_counts[0]}), "
-                      f"Medium({impact_counts[1]}), High({impact_counts[2]})\n"
-                      f"• Risk assessment: {risk_level}")
-
+            analytics_summary = (
+                f"Analytics: {data.get('isolated_silos', 0)} isolated silos found "
+                f"out of {data.get('num_nodes', 0)} entities "
+                f"({data.get('silo_ratio', 0):.1%} isolation rate)")
         elif query_type == "quality":
-            # Format quality predictions with detailed metrics
-            quality_scores = torch.sigmoid(pred).squeeze()
-            avg_quality = quality_scores.mean().item()
-            poor_quality = (quality_scores < 0.5).sum().item()
-            excellent_quality = (quality_scores > 0.8).sum().item()
-
-            threshold = num_nodes * 0.2
-            status = 'NEEDS ATTENTION' if poor_quality > threshold else 'GOOD'
-            answer = (f"Data quality assessment for {num_nodes} entities:\n"
-                      f"• Average quality score: {avg_quality:.3f}\n"
-                      f"• Poor quality entities: {poor_quality}\n"
-                      f"• Excellent quality entities: {excellent_quality}\n"
-                      f"• Overall status: {status}")
-
+            analytics_summary = (
+                f"Analytics: Average quality score {data.get('avg_quality', 0):.3f} "
+                f"({data.get('status', 'UNKNOWN')} overall status)")
+        elif query_type == "impact":
+            analytics_summary = (
+                f"Analytics: {data.get('high_impact', 0)} high-impact entities "
+                f"detected ({data.get('risk_level', 'UNKNOWN')} risk)")
         else:
-            answer = (f"Analyzed {num_nodes} entities with "
-                      f"confidence {avg_confidence:.3f}")
+            analytics_summary = f"Analytics: Processed {data.get('num_nodes', 0)} entities"
+
+        # Create coherent integrated response
+        if llm_clean and len(llm_clean.strip()) > 20:
+            # Use LLM response as primary content with analytics as validation
+            integrated_response = f"""{llm_clean}
+
+📊 Quantitative Analysis: {analytics_summary}"""
+        else:
+            # Fallback to analytics-focused response
+            integrated_response = f"""Based on the warehouse structure analysis:
+
+{analytics_summary}
+
+The system shows typical patterns for this type of data warehouse configuration."""
+
+        return integrated_response
+
+    def _create_contextual_prompt(self, query: str, x: Tensor,
+                                  edge_index: Tensor, query_type: str,
+                                  context: dict | None = None) -> str:
+        """Create context-aware prompt with graph information."""
+        # Analyze graph structure
+        num_nodes = x.size(0)
+        num_edges = edge_index.size(1)
+        avg_degree = (2 * num_edges) / num_nodes if num_nodes > 0 else 0
+
+        # Determine graph density
+        max_edges = num_nodes * (num_nodes - 1)
+        density = (2 * num_edges) / max_edges if max_edges > 0 else 0
+
+        if density > 0.1:
+            connectivity = "highly connected"
+        elif density > 0.05:
+            connectivity = "moderately connected"
+        else:
+            connectivity = "sparsely connected"
+
+        # Create domain-specific context
+        domain_context = ""
+        if context and 'node_types' in context:
+            node_types = context['node_types']
+            domain_context = f"The data contains {len(node_types)} entity types: {', '.join(node_types[:5])}."
+        else:
+            # Infer domain from graph characteristics
+            if num_nodes > 300 and connectivity == "sparsely connected":
+                domain_context = "This appears to be a large-scale relational database with multiple entity types."
+            elif avg_degree > 10:
+                domain_context = "This appears to be a highly interconnected system with complex relationships."
+            else:
+                domain_context = "This appears to be a structured data warehouse with defined relationships."
+
+        # Create task-specific prompt
+        if query_type == "lineage":
+            task_context = """
+Data lineage analysis focuses on tracing data flow and transformations through the system.
+Key aspects to consider:
+- Direct connections (raw data sources)
+- Staged data (intermediate processing)
+- Transformed data (modified/computed values)
+- Aggregated data (summarized information)
+- Derived data (calculated from other data)
+"""
+        elif query_type == "silo":
+            task_context = """
+Data silo analysis identifies isolated or poorly connected data sources.
+Key aspects to consider:
+- Isolated nodes (disconnected data sources)
+- Bridge nodes (connecting different data domains)
+- Cluster formation (related data groups)
+- Integration opportunities (potential connections)
+"""
+        elif query_type == "quality":
+            task_context = """
+Data quality analysis evaluates the reliability and completeness of data.
+Key aspects to consider:
+- Data completeness (missing values)
+- Data consistency (conflicting information)
+- Data accuracy (correctness of values)
+- Data freshness (how up-to-date the data is)
+"""
+        elif query_type == "impact":
+            task_context = """
+Impact analysis assesses the downstream effects of data changes.
+Key aspects to consider:
+- High-impact nodes (affecting many other entities)
+- Dependency chains (cascading effects)
+- Critical paths (essential data flows)
+- Risk assessment (potential failure points)
+"""
+        else:
+            task_context = "General warehouse intelligence analysis."
+
+        # Construct the contextual prompt
+        contextual_prompt = f"""You are a data warehouse intelligence expert analyzing a specific data warehouse.
+
+WAREHOUSE CONTEXT:
+- Graph structure: {num_nodes} entities, {num_edges} relationships
+- Connectivity: {connectivity} (average degree: {avg_degree:.1f})
+- {domain_context}
+
+ANALYSIS TASK:
+{task_context.strip()}
+
+USER QUESTION: {query}
+
+Please provide a specific analysis of this warehouse based on the graph structure and relationships. Focus on concrete insights rather than general definitions. Be concise and actionable."""
+
+        return contextual_prompt
+
+    def _clean_llm_response(self, llm_text: str) -> str:
+        """Clean and format LLM response for better coherence."""
+        if not llm_text:
+            return ""
+
+        # Remove common artifacts
+        cleaned = llm_text.strip()
+
+        # Remove markdown artifacts
+        cleaned = cleaned.replace('### Assistant:',
+                                  '').replace('### Human:', '')
+        cleaned = cleaned.replace('[ST:', '').replace('[O:',
+                                                      '').replace(']', '')
+
+        # Remove conversation fragments
+        if '### Human:' in cleaned:
+            cleaned = cleaned.split('### Human:')[0].strip()
+
+        # Remove incomplete sentences at the end
+        sentences = cleaned.split('.')
+        if len(sentences) > 1 and len(sentences[-1].strip()) < 10:
+            cleaned = '.'.join(sentences[:-1]) + '.'
+
+        # Remove leading/trailing quotes or brackets
+        cleaned = cleaned.strip('"\'[]{}()')
+
+        # Ensure it starts with a capital letter
+        if cleaned and not cleaned[0].isupper():
+            cleaned = cleaned[0].upper() + cleaned[1:]
+
+        return cleaned
+
+    def _extract_lineage_data(
+            self, pred: Tensor, num_nodes: int,
+            context: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Extract data for lineage analysis.
+
+        Args:
+            pred: Model predictions
+            num_nodes: Number of nodes
+            context: Optional context with real labels
+
+        Returns:
+            Dictionary with lineage analysis data
+        """
+        if context and 'warehouse_labels' in context:
+            # Use real labels
+            labels = context['warehouse_labels']['lineage']
+            if labels is not None:
+                distribution = torch.bincount(
+                    labels, minlength=NUM_LINEAGE_TYPES).tolist()
+                dominant_type = torch.mode(labels).values.item()
+                lineage_types = [
+                    'Direct', 'Staged', 'Transformed', 'Aggregated', 'Derived'
+                ]
+
+                return {
+                    'num_nodes': num_nodes,
+                    'lineage_type': lineage_types[dominant_type],
+                    'distribution': distribution,
+                    'confidence': 1.0
+                }
+
+        # Use predictions
+        probs = F.softmax(pred, dim=-1)
+        predicted_labels = torch.argmax(probs, dim=-1)
+        distribution = torch.bincount(predicted_labels,
+                                      minlength=NUM_LINEAGE_TYPES).tolist()
+        dominant_type = torch.mode(predicted_labels).values.item()
+        confidence = probs.max(dim=-1).values.mean().item()
+
+        lineage_types = [
+            'Direct', 'Staged', 'Transformed', 'Aggregated', 'Derived'
+        ]
 
         return {
-            "answer": answer,
-            "confidence": avg_confidence,
-            "query_type": query_type,
-            "raw_output": output
+            'num_nodes': num_nodes,
+            'lineage_type': lineage_types[dominant_type],
+            'distribution': distribution,
+            'confidence': confidence
         }
 
-    def get_conversation_history(self) -> List[Dict[str, str]]:
-        """Get the conversation history."""
-        return self.conversation_history
+    def _extract_silo_data(
+            self, pred: Tensor, num_nodes: int,
+            context: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Extract data for silo analysis.
 
-    def clear_history(self) -> None:
-        """Clear conversation history."""
-        self.conversation_history = []
+        Args:
+            pred: Model predictions
+            num_nodes: Number of nodes
+            context: Optional context with real labels
+
+        Returns:
+            Dictionary with silo analysis data
+        """
+        if context and 'warehouse_labels' in context:
+            # Use real labels
+            labels = context['warehouse_labels']['silo']
+            if labels is not None:
+                silo_count = (labels > SILO_THRESHOLD).sum().item()
+                connected_count = num_nodes - silo_count
+                silo_ratio = silo_count / num_nodes
+                status = 'CRITICAL' if silo_ratio > SILO_CRITICAL_RATIO else 'MODERATE' if silo_ratio > SILO_MODERATE_RATIO else 'GOOD'
+
+                return {
+                    'num_nodes': num_nodes,
+                    'silo_count': silo_count,
+                    'connected_count': connected_count,
+                    'silo_ratio': silo_ratio,
+                    'status': status,
+                    'confidence': 1.0
+                }
+
+        # Use predictions
+        silo_probs = torch.sigmoid(pred).squeeze()
+        silo_count = (silo_probs > SILO_THRESHOLD).sum().item()
+        connected_count = num_nodes - silo_count
+        silo_ratio = silo_count / num_nodes
+        confidence = silo_probs.mean().item()
+
+        status = 'CRITICAL' if silo_ratio > SILO_CRITICAL_RATIO else 'MODERATE' if silo_ratio > SILO_MODERATE_RATIO else 'GOOD'
+
+        return {
+            'num_nodes': num_nodes,
+            'silo_count': silo_count,
+            'connected_count': connected_count,
+            'silo_ratio': silo_ratio,
+            'status': status,
+            'confidence': confidence
+        }
+
+    def _extract_impact_data(self, pred: Tensor,
+                             num_nodes: int) -> dict[str, Any]:
+        """Extract data for impact analysis.
+
+        Args:
+            pred: Model predictions
+            num_nodes: Number of nodes
+
+        Returns:
+            Dictionary with impact analysis data
+        """
+        probs = F.softmax(pred, dim=-1)
+        predicted_labels = torch.argmax(probs, dim=-1)
+
+        low_impact = (predicted_labels == 0).sum().item()
+        medium_impact = (predicted_labels == 1).sum().item()
+        high_impact = (predicted_labels == 2).sum().item()
+
+        risk_level = 'HIGH' if high_impact > num_nodes * IMPACT_HIGH_RATIO else 'MEDIUM' if high_impact > num_nodes * IMPACT_MEDIUM_RATIO else 'LOW'
+
+        return {
+            'num_nodes': num_nodes,
+            'high_impact': high_impact,
+            'low': low_impact,
+            'medium': medium_impact,
+            'high': high_impact,
+            'risk_level': risk_level,
+            'confidence': probs.max(dim=-1).values.mean().item()
+        }
+
+    def _extract_quality_data(self, pred: Tensor,
+                              num_nodes: int) -> dict[str, Any]:
+        """Extract data for quality analysis.
+
+        Args:
+            pred: Model predictions
+            num_nodes: Number of nodes
+
+        Returns:
+            Dictionary with quality analysis data
+        """
+        scores = torch.sigmoid(pred).squeeze()
+        avg_quality = scores.mean().item()
+        poor_quality = (scores < QUALITY_THRESHOLD).sum().item()
+        high_quality = (scores > EXCELLENCE_THRESHOLD).sum().item()
+
+        threshold = num_nodes * QUALITY_ATTENTION_RATIO
+        status = 'NEEDS ATTENTION' if poor_quality > threshold else 'GOOD'
+
+        return {
+            'num_nodes': num_nodes,
+            'avg_quality': avg_quality,
+            'poor_quality': poor_quality,
+            'high_quality': high_quality,
+            'status': status,
+            'confidence': avg_quality
+        }
+
+    def get_conversation_history(self) -> list[dict[str, str]]:
+        """Get the conversation history.
+
+        Returns:
+            List of conversation entries
+        """
+        return self.conversation_history.copy()
 
 
 class SimpleWarehouseModel(nn.Module):
-    """Simplified warehouse model for demo purposes without LLM deps."""
-    def __init__(self, hidden_channels: int = 128):
+    """Simplified warehouse model for demo purposes without LLM dependencies.
+
+    This model provides basic warehouse intelligence functionality
+    using only GAT and task heads, suitable for testing and demos.
+
+    Args:
+        hidden_channels: Hidden dimension for GNN layers
+        input_channels: Input feature dimension
+    """
+    def __init__(self, hidden_channels: int = HIDDEN_DIM,
+                 input_channels: int = EMBEDDING_DIM) -> None:
         super().__init__()
+
+        if not HAS_GRETRIEVER or GAT is None:
+            raise ImportError(
+                "GAT component required. Install PyTorch Geometric.")
+
         self.gnn = GAT(
-            in_channels=384,  # Match demo data
+            in_channels=input_channels,
             hidden_channels=hidden_channels,
             out_channels=hidden_channels,
             num_layers=2,
@@ -437,31 +798,81 @@ class SimpleWarehouseModel(nn.Module):
         )
         self.task_head = WarehouseTaskHead(hidden_channels)
 
-    def __call__(self, question: List[str], x: Tensor, edge_index: Tensor,
-                 batch: Optional[Tensor] = None, task: str = "lineage",
-                 **kwargs: Any) -> Dict[str, Tensor]:
-        # Simple GNN forward pass
-        node_emb = self.gnn(x, edge_index)
-        pred = self.task_head(node_emb, task=task)
+    def __call__(self, question: list[str], x: Tensor, edge_index: Tensor,
+                 batch: Tensor | None = None, task: str = "lineage",
+                 **kwargs: Any) -> dict[str, Tensor]:
+        """Forward pass through simplified model.
 
-        return {
-            'pred': pred,
-            'node_emb': node_emb,
-            'graph_emb': pred.mean(dim=0),
-            'base_out': pred
-        }
+        Args:
+            question: List of questions (for compatibility)
+            x: Node features
+            edge_index: Edge connectivity
+            batch: Batch assignment
+            task: Task type
+            **kwargs: Additional arguments
+
+        Returns:
+            Dictionary with predictions and embeddings
+        """
+        try:
+            # Simple GNN forward pass
+            node_emb = self.gnn(x, edge_index)
+            pred = self.task_head(node_emb, task=task)
+
+            return {
+                'pred': pred,
+                'node_emb': node_emb,
+                'graph_emb': pred.mean(dim=0),
+                'task': task
+            }
+        except Exception as e:
+            logger.error(f"SimpleWarehouseModel forward failed: {e}")
+            raise RuntimeError(f"Model forward pass failed: {e}") from e
+
+    def inference(self, question: list[str], **kwargs) -> list[str]:
+        """Simple inference returning basic responses."""
+        return [f"Analysis result for: {q}" for q in question]
+
+    def predict_task(self, x: Tensor, edge_index: Tensor,
+                     task: str = "lineage") -> Tensor:
+        """Predict task-specific outputs.
+
+        Args:
+            x: Node features
+            edge_index: Edge connectivity
+            task: Task type
+
+        Returns:
+            Task predictions
+        """
+        try:
+            node_emb = self.gnn(x, edge_index)
+            pred = self.task_head(node_emb, task=task)
+            return pred
+        except Exception as e:
+            logger.error(f"SimpleWarehouseModel predict_task failed: {e}")
+            raise RuntimeError(f"Task prediction failed: {e}") from e
 
 
 def create_warehouse_demo() -> WarehouseConversationSystem:
-    """Create warehouse conversation system for demo.
+    """Create a warehouse demo system.
 
     Returns:
-        WarehouseConversationSystem instance.
+        Configured warehouse conversation system
+
+    Raises:
+        ImportError: If required components are not available
     """
-    # Create simplified model for demo
-    model = SimpleWarehouseModel(hidden_channels=128)
+    try:
+        if HAS_GRETRIEVER:
+            model = WarehouseGRetriever()
+        else:
+            model = SimpleWarehouseModel()
 
-    # Create conversation system
-    conversation_system = WarehouseConversationSystem(model)
+        return WarehouseConversationSystem(model)
 
-    return conversation_system
+    except Exception as e:
+        logger.error(f"Failed to create warehouse demo: {e}")
+        # Fallback to simple model
+        model = SimpleWarehouseModel()
+        return WarehouseConversationSystem(model)
