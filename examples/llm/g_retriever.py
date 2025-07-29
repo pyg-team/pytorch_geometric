@@ -174,7 +174,7 @@ def inference_step(model, batch, model_save_name="gnn+llm", max_out_tokens=128):
     # Check the type of model being used to determine the input arguments
     if model_save_name == 'llm':
         # Perform inference on the question and textual graph description
-        return model.inference(batch.question, batch.desc)
+        return model.inference(batch.question, batch.desc, max_out_tokens=max_out_tokens)
     else:  # (GNN+LLM)
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.edge_attr, batch.desc,
