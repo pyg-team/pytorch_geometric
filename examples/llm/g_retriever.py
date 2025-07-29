@@ -160,14 +160,15 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         )
 
 
-def inference_step(model, batch, model_save_name="gnn+llm",
-                   max_out_tokens=128):
+def inference_step(model, batch, model_save_name="gnn+llm", max_out_tokens=128):
     """Performs inference on a given batch of data using the provided model.
 
     Args:
         model (nn.Module): The model to use for inference.
         batch: The batch of data to process.
         model_save_name (str): The name of the model (e.g. 'llm').
+        max_out_tokens (int): The maximum number of tokens
+            for our model to output.
 
     Returns:
         The output of the inference step.
