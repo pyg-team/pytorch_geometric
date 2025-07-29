@@ -65,7 +65,7 @@ def train():
         out = model(data.x, data.edge_index, data.batch)
         loss = F.cross_entropy(out, data.y)
         loss.backward()
-        total_loss += data.num_graphs * float(loss)
+        total_loss += data.num_graphs * float(loss.detach())
         optimizer.step()
     return total_loss / len(train_dataset)
 
