@@ -690,6 +690,33 @@ def test(model, test_loader, args):
         # calculate the score based on pred and correct answer
         return llm_judge.score(question, pred, correct_answer)
 
+    eval_tuples = []
+    if not args.use_stored_eval_tuples:
+        for ii, test_batch in enumerate(tqdm(test_loader, desc="Testing")):
+            # early termination to evaluate scoring
+            if ii > 20:
+                break
+            new_qs = []
+            raw_qs = test_batch["question"]
+            for i, q in enumerate(test_batch["question"]):
+                # insert VectorRAG context
+                new_qs.append(
+                    prompt_template.format(
+                        question=q, context="\n".join(test_batch.text_context[i])))
+            test_batch.question = new_qs
+            if args.skip_graph_rag:
+                test_batch.desc = ""
+            preds = (inference_step(model, test_batch,
+                                    max_out_tokens=max_chars_in_train_answer))
+            for question, pred, label in zip(raw_qs, preds, test_batch.label):
+                eval_tuples.append((question, pred, label))
+
+        if args.store_eval_tuples:
+            _store_tuples(eval_tuples)
+
+    else:
+        eval_tuples = _get_stored_tuples()
+
     scores = []
     eval_tuples = []
     for test_batch in tqdm(test_loader, desc="Testing"):
@@ -734,6 +761,7 @@ if __name__ == '__main__':
 
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
+    # global max_chars_in_train_answer
     if os.path.exists(dataset_path) and not args.regenerate_dataset:
         print(f"Re-using Saved {dataset_name} KG-RAG Dataset...")
         data_lists, max_chars_in_train_answer = torch.load(
