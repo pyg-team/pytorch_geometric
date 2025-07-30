@@ -2,7 +2,6 @@ import argparse
 import gc
 import json
 import os
-import pickle
 import random
 import re
 import sys
@@ -152,13 +151,6 @@ def parse_args():
         '--use_x_percent_corpus', default=100.0, type=float,
         help="Debug flag that allows user to only use a random percentage "
         "of available knowledge base corpus for RAG")
-    parser.add_argument(
-        '--store_eval_tuples', action="store_true",
-        help="Store tuple answers from test step to .pkl file for evaluation")
-    parser.add_argument(
-        '--use_stored_eval_tuples', action="store_true",
-        help="Retrieve previously saved tuples for eval instead of generating"
-        "new ones")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
@@ -235,24 +227,6 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
             chunks = _chunk_text(paragraph)
         full_chunks.extend(chunks)
     return full_chunks
-
-
-def _store_tuples(eval_tuples):
-    with open('tuples.pkl', 'wb') as f:
-        pickle.dump(eval_tuples, f)
-
-
-def _get_stored_tuples():
-    tuples = None
-    with open('tuples.pkl', 'rb') as f:
-        tuples = pickle.load(f)
-
-    if tuples is None:
-        raise FileNotFoundError(
-            "Error: Could not open stored tuples. Have you checked that "
-            "tuples.pkl exists?")
-
-    return tuples
 
 
 def get_data(args):
@@ -709,40 +683,12 @@ def train(args, train_loader, val_loader):
     return model
 
 
-def test(model, test_loader, args):
-    print(f"LLMJudge using {args.NV_NIM_MODEL}")
+def test(model, test_loader, args):q
     llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
         # calculate the score based on pred and correct answer
         return llm_judge.score(question, pred, correct_answer)
-
-    eval_tuples = []
-    if not args.use_stored_eval_tuples:
-        for ii, test_batch in enumerate(tqdm(test_loader, desc="Testing")):
-            # early termination to evaluate scoring
-            # if ii > 20:
-                # break
-            new_qs = []
-            raw_qs = test_batch["question"]
-            for i, q in enumerate(test_batch["question"]):
-                # insert VectorRAG context
-                new_qs.append(
-                    prompt_template.format(
-                        question=q, context="\n".join(test_batch.text_context[i])))
-            test_batch.question = new_qs
-            if args.skip_graph_rag:
-                test_batch.desc = ""
-            preds = (inference_step(model, test_batch,
-                                    max_out_tokens=max_chars_in_train_answer))
-            for question, pred, label in zip(raw_qs, preds, test_batch.label):
-                eval_tuples.append((question, pred, label))
-
-        if args.store_eval_tuples:
-            _store_tuples(eval_tuples)
-
-    else:
-        eval_tuples = _get_stored_tuples()
 
     scores = []
     eval_tuples = []
@@ -788,7 +734,6 @@ if __name__ == '__main__':
 
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
-    # global max_chars_in_train_answer
     if os.path.exists(dataset_path) and not args.regenerate_dataset:
         print(f"Re-using Saved {dataset_name} KG-RAG Dataset...")
         data_lists, max_chars_in_train_answer = torch.load(
