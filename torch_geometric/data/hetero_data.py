@@ -622,7 +622,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             data = self.__class__()
             for target, attr_value in {**node_attrs, **edge_attrs}.items():
                 for attr, value in attr_value.items():
-                    print(f"Setting {target}.{attr} with value {value}")
                     if isinstance(value, Tensor):
                         value = value.clone()
                     elif isinstance(value, SparseTensor):
