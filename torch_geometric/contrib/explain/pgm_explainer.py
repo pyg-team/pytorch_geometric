@@ -151,7 +151,7 @@ class PGMExplainer(ExplainerAlgorithm):
 
             pred_change = torch.max(soft_pred) - soft_pred_perturb[pred_label]
 
-            sample[num_nodes] = pred_change
+            sample[num_nodes] = pred_change.detach()
             samples.append(sample)
 
         samples = torch.tensor(np.array(samples))
