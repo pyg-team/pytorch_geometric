@@ -160,13 +160,16 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         )
 
 
-def inference_step(model, batch, model_save_name="gnn+llm", max_out_tokens=None):
+def inference_step(model, batch, model_save_name="gnn+llm",
+                   max_out_tokens=128):
     """Performs inference on a given batch of data using the provided model.
 
     Args:
         model (nn.Module): The model to use for inference.
         batch: The batch of data to process.
         model_save_name (str): The name of the model (e.g. 'llm').
+        max_out_tokens (int): The maximum number of tokens
+            for our model to output.
 
     Returns:
         The output of the inference step.
@@ -174,11 +177,12 @@ def inference_step(model, batch, model_save_name="gnn+llm", max_out_tokens=None)
     # Check the type of model being used to determine the input arguments
     if model_save_name == 'llm':
         # Perform inference on the question and textual graph description
-        return model.inference(batch.question, batch.desc)
+        return model.inference(batch.question, batch.desc,
+                               max_out_tokens=max_out_tokens)
     else:  # (GNN+LLM)
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.edge_attr, batch.desc,
-                               max_out_tokens)
+                               max_out_tokens=max_out_tokens)
 
 
 def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
