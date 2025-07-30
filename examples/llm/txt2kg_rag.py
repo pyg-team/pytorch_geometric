@@ -683,7 +683,7 @@ def train(args, train_loader, val_loader):
     return model
 
 
-def test(model, test_loader, args):q
+def test(model, test_loader, args):
     llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
