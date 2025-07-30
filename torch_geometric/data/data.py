@@ -1,5 +1,6 @@
 import copy
 import warnings
+from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from itertools import chain
@@ -904,6 +905,110 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         return data
 
+    def separate(self) -> List[Self]:
+        r"""Extracts connected components of the graph using a union-find
+        algorithm. The components are returned as a list of
+        :class:`~torch_geometric.data.Data` objects, where each object
+        represents a disconnected component of the graph. Only works if
+        attributes are slicable (i.e. has the __getitem__ method implemented)
+        and are mutable (i.e. has the __setitem__ method implemented).
+
+        .. code-block::
+
+            data = Data()
+            data.x = torch.tensor([[1.0], [2.0], [3.0], [4.0]])
+            data.y = torch.tensor([[1.1], [2.1], [3.1], [4.1]])
+            data.edge_index = torch.tensor(
+                [[0, 1, 2, 3], [1, 0, 3, 2]], dtype=torch.long
+            )
+
+            split_data = data.separate()
+            print(len(split_data))
+            >>> 2
+
+            print(type(split_data))
+            >>> <class 'list'>
+
+            print(split_data[0].x)
+            >>> tensor([[1.0], [2.0]])
+
+            print(split_data[0].y)
+            >>> tensor([[1.1], [2.1]])
+
+            print(split_data[1].edge_index)
+            >>> tensor([[0, 1], [1, 0]])
+
+            print(split_data[1].x)
+            >>> tensor([[3.0], [4.0]])
+
+            print(split_data[1].y)
+            >>> tensor([[3.1], [4.1]])
+
+            print(split_data[1].edge_index)
+            >>> tensor([[0, 1], [1, 0]])
+
+        Returns:
+            List[Data]: A list of disconnected components.
+        """
+        self._check_slicable_and_mutable()
+
+        # Union-Find algorithm to find connected components
+        self._parents: Dict[int, int] = {}
+        self._ranks: Dict[int, int] = {}
+        for edge in self.edge_index.t().tolist():
+            self._union(edge[0], edge[1])
+        del self._ranks
+
+        # Group parents
+        grouped_parents = defaultdict(list)
+        for node, parent in self._parents.items():
+            grouped_parents[parent].append(node)
+
+        # Get all nodes that were not part of any edge
+        for node in range(self.num_nodes):
+            if node not in self._parents:
+                grouped_parents[node].append(node)
+        del self._parents
+
+        # Create components based on the found parents (roots)
+        components: List[Self] = []
+        for nodes in grouped_parents.values():
+            node_map = {
+                old_index: new_index
+                for new_index, old_index in enumerate(nodes)
+            }
+            edge_mask = (torch.isin(self.edge_index[0], torch.tensor(nodes))
+                         & torch.isin(self.edge_index[1], torch.tensor(nodes)))
+
+            edges = self.edge_index[:, edge_mask]
+            edges_reindexed = torch.stack([
+                torch.tensor([node_map[i.item()] for i in edges[0]]),
+                torch.tensor([node_map[i.item()] for i in edges[1]])
+            ])
+
+            attributes = {
+                attr: getattr(self, attr)[nodes]
+                for attr in self.node_attrs()
+            }
+
+            for attr in self.edge_attrs():
+                if attr == 'edge_index':
+                    continue
+                if isinstance(getattr(self, attr), Tensor):
+                    attributes[attr] = getattr(self, attr)[edge_mask]
+
+            for attr, value in {
+                    **attributes, 'edge_index': edges_reindexed
+            }.items():
+                if isinstance(value, Tensor):
+                    attributes[attr] = value.clone()
+                elif isinstance(value, SparseTensor):
+                    attributes[attr] = value.clone().coalesce()
+
+            components.append(self.__class__(**attributes))
+
+        return components
+
     ###########################################################################
 
     @classmethod
@@ -1149,6 +1254,65 @@ class Data(BaseData, FeatureStore, GraphStore):
             edge_attrs[EdgeLayout.CSC] = DataEdgeAttr('csc', size=size)
 
         return list(edge_attrs.values())
+
+    # Separate Helper Functions ##########################################
+
+    def _check_slicable_and_mutable(self):
+        r"""Checks if the node and edge attributes are slicable and mutable.
+        Raises a TypeError if any of the attributes do not support slicing or
+        are not mutable.
+        This is necessary for the `separate` method to work correctly.
+        """
+        for key in self._store.keys():
+            if key in {'edge_index', 'adj', 'adj_t'}:
+                continue
+            if not hasattr(self[key], "__getitem__"):
+                raise TypeError(f"Attribute '{key}' does not support slicing.")
+            if not hasattr(self[key], "__setitem__"):
+                raise TypeError(f"Attribute '{key}' is not mutable.")
+
+    def _find_parent(self, node: int) -> int:
+        r"""Finds and returns the representative parent of the given node in a
+        disjoint-set (union-find) data structure. Implements path compression
+        to optimize future queries.
+
+        Args:
+            node (int): The node for which to find the representative parent.
+
+        Returns:
+            int: The representative parent of the node.
+        """
+        if node not in self._parents:
+            self._parents[node] = node
+            self._ranks[node] = 0
+        if self._parents[node] != node:
+            self._parents[node] = self._find_parent(self._parents[node])
+        return self._parents[node]
+
+    def _union(self, node1: int, node2: int):
+        r"""Merges the sets containing node1 and node2 in the disjoint-set
+        data structure.
+
+        Finds the root parents of node1 and node2 using the _find_parent
+        method. If they belong to different sets, updates the parent of
+        root2 to be root1, effectively merging the two sets.
+
+        Args:
+            node1 (int): The index of the first node to union.
+            node2 (int): The index of the second node to union.
+        """
+        root1 = self._find_parent(node1)
+        root2 = self._find_parent(node2)
+        if root1 != root2:
+            if self._ranks[root1] < self._ranks[root2]:
+                self._parents[root1] = root2
+                self._ranks[root2] += 1
+            elif self._ranks[root1] > self._ranks[root2]:
+                self._parents[root2] = root1
+                self._ranks[root1] += 1
+            else:
+                self._parents[root2] = root1
+                self._ranks[root1] += 1
 
 
 ###############################################################################
