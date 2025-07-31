@@ -9,7 +9,6 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import networkx as nx
 import torch
 import torch.multiprocessing as mp
-from torchmetrics.functional import pairwise_cosine_similarity
 
 CLIENT_INITD = False
 
@@ -269,7 +268,6 @@ AGAIN, DO NOT output anything else.
         items_to_original_id = {item: i for i, item in enumerate(items)}
 
         # contains the mapping of the new items to the original items
-        items_to_id_mapping = {}
 
         # map one item to a cluster of items
         cluster_to_items_mapping = {}
@@ -304,7 +302,9 @@ AGAIN, DO NOT output anything else.
             print(
                 f"Ret items (after filtering hallucinated items): {ret_items}")
             summary_word = summary_word.strip(" '*-").lower()
-            cluster_to_items_mapping[summary_word] = [items_to_original_id[item] for item in ret_items]
+            cluster_to_items_mapping[summary_word] = [
+                items_to_original_id[item] for item in ret_items
+            ]
 
         return cluster_to_items_mapping
 
@@ -602,7 +602,7 @@ class TXT2KG():
         self.total_chars_parsed = 0
         self.time_to_parse = 0.0
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # (TODO) explore
         # self.embedding_model = SentenceTransformer(
         #     'Alibaba-NLP/gte-modernbert-base', device=device)
