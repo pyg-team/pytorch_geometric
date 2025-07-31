@@ -115,7 +115,7 @@ class DocumentRetriever(VectorRetriever):
         save_dict = torch.load(path, weights_only=False)
         if save_dict['embedded_docs'] is not None \
                 and isinstance(save_dict['embedded_docs'], Tensor)\
-                    and model_kwargs is not None:
+                and model_kwargs is not None:
             model_kwargs.pop("verbose", None)
         # Create a new DocumentRetriever with the loaded data
         return cls(raw_docs=save_dict['raw_docs'],
