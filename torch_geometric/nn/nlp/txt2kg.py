@@ -265,6 +265,50 @@ AGAIN, DO NOT output anything else.
         }]
         return messages
 
+    def _iterative_clustering(self, items: List[str],
+                              num_iters: int = 5) -> List[str]:
+        items_to_original_id = {item: i for i, item in enumerate(items)}
+
+        # contains the mapping of the new items to the original items
+        items_to_id_mapping = {}
+
+        # map one item to a cluster of items
+        cluster_to_items_mapping = {}
+
+        print("before resolution: ", items_to_original_id.keys())
+
+        for shots in range(num_iters):
+            messages = self._prepare_prompt(items_to_original_id.keys())
+
+            raw_result = self.remote_llm_caller(messages)
+            print(f"Raw result: {raw_result}")
+            try:
+                ret_items, summary_word = self._process(raw_result)
+            except Exception as e:
+                print(
+                    f"[_iterative_clustering] Failed to process LLM output: {type(e).__name__}: {str(e)}"
+                )
+                continue
+            print(f"Summary word: {summary_word}")
+            # handling diff kind of wrong LLM outputs
+            if ret_items is None:
+                continue
+            if len(ret_items) != 0 and not summary_word:
+                continue
+
+            # handles hallucinated items
+            ret_items = [
+                item for item in ret_items if item in items_to_original_id
+            ]
+            # handles empty items
+            ret_items = list({item for item in ret_items if item})
+            print(
+                f"Ret items (after filtering hallucinated items): {ret_items}")
+            summary_word = summary_word.strip(" '*-").lower()
+            cluster_to_items_mapping[summary_word] = [items_to_original_id[item] for item in ret_items]
+
+        return cluster_to_items_mapping
+
     def _iterative_resolution(self, items: List[str],
                               num_iters: int = 5) -> List[str]:
         items_to_original_id = {item: i for i, item in enumerate(items)}
