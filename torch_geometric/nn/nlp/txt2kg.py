@@ -9,7 +9,6 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import networkx as nx
 import torch
 import torch.multiprocessing as mp
-from sentence_transformers import SentenceTransformer
 from torchmetrics.functional import pairwise_cosine_similarity
 
 CLIENT_INITD = False
@@ -270,6 +269,7 @@ AGAIN, DO NOT output anything else.
         items_to_original_id = {item: i for i, item in enumerate(items)}
 
         # contains the mapping of the new items to the original items
+        items_to_id_mapping = {}
 
         # map one item to a cluster of items
         cluster_to_items_mapping = {}
@@ -304,9 +304,7 @@ AGAIN, DO NOT output anything else.
             print(
                 f"Ret items (after filtering hallucinated items): {ret_items}")
             summary_word = summary_word.strip(" '*-").lower()
-            cluster_to_items_mapping[summary_word] = [
-                items_to_original_id[item] for item in ret_items
-            ]
+            cluster_to_items_mapping[summary_word] = [items_to_original_id[item] for item in ret_items]
 
         return cluster_to_items_mapping
 
@@ -605,8 +603,9 @@ class TXT2KG():
         self.time_to_parse = 0.0
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.embedding_model = SentenceTransformer(
-            'Alibaba-NLP/gte-modernbert-base', device=device)
+        # (TODO) explore
+        # self.embedding_model = SentenceTransformer(
+        #     'Alibaba-NLP/gte-modernbert-base', device=device)
 
         self.remote_llm_caller = RemoteLLMCaller(NVIDIA_NIM_MODEL,
                                                  NVIDIA_API_KEY, ENDPOINT_URL)
@@ -687,32 +686,32 @@ class TXT2KG():
         return
 
         # TODO explore
-        emb_entities = self.embedding_model.encode(local_entities,
-                                                   show_progress_bar=True,
-                                                   convert_to_tensor=True)
-        chunk_embeddings = self.embedding_model.encode(chunks,
-                                                       show_progress_bar=True,
-                                                       convert_to_tensor=True)
-        # compute cos sim between entity embeddings and chunk embeddings
-        sim_matrix = pairwise_cosine_similarity(chunk_embeddings, emb_entities)
-        # a heuristic to get a topk relative to the chunk size
-        topk = self.chunk_size // 64
-        _, indices = torch.topk(sim_matrix, topk, largest=True)
-        # get topk most similar entities
-        indices_list = indices.cpu().tolist()
+        # emb_entities = self.embedding_model.encode(local_entities,
+        #                                            show_progress_bar=True,
+        #                                            convert_to_tensor=True)
+        # chunk_embeddings = self.embedding_model.encode(chunks,
+        #                                                show_progress_bar=True,
+        #                                                convert_to_tensor=True)
+        # # compute cos sim between entity embeddings and chunk embeddings
+        # sim_matrix = pairwise_cosine_similarity(chunk_embeddings, emb_entities)
+        # # a heuristic to get a topk relative to the chunk size
+        # topk = self.chunk_size // 64
+        # _, indices = torch.topk(sim_matrix, topk, largest=True)
+        # # get topk most similar entities
+        # indices_list = indices.cpu().tolist()
 
-        chunk_entities = [[
-            local_entities[entity_idx] for entity_idx in chunk_indices
-        ] for chunk_indices in indices_list]
+        # chunk_entities = [[
+        #     local_entities[entity_idx] for entity_idx in chunk_indices
+        # ] for chunk_indices in indices_list]
 
-        augmented_chunks = [
-            f"Entities: {chunk_e}\nText: {chunk}"
-            for chunk_e, chunk in zip(chunk_entities, chunks)
-        ]
+        # augmented_chunks = [
+        #     f"Entities: {chunk_e}\nText: {chunk}"
+        #     for chunk_e, chunk in zip(chunk_entities, chunks)
+        # ]
 
-        triples = self.triple_extractor(augmented_chunks)
-        triples = self.entity_resolver(local_entities, triples)
-        self.relevant_triples[key] = triples
+        # triples = self.triple_extractor(augmented_chunks)
+        # triples = self.entity_resolver(local_entities, triples)
+        # self.relevant_triples[key] = triples
 
     # legacy code
     def add_doc_2_KG(
