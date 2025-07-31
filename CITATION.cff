@@ -4,6 +4,7 @@ message: "Please cite our paper if you use this code in your own work."
 title: "PyG 2.0: Scalable Learning on Real World Graphs"
 authors:
 - family-names: "Fey et.al"
+  given-names: ""
 date-released: 2019-05-06
 license: MIT
 url: "https://github.com/pyg-team/pytorch_geometric"
