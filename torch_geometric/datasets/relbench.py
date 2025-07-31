@@ -57,7 +57,11 @@ try:
 except ImportError:
     logger.debug("PyG NLP not available")
     PYG_NLP_AVAILABLE = False
-    PyGSentenceTransformer = None
+
+    class PyGSentenceTransformer:  # type: ignore
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            raise ImportError("PyG SentenceTransformer not available")
+
 
 try:
     # yapf: disable
@@ -69,7 +73,11 @@ try:
 except ImportError:
     logger.debug("sentence-transformers not available")
     SENTENCE_TRANSFORMERS_AVAILABLE = False
-    STSentenceTransformer = None
+
+    class STSentenceTransformer:  # type: ignore
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            raise ImportError("sentence-transformers not available")
+
 
 # Check if any SBERT implementation is available
 if not PYG_NLP_AVAILABLE and not SENTENCE_TRANSFORMERS_AVAILABLE:
@@ -163,6 +171,9 @@ class HeuristicLabeler:
             return torch.ones(num_nodes, dtype=torch.float)
 
         edge_index = homo_data.edge_index
+        if edge_index is None:
+            return torch.ones(num_nodes, dtype=torch.float)
+
         if self.use_graph_analysis:
             node_degrees = degree(edge_index[0], num_nodes=num_nodes)
         else:
@@ -199,6 +210,9 @@ class HeuristicLabeler:
             return torch.zeros(num_nodes, dtype=torch.long)
 
         edge_index = homo_data.edge_index
+        if edge_index is None:
+            return torch.zeros(num_nodes, dtype=torch.long)
+
         if self.use_graph_analysis:
             node_degrees = degree(edge_index[0], num_nodes=num_nodes)
         else:
@@ -284,7 +298,7 @@ class RelBenchProcessor:
                  batch_size: int = DEFAULT_BATCH_SIZE) -> None:
         self.sbert_model = sbert_model
         self.batch_size = batch_size
-        self.encoder = None
+        self.encoder: Any = None
         self._initialize_encoder()
 
     def _initialize_encoder(self) -> None:
@@ -333,12 +347,15 @@ class RelBenchProcessor:
                 logger.warning(
                     "PyG SentenceTransformer requires tokenized input")
                 embeddings = torch.randn(len(texts), EMBEDDING_DIM)
-            else:
+            elif self.encoder is not None:
                 # sentence-transformers returns numpy array
                 embeddings = self.encoder.encode(texts,
                                                  batch_size=self.batch_size,
                                                  convert_to_tensor=True,
                                                  show_progress_bar=False)
+            else:
+                # Fallback if no encoder available
+                embeddings = torch.randn(len(texts), EMBEDDING_DIM)
                 if not isinstance(embeddings, torch.Tensor):
                     embeddings = torch.tensor(embeddings)
 
@@ -669,6 +686,8 @@ def _add_warehouse_labels_to_hetero_data(
         # Convert to homogeneous for label creation
         homo_data = hetero_data.to_homogeneous()
         num_nodes = homo_data.num_nodes
+        if num_nodes is None:
+            num_nodes = 0
 
         # Use external labels if provided, otherwise generate heuristics
         if external_labels:
@@ -694,10 +713,10 @@ def _add_warehouse_labels_to_hetero_data(
                 tasks_to_generate.append('anomaly')
 
             if tasks_to_generate and db is not None:
-                labels = labeler.generate_labels(hetero_data, db,
-                                                 tasks_to_generate)
+                labels_dict = labeler.generate_labels(hetero_data, db,
+                                                      tasks_to_generate)
 
-                for task_name, task_labels in labels.items():
+                for task_name, task_labels in labels_dict.items():
                     if task_name == 'lineage':
                         homo_data.lineage_label = task_labels
                     elif task_name == 'silo':

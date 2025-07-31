@@ -58,9 +58,16 @@ from ._trim_to_layer import trim_to_layer
 from .ppr import get_ppr
 from ._train_test_split_edges import train_test_split_edges
 from .influence import total_influence
-from .data_warehouse import (WarehouseGRetriever, WarehouseTaskHead,
-                             WarehouseConversationSystem,
-                             create_warehouse_demo)
+
+# Data warehouse utilities (optional dependencies)
+try:
+    # Imports used conditionally in __all__.extend() below
+    from .data_warehouse import (  # noqa: F401
+        WarehouseGRetriever, WarehouseTaskHead, WarehouseConversationSystem,
+        create_warehouse_demo)
+    _data_warehouse_available = True
+except ImportError:
+    _data_warehouse_available = False
 
 __all__ = [
     'scatter',
@@ -154,11 +161,25 @@ __all__ = [
     'get_ppr',
     'train_test_split_edges',
     'total_influence',
-    'WarehouseGRetriever',
-    'WarehouseTaskHead',
-    'WarehouseConversationSystem',
-    'create_warehouse_demo',
 ]
+
+# Add data warehouse utilities if available
+if _data_warehouse_available:
+    __all__.extend([
+        'WarehouseGRetriever',
+        'WarehouseTaskHead',
+        'WarehouseConversationSystem',
+        'create_warehouse_demo',
+    ])
+
+# Add data warehouse utilities if available
+if _data_warehouse_available:
+    __all__.extend([
+        'WarehouseGRetriever',
+        'WarehouseTaskHead',
+        'WarehouseConversationSystem',
+        'create_warehouse_demo',
+    ])
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
 # documentation rendering. We remove it for now from the documentation:
