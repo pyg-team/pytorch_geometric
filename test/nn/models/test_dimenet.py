@@ -59,7 +59,7 @@ def test_dimenet(Model):
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
 
         min_loss = float('inf')
-        for i in range(100):
+        for _ in range(100):
             optimizer.zero_grad()
             out = model(z, pos)
             loss = F.l1_loss(out, torch.tensor([1.0]))

@@ -1,8 +1,6 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
-import torch
-
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
@@ -17,6 +15,18 @@ class RAGFeatureStore(Protocol):
         the closest nodes. Return the indices of the nodes that are to be seeds
         for the RAG Sampler.
         """
+        ...
+
+    @property
+    @abstractmethod
+    def config(self) -> Dict[str, Any]:
+        """Get the config for the RAGFeatureStore."""
+        ...
+
+    @config.setter
+    @abstractmethod
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the RAGFeatureStore."""
         ...
 
     @abstractmethod
@@ -43,6 +53,18 @@ class RAGGraphStore(Protocol):
         """Sample a subgraph using the seeded nodes and edges."""
         ...
 
+    @property
+    @abstractmethod
+    def config(self) -> Dict[str, Any]:
+        """Get the config for the RAGGraphStore."""
+        ...
+
+    @config.setter
+    @abstractmethod
+    def config(self, config: Dict[str, Any]):
+        """Set the config for the RAGGraphStore."""
+        ...
+
     @abstractmethod
     def register_feature_store(self, feature_store: FeatureStore):
         """Register a feature store to be used with the sampler. Samplers need
@@ -64,16 +86,17 @@ class RAGQueryLoader:
         """Loader meant for making queries from a remote backend.
 
         Args:
-            graph_data (Tuple[RAGFeatureStore, RAGGraphStore]): Remote FeatureStore
-                and GraphStore to load from. Assumed to conform to the
-                protocols listed above.
+            graph_data (Tuple[RAGFeatureStore, RAGGraphStore]):
+                Remote FeatureStore and GraphStore to load from.
+                Assumed to conform to the protocols listed above.
             subgraph_filter (Optional[Callable[[Data, Any], Data]], optional):
                 Optional local transform to apply to data after retrieval.
                 Defaults to None.
             augment_query (bool, optional): Whether to augment the query with
                 retrieved documents. Defaults to False.
-            vector_retriever (Optional[VectorRetriever], optional): VectorRetriever to use for
-                retrieving documents. Defaults to None.
+            vector_retriever (Optional[VectorRetriever], optional):
+                VectorRetriever to use for retrieving documents.
+                Defaults to None.
             config (Optional[Dict[str, Any]], optional): Config to pass into
                 the RAGQueryLoader. Defaults to None.
         """
@@ -88,15 +111,13 @@ class RAGQueryLoader:
         self.config = config
 
     def _propagate_config(self, config: Dict[str, Any]):
-        """Propagate the config the relevant components.
-        """
+        """Propagate the config the relevant components."""
         self.feature_store.config = config
         self.graph_store.config = config
 
     @property
     def config(self):
-        """Get the config for the RAGQueryLoader.
-        """
+        """Get the config for the RAGQueryLoader."""
         return self._config
 
     @config.setter
@@ -124,28 +145,6 @@ class RAGQueryLoader:
         subgraph_sample = self.graph_store.sample_subgraph(seed_nodes)
 
         data = self.feature_store.load_subgraph(sample=subgraph_sample)
-
-        # need to use sampled edge_idx to index into original graph then reindex
-        total_e_idx_t = self.graph_store.edge_index[:, data.edge_idx].t()
-        data.node_idx = torch.tensor(
-            list(
-                dict.fromkeys(seed_nodes.tolist() +
-                              total_e_idx_t.reshape(-1).tolist())))
-        data.num_nodes = len(data.node_idx)
-
-        # use node idx to get data.x
-        data.x = self.feature_store.x[data.node_idx]
-        list_edge_index = []
-
-        # remap the edge_index
-        remap_dict = {
-            int(data.node_idx[i]): i
-            for i in range(len(data.node_idx))
-        }
-        for src, dst in total_e_idx_t.tolist():
-            list_edge_index.append(
-                (remap_dict[int(src)], remap_dict[int(dst)]))
-        data.edge_index = torch.tensor(list_edge_index).t()
 
         # apply local filter
         if self.subgraph_filter:

@@ -35,10 +35,11 @@ class SentenceTransformer(torch.nn.Module):
         # Maximum sequence length from the model configuration (e.g. 8192 for
         # models like ModernBERT)
         self.max_seq_length = self.model.config.max_position_embeddings
-
-        # Some models define a max sequence length in their configuration, others
-        # only in the tokenizer. This is a hacky heuristic to find the max
-        # sequence length that works for the model.
+        """
+        Some models define a max sequence length in their configuration. Others
+        only in the tokenizer. This is a hacky heuristic to find the max
+        sequence length that works for the model.
+        """
         probe_tokens = self.tokenizer("hacky heuristic", padding='max_length',
                                       return_tensors='pt')
         self.max_seq_length = min(self.max_seq_length,
@@ -130,7 +131,7 @@ class SentenceTransformer(torch.nn.Module):
                 ).to(output_device)
 
                 embs.append(emb)
-            except:
+            except:  # noqa
                 # fallback to using CPU for huge strings that cause OOMs
                 print("Sentence Transformer failed on cuda, trying w/ cpu...")
                 previous_device = self.device

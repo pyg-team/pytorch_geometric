@@ -65,7 +65,6 @@ def arg_parse():
     parser.add_argument('-e', '--epochs', type=int, default=50)
     parser.add_argument('-b', '--batch_size', type=int, default=1024)
     parser.add_argument('--fan_out', type=int, default=10)
-    parser.add_argument('--eval_steps', type=int, default=1000)
     parser.add_argument('--warmup_steps', type=int, default=20)
     parser.add_argument('--dropout', type=float, default=0.5)
     parser.add_argument(
@@ -82,7 +81,13 @@ def arg_parse():
         "--model",
         type=str,
         default='GCN',
-        choices=['SAGE', 'GAT', 'GCN', 'SGFormer'],
+        choices=[
+            'SAGE',
+            'GAT',
+            'GCN',
+            # TODO: Uncomment when we add support for disjoint sampling
+            # 'SGFormer',
+        ],
         help="Model used for training, default GCN",
     )
     parser.add_argument(
@@ -110,7 +115,7 @@ def arg_parse():
 def evaluate(rank, loader, model):
     with torch.no_grad():
         total_correct = total_examples = 0
-        for i, batch in enumerate(loader):
+        for batch in loader:
             batch = batch.to(rank)
             batch_size = batch.batch_size
 
@@ -221,7 +226,6 @@ def run_train(rank, args, data, world_size, cugraph_id, model, split_idx,
 
     dist.barrier()
 
-    args.eval_steps
     warmup_steps = args.warmup_steps
     dist.barrier()
     torch.cuda.synchronize()
@@ -347,6 +351,7 @@ if __name__ == '__main__':
             dataset.num_classes,
         )
     elif args.model == 'SGFormer':
+        # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
             in_channels=dataset.num_features,
             hidden_channels=args.hidden_channels,

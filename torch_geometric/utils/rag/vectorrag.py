@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import os
 from abc import abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Protocol, Union
@@ -13,7 +14,7 @@ from torch_geometric.utils.rag.backend_utils import batch_knn
 class VectorRetriever(Protocol):
     """Protocol for VectorRAG."""
     @abstractmethod
-    def query(self, query: Any, **kwargs) -> Data:
+    def query(self, query: Any, **kwargs: Optional[Dict[str, Any]]) -> Data:
         """Retrieve a context for a given query."""
         ...
 
@@ -31,8 +32,10 @@ class DocumentRetriever(VectorRetriever):
             raw_docs: List[str]: List of raw documents.
             embedded_docs: Optional[Tensor]: Embedded documents.
             k_for_docs: int: Number of documents to retrieve.
-            model: Optional[Union[SentenceTransformer, torch.nn.Module]]: Model to use for encoding.
-            model_kwargs: Optional[Dict[str, Any]]: Keyword arguments to pass to the model.
+            model: Optional[Union[SentenceTransformer, torch.nn.Module]]:
+                Model to use for encoding.
+            model_kwargs: Optional[Dict[str, Any]]:
+                Keyword arguments to pass to the model.
         """
         self.raw_docs = raw_docs
         self.embedded_docs = embedded_docs
@@ -44,7 +47,9 @@ class DocumentRetriever(VectorRetriever):
             self.model_kwargs = model_kwargs
 
         if self.embedded_docs is None:
-            assert self.model is not None, "Model must be provided if embedded_docs is not provided"
+            assert self.model is not None, \
+                "Model must be provided if embedded_docs is not provided"
+            self.model_kwargs = model_kwargs or {}
             self.embedded_docs = self.encoder(self.raw_docs,
                                               **self.model_kwargs)
             # we don't want to print the verbose output in `query`
@@ -95,7 +100,10 @@ class DocumentRetriever(VectorRetriever):
         Args:
             path: str: Path to the saved retriever.
             model: Union[SentenceTransformer, torch.nn.Module, Callable]:
-                Model to use for encoding. If None, the saved model will be used if available.
+                Model to use for encoding.
+                If None, the saved model will be used if available.
+            model_kwargs: Optional[Dict[str, Any]]
+                Key word args to be passed to model
 
         Returns:
             DocumentRetriever: The loaded retriever.
@@ -105,7 +113,9 @@ class DocumentRetriever(VectorRetriever):
                 f"No saved document retriever found at {path}")
 
         save_dict = torch.load(path, weights_only=False)
-
+        if save_dict['embedded_docs'] is not None \
+            and isinstance(save_dict['embedded_docs'], Tensor):
+            self.model_kwargs.pop("verbose", None)
         # Create a new DocumentRetriever with the loaded data
         return cls(raw_docs=save_dict['raw_docs'],
                    embedded_docs=save_dict['embedded_docs'],

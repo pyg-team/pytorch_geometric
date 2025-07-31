@@ -1,5 +1,5 @@
 [build-system]
-requires=["flit_core >=3.2,<4"]
+requires=["flit_core >=3.12,<4"]
 build-backend="flit_core.buildapi"
 
 [project]
@@ -18,10 +18,10 @@ keywords=[
     "graph-neural-networks",
     "graph-convolutional-networks",
 ]
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICENSE"]
 classifiers=[
     "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -45,7 +45,7 @@ dependencies=[
 [project.optional-dependencies]
 graphgym=[
     "protobuf<4.21",
-    "pytorch-lightning<2.3.0",
+    "pytorch-lightning",
     "yacs",
 ]
 modelhub=[
@@ -65,10 +65,12 @@ rag=[
     "pandas",
     "sentencepiece",
     "accelerate",
+    "torchmetrics",
 ]
 test=[
     "onnx",
     "onnxruntime",
+    "onnxscript",
     "pytest",
     "pytest-cov",
 ]
@@ -157,6 +159,7 @@ target-version = "py39"
 
 [tool.ruff.lint]
 select = [
+    "B",  # flake8-bugbear
     "D",  # pydocstyle
 ]
 ignore = [
@@ -199,6 +202,7 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+    "error::DeprecationWarning",
 ]
 markers = [
     "rag: mark test as RAG test",

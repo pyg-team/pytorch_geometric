@@ -8,6 +8,13 @@ from torch_geometric.loader import DataLoader, NeighborLoader
 from torch_geometric.nn.models import GraphSAGE, basic_gnn
 
 
+def deal_nan(x):
+    if isinstance(x, torch.Tensor):
+        x = x.clone()
+        x[torch.isnan(x)] = 0.0
+    return x
+
+
 class GLEM(torch.nn.Module):
     r"""This GNN+LM co-training model is based on GLEM from the `"Learning on
     Large-scale Text-attributed Graphs via Variational Inference"
@@ -37,20 +44,28 @@ class GLEM(torch.nn.Module):
         See `examples/llm_plus_gnn/glem.py` for example usage.
     """
     def __init__(
-            self,
-            lm_to_use: str = 'prajjwal1/bert-tiny',
-            gnn_to_use: basic_gnn = GraphSAGE,
-            out_channels: int = 47,
-            gnn_loss=nn.CrossEntropyLoss(reduction='mean'),
-            lm_loss=nn.CrossEntropyLoss(reduction='mean'),
-            alpha: float = 0.5,
-            beta: float = 0.5,
-            lm_dtype: torch.dtype = torch.bfloat16,
-            lm_use_lora: bool = True,
-            lora_target_modules: Optional[Union[List[str], str]] = None,
-            device: Union[str, torch.device] = torch.device('cpu'),
+        self,
+        lm_to_use: str = 'prajjwal1/bert-tiny',
+        gnn_to_use: basic_gnn = GraphSAGE,
+        out_channels: int = 47,
+        gnn_loss: Optional[nn.Module] = None,
+        lm_loss: Optional[nn.Module] = None,
+        alpha: float = 0.5,
+        beta: float = 0.5,
+        lm_dtype: torch.dtype = torch.bfloat16,
+        lm_use_lora: bool = True,
+        lora_target_modules: Optional[Union[List[str], str]] = None,
+        device: Optional[Union[str, torch.device]] = None,
     ):
         super().__init__()
+
+        if gnn_loss is None:
+            gnn_loss = nn.CrossEntropyLoss(reduction='mean')
+        if lm_loss is None:
+            lm_loss = nn.CrossEntropyLoss(reduction='mean')
+        if device is None:
+            device = torch.device('cpu')
+
         self.device = device
         self.lm_loss = lm_loss
         self.gnn = gnn_to_use
@@ -197,7 +212,7 @@ class GLEM(torch.nn.Module):
             optimizer.zero_grad()
             all_out.append(out)
             total_correct += int(out.argmax(dim=-1).eq(labels).sum())
-            total_loss += float(loss)
+            total_loss += float(loss.detach())
             if verbose:
                 pbar.update(batch['n_id'].size(0))
 
@@ -251,7 +266,7 @@ class GLEM(torch.nn.Module):
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
-            total_loss += float(loss)
+            total_loss += float(loss.detach())
             total_correct += int(out.argmax(dim=-1).eq(labels).sum())
             if verbose:
                 pbar.update(batch.batch_size)
@@ -371,9 +386,6 @@ class GLEM(torch.nn.Module):
             is_augmented: use EM or just train GNN and LM with gold data
 
         """
-        def deal_nan(x):
-            return 0 if torch.isnan(x) else x
-
         if is_augmented and (sum(~is_gold) > 0):
             mle_loss = deal_nan(loss_func(logits[is_gold], labels[is_gold]))
             # all other labels beside from ground truth(gold labels)

@@ -32,7 +32,7 @@ class Net(torch.nn.Module):
         self.lin = Linear(in_channels, hidden_channels)
 
         self.convs = torch.nn.ModuleList()
-        for i in range(2):
+        for _ in range(2):
             conv = GATConv(hidden_channels, hidden_channels, dropout=dropout)
             norm = BatchNorm1d(hidden_channels)
             act = LeakyReLU()

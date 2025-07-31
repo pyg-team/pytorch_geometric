@@ -160,13 +160,16 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         )
 
 
-def inference_step(model, batch, model_save_name="gnn+llm"):
+def inference_step(model, batch, model_save_name="gnn+llm",
+                   max_out_tokens=128):
     """Performs inference on a given batch of data using the provided model.
 
     Args:
         model (nn.Module): The model to use for inference.
         batch: The batch of data to process.
         model_save_name (str): The name of the model (e.g. 'llm').
+        max_out_tokens (int): The maximum number of tokens
+            for our model to output.
 
     Returns:
         The output of the inference step.
@@ -174,19 +177,23 @@ def inference_step(model, batch, model_save_name="gnn+llm"):
     # Check the type of model being used to determine the input arguments
     if model_save_name == 'llm':
         # Perform inference on the question and textual graph description
-        return model.inference(batch.question, batch.desc)
+        return model.inference(batch.question, batch.desc,
+                               max_out_tokens=max_out_tokens)
     else:  # (GNN+LLM)
         return model.inference(batch.question, batch.x, batch.edge_index,
-                               batch.batch, batch.edge_attr, batch.desc)
+                               batch.batch, batch.edge_attr, batch.desc,
+                               max_out_tokens=max_out_tokens)
 
 
-def adjust_learning_rate(param_group, LR, epoch, num_epochs):
+def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
+                         num_epochs: int):
     """Decay learning rate with half-cycle cosine after warmup.
 
     Args:
         param_group (dict): Parameter group.
         LR (float): Learning rate.
-        num_epochs (int): Current epoch.
+        epoch (int): current epoch
+        num_epochs (int): total epochs
 
     Returns:
         float: Adjusted learning rate.
@@ -284,8 +291,7 @@ def train(
     if model_save_name == 'llm':
         model = llm
     else:
-        model = GRetriever(llm=llm, gnn=gnn,
-                           mlp_out_channels=llm.word_embedding.embedding_dim)
+        model = GRetriever(llm=llm, gnn=gnn)
 
     # Create optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -324,7 +330,7 @@ def train(
                                      num_epochs)
 
             optimizer.step()
-            epoch_loss = epoch_loss + float(loss)
+            epoch_loss = epoch_loss + float(loss.detach())
 
             if (step + 1) % 2 == 0:
                 lr = optimizer.param_groups[0]['lr']
@@ -336,7 +342,7 @@ def train(
         eval_output = []
         model.eval()
         with torch.no_grad():
-            for step, batch in enumerate(val_loader):
+            for batch in val_loader:
                 loss = get_loss(model, batch, model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
@@ -349,7 +355,7 @@ def train(
 
     # Clean up memory
     torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_peak_memory_stats()
 
     # Load best checkpoint if necessary
     if checkpointing and best_epoch != num_epochs - 1:
@@ -364,7 +370,7 @@ def train(
     eval_output = []
     print("Final evaluation...")
     progress_bar_test = tqdm(range(len(test_loader)))
-    for step, batch in enumerate(test_loader):
+    for batch in test_loader:
         with torch.no_grad():
             pred = inference_step(model, batch, model_save_name)
             eval_data = {

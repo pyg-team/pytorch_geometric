@@ -30,7 +30,7 @@ def featurize(s: str) -> int:
 
 def sample_triplets(amount: int = 1) -> List[TripletLike]:
     trips = []
-    for i in range(amount):
+    for _ in range(amount):
         h, t = random.sample(NODE_POOL, k=2)
         r = random.sample(EDGE_POOL, k=1)[0]
         trips.append(tuple([h, r, t]))

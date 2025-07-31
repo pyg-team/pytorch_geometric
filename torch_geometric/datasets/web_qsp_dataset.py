@@ -2,7 +2,7 @@
 import gc
 import os
 from itertools import chain
-from typing import Any, Dict, Iterator, List
+from typing import Any, Dict, Iterator, List, Optional
 
 import torch
 from tqdm import tqdm
@@ -39,43 +39,56 @@ class KGQABaseDataset(InMemoryDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
-        use_cwq (bool, optional): Whether to load the ComplexWebQuestions dataset. (default: :obj:`True`)
-        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_kwargs (dict, optional): Keyword arguments for the the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
+        use_cwq (bool, optional):
+            Whether to load the ComplexWebQuestions dataset.
+            (default: :obj:`True`)
+        load_dataset_kwargs (dict, optional):
+            Keyword arguments for the `datasets.load_dataset` function.
+            (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional):
+            Keyword arguments for the
+            `get_features_for_triplets_groups` function.
+            (default: :obj:`{}`)
     """
     def __init__(
-            self,
-            dataset_name: str,
-            root: str,
-            split: str = "train",
-            force_reload: bool = False,
-            verbose: bool = False,
-            use_pcst: bool = True,
-            use_cwq: bool = True,
-            load_dataset_kwargs: Dict[str, Any] = dict(),
-            retrieval_kwargs: Dict[str, Any] = dict(),
+        self,
+        dataset_name: str,
+        root: str,
+        split: str = "train",
+        force_reload: bool = False,
+        verbose: bool = False,
+        use_pcst: bool = True,
+        use_cwq: bool = True,
+        load_dataset_kwargs: Optional[Dict[str, Any]] = None,
+        retrieval_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.split = split
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
-        self.load_dataset_kwargs = load_dataset_kwargs
-
-        # NOTE: If running into memory issues, try reducing this batch size
-        self.retrieval_kwargs = retrieval_kwargs
+        self.load_dataset_kwargs = load_dataset_kwargs or {}
+        """
+        NOTE: If running into memory issues,
+        try reducing this batch size
+        """
+        self.retrieval_kwargs = retrieval_kwargs or {}
 
         # Caching custom subsets of the dataset results in unsupported behavior
-        if 'split' in load_dataset_kwargs:
-            print(
-                "WARNING: Caching custom subsets of the dataset results in unsupported behavior. Please specify a separate root directory for each split, or set force_reload=True on subsequent instantiations of the dataset."
-            )
+        if 'split' in self.load_dataset_kwargs:
+            print("WARNING: Caching custom subsets of the dataset \
+                results in unsupported behavior.\
+                Please specify a separate root directory for each split,\
+                or set force_reload=True on subsequent instantiations\
+                of the dataset.")
 
         self.required_splits = ['train', 'validation', 'test']
 
         self.verbose = verbose
         self.force_reload = force_reload
         super().__init__(root, force_reload=force_reload)
-
-        # NOTE: Current behavior is to process the entire dataset, and only return the split specified by the user
+        """
+        NOTE: Current behavior is to process the entire dataset,
+        and only return the split specified by the user.
+        """
         if f'{split}_data.pt' not in set(self.processed_file_names):
             raise ValueError(f"Invalid 'split' argument (got {split})")
         if split == 'val':
@@ -88,12 +101,8 @@ class KGQABaseDataset(InMemoryDataset):
         return ["raw.pt"]
 
     @property
-    def _processed_split_file_names(self) -> List[str]:
-        return ["train_data.pt", "val_data.pt", "test_data.pt"]
-
-    @property
     def processed_file_names(self) -> List[str]:
-        return self._processed_split_file_names + ["large_graph_indexer"]
+        return ["train_data.pt", "val_data.pt", "test_data.pt"]
 
     def download(self) -> None:
         import datasets
@@ -105,7 +114,8 @@ class KGQABaseDataset(InMemoryDataset):
 
         # Assert that the dataset contains the required splits
         assert all(split in raw_dataset for split in self.required_splits), \
-            f"Dataset '{self.dataset_name}' is missing required splits: {self.required_splits}"
+            f"Dataset '{self.dataset_name}' is missing required splits: \
+            {self.required_splits}"
 
         raw_dataset.save_to_disk(self.raw_paths[0])
 
@@ -132,20 +142,15 @@ class KGQABaseDataset(InMemoryDataset):
         # Nodes:
         print("\tEncoding nodes...")
         nodes = self.indexer.get_unique_node_features()
-        x = self.model.encode(
-            nodes,  # type: ignore
-            batch_size=256,
-            output_device='cpu')
+        x = self.model.encode(nodes, batch_size=256, output_device='cpu')
         self.indexer.add_node_feature(new_feature_name="x", new_feature_vals=x)
 
         # Edges:
         print("\tEncoding edges...")
         edges = self.indexer.get_unique_edge_features(
             feature_name=EDGE_RELATION)
-        edge_attr = self.model.encode(
-            edges,  # type: ignore
-            batch_size=256,
-            output_device='cpu')
+        edge_attr = self.model.encode(edges, batch_size=256,
+                                      output_device='cpu')
         self.indexer.add_edge_feature(
             new_feature_name="edge_attr",
             new_feature_vals=edge_attr,
@@ -153,14 +158,18 @@ class KGQABaseDataset(InMemoryDataset):
         )
 
         print("\tSaving graph...")
-        self.indexer.save(self.processed_paths[-1])
+        self.indexer.save(self.indexer_path)
 
     def _retrieve_subgraphs(self) -> None:
-        for split_name, dataset, path in zip(
-                self.required_splits,
-            [self.raw_dataset[split] for split in self.required_splits],
-                self.processed_paths,
-        ):
+        raw_splits = [
+            self.raw_dataset[split] for split in self.required_splits
+        ]
+        zipped = zip(
+            self.required_splits,
+            raw_splits,  # noqa
+            self.processed_paths,
+        )
+        for split_name, dataset, path in zipped:
             print(f"Processing {split_name} split...")
 
             print("\tEncoding questions...")
@@ -223,12 +232,13 @@ class KGQABaseDataset(InMemoryDataset):
         self.model: SentenceTransformer = SentenceTransformer(model_name).to(
             device)
         self.model.eval()
-        if self.force_reload or not os.path.exists(self.processed_paths[-1]):
+        self.indexer_path = os.path.join(self.processed_dir,
+                                         "large_graph_indexer")
+        if self.force_reload or not os.path.exists(self.indexer_path):
             self._build_graph()
         else:
             print("Loading graph...")
-            self.indexer = LargeGraphIndexer.from_disk(
-                self.processed_paths[-1])
+            self.indexer = LargeGraphIndexer.from_disk(self.indexer_path)
         self.textual_nodes = DataFrame.from_dict(
             {"node_attr": self.indexer.get_node_features()})
         self.textual_nodes["node_id"] = self.textual_nodes.index
@@ -262,15 +272,26 @@ class WebQSPDataset(KGQABaseDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
-        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
+        load_dataset_kwargs (dict, optional):
+            Keyword arguments for the `datasets.load_dataset` function.
+            (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional):
+            Keyword arguments for the
+            `get_features_for_triplets_groups` function.
+            (default: :obj:`{}`)
     """
     def __init__(
-        self, root: str, split: str = "train", force_reload: bool = False,
-        verbose: bool = False, use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict(),
-        retrieval_kwargs: Dict[str, Any] = dict()
+        self,
+        root: str,
+        split: str = "train",
+        force_reload: bool = False,
+        verbose: bool = False,
+        use_pcst: bool = True,
+        load_dataset_kwargs: Optional[Dict[str, Any]] = None,
+        retrieval_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
+        load_dataset_kwargs = load_dataset_kwargs or {}
+        retrieval_kwargs = retrieval_kwargs or {}
         # Modify these paramters if running into memory/compute issues
         default_retrieval_kwargs = {
             'max_batch_size': 250,  # Lower batch size to reduce memory usage
@@ -299,15 +320,26 @@ class CWQDataset(KGQABaseDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
-        load_dataset_kwargs (dict, optional): Keyword arguments for the `datasets.load_dataset` function. (default: :obj:`{}`)
-        retrieval_kwargs (dict, optional): Keyword arguments for the `get_features_for_triplets_groups` function. (default: :obj:`{}`)
+        load_dataset_kwargs (dict, optional):
+            Keyword arguments for the `datasets.load_dataset` function.
+            (default: :obj:`{}`)
+        retrieval_kwargs (dict, optional):
+            Keyword arguments for the
+            `get_features_for_triplets_groups` function.
+            (default: :obj:`{}`)
     """
     def __init__(
-        self, root: str, split: str = "train", force_reload: bool = False,
-        verbose: bool = False, use_pcst: bool = True,
-        load_dataset_kwargs: Dict[str, Any] = dict(),
-        retrieval_kwargs: Dict[str, Any] = dict()
+        self,
+        root: str,
+        split: str = "train",
+        force_reload: bool = False,
+        verbose: bool = False,
+        use_pcst: bool = True,
+        load_dataset_kwargs: Optional[Dict[str, Any]] = None,
+        retrieval_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
+        load_dataset_kwargs = load_dataset_kwargs or {}
+        retrieval_kwargs = retrieval_kwargs or {}
         dataset_name = 'rmanluo/RoG-cwq'
         super().__init__(dataset_name, root, split, force_reload, verbose,
                          use_pcst, load_dataset_kwargs=load_dataset_kwargs,

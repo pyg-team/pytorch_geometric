@@ -508,8 +508,7 @@ class TXT2KG():
     inference a 14B param LLM, 'VAGOsolutions/SauerkrautLM-v2-14b-DPO'.
     Smaller LLMs did not work at all in testing.
     Note this 14B model requires a considerable amount of GPU memory.
-    See examples/llm/hotpot_qa.py for example usage on converting
-    HotPotQA context documents into a knowledge graph.
+    See examples/llm/txt2kg_rag.py for an example.
 
     Args:
         NVIDIA_NIM_MODEL : str, optional
@@ -523,7 +522,10 @@ class TXT2KG():
             (default: "https://integrate.api.nvidia.com/v1").
         local_LM : bool, optional
             A flag indicating whether a local Language Model (LM)
-            should be used (default: False).
+            should be used. This uses HuggingFace and will be slower
+            than deploying your own private NIM endpoint. This flag
+            is mainly recommended for dev/debug.
+            (default: False).
         chunk_size : int, optional
             The size of the chunks in which the text data is processed
             (default: 512).
@@ -727,7 +729,6 @@ class TXT2KG():
                         "Failed to import `openai` package, please install it and rerun the script"
                     )
                     sys.exit(1)
-
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
@@ -870,24 +871,33 @@ def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str,
 
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
-        NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
+        NIM_MODEL="nvidia/llama-3.1-nemotron-ultra-253b-v1",
         ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
         post_text=SYSTEM_PROMPT) -> str:
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
-        from openai import OpenAI
+        try:
+            from openai import OpenAI
+        except ImportError:
+            quit(
+                "Failed to import `openai` package, please install it and rerun the script"  # noqa
+            )
         global CLIENT
         CLIENT = OpenAI(base_url=ENDPOINT_URL, api_key=GLOBAL_NIM_KEY)
         CLIENT_INITD = True
     txt_input = txt
     if post_text != "":
         txt_input += '\n' + post_text
-    completion = CLIENT.chat.completions.create(
-        model=NIM_MODEL, messages=[{
-            "role": "user",
-            "content": txt_input
-        }], temperature=0, top_p=1, max_tokens=1024, stream=True)
+    messages = []
+    if "llama-3.1-nemotron-ultra-253b-v1" in NIM_MODEL \
+            or "kimi-k2-instruct" in NIM_MODEL:
+        messages.append({"role": "system", "content": "detailed thinking on"})
+    messages.append({"role": "user", "content": txt_input})
+    completion = CLIENT.chat.completions.create(model=NIM_MODEL,
+                                                messages=messages,
+                                                temperature=0, top_p=1,
+                                                max_tokens=1024, stream=True)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:

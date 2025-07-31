@@ -21,8 +21,8 @@ WITH_PT23 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 3
 WITH_PT24 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 4
 WITH_PT25 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 5
 WITH_PT26 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 6
-WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
-WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
+WITH_PT27 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 7
+WITH_PT28 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 8
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
@@ -70,19 +70,20 @@ try:
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
     try:
-        torch.classes.pyg.CPUHashMap
+        torch.classes.pyg.CPUHashMap  # noqa: B018
         WITH_CPU_HASH_MAP = True
     except Exception:
         WITH_CPU_HASH_MAP = False
     try:
-        torch.classes.pyg.CUDAHashMap
+        torch.classes.pyg.CUDAHashMap  # noqa: B018
         WITH_CUDA_HASH_MAP = True
     except Exception:
         WITH_CUDA_HASH_MAP = False
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'pyg-lib'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     pyg_lib = object
     WITH_PYG_LIB = False
     WITH_GMM = False
@@ -125,8 +126,9 @@ try:
     WITH_TORCH_SCATTER = True
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'torch-scatter'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     torch_scatter = object
     WITH_TORCH_SCATTER = False
 
@@ -136,8 +138,9 @@ try:
     WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'torch-cluster'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     WITH_TORCH_CLUSTER = False
     WITH_TORCH_CLUSTER_BATCH_SIZE = False
 
@@ -154,7 +157,7 @@ except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(
             f"An issue occurred while importing 'torch-spline-conv'. "
-            f"Disabling its usage. Stacktrace: {e}")
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     WITH_TORCH_SPLINE_CONV = False
 
 try:
@@ -163,8 +166,9 @@ try:
     WITH_TORCH_SPARSE = True
 except Exception as e:
     if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'torch-sparse'. "
+            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
     WITH_TORCH_SPARSE = False
 
     class SparseStorage:  # type: ignore
@@ -400,12 +404,15 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 # A representation of a feature tensor
 FeatureTensorType = Union[Tensor, np.ndarray]
-
-# A representation of an edge index, following the possible formats:
-#   * COO: (row, col)
-#   * CSC: (row, colptr)
-#   * CSR: (rowptr, col)
-EdgeTensorType = Tuple[Tensor, Tensor]
+"""
+A representation of an edge index, following the possible formats:
+   * default: Tensor, size = [2, num_edges]
+   *     Tensor[0, :] == row, Tensor[1, :] == col
+   * COO: (row, col)
+   * CSC: (row, colptr)
+   * CSR: (rowptr, col)
+"""
+EdgeTensorType = Union[Tensor, Tuple[Tensor, Tensor]]
 
 # Types for message passing ###################################################
 

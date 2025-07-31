@@ -26,16 +26,21 @@ class GraphNorm(torch.nn.Module):
         in_channels (int): Size of each input sample.
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
-    def __init__(self, in_channels: int, eps: float = 1e-5):
+    def __init__(self, in_channels: int, eps: float = 1e-5,
+                 device: Optional[torch.device] = None):
         super().__init__()
 
         self.in_channels = in_channels
         self.eps = eps
 
-        self.weight = torch.nn.Parameter(torch.empty(in_channels))
-        self.bias = torch.nn.Parameter(torch.empty(in_channels))
-        self.mean_scale = torch.nn.Parameter(torch.empty(in_channels))
+        self.weight = torch.nn.Parameter(
+            torch.empty(in_channels, device=device))
+        self.bias = torch.nn.Parameter(torch.empty(in_channels, device=device))
+        self.mean_scale = torch.nn.Parameter(
+            torch.empty(in_channels, device=device))
 
         self.reset_parameters()
 
