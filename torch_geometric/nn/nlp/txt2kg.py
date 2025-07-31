@@ -270,7 +270,6 @@ AGAIN, DO NOT output anything else.
         items_to_original_id = {item: i for i, item in enumerate(items)}
 
         # contains the mapping of the new items to the original items
-        items_to_id_mapping = {}
 
         # map one item to a cluster of items
         cluster_to_items_mapping = {}
@@ -305,7 +304,9 @@ AGAIN, DO NOT output anything else.
             print(
                 f"Ret items (after filtering hallucinated items): {ret_items}")
             summary_word = summary_word.strip(" '*-").lower()
-            cluster_to_items_mapping[summary_word] = [items_to_original_id[item] for item in ret_items]
+            cluster_to_items_mapping[summary_word] = [
+                items_to_original_id[item] for item in ret_items
+            ]
 
         return cluster_to_items_mapping
 
