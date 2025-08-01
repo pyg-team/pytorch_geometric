@@ -9,6 +9,15 @@ from torch_geometric.index import index2ptr
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import coalesce, index_sort, lexsort
 
+
+def reverse_edge_type(edge_type: EdgeType) -> EdgeType:
+    """Reverses edge types for heterogeneous graphs. Useful in cases of
+    backward sampling.
+    """
+    return (edge_type[2], edge_type[1],
+            edge_type[0]) if edge_type is not None else None
+
+
 # Edge Layout Conversion ######################################################
 
 
@@ -41,6 +50,7 @@ def to_csc(
     is_sorted: bool = False,
     src_node_time: Optional[Tensor] = None,
     edge_time: Optional[Tensor] = None,
+    to_transpose: bool = False,
 ) -> Tuple[Tensor, Tensor, OptTensor]:
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
@@ -53,7 +63,10 @@ def to_csc(
         if src_node_time is not None:
             raise NotImplementedError("Temporal sampling via 'SparseTensor' "
                                       "format not yet supported")
-        colptr, row, _ = data.adj.csc()
+        if to_transpose:
+            row, colptr, _ = data.adj.csr()
+        else:
+            colptr, row, _ = data.adj.csc()
 
     elif hasattr(data, 'adj_t'):
         if src_node_time is not None:
@@ -65,13 +78,21 @@ def to_csc(
             # raise NotImplementedError("Temporal sampling via 'SparseTensor' "
             #                           "format not yet supported")
             pass
-        colptr, row, _ = data.adj_t.csr()
+        if to_transpose:
+            row, colptr, _ = data.adj_t.csc()
+        else:
+            colptr, row, _ = data.adj_t.csr()
 
     elif data.edge_index is not None:
-        row, col = data.edge_index
+        if to_transpose:
+            col, row = data.edge_index
+        else:
+            row, col = data.edge_index
+
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time, edge_time)
-        colptr = index2ptr(col, data.size(1))
+        colptr = index2ptr(col,
+                           data.size(1) if not to_transpose else data.size(0))
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
         colptr = torch.zeros(data.num_nodes + 1, dtype=torch.long,
@@ -97,6 +118,7 @@ def to_hetero_csc(
     is_sorted: bool = False,
     node_time_dict: Optional[Dict[NodeType, Tensor]] = None,
     edge_time_dict: Optional[Dict[EdgeType, Tensor]] = None,
+    to_transpose: bool = False,
 ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, OptTensor]]:
     # Convert the heterogeneous graph data into a suitable format for sampling
     # (CSC format).
@@ -108,7 +130,11 @@ def to_hetero_csc(
         src_node_time = (node_time_dict or {}).get(edge_type[0], None)
         edge_time = (edge_time_dict or {}).get(edge_type, None)
         out = to_csc(store, device, share_memory, is_sorted, src_node_time,
-                     edge_time)
+                     edge_time, to_transpose)
+        # Edge types need to be reversed for backward sampling:
+        if to_transpose:
+            edge_type = reverse_edge_type(edge_type)
+
         colptr_dict[edge_type], row_dict[edge_type], perm_dict[edge_type] = out
 
     return colptr_dict, row_dict, perm_dict
@@ -160,3 +186,65 @@ def remap_keys(
         k if k in exclude else mapping.get(k, k): v
         for k, v in inputs.items()
     }
+
+
+def local_to_global_node_idx(node_values: Tensor,
+                             local_indices: Tensor) -> Tensor:
+    """Convert a tensor of indices referring to elements in the node_values
+    tensor to their values.
+
+    Args:
+        node_values (Tensor): The node values. (num_nodes, feature_dim)
+        local_indices (Tensor): The local indices. (num_indices)
+
+    Returns:
+        Tensor: The values of the node_values tensor at the local indices.
+        (num_indices, feature_dim)
+    """
+    return torch.index_select(node_values, dim=0, index=local_indices)
+
+
+def global_to_local_node_idx(node_values: Tensor,
+                             local_values: Tensor) -> Tensor:
+    """Converts a tensor of values that are contained in the node_values
+    tensor to their indices in that tensor.
+
+    Args:
+        node_values (Tensor): The node values. (num_nodes, feature_dim)
+        local_values (Tensor): The local values. (num_indices, feature_dim)
+
+    Returns:
+        Tensor: The indices of the local values in the node_values tensor.
+        (num_indices)
+    """
+    if node_values.dim() == 1:
+        node_values = node_values.unsqueeze(1)
+    if local_values.dim() == 1:
+        local_values = local_values.unsqueeze(1)
+    node_values_expand = node_values.unsqueeze(-1).expand(
+        *node_values.shape,
+        local_values.shape[0])  # (num_nodes, feature_dim, num_indices)
+    local_values_expand = local_values.transpose(0, 1).unsqueeze(0).expand(
+        *node_values_expand.shape)  # (num_nodes, feature_dim, num_indices)
+    idx_match = torch.all(node_values_expand == local_values_expand,
+                          dim=1).nonzero()  # (num_indices, 2)
+    sort_idx = torch.argsort(idx_match[:, 1])
+
+    return idx_match[:, 0][sort_idx]
+
+
+def unique_unsorted(tensor: Tensor) -> Tensor:
+    """Returns the unique elements of a tensor while preserving the original
+    order.
+
+    Necessary because torch.unique() ignores sort parameter.
+    """
+    seen = set()
+    output = []
+    for val in tensor:
+        val = tuple(val.tolist())
+        if val not in seen:
+            seen.add(val)
+            output.append(val)
+    return torch.tensor(output, dtype=tensor.dtype,
+                        device=tensor.device).reshape((-1, *tensor.shape[1:]))
