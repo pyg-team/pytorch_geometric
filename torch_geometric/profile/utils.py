@@ -145,7 +145,7 @@ def get_gpu_memory_from_nvidia_smi(  # pragma: no cover
     if device < 0 or device >= len(free_out):
         raise AttributeError(
             f'GPU {device} not available (found {len(free_out)} GPUs)')
- 
+
     free_mem = get_gpu_memory(free_out[device], digits)
     used_mem = get_gpu_memory(used_out[device], digits)
     return free_mem, used_mem
