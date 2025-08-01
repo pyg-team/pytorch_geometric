@@ -505,6 +505,7 @@ def make_dataset(args):
         q = QA_pair[0]
         max_chars_in_train_answer = max(len(QA_pair[1]),
                                         max_chars_in_train_answer)
+        # (TODO) make this batch queries for retrieving w/ CuVS+CuGraph
         subgraph = query_loader.query(q)
         subgraph.label = QA_pair[1]
         total_data_list.append(subgraph)
