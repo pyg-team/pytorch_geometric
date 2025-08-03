@@ -850,14 +850,14 @@ class Data(BaseData, FeatureStore, GraphStore):
         # that maps global node indices to local ones in the final
         # heterogeneous graph:
         node_ids, index_map = {}, torch.empty_like(node_type)
-        for i, key in enumerate(node_type_names):
+        for i in range(len(node_type_names)):
             node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
             index_map[node_ids[i]] = torch.arange(len(node_ids[i]),
                                                   device=index_map.device)
 
         # We iterate over edge types to find the local edge indices:
         edge_ids = {}
-        for i, key in enumerate(edge_type_names):
+        for i in range(len(edge_type_names)):
             edge_ids[i] = (edge_type == i).nonzero(as_tuple=False).view(-1)
 
         data = HeteroData()
@@ -1193,4 +1193,4 @@ def warn_or_raise(msg: str, raise_on_error: bool = True):
     if raise_on_error:
         raise ValueError(msg)
     else:
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)

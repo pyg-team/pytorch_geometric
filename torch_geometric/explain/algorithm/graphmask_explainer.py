@@ -202,25 +202,25 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         baselines, self.gates, full_biases = [], torch.nn.ModuleList(), []
 
-        for v_dim, m_dim, h_dim in zip(i_dim, j_dim, h_dim):
+        for v_dim, m_dim, o_dim in zip(i_dim, j_dim, h_dim):
             self.transform, self.layer_norm = [], []
             input_dims = [v_dim, m_dim, v_dim]
             for _, input_dim in enumerate(input_dims):
                 self.transform.append(
-                    Linear(input_dim, h_dim, bias=False).to(device))
-                self.layer_norm.append(LayerNorm(h_dim).to(device))
+                    Linear(input_dim, o_dim, bias=False).to(device))
+                self.layer_norm.append(LayerNorm(o_dim).to(device))
 
             self.transforms = torch.nn.ModuleList(self.transform)
             self.layer_norms = torch.nn.ModuleList(self.layer_norm)
 
             self.full_bias = Parameter(
-                torch.tensor(h_dim, dtype=torch.float, device=device))
+                torch.tensor(o_dim, dtype=torch.float, device=device))
             full_biases.append(self.full_bias)
 
-            self.reset_parameters(input_dims, h_dim)
+            self.reset_parameters(input_dims, o_dim)
 
             self.non_linear = ReLU()
-            self.output_layer = Linear(h_dim, 1).to(device)
+            self.output_layer = Linear(o_dim, 1).to(device)
 
             gate = [
                 self.transforms, self.layer_norms, self.non_linear,
@@ -385,7 +385,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                         f'Train explainer for graph {index} with layer '
                         f'{layer}')
             self._enable_layer(layer)
-            for epoch in range(self.epochs):
+            for _ in range(self.epochs):
                 with torch.no_grad():
                     model(x, edge_index, **kwargs)
                 gates, total_penalty = [], 0

@@ -73,7 +73,7 @@ def train():
     z = model.encode(train_data.x, train_data.edge_index)
 
     # We optimize the discriminator more frequently than the encoder.
-    for i in range(5):
+    for _ in range(5):
         discriminator_optimizer.zero_grad()
         discriminator_loss = model.discriminator_loss(z)
         discriminator_loss.backward()
@@ -84,7 +84,7 @@ def train():
     loss = loss + (1 / train_data.num_nodes) * model.kl_loss()
     loss.backward()
     encoder_optimizer.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()

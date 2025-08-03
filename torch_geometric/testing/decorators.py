@@ -252,8 +252,9 @@ def withDevice(func: Callable) -> Callable:
     if device:
         backend = os.getenv('TORCH_BACKEND')
         if backend is None:
-            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
-                          f"order to test against '{device}'")
+            warnings.warn(
+                f"Please specify the backend via 'TORCH_BACKEND' in"
+                f"order to test against '{device}'", stacklevel=2)
         else:
             import_module(backend)
             devices.append(pytest.param(torch.device(device), id=device))
@@ -268,7 +269,7 @@ def withMETIS(func: Callable) -> Callable:
     with_metis = WITH_METIS
 
     if with_metis:
-        try:  # Test that METIS can succesfully execute:
+        try:  # Test that METIS can successfully execute:
             # TODO Using `pyg-lib` metis partitioning leads to some weird bugs
             # in the # CI. As such, we require `torch-sparse` for now.
             rowptr = torch.tensor([0, 2, 4, 6])

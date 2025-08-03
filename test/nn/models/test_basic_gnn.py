@@ -248,7 +248,9 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
-@withPackage('onnx', 'onnxruntime')
+@onlyLinux
+@withPackage('torch>=2.6.0')
+@withPackage('onnx', 'onnxruntime', 'onnxscript')
 def test_onnx(tmp_path):
     import onnx
     import onnxruntime as ort
@@ -274,8 +276,14 @@ def test_onnx(tmp_path):
     assert expected.size() == (3, 16)
 
     path = osp.join(tmp_path, 'model.onnx')
-    torch.onnx.export(model, (x, edge_index), path,
-                      input_names=('x', 'edge_index'), opset_version=16)
+    torch.onnx.export(
+        model,
+        (x, edge_index),
+        path,
+        input_names=('x', 'edge_index'),
+        opset_version=18,
+        dynamo=True,  # False is deprecated by PyTorch
+    )
 
     model = onnx.load(path)
     onnx.checker.check_model(model)

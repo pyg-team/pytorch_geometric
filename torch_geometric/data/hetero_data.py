@@ -566,7 +566,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             This is equivalent to writing :obj:`data.x_dict`.
 
         Args:
-            key (str): The attribute to collect from all node and ege types.
+            key (str): The attribute to collect from all node and edge types.
             allow_empty (bool, optional): If set to :obj:`True`, will not raise
                 an error in case the attribute does not exit in any node or
                 edge type. (default: :obj:`False`)
@@ -585,12 +585,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         global _DISPLAYED_TYPE_NAME_WARNING
         if not _DISPLAYED_TYPE_NAME_WARNING and '__' in name:
             _DISPLAYED_TYPE_NAME_WARNING = True
-            warnings.warn(f"There exist type names in the "
-                          f"'{self.__class__.__name__}' object that contain "
-                          f"double underscores '__' (e.g., '{name}'). This "
-                          f"may lead to unexpected behavior. To avoid any "
-                          f"issues, ensure that your type names only contain "
-                          f"single underscores.")
+            warnings.warn(
+                f"There exist type names in the "
+                f"'{self.__class__.__name__}' object that contain "
+                f"double underscores '__' (e.g., '{name}'). This "
+                f"may lead to unexpected behavior. To avoid any "
+                f"issues, ensure that your type names only contain "
+                f"single underscores.", stacklevel=2)
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object

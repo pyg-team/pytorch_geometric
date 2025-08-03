@@ -201,7 +201,7 @@ def train(
         eval_output = []
         model.eval()
         with torch.no_grad():
-            for step, batch in enumerate(val_loader):
+            for batch in val_loader:
                 loss = get_loss(model, batch, model_save_name)
                 val_loss += loss.item()
             val_loss = val_loss / len(val_loader)
@@ -212,7 +212,7 @@ def train(
             best_epoch = epoch
             save_params_dict(model, f'{model_save_name}_best_val_loss_ckpt.pt')
     torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_peak_memory_stats()
 
     if checkpointing and best_epoch != num_epochs - 1:
         print("Loading best checkpoint...")
@@ -225,7 +225,7 @@ def train(
     eval_output = []
     print("Final evaluation...")
     progress_bar_test = tqdm(range(len(test_loader)))
-    for step, batch in enumerate(test_loader):
+    for batch in test_loader:
         with torch.no_grad():
             pred = inference_step(model, batch, model_save_name)
             eval_data = {
@@ -343,7 +343,7 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
                                                  model=pure_llm,
                                                  dataset=dataset)
             torch.cuda.empty_cache()
-            torch.cuda.reset_max_memory_allocated()
+            torch.cuda.reset_peak_memory_stats()
             gc.collect()
             e2e_time = round(time.time() - since, 2)
             model_log["tuned_llm"]["prep_time"] = prep_time
@@ -386,7 +386,7 @@ def benchmark_models(models: List[Type[nn.Module]], model_names: List[str],
                 tiny_llama=tiny_llama, dataset=dataset,
                 model_save_name=root_dir + '/' + name, model=model)
             torch.cuda.empty_cache()
-            torch.cuda.reset_max_memory_allocated()
+            torch.cuda.reset_peak_memory_stats()
             gc.collect()
             e2e_time = round(time.time() - since, 2)
             model_log[name]["prep_time"] = prep_time

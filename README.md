@@ -11,7 +11,7 @@ ______________________________________________________________________
 [![Contributing][contributing-image]][contributing-url]
 [![Slack][slack-image]][slack-url]
 
-**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks and Video Tutorials](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** | **[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** | **[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
 
 **PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
@@ -359,6 +359,22 @@ We recommend to start with a minimal installation, and install additional depend
 
 For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
+#### PyTorch 2.7
+
+To install the binaries for PyTorch 2.7.0, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.7.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu126`, or `cu128` depending on your PyTorch installation.
+
+|             | `cpu` | `cu118` | `cu126` | `cu128` |
+| ----------- | ----- | ------- | ------- | ------- |
+| **Linux**   | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |         |
+
 #### PyTorch 2.6
 
 To install the binaries for PyTorch 2.6.0, simply run
@@ -375,23 +391,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu124`, or `cu126`
 | **Windows** | ✅    | ✅      | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |         |
 
-#### PyTorch 2.5
-
-To install the binaries for PyTorch 2.5.0/2.5.1, simply run
-
-```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.5.0+${CUDA}.html
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu121`, or `cu124` depending on your PyTorch installation.
-
-|             | `cpu` | `cu118` | `cu121` | `cu124` |
-| ----------- | ----- | ------- | ------- | ------- |
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ✅      | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, PyTorch 2.1.0/2.1.1/2.1.2, PyTorch 2.2.0/2.2.1/2.2.2, PyTorch 2.3.0/2.3.1, and PyTorch 2.4.0/2.4.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, PyTorch 2.1.0/2.1.1/2.1.2, PyTorch 2.2.0/2.2.1/2.2.2, PyTorch 2.3.0/2.3.1, PyTorch 2.4.0/2.4.1, and PyTorch 2.5.0/2.5.1 (following the same procedure).
 **For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 
@@ -420,7 +420,7 @@ If you have any questions about it, please open an issue [here](https://github.c
 
 ## Cite
 
-Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective papers of the methods used) if you use this code in your own work:
+Please cite our [PyG 1.0](https://arxiv.org/abs/1903.02428) and [PyG 2.0](https://www.arxiv.org/abs/2507.16991) papers if you use this code in your own work:
 
 ```
 @inproceedings{Fey/Lenssen/2019,
@@ -428,6 +428,13 @@ Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective pa
   author={Fey, Matthias and Lenssen, Jan E.},
   booktitle={ICLR Workshop on Representation Learning on Graphs and Manifolds},
   year={2019},
+}
+
+@inproceedings{Fey/etal/2025,
+  title={{PyG} 2.0: Scalable Learning on Real World Graphs},
+  author={Fey, Matthias and Sunil, Jinu and Nitta, Akihiro and Puri, Rishi and Shah, Manan, and Stojanovi{\v{c}, Bla{\v{z} and Bendias, Ramona and Alexandria, Barghi and Kocijan, Vid and Zhang, Zecheng and He, Xinwei and Lenssen, Jan E. and Leskovec, Jure},
+  booktitle={Temporal Graph Learning Workshop @ KDD},
+  year={2025},
 }
 ```
 

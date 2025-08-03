@@ -35,7 +35,7 @@ repos:
         args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+    rev: v3.20.0
     hooks:
       - id: pyupgrade
         name: Upgrade Python syntax
@@ -68,14 +68,14 @@ repos:
         name: Sort imports
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.2.0
+    rev: 7.3.0
     hooks:
       - id: flake8
         name: Check PEP8
         additional_dependencies: [Flake8-pyproject]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.8
+    rev: v0.12.2
     hooks:
       - id: ruff
         name: Ruff formatting

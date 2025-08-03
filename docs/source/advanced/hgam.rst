@@ -115,7 +115,7 @@ Here, we show examples of how to use the HGAM functionality in combination with 
       >>> [128, 508, 1598]  # Number of sampled paper nodes per hop/layer.
 
       print(batch['author', 'writes', 'paper'].num_sampled_edges)
-      >>>> [629, 2621]  # Number of sampled autor<>paper edges per hop/layer.
+      >>>> [629, 2621]  # Number of sampled author<>paper edges per hop/layer.
 
 The attributes :obj:`num_sampled_nodes` and :obj:`num_sampled_edges` can be used by the :meth:`~torch_geometric.utils.trim_to_layer` function inside the GNN:
 
