@@ -11,7 +11,7 @@ ______________________________________________________________________
 [![Contributing][contributing-image]][contributing-url]
 [![Slack][slack-image]][slack-url]
 
-**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** | **[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** | **[Colab Notebooks and Video Tutorials](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** | **[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** | **[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
 
 **PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
