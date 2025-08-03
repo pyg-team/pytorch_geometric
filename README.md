@@ -420,7 +420,7 @@ If you have any questions about it, please open an issue [here](https://github.c
 
 ## Cite
 
-Please cite [PyG 1.0](https://arxiv.org/abs/1903.02428) and [PyG 2.0](https://www.arxiv.org/abs/2507.16991) papers if you use this code in your own work:
+Please cite our [PyG 1.0](https://arxiv.org/abs/1903.02428) and [PyG 2.0](https://www.arxiv.org/abs/2507.16991) papers if you use this code in your own work:
 
 ```
 @inproceedings{Fey/Lenssen/2019,
