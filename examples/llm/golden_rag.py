@@ -26,10 +26,6 @@ from torch_geometric.loader import DataLoader
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
-BATCH_SIZE_DEFAULT = 1
-EVAL_BATCH_SIZE_DEFAULT = 2
-LLM_GEN_MODE_DEFAULT = "full"
-DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
 max_chars_in_train_answer = 128
 sys_prompt = (
     "You are an expert assistant that can answer "
@@ -53,26 +49,24 @@ def parse_args():
                         help="The NIM LLM to use for TXT2KG for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, help="NVIDIA API key")
     parser.add_argument(
-        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL,
+        '--ENDPOINT_URL', type=str, default="https://integrate.api.nvidia.com/v1",
         help="The URL hosting your model, \
         in case you are not using the public NIM.")
-    parser.add_argument('--batch_size', type=int, default=BATCH_SIZE_DEFAULT,
+    parser.add_argument('--batch_size', type=int, default=1,
                         help="Batch size")
     parser.add_argument('--eval_batch_size', type=int,
-                        default=EVAL_BATCH_SIZE_DEFAULT,
+                        default=2,
                         help="Evaluation batch size")
     parser.add_argument('--llm_generator_name', type=str,
                         default=LLM_GENERATOR_NAME_DEFAULT,
                         help="The LLM to use for Generation")
     parser.add_argument(
-        '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
+        '--llm_generator_mode', type=str, default="full",
         choices=["frozen", "lora",
                  "full"], help="Whether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
     parser.add_argument('--dont_save_model', action="store_true",
                         help="Whether to skip model saving.")
-    parser.add_argument('--log_steps', type=int, default=30,
-                        help="Log to wandb every N steps")
     parser.add_argument(
         '--num_gpus', type=int, default=None,
         help="Number of GPUs to use. If not specified,"
@@ -89,22 +83,9 @@ def parse_args():
         "should contain corpus and train.json files. extracted triples, "
         "processed dataset, document retriever, and model checkpoints will "
         "be saved in the dataset folder")
-    parser.add_argument(
-        '--skip_graph_rag', action="store_true",
-        help="Skip the graph RAG step. "
-        "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
-    parser.add_argument(
-        '--use_x_percent_corpus', default=100.0, type=float,
-        help="Debug flag that allows user to only use a random percentage "
-        "of available knowledge base corpus for RAG")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
-    assert args.use_x_percent_corpus <= 100 and \
-        args.use_x_percent_corpus > 0, "Please provide a value in (0,100]"
-    if args.skip_graph_rag:
-        print("Skipping graph RAG step, setting GNN layers to 0...")
-        args.num_gnn_layers = 0
 
     return args
 
@@ -195,7 +176,9 @@ def test(model, test_loader, args):
 
     scores = []
     eval_tuples = []
-    for test_batch in tqdm(test_loader, desc="Testing"):
+    for iter, test_batch in enumerate(tqdm(test_loader, desc="Testing")):
+        if iter > 10:
+            break
         new_qs = []
         raw_qs = test_batch["question"]
         for i, q in enumerate(test_batch["question"]):
