@@ -3,24 +3,15 @@ import gc
 import json
 import os
 import random
-import re
-import sys
-import yaml
-from datetime import datetime
-from glob import glob
-from itertools import chain
 from pathlib import Path
-from tqdm import tqdm
 
 import torch
+from tqdm import tqdm
+
 from torch_geometric import seed_everything
 from torch_geometric.data import Data
-from torch_geometric.nn import (
-    LLM,
-    LLMJudge,
-    SentenceTransformer,
-)
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import LLM, LLMJudge, SentenceTransformer
 
 # CONSTANTS
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
@@ -41,6 +32,7 @@ prompt_template = """
     {context}
     [END_RETRIEVED_CONTEXTS]
     """
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -93,7 +85,7 @@ def parse_args():
 def get_data(args):
     # need a JSON dict of Questions and answers, see below for how its used
     json_path = Path(args.dataset) / "train.json"
-    corpus_path = Path(args.dataset) / "corpus"
+    Path(args.dataset) / "corpus"
 
     with open(json_path) as file:
         json_obj = json.load(file)
@@ -113,7 +105,7 @@ def make_dataset(args):
 
     model = SentenceTransformer(
         model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
-    
+
     # pre-process the dataset
     total_data_list = []
     # extracted_triple_sizes = []
@@ -122,9 +114,8 @@ def make_dataset(args):
         if data_point["is_impossible"]:
             continue
         question, answer = data_point["question"], data_point["answer"]
-        max_chars_in_train_answer = max(len(answer),
-                                        max_chars_in_train_answer)
-        
+        max_chars_in_train_answer = max(len(answer), max_chars_in_train_answer)
+
         data = Data()
         data.question = question
         data.label = answer
@@ -142,7 +133,7 @@ def make_dataset(args):
 
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
-    
+
     torch.save((data_lists, max_chars_in_train_answer), dataset_path)
     del model
     gc.collect()
@@ -184,11 +175,11 @@ def test(model, test_loader, args):
         for i, q in enumerate(test_batch["question"]):
             # insert VectorRAG context
             new_qs.append(
-                prompt_template.format(
-                    question=q, context=test_batch.text_context[i]))
+                prompt_template.format(question=q,
+                                       context=test_batch.text_context[i]))
         # breakpoint()
         test_batch.question = new_qs
-        
+
         ###
         # generator should be given questions with golden contexts
         ###
@@ -206,6 +197,7 @@ def test(model, test_loader, args):
     print("*" * 5 + "NOTE" + "*" * 5)
     print("Marlin Accuracy is Estimated by LLM as a Judge!")
     print("Improvement of this estimation process is WIP...")
+
 
 if __name__ == '__main__':
     # for reproducibility
