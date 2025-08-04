@@ -957,17 +957,16 @@ class Data(BaseData, FeatureStore, GraphStore):
         self._ranks: Dict[int, int] = {}
         for edge in self.edge_index.t().tolist():
             self._union(edge[0], edge[1])
-        del self._ranks
+
+        # Rerun _find_parent to ensure all nodes are covered correctly
+        for node in range(self.num_nodes):
+            self._find_parent(node)
 
         # Group parents
         grouped_parents = defaultdict(list)
         for node, parent in self._parents.items():
             grouped_parents[parent].append(node)
-
-        # Get all nodes that were not part of any edge
-        for node in range(self.num_nodes):
-            if node not in self._parents:
-                grouped_parents[node].append(node)
+        del self._ranks
         del self._parents
 
         # Create components based on the found parents (roots)

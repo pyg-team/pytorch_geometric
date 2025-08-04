@@ -655,7 +655,7 @@ def unmutable_obj():
     yield NotMutable()
 
 
-def test_hetero_data_heck_slicable_and_mutable(unmutable_obj):
+def test_hetero_data_check_slicable_and_mutable(unmutable_obj):
 
     # Case 1: All attributes are sliceable and mutable (should not raise)
     data = HeteroData()

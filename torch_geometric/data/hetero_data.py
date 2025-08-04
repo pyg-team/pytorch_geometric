@@ -547,20 +547,18 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             edge_index = self[edge_type].edge_index
             for src_node, dst_node in edge_index.t().tolist():
                 self._union((src, src_node), (dst, dst_node))
-        del self._ranks
+
+        # Rerun _find_parent to ensure all nodes are covered correctly
+        for node_type in self.node_types:
+            for node_index in range(self[node_type].num_nodes):
+                self._find_parent((node_type, node_index))
 
         # Group nodes by their representative parent
         components_map = defaultdict(list)
         for node, parent in self._parents.items():
             components_map[parent].append(node)
-
-        # Get all nodes that were not connected to any edge
-        for node_type in self.node_types:
-            for node_index in range(self[node_type].num_nodes):
-                if (node_type, node_index) not in self._parents:
-                    components_map[(node_type, node_index)].append(
-                        (node_type, node_index))
         del self._parents
+        del self._ranks
 
         components: List[Self] = []
         for nodes in components_map.values():
