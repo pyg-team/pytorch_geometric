@@ -153,6 +153,8 @@ def main():
         hidden_channels=64,
         dropout=0.3,
         normalize_rho=False,
+        # Uncomment the following line to group features together:
+        # feature_groups=[list(range(in_channels))] 
     ).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4,

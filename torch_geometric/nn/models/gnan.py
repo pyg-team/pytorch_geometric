@@ -68,6 +68,55 @@ class _PerFeatureMLP(nn.Module):
         return self.net(x.view(-1, 1))  # [N, out_channels]
 
 
+class _MultiFeatureMLP(nn.Module):
+    """MLP that processes multiple features together.
+
+    Args:
+        in_channels (int): Number of input features to process together.
+        out_channels (int): Output dimension per feature group.
+        n_layers (int): Number of layers. If ``1``, the MLP is a single Linear.
+        hidden_channels (int, optional): Hidden dimension. Required when
+            ``n_layers > 1``.
+        bias (bool, optional): Use bias terms. (default: ``True``)
+        dropout (float, optional): Dropout probability after hidden layers.
+            (default: ``0.0``)
+    """
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        n_layers: int,
+        hidden_channels: int | None = None,
+        *,
+        bias: bool = True,
+        dropout: float = 0.0,
+    ) -> None:
+        super().__init__()
+
+        if n_layers == 1:
+            self.net = nn.Linear(in_channels, out_channels, bias=bias)
+        else:
+            assert hidden_channels is not None
+            layers: list[nn.Module] = [
+                nn.Linear(in_channels, hidden_channels, bias=bias),
+                nn.ReLU(),
+                nn.Dropout(dropout),
+            ]
+            for _ in range(1, n_layers - 1):
+                layers += [
+                    nn.Linear(hidden_channels, hidden_channels, bias=bias),
+                    nn.ReLU(),
+                    nn.Dropout(dropout),
+                ]
+            layers.append(nn.Linear(hidden_channels, out_channels, bias=bias))
+            self.net = nn.Sequential(*layers)
+
+        _init_weights(self)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:  # [N, in_channels]
+        return self.net(x)  # [N, out_channels]
+
+
 class _RhoMLP(nn.Module):
     """MLP that turns a scalar distance into a scalar or vector weight."""
     def __init__(
@@ -111,6 +160,22 @@ class TensorGNAN(nn.Module):
     obtain *node‐level* predictions instead, in which case the forward returns
     a tensor of shape ``[num_nodes, out_channels]`` or ``[len(node_ids),
     out_channels]`` if ``node_ids`` is provided.
+    
+    Args:
+        in_channels (int): Number of input node features.
+        out_channels (int): Output dimension.
+        n_layers (int): Number of layers in the MLPs.
+        hidden_channels (int, optional): Hidden dimension in the MLPs.
+        bias (bool, optional): Use bias terms. (default: ``True``)
+        dropout (float, optional): Dropout probability. (default: ``0.0``)
+        normalize_rho (bool, optional): Whether to normalize rho weights.
+            (default: ``True``)
+        graph_level (bool, optional): Whether to produce graph-level predictions.
+            (default: ``True``)
+        feature_groups (List[List[int]], optional): Groups of feature indices to
+            process together. Each group will be processed by a single MLP that
+            takes multiple features as input. If None, each feature is processed
+            by its own MLP (default behavior). (default: ``None``)
     """
     def __init__(
         self,
@@ -123,17 +188,50 @@ class TensorGNAN(nn.Module):
         dropout: float = 0.0,
         normalize_rho: bool = True,
         graph_level: bool = True,
+        feature_groups: list[list[int]] | None = None,
     ) -> None:
         super().__init__()
 
         self.normalize_rho = normalize_rho
         self.graph_level = graph_level
         self.out_channels = out_channels
+        self.in_channels = in_channels
 
-        self.fs = nn.ModuleList([
-            _PerFeatureMLP(out_channels, n_layers, hidden_channels, bias=bias,
-                           dropout=dropout) for _ in range(in_channels)
-        ])
+        # Set up feature groups - default is each feature in its own group
+        if feature_groups is None:
+            self.feature_groups = [[i] for i in range(in_channels)]
+        else:
+            self.feature_groups = feature_groups
+            # Validate feature groups
+            all_features = set()
+            for group in feature_groups:
+                if not group:
+                    raise ValueError("Feature groups cannot be empty")
+                for feat_idx in group:
+                    if feat_idx < 0 or feat_idx >= in_channels:
+                        raise ValueError(f"Feature index {feat_idx} out of range [0, {in_channels})")
+                    if feat_idx in all_features:
+                        raise ValueError(f"Feature index {feat_idx} appears in multiple groups")
+                    all_features.add(feat_idx)
+            
+            if len(all_features) != in_channels:
+                missing = set(range(in_channels)) - all_features
+                raise ValueError(f"Missing feature indices in groups: {missing}")
+
+        # Create MLPs for each feature group
+        self.fs = nn.ModuleList()
+        for group in self.feature_groups:
+            group_size = len(group)
+            if group_size == 1:
+                # Single feature - use original MLP
+                mlp = _PerFeatureMLP(out_channels, n_layers, hidden_channels, 
+                                   bias=bias, dropout=dropout)
+            else:
+                # Multiple features - use new multi-feature MLP
+                mlp = _MultiFeatureMLP(group_size, out_channels, n_layers, 
+                                     hidden_channels, bias=bias, dropout=dropout)
+            self.fs.append(mlp)
+
         self.rho = _RhoMLP(out_channels, n_layers, hidden_channels, bias=True)
 
     # --------------------------------------------------------------
@@ -143,9 +241,20 @@ class TensorGNAN(nn.Module):
         dist: torch.Tensor = data.node_distances  # type: ignore # [N, N]
         norm: torch.Tensor = data.normalization_matrix  # type: ignore # [N, N]
 
-        # f_k(x_k)
-        fx = torch.stack([mlp(x[:, k]) for k, mlp in enumerate(self.fs)],
-                         dim=1)  # [N, F, C]
+        # Process features according to groups
+        fx_list = []
+        for group, mlp in zip(self.feature_groups, self.fs):
+            if len(group) == 1:
+                # Single feature - extract and process
+                feat_tensor = x[:, group[0]]  # [N]
+                group_output = mlp(feat_tensor)  # [N, C]
+            else:
+                # Multiple features - extract and process together
+                feat_tensor = x[:, group]  # [N, group_size]
+                group_output = mlp(feat_tensor)  # [N, C]
+            fx_list.append(group_output)
+        
+        fx = torch.stack(fx_list, dim=1)  # [N, num_groups, C]
 
         # Compute ρ on the inverted distances as suggested in the paper
         inv_dist = 1.0 / (1.0 + dist)  # [N, N]
