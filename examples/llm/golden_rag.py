@@ -11,18 +11,14 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import LLM, LLMJudge, SentenceTransformer
+from torch_geometric.nn import LLM, LLMJudge
 
-# CONSTANTS
-NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
-LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
+
 max_chars_in_train_answer = 128
 sys_prompt = (
     "You are an expert assistant that can answer "
     "any question from its knowledge, given a knowledge graph embedding and "
     "it's textualized context. Just give the answer, without explanation.")
-
 prompt_template = """
     [QUESTION]
     {question}
@@ -37,20 +33,18 @@ prompt_template = """
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--NV_NIM_MODEL', type=str,
-                        default=NV_NIM_MODEL_DEFAULT,
-                        help="The NIM LLM to use for TXT2KG for LLMJudge")
+                        default="nvidia/llama-3.1-nemotron-ultra-253b-v1",
+                        help="The NIM LLM to use for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, help="NVIDIA API key")
     parser.add_argument(
         '--ENDPOINT_URL', type=str, default="https://integrate.api.nvidia.com/v1",
         help="The URL hosting your model, \
         in case you are not using the public NIM.")
-    parser.add_argument('--batch_size', type=int, default=1,
-                        help="Batch size")
     parser.add_argument('--eval_batch_size', type=int,
                         default=2,
                         help="Evaluation batch size")
     parser.add_argument('--llm_generator_name', type=str,
-                        default=LLM_GENERATOR_NAME_DEFAULT,
+                        default="meta-llama/Meta-Llama-3.1-8B-Instruct",
                         help="The LLM to use for Generation")
     parser.add_argument(
         '--llm_generator_mode', type=str, default="full",
@@ -63,13 +57,6 @@ def parse_args():
         '--num_gpus', type=int, default=None,
         help="Number of GPUs to use. If not specified,"
         "will determine automatically based on model size.")
-    parser.add_argument(
-        '--doc_parsing_mode', type=str, default=None,
-        choices=["paragraph",
-                 "file"], help="How to parse documents: 'paragraph' splits "
-        "files by paragraphs, 'file' treats each file as"
-        "one document. "
-        "This will override any value set in the config file.")
     parser.add_argument(
         '--dataset', type=str, default="techqa", help="Dataset folder name, "
         "should contain corpus and train.json files. extracted triples, "
@@ -90,26 +77,19 @@ def get_data(args):
     with open(json_path) as file:
         json_obj = json.load(file)
 
+    ## TODO: Once generation is completed, this should contain the path to each document for each QA pair
     text_contexts = []
-    ## TODO
-    # Once generation is completed, this should contain the path to each document for each QA pair
 
     return json_obj, text_contexts
 
 
 def make_dataset(args):
     qa_pairs, context_docs = get_data(args)
-    print("Number of Docs in our VectorDB =", len(context_docs))
-    data_lists = {"train": [], "validation": [], "test": []}
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = SentenceTransformer(
-        model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
-
-    # pre-process the dataset
-    total_data_list = []
-    # extracted_triple_sizes = []
+    print(" ==> Number of Docs:", len(context_docs))
+    data_lists = {"test": []}
     global max_chars_in_train_answer
+    
+    total_data_list = []
     for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
         if data_point["is_impossible"]:
             continue
@@ -124,20 +104,12 @@ def make_dataset(args):
         total_data_list.append(data)
     random.shuffle(total_data_list)
 
-    # 60:20:20 split
-    data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
-    data_lists["validation"] = total_data_list[int(.6 * len(total_data_list)
-                                                   ):int(.8 *
-                                                         len(total_data_list))]
+    # NOTE: test and validation split have been removed
     data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
-
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
-
     torch.save((data_lists, max_chars_in_train_answer), dataset_path)
-    del model
-    gc.collect()
-    torch.cuda.empty_cache()
+
     return data_lists
 
 
@@ -149,7 +121,6 @@ def get_model(args):
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   dtype=torch.float32, n_gpus=args.num_gpus)
     else:
-        # frozen
         llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
                   dtype=torch.float32, n_gpus=args.num_gpus).eval()
         for _, p in llm.named_parameters():
@@ -177,7 +148,7 @@ def test(model, test_loader, args):
             new_qs.append(
                 prompt_template.format(question=q,
                                        context=test_batch.text_context[i]))
-        # breakpoint()
+
         test_batch.question = new_qs
 
         ###
@@ -210,18 +181,8 @@ if __name__ == '__main__':
     print(f"Starting {args.dataset} training with args: ", args)
     args.NV_NIM_KEY = saved_NIM_KEY
 
-    dataset_name = os.path.basename(args.dataset)
-    dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
-    if os.path.exists(dataset_path):
-        print(f"Re-using Saved {dataset_name} Dataset...")
-        data_lists, max_chars_in_train_answer = torch.load(
-            dataset_path, weights_only=False)
-    else:
-        data_lists = make_dataset(args)
-
-    # breakpoint()
-    batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
+    data_lists = make_dataset(args)
     test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
