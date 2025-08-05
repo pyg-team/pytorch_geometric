@@ -203,7 +203,8 @@ class WarehouseGRetriever(nn.Module):
             else:
                 connectivity = "highly integrated data ecosystem"
 
-            return f"a data warehouse with {connectivity} across {num_nodes} data entities"
+            return (f"a data warehouse with {connectivity} across "
+                    f"{num_nodes} data entities")
         except Exception:
             return "a structured data warehouse with multiple data sources"
 
@@ -218,13 +219,17 @@ class WarehouseGRetriever(nn.Module):
             torch.mean(node_emb).item()
 
             if emb_std > 0.5:
-                pattern = "diverse data patterns indicating multiple data domains"
+                pattern = ("diverse data patterns indicating "
+                           "multiple data domains")
             elif emb_std > 0.2:
-                pattern = "moderate data variation suggesting some specialization"
+                pattern = ("moderate data variation suggesting "
+                           "some specialization")
             else:
-                pattern = "consistent data patterns indicating unified structure"
+                pattern = ("consistent data patterns indicating "
+                           "unified structure")
 
-            return f"Graph analysis reveals {pattern} with embedding variance {emb_std:.3f}"
+            return (f"Graph analysis reveals {pattern} with "
+                    f"embedding variance {emb_std:.3f}")
         except Exception:
             return "Graph analysis indicates standard warehouse data patterns"
 
