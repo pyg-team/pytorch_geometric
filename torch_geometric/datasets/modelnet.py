@@ -79,8 +79,9 @@ class ModelNet(InMemoryDataset):
 
     urls = {
         '10':
-        'http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip',
-        '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
+        'http://3dvision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip',
+        '40':
+        'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
     def __init__(
