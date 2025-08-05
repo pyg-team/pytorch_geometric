@@ -146,11 +146,35 @@ class WarehouseGRetriever(nn.Module):
     def inference(self, question: list[str], x: Tensor, edge_index: Tensor,
                   batch: Tensor, max_out_tokens: int = DEFAULT_MAX_TOKENS,
                   **kwargs: Any) -> list[str]:
-        """Inference following G-Retriever pattern."""
-        return self.g_retriever.inference(question=question, x=x,
-                                          edge_index=edge_index, batch=batch,
-                                          max_out_tokens=max_out_tokens,
-                                          **kwargs)
+        """Enhanced two-stage inference for business-focused responses."""
+        try:
+            # Stage 1: Generate domain context
+            domain_context = self._generate_domain_context(x, edge_index)
+
+            # Stage 2: Generate GNN insights
+            gnn_insights = self._generate_gnn_insights(x, edge_index)
+
+            # Stage 3: Combine context with user question for business response
+            enhanced_questions = []
+            for q in question:
+                # Simplified prompt format for TinyLlama
+                enhanced_prompt = (f"Warehouse Analysis: {domain_context}. "
+                                   f"{gnn_insights}. Question: {q} Answer:")
+                enhanced_questions.append(enhanced_prompt)
+
+            # Use enhanced prompts with G-Retriever
+            return self.g_retriever.inference(question=enhanced_questions, x=x,
+                                              edge_index=edge_index,
+                                              batch=batch,
+                                              max_out_tokens=max_out_tokens,
+                                              **kwargs)
+        except Exception:
+            # Fallback to original inference
+            return self.g_retriever.inference(question=question, x=x,
+                                              edge_index=edge_index,
+                                              batch=batch,
+                                              max_out_tokens=max_out_tokens,
+                                              **kwargs)
 
     def predict_task(self, x: Tensor, edge_index: Tensor, task: str) -> Tensor:
         """Predict specific warehouse task."""
@@ -162,6 +186,47 @@ class WarehouseGRetriever(nn.Module):
 
         # Task-specific prediction
         return self.task_head(graph_emb, task)
+
+    def _generate_domain_context(self, x: Tensor, edge_index: Tensor) -> str:
+        """Generate domain-specific context for warehouse intelligence."""
+        try:
+            num_nodes = x.size(0)
+            num_edges = edge_index.size(1)
+
+            # Analyze graph structure
+            avg_degree = (2 * num_edges) / num_nodes if num_nodes > 0 else 0
+
+            if avg_degree < 1.5:
+                connectivity = "sparse data connections"
+            elif avg_degree < 3.0:
+                connectivity = "moderate data integration"
+            else:
+                connectivity = "highly integrated data ecosystem"
+
+            return f"a data warehouse with {connectivity} across {num_nodes} data entities"
+        except Exception:
+            return "a structured data warehouse with multiple data sources"
+
+    def _generate_gnn_insights(self, x: Tensor, edge_index: Tensor) -> str:
+        """Generate GNN-based insights for warehouse analysis."""
+        try:
+            # Get graph embeddings
+            node_emb = self.gnn(x, edge_index)
+
+            # Analyze embedding patterns for business insights
+            emb_std = torch.std(node_emb).item()
+            torch.mean(node_emb).item()
+
+            if emb_std > 0.5:
+                pattern = "diverse data patterns indicating multiple data domains"
+            elif emb_std > 0.2:
+                pattern = "moderate data variation suggesting some specialization"
+            else:
+                pattern = "consistent data patterns indicating unified structure"
+
+            return f"Graph analysis reveals {pattern} with embedding variance {emb_std:.3f}"
+        except Exception:
+            return "Graph analysis indicates standard warehouse data patterns"
 
 
 class WarehouseTaskHead(nn.Module):
