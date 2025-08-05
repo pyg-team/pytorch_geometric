@@ -1,5 +1,4 @@
 import argparse
-import gc
 import json
 import os
 import random
@@ -12,7 +11,6 @@ from torch_geometric import seed_everything
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import LLM, LLMJudge
-
 
 max_chars_in_train_answer = 128
 sys_prompt = (
@@ -41,8 +39,8 @@ def parse_args():
         default="https://integrate.api.nvidia.com/v1",
         help="The URL hosting your model, \
         in case you are not using the public NIM.")
-    parser.add_argument('--eval_batch_size', type=int,
-                        default=2, help="Evaluation batch size")
+    parser.add_argument('--eval_batch_size', type=int, default=2,
+                        help="Evaluation batch size")
     parser.add_argument('--llm_generator_name', type=str,
                         default="meta-llama/Meta-Llama-3.1-8B-Instruct",
                         help="The LLM to use for Generation")
@@ -88,7 +86,7 @@ def make_dataset(args):
     print(" ==> Number of Docs:", len(context_docs))
     data_lists = {"test": []}
     global max_chars_in_train_answer
-    
+
     total_data_list = []
     for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
         if data_point["is_impossible"]:
