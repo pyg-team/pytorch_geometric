@@ -37,12 +37,12 @@ def parse_args():
                         help="The NIM LLM to use for LLMJudge")
     parser.add_argument('--NV_NIM_KEY', type=str, help="NVIDIA API key")
     parser.add_argument(
-        '--ENDPOINT_URL', type=str, default="https://integrate.api.nvidia.com/v1",
+        '--ENDPOINT_URL', type=str,
+        default="https://integrate.api.nvidia.com/v1",
         help="The URL hosting your model, \
         in case you are not using the public NIM.")
     parser.add_argument('--eval_batch_size', type=int,
-                        default=2,
-                        help="Evaluation batch size")
+                        default=2, help="Evaluation batch size")
     parser.add_argument('--llm_generator_name', type=str,
                         default="meta-llama/Meta-Llama-3.1-8B-Instruct",
                         help="The LLM to use for Generation")
