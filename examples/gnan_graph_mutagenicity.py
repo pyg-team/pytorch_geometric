@@ -146,6 +146,10 @@ def main():
     val_loader = GNANDataLoader(val_dataset, batch_size=32, shuffle=False)
     test_loader = GNANDataLoader(test_dataset, batch_size=32, shuffle=False)
 
+    # Pick a sample graph from the *test* split to track during training.
+    sample_graph = test_dataset[0]
+    sample_graph = sample_graph.to(device)
+
     model = TensorGNAN(
         in_channels=in_channels,
         out_channels=1 if num_classes == 2 else num_classes,
@@ -197,6 +201,21 @@ def main():
 
         print(f"Epoch {epoch:03d}  Loss {avg_loss:.4f}  "
               f"ValAcc {val_acc:.4f}  TestAcc {test_acc:.4f}")
+
+        # --------------------------------------------------------------
+        # Print prediction & node importance for the tracked sample graph
+        # --------------------------------------------------------------
+        with torch.no_grad():
+            sample_pred = model(sample_graph)
+            sample_imp = model.node_importance(sample_graph)
+
+        # Flatten tensors for nicer printing (binary classification → 1 logit)
+        pred_value = sample_pred.squeeze().item()
+        node_imp_values = sample_imp.squeeze(-1).cpu().tolist()
+
+        print("Sample graph prediction:", f"{pred_value:.4f}")
+        print("Node importance contributions:")
+        print(node_imp_values)
 
         # Step the scheduler based on validation accuracy
         scheduler.step(val_acc)

@@ -234,60 +234,75 @@ class TensorGNAN(nn.Module):
 
         self.rho = _RhoMLP(out_channels, n_layers, hidden_channels, bias=True)
 
-    # --------------------------------------------------------------
+    def _process_feature_groups(self, x: torch.Tensor):
+        """Process features according to groups and return fx and f_sum."""
+        fx_list: list[torch.Tensor] = []
+        for group, mlp in zip(self.feature_groups, self.fs):
+            if len(group) == 1:
+                feat_tensor = x[:, group[0]]  # [N]
+            else:
+                feat_tensor = x[:, group]      # [N, |group|]
+            fx_list.append(mlp(feat_tensor))   # [N, C]
+        fx = torch.stack(fx_list, dim=1)        # [N, num_groups, C]
+        f_sum = fx.sum(dim=1)                   # [N, C]
+        return fx, f_sum
+
+    def _compute_rho(self, dist: torch.Tensor, norm: torch.Tensor, data) -> torch.Tensor:
+        """Compute rho tensor, including normalization and masking."""
+        x = data.x  # type: ignore
+        inv_dist = 1.0 / (1.0 + dist)  # [N, N]
+        rho = self.rho(inv_dist.flatten().view(-1, 1))  # [(N*N), C]
+        rho = rho.view(x.size(0), x.size(0), self.out_channels)  # [N, N, C]
+        if self.normalize_rho:
+            norm_safe = norm.clone()
+            norm_safe[norm_safe == 0] = 1.0
+            rho = rho / norm_safe.unsqueeze(-1)  # broadcast division
+        if hasattr(data, 'batch') and data.batch is not None:
+            batch_i = data.batch.view(-1, 1)  # type: ignore
+            batch_j = data.batch.view(1, -1)  # type: ignore
+            mask = (batch_i == batch_j).unsqueeze(-1)
+            rho = rho * mask
+        return rho
+
     def forward(self, data: Data | Batch,
                 node_ids: OptTensor = None) -> torch.Tensor:
         x: torch.Tensor = data.x  # type: ignore # [N, F]
         dist: torch.Tensor = data.node_distances  # type: ignore # [N, N]
         norm: torch.Tensor = data.normalization_matrix  # type: ignore # [N, N]
 
-        # Process features according to groups
-        fx_list = []
-        for group, mlp in zip(self.feature_groups, self.fs):
-            if len(group) == 1:
-                # Single feature - extract and process
-                feat_tensor = x[:, group[0]]  # [N]
-                group_output = mlp(feat_tensor)  # [N, C]
-            else:
-                # Multiple features - extract and process together
-                feat_tensor = x[:, group]  # [N, group_size]
-                group_output = mlp(feat_tensor)  # [N, C]
-            fx_list.append(group_output)
-        
-        fx = torch.stack(fx_list, dim=1)  # [N, num_groups, C]
-
-        # Compute ρ on the inverted distances as suggested in the paper
-        inv_dist = 1.0 / (1.0 + dist)  # [N, N]
-        rho = self.rho(inv_dist.flatten().view(-1, 1))  # [(N*N), C]
-        rho = rho.view(x.size(0), x.size(0), self.out_channels)  # [N, N, C]
-
-        if self.normalize_rho:
-            norm[norm == 0] = 1.0
-            rho = rho / norm.unsqueeze(-1)  # broadcast
-
-        # Apply a mask to ρ to prevent information leakage between
-        # graphs in the same batch.
-        if hasattr(data, 'batch') and data.batch is not None:
-            batch_i = data.batch.view(-1, 1)  # type: ignore
-            batch_j = data.batch.view(1, -1)  # type: ignore
-            mask = (batch_i == batch_j).unsqueeze(-1)
-            rho = rho * mask
+        _, f_sum = self._process_feature_groups(x)
+        rho = self._compute_rho(dist, norm, data)
 
         # Perform Σ_i Σ_j ρ(d_ij) Σ_k f_k(x_jk)
-        f_sum = fx.sum(dim=1)  # [N, C]
         out = torch.einsum('ijc,jc->ic', rho, f_sum)  # [N, C]
 
         if self.graph_level:
-            # # Use batch information for proper graph-level aggregation
             batch = data.batch  # type: ignore
             if batch is not None:
                 graph_out = scatter(out, batch, dim=0, reduce='add')
             else:
-                # Single graph case
                 graph_out = out.sum(dim=0, keepdim=True)  # [1, C]
             return graph_out
 
-        # --- node-level mode -------------------------------------------------
         if node_ids is not None:
             return out[node_ids]
         return out
+
+    def node_importance(self, data: Data | Batch) -> torch.Tensor:
+        """Returns the  contribution of every node to the
+        graph‐level prediction. UsingEq. (3) in the paper.
+        """
+        x: torch.Tensor = data.x  # type: ignore  # [N, F]
+        dist: torch.Tensor = data.node_distances  # type: ignore  # [N, N]
+        norm: torch.Tensor = data.normalization_matrix  # type: ignore  # [N, N]
+
+        _, f_sum = self._process_feature_groups(x)
+        rho = self._compute_rho(dist, norm, data)
+
+        # Aggregate over *receiver* nodes i to obtain \sum_i rho(d_{ij}).
+        rho_sum_over_i = rho.sum(dim=0)          # [N, C]
+
+        # Node contribution s_j = (sum_k f_k(x_jk)) * (sum_i rho(d_{ij})).
+        node_contrib = f_sum * rho_sum_over_i    # [N, C]
+
+        return node_contrib
