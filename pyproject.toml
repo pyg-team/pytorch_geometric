@@ -70,11 +70,13 @@ relbench=[
     "relbench[full]",
     "sentence-transformers",
     "pandas",
+    "huggingface_hub[hf_xet]",
 ]
 whg=[
     "sentence-transformers",
     "accelerate",
     "transformers",
+    "huggingface_hub[hf_xet]",
 ]
 test=[
     "onnx",

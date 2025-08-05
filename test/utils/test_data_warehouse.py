@@ -3,6 +3,8 @@
 import pytest
 import torch
 
+from torch_geometric.testing import withPackage
+
 
 class TestWarehouseTaskHead:
     """Test multi-task head functionality."""
@@ -55,6 +57,7 @@ class TestWarehouseTaskHead:
 
 class TestWarehouseGRetriever:
     """Test G-Retriever integration."""
+    @withPackage('transformers')
     def test_gretriever_initialization(self) -> None:
         """Test WarehouseGRetriever initialization."""
         try:
@@ -74,6 +77,7 @@ class TestWarehouseGRetriever:
         assert hasattr(model, 'g_retriever')
         assert hasattr(model, 'task_head')
 
+    @withPackage('transformers')
     def test_inference_functionality(self) -> None:
         """Test LLM inference functionality."""
         try:
@@ -99,6 +103,7 @@ class TestWarehouseGRetriever:
         assert len(result) == 1
         assert isinstance(result[0], str)
 
+    @withPackage('transformers')
     def test_task_prediction_functionality(self) -> None:
         """Test task-specific predictions."""
         try:
@@ -276,6 +281,7 @@ class TestSimpleWarehouseModel:
 
 class TestWarehouseDemo:
     """Test warehouse demo functionality."""
+    @withPackage('transformers')
     def test_create_warehouse_demo(self) -> None:
         """Test create_warehouse_demo function."""
         try:

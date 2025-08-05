@@ -4,10 +4,12 @@ import pytest
 import torch
 
 from torch_geometric.data import HeteroData
+from torch_geometric.testing import withPackage
 
 
 class TestRelBenchCore:
     """Test core RelBench functionality."""
+    @withPackage('relbench', 'transformers|sentence_transformers')
     def test_create_relbench_hetero_data(self) -> None:
         """Test RelBench data creation with real database."""
         try:
@@ -111,6 +113,7 @@ class TestHeuristicLabeler:
 
 class TestRelBenchProcessor:
     """Test RelBench data processing."""
+    @withPackage('relbench', 'transformers|sentence_transformers')
     def test_processor_initialization(self) -> None:
         """Test RelBenchProcessor initialization."""
         try:
@@ -121,6 +124,7 @@ class TestRelBenchProcessor:
         processor = RelBenchProcessor()
         assert processor is not None
 
+    @withPackage('relbench', 'transformers|sentence_transformers')
     def test_relbench_data_processing(self) -> None:
         """Test RelBench data processing."""
         try:

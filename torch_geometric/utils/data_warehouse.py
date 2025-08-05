@@ -890,8 +890,27 @@ class SimpleWarehouseModel(nn.Module):
             raise RuntimeError(f"Task prediction failed: {e}") from e
 
 
-def create_warehouse_demo() -> WarehouseConversationSystem:
-    """Create a warehouse demo system.
+def create_warehouse_demo(
+        llm_model_name: str = "TinyLlama/TinyLlama-1.1B-Chat-v0.1",
+        llm_temperature: float = 0.7, llm_top_k: int = 50,
+        llm_top_p: float = 0.9, llm_max_tokens: int = DEFAULT_MAX_TOKENS,
+        gnn_hidden_channels: int = HIDDEN_DIM, gnn_num_layers: int = 2,
+        gnn_heads: int = 4, dropout: float = DROPOUT, device: str = "cpu",
+        use_gretriever: bool = True) -> WarehouseConversationSystem:
+    """Create a warehouse demo system with configurable parameters.
+
+    Args:
+        llm_model_name: HuggingFace model name for the LLM
+        llm_temperature: Temperature for LLM text generation
+        llm_top_k: Top-k sampling for LLM
+        llm_top_p: Top-p (nucleus) sampling for LLM
+        llm_max_tokens: Maximum tokens to generate
+        gnn_hidden_channels: Hidden channels for GNN layers
+        gnn_num_layers: Number of GNN layers
+        gnn_heads: Number of attention heads for GAT
+        dropout: Dropout rate for regularization
+        device: Device to run models on
+        use_gretriever: Whether to use G-Retriever integration
 
     Returns:
         Configured warehouse conversation system
@@ -901,10 +920,15 @@ def create_warehouse_demo() -> WarehouseConversationSystem:
     """
     try:
         model: WarehouseGRetriever | SimpleWarehouseModel
-        if HAS_GRETRIEVER:
-            model = WarehouseGRetriever()
+        if HAS_GRETRIEVER and use_gretriever:
+            model = WarehouseGRetriever(
+                llm_model_name=llm_model_name,
+                gnn_hidden_channels=gnn_hidden_channels,
+                gnn_num_layers=gnn_num_layers, gnn_heads=gnn_heads,
+                dropout=dropout)
         else:
-            model = SimpleWarehouseModel()
+            model = SimpleWarehouseModel(hidden_channels=gnn_hidden_channels,
+                                         input_channels=EMBEDDING_DIM)
 
         return WarehouseConversationSystem(model)
 
