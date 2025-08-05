@@ -71,7 +71,7 @@ def test_tensor_gnan_node_importance():
         normalize_rho=False,  # simplifies the equality check
     )
 
-    graph_out = model(data)            # [1, 4]
+    graph_out = model(data)  # [1, 4]
     node_contrib = model.node_importance(data)  # [N, 4]
 
     # Shape checks

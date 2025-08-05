@@ -160,7 +160,7 @@ class TensorGNAN(nn.Module):
     obtain *node‐level* predictions instead, in which case the forward returns
     a tensor of shape ``[num_nodes, out_channels]`` or ``[len(node_ids),
     out_channels]`` if ``node_ids`` is provided.
-    
+
     Args:
         in_channels (int): Number of input node features.
         out_channels (int): Output dimension.
@@ -209,14 +209,19 @@ class TensorGNAN(nn.Module):
                     raise ValueError("Feature groups cannot be empty")
                 for feat_idx in group:
                     if feat_idx < 0 or feat_idx >= in_channels:
-                        raise ValueError(f"Feature index {feat_idx} out of range [0, {in_channels})")
+                        raise ValueError(
+                            f"Feature index {feat_idx} out of range [0, {in_channels})"
+                        )
                     if feat_idx in all_features:
-                        raise ValueError(f"Feature index {feat_idx} appears in multiple groups")
+                        raise ValueError(
+                            f"Feature index {feat_idx} appears in multiple groups"
+                        )
                     all_features.add(feat_idx)
-            
+
             if len(all_features) != in_channels:
                 missing = set(range(in_channels)) - all_features
-                raise ValueError(f"Missing feature indices in groups: {missing}")
+                raise ValueError(
+                    f"Missing feature indices in groups: {missing}")
 
         # Create MLPs for each feature group
         self.fs = nn.ModuleList()
@@ -224,12 +229,13 @@ class TensorGNAN(nn.Module):
             group_size = len(group)
             if group_size == 1:
                 # Single feature - use original MLP
-                mlp = _PerFeatureMLP(out_channels, n_layers, hidden_channels, 
-                                   bias=bias, dropout=dropout)
+                mlp = _PerFeatureMLP(out_channels, n_layers, hidden_channels,
+                                     bias=bias, dropout=dropout)
             else:
                 # Multiple features - use new multi-feature MLP
-                mlp = _MultiFeatureMLP(group_size, out_channels, n_layers, 
-                                     hidden_channels, bias=bias, dropout=dropout)
+                mlp = _MultiFeatureMLP(group_size, out_channels, n_layers,
+                                       hidden_channels, bias=bias,
+                                       dropout=dropout)
             self.fs.append(mlp)
 
         self.rho = _RhoMLP(out_channels, n_layers, hidden_channels, bias=True)
@@ -241,13 +247,14 @@ class TensorGNAN(nn.Module):
             if len(group) == 1:
                 feat_tensor = x[:, group[0]]  # [N]
             else:
-                feat_tensor = x[:, group]      # [N, |group|]
-            fx_list.append(mlp(feat_tensor))   # [N, C]
-        fx = torch.stack(fx_list, dim=1)        # [N, num_groups, C]
-        f_sum = fx.sum(dim=1)                   # [N, C]
+                feat_tensor = x[:, group]  # [N, |group|]
+            fx_list.append(mlp(feat_tensor))  # [N, C]
+        fx = torch.stack(fx_list, dim=1)  # [N, num_groups, C]
+        f_sum = fx.sum(dim=1)  # [N, C]
         return fx, f_sum
 
-    def _compute_rho(self, dist: torch.Tensor, norm: torch.Tensor, data) -> torch.Tensor:
+    def _compute_rho(self, dist: torch.Tensor, norm: torch.Tensor,
+                     data) -> torch.Tensor:
         """Compute rho tensor, including normalization and masking."""
         x = data.x  # type: ignore
         inv_dist = 1.0 / (1.0 + dist)  # [N, N]
@@ -300,9 +307,9 @@ class TensorGNAN(nn.Module):
         rho = self._compute_rho(dist, norm, data)
 
         # Aggregate over *receiver* nodes i to obtain \sum_i rho(d_{ij}).
-        rho_sum_over_i = rho.sum(dim=0)          # [N, C]
+        rho_sum_over_i = rho.sum(dim=0)  # [N, C]
 
         # Node contribution s_j = (sum_k f_k(x_jk)) * (sum_i rho(d_{ij})).
-        node_contrib = f_sum * rho_sum_over_i    # [N, C]
+        node_contrib = f_sum * rho_sum_over_i  # [N, C]
 
         return node_contrib
