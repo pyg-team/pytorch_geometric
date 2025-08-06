@@ -19,7 +19,6 @@ matrix fits comfortably in memory and can be coqmputed on the fly.
 
 from __future__ import annotations
 
-import pickle
 import random
 from pathlib import Path
 
