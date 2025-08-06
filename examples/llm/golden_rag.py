@@ -133,31 +133,33 @@ def test(model, data_list, args):
     scores = []
     eval_tuples = []
     for iter, test_batch in enumerate(tqdm(data_list, desc="Testing")):
-        if iter > 10:
+        if iter > 3:
+            print("Ending early for debugging")
             break
-        new_qs = []
-        raw_qs = test_batch.question
-        # insert VectorRAG context
+        q_with_context = ""
+        context = ""
+        q_no_context = test_batch.question
+
         # TODO: should this be done in a different way?
+        # insert VectorRAG context
         doc_path = Path(args.dataset) / "corpus" / test_batch.context_doc
         with open(doc_path) as f:
-            contents = f.read()
-            new_qs.append(prompt_template.format(
+            context = f.read()
+            q_with_context = prompt_template.format(
                 question=test_batch.question,
-                context=contents)
+                context=context
             )
-            
-        # NOTE: this includes contexts. use = raw_qs to test without context
-        test_batch.question = new_qs
-        
+
         # LLM generator inference step
-        # TODO: please check if this makes sense. context i believe is left blank in txt2kg_rag
-        preds = (model.inference(question=test_batch.question,
-                                 context="",
+        # TODO: please check if this makes sense
+        preds = (model.inference(question=q_no_context,
+                                 context=context,
                                  max_tokens=max_chars_in_train_answer))
-        for question, pred, label in zip(raw_qs, preds, test_batch.label):
+
+        for question, pred, label in zip(q_no_context, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
+        breakpoint()
         scores.append(eval(question, pred, label))
 
     avg_scores = sum(scores) / len(scores)
