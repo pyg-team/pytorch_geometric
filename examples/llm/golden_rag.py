@@ -39,7 +39,7 @@ def parse_args():
         default="https://integrate.api.nvidia.com/v1",
         help="The URL hosting your model, \
         in case you are not using the public NIM.")
-    parser.add_argument('--eval_batch_size', type=int, default=2,
+    parser.add_argument('--eval_batch_size', type=int, default=1,
                         help="Evaluation batch size")
     parser.add_argument('--llm_generator_name', type=str,
                         default="meta-llama/Meta-Llama-3.1-8B-Instruct",
@@ -73,42 +73,37 @@ def get_data(args):
     Path(args.dataset) / "corpus"
 
     with open(json_path) as file:
-        json_obj = json.load(file)
-
-    ## TODO: Once generation is completed, this should contain the path to each document for each QA pair
-    text_contexts = []
-
-    return json_obj, text_contexts
+        return json.load(file)
 
 
 def make_dataset(args):
-    qa_pairs, context_docs = get_data(args)
-    print(" ==> Number of Docs:", len(context_docs))
-    data_lists = {"test": []}
+    print("Reading in QA Data...")
+    qa_data = get_data(args)
+    print(" ==> Number of Docs:", len(qa_data))
+
+    # NOTE: test and validation split have been removed
+    # data_lists = {"test": []}
     global max_chars_in_train_answer
 
     total_data_list = []
-    for data_point in tqdm(qa_pairs, desc="Building un-split dataset"):
-        if data_point["is_impossible"]:
-            continue
-        question, answer = data_point["question"], data_point["answer"]
-        max_chars_in_train_answer = max(len(answer), max_chars_in_train_answer)
-
+    for pair in tqdm(qa_data, desc="Building un-split dataset"):
+        max_chars_in_train_answer = max(len(pair['answer']), max_chars_in_train_answer)
         data = Data()
-        data.question = question
-        data.label = answer
-        # TODO add context
-        data.text_context = "dummy contexts for placeholder :)"
+        data.question = pair['question']
+        data.label = pair['answer']
+        data.context_doc = pair['file_name']
         total_data_list.append(data)
     random.shuffle(total_data_list)
 
-    # NOTE: test and validation split have been removed
-    data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
-    torch.save((data_lists, max_chars_in_train_answer), dataset_path)
+    torch.save((total_data_list, max_chars_in_train_answer), dataset_path)
 
-    return data_lists
+    # NOTE: test and validation split have been removed. below code for all pairs
+    # torch.save((test_data, max_chars_in_train_answer), dataset_path)
+    # return total_data_list
+
+    return total_data_list[int(.8 * len(total_data_list)):]
 
 
 def get_model(args):
@@ -127,7 +122,8 @@ def get_model(args):
     return llm
 
 
-def test(model, test_loader, args):
+def test(model, data_list, args):
+    print(f"LLMJudge using {args.NV_NIM_MODEL}")
     llm_judge = LLMJudge(args.NV_NIM_MODEL, args.NV_NIM_KEY, args.ENDPOINT_URL)
 
     def eval(question: str, pred: str, correct_answer: str):
@@ -136,25 +132,28 @@ def test(model, test_loader, args):
 
     scores = []
     eval_tuples = []
-    for iter, test_batch in enumerate(tqdm(test_loader, desc="Testing")):
+    for iter, test_batch in enumerate(tqdm(data_list, desc="Testing")):
         if iter > 10:
             break
         new_qs = []
-        raw_qs = test_batch["question"]
-        for i, q in enumerate(test_batch["question"]):
-            # insert VectorRAG context
-            new_qs.append(
-                prompt_template.format(question=q,
-                                       context=test_batch.text_context[i]))
-
+        raw_qs = test_batch.question
+        # insert VectorRAG context
+        # TODO: should this be done in a different way?
+        doc_path = Path(args.dataset) / "corpus" / test_batch.context_doc
+        with open(doc_path) as f:
+            contents = f.read()
+            new_qs.append(prompt_template.format(
+                question=test_batch.question,
+                context=contents)
+            )
+            
+        # NOTE: this includes contexts. use = raw_qs to test without context
         test_batch.question = new_qs
-
-        ###
-        # generator should be given questions with golden contexts
-        ###
-
+        
+        # LLM generator inference step
+        # TODO: please check if this makes sense. context i believe is left blank in txt2kg_rag
         preds = (model.inference(question=test_batch.question,
-                                 context=test_batch.text_context,
+                                 context="",
                                  max_tokens=max_chars_in_train_answer))
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
@@ -181,8 +180,10 @@ if __name__ == '__main__':
 
     eval_batch_size = args.eval_batch_size
     data_lists = make_dataset(args)
-    test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
-                             drop_last=False, pin_memory=True, shuffle=False)
+    
+    # NOTE: do we need this now?
+    # test_loader = DataLoader(data_lists, batch_size=eval_batch_size,
+                            #  drop_last=False, pin_memory=True, shuffle=False)
 
     model = get_model(args)
-    test(model, test_loader, args)
+    test(model, data_lists, args)
