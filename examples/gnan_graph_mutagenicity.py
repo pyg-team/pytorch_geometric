@@ -106,23 +106,8 @@ def main():
     root = Path("data/Mutagenicity")
 
     # Save/load preprocessed dataset to avoid recomputation
-    import os
-    processed_path = root / "mutagenicity_gnan_preprocessed.pt"
-    if processed_path.exists():
-        print(f"Loading preprocessed dataset from {processed_path}")
-        try:
-            dataset = torch.load(processed_path)
-        except (pickle.UnpicklingError, RuntimeError):
-            print("Could not load preprocessed file, re-creating...")
-            os.remove(processed_path)
-            dataset = TUDataset(root=str(root), name="Mutagenicity",
-                                transform=PreprocessDistances())
-            torch.save(dataset, processed_path)
-    else:
-        print("Preprocessing dataset and saving to disk...")
-        dataset = TUDataset(root=str(root), name="Mutagenicity",
-                            transform=PreprocessDistances())
-        torch.save(dataset, processed_path)
+    dataset = TUDataset(root=str(root), name="Mutagenicity",
+                        transform=PreprocessDistances())
 
     num_classes = dataset.num_classes
     in_channels = dataset.num_features
