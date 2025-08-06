@@ -146,17 +146,15 @@ def test(model, data_list, args):
         with open(doc_path) as f:
             context = f.read()
             q_with_context = prompt_template.format(
-                question=test_batch.question,
-                context=context
-            )
+                question=test_batch.question, context=context)
 
         # LLM generator inference step
         # TODO: please check if this makes sense
-        preds = (model.inference(question=q_no_context,
-                                 context=context,
+        preds = (model.inference(question=q_no_context, context=context,
                                  max_tokens=max_chars_in_train_answer))
 
-        for question, pred, label in zip(q_no_context, preds, test_batch.label):
+        for question, pred, label in zip(q_no_context, preds,
+                                         test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
         breakpoint()
