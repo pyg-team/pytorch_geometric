@@ -133,9 +133,9 @@ def test(model, data_list, args):
     scores = []
     eval_tuples = []
     for iter, test_batch in enumerate(tqdm(data_list, desc="Testing")):
-        if iter > 3:
-            print("Ending early for debugging")
-            break
+        # if iter > 3:
+        #     print("Ending early for debugging")
+        #     break
         q_with_context = ""
         context = ""
         q_no_context = test_batch.question
@@ -151,13 +151,13 @@ def test(model, data_list, args):
             )
 
         # LLM generator inference step
-        # TODO: please check if this makes sense
-        preds = (model.inference(question=q_no_context,
-                                 context=context,
-                                 max_tokens=max_chars_in_train_answer))
+        # TODO: please check if this makes sense. context was "" in txt2kg_rag. Setting it equals to the context doc returned some weird output. A list[~260]
+        q = q_with_context
+        pred = model.inference(question=q,
+                               context="",
+                               max_tokens=max_chars_in_train_answer)
 
-        for question, pred, label in zip(q_no_context, preds, test_batch.label):
-            eval_tuples.append((question, pred, label))
+        eval_tuples.append((q, pred, test_batch.label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
         breakpoint()
         scores.append(eval(question, pred, label))
