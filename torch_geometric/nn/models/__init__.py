@@ -93,4 +93,21 @@ __all__ = classes = [
     'SGFormer',
     'Polynormer',
     'ARLinkPredictor',
+    'GraphReservoirCell',
+    'MultiPerspectiveAttention',
+    'MPGESNEncoder',
+    'MultiPerspectiveGraphESN',
+    'MPGESNLoss',
+    'create_electrode_graph',
+    'create_default_config',
 ]
+
+from .mp_gesn import (
+    GraphReservoirCell,
+    MultiPerspectiveAttention,
+    MPGESNEncoder,
+    MultiPerspectiveGraphESN,
+    MPGESNLoss,
+    create_electrode_graph,
+    create_default_config,
+)
