@@ -1,8 +1,10 @@
-from typing import List, Optional, Tuple, Union
+from typing import Final, List, Optional, Tuple, Union
 
+import torch
 import torch.nn.functional as F
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
@@ -63,6 +65,8 @@ class SAGEConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
+    SUPPORTS_FUSED_EDGE_INDEX: Final[bool] = True
+
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -147,6 +151,13 @@ class SAGEConv(MessagePassing):
         return x_j
 
     def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
+        if not torch.jit.is_scripting() and isinstance(adj_t, EdgeIndex):
+            return adj_t.matmul(
+                other=x[0],
+                reduce=self.aggr,
+                transpose=True,
+            )
+        
         if isinstance(adj_t, SparseTensor):
             adj_t = adj_t.set_value(None, layout=None)
         return spmm(adj_t, x[0], reduce=self.aggr)

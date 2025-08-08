@@ -2,6 +2,7 @@ import pytest
 import torch
 
 import torch_geometric.typing
+from torch_geometric import EdgeIndex
 from torch_geometric.nn import MLPAggregation, SAGEConv
 from torch_geometric.testing import (
     assert_module,
@@ -147,3 +148,47 @@ def test_compile_multi_aggr_sage_conv(device):
     expected = conv(x, edge_index)
     out = compiled_conv(x, edge_index)
     assert torch.allclose(out, expected, atol=1e-6)
+
+
+@pytest.mark.parametrize('aggr', ['mean', 'sum', 'max'])
+def test_sage_conv_edge_index(aggr):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    
+    conv = SAGEConv(8, 32, aggr=aggr)
+    
+    # Test regular edge_index
+    out1 = conv(x, edge_index)
+    assert out1.size() == (4, 32)
+    
+    # Test EdgeIndex with column sorting
+    edge_index_obj = EdgeIndex(edge_index, sort_order='col', sparse_size=(4, 4))
+    out2 = conv(x, edge_index_obj)
+    assert out2.size() == (4, 32)
+    assert torch.allclose(out1, out2, atol=1e-6)
+    
+    # Test EdgeIndex with row sorting  
+    edge_index_obj_row = EdgeIndex(edge_index, sort_order='row', sparse_size=(4, 4))
+    out3 = conv(x, edge_index_obj_row)
+    assert out3.size() == (4, 32)
+    assert torch.allclose(out1, out3, atol=1e-6)
+    
+    # Test bipartite case
+    x1 = torch.randn(4, 8)
+    x2 = torch.randn(2, 16)
+    conv_bipartite = SAGEConv((8, 16), 32, aggr=aggr)
+    
+    # Regular bipartite
+    out_bi1 = conv_bipartite((x1, x2), edge_index)
+    assert out_bi1.size() == (2, 32)
+    
+    # EdgeIndex bipartite
+    edge_index_bi = EdgeIndex(edge_index, sort_order='col', sparse_size=(4, 2))
+    out_bi2 = conv_bipartite((x1, x2), edge_index_bi)
+    assert out_bi2.size() == (2, 32)
+    assert torch.allclose(out_bi1, out_bi2, atol=1e-6)
+    
+    # Test with (x1, None) case
+    out_bi3 = conv_bipartite((x1, None), edge_index, size=(4, 2))
+    out_bi4 = conv_bipartite((x1, None), edge_index_bi)
+    assert torch.allclose(out_bi3, out_bi4, atol=1e-6)
