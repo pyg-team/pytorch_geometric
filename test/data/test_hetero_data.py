@@ -594,7 +594,7 @@ def test_hetero_data_update():
                        other['paper', 'paper'].edge_index)
 
 
-def test_hetero_data_connected_components():
+def test_hetero_data_connected_components_single_node_type():
     data = HeteroData()
     data["red"].x = torch.tensor([[1.0], [2.0], [3.0], [4.0], [5.0]])
     data["red"].y = torch.tensor([1, 2, 3, 4, 5])
@@ -644,6 +644,88 @@ def test_hetero_data_connected_components():
                        torch.tensor([[1], [1]]))
     assert torch.equal(split_data[1]["red", "to", "red"].edge_index,
                        torch.tensor([[0, 1], [1, 0]]))
+
+
+def test_hetero_data_connected_components_multiple_node_type():
+    data = HeteroData()
+    data["red"].x = torch.tensor([[1.0], [2.0], [3.0], [4.0], [5.0]])
+    data["red"].y = torch.tensor([1, 2, 3, 4, 5])
+    data["red"].z = torch.tensor([[1.1, 1.2], [2.1, 2.2], [3.1, 3.2],
+                                  [4.1, 4.2], [5.1, 5.2]])
+    data["blue"].x = torch.tensor([[6.0], [7.0]])
+    data["red", "to",
+         "red"].edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]],
+                                          dtype=torch.long)
+    data["red", "with", "red"].edge_index = torch.tensor([[1], [1]],
+                                                         dtype=torch.long)
+    data["red", "to", "blue"].edge_index = torch.tensor([[0], [0]])
+    split_data = data.connected_components()
+
+    assert isinstance(split_data, list)
+    assert len(split_data) == 4
+    assert isinstance(split_data[0], HeteroData)
+    assert isinstance(split_data[1], HeteroData)
+    assert isinstance(split_data[2], HeteroData)
+    assert isinstance(split_data[3], HeteroData)
+    assert split_data[0].node_types == ['red', 'blue']
+    assert split_data[1].node_types == ['red']
+    assert split_data[2].node_types == ['red']
+    assert split_data[3].node_types == ['blue']
+    assert split_data[0].edge_types == [('red', 'to', 'red'),
+                                        ('red', 'with', 'red'),
+                                        ('red', 'to', 'blue')]
+    assert split_data[1].edge_types == [('red', 'to', 'red')]
+    assert split_data[2].edge_types == []
+    assert split_data[3].edge_types == []
+    assert torch.equal(split_data[0]["red"].x, torch.tensor([[1.0], [2.0]]))
+    assert torch.equal(split_data[0]["red"].y, torch.tensor([1, 2]))
+    assert torch.equal(split_data[0]["red"].z,
+                       torch.tensor([[1.1, 1.2], [2.1, 2.2]]))
+    assert torch.equal(split_data[0]["blue"].x, torch.tensor([[6.0]]))
+    assert torch.equal(split_data[1]["red"].x, torch.tensor([[3.0], [4.0]]))
+    assert torch.equal(split_data[1]["red"].y, torch.tensor([3, 4]))
+    assert torch.equal(split_data[1]["red"].z,
+                       torch.tensor([[3.1, 3.2], [4.1, 4.2]]))
+    assert torch.equal(split_data[2]["red"].x, torch.tensor([[5.0]]))
+    assert torch.equal(split_data[2]["red"].y, torch.tensor([5]))
+    assert torch.equal(split_data[2]["red"].z, torch.tensor([[5.1, 5.2]]))
+    assert torch.equal(split_data[3]["blue"].x, torch.tensor([[7.0]]))
+    assert torch.equal(split_data[0]["red", "to", "red"].edge_index,
+                       torch.tensor([[0, 1], [1, 0]]))
+    assert torch.equal(split_data[0]["red", "with", "red"].edge_index,
+                       torch.tensor([[1], [1]]))
+    assert torch.equal(split_data[0]["red", "to", "blue"].edge_index,
+                       torch.tensor([[0], [0]]))
+    assert torch.equal(split_data[1]["red", "to", "red"].edge_index,
+                       torch.tensor([[0, 1], [1, 0]]))
+
+
+def test_hetero_data_connected_components_single_component():
+    data = HeteroData()
+    data["red"].x = torch.tensor([[1.0], [2.0]])
+    data["red"].y = torch.tensor([1, 2])
+    data["red"].z = torch.tensor([[1.1, 1.2], [2.1, 2.2]])
+    data["blue"].x = torch.tensor([[3.0]])
+    data["red", "to", "red"].edge_index = torch.tensor([[0, 1], [1, 0]],
+                                                       dtype=torch.long)
+    data["red", "to", "blue"].edge_index = torch.tensor([[0], [0]])
+    split_data = data.connected_components()
+
+    assert isinstance(split_data, list)
+    assert len(split_data) == 1
+    assert isinstance(split_data[0], HeteroData)
+    assert split_data[0].node_types == ['red', 'blue']
+    assert split_data[0].edge_types == [('red', 'to', 'red'),
+                                        ('red', 'to', 'blue')]
+    assert torch.equal(split_data[0]["red"].x, torch.tensor([[1.0], [2.0]]))
+    assert torch.equal(split_data[0]["red"].y, torch.tensor([1, 2]))
+    assert torch.equal(split_data[0]["red"].z,
+                       torch.tensor([[1.1, 1.2], [2.1, 2.2]]))
+    assert torch.equal(split_data[0]["blue"].x, torch.tensor([[3.0]]))
+    assert torch.equal(split_data[0]["red", "to", "red"].edge_index,
+                       torch.tensor([[0, 1], [1, 0]]))
+    assert torch.equal(split_data[0]["red", "to", "blue"].edge_index,
+                       torch.tensor([[0], [0]]))
 
 
 @pytest.fixture
