@@ -594,7 +594,7 @@ def test_hetero_data_update():
                        other['paper', 'paper'].edge_index)
 
 
-def test_hetero_data_separate():
+def test_hetero_data_connected_components():
     data = HeteroData()
     data["red"].x = torch.tensor([[1.0], [2.0], [3.0], [4.0], [5.0]])
     data["red"].y = torch.tensor([1, 2, 3, 4, 5])
@@ -606,7 +606,7 @@ def test_hetero_data_separate():
                                           dtype=torch.long)
     data["red", "with", "red"].edge_index = torch.tensor([[1], [1]],
                                                          dtype=torch.long)
-    split_data = data.separate()
+    split_data = data.connected_components()
 
     assert isinstance(split_data, list)
     assert len(split_data) == 5

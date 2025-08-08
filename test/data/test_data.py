@@ -418,7 +418,7 @@ def test_data_update():
     assert torch.equal(data.z, torch.arange(10, 15))
 
 
-def test_data_separate():
+def test_data_connected_components():
     data = Data()
     data.x = torch.tensor([[1.0], [2.0], [3.0], [4.0], [5.0]])
     data.y = torch.tensor([[1.1, 1.2], [2.1, 2.2], [3.1, 3.2], [4.1, 4.2],
@@ -426,7 +426,7 @@ def test_data_separate():
     data.edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]],
                                    dtype=torch.long)
 
-    split_data = data.separate()
+    split_data = data.connected_components()
     assert isinstance(split_data, list)
     assert len(split_data) == 3
 

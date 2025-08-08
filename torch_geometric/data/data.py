@@ -905,11 +905,11 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         return data
 
-    def separate(self) -> List[Self]:
+    def connected_components(self) -> List[Self]:
         r"""Extracts connected components of the graph using a union-find
         algorithm. The components are returned as a list of
         :class:`~torch_geometric.data.Data` objects, where each object
-        represents a disconnected component of the graph. Only works if
+        represents a connected component of the graph. Only works if
         attributes are slicable (i.e. has the __getitem__ method implemented)
         and are mutable (i.e. has the __setitem__ method implemented).
 
@@ -922,7 +922,7 @@ class Data(BaseData, FeatureStore, GraphStore):
                 [[0, 1, 2, 3], [1, 0, 3, 2]], dtype=torch.long
             )
 
-            split_data = data.separate()
+            split_data = data.connected_components()
             print(len(split_data))
             >>> 2
 
@@ -1254,7 +1254,7 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         return list(edge_attrs.values())
 
-    # Separate Helper Functions ##########################################
+    # Connected Components Helper Functions ###################################
 
     def _check_slicable_and_mutable(self):
         r"""Checks if the node and edge attributes are slicable and mutable.

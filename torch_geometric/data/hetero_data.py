@@ -487,7 +487,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return status
 
-    def separate(self) -> List[Self]:
+    def connected_components(self) -> List[Self]:
         r"""Extracts connected components of the heterogeneous graph using
         a union-find algorithm. The components are returned as a list of
         :class:`~torch_geometric.data.HeteroData` objects. Only works if
@@ -503,7 +503,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 [[0, 1, 2, 3], [1, 0, 3, 2]], dtype=torch.long
             )
 
-            split_data = data.separate()
+            split_data = data.connected_components()
             print(len(split_data))
             >>> 4
 
@@ -533,7 +533,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             )
 
         Returns:
-            List[HeteroData]: A list of disconnected components.
+            List[HeteroData]: A list of connected components.
         """
         self._check_slicable_and_mutable()
 
@@ -1291,13 +1291,13 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return list(edge_attrs.values())
 
-    # Separate Helper Functions ##########################################
+    # Connected Components Helper Functions ###################################
 
     def _check_slicable_and_mutable(self):
         r"""Checks if the node and edge attributes are slicable and mutable.
         Raises a TypeError if any of the attributes do not support slicing or
-        are not mutable. This is necessary for the `separate` method to work
-        correctly.
+        are not mutable. This is necessary for the `connected_components`
+        method to work correctly.
 
         Raises:
             TypeError: If any node or edge type does not support slicing or is
