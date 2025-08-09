@@ -4,14 +4,23 @@ import torch
 
 try:
     import pytorch_lightning as pl
+    _pl_is_available = True
+except ImportError:
+    try:
+        import lightning.pytorch as pl
+        _pl_is_available = True
+    except ImportError:
+        _pl_is_available = False
+
+if _pl_is_available:
     LightningModule = pl.LightningModule
     Callback = pl.Callback
-except ImportError:
+else:
     pl = object
     LightningModule = torch.nn.Module
     Callback = object
 
     warnings.warn(
-        "Please install 'pytorch_lightning' via  "
-        "'pip install pytorch_lightning' in order to use GraphGym",
+        "To use GraphGym, install 'pytorch_lightning' or 'lightning' via "
+        "'pip install pytorch_lightning' or 'pip install lightning'",
         stacklevel=2)

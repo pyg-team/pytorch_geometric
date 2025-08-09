@@ -7,8 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- Fix `detach()` warnings in example scripts involving tensor conversions. ([#10357](https://github.com/pyg-team/pytorch_geometric/pull/10357))
-- Fix non-tuple indexing to resolve PyTorch deprecation warning. ([#10389](https://github.com/pyg-team/pytorch_geometric/pull/10389))
+- Fixed importing PyTorch Lightning in `torch_geometric.graphgym` and `torch_geometric.data.lightning` when using `lightning` instead of `pytorch-lightning` ([#10404](https://github.com/pyg-team/pytorch_geometric/pull/10404))
+- Fixed `detach()` warnings in example scripts involving tensor conversions ([#10357](https://github.com/pyg-team/pytorch_geometric/pull/10357))
+- Fixed non-tuple indexing to resolve PyTorch deprecation warning ([#10389](https://github.com/pyg-team/pytorch_geometric/pull/10389))
 
 ### Added
 
