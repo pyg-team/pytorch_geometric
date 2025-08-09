@@ -12,7 +12,7 @@ inputs:
     default: cpu
   torchvision-version:
     required: false
-    default: '0.22.0'
+    default: '0.23.0'
   full_install:
     required: false
     default: true
