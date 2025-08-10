@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: "github-actions"
     directories:
       - "/"
-      - "/.github/actions/"
+      - "/.github/actions/setup"
     schedule:
       interval: "daily"
       time: "00:00"
