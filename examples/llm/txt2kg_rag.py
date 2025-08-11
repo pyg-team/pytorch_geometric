@@ -327,7 +327,7 @@ def index_kg(args, context_docs):
         # check to see if triples generation are using the correct model
         if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_data['model']:
             raise RuntimeError(
-                "Error: The stored triples were generated using a different model"
+                "Error: stored triples were generated using a different model"
             )
 
         saved_relevant_triples = checkpoint_data['triples']
@@ -422,7 +422,7 @@ def make_dataset(args):
         saved_data = torch.load(raw_triples_path)
         if args.NV_NIM_MODEL.split('/')[-1] != saved_data['model']:
             raise RuntimeError(
-                "Error: The stored triples were generated using a different model"
+                "Error: stored triples were generated using a different model"
             )
         
         print(f" -> Saved triples generated with: {saved_data['model']}")

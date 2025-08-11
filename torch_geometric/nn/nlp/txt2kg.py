@@ -197,8 +197,7 @@ class TXT2KG():
         self.doc_id_counter += 1
 
     def get_model_name(self) -> str:
-        """Returns the name of model used to generate triples
-        """
+        """Returns the name of model used to generate triples"""
         return self.NIM_MODEL.split('/')[-1] if not self.local_LM else "local"
 
 
