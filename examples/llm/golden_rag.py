@@ -138,7 +138,7 @@ def test(model, data_list, args):
         #     break
         q_with_context = ""
         context = ""
-        q_no_context = test_batch.question
+        test_batch.question
 
         # TODO: should this be done in a different way?
         # insert VectorRAG context
@@ -151,8 +151,7 @@ def test(model, data_list, args):
         # LLM generator inference step
         # TODO: please check if this makes sense. context was "" in txt2kg_rag. Setting it equals to the context doc returned some weird output. A list[~260]
         q = q_with_context
-        pred = model.inference(question=q,
-                               context="",
+        pred = model.inference(question=q, context="",
                                max_tokens=max_chars_in_train_answer)
 
         eval_tuples.append((q, pred, test_batch.label))
