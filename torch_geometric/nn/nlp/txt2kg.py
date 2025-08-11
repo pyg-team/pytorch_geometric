@@ -85,7 +85,9 @@ class TXT2KG():
         Returns:
             None
         """
-        torch.save(self.relevant_triples, path)
+        
+        torch.save({"model": self.get_model_name(),
+                    "triples": self.relevant_triples}, path)
 
     def _chunk_to_triples_str_local(self, txt: str) -> str:
         # call LLM on text
@@ -191,6 +193,12 @@ class TXT2KG():
                         pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
+    
+    def get_model_name(self) -> str:
+        """
+        Returns the name of model used to generate triples
+        """
+        return self.NIM_MODEL.split('/')[-1] if not self.local_LM else "local"
 
 
 def _chunk_to_triples_str_cloud(

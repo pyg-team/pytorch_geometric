@@ -31,6 +31,7 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
+from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn import (
     GAT,
@@ -317,13 +318,22 @@ def index_kg(args, context_docs):
     print(
         "Guide for deploying NIM: https://developer.nvidia.com/blog/a-simple-guide-to-deploying-generative-ai-with-nvidia-nim/"  # noqa
     )
+    context_docs = context_docs[:12] ## REMOVE ME
+    
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
     checkpoint_path = os.path.join(args.dataset, "checkpoint_kg.pt")
     if os.path.exists(checkpoint_path):
         print("Restoring KG from checkpoint...")
-        saved_relevant_triples = torch.load(checkpoint_path,
-                                            weights_only=False)
+        checkpoint_data = torch.load(checkpoint_path)
+        
+        # check to see if triples generation are using the correct model
+        if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_data['model']:
+            raise RuntimeError(
+                "Error: The stored triples were generated using a different model"
+            )
+        
+        saved_relevant_triples = checkpoint_data['triples']
         kg_maker.relevant_triples = saved_relevant_triples
         kg_maker.doc_id_counter = len(saved_relevant_triples)
         initial_tqdm_count = kg_maker.doc_id_counter
@@ -346,7 +356,10 @@ def index_kg(args, context_docs):
                             for triple_set in relevant_triples.values()))
     triples = list(dict.fromkeys(triples))
     raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
-    torch.save(triples, raw_triples_path)
+    torch.save({
+            "model": kg_maker.get_model_name(),
+            "triples": triples,
+        }, raw_triples_path)
     if os.path.exists(checkpoint_path):
         os.remove(checkpoint_path)
     return triples
@@ -409,7 +422,12 @@ def make_dataset(args):
     triples = []
     raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
     if os.path.exists(raw_triples_path):
-        triples = torch.load(raw_triples_path, weights_only=False)
+        saved_data = torch.load(raw_triples_path)
+        if args.NV_NIM_MODEL.split('/')[-1] != saved_data['model']:
+            raise RuntimeError(
+                "Error: The stored triples were generated using a different model"
+            )
+        triples = saved_data['saved_data']
     else:
         triples = index_kg(args, context_docs)
 
