@@ -317,21 +317,21 @@ def index_kg(args, context_docs):
     print(
         "Guide for deploying NIM: https://developer.nvidia.com/blog/a-simple-guide-to-deploying-generative-ai-with-nvidia-nim/"  # noqa
     )
-    context_docs = context_docs[:12] ## REMOVE ME
-    
+    context_docs = context_docs[:12]  ## REMOVE ME
+
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
     checkpoint_path = os.path.join(args.dataset, "checkpoint_kg.pt")
     if os.path.exists(checkpoint_path):
         print("Restoring KG from checkpoint...")
         checkpoint_data = torch.load(checkpoint_path)
-        
+
         # check to see if triples generation are using the correct model
         if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_data['model']:
             raise RuntimeError(
                 "Error: The stored triples were generated using a different model"
             )
-        
+
         saved_relevant_triples = checkpoint_data['triples']
         kg_maker.relevant_triples = saved_relevant_triples
         kg_maker.doc_id_counter = len(saved_relevant_triples)
@@ -356,9 +356,9 @@ def index_kg(args, context_docs):
     triples = list(dict.fromkeys(triples))
     raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
     torch.save({
-            "model": kg_maker.get_model_name(),
-            "triples": triples,
-        }, raw_triples_path)
+        "model": kg_maker.get_model_name(),
+        "triples": triples,
+    }, raw_triples_path)
     if os.path.exists(checkpoint_path):
         os.remove(checkpoint_path)
     return triples
