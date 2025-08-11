@@ -31,7 +31,6 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
-from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn import (
     GAT,
@@ -427,12 +426,13 @@ def make_dataset(args):
             raise RuntimeError(
                 "Error: The stored triples were generated using a different model"
             )
-        triples = saved_data['saved_data']
+        
+        print(f" -> Saved triples generated with: {saved_data['model']}")
+        triples = saved_data['triples']
     else:
         triples = index_kg(args, context_docs)
 
     print("Number of triples in our GraphDB =", len(triples))
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # creating the embedding model
@@ -764,7 +764,6 @@ if __name__ == '__main__':
             data_lists = update_data_lists(args, data_lists)
     else:
         data_lists = make_dataset(args)
-
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
     train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
