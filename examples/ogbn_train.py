@@ -11,7 +11,13 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
+from torch_geometric.nn.models import (
+    GAT,
+    GraphSAGE,
+    NodeFormer,
+    Polynormer,
+    SGFormer,
+)
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -37,24 +43,26 @@ parser.add_argument(
     "--model",
     type=str.lower,
     default='SGFormer',
-    choices=['sage', 'gat', 'sgformer', 'polynormer'],
+    choices=['sage', 'gat', 'sgformer', 'polynormer', 'nodeformer'],
     help="Model used for training",
 )
 
-parser.add_argument('-e', '--epochs', type=int, default=50)
+parser.add_argument('-e', '--epochs', type=int, default=100)
 parser.add_argument('-le', '--local_epochs', type=int, default=50,
                     help='warmup epochs for polynormer')
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=1,
+parser.add_argument('--num_heads', type=int, default=4,
                     help='number of heads for GAT or Graph Transformer model.')
-parser.add_argument('-b', '--batch_size', type=int, default=1024)
+parser.add_argument('-b', '--batch_size', type=int, default=2048)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
                     help='number of neighbors in each layer')
-parser.add_argument('--hidden_channels', type=int, default=256)
-parser.add_argument('--lr', type=float, default=0.003)
+parser.add_argument('--hidden_channels', type=int, default=128)
+parser.add_argument('--lr', type=float, default=1e-2)
 parser.add_argument('--wd', type=float, default=0.0)
 parser.add_argument('--dropout', type=float, default=0.5)
+parser.add_argument('--lamda', type=float, default=0.1,
+                    help='[nodeforder]weight for edge reg loss')
 parser.add_argument(
     '--use_directed_graph',
     action='store_true',
@@ -132,18 +140,24 @@ def train(epoch: int) -> tuple[Tensor, float]:
 
     total_loss = total_correct = 0
     for batch in train_loader:
+        batch = batch.to(device)
         optimizer.zero_grad()
         if args.model in ['sgformer', 'polynormer']:
             if args.model == 'polynormer' and epoch == args.local_epochs:
                 print('start global attention')
                 model._global = True
-            out = model(batch.x, batch.edge_index.to(device),
-                        batch.batch.to(device))[:batch.batch_size]
+            out = model(batch.x, batch.edge_index,
+                        batch.batch)[:batch.batch_size]
+        elif args.model in ['nodeformer']:
+            # import pdb; pdb.set_trace()
+            out, link_loss = model(batch.x, batch.edge_index)
+            out = out[:batch.batch_size]
         else:
-            out = model(batch.x,
-                        batch.edge_index.to(device))[:batch.batch_size]
+            out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze().to(torch.long)
         loss = F.cross_entropy(out, y)
+        if args.model in ['nodeformer']:
+            loss -= args.lamda * sum(link_loss) / len(link_loss)
         loss.backward()
         optimizer.step()
 
@@ -168,6 +182,9 @@ def test(loader: NeighborLoader) -> float:
         if args.model in ['sgformer', 'polynormer']:
             out = model(batch.x, batch.edge_index,
                         batch.batch)[:batch.batch_size]
+        elif args.model in ['nodeformer']:
+            out, _ = model(batch.x, batch.edge_index)
+            out = out[:batch.batch_size]
         else:
             out = model(batch.x, batch.edge_index)[:batch_size]
         pred = out.argmax(dim=-1)
@@ -181,6 +198,16 @@ def test(loader: NeighborLoader) -> float:
 
 def get_model(model_name: str) -> torch.nn.Module:
     if model_name == 'gat':
+        """
+        Average Epoch Time on training: 0.5798s
+        Average Epoch Time on inference: 0.1722s
+        Average Epoch Time: 0.7520s
+        Median Epoch Time: 0.7528s
+        Best Validation Accuracy: 68.54%
+        Testing...
+        Test Accuracy: 67.45%
+        Total Program Runtime: 76.2115s
+        """
         model = GAT(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -190,6 +217,16 @@ def get_model(model_name: str) -> torch.nn.Module:
             heads=args.num_heads,
         )
     elif model_name == 'sage':
+        """
+            Average Epoch Time on training: 0.3990s
+            Average Epoch Time on inference: 0.1387s
+            Average Epoch Time: 0.5378s
+            Median Epoch Time: 0.5314s
+            Best Validation Accuracy: 69.69%
+            Testing...
+            Test Accuracy: 68.26%
+            Total Program Runtime: 54.5042s
+        """
         model = GraphSAGE(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -214,6 +251,34 @@ def get_model(model_name: str) -> torch.nn.Module:
             out_channels=dataset.num_classes,
             local_layers=num_layers,
         )
+    elif model_name == 'nodeformer':
+        """
+            Average Epoch Time on training: 2.4006s
+            Average Epoch Time on inference: 0.2627s
+            Average Epoch Time: 2.6633s
+            Median Epoch Time: 2.6391s
+            Best Validation Accuracy: 69.96%
+            Testing...
+            Test Accuracy: 68.18%
+            Total Program Runtime: 267.4139s
+        """
+        model = NodeFormer(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            out_channels=dataset.num_classes,
+            num_layers=num_layers,
+            num_heads=args.num_heads,
+            use_bn=True,
+            nb_random_features=100,
+            use_gumbel=True,
+            use_residual=True,
+            use_act=True,
+            use_jk=True,
+            nb_gumbel_sample=5,
+            rb_order=1,
+            rb_trans='identity',
+            tau=1.0,
+        )
     else:
         raise ValueError(f'Unsupported model type: {model_name}')
 
@@ -227,8 +292,13 @@ optimizer = torch.optim.Adam(
     lr=args.lr,
     weight_decay=args.wd,
 )
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',
-                                                       patience=5)
+if args.model == 'nodeformer':
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
+                                                     milestones=[100, 200],
+                                                     gamma=0.5)
+else:
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='max', patience=5)
 
 print(f'Total time before training begins took '
       f'{time.perf_counter() - wall_clock_start:.4f}s')
