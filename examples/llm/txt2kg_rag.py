@@ -424,7 +424,7 @@ def make_dataset(args):
             raise RuntimeError(
                 "Error: stored triples were generated using a different model"
             )
-        
+
         print(f" -> Saved triples generated with: {saved_data['model']}")
         triples = saved_data['triples']
     else:
