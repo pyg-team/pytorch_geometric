@@ -146,9 +146,7 @@ def test(model, data_list, args):
         with open(doc_path) as f:
             context = f.read()
             q_with_context = prompt_template.format(
-                question=test_batch.question,
-                context=context
-            )
+                question=test_batch.question, context=context)
 
         # LLM generator inference step
         # TODO: please check if this makes sense. context was "" in txt2kg_rag. Setting it equals to the context doc returned some weird output. A list[~260]
