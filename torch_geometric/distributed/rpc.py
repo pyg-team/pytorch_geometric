@@ -113,7 +113,8 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
 class RPCRouter:
     r"""A router to get the worker based on the partition ID.
     Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph."""
+    https://github.com/rapidsai/cugraph.
+    """
     def __init__(self, partition_to_workers: List[List[str]]):
         for rpc_worker_list in partition_to_workers:
             if len(rpc_worker_list) == 0:

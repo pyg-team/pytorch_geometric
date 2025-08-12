@@ -23,6 +23,7 @@ class DistEdgeHeteroSamplerInput:
     types of an input edge are different.
     Deprecated, use 'CuGraph' instead:
     https://github.com/rapidsai/cugraph.
+
     Args:
         input_id (torch.Tensor, optional): The indices of the data loader input
             of the current mini-batch.
