@@ -24,8 +24,8 @@ from torch_geometric.typing import EdgeType, NodeOrEdgeType, NodeType
     https://github.com/rapidsai/cugraph")
 class RPCCallFeatureLookup(RPCCallBase):
     r"""A wrapper for RPC calls to the feature store.
-    Deprecated, use 'CuGraph' instead
-    https://github.com/rapidsai/cugraph
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     """
     def __init__(self, dist_feature: FeatureStore):
         super().__init__()
@@ -39,10 +39,9 @@ class RPCCallFeatureLookup(RPCCallBase):
 
 
 @dataclass
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
 class LocalTensorAttr(TensorAttr):
-    r"""Tensor attribute for storing features without :obj:`index`."""
+    r"""Tensor attribute for storing features without :obj:`index`.
+    """
     def __init__(
         self,
         group_name: Optional[Union[NodeType, EdgeType]] = _FieldStatus.UNSET,
@@ -50,7 +49,6 @@ class LocalTensorAttr(TensorAttr):
         index=None,
     ):
         super().__init__(group_name, attr_name, index)
-
 
 class LocalFeatureStore(FeatureStore):
     r"""Implements the :class:`~torch_geometric.data.FeatureStore` interface to
