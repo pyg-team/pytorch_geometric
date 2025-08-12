@@ -1,5 +1,7 @@
 Multi-GPU Training in Pure PyTorch
 ==================================
+Note that this method is deprecate in liue of CuGraph, the recommended multi-gpu method, see https://github.com/rapidsai/cugraph.
+
 
 For many large scale, real-world datasets, it may be necessary to scale-up training across multiple GPUs.
 This tutorial goes over how to set up a multi-GPU training  pipeline in :pyg:`PyG` with :pytorch:`PyTorch` via :class:`torch.nn.parallel.DistributedDataParallel`, without the need for any other third-party libraries (such as :lightning:`PyTorch Lightning`).
