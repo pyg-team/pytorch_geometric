@@ -13,7 +13,7 @@ class DistRole(Enum):
     https://github.com/rapidsai/cugraph")
 class DistContext:
     r"""Context information of the current process.
-    use 'CuGraph' instead
+    Deprecated, use 'CuGraph' instead
     https://github.com/rapidsai/cugraph"""
     rank: int
     global_rank: int
