@@ -52,7 +52,8 @@ def main(*,
          embedding_model: str,
          chunk_size: int,
          chunk_overlap: int,
-         metric_type: str
+         metric_type: str,
+         with_react_agent: bool
          ):
 
     files_to_read = os.path.join(datasets, "corpus")
@@ -97,16 +98,6 @@ def main(*,
     milvus_client = MilvusClient(uri=milvus_uri)
 
 
-    """
-    # Final status check
-    if collection_existed_before:
-        logger.info("Successfully added %s new documents to existing collection '%s'", len(doc_ids), collection_name)
-    else:
-        logger.info("Successfully created collection '%s' and added %s new documents", collection_name, len(doc_ids))
-
-    return doc_ids
-    """
-
     # FIXME: For now, always drop collection prior to each run
     if drop_collection:
         milvus_client.drop_collection(collection_name)
@@ -137,10 +128,9 @@ def main(*,
 
         # Insert the data into the collection
         milvus_client.insert(collection_name=collection_name, data=data)
-
         logger.info("Successfully added %s document chunks to Milvus collection %s", len(text_lines), collection_name)
 
-    else:
+    if not with_react_agent:    
         # Search the querry in the milvus database
         search_res = milvus_client.search(
             collection_name=collection_name,
@@ -154,47 +144,43 @@ def main(*,
         )
 
 
-    retrieved_lines_with_distances = [
-        (res["entity"]["text"], res["distance"]) for res in search_res[0]
-    ]
-    print(json.dumps(retrieved_lines_with_distances, indent=4))
-    print("\n\n")
+        retrieved_lines_with_distances = [
+            (res["entity"]["text"], res["distance"]) for res in search_res[0]
+        ]
+        print(json.dumps(retrieved_lines_with_distances, indent=4))
+        print("\n\n")
 
-    context = "\n".join(
-        [line_with_distance[0] for line_with_distance in retrieved_lines_with_distances]
-    )
+        context = "\n".join(
+            [line_with_distance[0] for line_with_distance in retrieved_lines_with_distances]
+        )
 
-    SYSTEM_PROMPT = """
-    Human: You are an AI assistant. You are able to find answers to the questions from the contextual passage snippets provided.
-    """
-    USER_PROMPT = f"""
-    Only use the following pieces of information enclosed in <context> tags to provide an answer to the question enclosed in <question> tags.
-    <context>
-    {context}
-    </context>
-    <question>
-    {question}
-    </question>
-    """
+        SYSTEM_PROMPT = """
+        Human: You are an AI assistant. You are able to find answers to the questions from the contextual passage snippets provided.
+        """
+        USER_PROMPT = f"""
+        Only use the following pieces of information enclosed in <context> tags to provide an answer to the question enclosed in <question> tags.
+        <context>
+        {context}
+        </context>
+        <question>
+        {question}
+        </question>
+        """
+        response = openai_client.chat.completions.create(
+            model=llm_generator_name,
+            messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": USER_PROMPT},
+            ],
+            #temperature=0.2,
+            #top_p=0.7,
+            #max_tokens=1024,
+            #stream=True
+        )
 
-
-    #openai_client.embeddings.create(input=text, model="text-embedding-3-small") # FiXME: Try a different embedding method
-
-    response = openai_client.chat.completions.create(
-        model=llm_generator_name,
-        messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": USER_PROMPT},
-        ],
-        #temperature=0.2,
-        #top_p=0.7,
-        #max_tokens=1024,
-        #stream=True
-    )
-
-    print(response.choices[0].message.content)
+        print(response.choices[0].message.content)
+        return response
     
-
 
 if __name__ == "__main__":
     import argparse
@@ -221,6 +207,8 @@ if __name__ == "__main__":
         '--chunk_overlap', type=int, default=128, help="Character chunk overlap when splitting the text")
     parser.add_argument(
         '--metric_type', type=str, default="IP", help="Metric type. Other options are COSINE, L2")
+    parser.add_argument(
+        '--with_react_agent', type=bool, default=False, help="Use react_agent")
     args = parser.parse_args()
 
     main(
