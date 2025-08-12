@@ -19,8 +19,8 @@ from torch_geometric.typing import EdgeType, InputNodes, OptTensor
     https://github.com/rapidsai/cugraph")
 class DistNeighborLoader(NodeLoader, DistLoader):
     r"""A distributed loader that performs sampling from nodes.
-    Deprecated, use 'CuGraph' instead
-    https://github.com/rapidsai/cugraph
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
 
     Args:
         data (tuple): A (:class:`~torch_geometric.data.FeatureStore`,
