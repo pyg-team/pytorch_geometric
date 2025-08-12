@@ -75,9 +75,9 @@
 
 <script>
   var torchList = [
+    ['torch-2.8.0', 'PyTorch 2.8.*'],
     ['torch-2.7.0', 'PyTorch 2.7.*'],
     ['torch-2.6.0', 'PyTorch 2.6.*'],
-    ['torch-2.5.0', 'PyTorch 2.5.*'],
   ];
 
   var osList = [
@@ -97,6 +97,7 @@
     ['cu124', '12.4'],
     ['cu126', '12.6'],
     ['cu128', '12.8'],
+    ['cu129', '12.9'],
     ['cpu', 'CPU'],
   ];
 
@@ -115,14 +116,6 @@
       $("#command pre").text('# macOS binaries do not support CUDA');
     }
 
-    else if (torch == "torch-2.5.0" && cuda == "cu126") {
-      $("#command pre").text('# PyTorch version does not support CUDA 12.6');
-    }
-
-    else if (torch == "torch-2.5.0" && cuda == "cu128") {
-      $("#command pre").text('# PyTorch version does not support CUDA 12.8');
-    }
-
     else if (torch == "torch-2.6.0" && cuda == "cu121") {
       $("#command pre").text('# PyTorch version does not support CUDA 12.1');
     }
@@ -139,16 +132,20 @@
       $("#command pre").text('# PyTorch version does not support CUDA 12.4');
     }
 
-    else if (package == "conda" && torch == "torch-2.6.0") {
-      $("#command pre").text('NOTE: Conda packages are no longer available. Please use pip instead');
+    else if (torch == "torch-2.8.0" && cuda == "cu118") {
+      $("#command pre").text('# PyTorch version does not support CUDA 11.8');
     }
 
-    else if (package == "conda" && torch == "torch-2.7.0") {
-      $("#command pre").text('NOTE: Conda packages are no longer available. Please use pip instead');
+    else if (torch == "torch-2.8.0" && cuda == "cu121") {
+      $("#command pre").text('# PyTorch version does not support CUDA 11.8');
+    }
+
+    else if (torch == "torch-2.8.0" && cuda == "cu124") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.4');
     }
 
     else if (package == "conda") {
-      $("#command pre").text('conda install pyg -c pyg');
+      $("#command pre").text('# Conda packages are no longer available since PyTorch >2.5.0. Please use pip instead.');
     }
 
     else {
