@@ -21,6 +21,9 @@ from torch_geometric.loader.base import DataLoaderIterator
     https://github.com/rapidsai/cugraph")
 class DistLoader:
     r"""A base class for creating distributed data loading routines.
+    
+    Deprecated, use 'CuGraph' instead
+    https://github.com/rapidsai/cugraph
 
     Args:
         current_ctx (DistContext): Distributed context info of the current
