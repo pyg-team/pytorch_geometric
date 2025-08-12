@@ -32,8 +32,6 @@ from openai import OpenAI
 import json
 
 
-
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -122,8 +120,6 @@ def test(
         # NOTE: update the env variables for the 'NV_NIM_KEY' and the 'ENDPOINT_URL'
         llm_judge = LLMJudge()
         score.append(llm_judge.score(question, response, answer))
-
-
 
 
 def emb_text(text_lines, model):

@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+general:
+  use_uvloop: true
+
+retrievers:
+  qa_retriever:
+    _type: milvus_retriever
+    uri: http://localhost:19530
+    collection_name: "qa_docs"
+    embedding_model: milvus_embedder
+    top_k: 10
+
+functions:
+  qa_retriever_tool:
+    _type: aiq_retriever
+    retriever: qa_retriever
+    topic: Retrieve information from QA doc
+
+llms:
+  nim_llm:
+    _type: nim
+    model_name: nvidia/llama-3.1-nemotron-70b-instruct
+    temperature: 0
+    max_tokens: 4096
+    top_p: 1
+
+embedders:
+  milvus_embedder:
+    _type: nim
+    model_name: Alibaba-NLP/gte-modernbert-base
+    truncate: "END"
+
+workflow:
+  _type: react_agent
+  tool_names:
+   - qa_retriever_tool
+  verbose: true
+  llm_name: nim_llm
