@@ -10,9 +10,11 @@ from torch_geometric.distributed.local_feature_store import LocalFeatureStore
 from torch_geometric.distributed.local_graph_store import LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
 from torch_geometric.typing import EdgeType, NodeType
-
+from torch_geometric.deprecation import deprecated
 
 @dataclass
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistEdgeHeteroSamplerInput:
     r"""The sampling input of
     :meth:`~torch_geometric.dstributed.DistNeighborSampler.node_sample` used
@@ -33,7 +35,8 @@ class DistEdgeHeteroSamplerInput:
     time_dict: Optional[Dict[NodeType, Tensor]] = None
     input_type: Optional[EdgeType] = None
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class NodeDict:
     r"""Class used during heterogeneous sampling.
     1) The nodes to serve as source nodes in the next layer.
@@ -58,7 +61,8 @@ class NodeDict:
             for k in node_types
         }
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class BatchDict:
     r"""Class used during disjoint heterogeneous sampling.
     1) The batch to serve as initial subgraph IDs for source nodes in the next
@@ -81,7 +85,8 @@ class BatchDict:
             for k in node_types
         }
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 def remove_duplicates(
     out: SamplerOutput,
     node: Tensor,
@@ -114,7 +119,8 @@ def remove_duplicates(
 
         return (src, node, src_batch, batch)
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 def filter_dist_store(
     feature_store: LocalFeatureStore,
     graph_store: LocalGraphStore,
@@ -167,7 +173,8 @@ def filter_dist_store(
 
     return data
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 def as_str(inputs: Union[NodeType, EdgeType]) -> str:
     if isinstance(inputs, NodeType):
         return inputs
@@ -175,7 +182,8 @@ def as_str(inputs: Union[NodeType, EdgeType]) -> str:
         return '__'.join(inputs)
     return ''
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 def reverse_edge_type(etype: EdgeType) -> EdgeType:
     src, rel, dst = etype
     if src != dst:
