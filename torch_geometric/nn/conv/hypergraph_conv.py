@@ -1,7 +1,6 @@
 from typing import Optional
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
@@ -83,7 +82,7 @@ class HypergraphConv(MessagePassing):
         heads: int = 1,
         concat: bool = True,
         negative_slope: float = 0.2,
-        dropout: float = 0,
+        dropout: float = 0.0,
         bias: bool = True,
         **kwargs,
     ):
@@ -108,8 +107,11 @@ class HypergraphConv(MessagePassing):
         else:
             self.heads = 1
             self.concat = True
+            self.negative_slope = negative_slope
+            self.dropout = dropout
             self.lin = Linear(in_channels, out_channels, bias=False,
                               weight_initializer='glorot')
+            self.att = torch.empty(0)
 
         if bias and concat:
             self.bias = Parameter(torch.empty(heads * out_channels))
@@ -162,7 +164,7 @@ class HypergraphConv(MessagePassing):
 
         x = self.lin(x)
 
-        alpha = None
+        alpha = torch.empty(0)
         if self.use_attention:
             assert hyperedge_attr is not None
             x = x.view(-1, self.heads, self.out_channels)
@@ -172,12 +174,13 @@ class HypergraphConv(MessagePassing):
             x_i = x[hyperedge_index[0]]
             x_j = hyperedge_attr[hyperedge_index[1]]
             alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
-            alpha = F.leaky_relu(alpha, self.negative_slope)
+            alpha = torch.nn.functional.leaky_relu(alpha, self.negative_slope)
             if self.attention_mode == 'node':
                 alpha = softmax(alpha, hyperedge_index[1], num_nodes=num_edges)
             else:
                 alpha = softmax(alpha, hyperedge_index[0], num_nodes=num_nodes)
-            alpha = F.dropout(alpha, p=self.dropout, training=self.training)
+            alpha = torch.nn.functional.dropout(alpha, p=self.dropout,
+                                                training=self.training)
 
         D = scatter(hyperedge_weight[hyperedge_index[1]], hyperedge_index[0],
                     dim=0, dim_size=num_nodes, reduce='sum')
@@ -209,7 +212,7 @@ class HypergraphConv(MessagePassing):
 
         out = norm_i.view(-1, 1, 1) * x_j.view(-1, H, F)
 
-        if alpha is not None:
+        if alpha.numel() > 0:
             out = alpha.view(-1, self.heads, 1) * out
 
         return out
