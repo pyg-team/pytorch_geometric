@@ -64,4 +64,3 @@ def test_hypergraph_jit_with_attention():
                     torch.tensor([[0, 1, 2], [0, 0, 1]]),
                     hyperedge_attr=torch.randn(2, in_channels))
     assert output.size() == (4, out_channels * conv.heads)
-
