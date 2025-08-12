@@ -45,7 +45,10 @@ from torch_geometric.typing import EdgeType, NodeType
 
 NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
+from torch_geometric.deprecation import deprecated
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
     processes.
