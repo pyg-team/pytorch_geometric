@@ -13,24 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import logging
 import os
+from glob import glob
 
+import torch
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from openai import OpenAI
+from pymilvus import MilvusClient
 from tqdm import tqdm
 
-from glob import glob
-import torch
-import torch.nn as nn
-from torch_geometric.nn import (
-    LLMJudge,
-    SentenceTransformer
-)
-
-from pymilvus import MilvusClient
-from openai import OpenAI
-import json
-
+from torch_geometric.nn import LLMJudge, SentenceTransformer
 
 # Configure logging
 logging.basicConfig(
@@ -46,13 +40,8 @@ LLM_GENERATOR_NAME_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
 
 
-def test(
-    milvus_client,
-    encoder_model,
-    metric_type: str,
-    dataset: str,
-    collection_name: str,
-    llm_generator_name: str):
+def test(milvus_client, encoder_model, metric_type: str, dataset: str,
+         collection_name: str, llm_generator_name: str):
 
     with open(os.path.join(dataset, "train.json")) as file:
         qa_pairs = json.load(file)
@@ -62,7 +51,7 @@ def test(
         if data_point["is_impossible"]:
             continue
         question, answer = (data_point["question"], data_point["answer"])
-    
+
         print("The question = \n", question)
         search_res = milvus_client.search(
             collection_name=collection_name,
@@ -71,20 +60,23 @@ def test(
                 emb_text(question, encoder_model).tolist()[0]
             ],  # Use the `emb_text` function to convert the question to an embedding vector
             limit=10,  # Return top 3 results
-            search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
+            search_params={
+                "metric_type": metric_type,
+                "params": {}
+            },  # Inner product distance
             output_fields=["text"],  # Return the text field
         )
 
-
         retrieved_lines_with_distances = [
-                (res["entity"]["text"], res["distance"]) for res in search_res[0]
-            ]
+            (res["entity"]["text"], res["distance"]) for res in search_res[0]
+        ]
         #print(json.dumps(retrieved_lines_with_distances, indent=4))
         #print("\n\n")
 
-        context = "\n".join(
-            [line_with_distance[0] for line_with_distance in retrieved_lines_with_distances]
-        )
+        context = "\n".join([
+            line_with_distance[0]
+            for line_with_distance in retrieved_lines_with_distances
+        ])
 
         SYSTEM_PROMPT = """
         Human: You are an AI assistant. You are able to find answers to the questions from the contextual passage snippets provided.
@@ -104,8 +96,14 @@ def test(
         response = openai_client.chat.completions.create(
             model=llm_generator_name,
             messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": USER_PROMPT},
+                {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT
+                },
+                {
+                    "role": "user",
+                    "content": USER_PROMPT
+                },
             ],
             #temperature=0.2,
             #top_p=0.7,
@@ -127,32 +125,24 @@ def emb_text(text_lines, model):
     return embeddings
 
 
-def main(*,
-         milvus_uri: str,
-         collection_name: str,
-         dataset: str,
-         llm_generator_name: str,
-         drop_collection: bool,
-         embedding_model: str,
-         chunk_size: int,
-         chunk_overlap: int,
-         metric_type: str,
-         with_react_agent: bool
-         ):
+def main(*, milvus_uri: str, collection_name: str, dataset: str,
+         llm_generator_name: str, drop_collection: bool, embedding_model: str,
+         chunk_size: int, chunk_overlap: int, metric_type: str,
+         with_react_agent: bool):
 
     dir_to_read = os.path.join(dataset, "corpus")
     files_to_read = os.path.join(dir_to_read, "*.txt")
     text_lines = []
     logger.info("Divide large bodies of text into smaller chunks")
     for file_path in glob(files_to_read, recursive=True):
-        with open(file_path, "r") as file:
+        with open(file_path) as file:
             file_text = file.read()
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,  # Example chunk size
             chunk_overlap=chunk_overlap,  # Example chunk overlap
             # separators=["\n\n", "\n", " ", ""], # Default separators
-            length_function=len, # Function to measure chunk length
-            is_separator_regex=False # Whether separators are regex patterns
+            length_function=len,  # Function to measure chunk length
+            is_separator_regex=False  # Whether separators are regex patterns
         )
 
         chunks = text_splitter.split_text(file_text)
@@ -162,7 +152,6 @@ def main(*,
     encoder_model = SentenceTransformer(
         model_name=embedding_model).to(device).eval()
 
-    
     test_embedding = emb_text("This is a test", encoder_model)
     # The test above is used to retrieve the embedding dim
     embedding_dim = len(test_embedding[0])
@@ -176,17 +165,17 @@ def main(*,
     # which correspond to the Public Endpoint and Api key in Zilliz Cloud.
     milvus_client = MilvusClient(uri=milvus_uri)
 
-
     # FIXME: For now, always drop collection prior to each run
     if drop_collection:
         milvus_client.drop_collection(collection_name)
-        logger.info("Successfully dropped the collection '%s'", collection_name)
+        logger.info("Successfully dropped the collection '%s'",
+                    collection_name)
 
         # Create a new collection
         milvus_client.create_collection(
             collection_name=collection_name,
             dimension=embedding_dim,
-            metric_type="IP",  # Inner product distance: 
+            metric_type="IP",  # Inner product distance:
             # Strong consistency waits for all loads to complete, adding latency with large datasets
             # consistency_level="Strong",  # Strong consistency level
         )
@@ -196,8 +185,11 @@ def main(*,
 
         emb_text_lines = emb_text(text_lines, encoder_model).tolist()
 
-        data = [{"id":idx, "vector":text_line, "text":text_lines[idx]} for (idx, text_line) in enumerate(emb_text_lines)]
-
+        data = [{
+            "id": idx,
+            "vector": text_line,
+            "text": text_lines[idx]
+        } for (idx, text_line) in enumerate(emb_text_lines)]
         """
         data = []
         # logger.info("Adding %s document chunks to Milvus collection %s", len(text_lines), collection_name)
@@ -208,11 +200,12 @@ def main(*,
         # Insert the data into the collection
         # FIXME: Should we add the option to update an existing collection with new documents?
         milvus_client.insert(collection_name=collection_name, data=data)
-        logger.info("Successfully added %s document chunks to Milvus collection %s", len(text_lines), collection_name)
+        logger.info(
+            "Successfully added %s document chunks to Milvus collection %s",
+            len(text_lines), collection_name)
 
-    
     return (milvus_client, encoder_model)
-    
+
 
 if __name__ == "__main__":
     import argparse
@@ -220,40 +213,41 @@ if __name__ == "__main__":
     CUDA_COLLECTION_NAME = "qa_docs"
     DEFAULT_URI = "http://localhost:19530"
 
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--milvus_uri", "-u", default=DEFAULT_URI, help="Milvus host URI")
-    parser.add_argument("--collection_name", "-n", default=CUDA_COLLECTION_NAME, help="Collection name for the data.")
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--milvus_uri", "-u", default=DEFAULT_URI,
+                        help="Milvus host URI")
+    parser.add_argument("--collection_name", "-n",
+                        default=CUDA_COLLECTION_NAME,
+                        help="Collection name for the data.")
     parser.add_argument(
         '--dataset', type=str, default="techqa", help="Dataset folder name, "
         "should contain corpus and train.json files."
         "will be saved in the dataset folder")
-    parser.add_argument(
-        '--llm_generator_name', type=str, default=LLM_GENERATOR_NAME_DEFAULT, help="The LLM to use for Generation")
-    parser.add_argument(
-        '--drop_collection', action="store_true", help="Drop the collection")
-    parser.add_argument(
-        '--embedding_model', type=str, default=ENCODER_MODEL_NAME_DEFAULT, help="The embedding model")
-    parser.add_argument(
-        '--chunk_size', type=int, default=1024, help="Character chunk size when splitting the text")
-    parser.add_argument(
-        '--chunk_overlap', type=int, default=128, help="Character chunk overlap when splitting the text")
-    parser.add_argument(
-        '--metric_type', type=str, default="IP", help="Metric type. Other options are COSINE, L2")
-    parser.add_argument(
-        '--with_react_agent', action="store_true", help="Use react_agent")
+    parser.add_argument('--llm_generator_name', type=str,
+                        default=LLM_GENERATOR_NAME_DEFAULT,
+                        help="The LLM to use for Generation")
+    parser.add_argument('--drop_collection', action="store_true",
+                        help="Drop the collection")
+    parser.add_argument('--embedding_model', type=str,
+                        default=ENCODER_MODEL_NAME_DEFAULT,
+                        help="The embedding model")
+    parser.add_argument('--chunk_size', type=int, default=1024,
+                        help="Character chunk size when splitting the text")
+    parser.add_argument('--chunk_overlap', type=int, default=128,
+                        help="Character chunk overlap when splitting the text")
+    parser.add_argument('--metric_type', type=str, default="IP",
+                        help="Metric type. Other options are COSINE, L2")
+    parser.add_argument('--with_react_agent', action="store_true",
+                        help="Use react_agent")
     args = parser.parse_args()
 
     (milvus_client, encoder_model) = main(
-            milvus_uri=args.milvus_uri,
-            collection_name=args.collection_name,
-            dataset=args.dataset,
-            llm_generator_name=args.llm_generator_name,
-            drop_collection=args.drop_collection,
-            embedding_model=args.embedding_model,
-            chunk_size=args.chunk_size,
-            chunk_overlap=args.chunk_overlap,
-            metric_type=args.metric_type
-        )
+        milvus_uri=args.milvus_uri, collection_name=args.collection_name,
+        dataset=args.dataset, llm_generator_name=args.llm_generator_name,
+        drop_collection=args.drop_collection,
+        embedding_model=args.embedding_model, chunk_size=args.chunk_size,
+        chunk_overlap=args.chunk_overlap, metric_type=args.metric_type)
 
     if not with_react_agent:
         test(
