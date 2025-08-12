@@ -40,8 +40,7 @@ class RPCCallFeatureLookup(RPCCallBase):
 
 @dataclass
 class LocalTensorAttr(TensorAttr):
-    r"""Tensor attribute for storing features without :obj:`index`.
-    """
+    r"""Tensor attribute for storing features without :obj:`index`."""
     def __init__(
         self,
         group_name: Optional[Union[NodeType, EdgeType]] = _FieldStatus.UNSET,
