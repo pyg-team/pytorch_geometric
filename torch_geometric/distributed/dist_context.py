@@ -1,6 +1,7 @@
-from torch_geometric.deprecation import deprecated
 from dataclasses import dataclass
 from enum import Enum
+
+from torch_geometric.deprecation import deprecated
 
 
 class DistRole(Enum):
