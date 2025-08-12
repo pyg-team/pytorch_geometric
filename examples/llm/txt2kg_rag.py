@@ -523,7 +523,7 @@ def make_dataset(args):
     data_lists["validation"] = total_data_list[int(.6 * len(total_data_list)
                                                    ):int(.8 *
                                                          len(total_data_list))]
-    data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):] # Note: This is the data with question's that will be querried against the Milvus db
+    data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
 
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
