@@ -70,6 +70,9 @@ class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader` and
     :class:`~torch_geometric.distributed.DistLinkNeighborLoader`.
+    Deprecated, use 'CuGraph' instead
+    https://github.com/rapidsai/cugraph
+
     """
     def __init__(
         self,
