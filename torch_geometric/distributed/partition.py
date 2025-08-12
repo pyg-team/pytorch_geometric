@@ -22,7 +22,7 @@ class Partitioner:
     r"""Partitions the graph and its features of a
     :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object.
-    
+
     Partitioned data output will be structured as shown below.
 
     **Homogeneous graphs:**
