@@ -22,7 +22,7 @@ class Partitioner:
     r"""Partitions the graph and its features of a
     :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object.
-
+    
     Partitioned data output will be structured as shown below.
 
     **Homogeneous graphs:**
@@ -62,6 +62,9 @@ class Partitioner:
             |-- graph.pt
             |-- node_feats.pt
             |-- edge_feats.pt
+
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
 
     Args:
         data (Data or HeteroData): The data object.
