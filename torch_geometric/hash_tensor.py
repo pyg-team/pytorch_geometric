@@ -241,7 +241,7 @@ class HashTensor(Tensor):
             layout = torch.strided
             requires_grad = False
 
-        out = Tensor._make_wrapper_subclass(  # type: ignore
+        out = Tensor._make_wrapper_subclass(
             cls,
             size=size,
             strides=stride,
