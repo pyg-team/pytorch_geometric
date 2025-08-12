@@ -330,9 +330,9 @@ def index_kg(args, context_docs):
         # check if triples generation are using the correct model
         if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_model_name:
             raise RuntimeError(
-                "Error: stored triples were generated using a different model"
-            )
-        saved_relevant_triples = torch.load(checkpoint_file, weights_only=False)
+                "Error: stored triples were generated using a different model")
+        saved_relevant_triples = torch.load(checkpoint_file,
+                                            weights_only=False)
         kg_maker.relevant_triples = saved_relevant_triples
         kg_maker.doc_id_counter = len(saved_relevant_triples)
         initial_tqdm_count = kg_maker.doc_id_counter
@@ -355,13 +355,14 @@ def index_kg(args, context_docs):
                             for triple_set in relevant_triples.values()))
     triples = list(dict.fromkeys(triples))
     raw_triples_path = args.dataset + "/{m}--{t}--raw_triples.pt"
-    
-    torch.save(triples, raw_triples_path.format(
-        m=kg_maker.get_model_name(),
-        t=datetime.now().strftime("%Y%m%d_%H%M%S"))
-    )
 
-    for old_checkpoint_file in Path(args.dataset).glob("*--*--checkpoint_kg.pt"):
+    torch.save(
+        triples,
+        raw_triples_path.format(m=kg_maker.get_model_name(),
+                                t=datetime.now().strftime("%Y%m%d_%H%M%S")))
+
+    for old_checkpoint_file in Path(
+            args.dataset).glob("*--*--checkpoint_kg.pt"):
         os.remove(old_checkpoint_file)
 
     return triples
@@ -428,12 +429,11 @@ def make_dataset(args):
     if len(raw_triples_file) == 1:
         raw_triples_file = raw_triples_file[0]
         stored_model_name = raw_triples_file.name.split('--')[0]
-        
+
         if args.NV_NIM_MODEL.split('/')[-1] != stored_model_name:
             raise RuntimeError(
-                "Error: stored triples were generated using a different model"
-            )
-        
+                "Error: stored triples were generated using a different model")
+
         print(f" -> Saved triples generated with: {stored_model_name}")
         triples = torch.load(raw_triples_file)
     else:
