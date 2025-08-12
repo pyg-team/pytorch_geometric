@@ -20,8 +20,8 @@ from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
     r"""A distributed loader that performs sampling from edges.
 
-    Deprecated, use 'CuGraph' instead
-    https://github.com/rapidsai/cugraph
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
 
     Args:
         data (tuple): A (:class:`~torch_geometric.data.FeatureStore`,
