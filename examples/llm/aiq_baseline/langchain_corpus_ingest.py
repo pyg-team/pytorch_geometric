@@ -31,6 +31,8 @@ from pymilvus import MilvusClient
 from openai import OpenAI
 import json
 
+from openai import OpenAI
+
 
 # Configure logging
 logging.basicConfig(
@@ -39,6 +41,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Define constants for better readability
+DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
 ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
 LLM_GENERATOR_NAME_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 
@@ -56,8 +60,8 @@ def main(*,
          with_react_agent: bool
          ):
 
-    files_to_read = os.path.join(datasets, "corpus")
-    files_to_read = "/home/jnke/tmp/corpus/*.txt"
+    dir_to_read = os.path.join(dataset, "corpus")
+    files_to_read = os.path.join(dir_to_read, "*.txt")
     text_lines = []
     for file_path in glob(files_to_read, recursive=True):
         with open(file_path, "r") as file:
@@ -74,6 +78,8 @@ def main(*,
 
         chunks = text_splitter.split_text(file_text)
         text_lines += chunks
+
+    print("text_lines = ", len(text_lines))
 
     def emb_text(text_lines):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -127,10 +133,13 @@ def main(*,
         """
 
         # Insert the data into the collection
+        # FIXME: Should we add the option to update an existing collection with new documents?
         milvus_client.insert(collection_name=collection_name, data=data)
         logger.info("Successfully added %s document chunks to Milvus collection %s", len(text_lines), collection_name)
 
-    if not with_react_agent:    
+    if not with_react_agent:
+        question = "what are GPUs good for?"
+        question = "discs, which are these dark bands, and then we still see striations. within cardiac muscle and we can see the branching. between the the fibers more cardiac muscle fiber Here we see different sections of smooth muscle. So here we have our smooth muscle cells. There are no striations compared to skeletal and cardiac muscle. So this is a nice longitudinal section of smooth muscle. and here we have a transverse or cross section. of smooth muscle Again, just more smooth muscle here and then cross section of smooth muscle below it. So this is the third type of muscle, which is smooth muscle lining the hollow organs of the body such as the uterus, the stomach, and the esophagus. Next, we'll talk about cartilage really quick. So we have three types of cartilage. We have the hyaline cartilage, fibro cartilage, elastic cartilage. So make sure you guys are comfortable being able to identify the different types of cartilage as well as their location. Here we have hyaline cartilage. This is hyaline cartilage. We can see"
         # Search the querry in the milvus database
         search_res = milvus_client.search(
             collection_name=collection_name,
@@ -166,6 +175,9 @@ def main(*,
         {question}
         </question>
         """
+
+        # Note: Need to set the env variable 'OPENAI_API_KEY'
+        openai_client = OpenAI(base_url=DEFAULT_ENDPOINT_URL)
         response = openai_client.chat.completions.create(
             model=llm_generator_name,
             messages=[
@@ -185,7 +197,7 @@ def main(*,
 if __name__ == "__main__":
     import argparse
 
-    CUDA_COLLECTION_NAME = "cuda_docs"
+    CUDA_COLLECTION_NAME = "qa_docs"
     DEFAULT_URI = "http://localhost:19530"
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -198,7 +210,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--llm_generator_name', type=str, default=LLM_GENERATOR_NAME_DEFAULT, help="The LLM to use for Generation")
     parser.add_argument(
-        '--drop_collection', type=bool, default=True, help="Drop the collection")
+        '--drop_collection', action="store_true", help="Drop the collection")
     parser.add_argument(
         '--embedding_model', type=str, default=ENCODER_MODEL_NAME_DEFAULT, help="The embedding model")
     parser.add_argument(
@@ -208,7 +220,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--metric_type', type=str, default="IP", help="Metric type. Other options are COSINE, L2")
     parser.add_argument(
-        '--with_react_agent', type=bool, default=False, help="Use react_agent")
+        '--with_react_agent', action="store_true", help="Use react_agent")
     args = parser.parse_args()
 
     main(
@@ -220,5 +232,6 @@ if __name__ == "__main__":
         embedding_model=args.embedding_model,
         chunk_size=args.chunk_size,
         chunk_overlap=args.chunk_overlap,
-        metric_type=args.metric_type
+        metric_type=args.metric_type,
+        with_react_agent=args.with_react_agent
     )
