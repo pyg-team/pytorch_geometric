@@ -17,6 +17,9 @@ from torch_geometric.utils import sort_edge_index
 class LocalGraphStore(GraphStore):
     r"""Implements the :class:`~torch_geometric.data.GraphStore` interface to
     act as a local graph store for distributed training.
+    Deprecated, use 'CuGraph' instead
+    https://github.com/rapidsai/cugraph
+
     """
     def __init__(self):
         super().__init__()
