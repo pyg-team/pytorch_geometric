@@ -47,6 +47,7 @@ def test_hypergraph_conv_with_more_edges_than_nodes():
     out = conv(x, hyperedge_index, hyperedge_weight)
     assert out.size() == (num_nodes, out_channels)
 
+
 def test_hypergraph_jit():
     in_channels, out_channels = (2, 3)
     conv = HypergraphConv(in_channels, out_channels)
@@ -55,6 +56,7 @@ def test_hypergraph_jit():
                     torch.tensor([[0, 1, 2], [0, 0, 1]]),
                     hyperedge_attr=torch.randn(2, in_channels))
     assert output.size() == (4, out_channels)
+
 
 def test_hypergraph_jit_with_attention():
     in_channels, out_channels = (2, 3)

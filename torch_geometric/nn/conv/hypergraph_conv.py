@@ -179,7 +179,8 @@ class HypergraphConv(MessagePassing):
                 alpha = softmax(alpha, hyperedge_index[1], num_nodes=num_edges)
             else:
                 alpha = softmax(alpha, hyperedge_index[0], num_nodes=num_nodes)
-            alpha = torch.nn.functional.dropout(alpha, p=self.dropout, training=self.training)
+            alpha = torch.nn.functional.dropout(alpha, p=self.dropout,
+                                                training=self.training)
 
         D = scatter(hyperedge_weight[hyperedge_index[1]], hyperedge_index[0],
                     dim=0, dim_size=num_nodes, reduce='sum')
