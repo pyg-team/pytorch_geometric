@@ -252,15 +252,15 @@ if __name__ == "__main__":
             embedding_model=args.embedding_model,
             chunk_size=args.chunk_size,
             chunk_overlap=args.chunk_overlap,
-            metric_type=args.metric_type,
-            with_react_agent=args.with_react_agent
+            metric_type=args.metric_type
         )
 
-    test(
-        milvus_client=milvus_client,
-        encoder_model=encoder_model,
-        metric_type=args.metric_type,
-        dataset=args.dataset,
-        collection_name=args.collection_name,
-        llm_generator_name=args.llm_generator_name,
-    )
+    if not with_react_agent:
+        test(
+            milvus_client=milvus_client,
+            encoder_model=encoder_model,
+            metric_type=args.metric_type,
+            dataset=args.dataset,
+            collection_name=args.collection_name,
+            llm_generator_name=args.llm_generator_name,
+        )
