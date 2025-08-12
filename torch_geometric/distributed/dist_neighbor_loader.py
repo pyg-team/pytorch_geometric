@@ -12,8 +12,10 @@ from torch_geometric.distributed import (
 from torch_geometric.loader import NodeLoader
 from torch_geometric.sampler.base import SubgraphType
 from torch_geometric.typing import EdgeType, InputNodes, OptTensor
+from torch_geometric.deprecation import deprecated
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistNeighborLoader(NodeLoader, DistLoader):
     r"""A distributed loader that performs sampling from nodes.
 
