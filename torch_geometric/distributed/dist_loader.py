@@ -6,6 +6,7 @@ from typing import Any, Optional, Union
 import torch.distributed
 import torch.multiprocessing as mp
 
+from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed import DistNeighborSampler
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.rpc import (
@@ -14,7 +15,7 @@ from torch_geometric.distributed.rpc import (
     shutdown_rpc,
 )
 from torch_geometric.loader.base import DataLoaderIterator
-from torch_geometric.deprecation import deprecated
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")

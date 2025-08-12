@@ -2,6 +2,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 
+from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed import (
     DistContext,
     DistLoader,
@@ -12,7 +13,7 @@ from torch_geometric.distributed import (
 from torch_geometric.loader import NodeLoader
 from torch_geometric.sampler.base import SubgraphType
 from torch_geometric.typing import EdgeType, InputNodes, OptTensor
-from torch_geometric.deprecation import deprecated
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")

@@ -6,11 +6,13 @@ from typing import Callable, Optional
 
 import torch
 
+from torch_geometric.deprecation import deprecated
+
 # Based on graphlearn-for-pytorch repository python/distributed/event_loop.py
 # https://github.com/alibaba/graphlearn-for-pytorch/blob/main/graphlearn_torch/
 # LICENSE: Apache v2
 
-from torch_geometric.deprecation import deprecated
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -30,6 +32,7 @@ def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     future.add_done_callback(on_done)
 
     return asyncio_future
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")

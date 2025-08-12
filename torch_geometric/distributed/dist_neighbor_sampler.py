@@ -47,6 +47,7 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 from torch_geometric.deprecation import deprecated
 
+
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 class RPCSamplingCallee(RPCCallBase):
