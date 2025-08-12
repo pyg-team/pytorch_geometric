@@ -16,7 +16,10 @@ from torch_geometric.deprecation import deprecated
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
-    r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future."""
+    r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future.
+    Deprecated, use 'CuGraph' instead
+    https://github.com/rapidsai/cugraph
+    """
     loop = asyncio.get_event_loop()
     asyncio_future = loop.create_future()
 
@@ -37,6 +40,8 @@ def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     https://github.com/rapidsai/cugraph")
 class ConcurrentEventLoop:
     r"""Concurrent event loop context.
+    Deprecated, use 'CuGraph' instead
+    https://github.com/rapidsai/cugraph
 
     Args:
         concurrency: max processing concurrency.
