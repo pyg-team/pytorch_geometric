@@ -1,5 +1,6 @@
 Multi-Node Training using SLURM
 ===============================
+Note that this method is deprecate in liue of CuGraph, the recommended multi-gpu method, see https://github.com/rapidsai/cugraph.
 
 This tutorial introduces a skeleton on how to perform distributed training on multiple GPUs over multiple nodes using the `SLURM workload manager <https://slurm.schedmd.com/>`_ available at many supercomputing centers.
 The code is based on `our tutorial on single-node multi-GPU training <multi_gpu_vanilla.html>`_.
