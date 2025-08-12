@@ -10,7 +10,10 @@ import torch
 # https://github.com/alibaba/graphlearn-for-pytorch/blob/main/graphlearn_torch/
 # LICENSE: Apache v2
 
+from torch_geometric.deprecation import deprecated
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future."""
     loop = asyncio.get_event_loop()
@@ -28,7 +31,8 @@ def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
 
     return asyncio_future
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class ConcurrentEventLoop:
     r"""Concurrent event loop context.
 
