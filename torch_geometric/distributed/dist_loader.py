@@ -14,8 +14,10 @@ from torch_geometric.distributed.rpc import (
     shutdown_rpc,
 )
 from torch_geometric.loader.base import DataLoaderIterator
+from torch_geometric.deprecation import deprecated
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistLoader:
     r"""A base class for creating distributed data loading routines.
 
