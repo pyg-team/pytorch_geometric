@@ -5,20 +5,15 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
-from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.io import fs
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 from torch_geometric.utils import sort_edge_index
 
 
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
 class LocalGraphStore(GraphStore):
     r"""Implements the :class:`~torch_geometric.data.GraphStore` interface to
     act as a local graph store for distributed training.
-    Deprecated, use 'CuGraph' instead
-    https://github.com/rapidsai/cugraph
 
     """
     def __init__(self):
