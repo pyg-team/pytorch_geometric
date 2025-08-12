@@ -50,7 +50,10 @@ def global_all_gather(obj, timeout: Optional[int] = None) -> Any:
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def global_barrier(timeout: Optional[int] = None) -> None:
-    r"""Block until all local and remote RPC processes."""
+    r"""Block until all local and remote RPC processes.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     try:
         global_all_gather(obj=None, timeout=timeout)
     except RuntimeError:
@@ -108,7 +111,9 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 class RPCRouter:
-    r"""A router to get the worker based on the partition ID."""
+    r"""A router to get the worker based on the partition ID.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph."""
     def __init__(self, partition_to_workers: List[List[str]]):
         for rpc_worker_list in partition_to_workers:
             if len(rpc_worker_list) == 0:
@@ -135,6 +140,8 @@ def rpc_partition_to_workers(
 ):
     r"""Performs an :obj:`all_gather` to get the mapping between partition and
     workers.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     """
     ctx = current_ctx
     partition_to_workers = [[] for _ in range(num_partitions)]
@@ -148,7 +155,10 @@ def rpc_partition_to_workers(
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 class RPCCallBase(ABC):
-    r"""A wrapper base class for RPC calls in remote processes."""
+    r"""A wrapper base class for RPC calls in remote processes.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     @abstractmethod
     def rpc_sync(self, *args, **kwargs):
         pass
@@ -167,7 +177,10 @@ _rpc_call_pool: Dict[int, RPCCallBase] = {}
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def rpc_register(call: RPCCallBase) -> int:
-    r"""Registers a call for RPC requests."""
+    r"""Registers a call for RPC requests.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     global _rpc_call_id
 
     with _rpc_call_lock:
@@ -189,7 +202,10 @@ def _rpc_async_call(call_id: int, *args, **kwargs):
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def rpc_async(worker_name: str, call_id: int, args=None, kwargs=None):
-    r"""Performs an asynchronous RPC request and returns a future."""
+    r"""Performs an asynchronous RPC request and returns a future.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     return rpc.rpc_async(
         to=worker_name,
         func=_rpc_async_call,
@@ -201,7 +217,10 @@ def rpc_async(worker_name: str, call_id: int, args=None, kwargs=None):
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def _rpc_sync_call(call_id: int, *args, **kwargs):
-    r"""Entry point for synchronous RPC requests."""
+    r"""Entry point for synchronous RPC requests.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     return _rpc_call_pool.get(call_id).rpc_sync(*args, **kwargs)
 
 
@@ -209,7 +228,10 @@ def _rpc_sync_call(call_id: int, *args, **kwargs):
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def rpc_sync(worker_name: str, call_id: int, args=None, kwargs=None):
-    r"""Performs a synchronous RPC request and returns a future."""
+    r"""Performs a synchronous RPC request and returns a future.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     future = rpc.rpc_async(
         to=worker_name,
         func=_rpc_sync_call,
