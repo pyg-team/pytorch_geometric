@@ -37,7 +37,10 @@ def rpc_require_initialized(func: Callable) -> Callable:
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def global_all_gather(obj, timeout: Optional[int] = None) -> Any:
-    r"""Gathers objects from all groups in a list."""
+    r"""Gathers objects from all groups in a list.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     if timeout is None:
         return rpc.api._all_gather(obj)
     return rpc.api._all_gather(obj, timeout=timeout)
