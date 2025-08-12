@@ -13,7 +13,6 @@ from torch_geometric.deprecation import deprecated
 # LICENSE: Apache v2
 
 
-
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:

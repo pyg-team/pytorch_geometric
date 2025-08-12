@@ -6,11 +6,12 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
+from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed.local_feature_store import LocalFeatureStore
 from torch_geometric.distributed.local_graph_store import LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
 from torch_geometric.typing import EdgeType, NodeType
-from torch_geometric.deprecation import deprecated
+
 
 @dataclass
 @deprecated("use 'CuGraph' instead\
@@ -34,6 +35,7 @@ class DistEdgeHeteroSamplerInput:
     node_dict: Dict[NodeType, Tensor]
     time_dict: Optional[Dict[NodeType, Tensor]] = None
     input_type: Optional[EdgeType] = None
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -61,6 +63,7 @@ class NodeDict:
             for k in node_types
         }
 
+
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 class BatchDict:
@@ -84,6 +87,7 @@ class BatchDict:
             k: torch.empty(0, dtype=torch.int64)
             for k in node_types
         }
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -118,6 +122,7 @@ def remove_duplicates(
         src = node[num_nodes:]
 
         return (src, node, src_batch, batch)
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -173,6 +178,7 @@ def filter_dist_store(
 
     return data
 
+
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def as_str(inputs: Union[NodeType, EdgeType]) -> str:
@@ -181,6 +187,7 @@ def as_str(inputs: Union[NodeType, EdgeType]) -> str:
     elif isinstance(inputs, (list, tuple)) and len(inputs) == 3:
         return '__'.join(inputs)
     return ''
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")

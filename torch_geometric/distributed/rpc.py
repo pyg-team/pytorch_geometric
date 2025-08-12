@@ -5,8 +5,8 @@ from typing import Any, Callable, Dict, List, Optional
 
 from torch.distributed import rpc
 
-from torch_geometric.distributed.dist_context import DistContext, DistRole
 from torch_geometric.deprecation import deprecated
+from torch_geometric.distributed.dist_context import DistContext, DistRole
 
 try:
     from torch._C._distributed_rpc import _is_current_rpc_agent_set
@@ -18,10 +18,12 @@ except Exception:
 
 _rpc_init_lock = threading.RLock()
 
+
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def rpc_is_initialized() -> bool:
     return _is_current_rpc_agent_set()
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -50,6 +52,7 @@ def global_barrier(timeout: Optional[int] = None) -> None:
         global_all_gather(obj=None, timeout=timeout)
     except RuntimeError:
         logging.error('Failed to respond to global barrier')
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -85,6 +88,7 @@ def init_rpc(
 
         global_barrier(timeout=rpc_timeout)
 
+
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
 def shutdown_rpc(id: str = None, graceful: bool = True,
@@ -96,6 +100,7 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
             rpc.shutdown(graceful, timeout)
         else:
             logging.info(f'RPC in {id} not initialized.')
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -135,6 +140,7 @@ def rpc_partition_to_workers(
     for worker_name, (_, _, idx) in gathered_results.items():
         partition_to_workers[idx].append(worker_name)
     return partition_to_workers
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
@@ -187,6 +193,7 @@ def rpc_async(worker_name: str, call_id: int, args=None, kwargs=None):
         args=(call_id, *args),
         kwargs=kwargs,
     )
+
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
