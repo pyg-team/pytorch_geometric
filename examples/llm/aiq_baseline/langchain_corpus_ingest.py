@@ -31,7 +31,7 @@ from pymilvus import MilvusClient
 from openai import OpenAI
 import json
 
-from openai import OpenAI
+
 
 
 # Configure logging
@@ -45,6 +45,90 @@ logger = logging.getLogger(__name__)
 DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
 ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
 LLM_GENERATOR_NAME_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
+NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
+
+
+def test(
+    milvus_client,
+    encoder_model,
+    metric_type: str,
+    dataset: str,
+    collection_name: str,
+    llm_generator_name: str):
+
+    with open(os.path.join(dataset, "train.json")) as file:
+        qa_pairs = json.load(file)
+
+    score = []
+    for data_point in tqdm(qa_pairs, desc="Retrieving pairs"):
+        if data_point["is_impossible"]:
+            continue
+        question, answer = (data_point["question"], data_point["answer"])
+    
+        print("The question = \n", question)
+        search_res = milvus_client.search(
+            collection_name=collection_name,
+            data=[
+                # Convert the question to an embedding vector
+                emb_text(question, encoder_model).tolist()[0]
+            ],  # Use the `emb_text` function to convert the question to an embedding vector
+            limit=10,  # Return top 3 results
+            search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
+            output_fields=["text"],  # Return the text field
+        )
+
+
+        retrieved_lines_with_distances = [
+                (res["entity"]["text"], res["distance"]) for res in search_res[0]
+            ]
+        #print(json.dumps(retrieved_lines_with_distances, indent=4))
+        #print("\n\n")
+
+        context = "\n".join(
+            [line_with_distance[0] for line_with_distance in retrieved_lines_with_distances]
+        )
+
+        SYSTEM_PROMPT = """
+        Human: You are an AI assistant. You are able to find answers to the questions from the contextual passage snippets provided.
+        """
+        USER_PROMPT = f"""
+        use the following pieces of information enclosed in <context> tags to provide an answer to the question enclosed in <question> tags.
+        <context>
+        {context}
+        </context>
+        <question>
+        {question}
+        </question>
+        """
+
+        # Note: Need to set the env variable 'OPENAI_API_KEY'
+        openai_client = OpenAI(base_url=DEFAULT_ENDPOINT_URL)
+        response = openai_client.chat.completions.create(
+            model=llm_generator_name,
+            messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": USER_PROMPT},
+            ],
+            #temperature=0.2,
+            #top_p=0.7,
+            #max_tokens=1024,
+            #stream=True
+        )
+
+        # FIXME: Trim response that will be passed to LLM
+        print(response.choices[0].message.content)
+        response = response.choices[0].message.content
+
+        # NOTE: update the env variables for the 'NV_NIM_KEY' and the 'ENDPOINT_URL'
+        llm_judge = LLMJudge()
+        score.append(llm_judge.score(question, response, answer))
+
+
+
+
+def emb_text(text_lines, model):
+    embeddings = model.encode(text_lines)
+    return embeddings
 
 
 def main(*,
@@ -78,16 +162,12 @@ def main(*,
         chunks = text_splitter.split_text(file_text)
         text_lines += chunks
 
-    def emb_text(text_lines):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model = SentenceTransformer(
-            model_name=embedding_model).to(device).eval()
-        
-        embeddings = model.encode(text_lines)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    encoder_model = SentenceTransformer(
+        model_name=embedding_model).to(device).eval()
 
-        return embeddings
     
-    test_embedding = emb_text("This is a test")
+    test_embedding = emb_text("This is a test", encoder_model)
     # The test above is used to retrieve the embedding dim
     embedding_dim = len(test_embedding[0])
 
@@ -118,7 +198,7 @@ def main(*,
 
         emb_text_lines = []
 
-        emb_text_lines = emb_text(text_lines).tolist()
+        emb_text_lines = emb_text(text_lines, encoder_model).tolist()
 
         data = [{"id":idx, "vector":text_line, "text":text_lines[idx]} for (idx, text_line) in enumerate(emb_text_lines)]
 
@@ -134,61 +214,8 @@ def main(*,
         milvus_client.insert(collection_name=collection_name, data=data)
         logger.info("Successfully added %s document chunks to Milvus collection %s", len(text_lines), collection_name)
 
-    if not with_react_agent:
-        question = "what are GPUs good for?"
-        question = "discs, which are these dark bands, and then we still see striations. within cardiac muscle and we can see the branching. between the the fibers more cardiac muscle fiber Here we see different sections of smooth muscle. So here we have our smooth muscle cells. There are no striations compared to skeletal and cardiac muscle. So this is a nice longitudinal section of smooth muscle. and here we have a transverse or cross section. of smooth muscle Again, just more smooth muscle here and then cross section of smooth muscle below it. So this is the third type of muscle, which is smooth muscle lining the hollow organs of the body such as the uterus, the stomach, and the esophagus. Next, we'll talk about cartilage really quick. So we have three types of cartilage. We have the hyaline cartilage, fibro cartilage, elastic cartilage. So make sure you guys are comfortable being able to identify the different types of cartilage as well as their location. Here we have hyaline cartilage. This is hyaline cartilage. We can see"
-        # Search the querry in the milvus database
-        search_res = milvus_client.search(
-            collection_name=collection_name,
-            data=[
-                # Convert the question to an embedding vector
-                emb_text(question).tolist()[0]
-            ],  # Use the `emb_text` function to convert the question to an embedding vector
-            limit=3,  # Return top 3 results
-            search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
-            output_fields=["text"],  # Return the text field
-        )
-
-
-        retrieved_lines_with_distances = [
-            (res["entity"]["text"], res["distance"]) for res in search_res[0]
-        ]
-        print(json.dumps(retrieved_lines_with_distances, indent=4))
-        print("\n\n")
-
-        context = "\n".join(
-            [line_with_distance[0] for line_with_distance in retrieved_lines_with_distances]
-        )
-
-        SYSTEM_PROMPT = """
-        Human: You are an AI assistant. You are able to find answers to the questions from the contextual passage snippets provided.
-        """
-        USER_PROMPT = f"""
-        Only use the following pieces of information enclosed in <context> tags to provide an answer to the question enclosed in <question> tags.
-        <context>
-        {context}
-        </context>
-        <question>
-        {question}
-        </question>
-        """
-
-        # Note: Need to set the env variable 'OPENAI_API_KEY'
-        openai_client = OpenAI(base_url=DEFAULT_ENDPOINT_URL)
-        response = openai_client.chat.completions.create(
-            model=llm_generator_name,
-            messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": USER_PROMPT},
-            ],
-            #temperature=0.2,
-            #top_p=0.7,
-            #max_tokens=1024,
-            #stream=True
-        )
-
-        print(response.choices[0].message.content)
-        return response
+    
+    return (milvus_client, encoder_model)
     
 
 if __name__ == "__main__":
@@ -220,15 +247,24 @@ if __name__ == "__main__":
         '--with_react_agent', action="store_true", help="Use react_agent")
     args = parser.parse_args()
 
-    main(
-        milvus_uri=args.milvus_uri,
-        collection_name=args.collection_name,
-        dataset=args.dataset,
-        llm_generator_name=args.llm_generator_name,
-        drop_collection=args.drop_collection,
-        embedding_model=args.embedding_model,
-        chunk_size=args.chunk_size,
-        chunk_overlap=args.chunk_overlap,
+    (milvus_client, encoder_model) = main(
+            milvus_uri=args.milvus_uri,
+            collection_name=args.collection_name,
+            dataset=args.dataset,
+            llm_generator_name=args.llm_generator_name,
+            drop_collection=args.drop_collection,
+            embedding_model=args.embedding_model,
+            chunk_size=args.chunk_size,
+            chunk_overlap=args.chunk_overlap,
+            metric_type=args.metric_type,
+            with_react_agent=args.with_react_agent
+        )
+
+    test(
+        milvus_client=milvus_client,
+        encoder_model=encoder_model,
         metric_type=args.metric_type,
-        with_react_agent=args.with_react_agent
+        dataset=args.dataset,
+        collection_name=args.collection_name,
+        llm_generator_name=args.llm_generator_name,
     )
