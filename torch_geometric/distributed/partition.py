@@ -14,7 +14,10 @@ from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.sampler.utils import sort_csc
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
+from torch_geometric.deprecation import deprecated
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class Partitioner:
     r"""Partitions the graph and its features of a
     :class:`~torch_geometric.data.Data` or
