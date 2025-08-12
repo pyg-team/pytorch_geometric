@@ -48,7 +48,6 @@ def main(*,
          collection_name: str,
          dataset: str,
          llm_generator_name: str,
-         regenerate_embeddings: bool,
          drop_collection: bool,
          embedding_model: str,
          chunk_size: int,
@@ -85,6 +84,7 @@ def main(*,
         return embeddings
     
     test_embedding = emb_text("This is a test")
+    # The test above is used to retrieve the embedding dim
     embedding_dim = len(test_embedding[0])
 
     # Setting the uri as a local file, e.g../milvus.db, is the most convenient method,
@@ -140,19 +140,18 @@ def main(*,
 
         logger.info("Successfully added %s document chunks to Milvus collection %s", len(text_lines), collection_name)
 
-    # question = "what are the benefits of using GPUs?"
-
-    # Search the querry in the milvus database
-    search_res = milvus_client.search(
-        collection_name=collection_name,
-        data=[
-            # Convert the question to an embedding vector
-            emb_text(question).tolist()[0]
-        ],  # Use the `emb_text` function to convert the question to an embedding vector
-        limit=3,  # Return top 3 results
-        search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
-        output_fields=["text"],  # Return the text field
-    )
+    else:
+        # Search the querry in the milvus database
+        search_res = milvus_client.search(
+            collection_name=collection_name,
+            data=[
+                # Convert the question to an embedding vector
+                emb_text(question).tolist()[0]
+            ],  # Use the `emb_text` function to convert the question to an embedding vector
+            limit=3,  # Return top 3 results
+            search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
+            output_fields=["text"],  # Return the text field
+        )
 
 
     retrieved_lines_with_distances = [
@@ -178,16 +177,11 @@ def main(*,
     </question>
     """
 
-    ENDPOINT_URL="https://integrate.api.nvidia.com/v1"
-
-    openai_client = OpenAI(base_url=ENDPOINT_URL, api_key="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")
 
     #openai_client.embeddings.create(input=text, model="text-embedding-3-small") # FiXME: Try a different embedding method
 
     response = openai_client.chat.completions.create(
-        #model="meta/llama-3.1-405b-instruct",
         model=llm_generator_name,
-        # model="gpt-3.5-turbo", # NOTE: Model not working. This method works with LLaMA-3.1-405B-Instruct, but it doesn’t work with LLaMA-3.2-90B-Instruct. Is it because the latter hasn’t been adapted yet?
         messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": USER_PROMPT},
@@ -218,8 +212,6 @@ if __name__ == "__main__":
     parser.add_argument(
         '--llm_generator_name', type=str, default=LLM_GENERATOR_NAME_DEFAULT, help="The LLM to use for Generation")
     parser.add_argument(
-        '--regenerate_embeddings', type=bool, default=True, help="Regenerate the embeddings")
-    parser.add_argument(
         '--drop_collection', type=bool, default=True, help="Drop the collection")
     parser.add_argument(
         '--embedding_model', type=str, default=ENCODER_MODEL_NAME_DEFAULT, help="The embedding model")
@@ -232,10 +224,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(
-        urls=args.urls,
         milvus_uri=args.milvus_uri,
         collection_name=args.collection_name,
-        dataset=args.collection_name,
+        dataset=args.dataset,
         llm_generator_name=args.llm_generator_name,
-
+        drop_collection=args.drop_collection,
+        embedding_model=args.embedding_model,
+        chunk_size=args.chunk_size,
+        chunk_overlap=args.chunk_overlap,
+        metric_type=args.metric_type
     )
