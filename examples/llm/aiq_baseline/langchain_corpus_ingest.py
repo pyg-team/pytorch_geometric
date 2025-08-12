@@ -63,11 +63,10 @@ def main(*,
     dir_to_read = os.path.join(dataset, "corpus")
     files_to_read = os.path.join(dir_to_read, "*.txt")
     text_lines = []
+    logger.info("Divide large bodies of text into smaller chunks")
     for file_path in glob(files_to_read, recursive=True):
         with open(file_path, "r") as file:
             file_text = file.read()
-        
-        logger.info("Divide large bodies of text into smaller chunks")
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,  # Example chunk size
             chunk_overlap=chunk_overlap,  # Example chunk overlap
@@ -78,8 +77,6 @@ def main(*,
 
         chunks = text_splitter.split_text(file_text)
         text_lines += chunks
-
-    print("text_lines = ", len(text_lines))
 
     def emb_text(text_lines):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
