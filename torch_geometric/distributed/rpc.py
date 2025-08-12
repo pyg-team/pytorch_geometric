@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, List, Optional
 from torch.distributed import rpc
 
 from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.deprecation import deprecated
 
 try:
     from torch._C._distributed_rpc import _is_current_rpc_agent_set
@@ -16,8 +17,6 @@ except Exception:
 
 
 _rpc_init_lock = threading.RLock()
-
-from torch_geometric.deprecation import deprecated
 
 @deprecated("use 'CuGraph' instead\
     https://github.com/rapidsai/cugraph")
