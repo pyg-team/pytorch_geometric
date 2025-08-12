@@ -42,10 +42,10 @@ from torch_geometric.sampler.base import NumNeighbors, SubgraphType
 from torch_geometric.sampler.neighbor_sampler import neg_sample
 from torch_geometric.sampler.utils import remap_keys
 from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.deprecation import deprecated
 
 NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
-from torch_geometric.deprecation import deprecated
 
 
 @deprecated("use 'CuGraph' instead\
@@ -64,7 +64,8 @@ class RPCSamplingCallee(RPCCallBase):
     def rpc_sync(self, *args, **kwargs) -> Any:
         pass
 
-
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader` and
