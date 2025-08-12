@@ -8,6 +8,7 @@ import torch
 import torch.multiprocessing as mp
 from torch import Tensor
 
+from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed import (
     DistContext,
     LocalFeatureStore,
@@ -46,9 +47,13 @@ from torch_geometric.typing import EdgeType, NodeType
 NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
     processes.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     """
     def __init__(self, sampler: NeighborSampler):
         super().__init__()
@@ -61,10 +66,15 @@ class RPCSamplingCallee(RPCCallBase):
         pass
 
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader` and
     :class:`~torch_geometric.distributed.DistLinkNeighborLoader`.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+
     """
     def __init__(
         self,
