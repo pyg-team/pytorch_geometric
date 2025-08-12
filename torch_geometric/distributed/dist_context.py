@@ -7,6 +7,8 @@ class DistRole(Enum):
 
 
 @dataclass
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistContext:
     r"""Context information of the current process."""
     rank: int
