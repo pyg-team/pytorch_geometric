@@ -173,6 +173,7 @@ class LinkNeighborLoader(LinkLoader):
         neg_sampling_ratio (int or float, optional): The ratio of sampled
             negative edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
+            For example use obj:`neg_sampling=dict(amount=0.5)`.
             (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
             timestamps for either the nodes or edges in the graph.
