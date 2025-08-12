@@ -52,6 +52,8 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
     processes.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     """
     def __init__(self, sampler: NeighborSampler):
         super().__init__()
@@ -70,8 +72,8 @@ class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader` and
     :class:`~torch_geometric.distributed.DistLinkNeighborLoader`.
-    Deprecated, use 'CuGraph' instead
-    https://github.com/rapidsai/cugraph
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
 
     """
     def __init__(
