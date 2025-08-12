@@ -119,19 +119,35 @@ def get_gpu_memory_from_nvidia_smi(  # pragma: no cover
         digits (int): The number of decimals to use for megabytes.
             (default: :obj:`2`)
     """
+    def parse_memory(output: str) -> list:
+        lines = output.decode('utf-8').split('\n')[1:-1]
+        mem_list = []
+        for line in lines:
+            val = line.split()[0]
+            if val != '[N/A]':
+                mem_list.append(int(val))
+            else:
+                mem_list.append(None)
+        return mem_list
+
+    def get_gpu_memory(out_device, digits):
+        if out_device is None:
+            return 0
+
+        return medibyte_to_megabyte(out_device, digits)
+
     CMD = 'nvidia-smi --query-gpu=memory.free --format=csv'
-    free_out = sp.check_output(CMD.split()).decode('utf-8').split('\n')[1:-1]
+    free_out = parse_memory(sp.check_output(CMD.split()))
 
     CMD = 'nvidia-smi --query-gpu=memory.used --format=csv'
-    used_out = sp.check_output(CMD.split()).decode('utf-8').split('\n')[1:-1]
+    used_out = parse_memory(sp.check_output(CMD.split()))
 
     if device < 0 or device >= len(free_out):
         raise AttributeError(
             f'GPU {device} not available (found {len(free_out)} GPUs)')
 
-    free_mem = medibyte_to_megabyte(int(free_out[device].split()[0]), digits)
-    used_mem = medibyte_to_megabyte(int(used_out[device].split()[0]), digits)
-
+    free_mem = get_gpu_memory(free_out[device], digits)
+    used_mem = get_gpu_memory(used_out[device], digits)
     return free_mem, used_mem
 
 

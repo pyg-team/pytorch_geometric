@@ -298,9 +298,8 @@ class LargeGraphIndexer:
             idxs = list(
                 self.get_node_features_iter(feature_name, pids,
                                             index_only=True))
-            return values[idxs]
-        return_value = list(self.get_node_features_iter(feature_name, pids))
-        return return_value
+            return values[torch.tensor(idxs)]
+        return list(self.get_node_features_iter(feature_name, pids))
 
     def get_node_features_iter(
         self,
@@ -423,7 +422,7 @@ class LargeGraphIndexer:
             idxs = list(
                 self.get_edge_features_iter(feature_name, pids,
                                             index_only=True))
-            return values[idxs]
+            return values[torch.tensor(idxs)]
         return list(self.get_edge_features_iter(feature_name, pids))
 
     def get_edge_features_iter(

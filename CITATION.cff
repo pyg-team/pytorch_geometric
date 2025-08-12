@@ -1,12 +1,42 @@
 ---
 cff-version: 1.2.0
-message: "Please cite our paper if you use this code in your own work."
+message: "Please cite our papers if you use this code in your own work."
 title: "Fast Graph Representation Learning with PyTorch Geometric"
 authors:
 - family-names: "Fey"
   given-names: "Matthias"
-- family-names: "Lenssen"
-  given-names: "Jan Eric"
 date-released: 2019-05-06
 license: MIT
 url: "https://github.com/pyg-team/pytorch_geometric"
+preferred-citation:
+  type: article
+  title: "PyG 2.0: Scalable Learning on Real World Graphs"
+  authors:
+  - family-names: "Fey"
+    given-names: "Matthias"
+  - family-names: "Sunil"
+    given-names: "Jinu"
+  - family-names: "Nitta"
+    given-names: "Akihiro"
+  - family-names: "Puri"
+    given-names: "Rishi"
+  - family-names: "Shah"
+    given-names: "Manan"
+  - family-names: "Stojanovi{\v{c}}"
+    given-names: "Bla{\v{z}}"
+  - family-names: "Bendias"
+    given-names: "Ramona"
+  - family-names: "Barghi"
+    given-names: "Alexandria"
+  - family-names: "Kocijan"
+    given-names: "Vid"
+  - family-names: "Zhang"
+    given-names: "Zecheng"
+  - family-names: "He"
+    given-names: "Xinwei"
+  - family-names: "Lenssen"
+    given-names: "Jan Eric"
+  - family-names: "Leskovec"
+    given-names: "Jure"
+  journal: "Temporal Graph Learning Workshop @ KDD"
+  year: 2025

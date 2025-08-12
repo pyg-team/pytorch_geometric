@@ -202,7 +202,7 @@ class QM9(InMemoryDataset):
             from rdkit import Chem, RDLogger
             from rdkit.Chem.rdchem import BondType as BT
             from rdkit.Chem.rdchem import HybridizationType
-            RDLogger.DisableLog('rdApp.*')
+            RDLogger.DisableLog('rdApp.*')  # type: ignore[attr-defined]
             WITH_RDKIT = True
 
         except ImportError:
