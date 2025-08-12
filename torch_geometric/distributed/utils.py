@@ -21,7 +21,8 @@ class DistEdgeHeteroSamplerInput:
     :meth:`~torch_geometric.dstributed.DistNeighborSampler.node_sample` used
     during distributed heterogeneous link sampling when source and target node
     types of an input edge are different.
-
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     Args:
         input_id (torch.Tensor, optional): The indices of the data loader input
             of the current mini-batch.
@@ -44,6 +45,8 @@ class NodeDict:
     1) The nodes to serve as source nodes in the next layer.
     2) The nodes with duplicates that are further needed to create COO output.
     3) The output nodes without duplicates.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     """
     def __init__(self, node_types, num_hops):
         self.src: Dict[NodeType, List[Tensor]] = {
@@ -73,6 +76,8 @@ class BatchDict:
     2) The subgraph IDs with duplicates that are further needed to create COO
        output.
     3) The output subgraph IDs without duplicates.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     """
     def __init__(self, node_types, num_hops):
         self.src: Dict[NodeType, List[Tensor]] = {
@@ -141,6 +146,8 @@ def filter_dist_store(
     holds nodes in `node` end edges in `edge` for each node and edge type,
     respectively. Sorted attribute values are provided as metadata from
     :class:`DistNeighborSampler`.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
     """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
