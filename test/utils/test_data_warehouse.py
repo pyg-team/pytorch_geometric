@@ -569,7 +569,7 @@ class TestSmartParser:
         assert 'Test Warehouse' in prompt
         assert 'table1' in prompt or 'table2' in prompt
         assert 'What is the data lineage?' in prompt
-        assert 'Please answer in 2-3 sentences' in prompt
+        assert 'Answer concisely in 2-3 sentences' in prompt
 
     def test_extract_essential_table_info(self) -> None:
         """Test table information extraction."""
@@ -1280,3 +1280,31 @@ class TestWarehouseDeepCoverage:
         txt = sys._format_quality_analytics(
             sys.model.predict_task(x, edge_index, 'quality'), x.shape[0])
         assert 'EXCELLENT' in txt and 'Average Quality Score' in txt
+
+
+class TestWarehouseTraining:
+    """Test warehouse training functionality."""
+    def test_create_warehouse_training_data(self) -> None:
+        """Test training data creation."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                create_warehouse_training_data, )
+        except ImportError:
+            pytest.skip("Training functions not available")
+
+        # Test basic data creation
+        training_data = create_warehouse_training_data(num_samples=5,
+                                                       num_nodes=20)
+
+        assert len(training_data) == 5
+        assert all('question' in sample for sample in training_data)
+        assert all('x' in sample for sample in training_data)
+        assert all('edge_index' in sample for sample in training_data)
+        assert all('label' in sample for sample in training_data)
+
+        # Check tensor shapes
+        sample = training_data[0]
+        assert sample['x'].shape == (20, 384)  # EMBEDDING_DIM = 384
+        assert sample['edge_index'].shape[0] == 2
+        assert isinstance(sample['question'], str)
+        assert isinstance(sample['label'], str)
