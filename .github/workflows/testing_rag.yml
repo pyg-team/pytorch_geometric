@@ -32,6 +32,7 @@ jobs:
             torch_geometric/nn/nlp/**
             torch_geometric/nn/models/g_retriever.py
             torch_geometric/loader/rag_loader.py
+            torch_geometric/utils/rag/**
 
       - name: Setup packages
         if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
