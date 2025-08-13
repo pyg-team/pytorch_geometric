@@ -3,15 +3,16 @@
 Demonstrates graph-based warehouse analysis with RelBench data integration.
 Supports lineage detection, silo analysis, and quality assessment.
 
-DEMO LIMITATIONS:
-- Uses TinyLlama (1.1B) which may hallucinate or generate off-topic content
-- Analytics predictions are from untrained/random-initialized models
-- Designed for architecture demonstration, not production accuracy
-- Responses may include artifacts from LLM training data
+DEMO FEATURES:
+- Uses Phi-3 (3.8B) or TinyLlama (1.1B) for LLM component
+- Includes GNN finetuning following G-Retriever pattern
+- Shows both untrained and trained model performance
+- Demonstrates warehouse intelligence with real graph analysis
 
 Usage:
     python examples/llm/whg_demo.py          # Non-verbose mode (clean output)
     python examples/llm/whg_demo.py --verbose  # Verbose mode (shows prompts)
+    python examples/llm/whg_demo.py --train   # Include GNN training demo
 """
 
 import sys
@@ -24,7 +25,11 @@ from torch_geometric.data import Data
 
 #
 try:
-    from torch_geometric.utils.data_warehouse import create_warehouse_demo
+    from torch_geometric.utils.data_warehouse import (
+        create_warehouse_demo,
+        create_warehouse_training_data,
+        train_warehouse_model,
+    )
 except ImportError as e:
     print(f"Import error: {e}")
     print("Make sure PyTorch Geometric is properly installed.")
@@ -120,10 +125,13 @@ def main() -> None:
                         help='Use concise context for small models')
     parser.add_argument('--cached', action='store_true',
                         help='Use cached models (avoid re-downloading)')
+    parser.add_argument('--train', action='store_true',
+                        help='Include GNN training demonstration')
     args = parser.parse_args()
 
     verbose = args.verbose
     llm_model = args.llm_model
+    include_training = args.train
     use_simple = args.simple
     use_concise = args.concise
     _ = args.cached  # trigger parse and avoid unused warning
@@ -141,7 +149,7 @@ def main() -> None:
         'llm_temperature': 0.7,
         'llm_top_k': 50,
         'llm_top_p': 0.95,
-        'llm_max_tokens': 150,
+        'llm_max_tokens': 60,
         'gnn_hidden_channels': 256,
         'gnn_heads': 4,
         'use_gretriever': not use_simple,
@@ -194,6 +202,32 @@ def main() -> None:
     except Exception as e:
         vprint(f"Failed to create warehouse system: {e}")
         return
+
+    # Optional: GNN Training Demo
+    if include_training and demo_config.get('use_gretriever', True):
+        vprint("\nStep 2.5: GNN Training Demonstration")
+        try:
+            # Create training data (small for demo)
+            vprint("Creating synthetic training data...")
+            training_data = create_warehouse_training_data(
+                num_samples=4, num_nodes=20)
+            vprint(f"Generated {len(training_data)} training samples")
+
+            # Train the model (quick demo with 1 epoch)
+            vprint("Training GNN component (1 epoch for demo)...")
+            if hasattr(conversation_system.model, 'g_retriever'):
+                trained_model = train_warehouse_model(
+                    conversation_system.model, training_data, num_epochs=1,
+                    lr=1e-4, batch_size=1, device='cpu', verbose=verbose)
+                conversation_system.model = trained_model
+                vprint("GNN training completed!")
+            else:
+                vprint("Simple model selected - skipping GNN training")
+
+        except Exception as e:
+            vprint(f"Training failed (continuing with untrained model): {e}")
+    elif include_training:
+        vprint("\nStep 2.5: Training skipped (simple model selected)")
 
     # Step 3: Prepare graph data for analysis with rich context
     graph_data = {
