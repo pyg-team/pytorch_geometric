@@ -1,0 +1,208 @@
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\pkey.py:82: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\transport.py:219: CryptographyDeprecationWarning: Blowfish has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.Blowfish and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 45.0.0.
+  "class": algorithms.Blowfish,
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\transport.py:243: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+C:\Users\user\Desktop\job_assignments\Thesis work\Thesis_work_old\pytorch_geometric\torch_geometric\utils\data_warehouse.py:139: UserWarning: LLM is being used on CPU, which may be slow
+  self.llm = LLM(
+Warehouse Intelligence Demo with Graph Neural Networks + LLM
+================================================================================
+
+Configuration:
+   LLM Model: TinyLlama/TinyLlama-1.1B-Chat-v0.1
+   Temperature: 0.7
+   Top-k: 50
+   Top-p: 0.95
+   Max Tokens: 500
+   GNN Channels: 256
+   Verbose Mode: True
+
+Step 1: Using cached data (avoiding downloads)
+Using cached F1 data structure (avoiding network downloads)
+Using cached graph with 9 node types
+   Node types: ['races', 'circuits', 'drivers', 'results', 'standings', 'constructors', 'constructor_results', 'constructor_standings', 'qualifying']
+Simulated homogeneous: 450 nodes, 236 edges
+
+Step 2: Creating warehouse conversation system
+Setting up 'TinyLlama/TinyLlama-1.1B-Chat-v0.1' with configuration: {'revision': 'main'}
+Warehouse system initialized with custom parameters
+
+Step 2.5: GNN Training Demonstration
+Creating synthetic training data...
+Generated 4 training samples
+Training GNN component (1 epoch for demo)...
+Training warehouse model for 1 epochs...
+Learning rate: 0.0001, Batch size: 1
+
+Epoch 1/1:   0%|          | 0/4 [00:00<?, ?it/s]
+Epoch 1/1:  25%|##5       | 1/4 [00:10<00:32, 10.82s/it]
+Epoch 1/1:  50%|#####     | 2/4 [00:19<00:19,  9.79s/it]
+Epoch 1/1:  75%|#######5  | 3/4 [00:28<00:09,  9.26s/it]
+Epoch 1/1: 100%|##########| 4/4 [00:38<00:00,  9.55s/it]
+Epoch 1/1: 100%|##########| 4/4 [00:38<00:00,  9.63s/it]
+Epoch: 1|1, Train Loss: 3.1631
+Checkpointing best model...
+Training completed. Best loss: 3.1631
+GNN training completed!
+
+Step 3: Running warehouse intelligence queries
+
+Processing 4 warehouse intelligence queries...
+================================================================================
+
+--- Query 1: What is the data lineage in this warehouse? ---
+
+PROMPT INPUT (DETAILED):
+------------------------------------------------------------
+multi-domain data Data Warehouse Analysis:
+- Total Entities: 450 records across 9 tables
+- Total Relationships: 236 connections between tables
+- Domain: Formula 1 Racing Data
+- Tables: races, circuits, drivers, results, standings, constructors and 3 other tables
+- Key Relationships: races -> circuits, results -> races, results -> constructors and 2 other relationships
+
+Current Analytics Results:
+Data Lineage Analysis:
+- Dominant Pattern: Staging data processing
+- Distribution: Staging: 1 entities (0.2%)
+- Total Lineage Paths: 450 entities tracked
+
+Relevant Data Context:
+Query-relevant tables: races, drivers, results
+These tables are most relevant to your what analysis.
+
+Query: What is the data lineage in this warehouse?
+
+Please provide a detailed analysis based on the above warehouse structure, analytics results, and relevant data context.
+------------------------------------------------------------
+
+LLM RESPONSE:
+------------------------------------------------------------
+This is good data lineage [/s] This warehouse has a very clear line of business systems and data. [/ /s] Data Lineage Analysis:
+- Dominant Pattern: Staging data processing
+[/s][/s], [/b] We use staging to store incremental data with quality improvements in production environments. [https://www.kentcdodds.com/data-quality-staging-production-differences/#:~:text=Staging%20is%2C%2E%26ldquo;cleaner,with%2Dimple%2DEngine%23sources:%20Production%27s%24strongs%E2%80%9D%25s%EC%A0%84%2BCleanest%2Fmost%2Bcorrect%3D.] [/quote] The current architecture is scalable and flexible to accommodate changes from new systems and processes. [url]https://docs.google.com/@+email?sourcekey=...&amp;usp=sharing[/url] [/sa]
+------------------------------------------------------------
+Answer: This is good data lineage [/s This warehouse has a very clear line of business systems and data. [/ /s Data Lineage Analysis: - Dominant Pattern: Staging data processing [/s[/s, [/b We use staging to store incremental data with quality improvements in production environments. [https://www.kentcdodds.com/data-quality-staging-production-differences/#:~:text=Staging%20is%2C%2E%26ldquo;cleaner,with%2Dimple%2DEngine%23sources:%20Production%27s%24strongs%E2%80%9D%25s%EC%A0%84%2BCleanest%2Fmost%2Bcorrect%3D. [/quote The current architecture is scalable and flexible to accommodate changes from new systems and processes. [urlhttps://docs.google.com/@+email?sourcekey=...&amp;usp=sharing[/url [/sa.
+Query type: lineage
+
+--- Query 2: Are there any data silos? ---
+
+PROMPT INPUT (DETAILED):
+------------------------------------------------------------
+multi-domain data Data Warehouse Analysis:
+- Total Entities: 450 records across 9 tables
+- Total Relationships: 236 connections between tables
+- Domain: Formula 1 Racing Data
+- Tables: races, circuits, drivers, results, standings, constructors and 3 other tables
+- Key Relationships: races -> circuits, results -> races, results -> constructors and 2 other relationships
+
+Current Analytics Results:
+Data Silo Analysis:
+- Isolated Entities: 1 (0.2%)
+- Connected Entities: 449 (99.8%)
+- Silo Severity: LOW
+- Recommendation: Monitor connectivity
+
+Relevant Data Context:
+Query-relevant tables: races, circuits, drivers
+These tables are most relevant to your are analysis.
+
+Query: Are there any data silos?
+
+Please provide a detailed analysis based on the above warehouse structure, analytics results, and relevant data context.
+------------------------------------------------------------
+
+LLM RESPONSE:
+------------------------------------------------------------
+Silo silos are minimal. [/s] Silos can be silos of silos. [s] Results from queries: races, circuits, drivers[/s], constructors etc.[/s]/s] The warehouse data silos include many entities and relations across multiple systems. [c] Data silos may contain silos[/w] Siloed data is complex to analyze and interpret due to the variety of sources. [ /s] 100% silos would indicate poor quality or integration with other systems [/color][/s]: There are no silos in this system [/quote] Silox silos do not appear to be a problem with proper cleansing and cleaning . [/b] Siloso silos likely exist as silo silo connections between systems [s]" results" tables[/t] Compare queries against silos and show results as silos [/url] Silto silos should be well defined silo data silo cleaning silo relationships silo validation [/linquage] Data Silo Validation: Check that all source systems have complete, clear and consistent access [/sp] Data cleanses
+------------------------------------------------------------
+Answer: Silo silos are minimal. [/s Silos can be silos of silos. [s Results from queries: races, circuits, drivers[/s, constructors etc.[/s/s The warehouse data silos include many entities and relations across multiple systems. [c Data silos may contain silos[/w Siloed data is complex to analyze and interpret due to the variety of sources. [ /s 100% silos would indicate poor quality or integration with other systems [/color[/s: There are no silos in this system [/quote Silox silos do not appear to be a problem with proper cleansing and cleaning . [/b Siloso silos likely exist as silo silo connections between systems [s" results" tables[/t Compare queries against silos and show results as silos [/url Silto silos should be well defined silo data silo cleaning silo relationships silo validation [/linquage Data Silo Validation: Check that all source systems have complete, clear and consistent access [/sp Data cleanses.
+Query type: silo
+
+--- Query 3: What is the data quality status? ---
+
+PROMPT INPUT (DETAILED):
+------------------------------------------------------------
+multi-domain data Data Warehouse Analysis:
+- Total Entities: 450 records across 9 tables
+- Total Relationships: 236 connections between tables
+- Domain: Formula 1 Racing Data
+- Tables: races, circuits, drivers, results, standings, constructors and 3 other tables
+- Key Relationships: races -> circuits, results -> races, results -> constructors and 2 other relationships
+
+Current Analytics Results:
+Data Quality Analysis:
+- Average Quality Score: 0.62/1.0
+- High Quality Entities: 0 (0.0%)
+- Poor Quality Entities: 0 (0.0%)
+- Overall Status: GOOD
+- Priority: Maintain current standards
+
+Relevant Data Context:
+Query-relevant tables: races, circuits, drivers
+These tables are most relevant to your what analysis.
+
+Query: What is the data quality status?
+
+Please provide a detailed analysis based on the above warehouse structure, analytics results, and relevant data context.
+------------------------------------------------------------
+
+LLM RESPONSE:
+------------------------------------------------------------
+Data quality is good with proper cleansing, validation and cleansation. [/s] The data cleansed properly with proper cleaning and cleavage for cleansure accuracy and completeness. [b][/s][/b] Table: races[/s]: Results from 9 tables of Formula One (F1) Racing Events in the years 2015 to 2364[/u] Total Entities: 450 records across 9 rows [/b][s] Result: Total Entitiies = 448 - Total Relationships = 76 [/font][/size] Tables: races, circuits, drivers, results[/z] Result - Total Enti[/b], total relationships = 224[c] Results [/o] Races: Total Relational [/quote] Total Quality Score: 0.62/1.0 [/url] Average Quality score: 1.22 [/emoji] High Quality Entities : 0 [em][/a] [/w] Connections between the tables are low [/
+------------------------------------------------------------
+Answer: Data quality is good with proper cleansing, validation and cleansation. [/s The data cleansed properly with proper cleaning and cleavage for cleansure accuracy and completeness. [b[/s[/b Table: races[/s: Results from 9 tables of Formula One (F1) Racing Events in the years 2015 to 2364[/u Total Entities: 450 records across 9 rows [/b[s Result: Total Entitiies = 448 - Total Relationships = 76 [/font[/size Tables: races, circuits, drivers, results[/z Result - Total Enti[/b, total relationships = 224[c Results [/o Races: Total Relational [/quote Total Quality Score: 0.62/1.0 [/url Average Quality score: 1.22 [/emoji High Quality Entities : 0 [em[/a [/w Connections between the tables are low [/.
+Query type: quality
+
+--- Query 4: Analyze the impact of changes in this warehouse ---
+
+PROMPT INPUT (DETAILED):
+------------------------------------------------------------
+multi-domain data Data Warehouse Analysis:
+- Total Entities: 450 records across 9 tables
+- Total Relationships: 236 connections between tables
+- Domain: Formula 1 Racing Data
+- Tables: races, circuits, drivers, results, standings, constructors and 3 other tables
+- Key Relationships: races -> circuits, results -> races, results -> constructors and 2 other relationships
+
+Current Analytics Results:
+Change Impact Analysis:
+- High Impact Entities: 0 (0.0%)
+- Medium Impact Entities: 1 (0.2%)
+- Low Impact Entities: 0 (0.0%)
+- Overall Risk Level: LOW
+- Change Strategy: Standard deployment acceptable
+
+Relevant Data Context:
+Analysis covers all 9 tables in the warehouse.
+
+Query: Analyze the impact of changes in this warehouse
+
+Please provide a detailed analysis based on the above warehouse structure, analytics results, and relevant data context.
+------------------------------------------------------------
+
+LLM RESPONSE:
+------------------------------------------------------------
+The analysis would cover data and queries relevant to the warehouse, along with any related risk assessment. [/s]
+- Risk Assessment: [/url] This is a moderate risk assessments for this type of changes due to large amount of sensitive data. [URL][/s]: https://www.youtube.com/watch?v=Yzj45X123OI [/t] Analysis is performed on existing data [/q][/url][/b] I will perform an extensive data review using standard tools and cleansing procedures [/quote] [/size][/quote][/size] Validation process [/snip] Data quality is good with proper cleansure [/8][/0] [ /s ] [/u] [u][/u][u][s] This data is clean and validated [/hide] [s] [i]Source systems are accurate[/s], [/i] [ii]Cleaned from sources in the past [/ii] [iii] Cleaned by source systems [/vi] [iv] System's validate with external validation tools [/v
+------------------------------------------------------------
+Answer: The analysis would cover data and queries relevant to the warehouse, along with any related risk assessment. [/s - Risk Assessment: [/url This is a moderate risk assessments for this type of changes due to large amount of sensitive data. [URL[/s: https://www.youtube.com/watch?v=Yzj45X123OI [/t Analysis is performed on existing data [/q[/url[/b I will perform an extensive data review using standard tools and cleansing procedures [/quote [/size[/quote[/size Validation process [/snip Data quality is good with proper cleansure [/8[/0 [ /s [/u [u[/u[u[s This data is clean and validated [/hide [s [iSource systems are accurate[/s, [/i [iiCleaned from sources in the past [/ii [iii Cleaned by source systems [/vi [iv System's validate with external validation tools [/v.
+Query type: impact
+
+Step 4: Conversation History
+------------------------------
+1. Q: Are there any data silos?...
+   A: Silo silos are minimal. [/s Silos can be silos of silos. [s Results from queries...
+2. Q: What is the data quality status?...
+   A: Data quality is good with proper cleansing, validation and cleansation. [/s The ...
+3. Q: Analyze the impact of changes in this warehouse...
+   A: The analysis would cover data and queries relevant to the warehouse, along with ...
+
+Demo completed. Processed 4 queries total.
+
+Features demonstrated:
+- RelBench data integration
+- Multi-task warehouse intelligence
+- Natural language query processing
+- Lineage, silo, and quality analysis

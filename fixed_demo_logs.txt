@@ -1,0 +1,21 @@
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\pkey.py:82: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\transport.py:219: CryptographyDeprecationWarning: Blowfish has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.Blowfish and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 45.0.0.
+  "class": algorithms.Blowfish,
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\transport.py:243: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+C:\Users\user\Desktop\job_assignments\Thesis work\Thesis_work_old\pytorch_geometric\torch_geometric\utils\data_warehouse.py:139: UserWarning: LLM is being used on CPU, which may be slow
+  self.llm = LLM(
+Setting up 'TinyLlama/TinyLlama-1.1B-Chat-v0.1' with configuration: {'revision': 'main'}
+
+--- Query 1: What is the data lineage in this warehouse? ---
+Answer: Querying the warehouse data and analyzing it based on what analysis provides a clear picture of how data is organized, who has access to which data, and where that data comes from.
+
+--- Query 2: Are there any data silos? ---
+Answer: ### Assistant description here### Write an analysis on the provided data context, including a detailed analysis of the various entities and relationships in this warehouse. Include recommendations based on the above information to help improve the data quality and performance of the query. Also provide relevant data context and analytics results to support your findings. The goal is to produce a clear and concise summary that can be used as a reference for further investigation or implementation ideas.
+
+--- Query 3: What is the data quality status? ---
+Answer: ```<issue_closed> <issue_start><issue_comment>Title: A11y: Add keyboard support to the form component username_0: ## What is this? This PR adds keyboard support for the `Form` component by implementing several accessibility improvements. ### Improved Accessibility - Contrast improvement with existing focus and blur events. The onBlur event now has a high priority so that focus can be lost before hitting the blur handler, which could cause issues in cases where the focus listener was removed at some point after the user interacted with the input element (e.g., when refreshing). Additionally, there are additional checks added to ensure that non-focused elements do not trigger blurs or other effects without being focused first. - Focus behavior improved such that if an input field's `tabindex` is set to -1, it will no longer trigger tab key presses but instead send up the whole window until all active inputs stop triggering them. This avoids situations where only certain users experience the same effect as the one described above (where clicking outside of the input prevents entering text), but also.
+
+--- Query 4: Analyze the impact of changes in this warehouse ---
+Answer: Sure, I can help you analyze the impact of changes in this warehouse structure and analytics results. What types of changes would you like to examine? Could you provide more context about the data context or queries you'd like analyzed?

@@ -825,11 +825,11 @@ Quantitative Analysis: {analytics_summary}"""
                 if isinstance(edge_type,
                               (list, tuple)) and len(edge_type) >= 3:
                     src, _, dst = edge_type[0], edge_type[1], edge_type[2]
-                    key_rels.append(f"{src}→{dst}")
+                    key_rels.append(f"{src}->{dst}")
                 elif isinstance(edge_type,
                                 (list, tuple)) and len(edge_type) == 2:
                     src, dst = edge_type[0], edge_type[1]
-                    key_rels.append(f"{src}→{dst}")
+                    key_rels.append(f"{src}->{dst}")
             relationships_str = (", ".join(key_rels)
                                  if key_rels else "table connections")
         else:
@@ -857,12 +857,12 @@ Quantitative Analysis: {analytics_summary}"""
                 cond1 = any(part in table2 for part in table1.split('_'))
                 cond2 = any(part in table1 for part in table2.split('_'))
                 if cond1 or cond2:
-                    common_rels.append(f"{table1}→{table2}")
+                    common_rels.append(f"{table1}->{table2}")
                     break
 
         if not common_rels and len(node_types) >= 2:
             # Fallback: just show first two tables connected
-            common_rels.append(f"{node_types[0]}→{node_types[1]}")
+            common_rels.append(f"{node_types[0]}->{node_types[1]}")
 
         return ", ".join(
             common_rels[:3]) if common_rels else "table connections"
@@ -983,11 +983,11 @@ Quantitative Analysis: {analytics_summary}"""
         if 'lineage' in query_lower or 'flow' in query_lower:
             relevant_samples = [
                 "Data Flow Examples:",
-                "- drivers table → results table (race performance)",
-                "- races table → results table (race outcomes)",
-                "- constructors table → constructor_results table "
+                "- drivers table -> results table (race performance)",
+                "- races table -> results table (race outcomes)",
+                "- constructors table -> constructor_results table "
                 "(team performance)",
-                "- circuits table → races table (venue information)"
+                "- circuits table -> races table (venue information)"
             ]
         elif 'silo' in query_lower or 'isolated' in query_lower:
             relevant_samples = [
@@ -1100,7 +1100,7 @@ Quantitative Analysis: {analytics_summary}"""
 
         if edge_types:
             edge_desc = ", ".join(
-                [f"{src} → {dst}" for src, rel, dst in edge_types[:3]])
+                [f"{src} -> {dst}" for src, rel, dst in edge_types[:3]])
             if len(edge_types) > 3:
                 edge_desc += f" and {len(edge_types) - 3} other relationships"
             structure_info.append(f"- Key Relationships: {edge_desc}")
