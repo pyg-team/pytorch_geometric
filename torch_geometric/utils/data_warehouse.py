@@ -185,16 +185,18 @@ class WarehouseGRetriever(nn.Module):
             from transformers import StoppingCriteria, StoppingCriteriaList
 
             class SentenceStoppingCriteria(StoppingCriteria):
-                def __init__(self, tokenizer, stop_strings):
+                def __init__(self, tokenizer: Any,
+                             stop_strings: list[str]) -> None:
                     self.tokenizer = tokenizer
-                    self.stop_token_ids = []
+                    self.stop_token_ids: list[list[int]] = []
                     for stop_str in stop_strings:
                         tokens = tokenizer.encode(stop_str,
                                                   add_special_tokens=False)
                         if tokens:
                             self.stop_token_ids.append(tokens)
 
-                def __call__(self, input_ids, scores, **kwargs):
+                def __call__(self, input_ids: Tensor, scores: Tensor,
+                             **kwargs: Any) -> bool:
                     # Check if any stop sequence appears at the end
                     for stop_tokens in self.stop_token_ids:
                         if len(input_ids[0]) >= len(stop_tokens):
@@ -1308,7 +1310,7 @@ Quantitative Analysis: {analytics_summary}"""
         # If the response is clearly garbled (repeated words), return fallback
         words = cleaned.split()
         if len(words) > 10:
-            word_counts = {}
+            word_counts: dict[str, int] = {}
             for word in words:
                 word_counts[word] = word_counts.get(word, 0) + 1
             # If any word appears more than 30% of the time, it's garbled
@@ -1657,7 +1659,8 @@ def create_warehouse_demo(
                                            concise_context=concise_context)
 
 
-def train_warehouse_model(model: WarehouseGRetriever, train_data: list,
+def train_warehouse_model(model: WarehouseGRetriever,
+                          train_data: list[dict[str, Any]],
                           num_epochs: int = 3, lr: float = 1e-4,
                           batch_size: int = 4, device: str = 'cpu',
                           verbose: bool = True) -> WarehouseGRetriever:
@@ -1761,8 +1764,8 @@ def train_warehouse_model(model: WarehouseGRetriever, train_data: list,
     return model
 
 
-def create_warehouse_training_data(num_samples: int = 20,
-                                   num_nodes: int = 100) -> list:
+def create_warehouse_training_data(
+        num_samples: int = 20, num_nodes: int = 100) -> list[dict[str, Any]]:
     """Create synthetic training data for warehouse intelligence.
 
     Args:
