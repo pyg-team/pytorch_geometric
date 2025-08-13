@@ -4,7 +4,12 @@ from typing import Callable, List, Optional, Union
 import numpy as np
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.utils import coalesce
 
 
@@ -43,7 +48,7 @@ class WikipediaNetwork(InMemoryDataset):
 
     """
 
-    raw_url = 'https://graphmining.ai/datasets/ptg/wiki'
+    raw_url = 'https://snap.stanford.edu/data/wikipedia.zip'
     processed_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
                      'geom-gcn/f1fc0d14b3b019c562737240d06ec83b07d16a8f')
 
@@ -51,13 +56,15 @@ class WikipediaNetwork(InMemoryDataset):
         self,
         root: str,
         name: str,
-        geom_gcn_preprocess: bool = True,
+        geom_gcn_preprocess: bool = False,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
     ) -> None:
         self.name = name.lower()
         self.geom_gcn_preprocess = geom_gcn_preprocess
+        # preprocess url is broken
+        assert not geom_gcn_preprocess
         assert self.name in ['chameleon', 'crocodile', 'squirrel']
         if geom_gcn_preprocess and self.name == 'crocodile':
             raise AttributeError("The dataset 'crocodile' is not available in "
@@ -86,7 +93,13 @@ class WikipediaNetwork(InMemoryDataset):
             return (['out1_node_feature_label.txt', 'out1_graph_edges.txt'] +
                     [f'{self.name}_split_0.6_0.2_{i}.npz' for i in range(10)])
         else:
-            return f'{self.name}.npz'
+            return [
+                f'wikipedia/{self.name}/{x}' for x in [
+                    f'musae_{self.name}_edges.csv',
+                    f'musae_{self.name}_features.json',
+                    f'musae_{self.name}_target.csv',
+                ]
+            ]
 
     @property
     def processed_file_names(self) -> str:
@@ -101,7 +114,8 @@ class WikipediaNetwork(InMemoryDataset):
                 url = f'{self.processed_url}/splits/{filename}'
                 download_url(url, self.raw_dir)
         else:
-            download_url(f'{self.raw_url}/{self.name}.npz', self.raw_dir)
+            file_path = download_url(self.raw_url, self.raw_dir)
+            extract_zip(file_path, self.raw_dir)
 
     def process(self) -> None:
         if self.geom_gcn_preprocess:
@@ -134,14 +148,29 @@ class WikipediaNetwork(InMemoryDataset):
                         val_mask=val_mask, test_mask=test_mask)
 
         else:
-            raw_data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
-            x = torch.from_numpy(raw_data['features']).to(torch.float)
-            edge_index = torch.from_numpy(raw_data['edges']).to(torch.long)
-            edge_index = edge_index.t().contiguous()
-            edge_index = coalesce(edge_index, num_nodes=x.size(0))
-            y = torch.from_numpy(raw_data['target']).to(torch.float)
+            import json
 
-            data = Data(x=x, edge_index=edge_index, y=y)
+            import pandas as pd
+            edges = pd.read_csv(self.raw_paths[0], dtype=int)
+            features = json.load(open(self.raw_paths[1]))
+            target = pd.read_csv(self.raw_paths[2], dtype=int)
+
+            x = []
+            n_feats = 128
+            for i in target['id'].values:
+                f = [0] * n_feats
+                if str(i) in features:
+                    n_len = len(features[str(i)])
+                    f = features[str(
+                        i)][:n_feats] if n_len >= n_feats else features[str(
+                            i)] + [0] * (n_feats - n_len)
+                x.append(f)
+            x = torch.from_numpy(np.array(x)).to(torch.float)
+            y = torch.from_numpy(target.values[:, 1]).t().to(torch.long)
+            edge_index = torch.from_numpy(edges.values).to(torch.long)
+            edge_index = edge_index.t().contiguous()
+
+            data = Data(x=x, y=y, edge_index=edge_index)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
