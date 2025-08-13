@@ -3,7 +3,7 @@
 import pytest
 
 
-def test_relbench_imports():
+def test_relbench_imports() -> None:
     """Test RelBench module imports."""
     try:
         from torch_geometric.datasets.relbench import (
@@ -20,7 +20,7 @@ def test_relbench_imports():
         pytest.skip("RelBench not available")
 
 
-def test_relbench_processor():
+def test_relbench_processor() -> None:
     """Test RelBenchProcessor basic functionality."""
     try:
         from torch_geometric.datasets.relbench import RelBenchProcessor
@@ -39,7 +39,7 @@ def test_relbench_processor():
             raise
 
 
-def test_create_relbench_hetero_data():
+def test_create_relbench_hetero_data() -> None:
     """Test create_relbench_hetero_data function."""
     try:
         from torch_geometric.datasets.relbench import \
