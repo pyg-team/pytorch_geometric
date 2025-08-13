@@ -208,7 +208,11 @@ class WarehouseGRetriever(nn.Module):
                     return False
 
             # Define stop strings for natural sentence endings
-            stop_strings = ['. ', '! ', '? ', '\n\n', 'Query:', 'Answer:']
+            # More aggressive stopping for container/CPU environments
+            stop_strings = [
+                '. ', '! ', '? ', '\n\n', 'Query:', 'Answer:', 'ships', 'alls',
+                'iffs', 'eason', 'alls.'
+            ]
             stopping_criteria = StoppingCriteriaList(
                 [SentenceStoppingCriteria(self.llm.tokenizer, stop_strings)])
 
@@ -1710,7 +1714,7 @@ def train_warehouse_model(model: WarehouseGRetriever,
             batch_samples = train_data[batch_start:batch_end]
 
             optimizer.zero_grad()
-            batch_loss = 0.0
+            batch_loss: Tensor | None = None
 
             # Process each sample in the batch
             for sample in batch_samples:
@@ -1728,13 +1732,16 @@ def train_warehouse_model(model: WarehouseGRetriever,
                     loss = model.train_forward(question=question, x=x,
                                                edge_index=edge_index,
                                                batch=batch_tensor, label=label)
-                    batch_loss += loss
+                    if batch_loss is None:
+                        batch_loss = loss
+                    else:
+                        batch_loss = batch_loss + loss
                 except Exception as e:
                     if verbose:
                         print(f"Warning: Training step failed: {e}")
                     continue
 
-            if batch_loss > 0:
+            if batch_loss is not None:
                 # Backward pass
                 batch_loss.backward()
 
