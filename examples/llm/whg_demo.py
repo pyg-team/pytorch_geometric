@@ -149,7 +149,7 @@ def main() -> None:
         'llm_temperature': 0.7,
         'llm_top_k': 50,
         'llm_top_p': 0.95,
-        'llm_max_tokens': 60,
+        'llm_max_tokens': 500,
         'gnn_hidden_channels': 256,
         'gnn_heads': 4,
         'use_gretriever': not use_simple,
