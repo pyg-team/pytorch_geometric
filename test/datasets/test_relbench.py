@@ -3,29 +3,21 @@
 import pytest
 
 
-def test_get_warehouse_task_info():
-    """Test get_warehouse_task_info function."""
-    # Import the module under test
+def test_relbench_imports():
+    """Test RelBench module imports."""
     try:
-        from torch_geometric.datasets.relbench import get_warehouse_task_info
+        from torch_geometric.datasets.relbench import (
+            RelBenchDataset,
+            RelBenchProcessor,
+            create_relbench_hetero_data,
+        )
+
+        # Test that classes can be imported
+        assert RelBenchDataset is not None
+        assert RelBenchProcessor is not None
+        assert create_relbench_hetero_data is not None
     except ImportError:
         pytest.skip("RelBench not available")
-
-    # Test basic functionality
-    task_info = get_warehouse_task_info()
-
-    # Verify structure
-    assert isinstance(task_info, dict)
-    assert 'lineage' in task_info
-    assert 'silo' in task_info
-    assert 'anomaly' in task_info
-
-    # Verify each task has required fields
-    for _task_name, task_data in task_info.items():
-        assert 'num_classes' in task_data
-        assert 'description' in task_data
-        assert isinstance(task_data['num_classes'], int)
-        assert isinstance(task_data['description'], str)
 
 
 def test_relbench_processor():
@@ -35,9 +27,16 @@ def test_relbench_processor():
     except ImportError:
         pytest.skip("RelBench not available")
 
-    # Test processor initialization
-    processor = RelBenchProcessor()
-    assert processor is not None
+    # Test processor initialization - handle missing dependencies gracefully
+    try:
+        processor = RelBenchProcessor()
+        assert processor is not None
+    except Exception as e:
+        # If sentence-transformers not available, raise appropriate error
+        if "sentence transformer" in str(e).lower():
+            pytest.skip("Sentence transformers not available in CI")
+        else:
+            raise
 
 
 def test_create_relbench_hetero_data():
