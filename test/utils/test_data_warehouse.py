@@ -1,6 +1,8 @@
 # isort: skip_file
 """Comprehensive tests for data warehouse intelligence system."""
 
+from typing import Any
+
 import pytest
 import torch
 
@@ -493,10 +495,11 @@ class TestSmartParser:
         pred = torch.zeros(x.shape[0], 5)
         pred[:, 2] = 3.0  # 'stores cleaned and processed business data'
 
-        def _fake_predict_task(_x, _edge_index, _task):  # noqa: ARG001
+        def _fake_predict_task(_x: Any, _edge_index: Any,
+                               _task: Any) -> Any:  # noqa: ARG001
             return pred
 
-        system.model.predict_task = _fake_predict_task
+        system.model.predict_task = _fake_predict_task  # type: ignore[method-assign]  # noqa: E501
 
         result = system._get_concise_analytics(x, edge_index, 'lineage')
         assert isinstance(result, str)
@@ -860,7 +863,8 @@ class TestWarehouseDemo:
         }]
 
         for config in configs:
-            demo_system = create_warehouse_demo(**config)
+            demo_system = create_warehouse_demo(
+                **config)  # type: ignore[arg-type]
             assert demo_system is not None
 
 
@@ -897,7 +901,7 @@ class TestWarehouseDeepCoverage:
         def _boom(_: list[str]) -> torch.Tensor:
             raise RuntimeError("encoding failed")
 
-        sys._encode_text = _boom  # type: ignore[attr-defined]
+        sys._encode_text = _boom  # type: ignore[method-assign,assignment]
         x = torch.randn(5, 384)
         edge_index = torch.randint(0, 5, (2, 8))
         ctx = {'node_types': ['users', 'orders']}
@@ -1201,11 +1205,11 @@ class TestWarehouseDeepCoverage:
         sys = WarehouseConversationSystem(SimpleWarehouseModel())
 
         # Force sentence encoder path with a dummy encoder
-        def dummy_encode(texts: list[str]):
+        def dummy_encode(texts: list[str]) -> torch.Tensor:
             return torch.randn(len(texts), 384)
 
-        sys.sentence_encoder = True  # flag
-        sys._encode_text = dummy_encode  # type: ignore[attr-defined]
+        sys.sentence_encoder = True  # type: ignore[attr-defined]
+        sys._encode_text = dummy_encode  # type: ignore[method-assign]
 
         x = torch.randn(5, 384)
         edge_index = torch.randint(0, 5, (2, 8))
@@ -1234,7 +1238,7 @@ class TestWarehouseDeepCoverage:
             pytest.skip("Data warehouse not available")
 
         class Dummy:
-            def predict_task(self, x, edge_index, task: str):
+            def predict_task(self, x: Any, edge_index: Any, task: str) -> Any:
                 if task == 'lineage':
                     logits = torch.zeros(1, 5)
                     logits[:, 2] = 5.0
@@ -1270,7 +1274,7 @@ class TestWarehouseDeepCoverage:
             pytest.skip("Data warehouse not available")
 
         class Dummy:
-            def predict_task(self, x, edge_index, task: str):
+            def predict_task(self, x: Any, edge_index: Any, task: str) -> Any:
                 # High logits -> sigmoid near 1.0 to trigger EXCELLENT branch
                 return torch.full((x.shape[0], ), 8.0)
 
