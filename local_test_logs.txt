@@ -1,0 +1,16 @@
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\pkey.py:82: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\transport.py:219: CryptographyDeprecationWarning: Blowfish has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.Blowfish and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 45.0.0.
+  "class": algorithms.Blowfish,
+C:\Users\user\anaconda3\Lib\site-packages\paramiko\transport.py:243: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Setting up 'microsoft/Phi-3-mini-4k-instruct' with configuration: {'revision': 'main'}
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|#####     | 1/2 [00:09<00:09,  9.81s/it]
+Loading checkpoint shards: 100%|##########| 2/2 [00:21<00:00, 10.83s/it]
+Loading checkpoint shards: 100%|##########| 2/2 [00:21<00:00, 10.68s/it]
+C:\Users\user\Desktop\job_assignments\Thesis work\Thesis_work_old\pytorch_geometric\torch_geometric\utils\data_warehouse.py:139: UserWarning: LLM is being used on CPU, which may be slow
+  self.llm = LLM(
+You are not running the flash-attention implementation, expect numerical differences.

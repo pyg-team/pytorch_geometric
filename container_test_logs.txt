@@ -1,0 +1,41 @@
+=== Test 1: Phi-3 Zero-shot Concise Mode ===
+/usr/local/lib/python3.12/dist-packages/transformers/utils/hub.py:111: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Setting up 'microsoft/Phi-3-mini-4k-instruct' with configuration: {'revision': 'main'}
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [01:36<01:36, 96.79s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [02:28<00:00, 70.33s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [02:28<00:00, 74.31s/it]
+/workspace/pytorch_geometric/torch_geometric/utils/data_warehouse.py:139: UserWarning: LLM is being used on CPU, which may be slow
+  self.llm = LLM(
+/workspace/pytorch_geometric/torch_geometric/utils/data_warehouse.py:1361: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/native/Scalar.cpp:22.)
+  confidence = probs.max(dim=-1).values.mean().item()
+
+--- Query 1: What is the data lineage in this warehouse? ---
+Answer: Indsdev slowellsalls phoneila rocks=[ databases [nnatifreason movementsships compressiffs.[nerrir roomsbol devicesdocseles himiderswocommentsroomsPhoneason circlesalls willingdaten密nalellspackageswordsPScomégights circychviews tele paymentdiffailsallsallswdattphonecommallsInternetallsallsropamps cars Bolastallspsellsallsoupsisionsalls TelurenshipallsallsComalls wordsapps vehicles双ifferent callsships genanntallsallsallsнinceickedalls carriastsightictedcallednamedoolsallsilcircitionstsallsshipsockallsCircionsallscketsathersarksourses friends rocksheallsersarsalls shipsightsallsarrorderscircleamount Phoneorkwdshipsallsuredshellwords ordersenturlsallsightsМside willing appsiqushallssockwdzipychallswdightsallswd requests brothersiti shapesmen willingships willing soldiersallsallsshipsightsalls rocksations telshipsalls willingallsychwords teleightsallsshipsallswdallsalls partnersallswdwddersalls diaallsshipstywdetsiders Comenablewd waitingalls untilfeatureswd willingrich schemesshipsapeswdwd Tel willing wricketallsalty beh willing machinesaxis motion Tel shallottom unitsights qui Telshipsshipswdidersmerceuel whomícharkwd.
+
+--- Query 2: Are there any data silos? ---
+Answer: Allsreasonpackagesiffs his databasesinds compressellsdocsiffs phone slowasonships rocksila [ Hisbol movements emailsdatennn.[listspaceshipsspacesilesdevropiffscomm[slowwaterwordsdiffner devicesailsoupsshipheakedapedPhoneships pillordinatesýchessnalilshipsuren cellsallssections carsilercalledates callsshipsouvertshipsampsfeatures Phonenumbersersessioniffsizersshipsrirprimary密bidstates=[shipsМshipsshipsstatescommandsuren机shipsdersshipsmessages火.
+
+--- Query 3: What is the data quality status? ---
+Answer: Indsdevellswoalls databases slow phoneells=[nn rocksPhoneasonatifdocsropdatencom.[diffshipsallsurenlistsPSiders rooms devices circlesbolwords willingychpackagesferoomsnalalls Himphone compressshipailsidesights [views himýchiles telereason Bolalls密Internetellsproductsrircommattach payment vehicles carsheoups contactsallsallsampsckets双sockcommentsiffs Telshipsallsellswdemes phonetsallscircleallsallsatt pillicted Phoneastsifferentallsallsuredathers circallsCircallsincenerallsallsalls genanntarsilallsallsitionsock willingcircallsightsappsightallscalledallsallsools shipsensesallsallsicksallsshipsshell willingallswdallsshipsallsCom movementswordsallsships soldiersallsallsarrallsships requestsisionsidersallsoursesurlsМalls Bolorderstyenable willingallsalls callsshships willingitiallswdshipsationsallsallsfeatures wingsmenallsent willingions friends waitingallsersships willingwdallsalls ordersaxiswd willingwordsshipsships rocksordsalls brothersalls unitsshipswd willingdersalls tele rockswdshipsights shallarks untilshipsalty apps quiwdwdiderswdshipsets whomiqu willing willingottomightswd Philships willing motionwd tel-shipsppersionwdights shapeswd powers.
+
+--- Query 4: Analyze the impact of changes in this warehouse ---
+Answer: Indsdevells databasesalls phonereason himdocs slowropwo rooms=[asonnn rocksshipsilesroomsailspackages HimPSidersatifnalPhone willing [asts密astiffsightsheInternetwords Phone telenumbersellsbolicted.[com circlesphoneattdatenallsallsychdiffshipviews carscommentsrir Telnerallsarscircle双 contactscommilproductsinceuren devicesshipspreisallsallswords phone wordsallswdalls vehiclesallsourses Bol paymenturedshipsisions callsampsallsidesmenalls circallscalledallsteleComallsallsitiallsallsarrallsallsifferentcircallsallsenableionsts carriiderssockitionsCircappsallscketsallswordsalls rocksools appsalls shipsockallsordersshellwdallsshipsathers willingdersiquzipallsiders teleallsightshipswdalls willingallsightsers willingottomarksallsallsallsty friends partnersurlsshipsallsalls willingightsallsships willing brothers beh dogs waitingwdwdalls movementsships-shipsallsshipswd willingwdetswdwdightsychights willingwdwords orders willing soldiers Bolshipsiders unitswd willingidersentwdalls diaalls quishipswdshipsychotionallsallswdри untilwd requestsicketwdships motionalls willingaltymerceshwdychightsshipsiderswdfeatures willingordsquitelwd willing.
+
+=== Test 2: Phi-3 Zero-shot Normal Mode ===
+/usr/local/lib/python3.12/dist-packages/transformers/utils/hub.py:111: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Setting up 'microsoft/Phi-3-mini-4k-instruct' with configuration: {'revision': 'main'}
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [01:29<01:29, 89.12s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [02:16<00:00, 64.82s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [02:16<00:00, 68.47s/it]
+/workspace/pytorch_geometric/torch_geometric/utils/data_warehouse.py:139: UserWarning: LLM is being used on CPU, which may be slow
+  self.llm = LLM(
+/workspace/pytorch_geometric/torch_geometric/utils/data_warehouse.py:1361: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/native/Scalar.cpp:22.)
+  minlength=NUM_LINEAGE_TYPES).tolist()
