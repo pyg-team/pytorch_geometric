@@ -155,10 +155,10 @@ class WikipediaNetwork(InMemoryDataset):
             features = json.load(open(self.raw_paths[1]))
             target = pd.read_csv(self.raw_paths[2], dtype=int)
 
-            x = []
+            x: List[List[float]] = []
             n_feats = 128
             for i in target['id'].values:
-                f = [0] * n_feats
+                f: List[float] = [0] * n_feats
                 if str(i) in features:
                     n_len = len(features[str(i)])
                     f = features[str(

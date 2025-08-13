@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import torch
 
@@ -60,7 +60,7 @@ class GemsecDeezer(InMemoryDataset):
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self) -> str:
+    def raw_file_names(self) -> List[str]:
         return [
             f'deezer_clean_data/{x}' for x in [
                 f'{self.name}_edges.csv',

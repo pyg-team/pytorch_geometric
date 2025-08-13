@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
@@ -46,7 +46,7 @@ class FacebookPagePage(InMemoryDataset):
         self.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self) -> str:
+    def raw_file_names(self) -> List[str]:
         return [
             f'facebook_large/{x}' for x in [
                 'musae_facebook_edges.csv',
@@ -74,7 +74,7 @@ class FacebookPagePage(InMemoryDataset):
         target['y'] = target['page_type'].apply(lambda x: page_type.index(x))
 
         # import pdb; pdb.set_trace()  # noqa: T201
-        x = []
+        xs = []
         n_feats = 128
         for i in target['id'].values:
             f = [0] * n_feats
@@ -83,8 +83,8 @@ class FacebookPagePage(InMemoryDataset):
                 f = features[str(
                     i)][:n_feats] if n_len >= n_feats else features[str(
                         i)] + [0] * (n_feats - n_len)
-            x.append(f)
-        x = torch.from_numpy(np.array(x)).to(torch.float)
+            xs.append(f)
+        x = torch.from_numpy(np.array(xs)).to(torch.float)
         y = torch.from_numpy(target['y'].values).t().to(torch.long)
         edge_index = torch.from_numpy(edges.values).to(torch.long)
         edge_index = edge_index.t().contiguous()

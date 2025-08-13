@@ -1,5 +1,5 @@
 import os.path as osp
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
@@ -103,7 +103,7 @@ class Twitch(InMemoryDataset):
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self) -> str:
+    def raw_file_names(self) -> List[str]:
         return [
             f'twitch/{self.name}/{x}' for x in [
                 f'musae_{self.name}_edges.csv',
@@ -128,7 +128,7 @@ class Twitch(InMemoryDataset):
         features = json.load(open(self.raw_paths[1]))
         target = pd.read_csv(self.raw_paths[2], dtype=int)
 
-        x = []
+        xs = []
         n_feats = 128
         for i in target['id'].values:
             f = [0] * n_feats
@@ -137,8 +137,8 @@ class Twitch(InMemoryDataset):
                 f = features[str(
                     i)][:n_feats] if n_len >= n_feats else features[str(
                         i)] + [0] * (n_feats - n_len)
-            x.append(f)
-        x = torch.from_numpy(np.array(x)).to(torch.float)
+            xs.append(f)
+        x = torch.from_numpy(np.array(xs)).to(torch.float)
         y = torch.from_numpy(target.values[:, 1]).t().to(torch.long)
         edge_index = torch.from_numpy(edges.values).to(torch.long)
         edge_index = edge_index.t().contiguous()
