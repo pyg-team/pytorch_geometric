@@ -155,17 +155,17 @@ class WikipediaNetwork(InMemoryDataset):
             features = json.load(open(self.raw_paths[1]))
             target = pd.read_csv(self.raw_paths[2], dtype=int)
 
-            x: List[List[float]] = []
+            xs = []
             n_feats = 128
             for i in target['id'].values:
-                f: List[float] = [0] * n_feats
+                z: List[float] = [0] * n_feats
                 if str(i) in features:
                     n_len = len(features[str(i)])
-                    f = features[str(
+                    z = features[str(
                         i)][:n_feats] if n_len >= n_feats else features[str(
                             i)] + [0] * (n_feats - n_len)
-                x.append(f)
-            x = torch.from_numpy(np.array(x)).to(torch.float)
+                xs.append(z)
+            x = torch.from_numpy(np.array(xs)).to(torch.float)
             y = torch.from_numpy(target.values[:, 1]).t().to(torch.long)
             edge_index = torch.from_numpy(edges.values).to(torch.long)
             edge_index = edge_index.t().contiguous()
