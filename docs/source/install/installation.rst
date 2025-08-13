@@ -13,7 +13,7 @@ Quick Start
 .. raw:: html
    :file: quick-start.html
 
-Installation via PyPi
+Installation via PyPI
 ---------------------
 
 From :pyg:`null` **PyG 2.3** onwards, you can install and use :pyg:`PyG` **without any external library** required except for :pytorch:`PyTorch`.
@@ -65,6 +65,7 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
+   * :pytorch:`PyTorch` 2.8.*: :obj:`${TORCH}=2.8.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu129`
    * :pytorch:`PyTorch` 2.7.*: :obj:`${TORCH}=2.7.0` and :obj:`${CUDA}=cpu|cu118|cu126|cu128`
    * :pytorch:`PyTorch` 2.6.*: :obj:`${TORCH}=2.6.0` and :obj:`${CUDA}=cpu|cu118|cu124|cu126`
    * :pytorch:`PyTorch` 2.5.*: :obj:`${TORCH}=2.5.0` and :obj:`${CUDA}=cpu|cu118|cu121|cu124`
@@ -75,11 +76,11 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    * :pytorch:`PyTorch` 2.0.*: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13.*: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
 
-   For example, for :pytorch:`PyTorch` 2.7.* and CUDA 12.8, type:
+   For example, for :pytorch:`PyTorch` 2.8.* and CUDA 12.9, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.7.0+cu128.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.8.0+cu129.html
 
    For example, for :pytorch:`PyTorch` 2.6.* and CUDA 12.6, type:
 

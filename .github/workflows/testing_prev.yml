@@ -19,18 +19,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        torch-version: [1.13.0, 2.1.0, 2.6.0]
+        torch-version: [1.13.0, 2.1.0, 2.7.0]
         include:
           - torch-version: 1.13.0
             torchvision-version: 0.14.0
           - torch-version: 2.1.0
             torchvision-version: 0.16.0
-          - torch-version: 2.6.0
-            torchvision-version: 0.21.0
+          - torch-version: 2.7.0
+            torchvision-version: 0.22.0
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 40
 

@@ -182,7 +182,7 @@ class Index(Tensor):
         assert_one_dimensional(data)
         assert_contiguous(data)
 
-        out = Tensor._make_wrapper_subclass(  # type: ignore
+        out = Tensor._make_wrapper_subclass(
             cls,
             size=data.size(),
             strides=data.stride(),

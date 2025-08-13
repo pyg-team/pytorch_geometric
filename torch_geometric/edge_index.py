@@ -325,7 +325,7 @@ class EdgeIndex(Tensor):
             elif sparse_size[0] is None and sparse_size[1] is not None:
                 sparse_size = (sparse_size[1], sparse_size[1])
 
-        out = Tensor._make_wrapper_subclass(  # type: ignore
+        out = Tensor._make_wrapper_subclass(
             cls,
             size=data.size(),
             strides=data.stride(),

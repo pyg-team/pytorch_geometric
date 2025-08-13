@@ -17,7 +17,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-14]
         python-version: ['3.9']
-        torch-version: [1.13.0, 2.0.0, 2.1.0, 2.2.0, 2.3.0, 2.4.0, 2.5.0, 2.6.0, 2.7.0, nightly]
+        torch-version: [1.13.0, 2.0.0, 2.1.0, 2.2.0, 2.3.0, 2.4.0, 2.5.0, 2.6.0, 2.7.0, 2.8.0, nightly]
         include:
           - torch-version: 1.13.0
             torchvision-version: 0.14.0
@@ -35,6 +35,10 @@ jobs:
             torchvision-version: 0.20.0
           - torch-version: 2.6.0
             torchvision-version: 0.21.0
+          - torch-version: 2.7.0
+            torchvision-version: 0.22.0
+          - torch-version: 2.8.0
+            torchvision-version: 0.23.0
           - torch-version: nightly
             torchvision-version: nightly
         exclude:
@@ -49,7 +53,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup packages
         uses: ./.github/actions/setup

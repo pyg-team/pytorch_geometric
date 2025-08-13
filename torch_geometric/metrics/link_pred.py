@@ -332,7 +332,10 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         r"""The maximum number of top-:math:`k` predictions to evaluate
         against.
         """
-        return max([metric.k for metric in self.values()])
+        return max([
+            metric.k  # type: ignore[return-value]
+            for metric in self.values()
+        ])  # type: ignore[type-var]
 
     @property
     def weighted(self) -> bool:
@@ -402,17 +405,23 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         for metric in self.values():
             if not isinstance(metric, LinkPredMetric):
-                metric.update(pred_index_mat, edge_label_index,
-                              edge_label_weight)
+                metric.update(  # type: ignore[operator]
+                    pred_index_mat,
+                    edge_label_index,
+                    edge_label_weight,
+                )
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
-        return {name: metric.compute() for name, metric in self.items()}
+        return {
+            name: metric.compute()  # type: ignore[operator]
+            for name, metric in self.items()
+        }
 
     def reset(self) -> None:
         r"""Reset metric state variables to their default value."""
         for metric in self.values():
-            metric.reset()
+            metric.reset()  # type: ignore[operator]
 
     def __repr__(self) -> str:
         names = [f'  {name}: {metric},\n' for name, metric in self.items()]
