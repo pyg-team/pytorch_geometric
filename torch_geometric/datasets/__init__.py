@@ -254,12 +254,8 @@ synthetic_datasets = [
 
 __all__ = homo_datasets + hetero_datasets + hyper_datasets + synthetic_datasets
 
-# Add RelBench utilities if available
+# Add RelBench dataset if available (only dataset classes belong in __all__)
 if _relbench_available:
     __all__.extend([
         "RelBenchDataset",
-        "RelBenchProcessor",
-        "create_relbench_hetero_data",
-        "get_warehouse_task_info",
-        "prepare_for_gretriever",
     ])
