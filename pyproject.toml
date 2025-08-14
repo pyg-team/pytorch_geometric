@@ -66,6 +66,16 @@ rag=[
     "sentencepiece",
     "accelerate",
 ]
+relbench=[
+    "relbench[full]",
+    "sentence-transformers",
+    "pandas",
+]
+whg=[
+    "sentence-transformers",
+    "accelerate",
+    "transformers",
+]
 test=[
     "onnx",
     "onnxruntime",
