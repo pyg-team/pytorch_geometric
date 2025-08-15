@@ -85,13 +85,13 @@ class RCDD(InMemoryDataset):
         mapping = torch.empty(len(node_df), dtype=torch.long)
         for node_type in node_df['node_type'].unique():
             mask = node_df['node_type'] == node_type
-            mask = torch.from_numpy(mask.values)
-            num_nodes = int(mask.sum())
-            mapping[mask] = torch.arange(num_nodes)
+            node_id = torch.from_numpy(node_df['node_id'][mask].values)
+            num_nodes = mask.sum()
+            mapping[node_id] = torch.arange(num_nodes)
             data[node_type].num_nodes = num_nodes
             x = np.vstack([
                 np.asarray(f.split(':'), dtype=np.float32)
-                for f in node_df['node_feat'][mask.numpy()]
+                for f in node_df['node_feat'][mask]
             ])
             data[node_type].x = torch.from_numpy(x)
 

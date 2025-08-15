@@ -1,7 +1,6 @@
 from typing import Any, Dict
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import Data
@@ -15,6 +14,8 @@ def read_npz(path: str, to_undirected: bool = True) -> Data:
 
 
 def parse_npz(f: Dict[str, Any], to_undirected: bool = True) -> Data:
+    import scipy.sparse as sp
+
     x = sp.csr_matrix((f['attr_data'], f['attr_indices'], f['attr_indptr']),
                       f['attr_shape']).todense()
     x = torch.from_numpy(x).to(torch.float)

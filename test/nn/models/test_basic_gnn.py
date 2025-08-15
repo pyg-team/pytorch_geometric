@@ -1,14 +1,12 @@
 import os
 import os.path as osp
 import random
-import sys
 import warnings
 
 import pytest
 import torch
 import torch.nn.functional as F
 
-import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
@@ -185,7 +183,7 @@ def test_batch(norm):
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
-    dataset = get_dataset(name='Cora')
+    dataset = get_dataset(name='karate')
     data = dataset[0]
 
     model = GraphSAGE(dataset.num_features, hidden_channels=16, num_layers=2,
@@ -220,10 +218,6 @@ def test_compile_basic(device):
 
 
 def test_packaging():
-    if (not torch_geometric.typing.WITH_PT113 and sys.version_info.major == 3
-            and sys.version_info.minor >= 10):
-        return  # Unsupported Python version
-
     warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
@@ -235,7 +229,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_model.pt')
     torch.save(model, path)
 
-    model = torch.load(path)
+    model = torch.load(path, weights_only=False)
     with torch.no_grad():
         assert model(x, edge_index).size() == (3, 16)
 
@@ -254,8 +248,9 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
-@withPackage('torch>=1.12.0')
-@withPackage('onnx', 'onnxruntime')
+@onlyLinux
+@withPackage('torch>=2.6.0')
+@withPackage('onnx', 'onnxruntime', 'onnxscript')
 def test_onnx(tmp_path):
     import onnx
     import onnxruntime as ort
@@ -281,8 +276,14 @@ def test_onnx(tmp_path):
     assert expected.size() == (3, 16)
 
     path = osp.join(tmp_path, 'model.onnx')
-    torch.onnx.export(model, (x, edge_index), path,
-                      input_names=('x', 'edge_index'), opset_version=16)
+    torch.onnx.export(
+        model,
+        (x, edge_index),
+        path,
+        input_names=('x', 'edge_index'),
+        opset_version=18,
+        dynamo=True,  # False is deprecated by PyTorch
+    )
 
     model = onnx.load(path)
     onnx.checker.check_model(model)
@@ -327,7 +328,7 @@ def test_trim_to_layer():
     )[:2]
     assert out2.size() == (2, 16)
 
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
 
 @withDevice

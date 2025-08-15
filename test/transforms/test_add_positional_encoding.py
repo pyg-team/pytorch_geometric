@@ -1,12 +1,14 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import (
     AddLaplacianEigenvectorPE,
     AddRandomWalkPE,
 )
 
 
+@withPackage('scipy')
 def test_add_laplacian_eigenvector_pe():
     x = torch.randn(6, 4)
     edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],
@@ -50,6 +52,7 @@ def test_add_laplacian_eigenvector_pe():
     assert torch.allclose(pe_cluster_2, pe_cluster_2.mean())
 
 
+@withPackage('scipy')
 def test_eigenvector_permutation_invariance():
     edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],
                                [1, 0, 4, 0, 4, 1, 3, 2, 5, 3]])

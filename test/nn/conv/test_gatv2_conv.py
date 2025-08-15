@@ -1,5 +1,6 @@
 from typing import Tuple
 
+import pytest
 import torch
 from torch import Tensor
 
@@ -10,13 +11,14 @@ from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
-def test_gatv2_conv():
+@pytest.mark.parametrize('residual', [False, True])
+def test_gatv2_conv(residual):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
-    conv = GATv2Conv(8, 32, heads=2)
+    conv = GATv2Conv(8, 32, heads=2, residual=residual)
     assert str(conv) == 'GATv2Conv(8, 32, heads=2)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
@@ -54,12 +56,10 @@ def test_gatv2_conv():
     assert result[1][1].size() == (7, 2)
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
 
-    if torch_geometric.typing.WITH_PT113:
-        # PyTorch < 1.13 does not support multi-dimensional CSR values :(
-        result = conv(x1, adj1.t(), return_attention_weights=True)
-        assert torch.allclose(result[0], out, atol=1e-6)
-        assert result[1][0].size() == torch.Size([4, 4, 2])
-        assert result[1][0]._nnz() == 7
+    result = conv(x1, adj1.t(), return_attention_weights=True)
+    assert torch.allclose(result[0], out, atol=1e-6)
+    assert result[1][0].size() == torch.Size([4, 4, 2])
+    assert result[1][0]._nnz() == 7
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         result = conv(x1, adj2.t(), return_attention_weights=True)

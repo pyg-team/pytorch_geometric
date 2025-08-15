@@ -10,6 +10,7 @@ import torch
 from torch import Tensor
 from typing_extensions import Self
 
+from torch_geometric import Index
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
 from torch_geometric.data.graph_store import EdgeLayout
@@ -35,6 +36,8 @@ from torch_geometric.utils import (
 )
 
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
+
+_DISPLAYED_TYPE_NAME_WARNING: bool = False
 
 
 class HeteroData(BaseData, FeatureStore, GraphStore):
@@ -279,6 +282,21 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns a list of edge type and edge storage pairs."""
         return list(self._edge_store_dict.items())
 
+    @property
+    def input_type(self) -> Optional[Union[NodeType, EdgeType]]:
+        r"""Returns the seed/input node/edge type of the graph in case it
+        refers to a sampled subgraph, *e.g.*, obtained via
+        :class:`~torch_geometric.loader.NeighborLoader` or
+        :class:`~torch_geometric.loader.LinkNeighborLoader`.
+        """
+        for node_type, store in self.node_items():
+            if hasattr(store, 'input_id'):
+                return node_type
+        for edge_type, store in self.edge_items():
+            if hasattr(store, 'input_id'):
+                return edge_type
+        return None
+
     def to_dict(self) -> Dict[str, Any]:
         out_dict: Dict[str, Any] = {}
         out_dict['_global_store'] = self._global_store.to_dict()
@@ -334,7 +352,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __cat_dim__(self, key: str, value: Any,
                     store: Optional[NodeOrEdgeStorage] = None, *args,
                     **kwargs) -> Any:
-        if is_sparse(value) and 'adj' in key:
+        if is_sparse(value) and ('adj' in key or 'edge_index' in key):
             return (0, 1)
         elif isinstance(store, EdgeStorage) and 'index' in key:
             return -1
@@ -344,6 +362,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 store: Optional[NodeOrEdgeStorage] = None, *args,
                 **kwargs) -> Any:
         if 'batch' in key and isinstance(value, Tensor):
+            if isinstance(value, Index):
+                return value.get_dim_size()
             return int(value.max()) + 1
         elif isinstance(store, EdgeStorage) and 'index' in key:
             return torch.tensor(store.size()).view(2, 1)
@@ -546,7 +566,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             This is equivalent to writing :obj:`data.x_dict`.
 
         Args:
-            key (str): The attribute to collect from all node and ege types.
+            key (str): The attribute to collect from all node and edge types.
             allow_empty (bool, optional): If set to :obj:`True`, will not raise
                 an error in case the attribute does not exit in any node or
                 edge type. (default: :obj:`False`)
@@ -562,11 +582,16 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return mapping
 
     def _check_type_name(self, name: str):
-        if '__' in name:
-            warnings.warn(f"The type '{name}' contains double underscores "
-                          f"('__') which may lead to unexpected behavior. "
-                          f"To avoid any issues, ensure that your type names "
-                          f"only contain single underscores.")
+        global _DISPLAYED_TYPE_NAME_WARNING
+        if not _DISPLAYED_TYPE_NAME_WARNING and '__' in name:
+            _DISPLAYED_TYPE_NAME_WARNING = True
+            warnings.warn(
+                f"There exist type names in the "
+                f"'{self.__class__.__name__}' object that contain "
+                f"double underscores '__' (e.g., '{name}'). This "
+                f"may lead to unexpected behavior. To avoid any "
+                f"issues, ensure that your type names only contain "
+                f"single underscores.", stacklevel=2)
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
@@ -771,8 +796,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         for edge_type in self.edge_types:
             if edge_type not in edge_types:
                 del data[edge_type]
-        node_types = set(e[0] for e in edge_types)
-        node_types |= set(e[-1] for e in edge_types)
+        node_types = {e[0] for e in edge_types}
+        node_types |= {e[-1] for e in edge_types}
         for node_type in self.node_types:
             if node_type not in node_types:
                 del data[node_type]
@@ -878,7 +903,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 if len(sizes) != len(stores):
                     continue
                 # The attributes needs to have the same number of dimensions:
-                lengths = set([len(size) for size in sizes])
+                lengths = {len(size) for size in sizes}
                 if len(lengths) != 1:
                     continue
                 # The attributes needs to have the same size in all dimensions:

@@ -45,7 +45,8 @@ class WikiCS(InMemoryDataset):
             warnings.warn(
                 f"The {self.__class__.__name__} dataset now returns an "
                 f"undirected graph by default. Please explicitly specify "
-                f"'is_undirected=False' to restore the old behavior.")
+                f"'is_undirected=False' to restore the old behavior.",
+                stacklevel=2)
             is_undirected = True
         self.is_undirected = is_undirected
         super().__init__(root, transform, pre_transform,
@@ -65,7 +66,7 @@ class WikiCS(InMemoryDataset):
             download_url(f'{self.url}/{name}', self.raw_dir)
 
     def process(self) -> None:
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             data = json.load(f)
 
         x = torch.tensor(data['features'], dtype=torch.float)

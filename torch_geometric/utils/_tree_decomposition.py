@@ -2,7 +2,6 @@ from itertools import chain
 from typing import Any, List, Literal, Tuple, Union, overload
 
 import torch
-from scipy.sparse.csgraph import minimum_spanning_tree
 from torch import Tensor
 
 from torch_geometric.utils import (
@@ -54,6 +53,7 @@ def tree_decomposition(
         :obj:`False`, else :obj:`(LongTensor, LongTensor, int, LongTensor)`
     """
     import rdkit.Chem as Chem
+    from scipy.sparse.csgraph import minimum_spanning_tree
 
     # Cliques = rings and bonds.
     cliques: List[List[int]] = [list(x) for x in Chem.GetSymmSSSR(mol)]
@@ -64,7 +64,7 @@ def tree_decomposition(
             xs.append(1)
 
     # Generate `atom2cliques` mappings.
-    atom2cliques: List[List[int]] = [[] for i in range(mol.GetNumAtoms())]
+    atom2cliques: List[List[int]] = [[] for _ in range(mol.GetNumAtoms())]
     for c in range(len(cliques)):
         for atom in cliques[c]:
             atom2cliques[atom].append(c)

@@ -1,0 +1,16 @@
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directories:
+      - "/"
+      - "/.github/actions/setup"
+    schedule:
+      interval: "daily"
+      time: "00:00"
+    labels:
+      - "ci"
+      - "skip-changelog"
+    pull-request-branch-name:
+      separator: "-"
+    open-pull-requests-limit: 10

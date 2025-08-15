@@ -582,3 +582,14 @@ def test_data_time_handling(num_nodes, num_edges):
 
     out = out.sort_by_time()
     assert torch.equal(out.time, data.time.repeat_interleave(2))
+
+
+def test_data_inc():
+    data = Data(edge_index=torch.tensor([[0, 1], [1, 0]]))
+    with pytest.warns(UserWarning, match="Unable to accurately infer"):
+        assert data.__inc__('edge_index', data.edge_index) == 2
+
+        data = Data(index=torch.empty(2, 0, dtype=torch.long))
+    with pytest.raises(RuntimeError, match="Unable to infer"):
+        with pytest.warns(UserWarning, match="Unable to accurately infer"):
+            data.__inc__('index', data.edge_index)

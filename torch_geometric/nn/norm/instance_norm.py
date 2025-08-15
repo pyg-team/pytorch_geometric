@@ -1,5 +1,6 @@
 from typing import Optional
 
+import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.modules.instancenorm import _InstanceNorm
@@ -36,6 +37,8 @@ class InstanceNorm(_InstanceNorm):
             :obj:`False`, this module does not track such statistics and always
             uses instance statistics in both training and eval modes.
             (default: :obj:`False`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -44,9 +47,10 @@ class InstanceNorm(_InstanceNorm):
         momentum: float = 0.1,
         affine: bool = False,
         track_running_stats: bool = False,
+        device: Optional[torch.device] = None,
     ):
         super().__init__(in_channels, eps, momentum, affine,
-                         track_running_stats)
+                         track_running_stats, device=device)
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""

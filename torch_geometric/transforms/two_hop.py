@@ -19,7 +19,7 @@ class TwoHop(BaseTransform):
 
         edge_index = EdgeIndex(edge_index, sparse_size=(N, N))
         edge_index = edge_index.sort_by('row')[0]
-        edge_index2, _ = edge_index @ edge_index
+        edge_index2 = edge_index.matmul(edge_index)[0].as_tensor()
         edge_index2, _ = remove_self_loops(edge_index2)
         edge_index = torch.cat([edge_index, edge_index2], dim=1)
 

@@ -10,7 +10,7 @@ def compute_loss(pred, true):
 
     Args:
         pred (torch.tensor): Unnormalized prediction
-        true (torch.tensor): Grou
+        true (torch.tensor): Ground truth labels
 
     Returns: Loss, normalized prediction score
 

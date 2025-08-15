@@ -4,6 +4,8 @@ from typing import Any, Dict, Optional, Union
 
 import torch
 
+from torch_geometric.io import fs
+
 try:
     from huggingface_hub import ModelHubMixin, hf_hub_download
 except ImportError:
@@ -175,7 +177,7 @@ class PyGModelHubMixin(ModelHubMixin):
 
         model = cls(dataset_name, model_name, model_kwargs)
 
-        state_dict = torch.load(model_file, map_location=map_location)
+        state_dict = fs.torch_load(model_file, map_location=map_location)
         model.load_state_dict(state_dict, strict=strict)
         model.eval()
 

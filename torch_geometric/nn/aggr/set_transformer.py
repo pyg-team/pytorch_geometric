@@ -38,7 +38,7 @@ class SetTransformerAggregation(Aggregation):
             (default: :obj:`1`)
         concat (bool, optional): If set to :obj:`False`, the seed embeddings
             are averaged instead of concatenated. (default: :obj:`True`)
-        norm (str, optional): If set to :obj:`True`, will apply layer
+        layer_norm (str, optional): If set to :obj:`True`, will apply layer
             normalization. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of attention weights.
             (default: :obj:`0`)

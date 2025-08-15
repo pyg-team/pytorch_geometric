@@ -87,7 +87,7 @@ class BitcoinOTC(InMemoryDataset):
         os.unlink(path)
 
     def process(self) -> None:
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             lines = [[x for x in line.split(',')]
                      for line in f.read().split('\n')[:-1]]
 

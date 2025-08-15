@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union
 
-import scipy.sparse
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
@@ -14,7 +13,7 @@ def to_scipy_sparse_matrix(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
-) -> scipy.sparse.coo_matrix:
+) -> Any:
     r"""Converts a graph given by edge indices and edge attributes to a scipy
     sparse matrix.
 
@@ -34,22 +33,23 @@ def to_scipy_sparse_matrix(
         <4x4 sparse matrix of type '<class 'numpy.float32'>'
             with 6 stored elements in COOrdinate format>
     """
+    import scipy.sparse as sp
+
     row, col = edge_index.cpu()
 
     if edge_attr is None:
-        edge_attr = torch.ones(row.size(0))
+        edge_attr = torch.ones(row.size(0), device="cpu")
     else:
         edge_attr = edge_attr.view(-1).cpu()
         assert edge_attr.size(0) == row.size(0)
 
     N = maybe_num_nodes(edge_index, num_nodes)
-    out = scipy.sparse.coo_matrix(
+    out = sp.coo_matrix(  #
         (edge_attr.numpy(), (row.numpy(), col.numpy())), (N, N))
     return out
 
 
-def from_scipy_sparse_matrix(
-        A: scipy.sparse.spmatrix) -> Tuple[Tensor, Tensor]:
+def from_scipy_sparse_matrix(A: Any) -> Tuple[Tensor, Tensor]:
     r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
@@ -251,13 +251,13 @@ def from_networkx(
     if group_edge_attrs is not None and not isinstance(group_edge_attrs, list):
         group_edge_attrs = edge_attrs
 
-    for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
+    for _, feat_dict in G.nodes(data=True):
         if set(feat_dict.keys()) != set(node_attrs):
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data_dict[str(key)].append(value)
 
-    for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
+    for _, _, feat_dict in G.edges(data=True):
         if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
@@ -452,15 +452,22 @@ def to_cugraph(
     g = cugraph.Graph(directed=directed)
     df = cudf.from_dlpack(to_dlpack(edge_index.t()))
 
+    df = cudf.DataFrame({
+        'source':
+        cudf.from_dlpack(to_dlpack(edge_index[0])),
+        'destination':
+        cudf.from_dlpack(to_dlpack(edge_index[1])),
+    })
+
     if edge_weight is not None:
         assert edge_weight.dim() == 1
-        df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
+        df['weight'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
     g.from_cudf_edgelist(
         df,
-        source=0,
-        destination=1,
-        edge_attr='2' if edge_weight is not None else None,
+        source='source',
+        destination='destination',
+        edge_attr='weight' if edge_weight is not None else None,
         renumber=relabel_nodes,
     )
 
@@ -476,13 +483,13 @@ def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     """
     df = g.view_edge_list()
 
-    src = from_dlpack(df[0].to_dlpack()).long()
-    dst = from_dlpack(df[1].to_dlpack()).long()
+    src = from_dlpack(df[g.source_columns].to_dlpack()).long()
+    dst = from_dlpack(df[g.destination_columns].to_dlpack()).long()
     edge_index = torch.stack([src, dst], dim=0)
 
     edge_weight = None
-    if '2' in df:
-        edge_weight = from_dlpack(df['2'].to_dlpack())
+    if g.weight_column is not None:
+        edge_weight = from_dlpack(df[g.weight_column].to_dlpack())
 
     return edge_index, edge_weight
 
@@ -527,10 +534,14 @@ def to_dgl(
     if isinstance(data, Data):
         if data.edge_index is not None:
             row, col = data.edge_index
-        else:
+        elif 'adj' in data:
+            row, col, _ = data.adj.coo()
+        elif 'adj_t' in data:
             row, col, _ = data.adj_t.t().coo()
+        else:
+            row, col = [], []
 
-        g = dgl.graph((row, col))
+        g = dgl.graph((row, col), num_nodes=data.num_nodes)
 
         for attr in data.node_attrs():
             g.ndata[attr] = data[attr]

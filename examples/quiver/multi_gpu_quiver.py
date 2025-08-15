@@ -1,6 +1,7 @@
 # This script shows how to use Quiver in an existing PyG example:
 # https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py
 import os
+from math import ceil
 
 import quiver
 import torch
@@ -69,7 +70,7 @@ def run(rank, world_size, dataset, quiver_feature, quiver_sampler):
 
     data = dataset[0]
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
+    train_idx = train_idx.split(ceil(train_idx.size(0) / world_size))[rank]
 
     train_loader = torch.utils.data.DataLoader(train_idx, batch_size=1024,
                                                shuffle=True, num_workers=0)

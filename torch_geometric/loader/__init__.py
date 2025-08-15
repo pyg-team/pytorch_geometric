@@ -22,6 +22,7 @@ from .dynamic_batch_sampler import DynamicBatchSampler
 from .prefetch import PrefetchLoader
 from .cache import CachedLoader
 from .mixin import AffinityMixin
+from .rag_loader import RAGQueryLoader, RAGFeatureStore, RAGGraphStore
 
 __all__ = classes = [
     'DataLoader',
@@ -50,6 +51,9 @@ __all__ = classes = [
     'PrefetchLoader',
     'CachedLoader',
     'AffinityMixin',
+    'RAGQueryLoader',
+    'RAGFeatureStore',
+    'RAGGraphStore'
 ]
 
 RandomNodeSampler = deprecated(

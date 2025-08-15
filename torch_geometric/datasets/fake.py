@@ -170,7 +170,7 @@ class FakeHeteroDataset(InMemoryDataset):
         random.shuffle(edge_types)
 
         self.edge_types: List[Tuple[str, str, str]] = []
-        count: Dict[Tuple[str, str], int] = defaultdict(lambda: 0)
+        count: Dict[Tuple[str, str], int] = defaultdict(int)
         for edge_type in edge_types[:max(num_edge_types, 1)]:
             rel = f'e{count[edge_type]}'
             count[edge_type] += 1
@@ -221,8 +221,6 @@ class FakeHeteroDataset(InMemoryDataset):
                 store.edge_attr = torch.rand(store.num_edges, self.edge_dim)
             elif self.edge_dim == 1:
                 store.edge_weight = torch.rand(store.num_edges)
-
-            pass
 
         if self._num_classes > 0 and self.task == 'graph':
             data.y = torch.tensor([random.randint(0, self._num_classes - 1)])

@@ -5,6 +5,7 @@ from torch_geometric.testing import is_full_test, withPackage
 
 
 @withPackage('torch_sparse')  # TODO `triplet` requires `SparseTensor` for now.
+@withPackage('torch-cluster')
 def test_gnnff():
     z = torch.randint(1, 10, (20, ))
     pos = torch.randn(20, 3)

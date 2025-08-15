@@ -11,7 +11,7 @@ class SVDFeatureReduction(BaseTransform):
     Decomposition (SVD) (functional name: :obj:`svd_feature_reduction`).
 
     Args:
-        out_channels (int): The dimensionlity of node features after
+        out_channels (int): The dimensionality of node features after
             reduction.
     """
     def __init__(self, out_channels: int):

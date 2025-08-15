@@ -7,7 +7,7 @@ from torch_geometric.testing import (
     onlyFullTest,
     onlyOnline,
 )
-from torch_geometric.transforms import RandomLinkSplit
+from torch_geometric.transforms import RandomLinkSplit, ToSparseTensor
 from torch_geometric.utils import is_undirected, to_undirected
 
 
@@ -83,6 +83,20 @@ def test_random_link_split():
     assert train_data.edge_attr.size() == (3, 3)
     assert train_data.edge_label_index.size(1) == 6
     assert train_data.edge_label.size(0) == 6
+
+
+def test_random_link_split_with_to_sparse_tensor():
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
+                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4]])
+    data = Data(edge_index=edge_index, num_nodes=6)
+
+    transform = RandomLinkSplit(num_val=2, num_test=2, neg_sampling_ratio=0.0)
+    train_data1, _, _ = transform(data)
+    assert train_data1.edge_index.size(1) == train_data1.edge_label.size(0)
+
+    train_data2 = ToSparseTensor()(train_data1)
+    assert train_data1.edge_label.equal(train_data2.edge_label)
+    assert train_data1.edge_label_index.equal(train_data2.edge_label_index)
 
 
 def test_random_link_split_with_label():

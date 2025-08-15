@@ -4,7 +4,6 @@ from itertools import product
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import (
@@ -69,6 +68,8 @@ class IMDB(InMemoryDataset):
         os.remove(path)
 
     def process(self) -> None:
+        import scipy.sparse as sp
+
         data = HeteroData()
 
         node_types = ['movie', 'director', 'actor']

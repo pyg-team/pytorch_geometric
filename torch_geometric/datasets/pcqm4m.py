@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data, OnDiskDataset, download_url, extract_zip
 from torch_geometric.data.data import BaseData
+from torch_geometric.io import fs
 from torch_geometric.utils import from_smiles as _from_smiles
 
 
@@ -72,7 +73,7 @@ class PCQM4Mv2(OnDiskDataset):
         self.from_smiles = from_smiles or _from_smiles
         super().__init__(root, transform, backend=backend, schema=schema)
 
-        split_idx = torch.load(self.raw_paths[1])
+        split_idx = fs.torch_load(self.raw_paths[1])
         self._indices = split_idx[self.split_mapping[split]].tolist()
 
     @property

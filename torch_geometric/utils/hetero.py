@@ -63,7 +63,7 @@ def group_hetero_graph(
 
 def get_unused_node_types(node_types: List[NodeType],
                           edge_types: List[EdgeType]) -> Set[NodeType]:
-    dst_node_types = set(edge_type[-1] for edge_type in edge_types)
+    dst_node_types = {edge_type[-1] for edge_type in edge_types}
     return set(node_types) - set(dst_node_types)
 
 

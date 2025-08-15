@@ -50,7 +50,7 @@ Now the only thing left to add is the execution of the training script:
 
     srun python distributed_sampling_multinode.py
 
-Note how the :obj`python` call is prefixed with the :obj:`srun` command and thus :obj:`--ntasks` replicas will be started.
+Note how the :obj:`python` call is prefixed with the :obj:`srun` command and thus :obj:`--ntasks` replicas will be started.
 
 Finally, to submit the :obj:`*.sbatch` file itself into the work queue, use the :obj:`sbatch` utility in your shell:
 

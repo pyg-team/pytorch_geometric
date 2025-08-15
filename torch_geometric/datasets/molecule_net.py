@@ -1,6 +1,7 @@
 import os
 import os.path as osp
 import re
+import warnings
 from typing import Callable, Dict, Optional, Tuple, Union
 
 import torch
@@ -189,7 +190,7 @@ class MoleculeNet(InMemoryDataset):
             os.unlink(path)
 
     def process(self) -> None:
-        with open(self.raw_paths[0], 'r') as f:
+        with open(self.raw_paths[0]) as f:
             dataset = f.read().split('\n')[1:-1]
             dataset = [x for x in dataset if len(x) > 0]  # Filter empty lines.
 
@@ -207,6 +208,12 @@ class MoleculeNet(InMemoryDataset):
 
             data = self.from_smiles(smiles)
             data.y = y
+
+            if data.num_nodes == 0:
+                warnings.warn(
+                    f"Skipping molecule '{smiles}' since it "
+                    f"resulted in zero atoms", stacklevel=2)
+                continue
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue

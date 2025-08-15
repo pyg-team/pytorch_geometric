@@ -1,0 +1,31 @@
+ARG BASE_IMAGE="intel/intel-extension-for-pytorch"
+ARG BASE_TAG="2.1.30-xpu"
+
+FROM ${BASE_IMAGE}:${BASE_TAG}
+
+# meta information
+LABEL org.opencontainers.image.version = "2.3.1"
+LABEL org.opencontainers.image.authors = "PyG authors"
+LABEL org.opencontainers.image.source = "https://github.com/pyg-team/pytorch_geometric"
+LABEL org.opencontainers.image.licenses = "MIT"
+LABEL org.opencontainers.image.base.name=${BASE_IMAGE}:${BASE_TAG}
+
+# Create a working directory
+RUN mkdir /app
+WORKDIR /app
+
+# Add the XPU-related package repository for the LTS releases
+RUN . /etc/os-release && \
+    wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | \
+    sudo gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu ${VERSION_CODENAME}/lts/2350 unified" | \
+    sudo tee /etc/apt/sources.list.d/intel-gpu-${VERSION_CODENAME}.list
+
+# Install oneCCL
+RUN sudo apt update && apt install -y intel-oneapi-ccl-devel=2021.12.0-309 python3-dev cmake vim
+RUN echo "source /opt/intel/oneapi/setvars.sh --force" >> /root/.bashrc
+
+# Install PyG
+RUN pip install ninja wheel ogb && pip install git+https://github.com/pyg-team/pyg-lib.git && \
+    pip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.5.0+cpu.html && \
+    pip install torch_geometric

@@ -118,15 +118,15 @@ class Batch(metaclass=DynamicInheritance):
         """
         if not hasattr(self, '_slice_dict'):
             raise RuntimeError(
-                ("Cannot reconstruct 'Data' object from 'Batch' because "
-                 "'Batch' was not created via 'Batch.from_data_list()'"))
+                "Cannot reconstruct 'Data' object from 'Batch' because "
+                "'Batch' was not created via 'Batch.from_data_list()'")
 
         data = separate(
             cls=self.__class__.__bases__[-1],
             batch=self,
             idx=idx,
-            slice_dict=getattr(self, '_slice_dict'),
-            inc_dict=getattr(self, '_inc_dict'),
+            slice_dict=self._slice_dict,
+            inc_dict=self._inc_dict,
             decrement=True,
         )
 

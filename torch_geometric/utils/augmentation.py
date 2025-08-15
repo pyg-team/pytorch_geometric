@@ -12,7 +12,7 @@ def shuffle_node(
     training: bool = True,
 ) -> Tuple[Tensor, Tensor]:
     r"""Randomly shuffle the feature matrix :obj:`x` along the
-    first dimmension.
+    first dimension.
 
     The method returns (1) the shuffled :obj:`x`, (2) the permutation
     indicating the orders of original nodes after shuffling.

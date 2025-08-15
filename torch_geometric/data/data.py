@@ -31,6 +31,7 @@ from torch_geometric.data.storage import (
     NodeStorage,
 )
 from torch_geometric.deprecation import deprecated
+from torch_geometric.index import Index
 from torch_geometric.typing import (
     EdgeTensorType,
     EdgeType,
@@ -290,13 +291,14 @@ class BaseData:
         self,
         start_time: Union[float, int],
         end_time: Union[float, int],
+        attr: str = 'time',
     ) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         in period :obj:`[start_time, end_time]`.
         """
         out = copy.copy(self)
         for store in out.stores:
-            store.snapshot(start_time, end_time)
+            store.snapshot(start_time, end_time, attr)
         return out
 
     def up_to(self, end_time: Union[float, int]) -> Self:
@@ -352,7 +354,7 @@ class BaseData:
         """
         return self.apply(lambda x: x.contiguous(), *args)
 
-    def to(self, device: Union[int, str], *args: str,
+    def to(self, device: Union[int, str, torch.device], *args: str,
            non_blocking: bool = False):
         r"""Performs tensor device conversion, either for all attributes or
         only the ones given in :obj:`*args`.
@@ -644,7 +646,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         return self
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if is_sparse(value) and 'adj' in key:
+        if is_sparse(value) and ('adj' in key or 'edge_index' in key):
             return (0, 1)
         elif 'index' in key or key == 'face':
             return -1
@@ -653,9 +655,17 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if 'batch' in key and isinstance(value, Tensor):
+            if isinstance(value, Index):
+                return value.get_dim_size()
             return int(value.max()) + 1
         elif 'index' in key or key == 'face':
-            return self.num_nodes
+            num_nodes = self.num_nodes
+            if num_nodes is None:
+                raise RuntimeError(f"Unable to infer 'num_nodes' from the "
+                                   f"attribute '{key}'. Please explicitly set "
+                                   f"'num_nodes' as an attribute of 'data' to "
+                                   f"prevent this error")
+            return num_nodes
         else:
             return 0
 
@@ -840,14 +850,14 @@ class Data(BaseData, FeatureStore, GraphStore):
         # that maps global node indices to local ones in the final
         # heterogeneous graph:
         node_ids, index_map = {}, torch.empty_like(node_type)
-        for i, key in enumerate(node_type_names):
+        for i in range(len(node_type_names)):
             node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
             index_map[node_ids[i]] = torch.arange(len(node_ids[i]),
                                                   device=index_map.device)
 
         # We iterate over edge types to find the local edge indices:
         edge_ids = {}
-        for i, key in enumerate(edge_type_names):
+        for i in range(len(edge_type_names)):
             edge_ids[i] = (edge_type == i).nonzero(as_tuple=False).view(-1)
 
         data = HeteroData()
@@ -934,16 +944,14 @@ class Data(BaseData, FeatureStore, GraphStore):
         r"""Iterates over all attributes in the data, yielding their attribute
         names and values.
         """
-        for key, value in self._store.items():
-            yield key, value
+        yield from self._store.items()
 
     def __call__(self, *args: str) -> Iterable:
         r"""Iterates over all attributes :obj:`*args` in the data, yielding
         their attribute names and values.
         If :obj:`*args` is not given, will iterate over all attributes.
         """
-        for key, value in self._store.items(*args):
-            yield key, value
+        yield from self._store.items(*args)
 
     @property
     def x(self) -> Optional[Tensor]:
@@ -1163,7 +1171,7 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
                f'[{value.num_rows}, {value.num_cols}])')
     elif isinstance(value, str):
         out = f"'{value}'"
-    elif isinstance(value, Sequence):
+    elif isinstance(value, (Sequence, set)):
         out = str([len(value)])
     elif isinstance(value, Mapping) and len(value) == 0:
         out = '{}'
@@ -1185,4 +1193,4 @@ def warn_or_raise(msg: str, raise_on_error: bool = True):
     if raise_on_error:
         raise ValueError(msg)
     else:
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)

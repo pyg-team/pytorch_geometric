@@ -262,15 +262,14 @@ class Pad(BaseTransform):
     All the attributes of node types other than :obj:`v0` and :obj:`v1` are
     padded using a value of :obj:`1.0`.
     All the attributes of the :obj:`('v0', 'e0', 'v1')` edge type are padded
-    usin a value of :obj:`3.5`.
+    using a value of :obj:`3.5`.
     The :obj:`edge_attr` attributes of the :obj:`('v1', 'e0', 'v0')` edge type
     are padded using a value of :obj:`-1.5`, and any other attributes of this
     edge type are padded using a value of :obj:`5.5`.
     All the attributes of edge types other than these two are padded using a
     value of :obj:`1.5`.
 
-    Example:
-    .. code-block::
+    .. code-block:: python
 
         num_nodes = {'v0': 10, 'v1': 20, 'v2':30}
         num_edges = {('v0', 'e0', 'v1'): 80}
@@ -467,9 +466,11 @@ class Pad(BaseTransform):
         edge_type: Optional[EdgeType] = None,
     ) -> None:
 
-        attrs_to_pad = set(
-            attr for attr in store.keys()
-            if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr))
+        attrs_to_pad = {
+            attr
+            for attr in store.keys()
+            if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr)
+        }
         if not attrs_to_pad:
             return
         num_target_edges = self.max_num_edges.get_value(edge_type)

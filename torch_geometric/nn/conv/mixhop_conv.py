@@ -14,7 +14,7 @@ from torch_geometric.utils import spmm
 
 class MixHopConv(MessagePassing):
     r"""The Mix-Hop graph convolutional operator from the
-    `"MixHop: Higher-Order Graph Convolutional Architecturesvia Sparsified
+    `"MixHop: Higher-Order Graph Convolutional Architectures via Sparsified
     Neighborhood Mixing" <https://arxiv.org/abs/1905.00067>`_ paper.
 
     .. math::

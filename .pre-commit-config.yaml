@@ -1,11 +1,12 @@
 ci:
+  # https://pre-commit.ci/#configuration
   autofix_prs: true
   autoupdate_commit_msg: '[pre-commit.ci] pre-commit suggestions'
-  autoupdate_schedule: quarterly
+  autoupdate_schedule: monthly
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: no-commit-to-branch
         name: No commits to master
@@ -27,41 +28,61 @@ repos:
           )$
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.33.0
+    rev: v1.37.1
     hooks:
       - id: yamllint
         name: Lint yaml
         args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+      - id: pyupgrade
+        name: Upgrade Python syntax
+        args: [--py38-plus]
+
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        name: Remove unused imports and variables
+        args: [
+          --remove-all-unused-imports,
+          --remove-unused-variables,
+          --remove-duplicate-keys,
+          --ignore-init-module-imports,
+          --in-place,
+        ]
+
   - repo: https://github.com/google/yapf
-    rev: v0.40.2
+    rev: v0.43.0
     hooks:
       - id: yapf
         name: Format code
         additional_dependencies: [toml]
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
       - id: isort
         name: Sort imports
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
+    rev: 7.3.0
     hooks:
       - id: flake8
         name: Check PEP8
         additional_dependencies: [Flake8-pyproject]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.9
+    rev: v0.12.7
     hooks:
       - id: ruff
         name: Ruff formatting
         args: [--fix, --exit-non-zero-on-fix]
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+    rev: 0.7.22
     hooks:
       - id: mdformat
         name: Format Markdown
@@ -69,3 +90,9 @@ repos:
           - mdformat-gfm
           - mdformat_frontmatter
           - mdformat_footnote
+
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+        name: Check Sphinx

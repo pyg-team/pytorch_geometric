@@ -105,7 +105,7 @@ class WikipediaNetwork(InMemoryDataset):
 
     def process(self) -> None:
         if self.geom_gcn_preprocess:
-            with open(self.raw_paths[0], 'r') as f:
+            with open(self.raw_paths[0]) as f:
                 lines = f.read().split('\n')[1:-1]
             xs = [[float(value) for value in line.split('\t')[1].split(',')]
                   for line in lines]
@@ -113,7 +113,7 @@ class WikipediaNetwork(InMemoryDataset):
             ys = [int(line.split('\t')[2]) for line in lines]
             y = torch.tensor(ys, dtype=torch.long)
 
-            with open(self.raw_paths[1], 'r') as f:
+            with open(self.raw_paths[1]) as f:
                 lines = f.read().split('\n')[1:-1]
                 edge_indices = [[int(value) for value in line.split('\t')]
                                 for line in lines]

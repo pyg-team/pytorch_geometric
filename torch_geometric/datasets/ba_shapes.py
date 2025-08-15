@@ -30,15 +30,14 @@ class BAShapes(InMemoryDataset):
         :class:`torch_geometric.datasets.graph_generator.BAGraph` instead.
 
     Args:
-        connection_distribution (str, optional): Specifies how the houses
-            and the BA graph get connected. Valid inputs are :obj:`"random"`
+        connection_distribution: Specifies how the houses and the BA graph get
+            connected. Valid inputs are :obj:`"random"`
             (random BA graph nodes are selected for connection to the houses),
             and :obj:`"uniform"` (uniformly distributed BA graph nodes are
-            selected for connection to the houses). (default: :obj:`"random"`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+            selected for connection to the houses).
+        transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
     """
     def __init__(
         self,

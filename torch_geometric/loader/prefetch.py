@@ -27,8 +27,9 @@ class DeviceHelper:
 
         if ((self.device.type == 'cuda' and not with_cuda)
                 or (self.device.type == 'xpu' and not with_xpu)):
-            warnings.warn(f"Requested device '{self.device.type}' is not "
-                          f"available, falling back to CPU")
+            warnings.warn(
+                f"Requested device '{self.device.type}' is not "
+                f"available, falling back to CPU", stacklevel=2)
             self.device = torch.device('cpu')
 
         self.stream = None
@@ -73,7 +74,7 @@ class PrefetchLoader:
         if isinstance(batch, dict):
             return {k: self.non_blocking_transfer(v) for k, v in batch.items()}
 
-        batch = batch.pin_memory(self.device_helper.device)
+        batch = batch.pin_memory()
         return batch.to(self.device_helper.device, non_blocking=True)
 
     def __iter__(self) -> Any:

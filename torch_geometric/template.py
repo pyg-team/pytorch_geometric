@@ -28,6 +28,7 @@ def module_from_template(
             delete=False,
     ) as tmp:
         tmp.write(module_repr)
+        tmp.flush()
 
     spec = importlib.util.spec_from_file_location(module_name, tmp.name)
     assert spec is not None

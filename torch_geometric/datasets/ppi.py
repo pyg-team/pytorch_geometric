@@ -106,8 +106,9 @@ class PPI(InMemoryDataset):
 
         for s, split in enumerate(['train', 'valid', 'test']):
             path = osp.join(self.raw_dir, f'{split}_graph.json')
-            with open(path, 'r') as f:
-                G = nx.DiGraph(json_graph.node_link_graph(json.load(f)))
+            with open(path) as f:
+                G = nx.DiGraph(
+                    json_graph.node_link_graph(json.load(f), edges="links"))
 
             x = np.load(osp.join(self.raw_dir, f'{split}_feats.npy'))
             x = torch.from_numpy(x).to(torch.float)

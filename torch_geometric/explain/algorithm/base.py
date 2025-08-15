@@ -50,7 +50,6 @@ class ExplainerAlgorithm(torch.nn.Module):
         r"""Checks if the explainer supports the user-defined settings provided
         in :obj:`self.explainer_config`, :obj:`self.model_config`.
         """
-        pass
 
     ###########################################################################
 
@@ -167,7 +166,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         elif self.model_config.return_type == ModelReturnType.probs:
             loss_fn = F.binary_cross_entropy
         else:
-            assert False
+            raise AssertionError()
 
         return loss_fn(y_hat.view_as(y), y.float())
 
@@ -184,7 +183,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         elif self.model_config.return_type == ModelReturnType.log_probs:
             loss_fn = F.nll_loss
         else:
-            assert False
+            raise AssertionError()
 
         return loss_fn(y_hat, y)
 

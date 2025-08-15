@@ -141,7 +141,7 @@ def get_shape(inputs: Any) -> str:
 def postprocess(info_list: List[dict]) -> List[dict]:
     for idx, info in enumerate(info_list):
         depth = info['depth']
-        if idx > 0:  # root module (0) is exclued
+        if idx > 0:  # root module (0) is excluded
             if depth == 1:
                 prefix = '├─'
             else:

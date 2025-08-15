@@ -370,18 +370,20 @@ class BaseStorage(MutableMapping):
         self,
         start_time: Union[float, int],
         end_time: Union[float, int],
+        attr: str = 'time',
     ) -> Self:
-        if 'time' in self:
-            mask = (self.time >= start_time) & (self.time <= end_time)
+        if attr in self:
+            time = self[attr]
+            mask = (time >= start_time) & (time <= end_time)
 
-            if self.is_node_attr('time'):
+            if self.is_node_attr(attr):
                 keys = self.node_attrs()
-            elif self.is_edge_attr('time'):
+            elif self.is_edge_attr(attr):
                 keys = self.edge_attrs()
 
             self._select(keys, mask)
 
-            if self.is_node_attr('time') and 'num_nodes' in self:
+            if self.is_node_attr(attr) and 'num_nodes' in self:
                 self.num_nodes: Optional[int] = int(mask.sum())
 
         return self
@@ -443,16 +445,16 @@ class NodeStorage(BaseStorage):
                 return self.edge_index.sparse_size(0)
             if self.edge_index.sparse_size(1) is not None:
                 return self.edge_index.sparse_size(1)
-        if 'adj' in self and isinstance(self.adj, SparseTensor):
+        if 'adj' in self and isinstance(self.adj, (Tensor, SparseTensor)):
             return self.adj.size(0)
-        if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):
+        if 'adj_t' in self and isinstance(self.adj_t, (Tensor, SparseTensor)):
             return self.adj_t.size(1)
         warnings.warn(
             f"Unable to accurately infer 'num_nodes' from the attribute set "
             f"'{set(self.keys())}'. Please explicitly set 'num_nodes' as an "
             f"attribute of " +
             ("'data'" if self._key is None else f"'data[{self._key}]'") +
-            " to suppress this warning")
+            " to suppress this warning", stacklevel=2)
         if 'edge_index' in self and isinstance(self.edge_index, Tensor):
             if self.edge_index.numel() > 0:
                 return int(self.edge_index.max()) + 1
@@ -804,6 +806,10 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if not isinstance(cat_dim, int):
+            return False
+
         num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_nodes:
@@ -850,6 +856,10 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if not isinstance(cat_dim, int):
+            return False
+
         num_nodes, num_edges = self.num_nodes, self.num_edges
 
         if value.shape[cat_dim] != num_edges:

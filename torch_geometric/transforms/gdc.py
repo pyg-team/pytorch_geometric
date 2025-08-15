@@ -1,8 +1,7 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import torch
-from scipy.linalg import expm
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -22,7 +21,7 @@ from torch_geometric.utils import (
 @functional_transform('gdc')
 class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
-    `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
+    `"Diffusion Improves Graph Learning" <https://arxiv.org/abs/1911.05485>`_
     paper (functional name: :obj:`gdc`).
 
     .. note::
@@ -79,18 +78,17 @@ class GDC(BaseTransform):
         self_loop_weight: float = 1.,
         normalization_in: str = 'sym',
         normalization_out: str = 'col',
-        diffusion_kwargs: Dict[str, Any] = dict(method='ppr', alpha=0.15),
-        sparsification_kwargs: Dict[str, Any] = dict(
-            method='threshold',
-            avg_degree=64,
-        ),
+        diffusion_kwargs: Optional[Dict[str, Any]] = None,
+        sparsification_kwargs: Optional[Dict[str, Any]] = None,
         exact: bool = True,
     ) -> None:
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
-        self.diffusion_kwargs = diffusion_kwargs
-        self.sparsification_kwargs = sparsification_kwargs
+        self.diffusion_kwargs = diffusion_kwargs or dict(
+            method='ppr', alpha=0.15)
+        self.sparsification_kwargs = sparsification_kwargs or dict(
+            method='threshold', avg_degree=64)
         self.exact = exact
 
         if self_loop_weight:
@@ -338,10 +336,10 @@ class GDC(BaseTransform):
 
         elif method == 'heat':
             raise NotImplementedError(
-                ('Currently no fast heat kernel is implemented. You are '
-                 'welcome to create one yourself, e.g., based on '
-                 '"Kloster and Gleich: Heat kernel based community detection '
-                 '(KDD 2014)."'))
+                'Currently no fast heat kernel is implemented. You are '
+                'welcome to create one yourself, e.g., based on '
+                '"Kloster and Gleich: Heat kernel based community detection '
+                '(KDD 2014)."')
         else:
             raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
 
@@ -473,6 +471,8 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`Tensor`)
         """
+        from scipy.linalg import expm
+
         if symmetric:
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()

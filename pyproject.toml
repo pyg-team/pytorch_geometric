@@ -1,16 +1,16 @@
 [build-system]
-requires=["flit_core >=3.2,<4"]
+requires=["flit_core >=3.12,<4"]
 build-backend="flit_core.buildapi"
 
 [project]
-name="torch_geometric"
-version="2.6.0"
+name="torch-geometric"
+version="2.7.0"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
 description="Graph Neural Network Library for PyTorch"
 readme="README.md"
-requires-python=">=3.8"
+requires-python=">=3.9"
 keywords=[
     "deep-learning",
     "pytorch",
@@ -18,15 +18,16 @@ keywords=[
     "graph-neural-networks",
     "graph-convolutional-networks",
 ]
+license = "MIT"
+license-files = ["LICENSE"]
 classifiers=[
     "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
@@ -37,9 +38,8 @@ dependencies=[
     "psutil>=5.8.0",
     "pyparsing",
     "requests",
-    "scikit-learn",
-    "scipy",
     "tqdm",
+    "xxhash",
 ]
 
 [project.optional-dependencies]
@@ -58,9 +58,18 @@ benchmark=[
     "protobuf<4.21",
     "wandb",
 ]
+rag=[
+    "pcst_fast",
+    "datasets",
+    "transformers",
+    "pandas",
+    "sentencepiece",
+    "accelerate",
+]
 test=[
     "onnx",
     "onnxruntime",
+    "onnxscript",
     "pytest",
     "pytest-cov",
 ]
@@ -71,13 +80,15 @@ dev=[
     "torch_geometric[test]",
 ]
 full = [
+    "scipy",
+    "scikit-learn",
     "ase",
     "captum<0.7.0",
     "graphviz",
     "h5py",
     "matplotlib",
     "networkx",
-    "numba",
+    "numba<0.60.0",
     "opt_einsum",
     "pandas",
     "pgmpy",
@@ -140,7 +151,14 @@ include_trailing_comma = true
 skip = [".gitignore", "__init__.py"]
 
 [tool.ruff]  # https://docs.astral.sh/ruff/rules
+src = ["torch_geometric"]
+line-length = 80
+indent-width = 4
+target-version = "py39"
+
+[tool.ruff.lint]
 select = [
+    "B",  # flake8-bugbear
     "D",  # pydocstyle
 ]
 ignore = [
@@ -153,10 +171,9 @@ ignore = [
     "D107",  # Ignore "Missing docstring in __init__"
     "D205",  # Ignore "blank line required between summary line and description"
 ]
-src = ["torch_geometric"]
-line-length = 80
-indent-width = 4
-target-version = "py38"
+
+[tool.ruff.format]
+quote-style = "single"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -184,6 +201,10 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+    "error::DeprecationWarning",
+]
+markers = [
+    "rag: mark test as RAG test",
 ]
 
 [tool.coverage.run]
@@ -203,3 +224,6 @@ exclude_lines = [
     "register_parameter",
     "torch.cuda.is_available",
 ]
+
+[tool.setuptools]
+py-modules = []

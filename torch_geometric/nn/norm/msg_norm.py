@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -19,10 +21,14 @@ class MessageNorm(torch.nn.Module):
         learn_scale (bool, optional): If set to :obj:`True`, will learn the
             scaling factor :math:`s` of message normalization.
             (default: :obj:`False`)
+        device (torch.device, optional): The device to use for the module.
+            (default: :obj:`None`)
     """
-    def __init__(self, learn_scale: bool = False):
+    def __init__(self, learn_scale: bool = False,
+                 device: Optional[torch.device] = None):
         super().__init__()
-        self.scale = Parameter(torch.empty(1), requires_grad=learn_scale)
+        self.scale = Parameter(torch.empty(1, device=device),
+                               requires_grad=learn_scale)
         self.reset_parameters()
 
     def reset_parameters(self):

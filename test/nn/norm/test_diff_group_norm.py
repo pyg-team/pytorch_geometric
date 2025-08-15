@@ -1,13 +1,14 @@
 import torch
 
 from torch_geometric.nn import DiffGroupNorm
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withDevice
 
 
-def test_diff_group_norm():
-    x = torch.randn(6, 16)
+@withDevice
+def test_diff_group_norm(device):
+    x = torch.randn(6, 16, device=device)
 
-    norm = DiffGroupNorm(16, groups=4, lamda=0)
+    norm = DiffGroupNorm(16, groups=4, lamda=0, device=device)
     assert str(norm) == 'DiffGroupNorm(16, groups=4)'
 
     assert torch.allclose(norm(x), x)
@@ -16,7 +17,7 @@ def test_diff_group_norm():
         jit = torch.jit.script(norm)
         assert torch.allclose(jit(x), x)
 
-    norm = DiffGroupNorm(16, groups=4, lamda=0.01)
+    norm = DiffGroupNorm(16, groups=4, lamda=0.01, device=device)
     assert str(norm) == 'DiffGroupNorm(16, groups=4)'
 
     out = norm(x)

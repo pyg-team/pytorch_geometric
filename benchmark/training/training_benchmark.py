@@ -74,7 +74,8 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
 def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
                  trim=False):
     if trim:
-        warnings.warn("Trimming not yet implemented for heterogeneous graphs")
+        warnings.warn("Trimming not yet implemented for heterogeneous graphs",
+                      stacklevel=2)
 
     if progress_bar:
         loader = tqdm(loader, desc=desc)
@@ -98,14 +99,16 @@ def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
     if args.write_csv == 'prof' and not args.profile:
-        warnings.warn("Cannot write profile data to CSV because profiling is "
-                      "disabled")
+        warnings.warn(
+            "Cannot write profile data to CSV because profiling is "
+            "disabled", stacklevel=2)
 
     if args.device == 'xpu':
         try:
             import intel_extension_for_pytorch as ipex
-        except ImportError:
-            raise RuntimeError('XPU device requires IPEX to be installed')
+        except ImportError as e:
+            raise RuntimeError(
+                'XPU device requires IPEX to be installed') from e
 
     if not device_conditions[args.device]():
         raise RuntimeError(f'{args.device.upper()} is not available')
@@ -132,7 +135,7 @@ def run(args: argparse.ArgumentParser):
         if args.device == 'cpu':
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
         elif args.device == 'cuda':
-            amp = torch.cuda.amp.autocast(enabled=False)
+            amp = torch.amp.autocast('cuda', enabled=False)
         elif args.device == 'xpu':
             amp = torch.xpu.amp.autocast(enabled=False)
         else:
@@ -169,7 +172,7 @@ def run(args: argparse.ArgumentParser):
 
                     assert len(
                         num_neighbors) == layers, \
-                        f'''num_neighbors={num_neighbors} lenght
+                        f'''num_neighbors={num_neighbors} length
                         != num of layers={layers}'''
 
                     kwargs = {

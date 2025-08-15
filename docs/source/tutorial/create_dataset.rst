@@ -154,7 +154,7 @@ Frequently Asked Questions
 
 #. **How can I skip the execution of** :meth:`download` **and/or** :meth:`process` **?**
 
-    You can skip downloading and/or processing by just not overriding the :meth:`download()` and :meth:`process()` methods:
+    You can skip downloading and/or processing by just not overriding the :meth:`download` and :meth:`process` methods:
 
     .. code-block:: python
 

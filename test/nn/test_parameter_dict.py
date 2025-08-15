@@ -28,7 +28,7 @@ def test_dot_syntax_keys():
 
     expected_keys = {'param1', 'model.param2', 'model.sub_model.param3'}
     assert set(parameter_dict.keys()) == expected_keys
-    assert set([key for key, _ in parameter_dict.items()]) == expected_keys
+    assert {key for key, _ in parameter_dict.items()} == expected_keys
 
     for key in expected_keys:
         assert key in parameter_dict
@@ -46,7 +46,7 @@ def test_tuple_keys():
 
     expected_keys = {('a', 'b'), ('a.b', 'c')}
     assert set(parameter_dict.keys()) == expected_keys
-    assert set([key for key, _ in parameter_dict.items()]) == expected_keys
+    assert {key for key, _ in parameter_dict.items()} == expected_keys
 
     for key in expected_keys:
         assert key in parameter_dict
@@ -64,7 +64,7 @@ def test_reserved_keys():
 
     expected_keys = {'type', '__annotations__'}
     assert set(parameter_dict.keys()) == expected_keys
-    assert set([key for key, _ in parameter_dict.items()]) == expected_keys
+    assert {key for key, _ in parameter_dict.items()} == expected_keys
 
     for key in expected_keys:
         assert key in parameter_dict

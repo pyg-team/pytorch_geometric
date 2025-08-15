@@ -4,8 +4,6 @@ from typing import Optional
 import torch
 from torch import Tensor
 
-import torch_geometric.typing
-
 
 @dataclass(init=False)
 class SelectOutput:
@@ -64,8 +62,7 @@ class SelectOutput:
         self.weight = weight
 
 
-if torch_geometric.typing.WITH_PT113:
-    SelectOutput = torch.jit.script(SelectOutput)
+SelectOutput = torch.jit.script(SelectOutput)
 
 
 class Select(torch.nn.Module):
@@ -80,7 +77,6 @@ class Select(torch.nn.Module):
     """
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        pass
 
     def forward(self, *args, **kwargs) -> SelectOutput:
         raise NotImplementedError

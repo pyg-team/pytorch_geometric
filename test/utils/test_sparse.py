@@ -4,6 +4,7 @@ import pytest
 import torch
 
 import torch_geometric.typing
+from torch_geometric.io import fs
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import is_full_test, withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
@@ -72,8 +73,7 @@ def test_dense_to_sparse():
                                    [0, 1, 0, 3, 3, 4, 3]]
     assert edge_attr.tolist() == [3, 1, 2, 1, 2, 3, 5]
 
-    # There is a bug in TorchScript for PyTorch < 1.12 :(
-    if torch_geometric.typing.WITH_PT112 and is_full_test():
+    if is_full_test():
         jit = torch.jit.script(dense_to_sparse)
         edge_index, edge_attr = jit(adj, mask)
         assert edge_index.tolist() == [[0, 0, 1, 2, 3, 3, 4],
@@ -175,7 +175,6 @@ def test_to_torch_csr_tensor():
         assert torch.allclose(coo.values(), edge_attr)
 
 
-@withPackage('torch>=1.12.0')
 def test_to_torch_csc_tensor():
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3],
@@ -226,7 +225,7 @@ def test_to_torch_coo_tensor_save_load(tmp_path):
 
     path = osp.join(tmp_path, 'adj.t')
     torch.save(adj, path)
-    adj = torch.load(path)
+    adj = fs.torch_load(path)
     assert adj.is_coalesced()
 
 

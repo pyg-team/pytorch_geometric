@@ -66,7 +66,7 @@ class PascalPF(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
-        self.pairs = torch.load(self.processed_paths[1])
+        self.pairs = fs.torch_load(self.processed_paths[1])
 
     @property
     def raw_file_names(self) -> List[str]:

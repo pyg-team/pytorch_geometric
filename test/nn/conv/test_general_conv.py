@@ -21,8 +21,19 @@ def test_general_conv(kwargs):
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     edge_attr = torch.randn(edge_index.size(1), 16)
 
+    conv = GeneralConv(8, 32, **kwargs)
+    assert str(conv) == 'GeneralConv(8, 32)'
+
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
+
     conv = GeneralConv(8, 32, in_edge_channels=16, **kwargs)
     assert str(conv) == 'GeneralConv(8, 32)'
+
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (4, 32)
 

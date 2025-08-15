@@ -62,7 +62,7 @@ class GenresEncoder:
         self.sep = sep
 
     def __call__(self, df):
-        genres = set(g for col in df.values for g in col.split(self.sep))
+        genres = {g for col in df.values for g in col.split(self.sep)}
         mapping = {genre: i for i, genre in enumerate(genres)}
 
         x = torch.zeros(len(df), len(mapping))

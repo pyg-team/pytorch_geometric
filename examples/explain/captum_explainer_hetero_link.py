@@ -77,7 +77,7 @@ class Model(torch.nn.Module):
 model = Model(hidden_channels=32).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-for epoch in range(1, 10):
+for _ in range(1, 10):
     model.train()
     optimizer.zero_grad()
     pred = model(

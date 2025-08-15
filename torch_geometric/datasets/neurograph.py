@@ -2,8 +2,6 @@ import os
 import os.path as osp
 from typing import Callable, List, Optional
 
-import torch
-
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
@@ -110,7 +108,7 @@ class NeuroGraphDataset(InMemoryDataset):
         fs.rm(osp.join(self.raw_dir, self.name))
 
     def process(self) -> None:
-        data, slices = torch.load(self.raw_paths[0])
+        data, slices = fs.torch_load(self.raw_paths[0])
 
         num_samples = slices['x'].size(0) - 1
         data_list: List[Data] = []

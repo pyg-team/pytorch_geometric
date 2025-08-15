@@ -6,7 +6,7 @@ from torch_geometric.testing import withPackage
 from torch_geometric.transforms import NodePropertySplit
 
 
-@withPackage('networkx')
+@withPackage('networkx', 'scipy')
 @pytest.mark.parametrize('property_name', [
     'popularity',
     'locality',

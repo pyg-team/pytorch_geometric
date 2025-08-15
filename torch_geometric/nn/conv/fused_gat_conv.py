@@ -3,9 +3,9 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import GATConv
 from torch_geometric.utils import sort_edge_index
-from torch_geometric.utils.sparse import index2ptr
 
 
 class FusedGATConv(GATConv):  # pragma: no cover

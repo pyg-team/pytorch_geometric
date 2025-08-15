@@ -70,14 +70,15 @@ class HeteroConv(torch.nn.Module):
         for edge_type, module in convs.items():
             check_add_self_loops(module, [edge_type])
 
-        src_node_types = set([key[0] for key in convs.keys()])
-        dst_node_types = set([key[-1] for key in convs.keys()])
+        src_node_types = {key[0] for key in convs.keys()}
+        dst_node_types = {key[-1] for key in convs.keys()}
         if len(src_node_types - dst_node_types) > 0:
             warnings.warn(
                 f"There exist node types ({src_node_types - dst_node_types}) "
                 f"whose representations do not get updated during message "
                 f"passing as they do not occur as destination type in any "
-                f"edge type. This may lead to unexpected behavior.")
+                f"edge type. This may lead to unexpected behavior.",
+                stacklevel=2)
 
         self.convs = ModuleDict(convs)
         self.aggr = aggr
@@ -102,7 +103,7 @@ class HeteroConv(torch.nn.Module):
                 individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
                 :class:`torch_sparse.SparseTensor`.
-            *args_dict (optional): Additional forward arguments of invididual
+            *args_dict (optional): Additional forward arguments of individual
                 :class:`torch_geometric.nn.conv.MessagePassing` layers.
             **kwargs_dict (optional): Additional forward arguments of
                 individual :class:`torch_geometric.nn.conv.MessagePassing`

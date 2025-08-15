@@ -13,7 +13,7 @@ from torch_geometric.utils import to_dense_adj, to_dense_batch
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
-avg_num_nodes = int(dataset.data.x.size(0) / len(dataset))
+avg_num_nodes = int(dataset._data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]
 val_dataset = dataset[n:2 * n]
@@ -46,18 +46,18 @@ class Net(torch.nn.Module):
         x, mask = to_dense_batch(x, batch)
         adj = to_dense_adj(edge_index, batch)
 
-        _, x, adj, sp1, o1, c1 = self.pool1(x, adj, mask)
+        _, x, adj, sp1, _, c1 = self.pool1(x, adj, mask)
 
         x = self.conv2(x, adj).relu()
 
-        _, x, adj, sp2, o2, c2 = self.pool2(x, adj)
+        _, x, adj, sp2, _, c2 = self.pool2(x, adj)
 
         x = self.conv3(x, adj)
 
         x = x.mean(dim=1)
         x = self.lin1(x).relu()
         x = self.lin2(x)
-        return F.log_softmax(x, dim=-1), sp1 + sp2 + o1 + o2 + c1 + c2
+        return F.log_softmax(x, dim=-1), sp1 + sp2 + c1 + c2
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -75,7 +75,7 @@ def train(train_loader):
         out, tot_loss = model(data.x, data.edge_index, data.batch)
         loss = F.nll_loss(out, data.y.view(-1)) + tot_loss
         loss.backward()
-        loss_all += data.y.size(0) * float(loss)
+        loss_all += data.y.size(0) * float(loss.detach())
         optimizer.step()
     return loss_all / len(train_dataset)
 
@@ -85,12 +85,11 @@ def test(loader):
     model.eval()
     correct = 0
     loss_all = 0
-
     for data in loader:
         data = data.to(device)
         pred, tot_loss = model(data.x, data.edge_index, data.batch)
         loss = F.nll_loss(pred, data.y.view(-1)) + tot_loss
-        loss_all += data.y.size(0) * float(loss)
+        loss_all += data.y.size(0) * float(loss.detach())
         correct += int(pred.max(dim=1)[1].eq(data.y.view(-1)).sum())
 
     return loss_all / len(loader.dataset), correct / len(loader.dataset)

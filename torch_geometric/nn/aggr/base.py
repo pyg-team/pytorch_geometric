@@ -25,7 +25,7 @@ class Aggregation(torch.nn.Module):
     Notably, :obj:`index` does not have to be sorted (for most aggregation
     operators):
 
-    .. code-block::
+    .. code-block:: python
 
        # Feature matrix holding 10 elements with 64 features each:
        x = torch.randn(10, 64)
@@ -39,7 +39,7 @@ class Aggregation(torch.nn.Module):
     called :obj:`ptr`. Here, elements within the same set need to be grouped
     together in the input, and :obj:`ptr` defines their boundaries:
 
-    .. code-block::
+    .. code-block:: python
 
        # Feature matrix holding 10 elements with 64 features each:
        x = torch.randn(10, 64)
@@ -94,11 +94,9 @@ class Aggregation(torch.nn.Module):
             max_num_elements: (int, optional): The maximum number of elements
                 within a single aggregation group. (default: :obj:`None`)
         """
-        pass
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        pass
 
     @disable_dynamic_shapes(required_args=['dim_size'])
     def __call__(
@@ -137,7 +135,7 @@ class Aggregation(torch.nn.Module):
                 if index.numel() > 0 and dim_size <= int(index.max()):
                     raise ValueError(f"Encountered invalid 'dim_size' (got "
                                      f"'{dim_size}' but expected "
-                                     f">= '{int(index.max()) + 1}')")
+                                     f">= '{int(index.max()) + 1}')") from e
             raise e
 
     def __repr__(self) -> str:

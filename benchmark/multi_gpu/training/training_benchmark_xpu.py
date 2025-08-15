@@ -44,10 +44,19 @@ if __name__ == '__main__':
 
     argparser = get_predefined_args()
     args = argparser.parse_args()
-    setattr(args, 'device', 'xpu')
+    args.device = 'xpu'
 
     assert args.dataset in supported_sets.keys(), \
         f"Dataset {args.dataset} isn't supported."
-    data, num_classes = get_dataset(args.dataset, args.root)
+
+    # if the dataset is not present, it will be downloaded
+    # only by process with rank=0,
+    # other process will use the dataset cache from rank=0,
+    # and will not re-download and process it
+    if rank == 0:
+        data, num_classes = get_dataset(args.dataset, args.root)
+    dist.barrier()
+    if rank != 0:
+        data, num_classes = get_dataset(args.dataset, args.root)
 
     run(rank, world_size, args, num_classes, data, custom_optimizer)

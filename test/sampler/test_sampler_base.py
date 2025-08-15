@@ -49,6 +49,9 @@ def test_heterogeneous_num_neighbors_dict_and_default():
 
     num_neighbors = NumNeighbors({('A', 'B'): [25, 10]}, default=[-1, -1])
 
+    with pytest.raises(ValueError, match="Not all edge types"):
+        num_neighbors.get_values([('A', 'C'), ('B', 'A')])
+
     values = num_neighbors.get_values([('A', 'B'), ('B', 'A')])
     assert values == {('A', 'B'): [25, 10], ('B', 'A'): [-1, -1]}
 

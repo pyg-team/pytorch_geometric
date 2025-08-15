@@ -73,7 +73,8 @@ class CaptumExplainer(ExplainerAlgorithm):
                              f"{self.attribution_method_class.__name__}")
 
         if kwargs.get('internal_batch_size', 1) != 1:
-            warnings.warn("Overriding 'internal_batch_size' to 1")
+            warnings.warn("Overriding 'internal_batch_size' to 1",
+                          stacklevel=2)
 
         if 'internal_batch_size' in self._get_attribute_parameters():
             kwargs['internal_batch_size'] = 1

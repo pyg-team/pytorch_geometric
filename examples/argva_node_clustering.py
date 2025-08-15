@@ -73,7 +73,7 @@ def train():
     z = model.encode(train_data.x, train_data.edge_index)
 
     # We optimize the discriminator more frequently than the encoder.
-    for i in range(5):
+    for _ in range(5):
         discriminator_optimizer.zero_grad()
         discriminator_loss = model.discriminator_loss(z)
         discriminator_loss.backward()
@@ -84,7 +84,7 @@ def train():
     loss = loss + (1 / train_data.num_nodes) * model.kl_loss()
     loss.backward()
     encoder_optimizer.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()
@@ -94,7 +94,8 @@ def test(data):
 
     # Cluster embedded values using k-means.
     kmeans_input = z.cpu().numpy()
-    kmeans = KMeans(n_clusters=7, random_state=0).fit(kmeans_input)
+    kmeans = KMeans(n_clusters=7, random_state=0,
+                    n_init='auto').fit(kmeans_input)
     pred = kmeans.predict(kmeans_input)
 
     labels = data.y.cpu().numpy()
@@ -111,9 +112,9 @@ def test(data):
 for epoch in range(1, 151):
     loss = train()
     auc, ap, completeness, hm, nmi = test(test_data)
-    print((f'Epoch: {epoch:03d}, Loss: {loss:.3f}, AUC: {auc:.3f}, '
-           f'AP: {ap:.3f}, Completeness: {completeness:.3f}, '
-           f'Homogeneity: {hm:.3f}, NMI: {nmi:.3f}'))
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.3f}, AUC: {auc:.3f}, '
+          f'AP: {ap:.3f}, Completeness: {completeness:.3f}, '
+          f'Homogeneity: {hm:.3f}, NMI: {nmi:.3f}')
 
 
 @torch.no_grad()

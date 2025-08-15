@@ -19,7 +19,7 @@ def set_printing():
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
     os.makedirs(cfg.run_dir, exist_ok=True)
-    h_file = logging.FileHandler('{}/logging.log'.format(cfg.run_dir))
+    h_file = logging.FileHandler(f'{cfg.run_dir}/logging.log')
     h_stdout = logging.StreamHandler(sys.stdout)
     if cfg.print == 'file':
         logging_cfg['handlers'] = [h_file]
@@ -40,7 +40,7 @@ class Logger:
         self._epoch_total = cfg.optim.max_epoch
         self._time_total = 0  # won't be reset
 
-        self.out_dir = '{}/{}'.format(cfg.run_dir, name)
+        self.out_dir = f'{cfg.run_dir}/{name}'
         os.makedirs(self.out_dir, exist_ok=True)
         if cfg.tensorboard_each_run:
             from tensorboardX import SummaryWriter
@@ -210,9 +210,9 @@ class Logger:
             }
 
         # print
-        logging.info('{}: {}'.format(self.name, stats))
+        logging.info(f'{self.name}: {stats}')
         # json
-        dict_to_json(stats, '{}/stats.json'.format(self.out_dir))
+        dict_to_json(stats, f'{self.out_dir}/stats.json')
         # tensorboard
         if cfg.tensorboard_each_run:
             dict_to_tb(stats, self.tb_writer, cur_epoch)
@@ -239,7 +239,7 @@ def create_logger():
     r"""Create logger for the experiment."""
     loggers = []
     names = ['train', 'val', 'test']
-    for i, dataset in enumerate(range(cfg.share.num_splits)):
+    for i, _ in enumerate(range(cfg.share.num_splits)):
         loggers.append(Logger(name=names[i], task_type=infer_task()))
     return loggers
 

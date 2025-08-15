@@ -25,21 +25,19 @@ class BAMultiShapesDataset(InMemoryDataset):
     This dataset is pre-computed from the official implementation.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+        root: Root directory where the dataset should be saved.
+        transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
+        pre_transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
+            being saved to disk.
+        pre_filter: A function that takes in a
+            :class:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
+            final dataset.
+        force_reload: Whether to re-process the dataset.
 
     **STATS:**
 

@@ -42,7 +42,15 @@ def propagate(
     # End Propagate Forward Pre Hook ###########################################
 
     mutable_size = self._check_input(edge_index, size)
-    fuse = is_sparse(edge_index) and self.fuse
+
+    # Run "fused" message and aggregation (if applicable).
+    fuse = False
+    if self.fuse:
+        if is_sparse(edge_index):
+            fuse = True
+        elif not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+            if self.SUPPORTS_FUSED_EDGE_INDEX and edge_index.is_sorted_by_col:
+                fuse = True
 
     if fuse:
 

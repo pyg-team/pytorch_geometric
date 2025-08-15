@@ -3,7 +3,6 @@ import os.path as osp
 from typing import Callable, List, Optional
 
 import numpy as np
-import scipy.sparse as sp
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_google_url
@@ -15,17 +14,15 @@ class AmazonProducts(InMemoryDataset):
     containing products and its categories.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
+        root: Root directory where the dataset should be saved.
+        transform: A function/transform that takes in an
+            :class:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
-            (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
+        pre_transform: A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
+            being saved to disk.
+        force_reload: Whether to re-process the dataset.
 
     **STATS:**
 
@@ -73,6 +70,8 @@ class AmazonProducts(InMemoryDataset):
         download_google_url(self.role_id, self.raw_dir, 'role.json')
 
     def process(self) -> None:
+        import scipy.sparse as sp
+
         f = np.load(osp.join(self.raw_dir, 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()

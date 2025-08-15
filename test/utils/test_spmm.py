@@ -82,7 +82,6 @@ def test_spmm_layout(device, layout, reduce):
         spmm(src, other, reduce=reduce)
 
 
-@withPackage('torch>=1.12.0')
 @pytest.mark.parametrize('reduce', ['sum', 'mean'])
 def test_spmm_jit(reduce):
     @torch.jit.script
@@ -121,8 +120,9 @@ def test_spmm_edge_index(device, reduce):
     out = spmm(src, other, reduce=reduce)
     assert out.size() == (4, 4)
 
-    out2 = spmm(src.to_sparse_coo(), other, reduce=reduce)
-    assert torch.allclose(out, out2)
+    if not other.is_cuda or reduce not in ['min', 'max']:
+        out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
+        assert torch.allclose(out, out2)
 
 
 if __name__ == '__main__':

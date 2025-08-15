@@ -22,6 +22,9 @@ class EgoData(Data):
 
 def read_ego(files: List[str], name: str) -> List[EgoData]:
     import pandas as pd
+    import tqdm
+
+    files = sorted(files)
 
     all_featnames = []
     files = [
@@ -38,7 +41,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
     all_featnames_dict = {key: i for i, key in enumerate(all_featnames)}
 
     data_list = []
-    for i in range(0, len(files), 5):
+    for i in tqdm.tqdm(range(0, len(files), 5)):
         circles_file = files[i]
         edges_file = files[i + 1]
         egofeat_file = files[i + 2]
@@ -64,6 +67,9 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
             indices = [all_featnames_dict[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
+
+            if x.size(1) > 100_000:
+                x = x.to_sparse_csr()
 
         idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
                           usecols=[0]).squeeze()
@@ -103,7 +109,7 @@ def read_ego(files: List[str], name: str) -> List[EgoData]:
         row = torch.cat([row, row_ego, col_ego], dim=0)
         col = torch.cat([col, col_ego, row_ego], dim=0)
         edge_index = torch.stack([row, col], dim=0)
-        edge_index = coalesce(edge_index, num_nodes=N)
+        edge_index = coalesce(edge_index, num_nodes=int(N))
 
         data = EgoData(x=x, edge_index=edge_index, circle=circle,
                        circle_batch=circle_batch)
@@ -123,7 +129,7 @@ def read_soc(files: List[str], name: str) -> List[Data]:
     edge_index = pd.read_csv(files[0], sep='\t', header=None,
                              skiprows=skiprows, dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
-    num_nodes = edge_index.max().item() + 1
+    num_nodes = int(edge_index.max()) + 1
     edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
@@ -137,11 +143,15 @@ def read_wiki(files: List[str], name: str) -> List[Data]:
     edge_index = torch.from_numpy(edge_index.values).t()
 
     idx = torch.unique(edge_index.flatten())
-    idx_assoc = torch.full((edge_index.max() + 1, ), -1, dtype=torch.long)
+    idx_assoc = torch.full(
+        (edge_index.max() + 1, ),  # type: ignore
+        -1,
+        dtype=torch.long,
+    )
     idx_assoc[idx] = torch.arange(idx.size(0))
 
     edge_index = idx_assoc[edge_index]
-    num_nodes = edge_index.max().item() + 1
+    num_nodes = int(edge_index.max()) + 1
     edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]

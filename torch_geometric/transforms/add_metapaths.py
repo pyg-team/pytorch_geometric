@@ -37,7 +37,7 @@ class AddMetaPaths(BaseTransform):
     :class:`~torch_geometric.data.HeteroData` object as edge type
     :obj:`(src_node_type, "metapath_*", dst_node_type)`, where
     :obj:`src_node_type` and :obj:`dst_node_type` denote :math:`\mathcal{V}_1`
-    and :math:`\mathcal{V}_{\ell}`, repectively.
+    and :math:`\mathcal{V}_{\ell}`, respectively.
 
     In addition, a :obj:`metapath_dict` object is added to the
     :class:`~torch_geometric.data.HeteroData` object which maps the
@@ -108,13 +108,15 @@ class AddMetaPaths(BaseTransform):
         **kwargs: bool,
     ) -> None:
         if 'drop_orig_edges' in kwargs:
-            warnings.warn("'drop_orig_edges' is dprecated. Use "
-                          "'drop_orig_edge_types' instead")
+            warnings.warn(
+                "'drop_orig_edges' is deprecated. Use "
+                "'drop_orig_edge_types' instead", stacklevel=2)
             drop_orig_edge_types = kwargs['drop_orig_edges']
 
         if 'drop_unconnected_nodes' in kwargs:
-            warnings.warn("'drop_unconnected_nodes' is dprecated. Use "
-                          "'drop_unconnected_node_types' instead")
+            warnings.warn(
+                "'drop_unconnected_nodes' is deprecated. Use "
+                "'drop_unconnected_node_types' instead", stacklevel=2)
             drop_unconnected_node_types = kwargs['drop_unconnected_nodes']
 
         for path in metapaths:
@@ -144,7 +146,7 @@ class AddMetaPaths(BaseTransform):
             if self.max_sample is not None:
                 edge_index, edge_weight = self._sample(edge_index, edge_weight)
 
-            for i, edge_type in enumerate(metapath[1:]):
+            for edge_type in metapath[1:]:
                 edge_index2, edge_weight2 = self._edge_index(data, edge_type)
 
                 edge_index, edge_weight = edge_index.matmul(
@@ -158,7 +160,7 @@ class AddMetaPaths(BaseTransform):
                         edge_index, edge_weight)
 
             new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
-            data[new_edge_type].edge_index = edge_index
+            data[new_edge_type].edge_index = edge_index.as_tensor()
             if self.weighted:
                 data[new_edge_type].edge_weight = edge_weight
             data.metapath_dict[new_edge_type] = metapath
@@ -231,7 +233,7 @@ class AddRandomMetaPaths(BaseTransform):
             will drop node types not connected by any edge type.
             (default: :obj:`False`)
         walks_per_node (int, List[int], optional): The number of random walks
-            for each starting node in a metapth. (default: :obj:`1`)
+            for each starting node in a metapath. (default: :obj:`1`)
         sample_ratio (float, optional): The ratio of source nodes to start
             random walks from. (default: :obj:`1.0`)
     """
@@ -276,7 +278,7 @@ class AddRandomMetaPaths(BaseTransform):
             row = start = torch.randperm(num_nodes)[:num_starts].repeat(
                 self.walks_per_node[j])
 
-            for i, edge_type in enumerate(metapath):
+            for edge_type in metapath:
                 edge_index = EdgeIndex(
                     data[edge_type].edge_index,
                     sparse_size=data[edge_type].size(),

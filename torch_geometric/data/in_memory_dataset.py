@@ -297,7 +297,7 @@ class InMemoryDataset(Dataset):
             self._data_list = None
         msg += f' {msg4}'
 
-        warnings.warn(msg)
+        warnings.warn(msg, stacklevel=2)
 
         return self._data
 
@@ -346,11 +346,9 @@ class InMemoryDataset(Dataset):
 
 def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
     if isinstance(node, Mapping):
-        for key, value in node.items():
-            for inner_key, inner_value in nested_iter(value):
-                yield inner_key, inner_value
+        for value in node.values():
+            yield from nested_iter(value)
     elif isinstance(node, Sequence):
-        for i, inner_value in enumerate(node):
-            yield i, inner_value
+        yield from enumerate(node)
     else:
         yield None, node

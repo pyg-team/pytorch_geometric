@@ -94,7 +94,7 @@ class BrcaTcga(InMemoryDataset):
         graph_feat = torch.from_numpy(graph_feat).to(torch.float)
         graph_labels = np.loadtxt(self.raw_paths[1], delimiter=',')
         graph_label = torch.from_numpy(graph_labels).to(torch.float)
-        edge_index = torch.load(self.raw_paths[2])
+        edge_index = fs.torch_load(self.raw_paths[2])
 
         data_list = []
         for x, y in zip(graph_feat, graph_label):

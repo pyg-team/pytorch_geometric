@@ -7,9 +7,17 @@ from typing import Callable
 
 import torch
 from packaging.requirements import Requirement
+from packaging.version import Version
 
+import torch_geometric
+import torch_geometric.typing
 from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
+
+
+def is_rag_test() -> bool:
+    r"""Whether to run the RAG test suite."""
+    return os.getenv('RAG_TEST', '0') == '1'
 
 
 def is_full_test() -> bool:
@@ -30,8 +38,8 @@ def onlyFullTest(func: Callable) -> Callable:
 
 def is_distributed_test() -> bool:
     r"""Whether to run the distributed test suite."""
-    return ((is_full_test() or os.getenv('DIST_TEST', '0') == '1')
-            and sys.platform == 'linux' and has_package('pyg_lib'))
+    return (os.getenv('DIST_TEST', '0') == '1' and sys.platform == 'linux'
+            and has_package('pyg_lib'))
 
 
 def onlyDistributedTest(func: Callable) -> Callable:
@@ -67,15 +75,34 @@ def noWindows(func: Callable) -> Callable:
     )(func)
 
 
-def onlyPython(*args: str) -> Callable:
+def noMac(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should not execute on
+    macOS systems.
+    """
+    import pytest
+    return pytest.mark.skipif(
+        sys.platform == 'darwin',
+        reason="macOS system",
+    )(func)
+
+
+def minPython(version: str) -> Callable:
     r"""A decorator to run tests on specific :python:`Python` versions only."""
     def decorator(func: Callable) -> Callable:
         import pytest
 
-        python_version = f'{sys.version_info.major}.{sys.version_info.minor}'
+        major, minor = version.split('.')
+
+        skip = False
+        if sys.version_info.major < int(major):
+            skip = True
+        if (sys.version_info.major == int(major)
+                and sys.version_info.minor < int(minor)):
+            skip = True
+
         return pytest.mark.skipif(
-            python_version not in args,
-            reason=f"Python {python_version} not supported",
+            skip,
+            reason=f"Python {version} required",
         )(func)
 
     return decorator
@@ -93,13 +120,8 @@ def onlyCUDA(func: Callable) -> Callable:
 def onlyXPU(func: Callable) -> Callable:
     r"""A decorator to skip tests if XPU is not found."""
     import pytest
-    try:
-        import intel_extension_for_pytorch as ipex
-        xpu_available = ipex.xpu.is_available()
-    except ImportError:
-        xpu_available = False
     return pytest.mark.skipif(
-        not xpu_available,
+        not torch_geometric.is_xpu_available(),
         reason="XPU not available",
     )(func)
 
@@ -157,24 +179,23 @@ def has_package(package: str) -> bool:
     req = Requirement(package)
     if find_spec(req.name) is None:
         return False
-    module = import_module(req.name)
-    if not hasattr(module, '__version__'):
-        return True
 
-    version = module.__version__
-    # `req.specifier` does not support `.dev` suffixes, e.g., for
-    # `pyg_lib==0.1.0.dev*`, so we manually drop them:
-    if '.dev' in version:
-        version = '.'.join(version.split('.dev')[:-1])
+    try:
+        module = import_module(req.name)
+        if not hasattr(module, '__version__'):
+            return True
 
-    return version in req.specifier
+        version = Version(module.__version__).base_version
+        return version in req.specifier
+    except Exception:
+        return False
 
 
 def withPackage(*args: str) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification.
     """
-    na_packages = set(package for package in args if not has_package(package))
+    na_packages = {package for package in args if not has_package(package)}
 
     if len(na_packages) == 1:
         reason = f"Package {list(na_packages)[0]} not found"
@@ -186,6 +207,18 @@ def withPackage(*args: str) -> Callable:
         return pytest.mark.skipif(len(na_packages) > 0, reason=reason)(func)
 
     return decorator
+
+
+def onlyRAG(func: Callable) -> Callable:
+    r"""A decorator to specify that this function belongs to the RAG test
+    suite.
+    """
+    import pytest
+    func = pytest.mark.rag(func)
+    return pytest.mark.skipif(
+        not is_rag_test(),
+        reason="RAG tests are disabled",
+    )(func)
 
 
 def withCUDA(func: Callable) -> Callable:
@@ -208,20 +241,20 @@ def withDevice(func: Callable) -> Callable:
     if torch.cuda.is_available():
         devices.append(pytest.param(torch.device('cuda:0'), id='cuda:0'))
 
-    if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-        try:  # Github CI may not have access to MPS hardware. Confirm:
-            torch.empty(1, device='mps')
-            devices.append(pytest.param(torch.device('mps:0'), id='mps'))
-        except RuntimeError:
-            pass
+    if torch_geometric.is_mps_available():
+        devices.append(pytest.param(torch.device('mps:0'), id='mps'))
+
+    if torch_geometric.is_xpu_available():
+        devices.append(pytest.param(torch.device('xpu:0'), id='xpu'))
 
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
     if device:
         backend = os.getenv('TORCH_BACKEND')
         if backend is None:
-            warnings.warn(f"Please specify the backend via 'TORCH_BACKEND' in"
-                          f"order to test against '{device}'")
+            warnings.warn(
+                f"Please specify the backend via 'TORCH_BACKEND' in"
+                f"order to test against '{device}'", stacklevel=2)
         else:
             import_module(backend)
             devices.append(pytest.param(torch.device(device), id=device))
@@ -236,7 +269,7 @@ def withMETIS(func: Callable) -> Callable:
     with_metis = WITH_METIS
 
     if with_metis:
-        try:  # Test that METIS can succesfully execute:
+        try:  # Test that METIS can successfully execute:
             # TODO Using `pyg-lib` metis partitioning leads to some weird bugs
             # in the # CI. As such, we require `torch-sparse` for now.
             rowptr = torch.tensor([0, 2, 4, 6])
@@ -248,6 +281,17 @@ def withMETIS(func: Callable) -> Callable:
     return pytest.mark.skipif(
         not with_metis,
         reason="METIS not enabled",
+    )(func)
+
+
+def withHashTensor(func: Callable) -> Callable:
+    r"""A decorator to only test in case :class:`HashTensor` is available."""
+    import pytest
+
+    return pytest.mark.skipif(
+        not torch_geometric.typing.WITH_CPU_HASH_MAP
+        and not has_package('pandas'),
+        reason="HashTensor dependencies not available",
     )(func)
 
 

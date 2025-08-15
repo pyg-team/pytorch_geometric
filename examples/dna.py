@@ -33,7 +33,7 @@ class Net(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers):
+        for _ in range(num_layers):
             self.convs.append(
                 DNAConv(hidden_channels, heads, groups, dropout=0.8))
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)

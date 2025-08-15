@@ -1,5 +1,6 @@
 # An Multi GPU implementation of unsupervised bipartite GraphSAGE
 # using the Alibaba Taobao dataset.
+import argparse
 import os
 import os.path as osp
 
@@ -96,7 +97,7 @@ class Model(torch.nn.Module):
         return self.decoder(z_dict['user'], z_dict['item'], edge_label_index)
 
 
-def run_train(rank, data, train_data, val_data, test_data, world_size):
+def run_train(rank, data, train_data, val_data, test_data, args, world_size):
     if rank == 0:
         print("Setting up Data Loaders...")
     train_edge_label_idx = train_data[('user', 'to', 'item')].edge_label_index
@@ -107,9 +108,9 @@ def run_train(rank, data, train_data, val_data, test_data, world_size):
         num_neighbors=[8, 4],
         edge_label_index=(('user', 'to', 'item'), train_edge_label_idx),
         neg_sampling='binary',
-        batch_size=2048,
+        batch_size=args.batch_size,
         shuffle=True,
-        num_workers=16,
+        num_workers=args.num_workers,
         drop_last=True,
     )
 
@@ -121,9 +122,9 @@ def run_train(rank, data, train_data, val_data, test_data, world_size):
             val_data[('user', 'to', 'item')].edge_label_index,
         ),
         edge_label=val_data[('user', 'to', 'item')].edge_label,
-        batch_size=2048,
+        batch_size=args.batch_size,
         shuffle=False,
-        num_workers=16,
+        num_workers=args.num_workers,
     )
 
     test_loader = LinkNeighborLoader(
@@ -134,16 +135,16 @@ def run_train(rank, data, train_data, val_data, test_data, world_size):
             test_data[('user', 'to', 'item')].edge_label_index,
         ),
         edge_label=test_data[('user', 'to', 'item')].edge_label,
-        batch_size=2048,
+        batch_size=args.batch_size,
         shuffle=False,
-        num_workers=16,
+        num_workers=args.num_workers,
     )
 
     def train():
         model.train()
 
         total_loss = total_examples = 0
-        for batch in tqdm.tqdm(train_loader):
+        for batch in tqdm.tqdm(train_loader, disable=rank != 0):
             batch = batch.to(rank)
             optimizer.zero_grad()
 
@@ -165,9 +166,8 @@ def run_train(rank, data, train_data, val_data, test_data, world_size):
     @torch.no_grad()
     def test(loader):
         model.eval()
-
         preds, targets = [], []
-        for batch in tqdm.tqdm(loader):
+        for batch in tqdm.tqdm(loader, disable=rank != 0):
             batch = batch.to(rank)
 
             pred = model(
@@ -204,21 +204,54 @@ def run_train(rank, data, train_data, val_data, test_data, world_size):
         )
         break
     model = DistributedDataParallel(model, device_ids=[rank])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    for epoch in range(1, 21):
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    best_val_auc = 0
+    for epoch in range(1, args.epochs):
+        print("Train")
         loss = train()
         if rank == 0:
+            print("Val")
             val_auc = test(val_loader)
-            test_auc = test(test_loader)
+            best_val_auc = max(best_val_auc, val_auc)
         if rank == 0:
-            print(f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val: {val_auc:.4f}, '
-                  f'Test: {test_auc:.4f}')
+            print(
+                f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val AUC: {val_auc:.4f}')
+    if rank == 0:
+        print("Test")
+        test_auc = test(test_loader)
+        print(f'Total {args.epochs:02d} epochs: Final Loss: {loss:4f}, '
+              f'Best Val AUC: {best_val_auc:.4f}, '
+              f'Test AUC: {test_auc:.4f}')
 
 
 if __name__ == '__main__':
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_workers', type=int, default=16,
+                        help="Number of workers per dataloader")
+    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--epochs', type=int, default=21)
+    parser.add_argument('--batch_size', type=int, default=2048)
+    parser.add_argument(
+        '--dataset_root_dir', type=str,
+        default=osp.join(osp.dirname(osp.realpath(__file__)),
+                         '../../data/Taobao'))
+    args = parser.parse_args()
 
-    dataset = Taobao(path)
+    def pre_transform(data):
+        # Compute sparsified item<>item relationships through users:
+        print('Computing item<>item relationships...')
+        mat = to_scipy_sparse_matrix(data['user', 'item'].edge_index).tocsr()
+        mat = mat[:data['user'].num_nodes, :data['item'].num_nodes]
+        comat = mat.T @ mat
+        comat.setdiag(0)
+        comat = comat >= 3.
+        comat = comat.tocoo()
+        row = torch.from_numpy(comat.row).to(torch.long)
+        col = torch.from_numpy(comat.col).to(torch.long)
+        data['item', 'item'].edge_index = torch.stack([row, col], dim=0)
+        return data
+
+    dataset = Taobao(args.dataset_root_dir, pre_transform=pre_transform)
     data = dataset[0]
 
     data['user'].x = torch.arange(0, data['user'].num_nodes)
@@ -245,26 +278,8 @@ if __name__ == '__main__':
     )(data)
     print('Done!')
 
-    # Compute sparsified item<>item relationships through users:
-    print('Computing item<>item relationships...')
-    mat = to_scipy_sparse_matrix(data['user', 'item'].edge_index).tocsr()
-    mat = mat[:data['user'].num_nodes, :data['item'].num_nodes]
-    comat = mat.T @ mat
-    comat.setdiag(0)
-    comat = comat >= 3.
-    comat = comat.tocoo()
-    row = torch.from_numpy(comat.row).to(torch.long)
-    col = torch.from_numpy(comat.col).to(torch.long)
-    item_to_item_edge_index = torch.stack([row, col], dim=0)
-
-    # Add the generated item<>item relationships for high-order information:
-    train_data['item', 'item'].edge_index = item_to_item_edge_index
-    val_data['item', 'item'].edge_index = item_to_item_edge_index
-    test_data['item', 'item'].edge_index = item_to_item_edge_index
-    print('Done!')
-
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
     mp.spawn(run_train,
-             args=(data, train_data, val_data, test_data, world_size),
+             args=(data, train_data, val_data, test_data, args, world_size),
              nprocs=world_size, join=True)

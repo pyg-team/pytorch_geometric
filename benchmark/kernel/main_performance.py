@@ -43,7 +43,7 @@ else:
     device = torch.device('cpu')
 
 if torch.cuda.is_available():
-    amp = torch.cuda.amp.autocast(enabled=False)
+    amp = torch.amp.autocast('cuda', enabled=False)
 else:
     amp = torch.cpu.amp.autocast(enabled=args.bf16)
 

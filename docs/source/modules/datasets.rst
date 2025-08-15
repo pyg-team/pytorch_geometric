@@ -32,6 +32,20 @@ Heterogeneous Datasets
      {{ name }}
    {% endfor %}
 
+Hypergraph Datasets
+-------------------
+
+.. currentmodule:: torch_geometric.datasets
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/only_class.rst
+
+   {% for name in torch_geometric.datasets.hyper_datasets %}
+     {{ name }}
+   {% endfor %}
+
 Synthetic Datasets
 ------------------
 

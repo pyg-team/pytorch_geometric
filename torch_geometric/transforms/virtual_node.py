@@ -37,7 +37,8 @@ class VirtualNode(BaseTransform):
         col = torch.cat([col, full, arange], dim=0)
         edge_index = torch.stack([row, col], dim=0)
 
-        new_type = edge_type.new_full((num_nodes, ), int(edge_type.max()) + 1)
+        num_edge_types = int(edge_type.max()) if edge_type.numel() > 0 else 0
+        new_type = edge_type.new_full((num_nodes, ), num_edge_types + 1)
         edge_type = torch.cat([edge_type, new_type, new_type + 1], dim=0)
 
         old_data = copy.copy(data)

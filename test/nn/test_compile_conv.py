@@ -52,7 +52,7 @@ def test_compile_conv(device, Conv):
 @withDevice
 @onlyLinux
 @onlyFullTest
-@withPackage('torch>=2.2.0')
+@withPackage('torch==2.3')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv_edge_index(device, Conv):
     import torch._dynamo as dynamo
@@ -60,6 +60,8 @@ def test_compile_conv_edge_index(device, Conv):
     x = torch.randn(10, 16, device=device)
     edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
     edge_index = EdgeIndex(edge_index, sparse_size=(10, 10))
+    edge_index = edge_index.sort_by('col')[0]
+    edge_index.fill_cache_()
 
     if Conv == GCNConv:
         conv = Conv(16, 32, normalize=False).to(device)

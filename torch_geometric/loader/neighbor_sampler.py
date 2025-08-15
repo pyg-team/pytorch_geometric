@@ -72,9 +72,9 @@ class NeighborSampler(torch.utils.data.DataLoader):
         `examples/reddit.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         reddit.py>`_ or
-        `examples/ogbn_products_sage.py
+        `examples/ogbn_train.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        ogbn_products_sage.py>`_.
+        ogbn_train.py>`_.
 
     Args:
         edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a

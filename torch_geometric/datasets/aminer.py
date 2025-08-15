@@ -24,17 +24,16 @@ class AMiner(InMemoryDataset):
     truth labels for a subset of nodes.
 
     Args:
-        root (str): Root directory where the dataset should be saved.
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.HeteroData` object and returns a
+        root: Root directory where the dataset should be saved.
+        transform: A function/transform that takes in a
+            :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
-            every access. (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.HeteroData` object and returns a
+            every access.
+        pre_transform: A function/transform that takes in a
+            :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
+            being saved to disk.
+        force_reload: Whether to re-process the dataset.
     """
 
     url = 'https://www.dropbox.com/s/1bnz8r7mofx0osf/net_aminer.zip?dl=1'

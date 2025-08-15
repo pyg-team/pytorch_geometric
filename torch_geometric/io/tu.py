@@ -1,7 +1,6 @@
 import os.path as osp
 from typing import Dict, List, Optional, Tuple
 
-import numpy as np
 import torch
 from torch import Tensor
 
@@ -37,7 +36,7 @@ def read_tu_data(
         if node_label.dim() == 1:
             node_label = node_label.unsqueeze(-1)
         node_label = node_label - node_label.min(dim=0)[0]
-        node_labels = node_label.unbind(dim=-1)
+        node_labels = list(node_label.unbind(dim=-1))
         node_labels = [one_hot(x) for x in node_labels]
         if len(node_labels) == 1:
             node_label = node_labels[0]
@@ -56,7 +55,7 @@ def read_tu_data(
         if edge_label.dim() == 1:
             edge_label = edge_label.unsqueeze(-1)
         edge_label = edge_label - edge_label.min(dim=0)[0]
-        edge_labels = edge_label.unbind(dim=-1)
+        edge_labels = list(edge_label.unbind(dim=-1))
         edge_labels = [one_hot(e) for e in edge_labels]
         if len(edge_labels) == 1:
             edge_label = edge_labels[0]
@@ -108,11 +107,11 @@ def cat(seq: List[Optional[Tensor]]) -> Optional[Tensor]:
 
 
 def split(data: Data, batch: Tensor) -> Tuple[Data, Dict[str, Tensor]]:
-    node_slice = cumsum(torch.from_numpy(np.bincount(batch)))
+    node_slice = cumsum(torch.bincount(batch))
 
     assert data.edge_index is not None
     row, _ = data.edge_index
-    edge_slice = cumsum(torch.from_numpy(np.bincount(batch[row])))
+    edge_slice = cumsum(torch.bincount(batch[row]))
 
     # Edge indices should start at zero for every graph.
     data.edge_index -= node_slice[batch[row]].unsqueeze(0)

@@ -79,7 +79,7 @@ class ToSparseTensor(BaseTransform):
 
             keys, values = [], []
             for key, value in store.items():
-                if key == 'edge_index':
+                if key in {'edge_index', 'edge_label', 'edge_label_index'}:
                     continue
 
                 if store.is_edge_attr(key):

@@ -34,7 +34,7 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
     if name in ['citationCiteseer', 'illc1850']:
         from torch_geometric.datasets import SuiteSparseMatrixCollection
         path = osp.join(root, 'SuiteSparseMatrixCollection')
-        return SuiteSparseMatrixCollection(path, name=name, *args, **kwargs)
+        return SuiteSparseMatrixCollection(path, *args, name=name, **kwargs)
     if 'elliptic' in name.lower():
         from torch_geometric.datasets import EllipticBitcoinDataset
         path = osp.join(root, 'EllipticBitcoinDataset')
@@ -56,7 +56,8 @@ def get_dataset() -> Callable:
 
     yield functools.partial(load_dataset, root)
 
-    fs.rm(root)
+    if fs.exists(root):
+        fs.rm(root)
 
 
 @pytest.fixture

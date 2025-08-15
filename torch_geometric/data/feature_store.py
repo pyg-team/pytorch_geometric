@@ -74,13 +74,6 @@ class TensorAttr(CastMixin):
         r"""Whether the :obj:`TensorAttr` has no unset fields."""
         return all([self.is_set(key) for key in self.__dataclass_fields__])
 
-    def fully_specify(self) -> 'TensorAttr':
-        r"""Sets all :obj:`UNSET` fields to :obj:`None`."""
-        for key in self.__dataclass_fields__:
-            if not self.is_set(key):
-                setattr(self, key, None)
-        return self
-
     def update(self, attr: 'TensorAttr') -> 'TensorAttr':
         r"""Updates an :class:`TensorAttr` with set attributes from another
         :class:`TensorAttr`.
@@ -230,10 +223,11 @@ class AttrView(CastMixin):
 
             store[group_name, attr_name]()
         """
-        # Set all UNSET values to None:
-        out = copy.copy(self)
-        out._attr.fully_specify()
-        return out._store.get_tensor(out._attr)
+        attr = copy.copy(self._attr)
+        for key in attr.__dataclass_fields__:  # Set all UNSET values to None.
+            if not attr.is_set(key):
+                setattr(attr, key, None)
+        return self._store.get_tensor(attr)
 
     def __copy__(self) -> 'AttrView':
         out = self.__class__.__new__(self.__class__)
@@ -283,7 +277,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         r"""To be implemented by :class:`FeatureStore` subclasses."""
-        pass
 
     def put_tensor(self, tensor: FeatureTensorType, *args, **kwargs) -> bool:
         r"""Synchronously adds a :obj:`tensor` to the :class:`FeatureStore`.
@@ -309,7 +302,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         r"""To be implemented by :class:`FeatureStore` subclasses."""
-        pass
 
     def get_tensor(
         self,
@@ -394,7 +386,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def _remove_tensor(self, attr: TensorAttr) -> bool:
         r"""To be implemented by :obj:`FeatureStore` subclasses."""
-        pass
 
     def remove_tensor(self, *args, **kwargs) -> bool:
         r"""Removes a tensor from the :class:`FeatureStore`.
@@ -418,7 +409,7 @@ class FeatureStore(ABC):
     def update_tensor(self, tensor: FeatureTensorType, *args,
                       **kwargs) -> bool:
         r"""Updates a :obj:`tensor` in the :class:`FeatureStore` with a new
-        value. Returns whether the update was succesful.
+        value. Returns whether the update was successful.
 
         .. note::
             Implementor classes can choose to define more efficient update
@@ -452,7 +443,6 @@ class FeatureStore(ABC):
     @abstractmethod
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         r"""Returns all registered tensor attributes."""
-        pass
 
     # `AttrView` methods ######################################################
 
@@ -483,9 +473,7 @@ class FeatureStore(ABC):
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
         key = self._tensor_attr_cls.cast(key)
-        # We need to fully-specify the key for __setitem__ as it does not make
-        # sense to work with a view here:
-        key.fully_specify()
+        assert key.is_fully_specified()
         self.put_tensor(value, key)
 
     def __getitem__(self, key: TensorAttr) -> Any:
@@ -507,13 +495,16 @@ class FeatureStore(ABC):
         # If the view is not fully-specified, return a :class:`AttrView`:
         return self.view(attr)
 
-    def __delitem__(self, key: TensorAttr):
+    def __delitem__(self, attr: TensorAttr):
         r"""Supports :obj:`del store[tensor_attr]`."""
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
-        key = self._tensor_attr_cls.cast(key)
-        key.fully_specify()
-        self.remove_tensor(key)
+        attr = self._tensor_attr_cls.cast(attr)
+        attr = copy.copy(attr)
+        for key in attr.__dataclass_fields__:  # Set all UNSET values to None.
+            if not attr.is_set(key):
+                setattr(attr, key, None)
+        self.remove_tensor(attr)
 
     def __iter__(self):
         raise NotImplementedError

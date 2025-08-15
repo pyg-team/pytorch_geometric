@@ -14,6 +14,7 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+from torch_geometric.io import fs
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import (
@@ -44,14 +45,16 @@ def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
     if args.write_csv == 'prof' and not args.profile:
-        warnings.warn("Cannot write profile data to CSV because profiling is "
-                      "disabled")
+        warnings.warn(
+            "Cannot write profile data to CSV because profiling is "
+            "disabled", stacklevel=2)
 
     if args.device == 'xpu':
         try:
             import intel_extension_for_pytorch as ipex
-        except ImportError:
-            raise RuntimeError('XPU device requires IPEX to be installed')
+        except ImportError as e:
+            raise RuntimeError(
+                'XPU device requires IPEX to be installed') from e
 
     if ((args.device == 'cuda' and not torch.cuda.is_available())
             or (args.device == 'xpu' and not torch.xpu.is_available())):
@@ -87,7 +90,7 @@ def run(args: argparse.ArgumentParser):
             raise ValueError("Layer-wise inference requires `steps=-1`")
 
         if args.device == 'cuda':
-            amp = torch.cuda.amp.autocast(enabled=False)
+            amp = torch.amp.autocast('cuda', enabled=False)
         elif args.device == 'xpu':
             amp = torch.xpu.amp.autocast(enabled=False)
         else:
@@ -186,7 +189,7 @@ def run(args: argparse.ArgumentParser):
                         model = model.to(device)
                         # TODO: Migrate to ModelHubMixin.
                         if args.ckpt_path:
-                            state_dict = torch.load(args.ckpt_path)
+                            state_dict = fs.torch_load(args.ckpt_path)
                             model.load_state_dict(state_dict)
                         model.eval()
                         if args.device == 'xpu':

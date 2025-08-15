@@ -165,7 +165,7 @@ class ToHeteroWithBasesTransformer(Transformer):
                 f"There exist node types ({unused_node_types}) whose "
                 f"representations do not get updated during message passing "
                 f"as they do not occur as destination type in any edge type. "
-                f"This may lead to unexpected behavior.")
+                f"This may lead to unexpected behavior.", stacklevel=2)
 
         names = self.metadata[0] + [rel for _, rel, _ in self.metadata[1]]
         for name in names:
@@ -174,7 +174,7 @@ class ToHeteroWithBasesTransformer(Transformer):
                     f"The type '{name}' contains invalid characters which "
                     f"may lead to unexpected behavior. To avoid any issues, "
                     f"ensure that your types only contain letters, numbers "
-                    f"and underscores.")
+                    f"and underscores.", stacklevel=2)
 
     def transform(self) -> GraphModule:
         self._node_offset_dict_initialized = False
@@ -272,7 +272,6 @@ class ToHeteroWithBasesTransformer(Transformer):
                     args=(value, self.find_by_name('edge_offset_dict')),
                     name=f'{value.name}__split')
 
-                pass
             elif isinstance(value, Node):
                 self.graph.inserting_before(node)
                 return self.graph.create_node(
@@ -309,6 +308,24 @@ class ToHeteroWithBasesTransformer(Transformer):
 ###############################################################################
 
 
+# We make use of a post-message computation hook to inject the
+# basis re-weighting for each individual edge type.
+# This currently requires us to set `conv.fuse = False`, which leads
+# to a materialization of messages.
+def hook(module, inputs, output):
+    assert isinstance(module._edge_type, Tensor)
+    if module._edge_type.size(0) != output.size(-2):
+        raise ValueError(
+            f"Number of messages ({output.size(0)}) does not match "
+            f"with the number of original edges "
+            f"({module._edge_type.size(0)}). Does your message "
+            f"passing layer create additional self-loops? Try to "
+            f"remove them via 'add_self_loops=False'")
+    weight = module.edge_type_weight.view(-1)[module._edge_type]
+    weight = weight.view([1] * (output.dim() - 2) + [-1, 1])
+    return weight * output
+
+
 class HeteroBasisConv(torch.nn.Module):
     # A wrapper layer that applies the basis-decomposition technique to a
     # heterogeneous graph.
@@ -318,23 +335,6 @@ class HeteroBasisConv(torch.nn.Module):
 
         self.num_relations = num_relations
         self.num_bases = num_bases
-
-        # We make use of a post-message computation hook to inject the
-        # basis re-weighting for each individual edge type.
-        # This currently requires us to set `conv.fuse = False`, which leads
-        # to a materialization of messages.
-        def hook(module, inputs, output):
-            assert isinstance(module._edge_type, Tensor)
-            if module._edge_type.size(0) != output.size(-2):
-                raise ValueError(
-                    f"Number of messages ({output.size(0)}) does not match "
-                    f"with the number of original edges "
-                    f"({module._edge_type.size(0)}). Does your message "
-                    f"passing layer create additional self-loops? Try to "
-                    f"remove them via 'add_self_loops=False'")
-            weight = module.edge_type_weight.view(-1)[module._edge_type]
-            weight = weight.view([1] * (output.dim() - 2) + [-1, 1])
-            return weight * output
 
         params = list(module.parameters())
         device = params[0].device if len(params) > 0 else 'cpu'
@@ -361,7 +361,7 @@ class HeteroBasisConv(torch.nn.Module):
                 warnings.warn(
                     f"'{conv}' will be duplicated, but its parameters cannot "
                     f"be reset. To suppress this warning, add a "
-                    f"'reset_parameters()' method to '{conv}'")
+                    f"'reset_parameters()' method to '{conv}'", stacklevel=2)
             torch.nn.init.xavier_uniform_(conv.edge_type_weight)
 
     def forward(self, edge_type: Tensor, *args, **kwargs) -> Tensor:
@@ -380,7 +380,7 @@ class HeteroBasisConv(torch.nn.Module):
 
 
 class LinearAlign(torch.nn.Module):
-    # Aligns representions to the same dimensionality. Note that this will
+    # Aligns representations to the same dimensionality. Note that this will
     # create lazy modules, and as such requires a forward pass in order to
     # initialize parameters.
     def __init__(self, keys: List[Union[NodeType, EdgeType]],
@@ -468,7 +468,7 @@ def get_edge_type(
 ###############################################################################
 
 # These methods are used to group the individual type-wise components into a
-# unfied single representation.
+# unified single representation.
 
 
 def group_node_placeholder(input_dict: Dict[NodeType, Tensor],

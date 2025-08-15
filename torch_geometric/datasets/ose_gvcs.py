@@ -97,7 +97,7 @@ class OSE_GVCS(InMemoryDataset):
         edges = defaultdict(list)
 
         for path in self.raw_paths:
-            with open(path, 'r') as f:
+            with open(path) as f:
                 product = json.load(f)
             categories.append(self.categories.index(product['category']))
             for interaction in product['ecology']:

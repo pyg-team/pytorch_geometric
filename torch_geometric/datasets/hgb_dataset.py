@@ -99,7 +99,7 @@ class HGBDataset(InMemoryDataset):
         # node_types = {0: 'paper', 1, 'author', ...}
         # edge_types = {0: ('paper', 'cite', 'paper'), ...}
         if self.name in ['acm', 'dblp', 'imdb']:
-            with open(self.raw_paths[0], 'r') as f:  # `info.dat`
+            with open(self.raw_paths[0]) as f:  # `info.dat`
                 info = json.load(f)
             n_types = info['node.dat']['node type']
             n_types = {int(k): v for k, v in n_types.items()}
@@ -112,7 +112,7 @@ class HGBDataset(InMemoryDataset):
                 e_types[key] = (src, rel, dst)
             num_classes = len(info['label.dat']['node type']['0'])
         elif self.name in ['freebase']:
-            with open(self.raw_paths[0], 'r') as f:  # `info.dat`
+            with open(self.raw_paths[0]) as f:  # `info.dat`
                 info = f.read().split('\n')
             start = info.index('TYPE\tMEANING') + 1
             end = info[start:].index('')
@@ -123,8 +123,8 @@ class HGBDataset(InMemoryDataset):
             start = info.index('LINK\tSTART\tEND\tMEANING') + 1
             end = info[start:].index('')
             for key, row in enumerate(info[start:start + end]):
-                row = row.split('\t')[1:]
-                src, dst, rel = [v for v in row if v != '']
+                edge = row.split('\t')[1:]
+                src, dst, rel = (v for v in edge if v != '')
                 src, dst = n_types[int(src)], n_types[int(dst)]
                 rel = rel.split('-')[1]
                 e_types[key] = (src, rel, dst)
@@ -134,8 +134,8 @@ class HGBDataset(InMemoryDataset):
         # Extract node information:
         mapping_dict = {}  # Maps global node indices to local ones.
         x_dict = defaultdict(list)
-        num_nodes_dict: Dict[str, int] = defaultdict(lambda: 0)
-        with open(self.raw_paths[1], 'r') as f:  # `node.dat`
+        num_nodes_dict: Dict[str, int] = defaultdict(int)
+        with open(self.raw_paths[1]) as f:  # `node.dat`
             xs = [v.split('\t') for v in f.read().split('\n')[:-1]]
         for x in xs:
             n_id, n_type = int(x[0]), n_types[int(x[2])]
@@ -151,7 +151,7 @@ class HGBDataset(InMemoryDataset):
 
         edge_index_dict = defaultdict(list)
         edge_weight_dict = defaultdict(list)
-        with open(self.raw_paths[2], 'r') as f:  # `link.dat`
+        with open(self.raw_paths[2]) as f:  # `link.dat`
             edges = [v.split('\t') for v in f.read().split('\n')[:-1]]
         for src, dst, rel, weight in edges:
             e_type = e_types[int(rel)]
@@ -168,9 +168,9 @@ class HGBDataset(InMemoryDataset):
 
         # Node classification:
         if self.name in ['acm', 'dblp', 'freebase', 'imdb']:
-            with open(self.raw_paths[3], 'r') as f:  # `label.dat`
+            with open(self.raw_paths[3]) as f:  # `label.dat`
                 train_ys = [v.split('\t') for v in f.read().split('\n')[:-1]]
-            with open(self.raw_paths[4], 'r') as f:  # `label.dat.test`
+            with open(self.raw_paths[4]) as f:  # `label.dat.test`
                 test_ys = [v.split('\t') for v in f.read().split('\n')[:-1]]
             for y in train_ys:
                 n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]

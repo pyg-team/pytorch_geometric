@@ -163,10 +163,17 @@ def test_graphgym_module(tmp_path):
     assert isinstance(outputs["loss"], torch.Tensor)
 
 
+@pytest.fixture
+def destroy_process_group():
+    yield
+    if torch.distributed.is_initialized():
+        torch.distributed.destroy_process_group()
+
+
 @onlyOnline
 @onlyLinux
 @withPackage('yacs', 'pytorch_lightning')
-def test_train(tmp_path, capfd):
+def test_train(destroy_process_group, tmp_path, capfd):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
 
     import pytorch_lightning as pl

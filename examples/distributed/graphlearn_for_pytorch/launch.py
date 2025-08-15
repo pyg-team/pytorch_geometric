@@ -38,7 +38,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    config = open(args.config, 'r')
+    config = open(args.config)
     config = yaml.safe_load(config)
     dataset = config['dataset']
     ip_list = config['nodes']

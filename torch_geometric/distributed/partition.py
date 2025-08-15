@@ -3,15 +3,16 @@ import logging
 import os
 import os.path as osp
 from collections import defaultdict
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 
 import torch_geometric.distributed as pyg_dist
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.io import fs
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.sampler.utils import sort_csc
-from torch_geometric.typing import Dict, EdgeType, EdgeTypeStr, NodeType, Tuple
+from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
 
 class Partitioner:
@@ -23,7 +24,7 @@ class Partitioner:
 
     **Homogeneous graphs:**
 
-    .. code-block::
+    .. code-block:: none
 
         root/
         |-- META.json
@@ -40,7 +41,7 @@ class Partitioner:
 
     **Heterogeneous graphs:**
 
-    .. code-block::
+    .. code-block:: none
 
         root/
         |-- META.json
@@ -303,7 +304,7 @@ class Partitioner:
                 elif self.is_node_level_time:
                     node_time = data.time
 
-                # Sort by column to avoid keeping track of permuations in
+                # Sort by column to avoid keeping track of permutations in
                 # `NeighborSampler` when converting to CSC format:
                 global_row, global_col, perm = sort_csc(
                     global_row, global_col, node_time, edge_time)
@@ -360,7 +361,7 @@ class Partitioner:
             'edge_types': self.edge_types,
             'node_offset': list(node_offset.values()) if node_offset else None,
             'is_hetero': self.is_hetero,
-            'is_sorted': True,  # Based on colum/destination.
+            'is_sorted': True,  # Based on columnn/destination.
         }
         with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
@@ -380,21 +381,21 @@ def load_partition_info(
     assert osp.exists(partition_dir)
 
     if meta['is_hetero'] is False:
-        node_pb = torch.load(osp.join(root_dir, 'node_map.pt'))
-        edge_pb = torch.load(osp.join(root_dir, 'edge_map.pt'))
+        node_pb = fs.torch_load(osp.join(root_dir, 'node_map.pt'))
+        edge_pb = fs.torch_load(osp.join(root_dir, 'edge_map.pt'))
 
         return (meta, num_partitions, partition_idx, node_pb, edge_pb)
     else:
         node_pb_dict = {}
         node_pb_dir = osp.join(root_dir, 'node_map')
         for ntype in meta['node_types']:
-            node_pb_dict[ntype] = torch.load(
+            node_pb_dict[ntype] = fs.torch_load(
                 osp.join(node_pb_dir, f'{pyg_dist.utils.as_str(ntype)}.pt'))
 
         edge_pb_dict = {}
         edge_pb_dir = osp.join(root_dir, 'edge_map')
         for etype in meta['edge_types']:
-            edge_pb_dict[tuple(etype)] = torch.load(
+            edge_pb_dict[tuple(etype)] = fs.torch_load(
                 osp.join(edge_pb_dir, f'{pyg_dist.utils.as_str(etype)}.pt'))
 
         return (meta, num_partitions, partition_idx, node_pb_dict,

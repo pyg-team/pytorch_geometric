@@ -1,9 +1,11 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import LargestConnectedComponents
 
 
+@withPackage('scipy')
 def test_largest_connected_components():
     assert str(LargestConnectedComponents()) == 'LargestConnectedComponents(1)'
 

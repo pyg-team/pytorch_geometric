@@ -6,6 +6,7 @@ from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.distributed.partition import load_partition_info
+from torch_geometric.io import fs
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 from torch_geometric.utils import sort_edge_index
 
@@ -185,7 +186,7 @@ class LocalGraphStore(GraphStore):
         graph_store.edge_pb = edge_pb
         graph_store.meta = meta
 
-        graph_data = torch.load(osp.join(part_dir, 'graph.pt'))
+        graph_data = fs.torch_load(osp.join(part_dir, 'graph.pt'))
         graph_store.is_sorted = meta['is_sorted']
 
         if not meta['is_hetero']:

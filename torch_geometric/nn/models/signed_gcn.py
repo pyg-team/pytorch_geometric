@@ -1,6 +1,5 @@
 from typing import Optional, Tuple
 
-import scipy.sparse
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -46,7 +45,7 @@ class SignedGCN(torch.nn.Module):
         self.conv1 = SignedConv(in_channels, hidden_channels // 2,
                                 first_aggr=True)
         self.convs = torch.nn.ModuleList()
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             self.convs.append(
                 SignedConv(hidden_channels // 2, hidden_channels // 2,
                            first_aggr=False))
@@ -98,6 +97,7 @@ class SignedGCN(torch.nn.Module):
                 :obj:`max_val + 1` of :attr:`pos_edge_index` and
                 :attr:`neg_edge_index`. (default: :obj:`None`)
         """
+        import scipy.sparse as sp
         from sklearn.decomposition import TruncatedSVD
 
         edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=1)
@@ -119,7 +119,7 @@ class SignedGCN(torch.nn.Module):
         # https://github.com/benedekrozemberczki/SGCN/blob/master/src/utils.py
         edge_index = edge_index.detach().numpy()
         val = val.detach().numpy()
-        A = scipy.sparse.coo_matrix((val, edge_index), shape=(N, N))
+        A = sp.coo_matrix((val, edge_index), shape=(N, N))
         svd = TruncatedSVD(n_components=self.in_channels, n_iter=128)
         svd.fit(A)
         x = svd.components_.T
@@ -256,7 +256,7 @@ class SignedGCN(torch.nn.Module):
             neg_p = self.discriminate(z, neg_edge_index)[:, :2].max(dim=1)[1]
         pred = (1 - torch.cat([pos_p, neg_p])).cpu()
         y = torch.cat(
-            [pred.new_ones((pos_p.size(0))),
+            [pred.new_ones(pos_p.size(0)),
              pred.new_zeros(neg_p.size(0))])
         pred, y = pred.numpy(), y.numpy()
 

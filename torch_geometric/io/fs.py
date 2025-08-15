@@ -1,6 +1,9 @@
 import io
 import os.path as osp
+import pickle
+import re
 import sys
+import warnings
 from typing import Any, Dict, List, Literal, Optional, Union, overload
 from uuid import uuid4
 
@@ -186,11 +189,11 @@ def rm(path: str, recursive: bool = True) -> None:
     get_fs(path).rm(path, recursive)
 
 
-def mv(path1: str, path2: str, recursive: bool = True) -> None:
+def mv(path1: str, path2: str) -> None:
     fs1 = get_fs(path1)
     fs2 = get_fs(path2)
     assert fs1.protocol == fs2.protocol
-    fs1.mv(path1, path2, recursive)
+    fs1.mv(path1, path2)
 
 
 def glob(path: str) -> List[str]:
@@ -211,5 +214,29 @@ def torch_save(data: Any, path: str) -> None:
 
 
 def torch_load(path: str, map_location: Any = None) -> Any:
+    if torch_geometric.typing.WITH_PT24:
+        try:
+            with fsspec.open(path, 'rb') as f:
+                return torch.load(f, map_location, weights_only=True)
+        except pickle.UnpicklingError as e:
+            error_msg = str(e)
+            if "add_safe_globals" in error_msg:
+                warn_msg = ("Weights only load failed. Please file an issue "
+                            "to make `torch.load(weights_only=True)` "
+                            "compatible in your case.")
+                match = re.search(r'add_safe_globals\(.*?\)', error_msg)
+                if match is not None:
+                    warnings.warn(
+                        f"{warn_msg} Please use "
+                        f"`torch.serialization.{match.group()}` to "
+                        f"allowlist this global.", stacklevel=2)
+                else:
+                    warnings.warn(warn_msg, stacklevel=2)
+
+                with fsspec.open(path, 'rb') as f:
+                    return torch.load(f, map_location, weights_only=False)
+            else:
+                raise e
+
     with fsspec.open(path, 'rb') as f:
         return torch.load(f, map_location)

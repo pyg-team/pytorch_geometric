@@ -14,7 +14,7 @@ class NeighborLoader(NodeLoader):
     This loader allows for mini-batch training of GNNs on large-scale graphs
     where full-batch training is not feasible.
 
-    More specifically, :obj:`num_neighbors` denotes how much neighbors are
+    More specifically, :obj:`num_neighbors` denotes how many neighbors are
     sampled for each node in each iteration.
     :class:`~torch_geometric.loader.NeighborLoader` takes in this list of
     :obj:`num_neighbors` and iteratively samples :obj:`num_neighbors[i]` for

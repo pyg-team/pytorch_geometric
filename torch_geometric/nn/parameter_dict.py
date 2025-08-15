@@ -1,4 +1,4 @@
-from typing import Final, Iterable, Mapping, Optional, Set, Tuple, Union
+from typing import Final, Iterable, Mapping, Optional, Tuple, Union
 
 import torch
 from torch.nn import Parameter
@@ -11,7 +11,7 @@ Key = Union[str, Tuple[str, ...]]
 # internal representation and converts it back to `.` in the external
 # representation. It also allows passing tuples as keys.
 class ParameterDict(torch.nn.ParameterDict):
-    CLASS_ATTRS: Final[Set[str]] = set(dir(torch.nn.ParameterDict))
+    CLASS_ATTRS: Final[Tuple[str, ...]] = set(dir(torch.nn.ParameterDict))
 
     def __init__(
         self,
