@@ -48,8 +48,6 @@ def parse_args():
         choices=["frozen", "lora",
                  "full"], help="Whether to freeze the Generator LLM,\
                         use LORA, or fully finetune")
-    parser.add_argument('--dont_save_model', action="store_true",
-                        help="Whether to skip model saving.")
     parser.add_argument(
         '--num_gpus', type=int, default=None,
         help="Number of GPUs to use. If not specified,"
@@ -67,10 +65,7 @@ def parse_args():
 
 
 def get_data(args):
-    # need a JSON dict of Questions and answers, see below for how its used
     json_path = Path(args.dataset) / "train.json"
-    Path(args.dataset) / "corpus"
-
     with open(json_path) as file:
         return json.load(file)
 
@@ -80,10 +75,7 @@ def make_dataset(args):
     qa_data = get_data(args)
     print(" ==> Number of Docs:", len(qa_data))
 
-    # NOTE: test and validation split have been removed
-    # data_lists = {"test": []}
     global max_chars_in_train_answer
-
     total_data_list = []
     for pair in tqdm(qa_data, desc="Building un-split dataset"):
         max_chars_in_train_answer = max(len(pair['answer']),
@@ -99,11 +91,7 @@ def make_dataset(args):
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
     torch.save((total_data_list, max_chars_in_train_answer), dataset_path)
 
-    # NOTE: test and validation split have been removed. below code for all pairs
-    # torch.save((test_data, max_chars_in_train_answer), dataset_path)
-    # return total_data_list
-
-    return total_data_list[int(.8 * len(total_data_list)):]
+    return total_data_list
 
 
 def get_model(args):
@@ -157,7 +145,6 @@ def test(model, data_list, args):
 
         eval_tuples.append((q, pred, test_batch.label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
-        breakpoint()
         scores.append(eval(question, pred, label))
 
     avg_scores = sum(scores) / len(scores)
@@ -181,9 +168,5 @@ if __name__ == '__main__':
     eval_batch_size = args.eval_batch_size
     data_lists = make_dataset(args)
 
-    # NOTE: do we need this now?
-    # test_loader = DataLoader(data_lists, batch_size=eval_batch_size,
-    #  drop_last=False, pin_memory=True, shuffle=False)
-
     model = get_model(args)
-    test(model, data_lists, args)
+    test(model, data_lists[:200], args)
