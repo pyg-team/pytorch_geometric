@@ -162,7 +162,9 @@ if __name__ == '__main__':
     # Need to sanitize sensitive keys
     saved_NIM_KEY = args.NV_NIM_KEY
     args.NV_NIM_KEY = "********"
-    print(f"Starting {args.dataset} training with args: ", args)
+    print(
+        f"Starting {args.dataset} training with args:\n{json.dumps(args, indent=4, sort_keys=True)}"
+    )
     args.NV_NIM_KEY = saved_NIM_KEY
 
     eval_batch_size = args.eval_batch_size
