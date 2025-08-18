@@ -7,7 +7,7 @@ Introduction
 ------------
 
 The key difference between *shallow* node embeddings (*e.g.,* :class:`~torch_geometric.nn.models.Node2Vec`) and *deep* node embeddings (*e.g.,* GNNs) is the choice of the encoder :math:`\textrm{ENC}(v, \mathcal{G}) = \mathbf{z}_v \in \mathbb{R}^d`.
-Specifically, shallow node embedding techniques rely on embedding nodes into low-dimensional vectorial representations :math:`\mathbf{z}_v` via a *shallow embedding lookup table* such that the likelihood of preserving neighborhoods is maximized, *i.e.* nearby nodes should receive similar embeddings while distant nodes should receive distinct embedding.
+Specifically, shallow node embedding techniques rely on embedding nodes into low-dimensional vectorial representations :math:`\mathbf{z}_v` via a *shallow embedding lookup table* such that the likelihood of preserving neighborhoods is maximized, *i.e.* nearby nodes should receive similar embeddings while distant nodes should receive distinct embeddings.
 These techniques generalize the famous `SkipGram <https://arxiv.org/abs/1310.4546>`_ model for obtaining low-dimensional word embeddings, in which sequences of words are now interpreted as sequences of nodes, *e.g.*, given via randomly-generated walks:
 
 .. figure:: ../_figures/shallow_node_embeddings.png
@@ -97,7 +97,7 @@ To generate random walks, we can simply iterate over the data loader, *e.g.*:
 Here, :obj:`pos_rw` will contain the node indices of positive random walks and :obj:`neg_rw` will contain the node indices of negative walks.
 In particular, :obj:`pos_rw` is a two-dimensional matrix of shape :obj:`[batch_size * walks_per_node * (2 + walk_length - context_size), context_size]`, and :obj:`neg_rw` is a two-dimensional matrix of shape :obj:`[num_negative_samples * pos_rw.size(0), context_size]`.
 
-Using this :obj:`loader` and the built-in constrastive :meth:`~torch_geometric.nn.models.Node2Vec.loss` function, we can define our :meth:`train` function as follows:
+Using this :obj:`loader` and the built-in contrastive :meth:`~torch_geometric.nn.models.Node2Vec.loss` function, we can define our :meth:`train` function as follows:
 
 .. code-block:: python
 
