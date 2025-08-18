@@ -48,7 +48,7 @@ def test(milvus_client, encoder_model, metric_type: str, dataset: str,
 
     score = []
     for data_point in tqdm(qa_pairs, desc="Retrieving pairs"):
-        if data_point["is_impossible"]:
+        if data_point.get("is_impossible"):
             continue
         question, answer = (data_point["question"], data_point["answer"])
 
@@ -59,11 +59,8 @@ def test(milvus_client, encoder_model, metric_type: str, dataset: str,
                 # Convert the question to an embedding vector
                 emb_text(question, encoder_model).tolist()[0]
             ],  # Use the `emb_text` function to convert the question to an embedding vector
-            limit=10,  # Return top 3 results
-            search_params={
-                "metric_type": metric_type,
-                "params": {}
-            },  # Inner product distance
+            limit=10,  # Return top 10 results
+            search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
             output_fields=["text"],  # Return the text field
         )
 
@@ -125,10 +122,17 @@ def emb_text(text_lines, model):
     return embeddings
 
 
-def main(*, milvus_uri: str, collection_name: str, dataset: str,
-         llm_generator_name: str, drop_collection: bool, embedding_model: str,
-         chunk_size: int, chunk_overlap: int, metric_type: str,
-         with_react_agent: bool):
+def main(*,
+         milvus_uri: str,
+         collection_name: str,
+         dataset: str,
+         llm_generator_name: str,
+         drop_collection: bool,
+         embedding_model: str,
+         chunk_size: int,
+         chunk_overlap: int,
+         metric_type: str
+         ):
 
     dir_to_read = os.path.join(dataset, "corpus")
     files_to_read = os.path.join(dir_to_read, "*.txt")
@@ -249,7 +253,7 @@ if __name__ == "__main__":
         embedding_model=args.embedding_model, chunk_size=args.chunk_size,
         chunk_overlap=args.chunk_overlap, metric_type=args.metric_type)
 
-    if not with_react_agent:
+    if not args.with_react_agent:
         test(
             milvus_client=milvus_client,
             encoder_model=encoder_model,
