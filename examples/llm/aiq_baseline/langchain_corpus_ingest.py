@@ -60,7 +60,10 @@ def test(milvus_client, encoder_model, metric_type: str, dataset: str,
                 emb_text(question, encoder_model).tolist()[0]
             ],  # Use the `emb_text` function to convert the question to an embedding vector
             limit=10,  # Return top 10 results
-            search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
+            search_params={
+                "metric_type": metric_type,
+                "params": {}
+            },  # Inner product distance
             output_fields=["text"],  # Return the text field
         )
 
@@ -122,17 +125,9 @@ def emb_text(text_lines, model):
     return embeddings
 
 
-def main(*,
-         milvus_uri: str,
-         collection_name: str,
-         dataset: str,
-         llm_generator_name: str,
-         drop_collection: bool,
-         embedding_model: str,
-         chunk_size: int,
-         chunk_overlap: int,
-         metric_type: str
-         ):
+def main(*, milvus_uri: str, collection_name: str, dataset: str,
+         llm_generator_name: str, drop_collection: bool, embedding_model: str,
+         chunk_size: int, chunk_overlap: int, metric_type: str):
 
     dir_to_read = os.path.join(dataset, "corpus")
     files_to_read = os.path.join(dir_to_read, "*.txt")
