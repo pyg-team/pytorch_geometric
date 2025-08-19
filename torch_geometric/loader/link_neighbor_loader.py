@@ -170,10 +170,10 @@ class LinkNeighborLoader(LinkLoader):
             negative sampling mode.
             If set to :obj:`None`, no negative sampling strategy is applied.
             (default: :obj:`None`)
+        For example use obj:`neg_sampling=dict(mode= 'binary', amount=0.5)`
         neg_sampling_ratio (int or float, optional): The ratio of sampled
             negative edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
-            For example use obj:`neg_sampling=dict(amount=0.5)`.
             (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
             timestamps for either the nodes or edges in the graph.
