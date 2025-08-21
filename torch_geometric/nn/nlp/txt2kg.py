@@ -5,7 +5,6 @@ import sys
 import time
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Tuple
-from typing import List, Optional, Tuple
 
 import torch
 import torch.multiprocessing as mp
@@ -14,7 +13,6 @@ CLIENT_INITD = False
 
 CLIENT = None
 GLOBAL_NIM_KEY = ""
-
 
 SYSTEM_PROMPT = """
 You are a helpful assistant that converts text into a list of knowledge triples with the form ('entity', 'relation', 'entity').
@@ -612,7 +610,6 @@ class TXT2KG():
 
         self.entity_resolver = LLMEntityResolver(self.remote_llm_caller)
 
-
     def save_kg(self, path: str) -> None:
         """Saves the relevant triples in the knowledge graph (KG) to a file.
 
@@ -646,8 +643,9 @@ class TXT2KG():
         self.relevant_triples = {}
 
     def add_doc_2_KG(self, txt: str,
-                         QA_pair: Optional[Tuple[str, str]] = None) -> None:
+                     QA_pair: Optional[Tuple[str, str]] = None) -> None:
         """Add a document to the Knowledge Graph (KG).
+
         Args:
             txt (str): The text to extract triples from.
             QA_pair (Tuple[str, str]], optional):
@@ -675,7 +673,6 @@ class TXT2KG():
         triples = self.entity_resolver(triples)
 
         self.relevant_triples[key] = triples
-
 
     def add_doc_2_KG_old(
         self,
@@ -911,6 +908,7 @@ def _chunk_to_triples_str_cloud(
             out_str += chunk.choices[0].delta.content
     return out_str
 
+
 def _chunk_to_result_cloud(txt: str, GLOBAL_NIM_KEY='',
                            NIM_MODEL="nvidia/llama-3.1-nemotron-70b-instruct",
                            ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
@@ -989,4 +987,3 @@ def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
                                  ENDPOINT_URL=ENDPOINT_URL,
                                  system_prompt=system_prompt)
     torch.save(out, "/tmp/txt2kg_outs_for_proc_" + str(rank))
-
