@@ -245,6 +245,29 @@ class SamplerOutput(CastMixin):
         return local_to_global_node_idx(
             self.node, self.orig_col) if self.orig_col is not None else None
 
+    @property
+    def global_row(self) -> Tensor:
+        return local_to_global_node_idx(self.node, self.row)
+
+    @property
+    def global_col(self) -> Tensor:
+        return local_to_global_node_idx(self.node, self.col)
+
+    @property
+    def seed_node(self) -> Tensor:
+        return local_to_global_node_idx(
+            self.node, self.batch) if self.batch is not None else None
+
+    @property
+    def global_orig_row(self) -> Tensor:
+        return local_to_global_node_idx(
+            self.node, self.orig_row) if self.orig_row is not None else None
+
+    @property
+    def global_orig_col(self) -> Tensor:
+        return local_to_global_node_idx(
+            self.node, self.orig_col) if self.orig_col is not None else None
+
     def to_bidirectional(
         self,
         keep_orig_edges: bool = False,
