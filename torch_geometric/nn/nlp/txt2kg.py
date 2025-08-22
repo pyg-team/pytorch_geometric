@@ -6,10 +6,9 @@ import time
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+import networkx as nx
 import torch
 import torch.multiprocessing as mp
-
-import networkx as nx
 
 CLIENT_INITD = False
 
@@ -673,7 +672,7 @@ class TXT2KG():
         # 2. Document wise linking
 
         # TODO: enable entity resolver
-       # triples = self.entity_resolver(triples)
+        # triples = self.entity_resolver(triples)
 
         self.relevant_triples[key] = triples
 
