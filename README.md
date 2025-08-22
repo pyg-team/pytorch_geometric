@@ -359,6 +359,22 @@ We recommend to start with a minimal installation, and install additional depend
 
 For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
+#### PyTorch 2.8
+
+To install the binaries for PyTorch 2.8.0, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.8.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu126`, `cu128`, or `cu129` depending on your PyTorch installation.
+
+|             | `cpu` | `cu126` | `cu128` | `cu129` |
+| ----------- | ----- | ------- | ------- | ------- |
+| **Linux**   | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |         |
+
 #### PyTorch 2.7
 
 To install the binaries for PyTorch 2.7.0, simply run
