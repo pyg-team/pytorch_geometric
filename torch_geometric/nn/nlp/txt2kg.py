@@ -9,6 +9,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import torch
 import torch.multiprocessing as mp
 
+import networkx as nx
+
 CLIENT_INITD = False
 
 CLIENT = None
@@ -670,7 +672,8 @@ class TXT2KG():
 
         # 2. Document wise linking
 
-        triples = self.entity_resolver(triples)
+        # TODO: enable entity resolver
+       # triples = self.entity_resolver(triples)
 
         self.relevant_triples[key] = triples
 
@@ -869,7 +872,6 @@ def _llm_call_and_consume(chunks: Tuple[str], system_prompt: str,
             print(
                 f"[_llm_call_and_consume] Full traceback: {traceback.format_exc()}"
             )
-    print(f"[_llm_call_and_consume] Total number of tries: {total_num_tries}")
     return result
 
 
