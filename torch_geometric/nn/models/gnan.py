@@ -4,7 +4,6 @@ import torch
 from torch import nn
 
 from torch_geometric.data import Batch, Data
-from torch_geometric.typing import OptTensor
 from torch_geometric.utils import scatter
 
 __all__ = [
@@ -170,12 +169,12 @@ class TensorGNAN(nn.Module):
         dropout (float, optional): Dropout probability. (default: ``0.0``)
         normalize_rho (bool, optional): Whether to normalize rho weights.
             (default: ``True``)
-        graph_level (bool, optional): Whether to produce graph-level predictions.
-            (default: ``True``)
-        feature_groups (List[List[int]], optional): Groups of feature indices to
-            process together. Each group will be processed by a single MLP that
-            takes multiple features as input. If None, each feature is processed
-            by its own MLP (default behavior). (default: ``None``)
+        graph_level (bool, optional): Whether to produce graph-level
+            predictions. (default: ``True``)
+        feature_groups (List[List[int]], optional): Groups of feature indices
+            to process together. Each group will be processed by a single MLP
+            that takes multiple features as input. If None, each feature is
+            processed by its own MLP (default behavior). (default: ``None``)
     """
     def __init__(
         self,
@@ -210,12 +209,12 @@ class TensorGNAN(nn.Module):
                 for feat_idx in group:
                     if feat_idx < 0 or feat_idx >= in_channels:
                         raise ValueError(
-                            f"Feature index {feat_idx} out of range [0, {in_channels})"
-                        )
+                            f"Feature index {feat_idx} out of range "
+                            f"[0, {in_channels})")
                     if feat_idx in all_features:
                         raise ValueError(
-                            f"Feature index {feat_idx} appears in multiple groups"
-                        )
+                            f"Feature index {feat_idx} appears in "
+                            "multiple groups")
                     all_features.add(feat_idx)
 
             if len(all_features) != in_channels:
@@ -271,8 +270,10 @@ class TensorGNAN(nn.Module):
             rho = rho * mask
         return rho
 
-    def forward(self, data: Data | Batch,
-                node_ids: OptTensor = None) -> torch.Tensor:
+    def forward(
+        self,
+        data: Data | Batch,
+    ) -> torch.Tensor:
         x: torch.Tensor = data.x  # type: ignore # [N, F]
         dist: torch.Tensor = data.node_distances  # type: ignore # [N, N]
         norm: torch.Tensor = data.normalization_matrix  # type: ignore # [N, N]
@@ -291,8 +292,6 @@ class TensorGNAN(nn.Module):
                 graph_out = out.sum(dim=0, keepdim=True)  # [1, C]
             return graph_out
 
-        if node_ids is not None:
-            return out[node_ids]
         return out
 
     def node_importance(self, data: Data | Batch) -> torch.Tensor:
@@ -301,7 +300,8 @@ class TensorGNAN(nn.Module):
         """
         x: torch.Tensor = data.x  # type: ignore  # [N, F]
         dist: torch.Tensor = data.node_distances  # type: ignore  # [N, N]
-        norm: torch.Tensor = data.normalization_matrix  # type: ignore  # [N, N]
+        norm: torch.Tensor = data.normalization_matrix  # type: ignore
+        # [N, N]
 
         _, f_sum = self._process_feature_groups(x)
         rho = self._compute_rho(dist, norm, data)
