@@ -922,36 +922,34 @@ class Data(BaseData, FeatureStore, GraphStore):
                 [[0, 1, 2, 3], [1, 0, 3, 2]], dtype=torch.long
             )
 
-            split_data = data.connected_components()
-            print(len(split_data))
+            components = data.connected_components()
+            print(len(components))
             >>> 2
 
-            print(type(split_data))
+            print(type(components))
             >>> <class 'list'>
 
-            print(split_data[0].x)
+            print(components[0].x)
             >>> tensor([[1.0], [2.0]])
 
-            print(split_data[0].y)
+            print(components[0].y)
             >>> tensor([[1.1], [2.1]])
 
-            print(split_data[1].edge_index)
+            print(components[1].edge_index)
             >>> tensor([[0, 1], [1, 0]])
 
-            print(split_data[1].x)
+            print(components[1].x)
             >>> tensor([[3.0], [4.0]])
 
-            print(split_data[1].y)
+            print(components[1].y)
             >>> tensor([[3.1], [4.1]])
 
-            print(split_data[1].edge_index)
+            print(components[1].edge_index)
             >>> tensor([[0, 1], [1, 0]])
 
         Returns:
             List[Data]: A list of disconnected components.
         """
-        self._check_slicable_and_mutable()
-
         # Union-Find algorithm to find connected components
         self._parents: Dict[int, int] = {}
         self._ranks: Dict[int, int] = {}
@@ -972,39 +970,12 @@ class Data(BaseData, FeatureStore, GraphStore):
         # Create components based on the found parents (roots)
         components: List[Self] = []
         for nodes in grouped_parents.values():
-            node_map = {
-                old_index: new_index
-                for new_index, old_index in enumerate(nodes)
-            }
-            edge_mask = (torch.isin(self.edge_index[0], torch.tensor(nodes))
-                         & torch.isin(self.edge_index[1], torch.tensor(nodes)))
+            # Convert the list of node IDs to a tensor
+            subset = torch.tensor(nodes, dtype=torch.long)
 
-            edges = self.edge_index[:, edge_mask]
-            edges_reindexed = torch.stack([
-                torch.tensor([node_map[i.item()] for i in edges[0]]),
-                torch.tensor([node_map[i.item()] for i in edges[1]])
-            ])
-
-            attributes = {
-                attr: getattr(self, attr)[nodes]
-                for attr in self.node_attrs()
-            }
-
-            for attr in self.edge_attrs():
-                if attr == 'edge_index':
-                    continue
-                if isinstance(getattr(self, attr), Tensor):
-                    attributes[attr] = getattr(self, attr)[edge_mask]
-
-            for attr, value in {
-                    **attributes, 'edge_index': edges_reindexed
-            }.items():
-                if isinstance(value, Tensor):
-                    attributes[attr] = value.clone()
-                elif isinstance(value, SparseTensor):
-                    attributes[attr] = value.clone().coalesce()
-
-            components.append(self.__class__(**attributes))
+            # Use the existing subgraph function
+            component_data = self.subgraph(subset)
+            components.append(component_data)
 
         return components
 

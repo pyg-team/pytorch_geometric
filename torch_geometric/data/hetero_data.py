@@ -503,40 +503,44 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 [[0, 1, 2, 3], [1, 0, 3, 2]], dtype=torch.long
             )
 
-            split_data = data.connected_components()
-            print(len(split_data))
+            components = data.connected_components()
+            print(len(components))
             >>> 4
 
-            print(type(split_data))
+            print(type(components))
             >>> <class 'list'>
 
-            print(split_data[0])
+            print(components[0])
             >>> HeteroData(
                 red={x: tensor([[1.], [2.]])},
+                blue={x: tensor([[]])},
                 red, to, red={edge_index: tensor([[0, 1], [1, 0]])}
             )
 
-            print(split_data[1])
+            print(components[1])
             >>> HeteroData(
                 red={x: tensor([[3.], [4.]])},
+                blue={x: tensor([[]])},
                 red, to, red={edge_index: tensor([[0, 1], [1, 0]])},
             )
 
-            print(split_data[2])
+            print(components[2])
             >>> HeteroData(
+                red={x: tensor([[]])},
                 blue={x: tensor([[5.]])},
+                red, to, red={edge_index: tensor([[],[]])}
             )
 
-            print(split_data[3])
+            print(components[3])
             >>> HeteroData(
+                red={x: tensor([[]])},
                 blue={x: tensor([[6.]])},
+                red, to, red={edge_index: tensor([[],[]])}
             )
 
         Returns:
             List[HeteroData]: A list of connected components.
         """
-        self._check_slicable_and_mutable()
-
         # Initialize union-find structures
         self._parents: Dict[Tuple[str, int], Tuple[str, int]] = {}
         self._ranks: Dict[Tuple[str, int], int] = {}
@@ -562,71 +566,21 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         components: List[Self] = []
         for nodes in components_map.values():
-            # Map old indices to new indices per node type
-            node_map = defaultdict(dict)
-            for node_type, old_index in nodes:
-                node_map[node_type].update(
-                    {old_index: len(node_map[node_type])})
+            # Prefill subset_dict with all node types to ensure all are present
+            subset_dict = {node_type: [] for node_type in self.node_types}
 
-            edges = {}
-            edge_masks = {}
-            for edge_type in self.edge_types:
-                src, _, dst = edge_type
-                if src not in node_map or dst not in node_map:
-                    continue
+            # Convert the list of (node_type, node_id) tuples to a subset_dict
+            for node_type, node_id in nodes:
+                subset_dict[node_type].append(node_id)
 
-                # Filter edges based on the node map
-                edge_index = self[edge_type].edge_index
-                src_mask = torch.isin(
-                    edge_index[0],
-                    torch.tensor(list(node_map[src].keys()),
-                                 device=edge_index.device))
-                dst_mask = torch.isin(
-                    edge_index[1],
-                    torch.tensor(list(node_map[dst].keys()),
-                                 device=edge_index.device))
-                edge_mask = src_mask & dst_mask
-                if not edge_mask.any():
-                    continue
+            # Convert lists to tensors
+            for node_type, node_ids in subset_dict.items():
+                subset_dict[node_type] = torch.tensor(node_ids,
+                                                      dtype=torch.long)
 
-                # Reindex edges based on the node map
-                filtered_src = [
-                    node_map[src][i.item()] for i in edge_index[0][edge_mask]
-                ]
-                filtered_dst = [
-                    node_map[dst][i.item()] for i in edge_index[1][edge_mask]
-                ]
-                edges[edge_type] = torch.tensor([filtered_src, filtered_dst],
-                                                dtype=torch.long)
-                edge_masks[edge_type] = edge_mask
-
-            # Create new node and edge attributes based on the mapping
-            node_attrs = {
-                node_type: {
-                    attr: self[node_type][attr][list(mapping.keys())]
-                    for attr in self[node_type].keys()
-                }
-                for node_type, mapping in node_map.items()
-            }
-
-            edge_attrs = {}
-            for edge_type, edge_mask in edge_masks.items():
-                edge_attrs[edge_type] = {
-                    attr: self[edge_type][attr][edge_mask]
-                    for attr in self[edge_type].keys() if attr != 'edge_index'
-                }
-                edge_attrs[edge_type]['edge_index'] = edges[edge_type]
-
-            data = self.__class__()
-            for target, attr_value in {**node_attrs, **edge_attrs}.items():
-                for attr, value in attr_value.items():
-                    if isinstance(value, Tensor):
-                        value = value.clone()
-                    elif isinstance(value, SparseTensor):
-                        value = value.clone().coalesce()
-                    data[target][attr] = value
-
-            components.append(data)
+            # Use the existing subgraph function to do all the heavy lifting
+            component_data = self.subgraph(subset_dict)
+            components.append(component_data)
 
         return components
 
@@ -1292,38 +1246,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return list(edge_attrs.values())
 
     # Connected Components Helper Functions ###################################
-
-    def _check_slicable_and_mutable(self):
-        r"""Checks if the node and edge attributes are slicable and mutable.
-        Raises a TypeError if any of the attributes do not support slicing or
-        are not mutable. This is necessary for the `connected_components`
-        method to work correctly.
-
-        Raises:
-            TypeError: If any node or edge type does not support slicing or is
-                not mutable.
-        """
-        for node_type in self.node_types:
-            for key in self[node_type].keys():
-                if not hasattr(self[node_type][key], "__getitem__"):
-                    raise TypeError(
-                        f"Node type '{node_type}' with key '{key}' " +
-                        "does not support slicing.")
-                if not hasattr(self[node_type][key], "__setitem__"):
-                    raise TypeError(
-                        f"Node type '{node_type}' with key '{key}' " +
-                        "is not mutable.")
-
-        for edge_type in self.edge_types:
-            for key in self[edge_type].keys():
-                if not hasattr(self[edge_type][key], "__getitem__"):
-                    raise TypeError(
-                        f"Edge type {edge_type} with key '{key}' " +
-                        "does not support slicing.")
-                if not hasattr(self[edge_type][key], "__setitem__"):
-                    raise TypeError(
-                        f"Edge type {edge_type} with key '{key}' " +
-                        "is not mutable.")
 
     def _find_parent(self, node: Tuple[str, int]) -> Tuple[str, int]:
         r"""Finds and returns the representative parent of the given node in a

@@ -446,43 +446,6 @@ def test_data_connected_components():
                        torch.tensor([[], []], dtype=torch.long))
 
 
-@pytest.fixture
-def unmutable_obj():
-    class NotMutable:
-        def __getitem__(self, idx):
-            return 0
-
-    yield NotMutable()
-
-
-def test_data_check_slicable_and_mutable(unmutable_obj):
-
-    # Case 1: All attributes are sliceable and mutable (should not raise)
-    data = Data()
-    data.x = torch.zeros(3, 4)
-    data.y = torch.ones(2, 5)
-    data.edge_index = torch.zeros(2, 2)
-    data.edge_weight = torch.ones(2)
-    try:
-        data._check_slicable_and_mutable()
-    except Exception as e:
-        pytest.fail(f"Unexpected exception: {e}")
-
-    # Case 2: Attribute not sliceable
-    data = Data()
-    data.x = 123
-    with pytest.raises(TypeError,
-                       match=("Attribute 'x' " + "does not support slicing.")):
-        data._check_slicable_and_mutable()
-
-    # Case 3: Attribute not mutable
-    data = Data()
-    data.x = unmutable_obj
-    with pytest.raises(TypeError,
-                       match=("Attribute 'x' " + "is not mutable.")):
-        data._check_slicable_and_mutable()
-
-
 def test_data_find_parent():
 
     # Case 1: Parent does not exist
