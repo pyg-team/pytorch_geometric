@@ -2,6 +2,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 
+from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed import (
     DistContext,
     DistLoader,
@@ -14,8 +15,13 @@ from torch_geometric.sampler.base import NegativeSampling, SubgraphType
 from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
     r"""A distributed loader that performs sampling from edges.
+
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
 
     Args:
         data (tuple): A (:class:`~torch_geometric.data.FeatureStore`,

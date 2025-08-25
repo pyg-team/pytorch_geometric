@@ -8,6 +8,7 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.data.feature_store import _FieldStatus
+from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed.partition import load_partition_info
 from torch_geometric.distributed.rpc import (
     RPCCallBase,
@@ -19,8 +20,13 @@ from torch_geometric.io import fs
 from torch_geometric.typing import EdgeType, NodeOrEdgeType, NodeType
 
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class RPCCallFeatureLookup(RPCCallBase):
-    r"""A wrapper for RPC calls to the feature store."""
+    r"""A wrapper for RPC calls to the feature store.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     def __init__(self, dist_feature: FeatureStore):
         super().__init__()
         self.dist_feature = dist_feature
