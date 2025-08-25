@@ -11,21 +11,27 @@ from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 
 try:
-    from pytorch_lightning import LightningDataModule as PLLightningDataModule
-    no_pytorch_lightning = False
+    from pytorch_lightning import LightningDataModule as _LightningDataModule
+    _pl_is_available = True
 except ImportError:
-    PLLightningDataModule = object  # type: ignore
-    no_pytorch_lightning = True
+    try:
+        from lightning.pytorch import \
+            LightningDataModule as _LightningDataModule
+        _pl_is_available = True
+    except ImportError:
+        _pl_is_available = False
+        _LightningDataModule = object
 
 
-class LightningDataModule(PLLightningDataModule):
+class LightningDataModule(_LightningDataModule):
     def __init__(self, has_val: bool, has_test: bool, **kwargs: Any) -> None:
         super().__init__()
 
-        if no_pytorch_lightning:
+        if not _pl_is_available:
             raise ModuleNotFoundError(
-                "No module named 'pytorch_lightning' found on this machine. "
-                "Run 'pip install pytorch_lightning' to install the library.")
+                "No module named 'pytorch_lightning' (or 'lightning') found "
+                "in your Python environment. Run 'pip install "
+                "pytorch_lightning' or 'pip install lightning'")
 
         if not has_val:
             self.val_dataloader = None  # type: ignore
