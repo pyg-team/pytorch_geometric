@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Added skip connections to basic GNNs ([#9481](https://github.com/pyg-team/pytorch_geometric/pull/9673))
+- Added ability to get global row and col ids from `SamplerOutput` ([#10200](https://github.com/pyg-team/pytorch_geometric/pull/10200))
+- Added PyTorch 2.8 support ([#10403](https://github.com/pyg-team/pytorch_geometric/pull/10403))
 - Added `Polynormer` model and example ([#9908](https://github.com/pyg-team/pytorch_geometric/pull/9908))
 - Added `ProteinMPNN` model and example ([#10289](https://github.com/pyg-team/pytorch_geometric/pull/10289))
 - Added the `Teeth3DS` dataset, an extended benchmark for intraoral 3D scan analysis ([#9833](https://github.com/pyg-team/pytorch_geometric/pull/9833))
