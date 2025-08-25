@@ -909,9 +909,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         r"""Extracts connected components of the graph using a union-find
         algorithm. The components are returned as a list of
         :class:`~torch_geometric.data.Data` objects, where each object
-        represents a connected component of the graph. Only works if
-        attributes are slicable (i.e. has the __getitem__ method implemented)
-        and are mutable (i.e. has the __setitem__ method implemented).
+        represents a connected component of the graph.
 
         .. code-block::
 
@@ -926,26 +924,8 @@ class Data(BaseData, FeatureStore, GraphStore):
             print(len(components))
             >>> 2
 
-            print(type(components))
-            >>> <class 'list'>
-
             print(components[0].x)
-            >>> tensor([[1.0], [2.0]])
-
-            print(components[0].y)
-            >>> tensor([[1.1], [2.1]])
-
-            print(components[1].edge_index)
-            >>> tensor([[0, 1], [1, 0]])
-
-            print(components[1].x)
-            >>> tensor([[3.0], [4.0]])
-
-            print(components[1].y)
-            >>> tensor([[3.1], [4.1]])
-
-            print(components[1].edge_index)
-            >>> tensor([[0, 1], [1, 0]])
+            >>> Data(x=[2, 1], y=[2, 1], edge_index=[2, 2])
 
         Returns:
             List[Data]: A list of disconnected components.

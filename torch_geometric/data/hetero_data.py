@@ -505,35 +505,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             print(len(components))
             >>> 4
 
-            print(type(components))
-            >>> <class 'list'>
-
             print(components[0])
             >>> HeteroData(
                 red={x: tensor([[1.], [2.]])},
                 blue={x: tensor([[]])},
                 red, to, red={edge_index: tensor([[0, 1], [1, 0]])}
-            )
-
-            print(components[1])
-            >>> HeteroData(
-                red={x: tensor([[3.], [4.]])},
-                blue={x: tensor([[]])},
-                red, to, red={edge_index: tensor([[0, 1], [1, 0]])},
-            )
-
-            print(components[2])
-            >>> HeteroData(
-                red={x: tensor([[]])},
-                blue={x: tensor([[5.]])},
-                red, to, red={edge_index: tensor([[],[]])}
-            )
-
-            print(components[3])
-            >>> HeteroData(
-                red={x: tensor([[]])},
-                blue={x: tensor([[6.]])},
-                red, to, red={edge_index: tensor([[],[]])}
             )
 
         Returns:
