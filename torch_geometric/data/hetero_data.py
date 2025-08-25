@@ -490,9 +490,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def connected_components(self) -> List[Self]:
         r"""Extracts connected components of the heterogeneous graph using
         a union-find algorithm. The components are returned as a list of
-        :class:`~torch_geometric.data.HeteroData` objects. Only works if
-        attributes are sliceable (i.e. implement `__getitem__`) and mutable
-        (i.e. implement `__setitem__`).
+        :class:`~torch_geometric.data.HeteroData` objects.
 
         .. code-block::
 
