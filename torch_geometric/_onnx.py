@@ -1,6 +1,6 @@
 import warnings
-from typing import Any, Union
 from io import BytesIO
+from typing import Any, Union
 
 import torch
 
@@ -61,20 +61,19 @@ def safe_onnx_export(
         error_type = type(e).__name__
 
         # Check for the specific onnx_ir.serde.SerdeError patterns
-        is_allowzero_error = (
-            ('onnx_ir.serde.SerdeError' in error_str and 'allowzero' in error_str) or
-            'ValueError: Value out of range: 1' in error_str or
-            (error_type == 'SerdeError' and 'serialize_model_into' in error_str) or
-            (error_type == 'SerdeError' and 'serialize_attribute_into' in error_str)
-        )
+        is_allowzero_error = (('onnx_ir.serde.SerdeError' in error_str
+                               and 'allowzero' in error_str) or
+                              'ValueError: Value out of range: 1' in error_str
+                              or (error_type == 'SerdeError'
+                                  and 'serialize_model_into' in error_str)
+                              or (error_type == 'SerdeError'
+                                  and 'serialize_attribute_into' in error_str))
 
         if is_allowzero_error:
             warnings.warn(
                 f"Encountered known ONNX serialization issue ({error_type}). "
-                "This is likely the allowzero boolean attribute bug. Attempting workaround...",
-                UserWarning,
-                stacklevel=2
-            )
+                "This is likely the allowzero boolean attribute bug. "
+                "Attempting workaround...", UserWarning, stacklevel=2)
 
             # Apply workaround strategies
             _apply_onnx_allowzero_workaround(model, args, f, **kwargs)
@@ -90,8 +89,9 @@ def _apply_onnx_allowzero_workaround(
     f: Union[str, BytesIO],
     **kwargs: Any,
 ) -> None:
-    r"""Apply workaround strategies for onnx_ir.serde.SerdeError with allowzero attributes."""
-
+    r"""Apply workaround strategies for onnx_ir.serde.SerdeError with allowzero
+    attributes.
+    """
     # Strategy 1: Try without dynamo if it was enabled
     if kwargs.get('dynamo', False):
         try:
@@ -100,9 +100,7 @@ def _apply_onnx_allowzero_workaround(
 
             warnings.warn(
                 "Retrying ONNX export with dynamo=False as workaround",
-                UserWarning,
-                stacklevel=3
-            )
+                UserWarning, stacklevel=3)
 
             torch.onnx.export(model, args, f, **kwargs_no_dynamo)
             return
@@ -120,9 +118,7 @@ def _apply_onnx_allowzero_workaround(
 
                 warnings.warn(
                     f"Retrying ONNX export with opset_version={opset_version}",
-                    UserWarning,
-                    stacklevel=3
-                )
+                    UserWarning, stacklevel=3)
 
                 torch.onnx.export(model, args, f, **kwargs_opset)
                 return
@@ -136,6 +132,6 @@ def _apply_onnx_allowzero_workaround(
         "This is caused by a bug in the onnx_ir package where boolean "
         "allowzero attributes cannot be serialized. "
         "Workarounds attempted: dynamo=False and different opset versions. "
-        "Consider updating to newer versions of onnx, onnxscript, and onnx_ir, "
-        "or export the model outside of pytest environment."
-    )
+        "Consider updating to newer versions of onnx, onnxscript, and "
+        "onnx_ir, "
+        "or export the model outside of pytest environment.")

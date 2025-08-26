@@ -254,6 +254,7 @@ def test_packaging():
 def test_onnx(tmp_path):
     import onnx
     import onnxruntime as ort
+
     from torch_geometric import safe_onnx_export
 
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
