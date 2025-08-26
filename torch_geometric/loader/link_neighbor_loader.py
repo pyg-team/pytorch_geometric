@@ -117,7 +117,7 @@ class LinkNeighborLoader(LinkLoader):
             :obj:`edge_label_index`. If set, temporal sampling will be
             used such that neighbors are guaranteed to fulfill temporal
             constraints, *i.e.*, neighbors have an earlier timestamp than
-            the ouput edge. The :obj:`time_attr` needs to be set for this
+            the output edge. The :obj:`time_attr` needs to be set for this
             to work. (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)

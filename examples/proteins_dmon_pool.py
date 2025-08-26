@@ -75,7 +75,7 @@ def train(train_loader):
         out, tot_loss = model(data.x, data.edge_index, data.batch)
         loss = F.nll_loss(out, data.y.view(-1)) + tot_loss
         loss.backward()
-        loss_all += data.y.size(0) * float(loss)
+        loss_all += data.y.size(0) * float(loss.detach())
         optimizer.step()
     return loss_all / len(train_dataset)
 
@@ -85,12 +85,11 @@ def test(loader):
     model.eval()
     correct = 0
     loss_all = 0
-
     for data in loader:
         data = data.to(device)
         pred, tot_loss = model(data.x, data.edge_index, data.batch)
         loss = F.nll_loss(pred, data.y.view(-1)) + tot_loss
-        loss_all += data.y.size(0) * float(loss)
+        loss_all += data.y.size(0) * float(loss.detach())
         correct += int(pred.max(dim=1)[1].eq(data.y.view(-1)).sum())
 
     return loss_all / len(loader.dataset), correct / len(loader.dataset)

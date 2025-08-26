@@ -6,6 +6,7 @@ import os.path as osp
 
 import torch
 from accelerate import Accelerator
+from accelerate.utils import DistributedDataParallelKwargs
 from torch.optim.lr_scheduler import StepLR
 from tqdm import tqdm
 
@@ -52,7 +53,8 @@ def train(
                              drop_last=False, pin_memory=True, shuffle=False)
 
     # Create model ===============================================
-    accelerator = Accelerator()
+    ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
+    accelerator = Accelerator(kwargs_handlers=[ddp_kwargs])
     device = accelerator.device
     model = GITMol().to(device)
     optimizer = torch.optim.AdamW(
@@ -108,7 +110,7 @@ def train(
                 f'gitmol_pretrain_epoch{best_epoch}_val_loss{best_val_loss:4f}_ckpt.pt'  # noqa: E501
             )
     torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_peak_memory_stats()
 
     # Test
     test_loss = eval(model, test_loader)

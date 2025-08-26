@@ -4,7 +4,7 @@ import torch
 import torch_geometric.typing
 
 from ._compile import compile, is_compiling
-from ._onnx import is_in_onnx_export
+from ._onnx import is_in_onnx_export, safe_onnx_export
 from .index import Index
 from .edge_index import EdgeIndex
 from .hash_tensor import HashTensor
@@ -43,6 +43,7 @@ __all__ = [
     'compile',
     'is_compiling',
     'is_in_onnx_export',
+    'safe_onnx_export',
     'is_mps_available',
     'is_xpu_available',
     'device',
@@ -56,6 +57,14 @@ __all__ = [
     'torch_geometric',
     '__version__',
 ]
+
+if not torch_geometric.typing.WITH_PT113:
+    import warnings as std_warnings
+
+    std_warnings.warn(
+        "PyG 2.7 removed support for PyTorch < 1.13. Consider "
+        "Consider upgrading to PyTorch >= 1.13 or downgrading "
+        "to PyG <= 2.6. ", stacklevel=2)
 
 # Serialization ###############################################################
 

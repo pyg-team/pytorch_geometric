@@ -69,10 +69,11 @@ def get_hash_map(key: Tensor) -> Union[CPUHashMap, CUDAHashMap]:
         return CUDAHashMap(key, 0.5)
 
     if key.is_cuda:
-        warnings.warn("Fallback to CPU-based mapping algorithm which may "
-                      "cause slowdowns and device synchronization. Please "
-                      "install 'pyg-lib' for an accelerated 'HashTensor' "
-                      "implementation.")
+        warnings.warn(
+            "Fallback to CPU-based mapping algorithm which may "
+            "cause slowdowns and device synchronization. Please "
+            "install 'pyg-lib' for an accelerated 'HashTensor' "
+            "implementation.", stacklevel=2)
 
     if torch_geometric.typing.WITH_CPU_HASH_MAP:
         return CPUHashMap(key.cpu(), -1)
@@ -240,7 +241,7 @@ class HashTensor(Tensor):
             layout = torch.strided
             requires_grad = False
 
-        out = Tensor._make_wrapper_subclass(  # type: ignore
+        out = Tensor._make_wrapper_subclass(
             cls,
             size=size,
             strides=stride,
@@ -326,10 +327,10 @@ class HashTensor(Tensor):
     # PyTorch/Python builtins #################################################
 
     # Prevent auto-wrapping outputs back into the proper subclass type:
-    __torch_function__ = torch._C._disabled_torch_function_impl
+    __torch_function__ = torch._C._disabled_torch_function_impl  # type: ignore
 
     @classmethod
-    def __torch_dispatch__(
+    def __torch_dispatch__(  # type: ignore
         cls: Type,
         func: Callable[..., Any],
         types: Iterable[Type[Any]],
@@ -416,7 +417,7 @@ class HashTensor(Tensor):
         """"""  # noqa: D419
         return self._min_key.is_shared()
 
-    def detach_(self) -> 'HashTensor':  # type: ignore
+    def detach_(self) -> 'HashTensor':
         """"""  # noqa: D419
         if self._value is not None:
             self._value.detach_()

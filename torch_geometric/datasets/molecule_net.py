@@ -210,8 +210,9 @@ class MoleculeNet(InMemoryDataset):
             data.y = y
 
             if data.num_nodes == 0:
-                warnings.warn(f"Skipping molecule '{smiles}' since it "
-                              f"resulted in zero atoms")
+                warnings.warn(
+                    f"Skipping molecule '{smiles}' since it "
+                    f"resulted in zero atoms", stacklevel=2)
                 continue
 
             if self.pre_filter is not None and not self.pre_filter(data):

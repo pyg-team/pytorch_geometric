@@ -104,7 +104,7 @@ class Index(Tensor):
     conversion in case its representation is sorted.
     Caches are filled based on demand (*e.g.*, when calling
     :meth:`Index.get_indptr`), or when explicitly requested via
-    :meth:`Index.fill_cache_`, and are maintaned and adjusted over its
+    :meth:`Index.fill_cache_`, and are maintained and adjusted over its
     lifespan.
 
     This representation ensures optimal computation in GNN message passing
@@ -182,7 +182,7 @@ class Index(Tensor):
         assert_one_dimensional(data)
         assert_contiguous(data)
 
-        out = Tensor._make_wrapper_subclass(  # type: ignore
+        out = Tensor._make_wrapper_subclass(
             cls,
             size=data.size(),
             strides=data.stride(),
@@ -361,10 +361,10 @@ class Index(Tensor):
         return index
 
     # Prevent auto-wrapping outputs back into the proper subclass type:
-    __torch_function__ = torch._C._disabled_torch_function_impl
+    __torch_function__ = torch._C._disabled_torch_function_impl  # type: ignore
 
     @classmethod
-    def __torch_dispatch__(
+    def __torch_dispatch__(  # type: ignore
         cls: Type,
         func: Callable[..., Any],
         types: Iterable[Type[Any]],

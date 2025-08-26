@@ -5,11 +5,6 @@ on:  # yamllint disable-line rule:truthy
   schedule:
     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ startsWith(github.ref, 'refs/pull/') || github.run_number }}  # yamllint disable-line
-  # Only cancel intermediate builds if on a PR:
-  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
-
 jobs:
 
   build:
@@ -18,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,7 +34,7 @@ jobs:
 
       - name: Build package
         run: |
-          pip install --upgrade build
+          pip install build
           python -m build
 
       - name: Publish package

@@ -332,7 +332,10 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         r"""The maximum number of top-:math:`k` predictions to evaluate
         against.
         """
-        return max([metric.k for metric in self.values()])
+        return max([
+            metric.k  # type: ignore[return-value]
+            for metric in self.values()
+        ])  # type: ignore[type-var]
 
     @property
     def weighted(self) -> bool:
@@ -402,17 +405,23 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         for metric in self.values():
             if not isinstance(metric, LinkPredMetric):
-                metric.update(pred_index_mat, edge_label_index,
-                              edge_label_weight)
+                metric.update(  # type: ignore[operator]
+                    pred_index_mat,
+                    edge_label_index,
+                    edge_label_weight,
+                )
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
-        return {name: metric.compute() for name, metric in self.items()}
+        return {
+            name: metric.compute()  # type: ignore[operator]
+            for name, metric in self.items()
+        }
 
     def reset(self) -> None:
         r"""Reset metric state variables to their default value."""
         for metric in self.values():
-            metric.reset()
+            metric.reset()  # type: ignore[operator]
 
     def __repr__(self) -> str:
         names = [f'  {name}: {metric},\n' for name, metric in self.items()]
@@ -670,6 +679,9 @@ class LinkPredDiversity(_LinkPredMetric):
     def __init__(self, k: int, category: Tensor) -> None:
         super().__init__(k)
 
+        self.accum: Tensor
+        self.total: Tensor
+
         if WITH_TORCHMETRICS:
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
@@ -736,11 +748,14 @@ class LinkPredPersonalization(_LinkPredMetric):
         self.max_src_nodes = max_src_nodes
         self.batch_size = batch_size
 
+        self.preds: List[Tensor]
+        self.total: Tensor
+
         if WITH_TORCHMETRICS:
             self.add_state('preds', default=[], dist_reduce_fx='cat')
             self.add_state('total', torch.tensor(0), dist_reduce_fx='sum')
         else:
-            self.preds: List[Tensor] = []
+            self.preds = []
             self.register_buffer('total', torch.tensor(0), persistent=False)
 
     def update(
@@ -825,6 +840,9 @@ class LinkPredAveragePopularity(_LinkPredMetric):
 
     def __init__(self, k: int, popularity: Tensor) -> None:
         super().__init__(k)
+
+        self.accum: Tensor
+        self.total: Tensor
 
         if WITH_TORCHMETRICS:
             self.add_state('accum', torch.tensor(0.), dist_reduce_fx='sum')

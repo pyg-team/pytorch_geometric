@@ -251,13 +251,13 @@ def from_networkx(
     if group_edge_attrs is not None and not isinstance(group_edge_attrs, list):
         group_edge_attrs = edge_attrs
 
-    for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
+    for _, feat_dict in G.nodes(data=True):
         if set(feat_dict.keys()) != set(node_attrs):
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data_dict[str(key)].append(value)
 
-    for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
+    for _, _, feat_dict in G.edges(data=True):
         if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
@@ -452,15 +452,22 @@ def to_cugraph(
     g = cugraph.Graph(directed=directed)
     df = cudf.from_dlpack(to_dlpack(edge_index.t()))
 
+    df = cudf.DataFrame({
+        'source':
+        cudf.from_dlpack(to_dlpack(edge_index[0])),
+        'destination':
+        cudf.from_dlpack(to_dlpack(edge_index[1])),
+    })
+
     if edge_weight is not None:
         assert edge_weight.dim() == 1
-        df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
+        df['weight'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
     g.from_cudf_edgelist(
         df,
-        source=0,
-        destination=1,
-        edge_attr='2' if edge_weight is not None else None,
+        source='source',
+        destination='destination',
+        edge_attr='weight' if edge_weight is not None else None,
         renumber=relabel_nodes,
     )
 
@@ -476,13 +483,13 @@ def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     """
     df = g.view_edge_list()
 
-    src = from_dlpack(df[0].to_dlpack()).long()
-    dst = from_dlpack(df[1].to_dlpack()).long()
+    src = from_dlpack(df[g.source_columns].to_dlpack()).long()
+    dst = from_dlpack(df[g.destination_columns].to_dlpack()).long()
     edge_index = torch.stack([src, dst], dim=0)
 
     edge_weight = None
-    if '2' in df:
-        edge_weight = from_dlpack(df['2'].to_dlpack())
+    if g.weight_column is not None:
+        edge_weight = from_dlpack(df[g.weight_column].to_dlpack())
 
     return edge_index, edge_weight
 

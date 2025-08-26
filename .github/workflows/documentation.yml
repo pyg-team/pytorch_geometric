@@ -18,14 +18,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 40
 
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v46
         with:
           files: |
             benchmark/**
@@ -45,11 +45,12 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install nbsphinx
-          pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
-          pip install -e .
+          uv pip install nbsphinx
+          uv pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
+          uv pip install -e .
 
       - name: Build documentation
         if: steps.changed-files-specific.outputs.only_changed != 'true'
+        working-directory: ./docs
         run: |
-          cd docs && make clean && make html SPHINXOPTS="-W"  # Fail on warning.
+          uv run --no-project sphinx-build -M html "source" "build" -W  # Fail on warning.
