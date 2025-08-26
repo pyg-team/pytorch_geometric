@@ -254,6 +254,7 @@ def test_packaging():
 def test_onnx(tmp_path):
     import onnx
     import onnxruntime as ort
+    from torch_geometric import safe_onnx_export
 
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
     warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
@@ -276,7 +277,7 @@ def test_onnx(tmp_path):
     assert expected.size() == (3, 16)
 
     path = osp.join(tmp_path, 'model.onnx')
-    torch.onnx.export(
+    safe_onnx_export(
         model,
         (x, edge_index),
         path,
