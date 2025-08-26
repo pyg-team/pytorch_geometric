@@ -1,5 +1,5 @@
 import warnings
-from io import BytesIO
+from os import PathLike
 from typing import Any, Union
 
 import torch
@@ -20,8 +20,8 @@ def is_in_onnx_export() -> bool:
 
 def safe_onnx_export(
     model: torch.nn.Module,
-    args: Union[torch.Tensor, tuple],
-    f: Union[str, BytesIO],
+    args: Union[torch.Tensor, tuple[Any, ...]],
+    f: Union[str, PathLike[Any], None],
     skip_on_error: bool = False,
     **kwargs: Any,
 ) -> bool:
@@ -34,7 +34,7 @@ def safe_onnx_export(
     Args:
         model (torch.nn.Module): The model to export.
         args (torch.Tensor or tuple): The input arguments for the model.
-        f (str or BytesIO): The file path or BytesIO object to save the model.
+        f (str or PathLike): The file path to save the model.
         skip_on_error (bool): If True, return False instead of raising when
             workarounds fail. Useful for CI environments.
         **kwargs: Additional arguments passed to :meth:`torch.onnx.export`.
@@ -65,6 +65,10 @@ def safe_onnx_export(
         >>> if not success:
         ...     print("ONNX export skipped due to known upstream issue")
     """
+    # Convert single tensor to tuple for torch.onnx.export compatibility
+    if isinstance(args, torch.Tensor):
+        args = (args, )
+
     try:
         # First attempt: standard ONNX export
         torch.onnx.export(model, args, f, **kwargs)
@@ -100,8 +104,8 @@ def safe_onnx_export(
 
 def _apply_onnx_allowzero_workaround(
     model: torch.nn.Module,
-    args: Union[torch.Tensor, tuple],
-    f: Union[str, BytesIO],
+    args: tuple[Any, ...],
+    f: Union[str, PathLike[Any], None],
     skip_on_error: bool = False,
     **kwargs: Any,
 ) -> bool:
@@ -164,17 +168,15 @@ def _apply_onnx_allowzero_workaround(
 
     # Strategy 4: Try with minimal settings
     try:
-        minimal_kwargs = {
-            'input_names': kwargs.get('input_names'),
-            'output_names': kwargs.get('output_names'),
+        minimal_kwargs: dict[str, Any] = {
             'opset_version': 11,
             'dynamo': False,
         }
-        # Remove None values
-        minimal_kwargs = {
-            k: v
-            for k, v in minimal_kwargs.items() if v is not None
-        }
+        # Add optional parameters if they exist
+        if kwargs.get('input_names') is not None:
+            minimal_kwargs['input_names'] = kwargs.get('input_names')
+        if kwargs.get('output_names') is not None:
+            minimal_kwargs['output_names'] = kwargs.get('output_names')
 
         warnings.warn(
             "Retrying ONNX export with minimal settings as last resort",

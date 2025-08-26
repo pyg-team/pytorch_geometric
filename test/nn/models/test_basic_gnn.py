@@ -251,7 +251,7 @@ def test_packaging():
 @onlyLinux
 @withPackage('torch>=2.6.0')
 @withPackage('onnx', 'onnxruntime', 'onnxscript')
-def test_onnx(tmp_path):
+def test_onnx(tmp_path: str) -> None:
     import onnx
     import onnxruntime as ort
 
@@ -297,8 +297,8 @@ def test_onnx(tmp_path):
             "Geometric.", UserWarning, stacklevel=2)
         return
 
-    model = onnx.load(path)
-    onnx.checker.check_model(model)
+    onnx_model = onnx.load(path)
+    onnx.checker.check_model(onnx_model)
 
     providers = ['CPUExecutionProvider']
     ort_session = ort.InferenceSession(path, providers=providers)
