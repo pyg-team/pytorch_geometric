@@ -82,10 +82,8 @@ def safe_onnx_export(
         is_allowzero_error = (('onnx_ir.serde.SerdeError' in error_str
                                and 'allowzero' in error_str) or
                               'ValueError: Value out of range: 1' in error_str
-                              or (error_type == 'SerdeError'
-                                  and 'serialize_model_into' in error_str)
-                              or (error_type == 'SerdeError'
-                                  and 'serialize_attribute_into' in error_str))
+                              or 'serialize_model_into' in error_str
+                              or 'serialize_attribute_into' in error_str)
 
         if is_allowzero_error:
             warnings.warn(
