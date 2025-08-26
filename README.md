@@ -279,6 +279,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 - **[ComplEx](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.ComplEx.html)** from Trouillon *et al.*: [Complex Embeddings for Simple Link Prediction](https://arxiv.org/abs/1606.06357) (ICML 2016) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)\]
 - **[DistMult](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.DistMult.html)** from Yang *et al.*: [Embedding Entities and Relations for Learning and Inference in Knowledge Bases](https://arxiv.org/abs/1412.6575) (ICLR 2015) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)\]
 - **[RotatE](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.RotatE.html)** from Sun *et al.*: [RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space](https://arxiv.org/abs/1902.10197) (ICLR 2019) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)\]
+- **[TokenGT](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.TokenGT.html)** from Kim *et al.*: [Pure Transformers are Powerful Graph Learners](https://arxiv.org/abs/2207.02505) (NeurIPS 2022) \[[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/token_gt_regression.py)\]
 
 </details>
 
