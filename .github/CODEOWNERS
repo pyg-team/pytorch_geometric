@@ -15,3 +15,5 @@
 /torch_geometric/sampler/ @rusty1s @mananshah99 @akihironitta
 
 /docs/ @rusty1s @akihironitta
+
+/torch_geometric/nn/conv/cugraph @tingyu66
