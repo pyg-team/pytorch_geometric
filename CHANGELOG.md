@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed non-tuple indexing to resolve PyTorch deprecation warning ([#10389](https://github.com/pyg-team/pytorch_geometric/pull/10389))
 
 ### Added
+
 - Added LPFormer Graph Transformer for Link Prediction ([#9956](https://github.com/pyg-team/pytorch_geometric/pull/9956))
 - Added ability to get global row and col ids from `SamplerOutput` ([#10200](https://github.com/pyg-team/pytorch_geometric/pull/10200))
 - Added PyTorch 2.8 support ([#10403](https://github.com/pyg-team/pytorch_geometric/pull/10403))
