@@ -200,6 +200,14 @@ class TXT2KG():
         return self.NIM_MODEL.split('/')[-1] if not self.local_LM else "local"
 
 
+known_reasoners = [
+    "llama-3.1-nemotron-ultra-253b-v1",
+    "kimi-k2-instruct",
+    "nemotron-super-49b-v1_5",
+    "gpt-oss",
+]
+
+
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
         NIM_MODEL="nvidia/llama-3.1-nemotron-ultra-253b-v1",
@@ -221,8 +229,8 @@ def _chunk_to_triples_str_cloud(
     if post_text != "":
         txt_input += '\n' + post_text
     messages = []
-    if "llama-3.1-nemotron-ultra-253b-v1" in NIM_MODEL \
-            or "kimi-k2-instruct" in NIM_MODEL:
+    if any([model_name_str in NIM_MODEL
+            for model_name_str in known_reasoners]):
         messages.append({"role": "system", "content": "detailed thinking on"})
     messages.append({"role": "user", "content": txt_input})
     completion = CLIENT.chat.completions.create(model=NIM_MODEL,

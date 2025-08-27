@@ -12,11 +12,11 @@ def test_llm() -> None:
     answer = ["yes!"]
 
     model = LLM(
-        model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+        model_name='HuggingFaceTB/SmolLM-360M',
         num_params=1,
         dtype=torch.float16,
     )
-    assert str(model) == 'LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1)'
+    assert str(model) == 'LLM(HuggingFaceTB/SmolLM-360M)'
 
     loss = model(question, answer)
     assert isinstance(loss, Tensor)

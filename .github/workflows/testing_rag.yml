@@ -49,4 +49,4 @@ jobs:
         if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         timeout-minutes: 10
         run: |
-          RAG_TEST=1 uv run --no-project pytest -m rag --durations 10
+          RAG_TEST=1 uv run --no-project pytest -m rag  --cov --cov-report=xml -v --durations 10
