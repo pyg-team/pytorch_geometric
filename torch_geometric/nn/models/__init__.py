@@ -34,7 +34,9 @@ from .git_mol import GITMol
 from .molecule_gpt import MoleculeGPT
 from .protein_mpnn import ProteinMPNN
 from .glem import GLEM
+from .lpformer import LPFormer
 from .sgformer import SGFormer
+
 from .polynormer import Polynormer
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
@@ -91,6 +93,7 @@ __all__ = classes = [
     'MoleculeGPT',
     'ProteinMPNN',
     'GLEM',
+    'LPFormer',
     'SGFormer',
     'Polynormer',
     'ARLinkPredictor',
