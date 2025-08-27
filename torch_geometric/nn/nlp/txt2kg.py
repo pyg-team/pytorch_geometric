@@ -192,12 +192,15 @@ class TXT2KG():
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
 
+
 known_reasoners = [
-                    "llama-3.1-nemotron-ultra-253b-v1", 
-                    "kimi-k2-instruct",
-                    "nemotron-super-49b-v1_5",
-                    "gpt-oss",
-                  ]
+    "llama-3.1-nemotron-ultra-253b-v1",
+    "kimi-k2-instruct",
+    "nemotron-super-49b-v1_5",
+    "gpt-oss",
+]
+
+
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
         NIM_MODEL="nvidia/llama-3.1-nemotron-ultra-253b-v1",
@@ -219,7 +222,8 @@ def _chunk_to_triples_str_cloud(
     if post_text != "":
         txt_input += '\n' + post_text
     messages = []
-    if any([model_name_str in NIM_MODEL for model_name_str in known_reasoners]):
+    if any([model_name_str in NIM_MODEL
+            for model_name_str in known_reasoners]):
         messages.append({"role": "system", "content": "detailed thinking on"})
     messages.append({"role": "user", "content": txt_input})
     completion = CLIENT.chat.completions.create(model=NIM_MODEL,
