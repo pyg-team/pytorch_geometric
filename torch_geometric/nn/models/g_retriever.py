@@ -139,6 +139,7 @@ class GRetriever(torch.nn.Module):
         """
         xs = None
         if self.gnn is not None:
+            x = x
             x = self.encode(x, edge_index, batch, edge_attr)
             x = self.projector(x)
             xs = x.split(1, dim=0)
