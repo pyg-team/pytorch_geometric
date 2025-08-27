@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Added `safe_onnx_export` function with workarounds for `onnx_ir.serde.SerdeError` issues in ONNX export ([#XXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXX))
 - Fixed importing PyTorch Lightning in `torch_geometric.graphgym` and `torch_geometric.data.lightning` when using `lightning` instead of `pytorch-lightning` ([#10404](https://github.com/pyg-team/pytorch_geometric/pull/10404))
 - Fixed `detach()` warnings in example scripts involving tensor conversions ([#10357](https://github.com/pyg-team/pytorch_geometric/pull/10357))
 - Fixed non-tuple indexing to resolve PyTorch deprecation warning ([#10389](https://github.com/pyg-team/pytorch_geometric/pull/10389))
@@ -14,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Adds TXT2KG class with examples ([#9992](https://github.com/pyg-team/pytorch_geometric/pull/9992))
+- Added LPFormer Graph Transformer for Link Prediction ([#9956](https://github.com/pyg-team/pytorch_geometric/pull/9956))
 - Added `BidirectionalSampler`, which samples both forwards and backwards on graph edges ([#10126](https://github.com/pyg-team/pytorch_geometric/pull/10126))
 - Enable Sampling both forwards and reverse edges on `NeighborSampler` ([#10126](https://github.com/pyg-team/pytorch_geometric/pull/10126))
 - Added ability to merge together `SamplerOutput` objects ([#10126](https://github.com/pyg-team/pytorch_geometric/pull/10126))
