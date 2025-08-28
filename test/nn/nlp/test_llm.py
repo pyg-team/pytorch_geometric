@@ -1,6 +1,6 @@
 import torch
 from torch import Tensor
-
+import gc
 from torch_geometric.nn.nlp import LLM
 from torch_geometric.testing import onlyRAG, withPackage
 
@@ -25,3 +25,5 @@ def test_llm() -> None:
 
     pred = model.inference(question)
     assert len(pred) == 1
+    gc.collect()
+    torch.cuda.empty_cache()
