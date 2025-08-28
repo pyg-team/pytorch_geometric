@@ -1,6 +1,8 @@
+import gc
+
 import torch
 from torch import Tensor
-import gc
+
 from torch_geometric.nn.nlp import LLM
 from torch_geometric.testing import onlyRAG, withPackage
 
