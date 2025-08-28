@@ -1,3 +1,5 @@
+import gc
+
 import torch
 from torch import Tensor
 
@@ -25,3 +27,6 @@ def test_llm() -> None:
 
     pred = model.inference(question)
     assert len(pred) == 1
+    del model
+    gc.collect()
+    torch.cuda.empty_cache()

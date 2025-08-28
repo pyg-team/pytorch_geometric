@@ -1,3 +1,5 @@
+import gc
+
 import torch
 
 from torch_geometric.nn import GAT, GRetriever
@@ -50,6 +52,9 @@ def test_g_retriever() -> None:
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
+    del model
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 @onlyRAG
@@ -98,3 +103,6 @@ def test_g_retriever_many_tokens() -> None:
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
+    del model
+    gc.collect()
+    torch.cuda.empty_cache()
