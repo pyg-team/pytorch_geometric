@@ -487,6 +487,77 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         return status
 
+    def connected_components(self) -> List[Self]:
+        r"""Extracts connected components of the heterogeneous graph using
+        a union-find algorithm. The components are returned as a list of
+        :class:`~torch_geometric.data.HeteroData` objects.
+
+        .. code-block::
+
+            data = HeteroData()
+            data["red"].x = torch.tensor([[1.0], [2.0], [3.0], [4.0]])
+            data["blue"].x = torch.tensor([[5.0], [6.0]])
+            data["red", "to", "red"].edge_index = torch.tensor(
+                [[0, 1, 2, 3], [1, 0, 3, 2]], dtype=torch.long
+            )
+
+            components = data.connected_components()
+            print(len(components))
+            >>> 4
+
+            print(components[0])
+            >>> HeteroData(
+                red={x: tensor([[1.], [2.]])},
+                blue={x: tensor([[]])},
+                red, to, red={edge_index: tensor([[0, 1], [1, 0]])}
+            )
+
+        Returns:
+            List[HeteroData]: A list of connected components.
+        """
+        # Initialize union-find structures
+        self._parents: Dict[Tuple[str, int], Tuple[str, int]] = {}
+        self._ranks: Dict[Tuple[str, int], int] = {}
+
+        # Union-Find algorithm to find connected components
+        for edge_type in self.edge_types:
+            src, _, dst = edge_type
+            edge_index = self[edge_type].edge_index
+            for src_node, dst_node in edge_index.t().tolist():
+                self._union((src, src_node), (dst, dst_node))
+
+        # Rerun _find_parent to ensure all nodes are covered correctly
+        for node_type in self.node_types:
+            for node_index in range(self[node_type].num_nodes):
+                self._find_parent((node_type, node_index))
+
+        # Group nodes by their representative parent
+        components_map = defaultdict(list)
+        for node, parent in self._parents.items():
+            components_map[parent].append(node)
+        del self._parents
+        del self._ranks
+
+        components: List[Self] = []
+        for nodes in components_map.values():
+            # Prefill subset_dict with all node types to ensure all are present
+            subset_dict = {node_type: [] for node_type in self.node_types}
+
+            # Convert the list of (node_type, node_id) tuples to a subset_dict
+            for node_type, node_id in nodes:
+                subset_dict[node_type].append(node_id)
+
+            # Convert lists to tensors
+            for node_type, node_ids in subset_dict.items():
+                subset_dict[node_type] = torch.tensor(node_ids,
+                                                      dtype=torch.long)
+
+            # Use the existing subgraph function to do all the heavy lifting
+            component_data = self.subgraph(subset_dict)
+            components.append(component_data)
+
+        return components
+
     def debug(self):
         pass  # TODO
 
@@ -1147,6 +1218,51 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     store._key, 'csc', size=size)
 
         return list(edge_attrs.values())
+
+    # Connected Components Helper Functions ###################################
+
+    def _find_parent(self, node: Tuple[str, int]) -> Tuple[str, int]:
+        r"""Finds and returns the representative parent of the given node in a
+        disjoint-set (union-find) data structure. Implements path compression
+        to optimize future queries.
+
+        Args:
+            node (tuple[str, int]): The node for which to find the parent.
+            First element is the node type, second is the node index.
+
+        Returns:
+            tuple[str, int]: The representative parent of the node.
+        """
+        if node not in self._parents:
+            self._parents[node] = node
+            self._ranks[node] = 0
+        if self._parents[node] != node:
+            self._parents[node] = self._find_parent(self._parents[node])
+        return self._parents[node]
+
+    def _union(self, node1: Tuple[str, int], node2: Tuple[str, int]):
+        r"""Merges the node1 and node2 in the disjoint-set data structure.
+
+        Finds the root parents of node1 and node2 using the _find_parent
+        method. If they belong to different sets, updates the parent of
+        root2 to be root1, effectively merging the two sets.
+
+        Args:
+            node1 (Tuple[str, int]): The first node to union. First element is
+                the node type, second is the node index.
+            node2 (Tuple[str, int]): The second node to union. First element is
+                the node type, second is the node index.
+        """
+        root1 = self._find_parent(node1)
+        root2 = self._find_parent(node2)
+        if root1 != root2:
+            if self._ranks[root1] < self._ranks[root2]:
+                self._parents[root1] = root2
+            elif self._ranks[root1] > self._ranks[root2]:
+                self._parents[root2] = root1
+            else:
+                self._parents[root2] = root1
+                self._ranks[root1] += 1
 
 
 # Helper functions ############################################################
