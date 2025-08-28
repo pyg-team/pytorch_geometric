@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric import EdgeIndex
+from torch_geometric import EdgeIndex, Index
 from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, scatter
@@ -137,7 +137,14 @@ def coalesce(  # noqa: F811
     idx = edge_index[0].new_empty(num_edges + 1)
     idx[0] = -1
     idx[1:] = edge_index[1 - int(sort_by_row)]
-    idx[1:].mul_(num_nodes).add_(edge_index[int(sort_by_row)])
+    idx[1:].mul_(num_nodes)
+
+    # idx[1:] += torch.tensor(edge_index[int(sort_by_row)])
+    edge_index_sort_by_row = edge_index[int(sort_by_row)]
+    if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        assert isinstance(edge_index_sort_by_row, Index)
+        edge_index_sort_by_row = edge_index_sort_by_row._data
+    idx[1:] += edge_index_sort_by_row
 
     is_undirected = False
     if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
