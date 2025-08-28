@@ -9,12 +9,15 @@ import torch
 
 import torch_geometric.distributed as pyg_dist
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.deprecation import deprecated
 from torch_geometric.io import fs
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.sampler.utils import sort_csc
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class Partitioner:
     r"""Partitions the graph and its features of a
     :class:`~torch_geometric.data.Data` or
@@ -59,6 +62,9 @@ class Partitioner:
             |-- graph.pt
             |-- node_feats.pt
             |-- edge_feats.pt
+
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
 
     Args:
         data (Data or HeteroData): The data object.
@@ -367,6 +373,8 @@ class Partitioner:
             json.dump(meta, f)
 
 
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 def load_partition_info(
     root_dir: str,
     partition_idx: int,

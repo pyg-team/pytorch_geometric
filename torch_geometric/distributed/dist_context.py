@@ -1,14 +1,21 @@
 from dataclasses import dataclass
 from enum import Enum
 
+from torch_geometric.deprecation import deprecated
+
 
 class DistRole(Enum):
     WORKER = 1
 
 
 @dataclass
+@deprecated("use 'CuGraph' instead\
+    https://github.com/rapidsai/cugraph")
 class DistContext:
-    r"""Context information of the current process."""
+    r"""Context information of the current process.
+    Deprecated, use 'CuGraph' instead:
+    https://github.com/rapidsai/cugraph.
+    """
     rank: int
     global_rank: int
     world_size: int
