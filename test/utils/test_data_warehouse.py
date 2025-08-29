@@ -1,7 +1,7 @@
 # isort: skip_file
 """Comprehensive tests for data warehouse intelligence system."""
 
-from typing import Any
+from typing import Any, cast
 
 import pytest
 import torch
@@ -1843,3 +1843,240 @@ class TestWarehouseTraining:
         assert sample['edge_index'].shape[0] == 2
         assert isinstance(sample['question'], str)
         assert isinstance(sample['label'], str)
+
+
+class TestAdditionalCoverage:
+    """Additional tests to cover uncovered branches with minimal deps."""
+    def test_import_fallback_reload(self) -> None:
+        """Force ImportError path and ensure stub classes raise ImportError."""
+        try:
+            import importlib
+            import sys
+            from types import ModuleType
+            import torch_geometric.utils.data_warehouse as dw
+        except Exception:  # pragma: no cover - environment import guard
+            pytest.skip("data_warehouse not importable")
+
+        orig_models = sys.modules.get('torch_geometric.nn.models')
+        orig_nlp = sys.modules.get('torch_geometric.nn.nlp')
+        try:
+            sys.modules['torch_geometric.nn.models'] = ModuleType(
+                'tg_dummy_models')
+            sys.modules['torch_geometric.nn.nlp'] = ModuleType('tg_dummy_nlp')
+            m = importlib.reload(dw)
+            assert m.HAS_GRETRIEVER is False
+            with pytest.raises(ImportError):
+                m.GRetriever()
+            with pytest.raises(ImportError):
+                m.LLM()
+        finally:
+            # Restore modules and reload back to normal
+            if orig_models is None:
+                sys.modules.pop('torch_geometric.nn.models', None)
+            else:
+                sys.modules['torch_geometric.nn.models'] = orig_models
+            if orig_nlp is None:
+                sys.modules.pop('torch_geometric.nn.nlp', None)
+            else:
+                sys.modules['torch_geometric.nn.nlp'] = orig_nlp
+            importlib.reload(dw)
+
+    @withPackage('transformers')
+    def test_custom_llm_inference_success_path(self) -> None:
+        """Exercise custom_llm_inference try-body via mocks."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        from unittest.mock import MagicMock, patch
+
+        with patch('torch_geometric.utils.data_warehouse.LLM') as mock_llm, \
+                patch('torch_geometric.utils.data_warehouse.GRetriever') \
+                as mock_gr:
+            mock_llm.return_value = MagicMock()
+            mock_gr.return_value = MagicMock()
+            model = WarehouseGRetriever()
+
+            # Mock LLM internals for success path
+            def _fake_get_embeds(
+                q: Any, c: Any, emb: Any
+            ) -> tuple[torch.Tensor, torch.Tensor, None]:  # noqa: D401,E501
+                return torch.randn(1, 4, 8), torch.ones(1, 4), None
+
+            model.llm._get_embeds = _fake_get_embeds  # type: ignore[assignment]  # noqa: E501
+
+            tok = MagicMock()
+            tok.return_value = MagicMock(input_ids=[1])
+            tok.pad_token_id = 0
+            tok.encode = MagicMock(return_value=[3])
+            tok.batch_decode = MagicMock(return_value=['ok'])
+
+            # Cast to Any to allow assigning mock tokenizer
+            model.llm = cast(Any, model.llm)
+            model.llm.tokenizer = tok
+
+            model.llm.llm = MagicMock()
+            model.llm.llm.generate = MagicMock(
+                return_value=torch.randint(0, 5, (1, 4)))
+
+            out = model.custom_llm_inference("q", context=None, embedding=None,
+                                             max_tokens=8)
+            assert isinstance(out, list) and len(out) > 0 and out[0] == 'ok'
+
+    def test_train_loop_with_simple_model(self) -> None:
+        """Run one training epoch to cover optimizer/backward/clip/step."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                create_warehouse_training_data,
+                train_warehouse_model,
+            )
+        except ImportError:
+            pytest.skip("Training functions not available")
+
+        model = SimpleWarehouseModel()
+        training_data = create_warehouse_training_data(num_samples=4,
+                                                       num_nodes=10)
+        # train_warehouse_model expects WarehouseGRetriever, but our simple
+        # model provides the train_forward fallback used inside.
+        trained = train_warehouse_model(
+            cast(Any, model),
+            training_data,
+            num_epochs=1,
+            batch_size=2,
+            device='cpu',
+            verbose=False,
+        )
+        assert trained is not None
+
+    @withPackage('transformers')
+    def test_inference_multi_question_path(self) -> None:
+        """Ensure multi-question path calls g_retriever.inference."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        from unittest.mock import MagicMock, patch
+
+        with patch('torch_geometric.utils.data_warehouse.LLM') as mock_llm, \
+                patch('torch_geometric.utils.data_warehouse.GRetriever') \
+                as mock_gr:
+            mock_llm.return_value = MagicMock()
+            gr = MagicMock()
+            gr.inference.return_value = ["ok2", "ok3"]
+            mock_gr.return_value = gr
+            model = WarehouseGRetriever()
+            x = torch.randn(3, 384)
+            edge_index = torch.randint(0, 3, (2, 4))
+            batch = torch.zeros(3, dtype=torch.long)
+            out = model.inference(["q1", "q2"], x, edge_index, batch)
+            assert out == ["ok2", "ok3"]
+
+    def test_concise_general_fallback(self) -> None:
+        """Unknown query type should return general fallback string."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        sys = WarehouseConversationSystem(SimpleWarehouseModel(),
+                                          concise_context=True)
+        x = torch.randn(5, 384)
+        edge_index = torch.randint(0, 5, (2, 8))
+        txt = sys._get_concise_analytics(x, edge_index, "unknown")
+        assert isinstance(txt, str) and len(txt) > 0
+        assert "contains business data" in txt
+
+    def test_infer_key_relationships_variants(self) -> None:
+        """Cover _infer_key_relationships early return, heuristic & fallback."""  # noqa: E501
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        sys = WarehouseConversationSystem(SimpleWarehouseModel())
+        # Early return (<2 tables)
+        assert sys._infer_key_relationships(["only"]) == "table connections"
+        # Heuristic overlap: parts of names overlap
+        rels = sys._infer_key_relationships(["orders", "order_items", "users"])
+        assert "orders->order_items" in rels
+        # Fallback: first two tables connected when no overlap found
+        rels2 = sys._infer_key_relationships(["a", "b", "c"])
+        assert rels2.startswith("a->b")
+
+    @withPackage('transformers')
+    def test_inference_single_question_path(self) -> None:
+        """Single-question list should route to custom_llm_inference."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        from unittest.mock import MagicMock, patch
+
+        with patch('torch_geometric.utils.data_warehouse.LLM') as mock_llm, \
+                patch('torch_geometric.utils.data_warehouse.GRetriever') \
+                as mock_gr:
+            mock_llm.return_value = MagicMock()
+            mock_gr.return_value = MagicMock()
+            model = WarehouseGRetriever()
+            x = torch.randn(3, 384)
+            edge_index = torch.randint(0, 3, (2, 4))
+            batch = torch.zeros(3, dtype=torch.long)
+            with patch.object(model, 'custom_llm_inference',
+                              return_value=['ok1']):
+                out = model.inference(["q1"], x, edge_index, batch)
+            assert out == ['ok1']
+
+    def test_integrated_response_path_non_empty_llm(self) -> None:
+        """Integrated response with non-empty LLM text via dummy model."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseConversationSystem, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        class DummyModel:
+            verbose = False
+
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                if task == 'lineage':
+                    logits = torch.zeros(x.shape[0], 5)
+                    logits[:, 1] = 1.0
+                    return logits
+                if task == 'impact':
+                    logits = torch.zeros(x.shape[0], 3)
+                    logits[:, 2] = 1.0
+                    return logits
+                return torch.zeros(x.shape[0], 1)
+
+            def inference(self, question: list[str], x: torch.Tensor,
+                          edge_index: torch.Tensor, batch: torch.Tensor,
+                          max_out_tokens: int | None = None,
+                          **_: Any) -> list[str]:
+                return ["This is a detailed answer."]
+
+        sys = WarehouseConversationSystem(DummyModel())
+        x = torch.randn(5, 384)
+        edge_index = torch.randint(0, 5, (2, 8))
+        batch = torch.zeros(5, dtype=torch.long)
+        context = {'node_types': ['a', 'b'], 'edge_types': [('a', 'rel', 'b')]}
+        out = sys.process_query("lineage?", {
+            'x': x,
+            'edge_index': edge_index,
+            'batch': batch,
+            'context': context,
+        })
+        assert isinstance(out['answer'], str) and len(out['answer']) > 0
