@@ -5,19 +5,6 @@ import pytest
 
 def test_relbench_imports() -> None:
     """Test RelBench module imports."""
-    try:
-        from torch_geometric.datasets.relbench import (
-            RelBenchDataset,
-            RelBenchProcessor,
-            create_relbench_hetero_data,
-        )
-
-        # Test that classes can be imported
-        assert RelBenchDataset is not None
-        assert RelBenchProcessor is not None
-        assert create_relbench_hetero_data is not None
-    except ImportError:
-        pytest.skip("RelBench not available")
 
 
 def test_relbench_processor() -> None:
@@ -41,11 +28,7 @@ def test_relbench_processor() -> None:
 
 def test_create_relbench_hetero_data() -> None:
     """Test create_relbench_hetero_data function."""
-    try:
-        from torch_geometric.datasets.relbench import \
-            create_relbench_hetero_data  # noqa: E501
-    except ImportError:
-        pytest.skip("RelBench not available")
+    from torch_geometric.datasets.relbench import create_relbench_hetero_data
 
     # Test with minimal parameters (will skip if data not available)
     try:
