@@ -66,9 +66,12 @@ class KGQABaseDataset(InMemoryDataset):
         self.dataset_name = dataset_name
         self.use_pcst = use_pcst
         self.load_dataset_kwargs = load_dataset_kwargs or {}
+
         """
         NOTE: If running into memory issues,
-        try reducing this batch size
+        try reducing this batch size for the LargeGraphIndexer
+        used to build our KG. 
+        Example: self.retrieval_kwargs = {"batch_size": 64}
         """
         self.retrieval_kwargs = retrieval_kwargs or {}
 
