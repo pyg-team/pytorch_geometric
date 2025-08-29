@@ -401,7 +401,7 @@ class NeighborSampler(BaseSampler):
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         out = node_sample(inputs, self._sample)
         if self.subgraph_type == SubgraphType.bidirectional:
-            out = out.to_bidirectional()
+            out = out.to_bidirectional(keep_orig_edges=self.keep_orig_edges)
         return out
 
     # Edge-based sampling #####################################################
