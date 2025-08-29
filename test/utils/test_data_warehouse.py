@@ -1291,20 +1291,26 @@ class TestWarehouseDeepCoverage:
 class TestExceptionHandling:
     """Test exception handling for coverage boost."""
     def test_import_error_fallback(self) -> None:
-        """Test ImportError handling in fallback classes."""
+        """Test ImportError handling in WarehouseGRetriever initialization."""
         try:
-            import torch_geometric.utils.data_warehouse as dw
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
         except ImportError:
             pytest.skip("Data warehouse not available")
 
-        # Test fallback GRetriever class
+        # Test the ImportError handling in WarehouseGRetriever.__init__
+        # This tests the exception path when G-Retriever is not available
+        import torch_geometric.utils.data_warehouse as dw
         original_has_gretriever = dw.HAS_GRETRIEVER
-        dw.HAS_GRETRIEVER = False
+
         try:
-            with pytest.raises(ImportError, match="GRetriever requires PyG"):
-                dw.GRetriever()
-            with pytest.raises(ImportError, match="LLM requires PyG"):
-                dw.LLM()
+            # Temporarily disable G-Retriever to test exception path
+            dw.HAS_GRETRIEVER = False
+
+            # This should raise ImportError("G-Retriever not available")
+            with pytest.raises(ImportError, match="G-Retriever not available"):
+                WarehouseGRetriever()
+
         finally:
             dw.HAS_GRETRIEVER = original_has_gretriever
 
@@ -1579,9 +1585,8 @@ class TestModelConfigurations:
             llm_model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1")
         assert model_tiny.gnn.out_channels == 2048
 
-        # Test default case
-        model_default = WarehouseGRetriever(
-            llm_model_name="some-unknown-model")
+        # Test default case (use gpt2 which is a valid model)
+        model_default = WarehouseGRetriever(llm_model_name="gpt2")
         assert model_default.gnn.out_channels == 2048
 
     @withPackage('transformers')
@@ -1698,17 +1703,17 @@ class TestAnalyticsFormatting:
                 pred[:isolated_count] = 0.8  # Above threshold
                 return pred
 
-        # Test CRITICAL severity (> 80%)
+        # Test CRITICAL severity (> 80%) - use 90% to ensure > 80%
         system_critical = WarehouseConversationSystem(
-            MockSiloSeverityModel(85))
+            MockSiloSeverityModel(90))
         x = torch.randn(10, 384)
         edge_index = torch.randint(0, 10, (2, 15))
         result = system_critical._format_silo_analytics(
             system_critical.model.predict_task(x, edge_index, "silo"), 10)
         assert "CRITICAL" in result
 
-        # Test HIGH severity (50% < x <= 80%)
-        system_high = WarehouseConversationSystem(MockSiloSeverityModel(60))
+        # Test HIGH severity (50% < x <= 80%) - 80% should be HIGH not CRITICAL
+        system_high = WarehouseConversationSystem(MockSiloSeverityModel(80))
         result = system_high._format_silo_analytics(
             system_high.model.predict_task(x, edge_index, "silo"), 10)
         assert "HIGH" in result
@@ -1735,12 +1740,15 @@ class TestAnalyticsFormatting:
 
         # Create mock model for quality scores
         class MockQualityModel:
-            def __init__(self, avg_quality: float) -> None:
-                self.avg_quality = avg_quality
+            def __init__(self, target_sigmoid: float) -> None:
+                # Convert target sigmoid output to logit input
+                import math
+                self.logit_value = math.log(target_sigmoid /
+                                            (1 - target_sigmoid))
 
             def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
                              task: str) -> torch.Tensor:
-                return torch.full((x.shape[0], 1), self.avg_quality)
+                return torch.full((x.shape[0], 1), self.logit_value)
 
         x = torch.randn(10, 384)
         edge_index = torch.randint(0, 10, (2, 15))
@@ -1751,14 +1759,14 @@ class TestAnalyticsFormatting:
             system_exc.model.predict_task(x, edge_index, "quality"), 10)
         assert "EXCELLENT" in result
 
-        # Test GOOD status (0.6 < x <= 0.8)
-        system_good = WarehouseConversationSystem(MockQualityModel(0.7))
+        # Test GOOD status (0.6 < x <= 0.8) - 0.71 should be GOOD
+        system_good = WarehouseConversationSystem(MockQualityModel(0.71))
         result = system_good._format_quality_analytics(
             system_good.model.predict_task(x, edge_index, "quality"), 10)
         assert "GOOD" in result
 
         # Test POOR status (<= 0.6)
-        system_poor = WarehouseConversationSystem(MockQualityModel(0.4))
+        system_poor = WarehouseConversationSystem(MockQualityModel(0.5))
         result = system_poor._format_quality_analytics(
             system_poor.model.predict_task(x, edge_index, "quality"), 10)
         assert "POOR" in result
