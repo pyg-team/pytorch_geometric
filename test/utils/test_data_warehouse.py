@@ -499,7 +499,8 @@ class TestSmartParser:
                                _task: Any) -> Any:  # noqa: ARG001
             return pred
 
-        system.model.predict_task = _fake_predict_task  # type: ignore[method-assign]  # noqa: E501
+        # type: ignore[method-assign]
+        system.model.predict_task = _fake_predict_task
 
         result = system._get_concise_analytics(x, edge_index, 'lineage')
         assert isinstance(result, str)
@@ -969,7 +970,7 @@ class TestWarehouseDeepCoverage:
         # Dummy model to control outputs
 
         class Dummy:
-            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+            def predict_task(self, x: torch.Tensor, _edge_index: torch.Tensor,
                              task: str) -> torch.Tensor:  # noqa: D401
                 n = x.shape[0]
                 if task == 'lineage':
@@ -1238,7 +1239,8 @@ class TestWarehouseDeepCoverage:
             pytest.skip("Data warehouse not available")
 
         class Dummy:
-            def predict_task(self, x: Any, edge_index: Any, task: str) -> Any:
+            def predict_task(self, _x: Any, _edge_index: Any,
+                             task: str) -> Any:
                 if task == 'lineage':
                     logits = torch.zeros(1, 5)
                     logits[:, 2] = 5.0
@@ -1274,7 +1276,7 @@ class TestWarehouseDeepCoverage:
             pytest.skip("Data warehouse not available")
 
         class Dummy:
-            def predict_task(self, x: Any, edge_index: Any, task: str) -> Any:
+            def predict_task(self, x: Any, _edge_index: Any, task: str) -> Any:
                 # High logits -> sigmoid near 1.0 to trigger EXCELLENT branch
                 return torch.full((x.shape[0], ), 8.0)
 
@@ -1284,6 +1286,513 @@ class TestWarehouseDeepCoverage:
         txt = sys._format_quality_analytics(
             sys.model.predict_task(x, edge_index, 'quality'), x.shape[0])
         assert 'EXCELLENT' in txt and 'Average Quality Score' in txt
+
+
+class TestExceptionHandling:
+    """Test exception handling for coverage boost."""
+    def test_import_error_fallback(self) -> None:
+        """Test ImportError handling in fallback classes."""
+        try:
+            import torch_geometric.utils.data_warehouse as dw
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Test fallback GRetriever class
+        original_has_gretriever = dw.HAS_GRETRIEVER
+        dw.HAS_GRETRIEVER = False
+        try:
+            with pytest.raises(ImportError, match="GRetriever requires PyG"):
+                dw.GRetriever()
+            with pytest.raises(ImportError, match="LLM requires PyG"):
+                dw.LLM()
+        finally:
+            dw.HAS_GRETRIEVER = original_has_gretriever
+
+    @withPackage('transformers')
+    def test_custom_llm_inference_exception(self) -> None:
+        """Test exception fallback in custom_llm_inference."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        model = WarehouseGRetriever()
+        # Force exception by providing invalid parameters
+        result = model.custom_llm_inference("test", context=None,
+                                            embedding=None, max_tokens=1)
+        assert isinstance(result, list)
+        assert len(result) >= 1
+
+    def test_process_query_exception_handling(self) -> None:
+        """Test exception handling in process_query."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        system = WarehouseConversationSystem(SimpleWarehouseModel())
+
+        # Test with invalid graph data to trigger exception
+        with pytest.raises((RuntimeError, ValueError)):
+            system.process_query("test", {"invalid": "data"})
+
+    def test_simple_model_exception_handling(self) -> None:
+        """Test exception handling in SimpleWarehouseModel."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        model = SimpleWarehouseModel()
+
+        # Test with invalid tensor shapes to trigger exceptions
+        x_invalid = torch.randn(2, 100)  # Wrong feature dimension
+        edge_index = torch.randint(0, 2, (2, 2))
+
+        with pytest.raises(RuntimeError):
+            model.predict_task(x_invalid, edge_index, task="lineage")
+
+
+class TestThresholdBranches:
+    """Test threshold conditions for analytics coverage."""
+    def test_silo_threshold_branches(self) -> None:
+        """Test silo probability threshold branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseConversationSystem, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Create mock model with controlled silo predictions
+        class MockSiloModel:
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                if task == "silo":
+                    # Return high probability to test > 0.7 branch
+                    return torch.tensor(0.8)
+                return torch.zeros(x.shape[0], 5)
+
+        system = WarehouseConversationSystem(MockSiloModel())
+        x = torch.randn(4, 384)
+        edge_index = torch.randint(0, 4, (2, 6))
+
+        result = system._extract_gat_insights(x, edge_index, "silo")
+        assert "isolated from others" in result
+
+        # Test medium probability (0.4 < prob < 0.7)
+        class MockSiloModelMed:
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                return torch.tensor(0.5)
+
+        system_med = WarehouseConversationSystem(MockSiloModelMed())
+        result_med = system_med._extract_gat_insights(x, edge_index, "silo")
+        assert "limited connections" in result_med
+
+    def test_quality_threshold_branches(self) -> None:
+        """Test quality score threshold branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseConversationSystem, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Test high quality (> 0.8)
+        class MockQualityModelHigh:
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                return torch.tensor(0.9)
+
+        system = WarehouseConversationSystem(MockQualityModelHigh())
+        x = torch.randn(4, 384)
+        edge_index = torch.randint(0, 4, (2, 6))
+
+        result = system._extract_gat_insights(x, edge_index, "quality")
+        assert "high with consistency" in result
+
+        # Test low quality (< 0.5)
+        class MockQualityModelLow:
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                return torch.tensor(0.3)
+
+        system_low = WarehouseConversationSystem(MockQualityModelLow())
+        result_low = system_low._extract_gat_insights(x, edge_index, "quality")
+        assert "needs improvement" in result_low
+
+    def test_impact_threshold_branches(self) -> None:
+        """Test impact level threshold branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseConversationSystem, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Test high impact
+        class MockImpactModel:
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                logits = torch.zeros(1, 3)
+                logits[:, 2] = 5.0  # High impact class
+                return logits
+
+        system = WarehouseConversationSystem(MockImpactModel())
+        x = torch.randn(4, 384)
+        edge_index = torch.randint(0, 4, (2, 6))
+
+        result = system._extract_gat_insights(x, edge_index, "impact")
+        assert "high impact" in result
+
+
+class TestEdgeCases:
+    """Test edge cases and boundary conditions."""
+    @withPackage('transformers')
+    def test_empty_question_handling(self) -> None:
+        """Test empty question list handling."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        model = WarehouseGRetriever()
+        x = torch.randn(5, 384)
+        edge_index = torch.randint(0, 5, (2, 8))
+        batch = torch.zeros(5, dtype=torch.long)
+
+        # Test with empty question list
+        loss = model.train_forward([], x, edge_index, batch, ["label"])
+        assert isinstance(loss, torch.Tensor)
+        assert loss.requires_grad
+
+    @withPackage('transformers')
+    def test_empty_label_handling(self) -> None:
+        """Test empty label list handling."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        model = WarehouseGRetriever()
+        x = torch.randn(5, 384)
+        edge_index = torch.randint(0, 5, (2, 8))
+        batch = torch.zeros(5, dtype=torch.long)
+
+        # Test with empty label list
+        loss = model.train_forward(["question"], x, edge_index, batch, [])
+        assert isinstance(loss, torch.Tensor)
+
+    def test_empty_llm_response_cleaning(self) -> None:
+        """Test LLM response cleaning with edge cases."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        system = WarehouseConversationSystem(SimpleWarehouseModel())
+
+        # Test empty string
+        result = system._clean_llm_response("")
+        assert result == ""
+
+        # Test whitespace only
+        result = system._clean_llm_response("   ")
+        assert result == ""
+
+        # Test training artifacts
+        result = system._clean_llm_response("### Assistant: Hello")
+        assert "Assistant" not in result
+
+        # Test repetitive text (should trigger fallback)
+        repetitive = "word " * 15
+        result = system._clean_llm_response(repetitive)
+        assert "Analysis completed" in result
+
+    def test_empty_context_handling(self) -> None:
+        """Test handling of None/empty context in various methods."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        system = WarehouseConversationSystem(SimpleWarehouseModel())
+        x = torch.randn(4, 384)
+        edge_index = torch.randint(0, 4, (2, 6))
+
+        # Test with None context
+        result = system._extract_relevant_data_samples("lineage", x,
+                                                       edge_index, None)
+        assert "No specific data samples" in result
+
+        # Test domain description with None context
+        desc = system._get_dataset_description(None)
+        assert desc == "data"
+
+    def test_encode_text_fallback(self) -> None:
+        """Test _encode_text fallback behavior."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        system = WarehouseConversationSystem(SimpleWarehouseModel())
+
+        # Test without sentence encoder (should use fallback)
+        result = system._encode_text(["test text"])
+        assert isinstance(result, torch.Tensor)
+        assert result.shape == (1, 384)
+
+
+class TestModelConfigurations:
+    """Test different model configuration branches."""
+    @withPackage('transformers')
+    def test_llm_embedding_dimension_detection(self) -> None:
+        """Test LLM embedding dimension detection branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        # Test Phi-3 model detection
+        model_phi = WarehouseGRetriever(
+            llm_model_name="microsoft/Phi-3-mini-4k-instruct")
+        assert model_phi.gnn.out_channels == 3072
+
+        # Test TinyLlama model detection
+        model_tiny = WarehouseGRetriever(
+            llm_model_name="TinyLlama/TinyLlama-1.1B-Chat-v0.1")
+        assert model_tiny.gnn.out_channels == 2048
+
+        # Test default case
+        model_default = WarehouseGRetriever(
+            llm_model_name="some-unknown-model")
+        assert model_default.gnn.out_channels == 2048
+
+    @withPackage('transformers')
+    def test_parameter_handling_branches(self) -> None:
+        """Test parameter handling in custom_llm_inference."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseGRetriever, )
+        except ImportError:
+            pytest.skip("G-Retriever not available")
+
+        model = WarehouseGRetriever()
+
+        # Test max_tokens parameter handling (None vs provided)
+        result1 = model.custom_llm_inference("test", max_tokens=None)
+        assert isinstance(result1, list)
+
+        result2 = model.custom_llm_inference("test", max_tokens=50)
+        assert isinstance(result2, list)
+
+        # Test context parameter handling
+        result3 = model.custom_llm_inference("test", context="context")
+        assert isinstance(result3, list)
+
+        result4 = model.custom_llm_inference("test", context=None)
+        assert isinstance(result4, list)
+
+    def test_query_type_classification_branches(self) -> None:
+        """Test all query type classification branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        system = WarehouseConversationSystem(SimpleWarehouseModel())
+
+        # Test all classification branches
+        test_cases = [
+            ("trace the lineage", "lineage"),
+            ("check for silos", "silo"),
+            ("analyze impact", "impact"),
+            ("assess quality", "quality"),
+            ("general question", "general"),
+        ]
+
+        for query, expected_type in test_cases:
+            result = system.classify_query(query)
+            assert result == expected_type
+
+    def test_analytics_generation_error_handling(self) -> None:
+        """Test analytics generation with error conditions."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseConversationSystem, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Create model that raises exceptions
+        class ErrorModel:
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                raise RuntimeError("Prediction failed")
+
+        system = WarehouseConversationSystem(ErrorModel())
+        x = torch.randn(4, 384)
+        edge_index = torch.randint(0, 4, (2, 6))
+
+        # Test error handling in _get_concise_analytics
+        result = system._get_concise_analytics(x, edge_index, "lineage")
+        assert "analysis details unavailable" in result
+
+        # Test error handling in _extract_gat_insights
+        result2 = system._extract_gat_insights(x, edge_index, "silo")
+        assert "Unable to analyze structure" in result2
+
+    def test_create_warehouse_demo_fallback(self) -> None:
+        """Test create_warehouse_demo fallback behavior."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                create_warehouse_demo, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Test fallback to simple model (exception path)
+        demo_system = create_warehouse_demo(use_gretriever=False)
+        assert demo_system is not None
+        assert hasattr(demo_system, 'model')
+
+
+class TestAnalyticsFormatting:
+    """Test analytics formatting branches for coverage."""
+    def test_silo_severity_levels(self) -> None:
+        """Test all silo severity classification branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseConversationSystem, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Create mock model to control silo predictions
+        class MockSiloSeverityModel:
+            def __init__(self, isolation_pct: float) -> None:
+                self.isolation_pct = isolation_pct
+
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                # Return predictions that result in specific isolation %
+                num_nodes = x.shape[0]
+                isolated_count = int(num_nodes * self.isolation_pct / 100)
+                pred = torch.zeros(num_nodes, 1)
+                pred[:isolated_count] = 0.8  # Above threshold
+                return pred
+
+        # Test CRITICAL severity (> 80%)
+        system_critical = WarehouseConversationSystem(
+            MockSiloSeverityModel(85))
+        x = torch.randn(10, 384)
+        edge_index = torch.randint(0, 10, (2, 15))
+        result = system_critical._format_silo_analytics(
+            system_critical.model.predict_task(x, edge_index, "silo"), 10)
+        assert "CRITICAL" in result
+
+        # Test HIGH severity (50% < x <= 80%)
+        system_high = WarehouseConversationSystem(MockSiloSeverityModel(60))
+        result = system_high._format_silo_analytics(
+            system_high.model.predict_task(x, edge_index, "silo"), 10)
+        assert "HIGH" in result
+
+        # Test MODERATE severity (20% < x <= 50%)
+        system_mod = WarehouseConversationSystem(MockSiloSeverityModel(30))
+        result = system_mod._format_silo_analytics(
+            system_mod.model.predict_task(x, edge_index, "silo"), 10)
+        assert "MODERATE" in result
+
+        # Test LOW severity (<= 20%)
+        system_low = WarehouseConversationSystem(MockSiloSeverityModel(10))
+        result = system_low._format_silo_analytics(
+            system_low.model.predict_task(x, edge_index, "silo"), 10)
+        assert "LOW" in result
+
+    def test_quality_status_levels(self) -> None:
+        """Test quality status classification branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                WarehouseConversationSystem, )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        # Create mock model for quality scores
+        class MockQualityModel:
+            def __init__(self, avg_quality: float) -> None:
+                self.avg_quality = avg_quality
+
+            def predict_task(self, x: torch.Tensor, edge_index: torch.Tensor,
+                             task: str) -> torch.Tensor:
+                return torch.full((x.shape[0], 1), self.avg_quality)
+
+        x = torch.randn(10, 384)
+        edge_index = torch.randint(0, 10, (2, 15))
+
+        # Test EXCELLENT status (> 0.8)
+        system_exc = WarehouseConversationSystem(MockQualityModel(0.9))
+        result = system_exc._format_quality_analytics(
+            system_exc.model.predict_task(x, edge_index, "quality"), 10)
+        assert "EXCELLENT" in result
+
+        # Test GOOD status (0.6 < x <= 0.8)
+        system_good = WarehouseConversationSystem(MockQualityModel(0.7))
+        result = system_good._format_quality_analytics(
+            system_good.model.predict_task(x, edge_index, "quality"), 10)
+        assert "GOOD" in result
+
+        # Test POOR status (<= 0.6)
+        system_poor = WarehouseConversationSystem(MockQualityModel(0.4))
+        result = system_poor._format_quality_analytics(
+            system_poor.model.predict_task(x, edge_index, "quality"), 10)
+        assert "POOR" in result
+
+    def test_impact_risk_levels(self) -> None:
+        """Test impact risk level classification branches."""
+        try:
+            from torch_geometric.utils.data_warehouse import (
+                SimpleWarehouseModel,
+                WarehouseConversationSystem,
+            )
+        except ImportError:
+            pytest.skip("Data warehouse not available")
+
+        system = WarehouseConversationSystem(SimpleWarehouseModel())
+        torch.randn(10, 384)
+
+        # Test HIGH risk (> 30% high impact)
+        pred_high = torch.zeros(10, 3)
+        pred_high[:4, 2] = 5.0  # 40% high impact
+        data = system._extract_impact_data(pred_high, 10)
+        assert data['risk_level'] == 'HIGH'
+
+        # Test MEDIUM risk (10% < x <= 30%)
+        pred_med = torch.zeros(10, 3)
+        pred_med[:2, 2] = 5.0  # 20% high impact
+        data = system._extract_impact_data(pred_med, 10)
+        assert data['risk_level'] == 'MEDIUM'
+
+        # Test LOW risk (<= 10%)
+        pred_low = torch.zeros(10, 3)
+        pred_low[:1, 2] = 5.0  # 10% high impact
+        data = system._extract_impact_data(pred_low, 10)
+        assert data['risk_level'] == 'LOW'
 
 
 class TestWarehouseTraining:

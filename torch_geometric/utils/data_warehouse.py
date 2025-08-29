@@ -88,12 +88,13 @@ class GATWrapper(nn.Module):
         return self.gat(x, edge_index)
 
 
-# PyG imports with fallbacks
+# PyG LLM imports with fallbacks for optional transformers dependency
 try:
     from torch_geometric.nn.models import GRetriever
     from torch_geometric.nn.nlp import LLM
     HAS_GRETRIEVER = True
 except ImportError:
+    # LLM module requires transformers package (optional dependency)
     HAS_GRETRIEVER = False
 
     class GRetriever:  # type: ignore

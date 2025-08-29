@@ -780,21 +780,65 @@ def create_relbench_hetero_data(
     use_dummy_fallback: bool = False,
     batch_size: int = DEFAULT_BATCH_SIZE,
 ) -> HeteroData:
-    """Create HeteroData from RelBench dataset with warehouse enhancements.
+    """Create HeteroData from a RelBench dataset with warehouse enhancements.
+
+    Labels (on homogeneous graph ``h = data._homo_data_with_labels``):
+      - ``lineage_label``: ``LongTensor[num_total_nodes]``, values ``0..4``
+        (FK depth, capped). Descriptive mapping (not enforced):
+        0=source, 1=staged, 2=transformed, 3=aggregated, 4=derived
+      - ``silo_label``:    ``FloatTensor[num_total_nodes]``,
+        values ``{0.0, 1.0}``
+        (connectivity). Descriptive mapping (not enforced):
+        0.0=connected, 1.0=isolated
+      - ``anomaly_label``: ``LongTensor[num_total_nodes]`` from heuristics
+        (``FloatTensor`` in dummy fallback)
+
+    ``external_labels``: Optional dict with keys in
+    {``'lineage'``, ``'silo'``, ``'anomaly'``} mapping to tensors of shape
+    ``(num_total_nodes,)`` matching the dtypes above.
 
     Args:
         dataset_name: Name of the RelBench dataset
         sbert_model: Sentence transformer model for embeddings
         sample_size: Optional sample size for large datasets
         create_lineage_labels: Whether to create lineage labels
+            (FK depth analysis)
         create_silo_labels: Whether to create silo labels
+            (connectivity/degree analysis)
         create_anomaly_labels: Whether to create anomaly labels
+            (graph centrality/degree statistics)
         external_labels: Pre-computed labels to use instead of heuristics
         use_dummy_fallback: Whether to use dummy data if RelBench fails
         batch_size: Batch size for embedding computation
 
     Returns:
         HeteroData object with embeddings and optional warehouse labels
+
+    Example:
+        >>> data = create_relbench_hetero_data(
+        ...     'rel-amazon',
+        ...     create_lineage_labels=True,
+        ...     create_silo_labels=True,
+        ...     create_anomaly_labels=True,
+        ... )
+        >>> h = data._homo_data_with_labels
+        >>> (h.lineage_label.dtype, h.silo_label.dtype)  # doctest: +SKIP
+        (torch.int64, torch.float32)
+
+        >>> import torch
+        >>> N = 1000
+        >>> external_labels = {
+        ...     'lineage': torch.randint(0, 5, (N,), dtype=torch.long),
+        ...     'silo': torch.randint(0, 2, (N,), dtype=torch.float),
+        ...     'anomaly': torch.randint(0, 2, (N,), dtype=torch.long),
+        ... }
+        >>> data = create_relbench_hetero_data(
+        ...     'rel-amazon',
+        ...     create_lineage_labels=True,
+        ...     create_silo_labels=True,
+        ...     create_anomaly_labels=True,
+        ...     external_labels=external_labels,
+        ... )  # doctest: +SKIP
 
     Raises:
         RelBenchError: If processing fails and no fallback is requested
