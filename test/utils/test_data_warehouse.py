@@ -1,7 +1,7 @@
 # isort: skip_file
 """Comprehensive tests for data warehouse intelligence system."""
 
-from typing import Any, cast
+from typing import Any, Optional, cast
 
 import pytest
 import torch
@@ -2064,7 +2064,7 @@ class TestAdditionalCoverage:
 
             def inference(self, question: list[str], x: torch.Tensor,
                           edge_index: torch.Tensor, batch: torch.Tensor,
-                          max_out_tokens: int | None = None,
+                          max_out_tokens: Optional[int] = None,
                           **_: Any) -> list[str]:
                 return ["This is a detailed answer."]
 
