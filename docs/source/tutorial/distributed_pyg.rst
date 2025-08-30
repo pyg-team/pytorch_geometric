@@ -1,6 +1,6 @@
 Distributed Training in PyG
 ===========================
-Note that this method is deprecated in liue of CuGraph, the recommended multi-gpu method. See `CuGraph Examples Repo <https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
+Note that this method is deprecated in lieu of CuGraph, the recommended multi-gpu method. See `CuGraph Examples Repo <https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
 .. figure:: ../_figures/intel_kumo.png
    :width: 400px
