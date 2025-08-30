@@ -82,7 +82,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
-- Deprecate `torch_geometric.distributed` in lieu of `CuGraph` ([#10411](https://github.com/pyg-team/pytorch_geometric/pull/10411))
+- Deprecated `torch_geometric.distributed` in lieu of `cuGraph` ([#10411](https://github.com/pyg-team/pytorch_geometric/pull/10411))
 
 ### Fixed
 
