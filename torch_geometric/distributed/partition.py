@@ -367,6 +367,7 @@ class Partitioner:
         with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
 
+
 def load_partition_info(
     root_dir: str,
     partition_idx: int,
