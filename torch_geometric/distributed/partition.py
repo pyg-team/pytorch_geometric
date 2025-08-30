@@ -9,7 +9,6 @@ import torch
 
 import torch_geometric.distributed as pyg_dist
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.deprecation import deprecated
 from torch_geometric.io import fs
 from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.sampler.utils import sort_csc
