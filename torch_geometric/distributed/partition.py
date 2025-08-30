@@ -366,9 +366,6 @@ class Partitioner:
         with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
 
-
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
 def load_partition_info(
     root_dir: str,
     partition_idx: int,
