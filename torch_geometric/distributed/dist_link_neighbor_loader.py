@@ -17,6 +17,7 @@ from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 @deprecated("Use 'cuGraph' instead.\
     See https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples"
+
             # noqa
             )
 class DistLinkNeighborLoader(LinkLoader, DistLoader):

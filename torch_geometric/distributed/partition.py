@@ -15,6 +15,7 @@ from torch_geometric.loader.cluster import ClusterData
 from torch_geometric.sampler.utils import sort_csc
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
+
 class Partitioner:
     r"""Partitions the graph and its features of a
     :class:`~torch_geometric.data.Data` or
