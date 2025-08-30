@@ -15,13 +15,16 @@ from torch_geometric.sampler.base import NegativeSampling, SubgraphType
 from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples" # noqa
+            )
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
     r"""A distributed loader that performs sampling from edges.
 
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+    Deprecated, use 'cuGraph' instead.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
     Args:
         data (tuple): A (:class:`~torch_geometric.data.FeatureStore`,
