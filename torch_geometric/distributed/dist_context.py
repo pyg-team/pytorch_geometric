@@ -9,12 +9,12 @@ class DistRole(Enum):
 
 
 @dataclass
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
+@deprecated("Use 'CuGraph' instead.\
+    See https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples") # noqa
 class DistContext:
     r"""Context information of the current process.
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+    Deprecated, use 'CuGraph' instead.
+    See `cuGraph examples repo <https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_. # noqa
     """
     rank: int
     global_rank: int
