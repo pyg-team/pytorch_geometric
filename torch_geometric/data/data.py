@@ -1242,10 +1242,8 @@ class Data(BaseData, FeatureStore, GraphStore):
         if root1 != root2:
             if self._ranks[root1] < self._ranks[root2]:
                 self._parents[root1] = root2
-                self._ranks[root2] += 1
             elif self._ranks[root1] > self._ranks[root2]:
                 self._parents[root2] = root1
-                self._ranks[root1] += 1
             else:
                 self._parents[root2] = root1
                 self._ranks[root1] += 1
