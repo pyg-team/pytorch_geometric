@@ -612,7 +612,7 @@ def test_hetero_data_connected_components_single_node_type():
     assert len(split_data) == 5
     for data in split_data:
         assert isinstance(data, HeteroData)
-    
+
     assert split_data[0].node_types == ['red', 'blue']
     assert split_data[1].node_types == ['red', 'blue']
     assert split_data[2].node_types == ['red', 'blue']
