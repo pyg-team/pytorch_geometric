@@ -1207,20 +1207,6 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     # Connected Components Helper Functions ###################################
 
-    def _check_slicable_and_mutable(self):
-        r"""Checks if the node and edge attributes are slicable and mutable.
-        Raises a TypeError if any of the attributes do not support slicing or
-        are not mutable.
-        This is necessary for the `separate` method to work correctly.
-        """
-        for key in self._store.keys():
-            if key in {'edge_index', 'adj', 'adj_t'}:
-                continue
-            if not hasattr(self[key], "__getitem__"):
-                raise TypeError(f"Attribute '{key}' does not support slicing.")
-            if not hasattr(self[key], "__setitem__"):
-                raise TypeError(f"Attribute '{key}' is not mutable.")
-
     def _find_parent(self, node: int) -> int:
         r"""Finds and returns the representative parent of the given node in a
         disjoint-set (union-find) data structure. Implements path compression
