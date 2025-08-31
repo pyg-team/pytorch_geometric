@@ -13,8 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-general:
-  use_uvloop: true
+# qa_retriever_tool
+
+#general:
+#  use_uvloop: true
+
+memory:
+  saas_memory:
+    _type: mem0_memory
 
 retrievers:
   qa_retriever:
@@ -22,7 +28,7 @@ retrievers:
     uri: http://localhost:19530
     collection_name: "qa_docs"
     embedding_model: milvus_embedder
-    top_k: 10
+    top_k: 2
 
 functions:
   qa_retriever_tool:
@@ -30,12 +36,27 @@ functions:
     retriever: qa_retriever
     topic: Retrieve information from QA doc
 
+  add_memory:
+      _type: add_memory
+      memory: saas_memory
+      description: |
+        Add any facts about user preferences to long term memory. Always use this if users mention a preference.
+        The input to this tool should be a string that describes the user's preference, not the question or answer.
+
+  get_memory:
+    _type: get_memory
+    memory: saas_memory
+    description: |
+      Always call this tool before calling any other tools, even if the user does not mention to use it.
+      The question should be about user preferences which will help you format your response.
+      For example: "How does the user like responses formatted?"
+
 llms:
   nim_llm:
     _type: nim
     model_name: nvidia/llama-3.1-nemotron-70b-instruct
     temperature: 0
-    max_tokens: 4096
+    max_completion_tokens: 128
     top_p: 1
 
 embedders:
@@ -48,5 +69,9 @@ workflow:
   _type: react_agent
   tool_names:
    - qa_retriever_tool
+   - add_memory
+   - get_memory
   verbose: true
   llm_name: nim_llm
+  # Override the default system prompt here to ensure the agent always uses the memory tool correctly
+  

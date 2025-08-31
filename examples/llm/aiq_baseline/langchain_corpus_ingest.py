@@ -26,6 +26,11 @@ from tqdm import tqdm
 
 from torch_geometric.nn import LLMJudge, SentenceTransformer
 
+from uuid import uuid4
+from langchain_milvus import Milvus
+from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings
+from langchain_core.documents import Document
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -35,10 +40,14 @@ logger = logging.getLogger(__name__)
 
 # Define constants for better readability
 DEFAULT_ENDPOINT_URL = "https://integrate.api.nvidia.com/v1"
-ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
+# ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
+ENCODER_MODEL_NAME_DEFAULT = "nvidia/nv-embedqa-e5-v5"
 LLM_GENERATOR_NAME_DEFAULT = "nvidia/llama-3.1-nemotron-70b-instruct"
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
 
+def emb_text(text_lines, model):
+    embeddings = model.encode(text_lines)
+    return embeddings
 
 def test(milvus_client, encoder_model, metric_type: str, dataset: str,
          collection_name: str, llm_generator_name: str):
@@ -47,23 +56,24 @@ def test(milvus_client, encoder_model, metric_type: str, dataset: str,
         qa_pairs = json.load(file)
 
     score = []
+    idx = -1
     for data_point in tqdm(qa_pairs, desc="Retrieving pairs"):
+        idx += 1
+        if idx == 100:
+            break
         if data_point.get("is_impossible"):
             continue
         question, answer = (data_point["question"], data_point["answer"])
 
-        print("The question = \n", question)
+        print("\nThe question = \n", question, flush=True)
         search_res = milvus_client.search(
             collection_name=collection_name,
             data=[
                 # Convert the question to an embedding vector
                 emb_text(question, encoder_model).tolist()[0]
             ],  # Use the `emb_text` function to convert the question to an embedding vector
-            limit=10,  # Return top 10 results
-            search_params={
-                "metric_type": metric_type,
-                "params": {}
-            },  # Inner product distance
+            limit=200,  # Return top 200 results
+            search_params={"metric_type": metric_type, "params": {}},  # Inner product distance
             output_fields=["text"],  # Return the text field
         )
 
@@ -79,10 +89,15 @@ def test(milvus_client, encoder_model, metric_type: str, dataset: str,
         ])
 
         SYSTEM_PROMPT = """
-        Human: You are an AI assistant. You are able to find answers to the questions from the contextual passage snippets provided.
+        Human: You are an AI assistant. You are able to find answers to the questions from the
+        contextual passage snippets provided. Formulate an answer without explanation.
         """
+
         USER_PROMPT = f"""
-        use the following pieces of information enclosed in <context> tags to provide an answer to the question enclosed in <question> tags.
+        use the following pieces of information enclosed in <context> tags to provide an answer
+        to the question enclosed in <question> tags. Enclose the answer within
+        <predicted> </predicted> tag. Always try to formulate an answer from the context without
+        explanation.
         <context>
         {context}
         </context>
@@ -107,31 +122,73 @@ def test(milvus_client, encoder_model, metric_type: str, dataset: str,
             ],
             #temperature=0.2,
             #top_p=0.7,
-            #max_tokens=1024,
+            max_tokens=128,
             #stream=True
         )
 
         # FIXME: Trim response that will be passed to LLM
-        print(response.choices[0].message.content)
+        #print(response.choices[0].message.content, flush=True)
         response = response.choices[0].message.content
+        print(response)
+        print("\ncorrect answer: ", answer, flush=True)
 
         # NOTE: update the env variables for the 'NV_NIM_KEY' and the 'ENDPOINT_URL'
-        llm_judge = LLMJudge()
+
+        llm_judge = LLMJudge(NV_NIM_MODEL_DEFAULT, os.getenv('NIM_API_KEY'), DEFAULT_ENDPOINT_URL)
         score.append(llm_judge.score(question, response, answer))
+        print("score = ", score, flush=True)
+        print("\n\n")
 
+    avg_scores = sum(score) / len(score)
+    print("Avg marlin accuracy=", avg_scores, flush=True)
+    print("*" * 5 + "NOTE" + "*" * 5, flush=True)
+    print("Marlin Accuracy is Estimated by LLM as a Judge!", flush=True)
+    print("Improvement of this estimation process is WIP...", flush=True)
 
-def emb_text(text_lines, model):
-    embeddings = model.encode(text_lines)
-    return embeddings
+async def main(*,
+         milvus_uri: str,
+         collection_name: str,
+         dataset: str,
+         drop_collection: bool,
+         embedding_model: str,
+         chunk_size: int,
+         chunk_overlap: int,
+         ):
+    embedder = NVIDIAEmbeddings(model=embedding_model, truncate="END")
+    
+    # Create the Milvus vector store
+    vector_store = Milvus(
+        embedding_function=embedder,
+        collection_name=collection_name,
+        connection_args={"uri": milvus_uri},
+    )
+    
+    if drop_collection:
+        logger.info("Drop Milvus collection: %s", collection_name)
+        vector_store.client.drop_collection(collection_name)
 
-
-def main(*, milvus_uri: str, collection_name: str, dataset: str,
-         llm_generator_name: str, drop_collection: bool, embedding_model: str,
-         chunk_size: int, chunk_overlap: int, metric_type: str):
-
+    # Check if collection existed (Milvus connects to existing collections during init)
+    collection_existed_before = vector_store.col is not None
+    
+    if collection_existed_before: # FIXME
+        logger.info("Using existing Milvus collection: %s", collection_name)
+        # Get collection info for logging
+        try:
+            num_entities = vector_store.client.query(collection_name=collection_name,
+                                                     filter="",
+                                                     output_fields=["count(*)"])
+            entity_count = num_entities[0]["count(*)"] if num_entities else "unknown number of"
+            logger.info("Collection '%s' contains %s documents", collection_name, entity_count)
+        except Exception as e:
+            logger.warning("Could not get collection info: %s", e)
+    else:
+        logger.info("Collection '%s' does not exist, will be created when documents are added", collection_name)
+    
+    
     dir_to_read = os.path.join(dataset, "corpus")
     files_to_read = os.path.join(dir_to_read, "*.txt")
     text_lines = []
+    doc_ids = []
     logger.info("Divide large bodies of text into smaller chunks")
     for file_path in glob(files_to_read, recursive=True):
         with open(file_path) as file:
@@ -145,69 +202,18 @@ def main(*, milvus_uri: str, collection_name: str, dataset: str,
         )
 
         chunks = text_splitter.split_text(file_text)
-        text_lines += chunks
+        #text_lines += Document(page_content=chunks)
+        text_lines.append(Document(page_content=chunks[0]))
+    
+    ids = [str(uuid4()) for _ in range(len(text_lines))]
+    doc_ids.extend(await vector_store.aadd_documents(documents=text_lines, ids=ids))
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    encoder_model = SentenceTransformer(
-        model_name=embedding_model).to(device).eval()
-
-    test_embedding = emb_text("This is a test", encoder_model)
-    # The test above is used to retrieve the embedding dim
-    embedding_dim = len(test_embedding[0])
-
-    # Setting the uri as a local file, e.g../milvus.db, is the most convenient method,
-    # as it automatically utilizes Milvus Lite to store all data in this file.
-
-    # If you have large scale of data, you can set up a more performant Milvus server on
-    # docker or kubernetes. In this setup, please use the server uri, e.g.http://localhost:19530, as your uri.
-    # If you want to use Zilliz Cloud, the fully managed cloud service for Milvus, adjust the uri and token,
-    # which correspond to the Public Endpoint and Api key in Zilliz Cloud.
-    milvus_client = MilvusClient(uri=milvus_uri)
-
-    # FIXME: For now, always drop collection prior to each run
-    if drop_collection:
-        milvus_client.drop_collection(collection_name)
-        logger.info("Successfully dropped the collection '%s'",
-                    collection_name)
-
-        # Create a new collection
-        milvus_client.create_collection(
-            collection_name=collection_name,
-            dimension=embedding_dim,
-            metric_type="IP",  # Inner product distance:
-            # Strong consistency waits for all loads to complete, adding latency with large datasets
-            # consistency_level="Strong",  # Strong consistency level
-        )
-        logger.info("Successfully created collection '%s'", collection_name)
-
-        emb_text_lines = []
-
-        emb_text_lines = emb_text(text_lines, encoder_model).tolist()
-
-        data = [{
-            "id": idx,
-            "vector": text_line,
-            "text": text_lines[idx]
-        } for (idx, text_line) in enumerate(emb_text_lines)]
-        """
-        data = []
-        # logger.info("Adding %s document chunks to Milvus collection %s", len(text_lines), collection_name)
-        for i, line in enumerate(tqdm(text_lines, desc="Creating embeddings")):
-            data.append({"id": i, "vector": emb_text(line).tolist()[0], "text": line})
-        """
-
-        # Insert the data into the collection
-        # FIXME: Should we add the option to update an existing collection with new documents?
-        milvus_client.insert(collection_name=collection_name, data=data)
-        logger.info(
-            "Successfully added %s document chunks to Milvus collection %s",
-            len(text_lines), collection_name)
-
-    return (milvus_client, encoder_model)
+    return
 
 
 if __name__ == "__main__":
     import argparse
+    import asyncio
 
     CUDA_COLLECTION_NAME = "qa_docs"
     DEFAULT_URI = "http://localhost:19530"
@@ -231,7 +237,7 @@ if __name__ == "__main__":
     parser.add_argument('--embedding_model', type=str,
                         default=ENCODER_MODEL_NAME_DEFAULT,
                         help="The embedding model")
-    parser.add_argument('--chunk_size', type=int, default=1024,
+    parser.add_argument('--chunk_size', type=int, default=2048,
                         help="Character chunk size when splitting the text")
     parser.add_argument('--chunk_overlap', type=int, default=128,
                         help="Character chunk overlap when splitting the text")
@@ -241,19 +247,13 @@ if __name__ == "__main__":
                         help="Use react_agent")
     args = parser.parse_args()
 
-    (milvus_client, encoder_model) = main(
-        milvus_uri=args.milvus_uri, collection_name=args.collection_name,
-        dataset=args.dataset, llm_generator_name=args.llm_generator_name,
-        drop_collection=args.drop_collection,
-        embedding_model=args.embedding_model, chunk_size=args.chunk_size,
-        chunk_overlap=args.chunk_overlap, metric_type=args.metric_type)
-
-    if not args.with_react_agent:
-        test(
-            milvus_client=milvus_client,
-            encoder_model=encoder_model,
-            metric_type=args.metric_type,
-            dataset=args.dataset,
+    asyncio.run(
+        main(
+            milvus_uri=args.milvus_uri,
             collection_name=args.collection_name,
-            llm_generator_name=args.llm_generator_name,
-        )
+            dataset=args.dataset,
+            drop_collection=args.drop_collection,
+            embedding_model=args.embedding_model,
+            chunk_size=args.chunk_size,
+            chunk_overlap=args.chunk_overlap
+        ))
