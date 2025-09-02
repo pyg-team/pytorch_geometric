@@ -20,8 +20,7 @@ from torch_geometric.loader.base import DataLoaderIterator
 @deprecated("Use 'cuGraph' instead.\
     See https://github.com/rapidsai/\
     cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples"
-            )
+    cugraph-pyg/cugraph_pyg/examples")
 class DistLoader:
     r"""A base class for creating distributed data loading routines.
 
