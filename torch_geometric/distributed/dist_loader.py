@@ -17,13 +17,18 @@ from torch_geometric.distributed.rpc import (
 from torch_geometric.loader.base import DataLoaderIterator
 
 
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples"
+            )
 class DistLoader:
     r"""A base class for creating distributed data loading routines.
 
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+    Deprecated, use 'cuGraph' instead.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
     Args:
         current_ctx (DistContext): Distributed context info of the current
