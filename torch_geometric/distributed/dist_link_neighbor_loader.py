@@ -22,7 +22,8 @@ from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
     r"""A distributed loader that performs sampling from edges.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
