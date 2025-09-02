@@ -757,6 +757,7 @@ def test_hetero_data_union():
     assert data._ranks == prev_ranks
     assert data._parents == prev_parents
 
+
 # Feature Store ###############################################################
 
 
