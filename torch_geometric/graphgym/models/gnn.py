@@ -119,7 +119,7 @@ class FeatureEncoder(torch.nn.Module):
                         has_bias=False,
                         cfg=cfg,
                     ))
-            # Update `dim_in` to reflect the new dimension fo the node features
+            # Update `dim_in` to reflect the new dimension of the node features
             self.dim_in = cfg.gnn.dim_inner
         if cfg.dataset.edge_encoder:
             # Encode integer edge features via `torch.nn.Embedding`:
