@@ -75,8 +75,7 @@ class RPCSamplingCallee(RPCCallBase):
 @deprecated("Use 'cuGraph' instead.\
     See https://github.com/rapidsai/\
     cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples"
-            )
+    cugraph-pyg/cugraph_pyg/examples")
 class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader` and

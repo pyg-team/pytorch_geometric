@@ -18,8 +18,7 @@ from torch_geometric.typing import EdgeType, InputNodes, OptTensor
 @deprecated("Use 'cuGraph' instead.\
     See https://github.com/rapidsai/\
     cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples"
-            )
+    cugraph-pyg/cugraph_pyg/examples")
 class DistNeighborLoader(NodeLoader, DistLoader):
     r"""A distributed loader that performs sampling from nodes.
 
