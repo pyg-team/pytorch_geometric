@@ -44,8 +44,12 @@ def rpc_require_initialized(func: Callable) -> Callable:
     cugraph-pyg/cugraph_pyg/examples")
 def global_all_gather(obj, timeout: Optional[int] = None) -> Any:
     r"""Gathers objects from all groups in a list.
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
     """
     if timeout is None:
         return rpc.api._all_gather(obj)
@@ -59,8 +63,12 @@ def global_all_gather(obj, timeout: Optional[int] = None) -> Any:
     cugraph-pyg/cugraph_pyg/examples")
 def global_barrier(timeout: Optional[int] = None) -> None:
     r"""Block until all local and remote RPC processes.
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
     """
     try:
         global_all_gather(obj=None, timeout=timeout)
@@ -127,7 +135,8 @@ def shutdown_rpc(id: str = None, graceful: bool = True,
 class RPCRouter:
     r"""A router to get the worker based on the partition ID.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -161,7 +170,8 @@ def rpc_partition_to_workers(
     r"""Performs an :obj:`all_gather` to get the mapping between partition and
     workers.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -182,7 +192,8 @@ def rpc_partition_to_workers(
 class RPCCallBase(ABC):
     r"""A wrapper base class for RPC calls in remote processes.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -209,7 +220,8 @@ _rpc_call_pool: Dict[int, RPCCallBase] = {}
 def rpc_register(call: RPCCallBase) -> int:
     r"""Registers a call for RPC requests.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -239,7 +251,8 @@ def _rpc_async_call(call_id: int, *args, **kwargs):
 def rpc_async(worker_name: str, call_id: int, args=None, kwargs=None):
     r"""Performs an asynchronous RPC request and returns a future.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -259,7 +272,8 @@ def rpc_async(worker_name: str, call_id: int, args=None, kwargs=None):
 def _rpc_sync_call(call_id: int, *args, **kwargs):
     r"""Entry point for synchronous RPC requests.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -275,7 +289,8 @@ def _rpc_sync_call(call_id: int, *args, **kwargs):
 def rpc_sync(worker_name: str, call_id: int, args=None, kwargs=None):
     r"""Performs a synchronous RPC request and returns a future.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
