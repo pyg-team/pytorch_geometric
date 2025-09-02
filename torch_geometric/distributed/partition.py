@@ -361,7 +361,7 @@ class Partitioner:
             'edge_types': self.edge_types,
             'node_offset': list(node_offset.values()) if node_offset else None,
             'is_hetero': self.is_hetero,
-            'is_sorted': True,  # Based on columnn/destination.
+            'is_sorted': True,  # Based on column/destination.
         }
         with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
