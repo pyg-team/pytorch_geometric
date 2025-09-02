@@ -55,7 +55,8 @@ class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
     processes.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -80,7 +81,8 @@ class DistNeighborSampler:
     used by :class:`~torch_geometric.distributed.DistNeighborLoader` and
     :class:`~torch_geometric.distributed.DistLinkNeighborLoader`.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
