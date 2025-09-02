@@ -20,7 +20,8 @@ from torch_geometric.deprecation import deprecated
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -49,7 +50,8 @@ def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
 class ConcurrentEventLoop:
     r"""Concurrent event loop context.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
