@@ -347,7 +347,10 @@ def index_kg(args, context_docs):
         chkpt_count += 1
         if chkpt_count == chkpt_interval:
             chkpt_count = 0
-            kg_maker.save_kg(args.dataset + "/{m}--{t}--checkpoint_kg.pt")
+            path = args.dataset + "/{m}--{t}--checkpoint_kg.pt"
+            model = kg_maker.NIM_MODEL.split('/')[-1] if not kg_maker.local_LM else "local"
+            path = path.format(m=model, t=datetime.now().strftime("%Y%m%d_%H%M%S"))
+            torch.save(kg_maker.relevant_triples, path)
 
     relevant_triples = kg_maker.relevant_triples
     triples = list(
