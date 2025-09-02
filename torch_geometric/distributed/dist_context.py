@@ -15,7 +15,8 @@ class DistRole(Enum):
     cugraph-pyg/cugraph_pyg/examples")
 class DistContext:
     r"""Context information of the current process.
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
