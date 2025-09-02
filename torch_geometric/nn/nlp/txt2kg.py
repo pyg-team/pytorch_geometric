@@ -87,8 +87,7 @@ class TXT2KG():
             None
         """
         model = self.NIM_MODEL.split('/')[-1] if not self.local_LM else "local"
-        path = path.format(m=model,
-                           t=datetime.now().strftime("%Y%m%d_%H%M%S"))
+        path = path.format(m=model, t=datetime.now().strftime("%Y%m%d_%H%M%S"))
         torch.save(self.relevant_triples, path)
 
     def _chunk_to_triples_str_local(self, txt: str) -> str:
