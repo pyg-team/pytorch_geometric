@@ -20,12 +20,17 @@ from torch_geometric.io import fs
 from torch_geometric.typing import EdgeType, NodeOrEdgeType, NodeType
 
 
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 class RPCCallFeatureLookup(RPCCallBase):
     r"""A wrapper for RPC calls to the feature store.
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+
+    Deprecated, use 'cuGraph' instead.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
     """
     def __init__(self, dist_feature: FeatureStore):
         super().__init__()
