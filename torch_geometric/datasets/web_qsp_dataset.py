@@ -39,9 +39,6 @@ class KGQABaseDataset(InMemoryDataset):
         verbose (bool, optional): Whether to print output. Defaults to False.
         use_pcst (bool, optional): Whether to preprocess the dataset's graph
             with PCST or return the full graphs. (default: :obj:`True`)
-        use_cwq (bool, optional):
-            Whether to load the ComplexWebQuestions dataset.
-            (default: :obj:`True`)
         load_dataset_kwargs (dict, optional):
             Keyword arguments for the `datasets.load_dataset` function.
             (default: :obj:`{}`)
@@ -58,7 +55,6 @@ class KGQABaseDataset(InMemoryDataset):
         force_reload: bool = False,
         verbose: bool = False,
         use_pcst: bool = True,
-        use_cwq: bool = True,
         load_dataset_kwargs: Optional[Dict[str, Any]] = None,
         retrieval_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
