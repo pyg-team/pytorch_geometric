@@ -356,9 +356,10 @@ def index_kg(args, context_docs):
     triples = list(dict.fromkeys(triples))
     raw_triples_path = args.dataset + "/{m}--{t}--raw_triples.pt"
 
+    model_name = kg_maker.NIM_MODEL.split('/')[-1] if not kg_maker.local_LM else "local"
     torch.save(
         triples,
-        raw_triples_path.format(m=kg_maker.get_model_name(),
+        raw_triples_path.format(m=model_name,
                                 t=datetime.now().strftime("%Y%m%d_%H%M%S")))
 
     for old_checkpoint_file in Path(
