@@ -50,8 +50,7 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 @deprecated("Use 'cuGraph' instead.\
     See https://github.com/rapidsai/\
     cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples"
-            )
+    cugraph-pyg/cugraph_pyg/examples")
 class RPCSamplingCallee(RPCCallBase):
     r"""A wrapper for RPC callee that will perform RPC sampling from remote
     processes.
