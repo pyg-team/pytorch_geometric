@@ -11,7 +11,7 @@ This particular feature store abstraction makes a few key assumptions:
 * A feature can be uniquely identified from any associated attributes specified
   in `TensorAttr`.
 
-It is the job of a feature store implementor class to handle these assumptions
+It is the job of a feature store implementer class to handle these assumptions
 properly. For example, a simple in-memory feature store implementation may
 concatenate all metadata values with a feature index and use this as a unique
 index in a KV store. More complicated implementations may choose to partition
@@ -352,7 +352,7 @@ class FeatureStore(ABC):
 
         .. note::
             The default implementation simply iterates over all calls to
-            :meth:`get_tensor`. Implementor classes that can provide
+            :meth:`get_tensor`. Implementer classes that can provide
             additional, more performant functionality are recommended to
             to override this method.
 
@@ -412,7 +412,7 @@ class FeatureStore(ABC):
         value. Returns whether the update was successful.
 
         .. note::
-            Implementor classes can choose to define more efficient update
+            Implementer classes can choose to define more efficient update
             methods; the default performs a removal and insertion.
 
         Args:

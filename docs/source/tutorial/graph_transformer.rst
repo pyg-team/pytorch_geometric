@@ -12,7 +12,7 @@ Transformers on Graphs
 ------------------------------
 
 Compared to Graph Transformers, MPNNs have several drawbacks: (1) WL test: 1-order MPNNs have limited expressivity; (2) Over-smoothing: the features tend to
-converage to the same value while increasing the number of GNN layers; (3) Over-squashing: Losing information when trying to aggregate messages from many neighbors into a single vector;
+coverage to the same value while increasing the number of GNN layers; (3) Over-squashing: Losing information when trying to aggregate messages from many neighbors into a single vector;
 (4) Cannot capture long-range dependencies.
 
 Feeding the whole graph into the Transformer also brings several pros and cons
