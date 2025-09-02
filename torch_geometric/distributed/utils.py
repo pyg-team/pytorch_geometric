@@ -24,7 +24,8 @@ class DistEdgeHeteroSamplerInput:
     during distributed heterogeneous link sampling when source and target node
     types of an input edge are different.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -54,7 +55,8 @@ class NodeDict:
     2) The nodes with duplicates that are further needed to create COO output.
     3) The output nodes without duplicates.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -90,7 +92,8 @@ class BatchDict:
        output.
     3) The output subgraph IDs without duplicates.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
@@ -167,7 +170,8 @@ def filter_dist_store(
     respectively. Sorted attribute values are provided as metadata from
     :class:`DistNeighborSampler`.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
