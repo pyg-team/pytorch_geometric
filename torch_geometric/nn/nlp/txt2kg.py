@@ -86,7 +86,8 @@ class TXT2KG():
         Returns:
             None
         """
-        path = path.format(m=self.get_model_name(),
+        model = self.NIM_MODEL.split('/')[-1] if not self.local_LM else "local"
+        path = path.format(m=model,
                            t=datetime.now().strftime("%Y%m%d_%H%M%S"))
         torch.save(self.relevant_triples, path)
 
@@ -194,10 +195,6 @@ class TXT2KG():
                         pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
-
-    def get_model_name(self) -> str:
-        """Returns the name of model used to generate triples."""
-        return self.NIM_MODEL.split('/')[-1] if not self.local_LM else "local"
 
 
 known_reasoners = [
