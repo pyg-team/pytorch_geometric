@@ -1,4 +1,4 @@
-import atexit
+simport atexit
 import logging
 import os
 from typing import Any, Optional, Union
@@ -24,7 +24,8 @@ from torch_geometric.loader.base import DataLoaderIterator
 class DistLoader:
     r"""A base class for creating distributed data loading routines.
 
-    Deprecated, use 'cuGraph' instead.
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
     See `'cuGraph' examples repo
     <https://github.com/rapidsai/cugraph-gnn/
     tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
