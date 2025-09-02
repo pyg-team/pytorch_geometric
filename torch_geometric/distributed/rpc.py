@@ -149,7 +149,6 @@ class RPCRouter:
 
 
 @rpc_require_initialized
-
 @deprecated("Use 'cuGraph' instead.\
     See https://github.com/rapidsai/\
     cugraph-gnn/tree/main/python/\
