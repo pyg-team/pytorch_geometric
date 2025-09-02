@@ -42,12 +42,17 @@ def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     return asyncio_future
 
 
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 class ConcurrentEventLoop:
     r"""Concurrent event loop context.
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+
+    Deprecated, use 'cuGraph' instead.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
     Args:
         concurrency: max processing concurrency.
