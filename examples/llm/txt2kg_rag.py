@@ -319,10 +319,19 @@ def index_kg(args, context_docs):
     )
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
-    checkpoint_path = os.path.join(args.dataset, "checkpoint_kg.pt")
-    if os.path.exists(checkpoint_path):
-        print("Restoring KG from checkpoint...")
-        saved_relevant_triples = torch.load(checkpoint_path,
+    checkpoint_file = list(Path(args.dataset).glob("*--*--checkpoint_kg.pt"))
+    if len(checkpoint_file) > 1:
+        raise RuntimeError("Error: more than one checkpoint file found")
+
+    if len(checkpoint_file) == 1:
+        print("Restoring KG from checkpoint")
+        checkpoint_file = checkpoint_file[0]
+        checkpoint_model_name = checkpoint_file.name.split('--')[0]
+        # check if triples generation are using the correct model
+        if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_model_name:
+            raise RuntimeError(
+                "Error: stored triples were generated using a different model")
+        saved_relevant_triples = torch.load(checkpoint_file,
                                             weights_only=False)
         kg_maker.relevant_triples = saved_relevant_triples
         kg_maker.doc_id_counter = len(saved_relevant_triples)
@@ -338,17 +347,31 @@ def index_kg(args, context_docs):
         chkpt_count += 1
         if chkpt_count == chkpt_interval:
             chkpt_count = 0
-            kg_maker.save_kg(checkpoint_path)
-    relevant_triples = kg_maker.relevant_triples
+            path = args.dataset + "/{m}--{t}--checkpoint_kg.pt"
+            model = kg_maker.NIM_MODEL.split(
+                '/')[-1] if not kg_maker.local_LM else "local"
+            path = path.format(m=model,
+                               t=datetime.now().strftime("%Y%m%d_%H%M%S"))
+            torch.save(kg_maker.relevant_triples, path)
 
+    relevant_triples = kg_maker.relevant_triples
     triples = list(
         chain.from_iterable(triple_set
                             for triple_set in relevant_triples.values()))
     triples = list(dict.fromkeys(triples))
-    raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
-    torch.save(triples, raw_triples_path)
-    if os.path.exists(checkpoint_path):
-        os.remove(checkpoint_path)
+    raw_triples_path = args.dataset + "/{m}--{t}--raw_triples.pt"
+
+    model_name = kg_maker.NIM_MODEL.split(
+        '/')[-1] if not kg_maker.local_LM else "local"
+    torch.save(
+        triples,
+        raw_triples_path.format(m=model_name,
+                                t=datetime.now().strftime("%Y%m%d_%H%M%S")))
+
+    for old_checkpoint_file in Path(
+            args.dataset).glob("*--*--checkpoint_kg.pt"):
+        os.remove(old_checkpoint_file)
+
     return triples
 
 
@@ -407,14 +430,23 @@ def make_dataset(args):
     data_lists = {"train": [], "validation": [], "test": []}
 
     triples = []
-    raw_triples_path = os.path.join(args.dataset, "raw_triples.pt")
-    if os.path.exists(raw_triples_path):
-        triples = torch.load(raw_triples_path, weights_only=False)
+    raw_triples_file = list(Path(args.dataset).glob("*--*--raw_triples.pt"))
+    if len(raw_triples_file) > 1:
+        raise RuntimeError("Error: multiple raw_triples files found")
+    if len(raw_triples_file) == 1:
+        raw_triples_file = raw_triples_file[0]
+        stored_model_name = raw_triples_file.name.split('--')[0]
+
+        if args.NV_NIM_MODEL.split('/')[-1] != stored_model_name:
+            raise RuntimeError(
+                "Error: stored triples were generated using a different model")
+
+        print(f" -> Saved triples generated with: {stored_model_name}")
+        triples = torch.load(raw_triples_file)
     else:
         triples = index_kg(args, context_docs)
 
     print("Number of triples in our GraphDB =", len(triples))
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # creating the embedding model
@@ -746,7 +778,6 @@ if __name__ == '__main__':
             data_lists = update_data_lists(args, data_lists)
     else:
         data_lists = make_dataset(args)
-
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
     train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
