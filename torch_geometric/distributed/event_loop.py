@@ -13,12 +13,18 @@ from torch_geometric.deprecation import deprecated
 # LICENSE: Apache v2
 
 
-@deprecated("use 'CuGraph' instead\
-    https://github.com/rapidsai/cugraph")
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future.
-    Deprecated, use 'CuGraph' instead:
-    https://github.com/rapidsai/cugraph.
+
+    Deprecated, use 'cuGraph' instead.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
+
     """
     loop = asyncio.get_event_loop()
     asyncio_future = loop.create_future()
