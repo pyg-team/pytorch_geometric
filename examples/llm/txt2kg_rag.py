@@ -55,7 +55,7 @@ from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
+ENCODER_MODEL_NAME_DEFAULT = "Qwen/Qwen3-0.6B"
 KG_CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
@@ -739,8 +739,11 @@ def test(model, test_loader, args):
         test_batch.question = new_qs
         if args.skip_graph_rag:
             test_batch.desc = ""
-        preds = (inference_step(model, test_batch,
-                                max_out_tokens=max_chars_in_train_answer / 2))
+        
+        ####
+        # SET TO 400
+        ####
+        preds = (inference_step(model, test_batch, max_out_tokens=400))
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
