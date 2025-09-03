@@ -346,6 +346,9 @@ def index_kg(args, context_docs):
         kg_maker.add_doc_2_KG(txt=context_doc)
         chkpt_count += 1
         if chkpt_count == chkpt_interval:
+            for old_checkpoint_file in Path(
+              args.dataset).glob("*--*--checkpoint_kg.pt"):
+                os.remove(old_checkpoint_file)
             chkpt_count = 0
             path = args.dataset + "/{m}--{t}--checkpoint_kg.pt"
             model = kg_maker.NIM_MODEL.split(
