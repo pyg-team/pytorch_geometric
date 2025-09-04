@@ -18,6 +18,6 @@ __all__ = [
     'GRetriever',
     'MoleculeGPT',
     'GLEM',
-    'ProtienMPNN',
+    'ProteinMPNN',
     'GITMol',
 ]
