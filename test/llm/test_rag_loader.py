@@ -6,10 +6,8 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.llm.rag_loader import RAGQueryLoader
 from torch_geometric.llm.models import SentenceTransformer
-from torch_geometric.sampler import SamplerOutput
-from torch_geometric.testing import onlyRAG
+from torch_geometric.llm.rag_loader import RAGQueryLoader
 from torch_geometric.llm.utils.backend_utils import (
     create_graph_from_triples,
     create_remote_backend_from_graph_data,
@@ -17,6 +15,8 @@ from torch_geometric.llm.utils.backend_utils import (
 from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
 from torch_geometric.llm.utils.graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.llm.utils.vectorrag import VectorRetriever
+from torch_geometric.sampler import SamplerOutput
+from torch_geometric.testing import onlyRAG
 
 
 class MockRAGFeatureStore:
