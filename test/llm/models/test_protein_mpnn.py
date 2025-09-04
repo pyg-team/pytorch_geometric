@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn.models import ProteinMPNN
+from torch_geometric.llm.models import ProteinMPNN
 from torch_geometric.testing import withPackage
 
 

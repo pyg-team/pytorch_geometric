@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from torch_geometric.nn.models.glem import deal_nan
+from torch_geometric.llm.models.glem import deal_nan
 
 
 def test_deal_nan_tensor_replaces_nans():

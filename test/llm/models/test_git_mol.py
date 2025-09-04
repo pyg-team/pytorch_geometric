@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn.models import GITMol
+from torch_geometric.llm.models import GITMol
 from torch_geometric.testing import withPackage
 
 
