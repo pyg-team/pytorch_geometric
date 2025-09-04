@@ -7,13 +7,13 @@ from typing import Any, Dict, Iterator, List, Optional
 import torch
 from tqdm import tqdm
 
-from torch_geometric.data import (
-    InMemoryDataset,
+from torch_geometric.data import InMemoryDataset
+from torch_geometric.llm.large_graph_indexer import (
+    EDGE_RELATION,
     LargeGraphIndexer,
     TripletLike,
-    get_features_for_triplets_groups,
+    get_features_for_triplets_groups
 )
-from torch_geometric.data.large_graph_indexer import EDGE_RELATION
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import retrieval_via_pcst
 
