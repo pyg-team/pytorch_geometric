@@ -8,7 +8,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.llm.models import SentenceTransformer
-from torch_geometric.llm.rag.backend_utils import batch_knn
+from torch_geometric.llm.backend_utils import batch_knn
 
 
 class VectorRetriever(Protocol):
