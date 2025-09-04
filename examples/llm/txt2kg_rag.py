@@ -769,6 +769,7 @@ if __name__ == '__main__':
     saved_NIM_KEY = args.NV_NIM_KEY
     args.NV_NIM_KEY = "********"
     print(f"Starting {args.dataset} training with args: ", args)
+    print(f"Using Encoding Model: {ENCODER_MODEL_NAME_DEFAULT}")
     args.NV_NIM_KEY = saved_NIM_KEY
 
     dataset_name = os.path.basename(args.dataset)
