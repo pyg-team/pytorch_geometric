@@ -1,8 +1,8 @@
 import pytest
 import torch
 
-from torch_geometric.testing import onlyRAG
 from torch_geometric.llm.utils.vectorrag import DocumentRetriever
+from torch_geometric.testing import onlyRAG
 
 
 @pytest.fixture

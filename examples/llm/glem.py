@@ -24,9 +24,9 @@ from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from torch_geometric import seed_everything
 from torch_geometric.data import download_google_url
 from torch_geometric.datasets import TAGDataset
+from torch_geometric.llm import GLEM
 from torch_geometric.loader import DataLoader, NeighborLoader
 from torch_geometric.nn.models import GAT, GCN, GraphSAGE
-from torch_geometric.llm import GLEM
 
 
 def get_n_params(model):

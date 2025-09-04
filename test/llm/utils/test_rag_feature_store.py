@@ -4,9 +4,9 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
 from torch_geometric.sampler import SamplerOutput
 from torch_geometric.testing.decorators import onlyRAG
-from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
 
 
 class TestKNNRAGFeatureStore:
