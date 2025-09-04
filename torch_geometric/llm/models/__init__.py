@@ -9,7 +9,7 @@ from .glem import GLEM
 from .protein_mpnn import ProteinMPNN
 from .git_mol import GITMol
 
-__all__ = classes = [
+__all__ = [
     'SentenceTransformer',
     'VisionTransformer',
     'LLM',
