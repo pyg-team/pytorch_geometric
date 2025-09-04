@@ -27,7 +27,7 @@ class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
     :class:`~torch_geometric.nn.conv.SAGEConv` based on the :obj:`cugraph-ops`
     package that fuses message passing computation for accelerated execution
     and lower memory footprint.
-    The easiest way to enable :obj:`cugraph-ops`
+    The current method to enable :obj:`cugraph-ops`
     is to use `The NVIDIA PyG Container
     <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg>`_.
     """
