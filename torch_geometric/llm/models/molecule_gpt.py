@@ -3,8 +3,8 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.nn.attention import QFormer
 from torch_geometric.llm.models.llm import BOS, LLM, MAX_NEW_TOKENS
+from torch_geometric.nn.attention import QFormer
 from torch_geometric.utils import to_dense_batch
 
 
