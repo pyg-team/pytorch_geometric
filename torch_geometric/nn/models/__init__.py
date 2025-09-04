@@ -29,7 +29,6 @@ from .gnnff import GNNFF
 from .pmlp import PMLP
 from .neural_fingerprint import NeuralFingerprint
 from .visnet import ViSNet
-from .g_retriever import GRetriever
 from .git_mol import GITMol
 from .molecule_gpt import MoleculeGPT
 from .protein_mpnn import ProteinMPNN
@@ -87,7 +86,6 @@ __all__ = classes = [
     'PMLP',
     'NeuralFingerprint',
     'ViSNet',
-    'GRetriever',
     'GITMol',
     'MoleculeGPT',
     'ProteinMPNN',

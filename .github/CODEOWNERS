@@ -16,14 +16,6 @@
 
 /docs/ @rusty1s @akihironitta
 
-/torch_geometric/loader/rag_loader.py @puririshi98
-
-/torch_geometric/data/large_graph_indexer.py @puririshi98
-
-/torch_geometric/utils/rag @puririshi98
-
-/torch_geometric/nn/nlp @puririshi98
-
-/torch_geometric/nn/models/g_retriever.py @puririshi98
-
 /examples/llm @puririshi98
+
+/torch_geometric/llm @puririshi98
