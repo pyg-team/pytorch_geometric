@@ -387,8 +387,6 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         if self.weighted and edge_label_weight is None:
             raise ValueError(f"'edge_label_weight' is a required argument for "
                              f"weighted '{self.__class__.__name__}' metrics")
-        if not self.weighted:
-            edge_label_weight = None
 
         data = LinkPredMetricData(  # Share metric data across metrics.
             pred_index_mat=pred_index_mat,
