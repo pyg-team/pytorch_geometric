@@ -12,7 +12,7 @@ from torch_geometric.llm.large_graph_indexer import (
     EDGE_RELATION,
     LargeGraphIndexer,
     TripletLike,
-    get_features_for_triplets_groups
+    get_features_for_triplets_groups,
 )
 from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.utils.rag.backend_utils import retrieval_via_pcst
