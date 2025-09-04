@@ -3,7 +3,7 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.llm.models import LLM, MAX_NEW_TOKENS
+from torch_geometric.llm.models.llm import LLM, MAX_NEW_TOKENS
 from torch_geometric.utils import scatter
 
 
