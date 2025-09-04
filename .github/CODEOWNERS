@@ -6,7 +6,7 @@
 
 /.github/ @rusty1s @akihironitta
 
-/.github/CODEOWNDERS @rusty1s
+/.github/CODEOWNERS @rusty1s
 
 /torch_geometric/data/ @rusty1s @mananshah99 @akihironitta
 
