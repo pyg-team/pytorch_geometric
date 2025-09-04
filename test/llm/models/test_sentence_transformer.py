@@ -1,6 +1,6 @@
 import pytest
 
-from torch_geometric.nn.nlp import SentenceTransformer
+from torch_geometric.llm.models import SentenceTransformer
 from torch_geometric.testing import onlyRAG, withCUDA, withPackage
 
 

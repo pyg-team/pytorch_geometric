@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 from torch_geometric.data import Data, FeatureStore, HeteroData
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputEdges, InputNodes
-from torch_geometric.utils.rag.vectorrag import VectorRetriever
+from torch_geometric.llm.utils.vectorrag import VectorRetriever
 
 
 class RAGFeatureStore(Protocol):

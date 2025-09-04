@@ -5,16 +5,14 @@ from typing import List
 import pytest
 import torch
 
-from torch_geometric.data import (
-    Data,
-    LargeGraphIndexer,
-    TripletLike,
-    get_features_for_triplets,
-)
-from torch_geometric.data.large_graph_indexer import (
+from torch_geometric.data import Data
+from torch_geometric.llm.large_graph_indexer import (
     EDGE_PID,
     EDGE_RELATION,
     NODE_PID,
+    LargeGraphIndexer,
+    TripletLike,
+    get_features_for_triplets,
 )
 from torch_geometric.typing import WITH_PT20
 

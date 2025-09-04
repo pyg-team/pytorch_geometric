@@ -34,23 +34,25 @@ from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader, RAGQueryLoader
 from torch_geometric.nn import (
     GAT,
+    SGFormer,
+)
+from torch_geometric.llm.models.txt2kg import _chunk_text
+from torch_geometric.llm.models import (
     LLM,
     TXT2KG,
     GRetriever,
     LLMJudge,
     SentenceTransformer,
-    SGFormer,
 )
-from torch_geometric.nn.nlp.txt2kg import _chunk_text
-from torch_geometric.utils.rag.backend_utils import (
+from torch_geometric.llm.utils.backend_utils import (
     create_graph_from_triples,
     create_remote_backend_from_graph_data,
     make_pcst_filter,
     preprocess_triplet,
 )
-from torch_geometric.utils.rag.feature_store import KNNRAGFeatureStore
-from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
-from torch_geometric.utils.rag.vectorrag import DocumentRetriever
+from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
+from torch_geometric.llm.utils.graph_store import NeighborSamplingRAGGraphStore
+from torch_geometric.llm.utils.vectorrag import DocumentRetriever
 
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"

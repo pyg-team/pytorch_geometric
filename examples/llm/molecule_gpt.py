@@ -14,8 +14,7 @@ from torch_geometric import seed_everything
 from torch_geometric.datasets import InstructMolDataset, MoleculeGPTDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv
-from torch_geometric.nn.models import MoleculeGPT
-from torch_geometric.nn.nlp import LLM, SentenceTransformer
+from torch_geometric.llm.models import MoleculeGPT, LLM, SentenceTransformer
 
 
 def save_params_dict(model, save_path):

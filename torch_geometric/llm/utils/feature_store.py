@@ -9,7 +9,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputNodes
-from torch_geometric.utils.rag.backend_utils import batch_knn
+from torch_geometric.llm.utils.backend_utils import batch_knn
 
 
 # NOTE: Only compatible with Homogeneous graphs for now

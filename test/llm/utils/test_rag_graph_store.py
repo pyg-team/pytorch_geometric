@@ -5,7 +5,7 @@ import torch
 
 from torch_geometric.data import FeatureStore
 from torch_geometric.sampler import BidirectionalNeighborSampler, SamplerOutput
-from torch_geometric.utils.rag.graph_store import NeighborSamplingRAGGraphStore
+from torch_geometric.llm.utils.graph_store import NeighborSamplingRAGGraphStore
 
 
 def setup_test_fixtures():

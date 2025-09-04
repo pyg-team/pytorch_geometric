@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn.nlp import VisionTransformer
+from torch_geometric.llm.models import VisionTransformer
 from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
 
 

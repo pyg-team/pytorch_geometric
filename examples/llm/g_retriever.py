@@ -28,8 +28,8 @@ from tqdm import tqdm
 from torch_geometric import seed_everything
 from torch_geometric.datasets import CWQDataset, WebQSPDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models import GAT, GRetriever
-from torch_geometric.nn.nlp import LLM
+from torch_geometric.nn.models import GAT
+from torch_geometric.llm.models import LLM, GRetriever
 
 
 def compute_metrics(eval_output):

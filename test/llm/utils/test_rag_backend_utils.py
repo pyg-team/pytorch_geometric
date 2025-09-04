@@ -5,7 +5,7 @@ from typing import List
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.utils.rag.backend_utils import (
+from torch_geometric.llm.utils.backend_utils import (
     create_graph_from_triples,
     create_remote_backend_from_graph_data,
 )
