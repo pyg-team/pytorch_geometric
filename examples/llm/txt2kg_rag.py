@@ -31,6 +31,7 @@ from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
+from torch_geometric.llm import RAGQueryLoader
 from torch_geometric.llm.models import (
     LLM,
     TXT2KG,
@@ -38,7 +39,6 @@ from torch_geometric.llm.models import (
     LLMJudge,
     SentenceTransformer,
 )
-from torch_geometric.llm import RAGQueryLoader
 from torch_geometric.llm.models.txt2kg import _chunk_text
 from torch_geometric.llm.utils.backend_utils import (
     create_graph_from_triples,
