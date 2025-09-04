@@ -50,4 +50,4 @@ jobs:
       - name: Check type hints
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          uv run --no-project mypy --cache-dir=/dev/null --excluse llm
+          uv run --no-project mypy --cache-dir=/dev/null --exclude llm
