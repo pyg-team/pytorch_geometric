@@ -36,7 +36,7 @@ def test_gat_conv_equality(bias, bipartite, concat, edge_attr, heads, max_num_ne
     if edge_attr and not bipartite:
         e_attrs = torch.randn(size=(edge_index.size(1), 10)
         out1 = conv1(x, edge_index, edge_attr=e_attrs)
-    
+
         out2 = conv2(
             x,
             EdgeIndex(edge_index, sparse_size=size),
@@ -48,7 +48,7 @@ def test_gat_conv_equality(bias, bipartite, concat, edge_attr, heads, max_num_ne
             out1 = conv1((x, x[:size[1]]), edge_index)
         else:
             out1 = conv1(x, edge_index)
-    
+
         out2 = conv2(
             x,
             EdgeIndex(edge_index, sparse_size=size),
