@@ -29,8 +29,8 @@ class SparseCrossEntropy(torch.autograd.Function):
             pos_y = edge_label_index[:, pos_mask]
             pos_weight = edge_label_weight[pos_mask]
 
-            neg_mask = ~pos_mask
-            if neg_mask.numel() > 0:
+            if pos_y.size(1) < edge_label_index.size(1):
+                neg_mask = ~pos_mask
                 neg_y = edge_label_index[:, neg_mask]
                 neg_weight = edge_label_weight[neg_mask]
 
