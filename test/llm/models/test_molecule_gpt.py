@@ -3,8 +3,8 @@ from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 
+from torch_geometric.llm.models import LLM, MoleculeGPT, SentenceTransformer
 from torch_geometric.nn import GINEConv
-from torch_geometric.llm.models import LLM, SentenceTransformer, MoleculeGPT
 from torch_geometric.testing import onlyFullTest, withPackage
 
 
