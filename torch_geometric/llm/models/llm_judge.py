@@ -1,7 +1,8 @@
 from math import isnan
 from typing import Optional
 
-from torch_geometric.llm.models.txt2kg import _chunk_to_triples_str_cloud as call_NIM
+from torch_geometric.llm.models.txt2kg import \
+    _chunk_to_triples_str_cloud as call_NIM
 
 # Credit for original "Marlin Accuracy" system goes to:
 # Gilberto Titericz (NVIDIA)
