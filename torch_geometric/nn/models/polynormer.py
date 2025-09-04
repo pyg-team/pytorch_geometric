@@ -37,7 +37,7 @@ class Polynormer(torch.nn.Module):
             (default: :obj:`True`)
         pre_ln (bool): Pre layer normalization.
             (default: :obj:`False`)
-        post_bn (bool): Post batch normlization.
+        post_bn (bool): Post batch normalization.
             (default: :obj:`True`)
         local_attn (bool): Whether use local attention.
             (default: :obj:`False`)

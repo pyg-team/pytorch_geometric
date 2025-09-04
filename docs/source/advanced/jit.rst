@@ -91,4 +91,4 @@ However, if you want your own GNN module to be compatible with :meth:`torch.jit.
                 # propagate_type: (x: Tensor, edge_weight: Optional[Tensor])
                 return self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
-   If none of these options are given, the :class:`~torch_geometric.nn.conv.MessagePassing` module will infer the arguments of :meth:`~torch_geometric.nn.conv.MessagePassing.propagate` to be of type :class:`torch.Tensor` (mimicing the default type that TorchScript is inferring for non-annotated arguments).
+   If none of these options are given, the :class:`~torch_geometric.nn.conv.MessagePassing` module will infer the arguments of :meth:`~torch_geometric.nn.conv.MessagePassing.propagate` to be of type :class:`torch.Tensor` (mimicking the default type that TorchScript is inferring for non-annotated arguments).

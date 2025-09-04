@@ -10,7 +10,7 @@ This particular graph store abstraction makes a few key assumptions:
   support dynamic modification of edge indices once they have been inserted
   into the graph store.
 
-It is the job of a graph store implementor class to handle these assumptions
+It is the job of a graph store implementer class to handle these assumptions
 properly. For example, a simple in-memory graph store implementation may
 concatenate all metadata values with an edge index and use this as a unique
 index in a KV store. More complicated implementations may choose to partition

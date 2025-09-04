@@ -5,9 +5,11 @@ This readme highlights some key examples.
 
 A great and simple example to start with is [`gcn.py`](./gcn.py), showing a user how to train a [`GCN`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.GCN.html) model for node-level prediction on small-scale homogeneous data.
 
-For a simple link prediction example, see [`link_pred.py`](./link_pred.py).
+For a simple GNN based link prediction example, see [`link_pred.py`](./link_pred.py).
 
-For an improved link prediction approach using Attract-Repel embeddings that can significantly boost accuracy (up to 23% improvement in AUC), see [`ar_link_pred.py`](./ar_link_pred.py). This approach is based on [Pseudo-Euclidean Attract-Repel Embeddings for Undirected Graphs](https://arxiv.org/abs/2106.09671).
+For an improved GNN based link prediction approach using Attract-Repel embeddings that can significantly boost accuracy (up to 23% improvement in AUC), see [`ar_link_pred.py`](./ar_link_pred.py). This approach is based on [Pseudo-Euclidean Attract-Repel Embeddings for Undirected Graphs](https://arxiv.org/abs/2106.09671).
+
+To see an example for doing link prediction with an advanced Graph Transformer called [`LPFormer`](https://arxiv.org/abs/2310.11009), see \[`lpformer.py`\].
 
 For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see the `ogbn_*.py` examples:
 

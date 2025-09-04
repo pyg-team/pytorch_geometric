@@ -594,6 +594,170 @@ def test_hetero_data_update():
                        other['paper', 'paper'].edge_index)
 
 
+def test_hetero_data_connected_components():
+    data = HeteroData()
+    data["red"].x = torch.tensor([[1.0], [2.0], [3.0], [4.0], [5.0]])
+    data["red"].y = torch.tensor([1, 2, 3, 4, 5])
+    data["red"].z = torch.tensor([[1.1, 1.2], [2.1, 2.2], [3.1, 3.2],
+                                  [4.1, 4.2], [5.1, 5.2]])
+    data["blue"].x = torch.tensor([[6.0], [7.0]])
+    data["red", "to",
+         "red"].edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]],
+                                          dtype=torch.long)
+    data["red", "with", "red"].edge_index = torch.tensor([[1], [1]],
+                                                         dtype=torch.long)
+    data["red", "to", "blue"].edge_index = torch.tensor([[0], [0]])
+    split_data = data.connected_components()
+
+    assert isinstance(split_data, list)
+    assert len(split_data) == 4
+    assert isinstance(split_data[0], HeteroData)
+    assert isinstance(split_data[1], HeteroData)
+    assert isinstance(split_data[2], HeteroData)
+    assert isinstance(split_data[3], HeteroData)
+    assert split_data[0].node_types == ['red', 'blue']
+    assert split_data[1].node_types == ['red', 'blue']
+    assert split_data[2].node_types == ['red', 'blue']
+    assert split_data[3].node_types == ['red', 'blue']
+    assert split_data[0].edge_types == [('red', 'to', 'red'),
+                                        ('red', 'with', 'red'),
+                                        ('red', 'to', 'blue')]
+    assert split_data[1].edge_types == [('red', 'to', 'red'),
+                                        ('red', 'with', 'red'),
+                                        ('red', 'to', 'blue')]
+    assert split_data[2].edge_types == [('red', 'to', 'red'),
+                                        ('red', 'with', 'red'),
+                                        ('red', 'to', 'blue')]
+    assert split_data[3].edge_types == [('red', 'to', 'red'),
+                                        ('red', 'with', 'red'),
+                                        ('red', 'to', 'blue')]
+    assert torch.equal(split_data[0]["red"].x, torch.tensor([[1.0], [2.0]]))
+    assert torch.equal(split_data[0]["red"].y, torch.tensor([1, 2]))
+    assert torch.equal(split_data[0]["red"].z,
+                       torch.tensor([[1.1, 1.2], [2.1, 2.2]]))
+    assert torch.equal(split_data[0]["blue"].x, torch.tensor([[6.0]]))
+
+    assert torch.equal(split_data[1]["red"].x, torch.tensor([[3.0], [4.0]]))
+    assert torch.equal(split_data[1]["red"].y, torch.tensor([3, 4]))
+    assert torch.equal(split_data[1]["red"].z,
+                       torch.tensor([[3.1, 3.2], [4.1, 4.2]]))
+    assert torch.equal(split_data[1]["blue"].x, torch.empty((0, 1)))
+
+    assert torch.equal(split_data[2]["red"].x, torch.tensor([[5.0]]))
+    assert torch.equal(split_data[2]["red"].y, torch.tensor([5]))
+    assert torch.equal(split_data[2]["red"].z, torch.tensor([[5.1, 5.2]]))
+    assert torch.equal(split_data[2]["blue"].x, torch.empty((0, 1)))
+
+    assert torch.equal(split_data[3]["red"].x, torch.empty((0, 1)))
+    assert torch.equal(split_data[3]["red"].y,
+                       torch.empty((0, ), dtype=torch.int64))
+    assert torch.equal(split_data[3]["red"].z, torch.empty((0, 2)))
+    assert torch.equal(split_data[3]["blue"].x, torch.tensor([[7.0]]))
+
+    assert torch.equal(split_data[0]["red", "to", "red"].edge_index,
+                       torch.tensor([[0, 1], [1, 0]]))
+    assert torch.equal(split_data[0]["red", "with", "red"].edge_index,
+                       torch.tensor([[1], [1]]))
+    assert torch.equal(split_data[0]["red", "to", "blue"].edge_index,
+                       torch.tensor([[0], [0]]))
+
+    assert torch.equal(split_data[1]["red", "to", "red"].edge_index,
+                       torch.tensor([[0, 1], [1, 0]]))
+    assert torch.equal(split_data[1]["red", "with", "red"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+    assert torch.equal(split_data[1]["red", "to", "blue"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+
+    assert torch.equal(split_data[2]["red", "to", "red"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+    assert torch.equal(split_data[2]["red", "with", "red"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+    assert torch.equal(split_data[2]["red", "to", "blue"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+
+    assert torch.equal(split_data[3]["red", "to", "red"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+    assert torch.equal(split_data[3]["red", "with", "red"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+    assert torch.equal(split_data[3]["red", "to", "blue"].edge_index,
+                       torch.empty((2, 0), dtype=torch.long))
+
+
+def test_hetero_data_connected_components_single_component():
+    data = HeteroData()
+    data["red"].x = torch.tensor([[1.0], [2.0]])
+    data["red"].y = torch.tensor([1, 2])
+    data["red"].z = torch.tensor([[1.1, 1.2], [2.1, 2.2]])
+    data["blue"].x = torch.tensor([[3.0]])
+    data["red", "to", "red"].edge_index = torch.tensor([[0, 1], [1, 0]],
+                                                       dtype=torch.long)
+    data["red", "to", "blue"].edge_index = torch.tensor([[0], [0]])
+    split_data = data.connected_components()
+
+    assert isinstance(split_data, list)
+    assert len(split_data) == 1
+
+
+def test_hetero_data_find_parent():
+    # Case 1: Parent does not exist
+    data = HeteroData()
+    data._parents = {}
+    data._ranks = {}
+    node = ('paper', 1)
+    assert data._find_parent(node) == node
+    assert data._parents == {node: node}
+    assert data._ranks == {node: 0}
+
+    # Case 2: Parent exists
+    data._parents[node] = ('paper', 0)
+    assert data._find_parent(node) == ('paper', 0)
+
+
+def test_hetero_data_union():
+    # Setup: two nodes in different sets
+    data = HeteroData()
+    data._parents = {}
+    data._ranks = {}
+    node1 = ('paper', 1)
+    node2 = ('paper', 2)
+
+    # Initially, both nodes are their own parents with rank 0
+    assert data._find_parent(node1) == node1
+    assert data._find_parent(node2) == node2
+    data._ranks[node1] = 0
+    data._ranks[node2] = 0
+
+    # Union them: node2 should now point to node1, and node1's rank increases
+    data._union(node1, node2)
+    assert data._find_parent(node1) == node1
+    assert data._find_parent(node2) == node1
+    assert data._ranks[node1] == 1
+
+    # Add a third node with higher rank and union with node1
+    node3 = ('paper', 3)
+    data._parents[node3] = node3
+    data._ranks[node3] = 2
+    data._union(node1, node3)
+    # node1's parent should now be node3, since node3 has higher rank
+    assert data._find_parent(node1) == node3
+    assert data._find_parent(node3) == node3
+
+    # Add a fourth node with lower rank and union with node3
+    node4 = ('paper', 4)
+    data._parents[node4] = node4
+    data._ranks[node4] = 0
+    data._union(node3, node4)
+    assert data._find_parent(node4) == node3
+    assert data._find_parent(node3) == node3
+
+    # Union of already connected nodes should not change anything
+    prev_ranks = data._ranks.copy()
+    prev_parents = data._parents.copy()
+    data._union(node1, node3)
+    assert data._ranks == prev_ranks
+    assert data._parents == prev_parents
+
+
 # Feature Store ###############################################################
 
 
