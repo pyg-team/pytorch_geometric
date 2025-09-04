@@ -5,8 +5,8 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import BatchNorm1d, LayerNorm, Linear, ReLU, Sequential
 
-from torch_geometric.nn import GINEConv
 from torch_geometric.llm.models import SentenceTransformer, VisionTransformer
+from torch_geometric.nn import GINEConv
 from torch_geometric.utils import add_self_loops, to_dense_batch
 
 
