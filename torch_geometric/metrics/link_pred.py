@@ -21,6 +21,19 @@ class LinkPredMetricData:
     edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]]
     edge_label_weight: Optional[Tensor] = None
 
+    def __post_init__(self) -> None:
+        # Filter all negative weights - they should not be used as ground-truth
+        if self.edge_label_weight is not None:
+            pos_mask = self.edge_label_weight > 0
+            self.edge_label_weight = self.edge_label_weight[pos_mask]
+            if isinstance(self.edge_label_index, Tensor):
+                self.edge_label_index = self.edge_label_index[:, pos_mask]
+            else:
+                self.edge_label_index = (
+                    self.edge_label_index[0][pos_mask],
+                    self.edge_label_index[1][pos_mask],
+                )
+
     @property
     def pred_rel_mat(self) -> Tensor:
         r"""Returns a matrix indicating the relevance of the `k`-th prediction.
