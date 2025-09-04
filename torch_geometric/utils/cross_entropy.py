@@ -18,30 +18,51 @@ class SparseCrossEntropy(torch.autograd.Function):
     ) -> Tensor:
         assert inputs.dim() == 2
 
-        logsumexp = inputs.logsumexp(dim=-1)
-        ctx.save_for_backward(inputs, edge_label_index, edge_label_weight,
-                              logsumexp)
+        # Support for both positive and negative weights:
+        # Positive weights scale the logits *after* softmax.
+        # Negative weights scale the denominator *before* softmax:
+        pos_y = edge_label_index
+        neg_y = pos_weight = neg_weight = None
 
-        out = inputs[edge_label_index[0], edge_label_index[1]]
-        out.neg_().add_(logsumexp[edge_label_index[0]])
         if edge_label_weight is not None:
-            out *= edge_label_weight
+            pos_mask = edge_label_weight >= 0
+            pos_y = edge_label_index[:, pos_mask]
+            pos_weight = edge_label_weight[pos_mask]
+
+            if pos_y.size(1) < edge_label_index.size(1):
+                neg_mask = ~pos_mask
+                neg_y = edge_label_index[:, neg_mask]
+                neg_weight = edge_label_weight[neg_mask]
+
+            if neg_y is not None and neg_weight is not None:
+                inputs = inputs.clone()
+                inputs[
+                    neg_y[0],
+                    neg_y[1],
+                ] += neg_weight.abs().log().clamp(min=1e-12)
+
+        logsumexp = inputs.logsumexp(dim=-1)
+        ctx.save_for_backward(inputs, pos_y, pos_weight, logsumexp)
+
+        out = inputs[pos_y[0], pos_y[1]]
+        out.neg_().add_(logsumexp[pos_y[0]])
+        if pos_weight is not None:
+            out *= pos_weight
 
         return out.sum() / inputs.size(0)
 
     @staticmethod
     @torch.autograd.function.once_differentiable
     def backward(ctx: Any, grad_out: Tensor) -> Tuple[Tensor, None, None]:
-        inputs, edge_label_index, edge_label_weight, logsumexp = (
-            ctx.saved_tensors)
+        inputs, pos_y, pos_weight, logsumexp = ctx.saved_tensors
 
         grad_out = grad_out / inputs.size(0)
-        grad_out = grad_out.expand(edge_label_index.size(1))
+        grad_out = grad_out.expand(pos_y.size(1))
 
-        if edge_label_weight is not None:
-            grad_out = grad_out * edge_label_weight
+        if pos_weight is not None:
+            grad_out = grad_out * pos_weight
 
-        grad_logsumexp = scatter(grad_out, edge_label_index[0], dim=0,
+        grad_logsumexp = scatter(grad_out, pos_y[0], dim=0,
                                  dim_size=inputs.size(0), reduce='sum')
 
         # Gradient computation of `logsumexp`: `grad * (self - result).exp()`
@@ -49,7 +70,7 @@ class SparseCrossEntropy(torch.autograd.Function):
         grad_input.exp_()
         grad_input.mul_(grad_logsumexp.view(-1, 1))
 
-        grad_input[edge_label_index[0], edge_label_index[1]] -= grad_out
+        grad_input[pos_y[0], pos_y[1]] -= grad_out
 
         return grad_input, None, None
 
