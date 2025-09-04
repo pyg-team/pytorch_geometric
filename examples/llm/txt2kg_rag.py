@@ -55,7 +55,7 @@ from torch_geometric.utils.rag.vectorrag import DocumentRetriever
 # Define constants for better readability
 NV_NIM_MODEL_DEFAULT = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
 LLM_GENERATOR_NAME_DEFAULT = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-ENCODER_MODEL_NAME_DEFAULT = "Alibaba-NLP/gte-modernbert-base"
+ENCODER_MODEL_NAME_DEFAULT = "Qwen/Qwen3-0.6B"
 KG_CHUNK_SIZE_DEFAULT = 512
 GNN_HID_CHANNELS_DEFAULT = 1024
 GNN_LAYERS_DEFAULT = 4
@@ -346,6 +346,9 @@ def index_kg(args, context_docs):
         kg_maker.add_doc_2_KG(txt=context_doc)
         chkpt_count += 1
         if chkpt_count == chkpt_interval:
+            for old_checkpoint_file in Path(
+                    args.dataset).glob("*--*--checkpoint_kg.pt"):
+                os.remove(old_checkpoint_file)
             chkpt_count = 0
             path = args.dataset + "/{m}--{t}--checkpoint_kg.pt"
             model = kg_maker.NIM_MODEL.split(
@@ -736,8 +739,11 @@ def test(model, test_loader, args):
         test_batch.question = new_qs
         if args.skip_graph_rag:
             test_batch.desc = ""
-        preds = (inference_step(model, test_batch,
-                                max_out_tokens=max_chars_in_train_answer / 2))
+
+        ####
+        # SET TO 400
+        ####
+        preds = (inference_step(model, test_batch, max_out_tokens=400))
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
@@ -763,6 +769,7 @@ if __name__ == '__main__':
     saved_NIM_KEY = args.NV_NIM_KEY
     args.NV_NIM_KEY = "********"
     print(f"Starting {args.dataset} training with args: ", args)
+    print(f"Using Encoding Model: {ENCODER_MODEL_NAME_DEFAULT}")
     args.NV_NIM_KEY = saved_NIM_KEY
 
     dataset_name = os.path.basename(args.dataset)
