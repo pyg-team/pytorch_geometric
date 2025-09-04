@@ -30,6 +30,7 @@ def safe_onnx_export(
 
     This function provides workarounds for the ``onnx_ir.serde.SerdeError``
     with boolean ``allowzero`` attributes that occurs in certain environments.
+    See: https://github.com/pytorch/pytorch/issues/161941
 
     Args:
         model (torch.nn.Module): The model to export.
@@ -89,6 +90,7 @@ def safe_onnx_export(
             warnings.warn(
                 f"Encountered known ONNX serialization issue ({error_type}). "
                 "This is likely the allowzero boolean attribute bug. "
+                "See: https://github.com/pytorch/pytorch/issues/161941. "
                 "Attempting workaround...", UserWarning, stacklevel=2)
 
             # Apply workaround strategies
@@ -109,6 +111,8 @@ def _apply_onnx_allowzero_workaround(
 ) -> bool:
     r"""Apply workaround strategies for onnx_ir.serde.SerdeError with allowzero
     attributes.
+
+    See: https://github.com/pytorch/pytorch/issues/161941
 
     Returns:
         bool: True if export succeeded, False if skipped (when
@@ -196,10 +200,11 @@ def _apply_onnx_allowzero_workaround(
             "ONNX export skipped due to known upstream issue "
             "(onnx_ir.serde.SerdeError). "
             "This is caused by a bug in the onnx_ir package where boolean "
-            "allowzero attributes cannot be serialized. All workarounds "
-            "failed. Consider updating packages: pip install --upgrade onnx "
-            "onnxscript "
-            "onnx_ir", UserWarning, stacklevel=3)
+            "allowzero attributes cannot be serialized. "
+            "See: https://github.com/pytorch/pytorch/issues/161941. "
+            "All workarounds failed. Consider updating packages: "
+            "pip install --upgrade onnx onnxscript onnx_ir", UserWarning,
+            stacklevel=3)
         return False
 
     # For regular usage: provide detailed error message
@@ -207,6 +212,7 @@ def _apply_onnx_allowzero_workaround(
         "Failed to export model to ONNX due to known serialization issue. "
         "This is caused by a bug in the onnx_ir package where boolean "
         "allowzero attributes cannot be serialized. "
+        "See: https://github.com/pytorch/pytorch/issues/161941. "
         "Workarounds attempted: dynamo=False, multiple opset versions, "
         "and legacy export. ")
 
