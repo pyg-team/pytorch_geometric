@@ -29,7 +29,8 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
     :class:`~torch_geometric.nn.conv.RGCNConv` based on the :obj:`cugraph-ops`
     package that fuses message passing computation for accelerated execution
     and lower memory footprint.
-    The easiest way to enable :obj:`cugraph-ops` is to use `The NVIDIA PyG Container
+    The easiest way to enable :obj:`cugraph-ops`
+    is to use `The NVIDIA PyG Container
     <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg>`_.
     """
     def __init__(self, in_channels: int, out_channels: int, num_relations: int,
