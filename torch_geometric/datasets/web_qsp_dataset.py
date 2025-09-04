@@ -14,8 +14,8 @@ from torch_geometric.llm.large_graph_indexer import (
     TripletLike,
     get_features_for_triplets_groups,
 )
-from torch_geometric.nn.nlp import SentenceTransformer
-from torch_geometric.utils.rag.backend_utils import retrieval_via_pcst
+from torch_geometric.llm.models import SentenceTransformer
+from torch_geometric.llm.utils.backend_utils import retrieval_via_pcst
 
 
 def preprocess_triplet(triplet: TripletLike) -> TripletLike:
