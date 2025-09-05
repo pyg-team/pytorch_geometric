@@ -143,8 +143,14 @@ def _apply_onnx_allowzero_workaround(
                 kwargs_opset['opset_version'] = opset_version
 
                 warnings.warn(
-                    f"Retrying ONNX export with opset_version={opset_version}",
-                    UserWarning, stacklevel=3)
+                    ("Retrying ONNX export with "
+                     f"opset_version={opset_version}. "
+                     "Note: opset <18 may reduce optimizations. "
+                     "Consider upgrading: pip install --upgrade onnx "
+                     "onnxscript onnx_ir"),
+                    UserWarning,
+                    stacklevel=3,
+                )
 
                 torch.onnx.export(model, args, f, **kwargs_opset)
                 return True
