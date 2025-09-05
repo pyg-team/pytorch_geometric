@@ -43,8 +43,7 @@ def safe_get_world_size():
 
 
 def init_distributed():
-    """
-    Initialize distributed training if environment variables are set.
+    """Initialize distributed training if environment variables are set.
     Fallback to single-GPU mode otherwise.
     """
     # Already initialized ? nothing to do
@@ -74,12 +73,17 @@ def init_distributed():
     world_size = int(os.environ["WORLD_SIZE"])
     if world_size > 1:
         dist.init_process_group(backend="nccl", init_method="env://")
-        print(f"Initialized distributed: rank {os.environ['RANK']}, world_size {world_size}")
+        print(
+            f"Initialized distributed: rank {os.environ['RANK']}, world_size {world_size}"
+        )
     else:
         print("Running in single-GPU / single-process mode")
 
     if not dist.is_initialized():
-        dist.init_process_group(backend="nccl", init_method="env://", rank=0, world_size=1)    
+        dist.init_process_group(backend="nccl", init_method="env://", rank=0,
+                                world_size=1)
+
+
 # ------------------------------------------------------
 
 
@@ -260,18 +264,20 @@ if __name__ == '__main__':
         print(f"Training {args.dataset} with {args.model} model.")
 
     if args.model == "GAT":
-        model = torch_geometric.nn.models.GAT(
-            dataset.num_features, args.hidden_channels,
-            args.num_layers, dataset.num_classes,
-            heads=args.num_heads).cuda()
+        model = torch_geometric.nn.models.GAT(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes,
+                                              heads=args.num_heads).cuda()
     elif args.model == "GCN":
-        model = torch_geometric.nn.models.GCN(
-            dataset.num_features, args.hidden_channels,
-            args.num_layers, dataset.num_classes).cuda()
+        model = torch_geometric.nn.models.GCN(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes).cuda()
     elif args.model == "SAGE":
         model = torch_geometric.nn.models.GraphSAGE(
-            dataset.num_features, args.hidden_channels,
-            args.num_layers, dataset.num_classes).cuda()
+            dataset.num_features, args.hidden_channels, args.num_layers,
+            dataset.num_classes).cuda()
     elif args.model == 'SGFormer':
         # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
@@ -286,7 +292,8 @@ if __name__ == '__main__':
     else:
         raise ValueError(f'Unsupported model type: {args.model}')
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
+                                 weight_decay=args.wd)
 
     loader_kwargs = dict(
         data=data,
@@ -295,7 +302,8 @@ if __name__ == '__main__':
         batch_size=args.batch_size,
     )
 
-    train_loader = create_loader(split_idx['train'], 'train', **loader_kwargs, shuffle=True)
+    train_loader = create_loader(split_idx['train'], 'train', **loader_kwargs,
+                                 shuffle=True)
     val_loader = create_loader(split_idx['valid'], 'val', **loader_kwargs)
     test_loader = create_loader(split_idx['test'], 'test', **loader_kwargs)
 
@@ -304,7 +312,8 @@ if __name__ == '__main__':
 
     prep_time = round(time.perf_counter() - wall_clock_start, 2)
     if safe_get_rank() == 0:
-        print("Total time before training begins (prep_time) =", prep_time, "seconds")
+        print("Total time before training begins (prep_time) =", prep_time,
+              "seconds")
         print("Beginning training...")
 
     val_accs, times, train_times, inference_times = [], [], [], []
@@ -322,8 +331,9 @@ if __name__ == '__main__':
         val_accs.append(val_acc)
 
         if safe_get_rank() == 0:
-            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
-                  f'Val: {val_acc:.4f}, Time: {train_end - train_start:.4f}s')
+            print(
+                f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
+                f'Val: {val_acc:.4f}, Time: {train_end - train_start:.4f}s')
 
         times.append(time.perf_counter() - train_start)
         best_val = max(best_val, val_acc)
@@ -331,7 +341,8 @@ if __name__ == '__main__':
     if safe_get_rank() == 0:
         print(f"Total time used: {time.perf_counter()-start:.4f}")
         print("Final Validation: {:.4f} ± {:.4f}".format(
-            torch.tensor(val_accs).mean(), torch.tensor(val_accs).std()))
+            torch.tensor(val_accs).mean(),
+            torch.tensor(val_accs).std()))
         print(f"Best validation accuracy: {best_val:.4f}")
         print("Testing...")
         final_test_acc = test(model, test_loader)
