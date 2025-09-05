@@ -249,6 +249,8 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
+@onlyLinux
+@withPackage('torch>=2.6.0')
 @withPackage('onnx', 'onnxruntime', 'onnxscript')
 @pytest.mark.parametrize('dynamo', [
     pytest.param(
@@ -261,6 +263,8 @@ def test_packaging():
 def test_onnx(tmp_path, dynamo):
     import onnx
     import onnxruntime as ort
+
+    from torch_geometric import safe_onnx_export
 
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
     warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
@@ -293,8 +297,8 @@ def test_onnx(tmp_path, dynamo):
         **kwargs,
     )
 
-    model = onnx.load(path)
-    onnx.checker.check_model(model)
+    onnx_model = onnx.load(path)
+    onnx.checker.check_model(onnx_model)
 
     providers = ['CPUExecutionProvider']
     ort_session = ort.InferenceSession(path, providers=providers)

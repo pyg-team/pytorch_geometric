@@ -167,7 +167,8 @@ class MyCommentedConv(MessagePassing):
 
 
 def test_my_commented_conv():
-    # Check that `self.propagate` occurences in comments are correctly ignored.
+    # Check that `self.propagate` occurrences in comments are correctly
+    # ignored.
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
 

@@ -12,10 +12,9 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import InstructMolDataset, MoleculeGPTDataset
+from torch_geometric.llm.models import LLM, MoleculeGPT, SentenceTransformer
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv
-from torch_geometric.nn.models import MoleculeGPT
-from torch_geometric.nn.nlp import LLM, SentenceTransformer
 
 
 def save_params_dict(model, save_path):
@@ -62,6 +61,12 @@ def train(
                                (num_epochs - warmup_epochs)))
         param_group['lr'] = lr
         return lr
+
+    def get_clippable_params(params):
+        return [
+            p for p in params
+            if isinstance(p, torch.Tensor) and not hasattr(p, '_spec')
+        ]
 
     start_time = time.time()
     # Load dataset ================================================
@@ -144,14 +149,15 @@ def train(
                          batch.edge_attr, batch.smiles, batch.instruction,
                          batch.y)
             loss.backward()
-            clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+            clip_grad_norm_(
+                get_clippable_params(optimizer.param_groups[0]['params']), 0.1)
 
             if (step + 1) % grad_steps == 0:
                 adjust_learning_rate(optimizer.param_groups[0], lr,
                                      step / len(train_loader) + epoch)
 
             optimizer.step()
-            epoch_loss += loss.item()
+            epoch_loss += loss.detach().item()
 
             if (step + 1) % grad_steps == 0:
                 lr = optimizer.param_groups[0]['lr']

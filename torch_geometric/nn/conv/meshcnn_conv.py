@@ -1,7 +1,7 @@
 # The below is to suppress the warning on torch.nn.conv.MeshCNNConv::update
 # pyright: reportIncompatibleMethodOverride=false
+import warnings
 from typing import Optional
-from warnings import warn
 
 import torch
 from torch.nn import Linear, Module, ModuleList
@@ -64,7 +64,7 @@ class MeshCNNConv(MessagePassing):
         :math:`\mathcal{N}(1) = (a(1), b(1), c(1), d(1)) = (2, 3, 4, 5)`
 
 
-    Because of this ordering constrait, :obj:`MeshCNNConv` **requires
+    Because of this ordering constraint, :obj:`MeshCNNConv` **requires
     that the columns of** :math:`A`
     **be ordered in the following way**:
 
@@ -149,7 +149,7 @@ class MeshCNNConv(MessagePassing):
 
 
     Args:
-        in_channels (int): Corresonds to :math:`\text{Dim-Out}(k)`
+        in_channels (int): Corresponds to :math:`\text{Dim-Out}(k)`
             in the above overview. This
             represents the output dimension of the prior layer. For the given
             input mesh :math:`\mathcal{m} = (V, F)`, the prior layer is
@@ -184,7 +184,7 @@ class MeshCNNConv(MessagePassing):
             a vector of dimensions :attr:`out_channels`.
 
     Discussion:
-        The key difference that seperates :obj:`MeshCNNConv` from a traditional
+        The key difference that separates :obj:`MeshCNNConv` from a traditional
         message passing graph neural network is that :obj:`MeshCNNConv`
         requires the set of neighbors for a node
         :math:`\mathcal{N}(u) = (v_1, v_2, ...)`
@@ -198,7 +198,7 @@ class MeshCNNConv(MessagePassing):
         :math:`\mathbb{S}_4`. Put more plainly, in tradition message passing
         GNNs, the network is *unable* to distinguish one neighboring node
         from another.
-        In constrast, in :obj:`MeshCNNConv`, each of the 4 neighbors has a
+        In contrast, in :obj:`MeshCNNConv`, each of the 4 neighbors has a
         "role", either the "a", "b", "c", or "d" neighbor. We encode this fact
         by requiring that :math:`\mathcal{N}` return the 4-tuple,
         where the first component is the "a" neighbor, and so on.
@@ -444,7 +444,7 @@ class MeshCNNConv(MessagePassing):
         """
         assert isinstance(kernels, ModuleList), \
             f"Parameter 'kernels' must be a \
-            torch.nn.module.ModuleList with 5 memebers, but we got \
+            torch.nn.module.ModuleList with 5 members, but we got \
             {type(kernels)}."
 
         assert len(kernels) == 5, "Parameter 'kernels' must be a \
@@ -456,13 +456,10 @@ class MeshCNNConv(MessagePassing):
                 {type(network)}"
             if not hasattr(network, "in_channels") and \
                     not hasattr(network, "in_features"):
-                warn(
-                    f"kernel[{i}] does not have attribute \
-                            'in_channels' nor 'out_features'. The \
-                            network must take as input a \
-                            {self.in_channels}-dimensional tensor. \
-                            Still, assuming user configured \
-                            correctly. Continuing..", stacklevel=2)
+                warnings.warn(
+                    f"kernel[{i}] does not have attribute 'in_channels' nor "
+                    f"'out_features'. The network must take as input a "
+                    f"{self.in_channels}-dimensional tensor.", stacklevel=2)
             else:
                 input_dimension = getattr(network, "in_channels",
                                           network.in_features)
@@ -475,13 +472,10 @@ class MeshCNNConv(MessagePassing):
 
             if not hasattr(network, "out_channels") and \
                     not hasattr(network, "out_features"):
-                warn(
-                    f"kernel[{i}] does not have attribute \
-                                'in_channels' nor 'out_features'. The \
-                                network must take as input a \
-                                {self.in_channels}-dimensional tensor. \
-                                Still, assuming user configured \
-                                correctly. Continuing..", stacklevel=2)
+                warnings.warn(
+                    f"kernel[{i}] does not have attribute 'in_channels' nor "
+                    f"'out_features'. The network must take as input a "
+                    f"{self.in_channels}-dimensional tensor.", stacklevel=2)
             else:
                 output_dimension = getattr(network, "out_channels",
                                            network.out_features)

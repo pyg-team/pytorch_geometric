@@ -30,8 +30,8 @@ class AirfRANS(InMemoryDataset):
     divided by the specific mass (one component in meter squared per second
     squared), the turbulent kinematic viscosity (one component in meter squared
     per second).
-    Finaly, a boolean is attached to each point to inform if this point lies on
-    the airfoil or not.
+    Finally, a boolean is attached to each point to inform if this point lies
+    on the airfoil or not.
 
     A library for manipulating simulations of the dataset is available `here
     <https://airfrans.readthedocs.io/en/latest/index.html>`_.

@@ -1,6 +1,8 @@
 External Resources
 ==================
 
+* Fey *et al.*: **PyG 2.0: Scalable Learning on Real World Graphs** [`Paper <https://arxiv.org/abs/2507.16991>`__]
+
 * Matthias Fey and Jan E. Lenssen: **Fast Graph Representation Learning with** :pyg:`null` **PyTorch Geometric** [`Paper <https://arxiv.org/abs/1903.02428>`_, `Slides (3.3MB) <http://rusty1s.github.io/pyg_slides.pdf>`__, `Poster (2.3MB) <http://rusty1s.github.io/pyg_poster.pdf>`__, `Notebook <http://htmlpreview.github.io/?https://github.com/rusty1s/rusty1s.github.io/blob/master/pyg_notebook.html>`__]
 
 * :stanford:`Stanford CS224W: Machine Learning with Graphs`: **Graph Machine Learning lectures** [:youtube:`null` `Youtube <https://www.youtube.com/watch?v=JAB_plj2rbA>`__]
