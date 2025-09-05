@@ -43,8 +43,7 @@ def safe_get_world_size():
 
 
 def init_distributed():
-    """
-    Initialize distributed training if environment variables are set.
+    """Initialize distributed training if environment variables are set.
     Fallback to single-GPU mode otherwise.
     """
     # Already initialized ? nothing to do
@@ -80,8 +79,10 @@ def init_distributed():
         print("Running in single-GPU / single-process mode")
 
     if not dist.is_initialized():
-        dist.init_process_group(backend="nccl", init_method="env://",
-                                rank=0, world_size=1)
+        dist.init_process_group(backend="nccl", init_method="env://", rank=0,
+                                world_size=1)
+
+
 # ------------------------------------------------------
 
 
@@ -262,18 +263,20 @@ if __name__ == '__main__':
         print(f"Training {args.dataset} with {args.model} model.")
 
     if args.model == "GAT":
-        model = torch_geometric.nn.models.GAT(
-            dataset.num_features, args.hidden_channels,
-            args.num_layers, dataset.num_classes,
-            heads=args.num_heads).cuda()
+        model = torch_geometric.nn.models.GAT(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes,
+                                              heads=args.num_heads).cuda()
     elif args.model == "GCN":
-        model = torch_geometric.nn.models.GCN(
-            dataset.num_features, args.hidden_channels,
-            args.num_layers, dataset.num_classes).cuda()
+        model = torch_geometric.nn.models.GCN(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes).cuda()
     elif args.model == "SAGE":
         model = torch_geometric.nn.models.GraphSAGE(
-            dataset.num_features, args.hidden_channels,
-            args.num_layers, dataset.num_classes).cuda()
+            dataset.num_features, args.hidden_channels, args.num_layers,
+            dataset.num_classes).cuda()
     elif args.model == 'SGFormer':
         # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
@@ -337,7 +340,8 @@ if __name__ == '__main__':
     if safe_get_rank() == 0:
         print(f"Total time used: {time.perf_counter()-start:.4f}")
         print("Final Validation: {:.4f} ± {:.4f}".format(
-            torch.tensor(val_accs).mean(), torch.tensor(val_accs).std()))
+            torch.tensor(val_accs).mean(),
+            torch.tensor(val_accs).std()))
         print(f"Best validation accuracy: {best_val:.4f}")
         print("Testing...")
         final_test_acc = test(model, test_loader)
