@@ -117,7 +117,7 @@ class GNNNode(torch.nn.Module):
             num_layers (int): number of GNN message passing layers.
             residual (bool): whether to add residual connection.
             drop_ratio (float): dropout ratio.
-            JK (str): "last" or "sum" to choose JK concat strat.
+            JK (str): "last" or "sum" to choose JK concat strata.
             residual (bool): Whether or not to add the residual
             gnn_type (str): Type of GNN to use.
         """
@@ -302,8 +302,8 @@ class GNN(torch.nn.Module):
             virtual_node (bool): whether to add virtual node or not.
             residual (bool): Whether or not to add the residual
             drop_ratio (float): dropout ratio.
-            JK (str): "last" or "sum" to choose JK concat strat.
-            graph_pooling (str): Graph pooling strat to use.
+            JK (str): "last" or "sum" to choose JK concat strata.
+            graph_pooling (str): Graph pooling strata to use.
         """
         super().__init__()
         if num_layers < 2:
