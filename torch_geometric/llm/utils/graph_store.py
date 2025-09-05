@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union, Tuple
+from typing import Any, Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -20,6 +20,7 @@ from torch_geometric.utils import index_sort
 #    * CSC: (row, colptr)
 #    * CSR: (rowptr, col)
 EdgeTensorType = Union[Tensor, Tuple[Tensor, Tensor]]
+
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     """Neighbor sampling based graph-store to store & retrieve graph data."""
