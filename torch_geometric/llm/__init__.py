@@ -3,7 +3,7 @@ from .rag_loader import RAGQueryLoader
 from .utils import *  # noqa
 from .models import *  # noqa
 
-__all__ = classes = [
+__all__ = [
     LargeGraphIndexer,
     RAGQueryLoader,
 ]
