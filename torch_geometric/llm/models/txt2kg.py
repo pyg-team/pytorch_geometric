@@ -9,6 +9,7 @@ CLIENT_INITD = False
 
 CLIENT = None
 GLOBAL_NIM_KEY = ""
+GREEN = "TEA"
 SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Separate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph."  # noqa
 
 
