@@ -10,7 +10,6 @@ from torch_geometric.sampler import (
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.typing import EdgeTensorType
 from torch_geometric.utils import index_sort
 
 # A representation of an edge index, following the possible formats:
@@ -19,7 +18,7 @@ from torch_geometric.utils import index_sort
 #    * COO: (row, col)
 #    * CSC: (row, colptr)
 #    * CSR: (rowptr, col)
-EdgeTensorType = Union[Tensor, Tuple[Tensor, Tensor]]
+_EdgeTensorType = Union[Tensor, Tuple[Tensor, Tensor]]
 
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
@@ -116,7 +115,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         return ret
 
     @property
-    def edge_index(self) -> EdgeTensorType:
+    def edge_index(self) -> _EdgeTensorType:
         """Gets the edge index of the graph.
 
         :return: The edge index as a tensor.
@@ -124,7 +123,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         return self.get_edge_index(*self.edge_idx_args, **self.edge_idx_kwargs)
 
     def put_edge_index(  # type: ignore[no-untyped-def]
-            self, edge_index: EdgeTensorType, *args, **kwargs) -> bool:
+            self, edge_index: _EdgeTensorType, *args, **kwargs) -> bool:
         """Stores an edge index in the graph store.
 
         :param edge_index: The edge index to store.
@@ -139,7 +138,7 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
 
     # HACKY
     @edge_index.setter  # type: ignore
-    def edge_index(self, edge_index: EdgeTensorType) -> None:
+    def edge_index(self, edge_index: _EdgeTensorType) -> None:
         """Sets the edge index of the graph.
 
         :param edge_index: The edge index to set.
