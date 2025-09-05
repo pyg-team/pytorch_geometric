@@ -264,8 +264,6 @@ def test_onnx(tmp_path, dynamo):
     import onnx
     import onnxruntime as ort
 
-    from torch_geometric import safe_onnx_export
-
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
     warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
 
