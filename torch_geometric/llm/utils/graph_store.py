@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union, Tuple
 
 import torch
 from torch import Tensor
@@ -13,6 +13,13 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import EdgeTensorType
 from torch_geometric.utils import index_sort
 
+# A representation of an edge index, following the possible formats:
+#    * default: Tensor, size = [2, num_edges]
+#    *     Tensor[0, :] == row, Tensor[1, :] == col
+#    * COO: (row, col)
+#    * CSC: (row, colptr)
+#    * CSR: (rowptr, col)
+EdgeTensorType = Union[Tensor, Tuple[Tensor, Tensor]]
 
 class NeighborSamplingRAGGraphStore(LocalGraphStore):
     """Neighbor sampling based graph-store to store & retrieve graph data."""

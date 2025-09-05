@@ -404,15 +404,12 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 # A representation of a feature tensor
 FeatureTensorType = Union[Tensor, np.ndarray]
-"""
-A representation of an edge index, following the possible formats:
-   * default: Tensor, size = [2, num_edges]
-   *     Tensor[0, :] == row, Tensor[1, :] == col
-   * COO: (row, col)
-   * CSC: (row, colptr)
-   * CSR: (rowptr, col)
-"""
-EdgeTensorType = Union[Tensor, Tuple[Tensor, Tensor]]
+
+# A representation of an edge index, following the possible formats:
+#   * COO: (row, col)
+#   * CSC: (row, colptr)
+#   * CSR: (rowptr, col)
+EdgeTensorType = Tuple[Tensor, Tensor]
 
 # Types for message passing ###################################################
 
