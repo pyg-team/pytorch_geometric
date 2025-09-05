@@ -74,12 +74,14 @@ def init_distributed():
     world_size = int(os.environ["WORLD_SIZE"])
     if world_size > 1:
         dist.init_process_group(backend="nccl", init_method="env://")
-        print(f"Initialized distributed: rank {os.environ['RANK']}, world_size {world_size}")
+        rank = os.environ['RANK']
+        print(f"Initialized distributed: rank {rank}, world_size {world_size}")
     else:
         print("Running in single-GPU / single-process mode")
 
     if not dist.is_initialized():
-        dist.init_process_group(backend="nccl", init_method="env://", rank=0, world_size=1)    
+        dist.init_process_group(backend="nccl", init_method="env://",
+                                rank=0, world_size=1)
 # ------------------------------------------------------
 
 
@@ -286,7 +288,8 @@ if __name__ == '__main__':
     else:
         raise ValueError(f'Unsupported model type: {args.model}')
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
+                                 weight_decay=args.wd)
 
     loader_kwargs = dict(
         data=data,
@@ -295,16 +298,18 @@ if __name__ == '__main__':
         batch_size=args.batch_size,
     )
 
-    train_loader = create_loader(split_idx['train'], 'train', **loader_kwargs, shuffle=True)
+    train_loader = create_loader(split_idx['train'], 'train', **loader_kwargs,
+                                 shuffle=True)
     val_loader = create_loader(split_idx['valid'], 'val', **loader_kwargs)
     test_loader = create_loader(split_idx['test'], 'test', **loader_kwargs)
 
     if dist.is_initialized():
         dist.barrier()  # sync before training
 
-    prep_time = round(time.perf_counter() - wall_clock_start, 2)
     if safe_get_rank() == 0:
-        print("Total time before training begins (prep_time) =", prep_time, "seconds")
+        prep_time = round(time.perf_counter() - wall_clock_start, 2)
+        print("Total time before training begins (prep_time) =", prep_time,
+              "seconds")
         print("Beginning training...")
 
     val_accs, times, train_times, inference_times = [], [], [], []
@@ -322,8 +327,9 @@ if __name__ == '__main__':
         val_accs.append(val_acc)
 
         if safe_get_rank() == 0:
-            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
-                  f'Val: {val_acc:.4f}, Time: {train_end - train_start:.4f}s')
+            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, '
+                  f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+                  f'Time: {train_end - train_start:.4f}s')
 
         times.append(time.perf_counter() - train_start)
         best_val = max(best_val, val_acc)
