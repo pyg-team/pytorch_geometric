@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData
+from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed.local_feature_store import LocalFeatureStore
 from torch_geometric.distributed.local_graph_store import LocalGraphStore
 from torch_geometric.sampler import SamplerOutput
@@ -13,11 +14,21 @@ from torch_geometric.typing import EdgeType, NodeType
 
 
 @dataclass
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 class DistEdgeHeteroSamplerInput:
     r"""The sampling input of
     :meth:`~torch_geometric.dstributed.DistNeighborSampler.node_sample` used
     during distributed heterogeneous link sampling when source and target node
     types of an input edge are different.
+
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
     Args:
         input_id (torch.Tensor, optional): The indices of the data loader input
@@ -34,11 +45,21 @@ class DistEdgeHeteroSamplerInput:
     input_type: Optional[EdgeType] = None
 
 
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 class NodeDict:
     r"""Class used during heterogeneous sampling.
     1) The nodes to serve as source nodes in the next layer.
     2) The nodes with duplicates that are further needed to create COO output.
     3) The output nodes without duplicates.
+
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
     """
     def __init__(self, node_types, num_hops):
         self.src: Dict[NodeType, List[Tensor]] = {
@@ -59,6 +80,10 @@ class NodeDict:
         }
 
 
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 class BatchDict:
     r"""Class used during disjoint heterogeneous sampling.
     1) The batch to serve as initial subgraph IDs for source nodes in the next
@@ -66,6 +91,12 @@ class BatchDict:
     2) The subgraph IDs with duplicates that are further needed to create COO
        output.
     3) The output subgraph IDs without duplicates.
+
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
     """
     def __init__(self, node_types, num_hops):
         self.src: Dict[NodeType, List[Tensor]] = {
@@ -82,6 +113,10 @@ class BatchDict:
         }
 
 
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 def remove_duplicates(
     out: SamplerOutput,
     node: Tensor,
@@ -115,6 +150,10 @@ def remove_duplicates(
         return (src, node, src_batch, batch)
 
 
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 def filter_dist_store(
     feature_store: LocalFeatureStore,
     graph_store: LocalGraphStore,
@@ -130,6 +169,12 @@ def filter_dist_store(
     holds nodes in `node` end edges in `edge` for each node and edge type,
     respectively. Sorted attribute values are provided as metadata from
     :class:`DistNeighborSampler`.
+
+    Deprecated, use 'cuGraph' instead for scaling
+    with single or multiple gpus.
+    See `'cuGraph' examples repo
+    <https://github.com/rapidsai/cugraph-gnn/
+    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
     """
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
@@ -168,6 +213,10 @@ def filter_dist_store(
     return data
 
 
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 def as_str(inputs: Union[NodeType, EdgeType]) -> str:
     if isinstance(inputs, NodeType):
         return inputs
@@ -176,6 +225,10 @@ def as_str(inputs: Union[NodeType, EdgeType]) -> str:
     return ''
 
 
+@deprecated("Use 'cuGraph' instead.\
+    See https://github.com/rapidsai/\
+    cugraph-gnn/tree/main/python/\
+    cugraph-pyg/cugraph_pyg/examples")
 def reverse_edge_type(etype: EdgeType) -> EdgeType:
     src, rel, dst = etype
     if src != dst:
