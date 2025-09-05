@@ -15,3 +15,7 @@
 /torch_geometric/sampler/ @rusty1s @mananshah99 @akihironitta
 
 /docs/ @rusty1s @akihironitta
+
+/examples/llm @puririshi98
+
+/torch_geometric/llm @puririshi98
