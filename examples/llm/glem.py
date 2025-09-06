@@ -42,6 +42,7 @@ def get_n_params(model):
 def main(args):
     gpu = args.gpu
     dataset_name = args.dataset
+    text_type = args.text_type if args.dataset == 'arxiv' else 'raw_text'
     root = osp.join('data', 'ogb')
     hf_model = args.hf_model
     pl_ratio = args.pl_ratio
@@ -85,7 +86,7 @@ def main(args):
 
     tag_dataset = TAGDataset(root, dataset, hf_model,
                              token_on_disk=token_on_disk)
-    text_dataset = tag_dataset.to_text_dataset()
+    text_dataset = tag_dataset.to_text_dataset(text_type)
     print(tag_dataset.num_classes, tag_dataset.raw_file_names)
 
     num_classes = tag_dataset.num_classes
@@ -403,8 +404,12 @@ if __name__ == '__main__':
                         help='number of runs')
     parser.add_argument('--num_em_iters', type=int, default=1,
                         help='number of iterations')
-    parser.add_argument("--dataset", type=str, default='products',
+    parser.add_argument("--dataset", type=str, default='arxiv',
                         help='arxiv or products')
+    parser.add_argument(
+        "--text_type", type=str, default='llm_explanation',
+        help="type of text, support raw_text, llm_explanation,"
+        "all for arxiv and raw_text for products")
     parser.add_argument("--pl_ratio", type=float, default=0.5,
                         help="pseudo labels ratio")
     parser.add_argument('--hf_model', type=str, default='prajjwal1/bert-tiny',
