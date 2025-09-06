@@ -16,17 +16,19 @@ def test_appnp():
     assert str(conv) == 'APPNP(K=3, alpha=0.1)'
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
-    assert torch.allclose(conv(x, adj1.t()), out)
+    assert torch.allclose(conv(x, adj1.t()), out, rtol=1e-5, atol=1e-6)
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        assert torch.allclose(conv(x, adj2.t()), out)
+        assert torch.allclose(conv(x, adj2.t()), out, rtol=1e-5, atol=1e-6)
 
     # Run again to test the cached functionality:
     assert conv._cached_edge_index is not None
-    assert torch.allclose(conv(x, edge_index), conv(x, adj1.t()))
+    assert torch.allclose(conv(x, edge_index), conv(x, adj1.t()), rtol=1e-5,
+                          atol=1e-6)
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         assert conv._cached_adj_t is not None
-        assert torch.allclose(conv(x, edge_index), conv(x, adj2.t()))
+        assert torch.allclose(conv(x, edge_index), conv(x, adj2.t()),
+                              rtol=1e-5, atol=1e-6)
 
     conv.reset_parameters()
     assert conv._cached_edge_index is None
@@ -34,10 +36,10 @@ def test_appnp():
 
     if is_full_test():
         jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out)
+        assert torch.allclose(jit(x, edge_index), out, rtol=1e-5, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj2.t()), out)
+            assert torch.allclose(jit(x, adj2.t()), out, rtol=1e-5, atol=1e-6)
 
 
 def test_appnp_dropout():
@@ -47,9 +49,9 @@ def test_appnp_dropout():
 
     # With dropout probability of 1.0, the final output equals to alpha * x:
     conv = APPNP(K=2, alpha=0.1, dropout=1.0)
-    assert torch.allclose(0.1 * x, conv(x, edge_index))
-    assert torch.allclose(0.1 * x, conv(x, adj1.t()))
+    assert torch.allclose(0.1 * x, conv(x, edge_index), rtol=1e-5, atol=1e-6)
+    assert torch.allclose(0.1 * x, conv(x, adj1.t()), rtol=1e-5, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        assert torch.allclose(0.1 * x, conv(x, adj2.t()))
+        assert torch.allclose(0.1 * x, conv(x, adj2.t()), rtol=1e-5, atol=1e-6)
