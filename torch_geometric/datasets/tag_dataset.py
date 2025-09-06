@@ -83,7 +83,6 @@ class TAGDataset(InMemoryDataset):
         # list the vars you want to pass in before run download & process
         self.name = dataset.name
         self.text = text
-        self.llm_explanation = None
         self.llm_prediction_topk = 5
         self.tokenizer_name = tokenizer_name
         from transformers import AutoTokenizer
@@ -134,10 +133,6 @@ class TAGDataset(InMemoryDataset):
         self._data['is_gold'] = is_good_tensor
         if self.text is not None and len(self.text) != self._data.num_nodes:
             raise ValueError("The number of text sequence in 'text' should be "
-                             "equal to number of nodes!")
-        if self.llm_explanation is not None and len(
-                self.llm_explanation) != self._data.num_nodes:
-            raise ValueError("The number of LLM explanation should be "
                              "equal to number of nodes!")
         self.token_on_disk = token_on_disk
         self.tokenize_batch_size = tokenize_batch_size
