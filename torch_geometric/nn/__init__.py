@@ -8,6 +8,7 @@ from .encoding import PositionalEncoding, TemporalEncoding
 from .summary import summary
 
 from .aggr import *  # noqa
+from .attention import *  # noqa
 from .conv import *  # noqa
 from .pool import *  # noqa
 from .glob import *  # noqa
