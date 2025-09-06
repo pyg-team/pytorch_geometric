@@ -31,7 +31,7 @@ train_data, val_data, test_data = T.RandomLinkSplit(
     rev_edge_types=[('movie', 'rev_rates', 'user')],
 )(data)
 
-# Generate the co-occurence matrix of movies<>movies:
+# Generate the co-occurrence matrix of movies<>movies:
 metapath = [('movie', 'rev_rates', 'user'), ('user', 'rates', 'movie')]
 train_data = T.AddMetaPaths(metapaths=[metapath])(train_data)
 
