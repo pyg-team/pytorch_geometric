@@ -1,7 +1,3 @@
-import gc
-
-import torch
-
 from torch_geometric.datasets import TAGDataset
 from torch_geometric.testing import onlyFullTest, withPackage
 
@@ -24,5 +20,3 @@ def test_tag_dataset() -> None:
         == len(tag_dataset.llm_explanation) \
         == len(tag_dataset.llm_prediction)
     assert 1166243 == tag_dataset[0].num_edges
-    torch.cuda.empty_cache()
-    gc.collect()

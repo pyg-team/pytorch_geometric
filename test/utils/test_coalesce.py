@@ -63,8 +63,6 @@ def test_coalesce_jit():
         edge_index: Tensor,
         edge_attr: Optional[Tensor],
     ) -> Tuple[Tensor, Optional[Tensor]]:
-        if edge_attr is None:
-            return coalesce(edge_index), None
         return coalesce(edge_index, edge_attr)
 
     @torch.jit.script
@@ -75,7 +73,7 @@ def test_coalesce_jit():
         return coalesce(edge_index, edge_attr)
 
     edge_index = torch.tensor([[2, 1, 1, 0], [1, 2, 0, 1]])
-    edge_attr: torch.Tensor = torch.tensor([[1], [2], [3], [4]])
+    edge_attr = torch.tensor([[1], [2], [3], [4]])
 
     out = wrapper1(edge_index)
     assert out.size() == edge_index.size()

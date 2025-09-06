@@ -19,7 +19,7 @@ MISSING = '???'
 @overload
 def is_undirected(
     edge_index: Tensor,
-    edge_attr: OptTensor = None,
+    edge_attr: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
 ) -> bool:
     pass
@@ -36,7 +36,7 @@ def is_undirected(  # noqa: F811
 
 def is_undirected(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor]] = None,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
 ) -> bool:
     r"""Returns :obj:`True` if the graph given by :attr:`edge_index` is
@@ -71,7 +71,7 @@ def is_undirected(  # noqa: F811
     if isinstance(edge_attr, Tensor):
         edge_attrs.append(edge_attr)
     elif isinstance(edge_attr, (list, tuple)):
-        edge_attrs = list(edge_attr)
+        edge_attrs = edge_attr
 
     edge_index1, edge_attrs1 = sort_edge_index(
         edge_index,
@@ -123,10 +123,10 @@ def to_undirected(  # noqa: F811
 @overload
 def to_undirected(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: OptTensor,
+    edge_attr: Optional[Tensor],
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
-) -> Tuple[Tensor, OptTensor]:
+) -> Tuple[Tensor, Optional[Tensor]]:
     pass
 
 
@@ -142,7 +142,7 @@ def to_undirected(  # noqa: F811
 
 def to_undirected(  # noqa: F811
     edge_index: Tensor,
-    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
+    edge_attr: Union[Optional[Tensor], List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
 ) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
@@ -195,7 +195,7 @@ def to_undirected(  # noqa: F811
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
     if isinstance(edge_attr, int):
         num_nodes = edge_attr
-        edge_attr = None
+        edge_attr = MISSING
 
     row, col = edge_index[0], edge_index[1]
     row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)

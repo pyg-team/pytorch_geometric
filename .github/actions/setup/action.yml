@@ -21,16 +21,6 @@ runs:
   using: composite
 
   steps:
-    - name: Clear JIT cache
-      run: rm -rf ~/.cache/torch_extensions
-      shell: bash
-
-    - name: Remove Python cache
-      run: |
-        rm -rf ~/.cache/pip
-        rm -rf ~/.cache/torch_extensions
-      shell: bash
-
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:

@@ -80,9 +80,6 @@ class TAGDataset(InMemoryDataset):
         dataset: InMemoryDataset,
         tokenizer_name: str,
         text: Optional[List[str]] = None,
-        llm_explanation: Optional[List[str]] = None,
-        llm_prediction: Optional[Tensor] = None,
-        llm_prediction_topk: int = 5,
         split_idx: Optional[Dict[str, Tensor]] = None,
         tokenize_batch_size: int = 256,
         token_on_disk: bool = False,
@@ -92,9 +89,9 @@ class TAGDataset(InMemoryDataset):
         # list the vars you want to pass in before run download & process
         self.name = dataset.name
         self.text = text
-        self.llm_explanation = llm_explanation
-        self.llm_prediction = llm_prediction
-        self.llm_prediction_topk = llm_prediction_topk
+        self.llm_explanation = None
+        self.llm_prediction = None
+        self.llm_prediction_topk = 5
         self.tokenizer_name = tokenizer_name
         from transformers import AutoTokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
@@ -124,8 +121,6 @@ class TAGDataset(InMemoryDataset):
         if text_on_disk:
             if text is not None:
                 self.save_node_text(text)
-            if llm_explanation is not None:
-                self.save_node_explanation(llm_explanation)
         self.text_on_disk = text_on_disk
         # init will call download and process
         super().__init__(self.root, transform=None, pre_transform=None,
@@ -319,17 +314,6 @@ class TAGDataset(InMemoryDataset):
             print(f'The raw text is existed at {node_text_path}')
         else:
             print(f'Saving raw text file at {node_text_path}')
-            os.makedirs(f'{self.root}/raw', exist_ok=True)
-            text_df = DataFrame(text, columns=['text'])
-            text_df.to_csv(osp.join(node_text_path), compression='gzip',
-                           index=False)
-
-    def save_node_explanation(self, text: List[str]) -> None:
-        node_text_path = osp.join(self.root, 'raw', 'node-gpt-response.csv.gz')
-        if osp.exists(node_text_path):
-            print(f'The llm explanation is existed at {node_text_path}')
-        else:
-            print(f'Saving llm explanation file at {node_text_path}')
             os.makedirs(f'{self.root}/raw', exist_ok=True)
             text_df = DataFrame(text, columns=['text'])
             text_df.to_csv(osp.join(node_text_path), compression='gzip',
