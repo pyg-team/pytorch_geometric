@@ -6,13 +6,13 @@ inputs:
     default: '3.9'
   torch-version:
     required: false
-    default: '2.7.0'
+    default: '2.8.0'
   cuda-version:
     required: false
     default: cpu
   torchvision-version:
     required: false
-    default: '0.22.0'
+    default: '0.23.0'
   full_install:
     required: false
     default: true
@@ -22,7 +22,7 @@ runs:
 
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v6
       with:
         python-version: ${{ inputs.python-version }}
         activate-environment: true

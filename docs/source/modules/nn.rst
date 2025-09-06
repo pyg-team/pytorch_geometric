@@ -251,19 +251,6 @@ Encodings
      {{ name }}
    {% endfor %}
 
-NLP
----------
-
-.. currentmodule:: torch_geometric.nn.nlp
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated
-   :template: autosummary/nn.rst
-
-   {% for name in torch_geometric.nn.nlp.classes %}
-     {{ name }}
-   {% endfor %}
 
 Functional
 ----------
