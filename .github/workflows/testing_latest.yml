@@ -68,16 +68,17 @@ jobs:
       - name: Check installation
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
-          uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-          uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
-        shell: bash
+          import torch
+          print('PyTorch:', torch.__version__)
+          print('CUDA available:', torch.cuda.is_available())
+          print('CUDA:', torch.version.cuda)
+        shell: python
 
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 15
         run: |
-          uv run --no-project pytest --cov --cov-report=xml --durations 10
+          pytest --cov --cov-report=xml --durations 10
 
       - name: Upload coverage
         if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Linux' }}

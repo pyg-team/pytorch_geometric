@@ -30,13 +30,14 @@ jobs:
 
       - name: Check installation
         run: |
-          uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
-          uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-          uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
-        shell: bash
+          import torch
+          print('PyTorch:', torch.__version__)
+          print('CUDA available:', torch.cuda.is_available())
+          print('CUDA:', torch.version.cuda)
+        shell: python
 
       - name: Run tests
         timeout-minutes: 20
         run: |
-          FULL_TEST=1 uv run --no-project pytest --durations 10
+          FULL_TEST=1 pytest --durations 10
         shell: bash

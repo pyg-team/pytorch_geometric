@@ -40,13 +40,13 @@ runs:
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
-        uv pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        uv pip install torch==${{ inputs.torch-version }} --index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version == 'nightly' }}
       run: |
-        uv pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
+        uv pip install --pre torch --index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install compatible networkx
@@ -57,10 +57,11 @@ runs:
 
     - name: Check installation
       run: |
-        uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
-        uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-        uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
-      shell: bash
+        import torch
+        print('PyTorch:', torch.__version__)
+        print('CUDA available:', torch.cuda.is_available())
+        print('CUDA:', torch.version.cuda)
+      shell: python
 
     - name: Install pyg-lib
       if: ${{ inputs.torch-version != 'nightly' }}
@@ -83,7 +84,7 @@ runs:
     - name: Install torchvision
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
-        uv pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        uv pip install torchvision==${{ inputs.torchvision-version }} --index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install extension packages
