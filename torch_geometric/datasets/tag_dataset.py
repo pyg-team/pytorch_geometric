@@ -44,12 +44,6 @@ class TAGDataset(InMemoryDataset):
             on huggingface.co.
         text (List[str]): list of raw text associate with node, the order of
             list should be align with node list
-        llm_explanation (Optional[List[str]]): list of llm explanation
-            associate with node, which should be align with node list
-        llm_prediction (Optional[List[str]]): list of llm prediction associate
-            with node, the order of list should be align with node list
-        llm_prediction_topk (int): Top K prediction from LLM used as
-            features for GNN training, default: 5
         split_idx (Optional[Dict[str, torch.Tensor]]): Optional dictionary,
             for saving split index, it is required that if your dataset doesn't
             have get_split_idx function
@@ -90,7 +84,6 @@ class TAGDataset(InMemoryDataset):
         self.name = dataset.name
         self.text = text
         self.llm_explanation = None
-        self.llm_prediction = None
         self.llm_prediction_topk = 5
         self.tokenizer_name = tokenizer_name
         from transformers import AutoTokenizer
@@ -145,10 +138,6 @@ class TAGDataset(InMemoryDataset):
         if self.llm_explanation is not None and len(
                 self.llm_explanation) != self._data.num_nodes:
             raise ValueError("The number of LLM explanation should be "
-                             "equal to number of nodes!")
-        if self.llm_prediction is not None and len(
-                self.llm_prediction) != self._data.num_nodes:
-            raise ValueError("The number of LLM prediction should be "
                              "equal to number of nodes!")
         self.token_on_disk = token_on_disk
         self.tokenize_batch_size = tokenize_batch_size
@@ -292,7 +281,6 @@ class TAGDataset(InMemoryDataset):
             for i, pred in enumerate(preds):
                 pl[i][:len(pred)] = torch.tensor(
                     pred[:self.llm_prediction_topk], dtype=torch.long) + 1
-            self.llm_prediction = pl
         elif self.name in self.llm_explanation_id:
             self.download()
         else:
@@ -300,7 +288,7 @@ class TAGDataset(InMemoryDataset):
                 'The dataset is not ogbn-arxiv,'
                 'please pass in your llm explanation list to `llm_explanation`'
                 'and llm prediction list to `llm_prediction`')
-        if self.llm_explanation is None or self.llm_prediction is None:
+        if self.llm_explanation is None or pl is None:
             raise ValueError(
                 "The TAGDataset only have ogbn-arxiv LLM explanations"
                 "and predictions in default. The llm explanation and"
