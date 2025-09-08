@@ -21,6 +21,19 @@ class LinkPredMetricData:
     edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]]
     edge_label_weight: Optional[Tensor] = None
 
+    def __post_init__(self) -> None:
+        # Filter all negative weights - they should not be used as ground-truth
+        if self.edge_label_weight is not None:
+            pos_mask = self.edge_label_weight > 0
+            self.edge_label_weight = self.edge_label_weight[pos_mask]
+            if isinstance(self.edge_label_index, Tensor):
+                self.edge_label_index = self.edge_label_index[:, pos_mask]
+            else:
+                self.edge_label_index = (
+                    self.edge_label_index[0][pos_mask],
+                    self.edge_label_index[1][pos_mask],
+                )
+
     @property
     def pred_rel_mat(self) -> Tensor:
         r"""Returns a matrix indicating the relevance of the `k`-th prediction.
@@ -332,7 +345,10 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         r"""The maximum number of top-:math:`k` predictions to evaluate
         against.
         """
-        return max([metric.k for metric in self.values()])
+        return max([
+            metric.k  # type: ignore[return-value]
+            for metric in self.values()
+        ])  # type: ignore[type-var]
 
     @property
     def weighted(self) -> bool:
@@ -371,8 +387,6 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         if self.weighted and edge_label_weight is None:
             raise ValueError(f"'edge_label_weight' is a required argument for "
                              f"weighted '{self.__class__.__name__}' metrics")
-        if not self.weighted:
-            edge_label_weight = None
 
         data = LinkPredMetricData(  # Share metric data across metrics.
             pred_index_mat=pred_index_mat,
@@ -402,17 +416,23 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
 
         for metric in self.values():
             if not isinstance(metric, LinkPredMetric):
-                metric.update(pred_index_mat, edge_label_index,
-                              edge_label_weight)
+                metric.update(  # type: ignore[operator]
+                    pred_index_mat,
+                    edge_label_index,
+                    edge_label_weight,
+                )
 
     def compute(self) -> Dict[str, Tensor]:
         r"""Computes the final metric values."""
-        return {name: metric.compute() for name, metric in self.items()}
+        return {
+            name: metric.compute()  # type: ignore[operator]
+            for name, metric in self.items()
+        }
 
     def reset(self) -> None:
         r"""Reset metric state variables to their default value."""
         for metric in self.values():
-            metric.reset()
+            metric.reset()  # type: ignore[operator]
 
     def __repr__(self) -> str:
         names = [f'  {name}: {metric},\n' for name, metric in self.items()]

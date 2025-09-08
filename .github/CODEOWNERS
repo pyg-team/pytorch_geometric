@@ -1,34 +1,21 @@
-# About code owners
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
-#
-# Code owners recieve review requests when parts of code they "own" change.
 
-*.py @rusty1s @wsad1
+* @rusty1s @akihironitta
 
-/torch_geometric/nn/ @EdisonLeeeee
+*.py @rusty1s @wsad1 @akihironitta
 
-/torch_geometric/explain/ @RexYing @RBendias @dufourc1
+/.github/ @rusty1s @akihironitta
 
-/torch_geometric/data/ @mananshah99
+/.github/CODEOWNERS @rusty1s
 
-/torch_geometric/loader/ @mananshah99 @pyg-team/intel-team
+/torch_geometric/data/ @rusty1s @mananshah99 @akihironitta
 
-/torch_geometric/sampler/ @mananshah99 @pyg-team/intel-team
+/torch_geometric/loader/ @rusty1s @mananshah99 @akihironitta
 
-/torch_geometric/transforms/ @wsad1
+/torch_geometric/sampler/ @rusty1s @mananshah99 @akihironitta
 
-/torch_geometric/utils/ @wsad1
+/docs/ @rusty1s @akihironitta
 
-/torch_geometric/datasets/ @wsad1
+/examples/llm @puririshi98
 
-/torch_geometric/graphgym/ @JiaxuanYou
-
-/test/ @wsad1
-
-/docs/ @rusty1s
-
-/graphgym/ @JiaxuanYou
-
-/examples/ @wsad1
-
-/benchmark/ @pyg-team/intel-team
+/torch_geometric/llm @puririshi98
