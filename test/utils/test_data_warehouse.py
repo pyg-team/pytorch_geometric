@@ -1857,12 +1857,10 @@ class TestAdditionalCoverage:
         except Exception:  # pragma: no cover - environment import guard
             pytest.skip("data_warehouse not importable")
 
-        orig_models = sys.modules.get('torch_geometric.nn.models')
-        orig_nlp = sys.modules.get('torch_geometric.nn.nlp')
+        orig_llm_models = sys.modules.get('torch_geometric.llm.models')
         try:
-            sys.modules['torch_geometric.nn.models'] = ModuleType(
-                'tg_dummy_models')
-            sys.modules['torch_geometric.nn.nlp'] = ModuleType('tg_dummy_nlp')
+            # Shadow llm.models to trigger ImportError on from-import
+            sys.modules['torch_geometric.llm.models'] = ModuleType('tg_dummy')
             m = importlib.reload(dw)
             assert m.HAS_GRETRIEVER is False
             with pytest.raises(ImportError):
@@ -1871,14 +1869,10 @@ class TestAdditionalCoverage:
                 m.LLM()
         finally:
             # Restore modules and reload back to normal
-            if orig_models is None:
-                sys.modules.pop('torch_geometric.nn.models', None)
+            if orig_llm_models is None:
+                sys.modules.pop('torch_geometric.llm.models', None)
             else:
-                sys.modules['torch_geometric.nn.models'] = orig_models
-            if orig_nlp is None:
-                sys.modules.pop('torch_geometric.nn.nlp', None)
-            else:
-                sys.modules['torch_geometric.nn.nlp'] = orig_nlp
+                sys.modules['torch_geometric.llm.models'] = orig_llm_models
             importlib.reload(dw)
 
     @withPackage('transformers')

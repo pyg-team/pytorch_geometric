@@ -90,8 +90,7 @@ class GATWrapper(nn.Module):
 
 # PyG LLM imports with fallbacks for optional transformers dependency
 try:
-    from torch_geometric.nn.models import GRetriever
-    from torch_geometric.nn.nlp import LLM
+    from torch_geometric.llm.models import LLM, GRetriever
     HAS_GRETRIEVER = True
 except ImportError:
     # LLM module requires transformers package (optional dependency)
@@ -159,7 +158,6 @@ class WarehouseGRetriever(nn.Module):
         self.g_retriever = GRetriever(
             llm=self.llm,
             gnn=self.gnn,
-            mlp_out_channels=llm_embedding_dim  # Match LLM embedding dimension
         )
 
         # Task-specific heads (input dimension matches GNN output)
@@ -186,7 +184,7 @@ class WarehouseGRetriever(nn.Module):
                 ([embedding] if embedding is not None else None))
 
             # Get BOS token the PyG way
-            from torch_geometric.nn.nlp.llm import BOS
+            from torch_geometric.llm.models.llm import BOS
             bos_token = self.llm.tokenizer(
                 BOS, add_special_tokens=False).input_ids[0]
 
