@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import fs
-from torch_geometric.nn.nlp import LLM
+from torch_geometric.llm.models import LLM
 from torch_geometric.utils import one_hot
 
 

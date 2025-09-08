@@ -3,11 +3,11 @@ import warnings
 import torch
 
 try:
-    import pytorch_lightning as pl
+    import lightning.pytorch as pl
     _pl_is_available = True
 except ImportError:
     try:
-        import lightning.pytorch as pl
+        import pytorch_lightning as pl
         _pl_is_available = True
     except ImportError:
         _pl_is_available = False

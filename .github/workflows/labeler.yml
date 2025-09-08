@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Add PR labels
-        uses: actions/labeler@v5
+        uses: actions/labeler@v6
         continue-on-error: true
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
