@@ -11,3 +11,30 @@ torch_geometric.llm
 
 .. automodule:: torch_geometric.llm
    :members:
+
+
+Models
+----------------
+
+.. currentmodule:: torch_geometric.llm.models
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.llm.model.classes %}
+     {{ name }}
+   {% endfor %}
+
+Utils
+----------------
+
+.. currentmodule:: torch_geometric.llm.utils
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.llm.utils.classes %}
+     {{ name }}
+   {% endfor %}
