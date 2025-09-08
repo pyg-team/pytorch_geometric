@@ -4,7 +4,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.utils import degree
 
@@ -257,27 +256,33 @@ def kernelized_gumbel_softmax(
 
 
 def add_conv_relational_bias(x, edge_index, b, trans='sigmoid'):
-    r"""Compute updated result by the relational bias of input adjacency
-    the implementation is similar to the Graph Convolution Network with a
-    (shared) scalar weight for each edge.
-    """
     row, col = edge_index
-    d_in = degree(col, x.shape[1]).float()
+    B, N, H, D = x.shape
+
+    d_in = degree(col, N).float()
     d_norm_in = (1. / d_in[col]).sqrt()
-    d_out = degree(row, x.shape[1]).float()
+    d_out = degree(row, N).float()
     d_norm_out = (1. / d_out[row]).sqrt()
+
     conv_output = []
-    for i in range(x.shape[2]):
+    for i in range(H):
         if trans == 'sigmoid':
-            b_i = F.sigmoid(b[i])
+            b_i = torch.sigmoid(b[i])
         elif trans == 'identity':
             b_i = b[i]
         else:
             raise NotImplementedError
-        value = torch.ones_like(row) * b_i * d_norm_in * d_norm_out
-        adj_i = SparseTensor(row=col, col=row, value=value,
-                             sparse_sizes=(x.shape[1], x.shape[1]))
-        conv_output.append(matmul(adj_i, x[:, :, i]))  # [B, N, D]
+
+        value = b_i * d_norm_in * d_norm_out  # [E]
+
+        out = torch.zeros(B, N, D, device=x.device, dtype=x.dtype)
+        out.index_add_(
+            1, col,
+            x[:, row, i, :] * value.view(1, -1, 1)   # :fire: 关键修正：扩展到 [B, E, D]
+        )
+
+        conv_output.append(out)
+
     conv_output = torch.stack(conv_output, dim=2)  # [B, N, H, D]
     return conv_output
 
@@ -463,12 +468,7 @@ class NodeFormer(nn.Module):
         for fc in self.fcs:
             fc.reset_parameters()
 
-    # def forward(self, x, adjs, tau=1.0):
     def forward(self, x, adjs):
-        # todo: edge_index of high order adjacency
-        # for i in range(self.rb_order - 1):
-        #     adj = adj_mul(adj, adj, n)
-        #     adjs.append(adj)
         adjs = [adjs]
         x = x.unsqueeze(0)  # [B, N, H, D], B=1 denotes number of graph
         layer_ = []
@@ -501,7 +501,6 @@ class NodeFormer(nn.Module):
         x_out = self.fcs[-1](z).squeeze(0)
         x_out = F.log_softmax(x_out, dim=-1)
 
-        # import pdb; pdb.set_trace()
         if self.use_edge_loss:
             return x_out, link_loss_
         else:

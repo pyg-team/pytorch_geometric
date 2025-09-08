@@ -1,11 +1,9 @@
 import torch
 
 from torch_geometric.nn.models import NodeFormer
-from torch_geometric.testing import withPackage
 
 
-@withPackage('torch_sparse')
-def test_sgformer():
+def test_nodeformer():
     x = torch.randn(10, 16)
     edge_index = torch.tensor([
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],

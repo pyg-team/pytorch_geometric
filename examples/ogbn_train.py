@@ -47,22 +47,22 @@ parser.add_argument(
     help="Model used for training",
 )
 
-parser.add_argument('-e', '--epochs', type=int, default=100)
+parser.add_argument('-e', '--epochs', type=int, default=50)
 parser.add_argument('-le', '--local_epochs', type=int, default=50,
                     help='warmup epochs for polynormer')
 parser.add_argument('--num_layers', type=int, default=3)
-parser.add_argument('--num_heads', type=int, default=4,
+parser.add_argument('--num_heads', type=int, default=1,
                     help='number of heads for GAT or Graph Transformer model.')
-parser.add_argument('-b', '--batch_size', type=int, default=2048)
+parser.add_argument('-b', '--batch_size', type=int, default=1024)
 parser.add_argument('--num_workers', type=int, default=12)
 parser.add_argument('--fan_out', type=int, default=10,
                     help='number of neighbors in each layer')
-parser.add_argument('--hidden_channels', type=int, default=128)
-parser.add_argument('--lr', type=float, default=1e-2)
+parser.add_argument('--hidden_channels', type=int, default=256)
+parser.add_argument('--lr', type=float, default=0.003)
 parser.add_argument('--wd', type=float, default=0.0)
 parser.add_argument('--dropout', type=float, default=0.5)
 parser.add_argument('--lamda', type=float, default=0.1,
-                    help='[nodeforder]weight for edge reg loss')
+                    help='weight for edge reg loss of nodeformer')
 parser.add_argument(
     '--use_directed_graph',
     action='store_true',
@@ -149,7 +149,6 @@ def train(epoch: int) -> tuple[Tensor, float]:
             out = model(batch.x, batch.edge_index,
                         batch.batch)[:batch.batch_size]
         elif args.model in ['nodeformer']:
-            # import pdb; pdb.set_trace()
             out, link_loss = model(batch.x, batch.edge_index)
             out = out[:batch.batch_size]
         else:
@@ -198,16 +197,6 @@ def test(loader: NeighborLoader) -> float:
 
 def get_model(model_name: str) -> torch.nn.Module:
     if model_name == 'gat':
-        """
-        Average Epoch Time on training: 0.5798s
-        Average Epoch Time on inference: 0.1722s
-        Average Epoch Time: 0.7520s
-        Median Epoch Time: 0.7528s
-        Best Validation Accuracy: 68.54%
-        Testing...
-        Test Accuracy: 67.45%
-        Total Program Runtime: 76.2115s
-        """
         model = GAT(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -217,16 +206,6 @@ def get_model(model_name: str) -> torch.nn.Module:
             heads=args.num_heads,
         )
     elif model_name == 'sage':
-        """
-            Average Epoch Time on training: 0.3990s
-            Average Epoch Time on inference: 0.1387s
-            Average Epoch Time: 0.5378s
-            Median Epoch Time: 0.5314s
-            Best Validation Accuracy: 69.69%
-            Testing...
-            Test Accuracy: 68.26%
-            Total Program Runtime: 54.5042s
-        """
         model = GraphSAGE(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
@@ -252,16 +231,6 @@ def get_model(model_name: str) -> torch.nn.Module:
             local_layers=num_layers,
         )
     elif model_name == 'nodeformer':
-        """
-            Average Epoch Time on training: 2.4006s
-            Average Epoch Time on inference: 0.2627s
-            Average Epoch Time: 2.6633s
-            Median Epoch Time: 2.6391s
-            Best Validation Accuracy: 69.96%
-            Testing...
-            Test Accuracy: 68.18%
-            Total Program Runtime: 267.4139s
-        """
         model = NodeFormer(
             in_channels=dataset.num_features,
             hidden_channels=num_hidden_channels,
