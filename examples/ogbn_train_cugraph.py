@@ -1,4 +1,5 @@
 import argparse
+import os
 import os.path as osp
 import time
 
@@ -6,6 +7,7 @@ import cupy
 import psutil
 import rmm
 import torch
+import torch.distributed as dist
 from rmm.allocators.cupy import rmm_cupy_allocator
 from rmm.allocators.torch import rmm_torch_allocator
 
@@ -29,6 +31,59 @@ from ogb.nodeproppred import PygNodePropPredDataset  # noqa
 import torch_geometric  # noqa
 
 cudf.set_option("spill", True)
+
+
+# ---------------- Distributed helpers ----------------
+def safe_get_rank():
+    return dist.get_rank() if dist.is_initialized() else 0
+
+
+def safe_get_world_size():
+    return dist.get_world_size() if dist.is_initialized() else 1
+
+
+def init_distributed():
+    """Initialize distributed training if environment variables are set.
+    Fallback to single-GPU mode otherwise.
+    """
+    # Already initialized ? nothing to do
+    if dist.is_available() and dist.is_initialized():
+        return
+
+    # Default env vars for single-GPU / single-process fallback
+    default_env = {
+        "RANK": "0",
+        "LOCAL_RANK": "0",
+        "WORLD_SIZE": "1",
+        "LOCAL_WORLD_SIZE": "1",
+        "MASTER_ADDR": "127.0.0.1",
+        "MASTER_PORT": "29500"
+    }
+
+    # Update environment only if keys are missing
+    for k, v in default_env.items():
+        os.environ.setdefault(k, v)
+
+    # Set CUDA device
+    if torch.cuda.is_available():
+        local_rank = int(os.environ["LOCAL_RANK"])
+        torch.cuda.set_device(local_rank)
+
+    # Initialize distributed only if world_size > 1
+    world_size = int(os.environ["WORLD_SIZE"])
+    if world_size > 1:
+        dist.init_process_group(backend="nccl", init_method="env://")
+        rank = os.environ['RANK']
+        print(f"Initialized distributed: rank {rank}, world_size {world_size}")
+    else:
+        print("Running in single-GPU / single-process mode")
+
+    if not dist.is_initialized():
+        dist.init_process_group(backend="nccl", init_method="env://", rank=0,
+                                world_size=1)
+
+
+# ------------------------------------------------------
 
 
 def arg_parse():
@@ -98,15 +153,16 @@ def arg_parse():
 
 
 def create_loader(
+    input_nodes,
+    stage_name,
     data,
     num_neighbors,
-    input_nodes,
     replace,
     batch_size,
-    stage_name,
     shuffle=False,
 ):
-    print(f'Creating {stage_name} loader...')
+    if safe_get_rank() == 0:
+        print(f'Creating {stage_name} loader...')
 
     return NeighborLoader(
         data,
@@ -118,7 +174,7 @@ def create_loader(
     )
 
 
-def train(model, train_loader):
+def train(model, train_loader, optimizer):
     model.train()
 
     total_loss = total_correct = total_examples = 0
@@ -156,17 +212,26 @@ def test(model, loader):
 
 
 if __name__ == '__main__':
+    # init DDP if needed
+    init_distributed()
+
     args = arg_parse()
     torch_geometric.seed_everything(123)
+
     if "papers" in str(args.dataset) and (psutil.virtual_memory().total /
                                           (1024**3)) < 390:
-        print("Warning: may not have enough RAM to use this many GPUs.")
-        print("Consider upgrading RAM if an error occurs.")
-        print("Estimated RAM Needed: ~390GB.")
+        if safe_get_rank() == 0:
+            print("Warning: may not have enough RAM to use this many GPUs.")
+            print("Consider upgrading RAM if an error occurs.")
+            print("Estimated RAM Needed: ~390GB.")
+
     wall_clock_start = time.perf_counter()
 
     root = osp.join(args.dataset_dir, args.dataset_subdir)
-    print('The root is: ', root)
+
+    if safe_get_rank() == 0:
+        print('The root is: ', root)
+
     dataset = PygNodePropPredDataset(name=args.dataset, root=root)
     split_idx = dataset.get_idx_split()
 
@@ -188,13 +253,15 @@ if __name__ == '__main__':
         size=(data.num_nodes, data.num_nodes),
     )] = data.edge_index
 
-    feature_store = cugraph_pyg.data.TensorDictFeatureStore()
+    feature_store = cugraph_pyg.data.FeatureStore()
     feature_store['node', 'x', None] = data.x
     feature_store['node', 'y', None] = data.y
 
     data = (feature_store, graph_store)
 
-    print(f"Training {args.dataset} with {args.model} model.")
+    if safe_get_rank() == 0:
+        print(f"Training {args.dataset} with {args.model} model.")
+
     if args.model == "GAT":
         model = torch_geometric.nn.models.GAT(dataset.num_features,
                                               args.hidden_channels,
@@ -202,19 +269,14 @@ if __name__ == '__main__':
                                               dataset.num_classes,
                                               heads=args.num_heads).cuda()
     elif args.model == "GCN":
-        model = torch_geometric.nn.models.GCN(
-            dataset.num_features,
-            args.hidden_channels,
-            args.num_layers,
-            dataset.num_classes,
-        ).cuda()
+        model = torch_geometric.nn.models.GCN(dataset.num_features,
+                                              args.hidden_channels,
+                                              args.num_layers,
+                                              dataset.num_classes).cuda()
     elif args.model == "SAGE":
         model = torch_geometric.nn.models.GraphSAGE(
-            dataset.num_features,
-            args.hidden_channels,
-            args.num_layers,
-            dataset.num_classes,
-        ).cuda()
+            dataset.num_features, args.hidden_channels, args.num_layers,
+            dataset.num_classes).cuda()
     elif args.model == 'SGFormer':
         # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
@@ -227,7 +289,7 @@ if __name__ == '__main__':
             gnn_dropout=args.dropout,
         ).cuda()
     else:
-        raise ValueError('Unsupported model type: {args.model}')
+        raise ValueError(f'Unsupported model type: {args.model}')
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,
                                  weight_decay=args.wd)
@@ -239,69 +301,54 @@ if __name__ == '__main__':
         batch_size=args.batch_size,
     )
 
-    train_loader = create_loader(
-        input_nodes=split_idx['train'],
-        stage_name='train',
-        shuffle=True,
-        **loader_kwargs,
-    )
+    train_loader = create_loader(split_idx['train'], 'train', **loader_kwargs,
+                                 shuffle=True)
+    val_loader = create_loader(split_idx['valid'], 'val', **loader_kwargs)
+    test_loader = create_loader(split_idx['test'], 'test', **loader_kwargs)
 
-    val_loader = create_loader(
-        input_nodes=split_idx['valid'],
-        stage_name='val',
-        **loader_kwargs,
-    )
+    if dist.is_initialized():
+        dist.barrier()  # sync before training
 
-    test_loader = create_loader(
-        input_nodes=split_idx['test'],
-        stage_name='test',
-        **loader_kwargs,
-    )
-    prep_time = round(time.perf_counter() - wall_clock_start, 2)
-    print("Total time before training begins (prep_time) =", prep_time,
-          "seconds")
-    print("Beginning training...")
-    val_accs = []
-    times = []
-    train_times = []
-    inference_times = []
+    if safe_get_rank() == 0:
+        prep_time = round(time.perf_counter() - wall_clock_start, 2)
+        print("Total time before training begins (prep_time) =", prep_time,
+              "seconds")
+        print("Beginning training...")
+
+    val_accs, times, train_times, inference_times = [], [], [], []
     best_val = 0.
     start = time.perf_counter()
-    epochs = args.epochs
-    for epoch in range(1, epochs + 1):
+    for epoch in range(1, args.epochs + 1):
         train_start = time.perf_counter()
-        loss, train_acc = train(model, train_loader)
+        loss, train_acc = train(model, train_loader, optimizer)
         train_end = time.perf_counter()
         train_times.append(train_end - train_start)
         inference_start = time.perf_counter()
         train_acc = test(model, train_loader)
         val_acc = test(model, val_loader)
-
         inference_times.append(time.perf_counter() - inference_start)
         val_accs.append(val_acc)
-        print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train:'
-              f' {train_acc:.4f} Time: {train_end - train_start:.4f}s')
-        print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, ')
+
+        if safe_get_rank() == 0:
+            print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, '
+                  f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
+                  f'Time: {train_end - train_start:.4f}s')
 
         times.append(time.perf_counter() - train_start)
-        if val_acc > best_val:
-            best_val = val_acc
+        best_val = max(best_val, val_acc)
 
-    print(f"Total time used: is {time.perf_counter()-start:.4f}")
-    val_acc = torch.tensor(val_accs)
-    print('============================')
-    print("Average Epoch Time on training: {:.4f}".format(
-        torch.tensor(train_times).mean()))
-    print("Average Epoch Time on inference: {:.4f}".format(
-        torch.tensor(inference_times).mean()))
-    print(f"Average Epoch Time: {torch.tensor(times).mean():.4f}")
-    print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
-    print(f'Final Validation: {val_acc.mean():.4f} ± {val_acc.std():.4f}')
-    print(f"Best validation accuracy: {best_val:.4f}")
+    if safe_get_rank() == 0:
+        print(f"Total time used: {time.perf_counter()-start:.4f}")
+        print("Final Validation: {:.4f} ± {:.4f}".format(
+            torch.tensor(val_accs).mean(),
+            torch.tensor(val_accs).std()))
+        print(f"Best validation accuracy: {best_val:.4f}")
+        print("Testing...")
+        final_test_acc = test(model, test_loader)
+        print(f'Test Accuracy: {final_test_acc:.4f}')
+        total_time = round(time.perf_counter() - wall_clock_start, 2)
+        print("Total Program Runtime (total_time) =", total_time, "seconds")
 
-    print("Testing...")
-    final_test_acc = test(model, test_loader)
-    print(f'Test Accuracy: {final_test_acc:.4f}')
-
-    total_time = round(time.perf_counter() - wall_clock_start, 2)
-    print("Total Program Runtime (total_time) =", total_time, "seconds")
+    if dist.is_initialized():
+        dist.barrier()
+        dist.destroy_process_group()
