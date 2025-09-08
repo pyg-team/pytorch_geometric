@@ -277,8 +277,9 @@ def add_conv_relational_bias(x, edge_index, b, trans='sigmoid'):
 
         out = torch.zeros(B, N, D, device=x.device, dtype=x.dtype)
         out.index_add_(
-            1, col,
-            x[:, row, i, :] * value.view(1, -1, 1)   # :fire: 关键修正：扩展到 [B, E, D]
+            1,
+            col,
+            x[:, row, i, :] * value.view(1, -1, 1)  # :fire: 关键修正：扩展到 [B, E, D]
         )
 
         conv_output.append(out)
