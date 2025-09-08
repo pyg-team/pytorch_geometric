@@ -22,7 +22,7 @@ Models
    :nosignatures:
    :toctree: ../generated
 
-   {% for name in torch_geometric.llm.model.classes %}
+   {% for name in torch_geometric.llm.models.classes %}
      {{ name }}
    {% endfor %}
 
