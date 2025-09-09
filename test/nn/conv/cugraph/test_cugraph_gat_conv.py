@@ -34,7 +34,7 @@ def test_gat_conv_equality(bias, bipartite, concat, edge_attr, heads, max_num_ne
         conv2.att.data[:heads * out_channels] = conv1.att_src.data.flatten()
         conv2.att.data[heads * out_channels:] = conv1.att_dst.data.flatten()
     if edge_attr and not bipartite:
-        e_attrs = torch.randn(size=(edge_index.size(1), 10)
+        e_attrs = torch.randn(size=(edge_index.size(1), 10))
         out1 = conv1(x, edge_index, edge_attr=e_attrs)
 
         out2 = conv2(
