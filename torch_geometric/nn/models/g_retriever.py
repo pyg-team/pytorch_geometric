@@ -93,7 +93,7 @@ class GRetriever(torch.nn.Module):
         edge_attr: Optional[Tensor],
     ) -> Tensor:
         x = x.to(self.llm.device)
-        edge_index = edge_index.to(self.llm.device)
+        edge_index = edge_index.to(torch.int64).to(self.llm.device)
         if edge_attr is not None:
             edge_attr = edge_attr.to(self.llm.device)
         batch = batch.to(self.llm.device)
