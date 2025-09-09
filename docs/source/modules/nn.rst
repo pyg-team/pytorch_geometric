@@ -242,16 +242,6 @@ Encodings
 
 .. currentmodule:: torch_geometric.nn.encoding
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated
-   :template: autosummary/nn.rst
-
-   {% for name in torch_geometric.nn.encoding.classes %}
-     {{ name }}
-   {% endfor %}
-
-
 Functional
 ----------
 
