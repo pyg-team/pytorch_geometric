@@ -26,7 +26,7 @@ For this, simply run:
 Additional Libraries
 ~~~~~~~~~~~~~~~~~~~~
 
-If you want to utilize the full set of features from :pyg:`PyG`, there exists several additional libraries you may want to install:
+If you want to utilize the full set of features from :pyg:`PyG`, there exist several additional libraries you may want to install:
 
 * `pyg-lib <https://github.com/pyg-team/pyg-lib>`__: Heterogeneous GNN operators and graph sampling routines
 * `torch-scatter <https://github.com/rusty1s/pytorch_scatter>`__: Accelerated and efficient sparse reductions

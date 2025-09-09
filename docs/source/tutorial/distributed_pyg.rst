@@ -9,7 +9,7 @@ Distributed Training in PyG
     Developers and researchers can now take full advantage of distributed training on large-scale datasets which cannot be fully loaded in memory of one machine at the same time.
     This implementation doesn't require any additional packages to be installed on top of the default :pyg:`PyG` stack.
 
-In real life applications, graphs often consists of billions of nodes that cannot fit into a single system memory.
+In real life applications, graphs often consist of billions of nodes that cannot fit into a single system memory.
 This is when distributed training of Graph Neural Networks comes in handy.
 By allocating a number of partitions of the large graph into a cluster of CPUs, one can deploy synchronized model training on the whole dataset at once by making use of :pytorch:`PyTorch's` `Distributed Data Parallel (DDP) <https://pytorch.org/docs/stable/notes/ddp.html>`_ capabilities.
 This architecture seamlessly distributes training of Graph Neural Networks across multiple nodes via `Remote Procedure Calls (RPCs) <https://pytorch.org/docs/stable/rpc.html>`_ for efficient sampling and retrieval of non-local features with traditional DDP for model training.
@@ -36,7 +36,7 @@ Architecture Components
 
 Overall, :class:`torch_geometric.distributed` is divided into the following components:
 
-* :class:`~torch_geometric.distributed.Partitoner` partitions the graph into multiple parts, such that each node only needs to load its local data in memory.
+* :class:`~torch_geometric.distributed.Partitioner` partitions the graph into multiple parts, such that each node only needs to load its local data in memory.
 * :class:`~torch_geometric.distributed.LocalGraphStore` and :class:`~torch_geometric.distributed.LocalFeatureStore` store the graph topology and features per partition, respectively.
   In addition, they maintain a mapping between local and global IDs for efficient assignment of nodes and feature lookup.
 * :class:`~torch_geometric.distributed.DistNeighborSampler`  implements the distributed sampling algorithm, which includes local+remote sampling and the final merge between local/remote sampling results based on :pytorch:`PyTorch's` RPC mechanisms.
@@ -212,7 +212,7 @@ In this distributed training implementation two :class:`torch.distributed` commu
 Our solution opts for :class:`torch.distributed.rpc` over alternatives such as gRPC because :pytorch:`PyTorch` RPC inherently comprehends tensor-type data.
 Unlike other RPC methods, which require the serialization or digitization of JSON or other user data into tensor types, using this method helps avoid additional serialization and digitization overhead.
 
-The DDP group is initialzied in a standard way in the main training script:
+The DDP group is initialized in a standard way in the main training script:
 
 .. code-block:: python
 

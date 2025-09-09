@@ -162,7 +162,7 @@ def coalesce(  # noqa: F811
 
     mask = idx[1:] > idx[:-1]
 
-    # Only perform expensive merging in case there exists duplicates:
+    # Only perform expensive merging in case there exist duplicates:
     if mask.all():
         if edge_attr is None or isinstance(edge_attr, Tensor):
             return edge_index, edge_attr

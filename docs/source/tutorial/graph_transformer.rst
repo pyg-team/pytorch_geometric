@@ -1,9 +1,9 @@
 Graph Transformer
 =================
 
-`Transformer <https://arxiv.org/abs/1706.03762>`_ is an effictive architecture in `natural language processing <https://arxiv.org/abs/1810.04805>`_ and `computer vision <https://arxiv.org/abs/2010.11929>`_.
+`Transformer <https://arxiv.org/abs/1706.03762>`_ is an effective architecture in `natural language processing <https://arxiv.org/abs/1810.04805>`_ and `computer vision <https://arxiv.org/abs/2010.11929>`_.
 Recently, there have been some applications(`Grover <https://arxiv.org/abs/2007.02835>`_, `GraphGPS <https://arxiv.org/abs/2205.12454>`_, etc) that combine transformers on graphs.
-In this tutorial, we will present how to build a graph transformer model via :pyg:`PyG`. See `<our webinar https://youtu.be/wAYryx3GjLw?si=2vB7imfenP5tUvqd>` for in-depth learning on this topic.
+In this tutorial, we will present how to build a graph transformer model via :pyg:`PyG`. See `our webinar <https://youtu.be/wAYryx3GjLw?si=2vB7imfenP5tUvqd>_` for in-depth learning on this topic.
 
 .. note::
     Click `here <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_gps.py>`_ to download the full example code
@@ -25,7 +25,7 @@ Feeding the whole graph into the Transformer also brings several pros and cons
 **Cons**
 
 * Loss of inductive bias that enables GNNs to work so well on graphs with pronounced locality. Particularly in graphs where edges represent relatedness/closeness.
-* Language input is squential, but graphs are permutation invariant to node ordering.
+* Language input is sequential, but graphs are permutation invariant to node ordering.
 * Square computational complexity :math:`O(N^2)` in the number of nodes whereas message passing GNNs are linear in the number of edges :math:`O(E)`. Graphs are often sparse :math:`N \approx E`.
 
 Attention
@@ -66,7 +66,7 @@ When two nodes share similar subgraphs, or when two graphs are similar, their SE
 GPS Layer and GraphGPS Model
 --------------------------------------
 
-Firstly, we introduce the GPS layer, which is combined with local MPNN and global Transformer, and then followed by 2-layer MLP and skip-connecttions.
+Firstly, we introduce the GPS layer, which is combined with local MPNN and global Transformer, and then followed by 2-layer MLP and skip-connections.
 Local MPNN can provide locality bias that is difficult or expensive to achieve in Transformer.
 In addition, features of edges can be updated and encoded into the node features(`GatedGCN <https://arxiv.org/abs/1711.07553>`_, `GINE <https://arxiv.org/abs/1905.12265>`_).
 Transformer can utilize positional and structural encodings. As we don't need to consider edge features, We can use the existing linear Transformer architecture to reduce the time complexity from :math:`O(N^2)` to :math:`O(N + E)`, like `Performer <https://arxiv.org/abs/2009.14794>`_ and `BigBird <https://arxiv.org/abs/2007.14062>`_.

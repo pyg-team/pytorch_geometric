@@ -146,7 +146,7 @@ class NeighborLoader(NodeLoader):
             If set to :obj:`"induced"`, the returned subgraph contains the
             induced subgraph of all sampled nodes.
             (default: :obj:`"directional"`)
-        disjoint (bool, optional): If set to :obj: `True`, each seed node will
+        disjoint (bool, optional): If set to :obj:`True`, each seed node will
             create its own disjoint subgraph.
             If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
             vector holding the mapping of nodes to their respective subgraph.
@@ -192,7 +192,7 @@ class NeighborLoader(NodeLoader):
             on whether data partially lives on the GPU
             (:obj:`filter_per_worker=True`) or entirely on the CPU
             (:obj:`filter_per_worker=False`).
-            There exists different trade-offs for setting this option.
+            There exist different trade-offs for setting this option.
             Specifically, setting this option to :obj:`True` for in-memory
             datasets will move all features to shared memory, which may result
             in too many open file handles. (default: :obj:`None`)

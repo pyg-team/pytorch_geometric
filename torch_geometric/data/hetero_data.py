@@ -74,7 +74,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         data = data.pin_memory()
         data = data.to('cuda:0', non_blocking=True)
 
-    Note that there exists multiple ways to create a heterogeneous graph data,
+    Note that there exist multiple ways to create a heterogeneous graph data,
     *e.g.*:
 
     * To initialize a node of type :obj:`"paper"` holding a node feature

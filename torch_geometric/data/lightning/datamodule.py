@@ -732,7 +732,7 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
         }
         if len(input_nodes_dict) != 1:
             raise ValueError(f"Could not automatically determine the input "
-                             f"nodes of {data} since there exists multiple "
+                             f"nodes of {data} since there exist multiple "
                              f"types with attribute '{attr_name}'")
         return list(input_nodes_dict.items())[0]
     return None
