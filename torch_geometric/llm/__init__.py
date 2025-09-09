@@ -4,6 +4,6 @@ from .utils import *  # noqa
 from .models import *  # noqa
 
 __all__ = classes = [
-    LargeGraphIndexer,
-    RAGQueryLoader,
+    'LargeGraphIndexer',
+    'RAGQueryLoader',
 ]
