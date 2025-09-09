@@ -124,7 +124,7 @@ class LightningData(LightningDataModule):
 
         if loader in ['neighbor', 'link_neighbor']:
 
-            # Define a new `NeighborSampler` to be re-used across data loaders:
+            # Define a new `NeighborSampler` to be reused across data loaders:
             sampler_kwargs, self.loader_kwargs = split_kwargs(
                 self.kwargs,
                 NeighborSampler,

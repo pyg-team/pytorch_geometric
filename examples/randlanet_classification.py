@@ -62,9 +62,9 @@ class LocalFeatureAggregation(MessagePassing):
         """Local Spatial Encoding (locSE) and attentive pooling of features.
 
         Args:
-            x_j (Tensor): neighboors features (K,d)
+            x_j (Tensor): neighbors features (K,d)
             pos_i (Tensor): centroid position (repeated) (K,3)
-            pos_j (Tensor): neighboors positions (K,3)
+            pos_j (Tensor): neighbors positions (K,3)
             index (Tensor): index of centroid positions
                 (e.g. [0,...,0,1,...,1,...,N,...,N])
 
