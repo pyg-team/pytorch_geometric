@@ -130,12 +130,12 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Loads a subgraph from the given sample.
 
         Args:
-        - sample: The sample to load the subgraph from.
-        - induced: Whether to return the induced subgraph.
-            Resets node and edge ids.
+            sample: The sample to load the subgraph from.
+            induced: Whether to return the induced subgraph.
+                Resets node and edge ids.
 
         Returns:
-        - The loaded subgraph.
+            The loaded subgraph.
         """
         if isinstance(sample, HeteroSamplerOutput):
             raise NotImplementedError
