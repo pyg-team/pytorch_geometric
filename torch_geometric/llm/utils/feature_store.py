@@ -79,8 +79,8 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
-        - query (Union[str, List[str], Tuple[str]]):
-            The query or list of queries to search for.
+        - query (Union[str, List[str], Tuple[str]]): The query
+            or list of queries to search for.
 
         Returns:
         - The indices of the most similar nodes and the encoded query
