@@ -14,7 +14,8 @@ from torch_geometric.testing import onlyCUDA, withPackage
 @pytest.mark.parametrize('edge_attr', [True, False])
 @pytest.mark.parametrize('heads', [1, 2, 3])
 @pytest.mark.parametrize('max_num_neighbors', [8, None])
-def test_gat_conv_equality(bias, bipartite, concat, edge_attr, heads, max_num_neighbors):
+def test_gat_conv_equality(bias, bipartite, concat, edge_attr, heads,
+                           max_num_neighbors):
     in_channels, out_channels = 5, 2
     kwargs = dict(bias=bias, concat=concat)
 
@@ -37,12 +38,8 @@ def test_gat_conv_equality(bias, bipartite, concat, edge_attr, heads, max_num_ne
         e_attrs = torch.randn(size=(edge_index.size(1), 10))
         out1 = conv1(x, edge_index, edge_attr=e_attrs)
 
-        out2 = conv2(
-            x,
-            EdgeIndex(edge_index, sparse_size=size),
-            max_num_neighbors=max_num_neighbors,
-            edge_attr=e_attrs
-        )
+        out2 = conv2(x, EdgeIndex(edge_index, sparse_size=size),
+                     max_num_neighbors=max_num_neighbors, edge_attr=e_attrs)
     else:
         if bipartite:
             out1 = conv1((x, x[:size[1]]), edge_index)
