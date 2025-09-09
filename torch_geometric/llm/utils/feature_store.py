@@ -79,11 +79,11 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Retrieves the k_nodes most similar nodes to the given query.
 
         Args:
-        - query (Union[str, List[str], Tuple[str]]):
-            The query or list of queries to search for.
+            query (Union[str, List[str], Tuple[str]]): The query
+                or list of queries to search for.
 
         Returns:
-        - The indices of the most similar nodes and the encoded query
+            The indices of the most similar nodes and the encoded query
         """
         if not isinstance(query, (list, tuple)):
             query = [query]
@@ -130,12 +130,12 @@ class KNNRAGFeatureStore(LocalFeatureStore):
         """Loads a subgraph from the given sample.
 
         Args:
-        - sample: The sample to load the subgraph from.
-        - induced: Whether to return the induced subgraph.
-            Resets node and edge ids.
+            sample: The sample to load the subgraph from.
+            induced: Whether to return the induced subgraph.
+                Resets node and edge ids.
 
         Returns:
-        - The loaded subgraph.
+            The loaded subgraph.
         """
         if isinstance(sample, HeteroSamplerOutput):
             raise NotImplementedError

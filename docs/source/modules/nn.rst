@@ -231,13 +231,6 @@ Encodings
    :undoc-members:
    :exclude-members: training
 
-NLP
----------
-
-.. automodule:: torch_geometric.nn.nlp
-   :members:
-   :undoc-members:
-
 Functional
 ----------
 
