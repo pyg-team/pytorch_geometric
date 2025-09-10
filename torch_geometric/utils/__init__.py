@@ -19,7 +19,9 @@ from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from ._subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                         bipartite_subgraph)
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
+from ._unbatch import unbatch, unbatch_edge_index
 from ._homophily import homophily
+from ._label_informativeness import label_informativeness
 from ._assortativity import assortativity
 from ._normalize_edge_index import normalize_edge_index
 from .laplacian import get_laplacian
@@ -34,7 +36,6 @@ from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_csc_tensor, to_torch_sparse_tensor,
                      to_edge_index)
 from ._spmm import spmm
-from ._unbatch import unbatch, unbatch_edge_index
 from ._one_hot import one_hot
 from ._normalized_cut import normalized_cut
 from ._grid import grid
@@ -89,7 +90,10 @@ __all__ = [
     'dropout_edge',
     'dropout_path',
     'dropout_adj',
+    'unbatch',
+    'unbatch_edge_index',
     'homophily',
+    'label_informativeness',
     'assortativity',
     'normalize_edge_index',
     'get_laplacian',
@@ -112,8 +116,6 @@ __all__ = [
     'to_torch_sparse_tensor',
     'to_edge_index',
     'spmm',
-    'unbatch',
-    'unbatch_edge_index',
     'one_hot',
     'normalized_cut',
     'grid',
