@@ -45,12 +45,10 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          uv pip install nbsphinx
-          uv pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
-          uv pip install -e .
+          uv pip install -e . nbsphinx git+https://github.com/pyg-team/pyg_sphinx_theme.git
 
       - name: Build documentation
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         working-directory: ./docs
         run: |
-          uv run --no-project sphinx-build -M html "source" "build" -W  # Fail on warning.
+          sphinx-build -M html "source" "build" -W  # Fail on warning.
