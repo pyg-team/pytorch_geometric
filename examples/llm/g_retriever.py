@@ -27,9 +27,9 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import CWQDataset, WebQSPDataset
+from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models import GAT, GRetriever
-from torch_geometric.nn.nlp import LLM
+from torch_geometric.nn.models import GAT
 
 
 def compute_metrics(eval_output):
@@ -133,7 +133,7 @@ def load_params_dict(model, save_path):
     return model
 
 
-def get_loss(model, batch, model_save_name: str) -> Tensor:
+def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
     """Compute the loss for a given model and batch of data.
 
     Args:
@@ -150,23 +150,26 @@ def get_loss(model, batch, model_save_name: str) -> Tensor:
         return model(batch.question, batch.label, batch.desc)
     else:  # (GNN+LLM)
         return model(
-            batch.question,
-            batch.x,  # node features
-            batch.edge_index,  # edge indices
-            batch.batch,  # batch indices
-            batch.label,  # answers (labels)
+            batch.question,  # ["list", "of", "questions", "here"]
+            batch.x,  # [num_nodes, num_features]
+            batch.edge_index,  # [2, num_edges]
+            batch.batch,  # which node belongs to which batch index
+            batch.label,  # list answers (labels)
             batch.edge_attr,  # edge attributes
-            batch.desc  # description
+            batch.desc  # list of text graph descriptions
         )
 
 
-def inference_step(model, batch, model_save_name):
+def inference_step(model, batch, model_save_name="gnn+llm",
+                   max_out_tokens=128):
     """Performs inference on a given batch of data using the provided model.
 
     Args:
         model (nn.Module): The model to use for inference.
         batch: The batch of data to process.
         model_save_name (str): The name of the model (e.g. 'llm').
+        max_out_tokens (int): The maximum number of tokens
+            for our model to output.
 
     Returns:
         The output of the inference step.
@@ -174,16 +177,37 @@ def inference_step(model, batch, model_save_name):
     # Check the type of model being used to determine the input arguments
     if model_save_name == 'llm':
         # Perform inference on the question and textual graph description
-        return model.inference(batch.question, batch.desc)
+        return model.inference(batch.question, batch.desc,
+                               max_out_tokens=max_out_tokens)
     else:  # (GNN+LLM)
-        return model.inference(
-            batch.question,
-            batch.x,  # node features
-            batch.edge_index,  # edge indices
-            batch.batch,  # batch indices
-            batch.edge_attr,  # edge attributes
-            batch.desc  # description
-        )
+        return model.inference(batch.question, batch.x, batch.edge_index,
+                               batch.batch, batch.edge_attr, batch.desc,
+                               max_out_tokens=max_out_tokens)
+
+
+def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
+                         num_epochs: int):
+    """Decay learning rate with half-cycle cosine after warmup.
+
+    Args:
+        param_group (dict): Parameter group.
+        LR (float): Learning rate.
+        epoch (int): current epoch
+        num_epochs (int): total epochs
+
+    Returns:
+        float: Adjusted learning rate.
+    """
+    min_lr = 5e-6
+    warmup_epochs = 1
+    if epoch < warmup_epochs:
+        lr = LR
+    else:
+        lr = min_lr + (LR - min_lr) * 0.5 * (
+            1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
+                           (num_epochs - warmup_epochs)))
+    param_group['lr'] = lr
+    return lr
 
 
 def train(
@@ -218,28 +242,6 @@ def train(
     Returns:
         None
     """
-    def adjust_learning_rate(param_group, LR, epoch):
-        """Decay learning rate with half-cycle cosine after warmup.
-
-        Args:
-            param_group (dict): Parameter group.
-            LR (float): Learning rate.
-            epoch (int): Current epoch.
-
-        Returns:
-            float: Adjusted learning rate.
-        """
-        min_lr = 5e-6
-        warmup_epochs = 1
-        if epoch < warmup_epochs:
-            lr = LR
-        else:
-            lr = min_lr + (LR - min_lr) * 0.5 * (
-                1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
-                               (num_epochs - warmup_epochs)))
-        param_group['lr'] = lr
-        return lr
-
     # Start training time
     start_time = time.time()
 
@@ -289,8 +291,7 @@ def train(
     if model_save_name == 'llm':
         model = llm
     else:
-        model = GRetriever(llm=llm, gnn=gnn,
-                           mlp_out_channels=llm.word_embedding.embedding_dim)
+        model = GRetriever(llm=llm, gnn=gnn)
 
     # Create optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
@@ -325,7 +326,8 @@ def train(
 
             if (step + 1) % 2 == 0:
                 adjust_learning_rate(optimizer.param_groups[0], lr,
-                                     step / len(train_loader) + epoch)
+                                     step / len(train_loader) + epoch,
+                                     num_epochs)
 
             optimizer.step()
             epoch_loss = epoch_loss + float(loss.detach())
