@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
+import scipy.sparse as sp
 import torch
 from torch import Tensor
 
@@ -75,7 +76,7 @@ class GDC(BaseTransform):
     """
     def __init__(
         self,
-        self_loop_weight: float = 1.,
+        self_loop_weight: float = 1.0,
         normalization_in: str = 'sym',
         normalization_out: str = 'col',
         diffusion_kwargs: Optional[Dict[str, Any]] = None,
@@ -111,8 +112,11 @@ class GDC(BaseTransform):
 
         if self.self_loop_weight:
             edge_index, edge_weight = add_self_loops(
-                edge_index, edge_weight, fill_value=self.self_loop_weight,
-                num_nodes=N)
+                edge_index,
+                edge_weight,
+                fill_value=self.self_loop_weight,
+                num_nodes=N,
+            )
 
         edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
 
@@ -125,8 +129,12 @@ class GDC(BaseTransform):
                 diff_mat, **self.sparsification_kwargs)
         else:
             edge_index, edge_weight = self.diffusion_matrix_approx(
-                edge_index, edge_weight, N, self.normalization_in,
-                **self.diffusion_kwargs)
+                edge_index,
+                edge_weight,
+                N,
+                self.normalization_in,
+                **self.diffusion_kwargs,
+            )
             edge_index, edge_weight = self.sparsify_sparse(
                 edge_index, edge_weight, N, **self.sparsification_kwargs)
 
@@ -175,13 +183,13 @@ class GDC(BaseTransform):
         elif normalization == 'col':
             _, col = edge_index
             deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
-            deg_inv = 1. / deg
+            deg_inv = 1.0 / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[col]
         elif normalization == 'row':
             row, _ = edge_index
             deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
-            deg_inv = 1. / deg
+            deg_inv = 1.0 / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[row]
         elif normalization is None:
@@ -332,14 +340,37 @@ class GDC(BaseTransform):
             else:
                 raise ValueError(
                     f"Transition matrix normalization '{normalization}' not "
-                    f"implemented for non-exact GDC computation")
+                    f'implemented for non-exact GDC computation')
 
         elif method == 'heat':
-            raise NotImplementedError(
-                'Currently no fast heat kernel is implemented. You are '
-                'welcome to create one yourself, e.g., based on '
-                '"Kloster and Gleich: Heat kernel based community detection '
-                '(KDD 2014)."')
+            # For heat kernel, we use a Taylor expansion approximation
+            # exp(-t(I-A)) ≈ sum_{k=0}^K (t^k/k!) * A^k * exp(-t)
+
+            # Initialize with identity matrix (scaled by exp(-t))
+            edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
+                                                     fill_value=-1,
+                                                     num_nodes=num_nodes)
+            edge_weight = kwargs['t'] * edge_weight
+
+            # Convert to SciPy sparse matrix:
+            row, col = edge_index
+            row_np = row.cpu().numpy()
+            col_np = col.cpu().numpy()
+            edge_weight_np = edge_weight.cpu().numpy()
+            adj = sp.csr_matrix((edge_weight_np, (row_np, col_np)),
+                                shape=(num_nodes, num_nodes))
+
+            diff_matrix = self._heat_diffusion_approx(adj)
+
+            # Convert back to torch tensors:
+            diff_matrix_coo = diff_matrix.tocoo()
+            device = edge_index.device
+            edge_index = torch.tensor(
+                [diff_matrix_coo.row, diff_matrix_coo.col], dtype=torch.long,
+                device=device)
+            edge_weight = torch.tensor(diff_matrix_coo.data, dtype=torch.float,
+                                       device=device)
+
         else:
             raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
 
@@ -450,8 +481,8 @@ class GDC(BaseTransform):
                     kwargs['avg_degree'],
                 )
 
-            remaining_edge_idx = (edge_weight >= kwargs['eps']).nonzero(
-                as_tuple=False).flatten()
+            remaining_edge_idx = ((edge_weight >= kwargs['eps']).nonzero(
+                as_tuple=False).flatten())
             edge_index = edge_index[:, remaining_edge_idx]
             edge_weight = edge_weight[remaining_edge_idx]
         elif method == 'topk':
@@ -503,3 +534,34 @@ class GDC(BaseTransform):
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
         return float(left + right) / 2.0
+
+    def _heat_diffusion_approx(self, adj: sp.csr_matrix) -> sp.csr_matrix:
+        """Computes an approximation of the heat diffusion on a graph.
+
+        This method approximates the matrix exponential exp(-t(I-A)) using a
+        Taylor polynomialexpansion, where A is the adjacency matrix and t is
+        the diffusion time parameter.
+
+        Args:
+            adj (scipy.sparse.csr_matrix): Input adjacency matrix
+
+        Returns:
+            scipy.sparse.csr_matrix: Approximated heat diffusion matrix
+
+        Note:
+            The approximation is computed using the formula:
+            exp(-t(I-A)) = exp(-t)sum_{k=0}^{max_iter} (t^k/k!)A^k
+
+            The implementation uses an iterative approach to
+            compute series terms, accumulating the result in diff_matrix.
+        """
+        # Initialize with the identity scaled by exp(-t)
+        diff_matrix = sp.identity(
+            adj.shape[0], format="csr") * np.exp(-self.diffusion_kwargs['t'])
+        a_power = adj.copy()
+        coef = self.diffusion_kwargs['t']
+        for k in range(1, self.sparsification_kwargs['max_iter'] + 1):
+            diff_matrix = diff_matrix + coef * a_power
+            a_power = a_power.dot(adj)
+            coef = coef * self.diffusion_kwargs['t'] / (k + 1)
+        return diff_matrix
