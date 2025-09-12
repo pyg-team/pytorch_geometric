@@ -9,5 +9,5 @@ The `explain` package of PyG provides a set of tools to explain the predictions 
 | [`gnn_explainer_link_pred.py`](./gnn_explainer_link_pred.py)           | `GNNExplainer` for link prediction                      |
 | [`gnn_explainer_ba_shapes.py`](./gnn_explainer_ba_shapes.py)           | `GNNExplainer` applied on the `BAShapes` dataset        |
 | [`captum_explainer.py`](./captum_explainer.py)                         | Captum-based explainer for node classification          |
-| [`captum_explainer_hetero_link.py`](./captum_explainer_hetero_link.py) | Captum-based explainer for heterogenous link prediction |
+| [`captum_explainer_hetero_link.py`](./captum_explainer_hetero_link.py) | Captum-based explainer for heterogeneous link prediction |
 | [`graphmask_explainer.py`](./graphmask_explainer.py)                   | `GraphMaskExplainer` for node classification            |
