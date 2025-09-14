@@ -1,4 +1,5 @@
 import math
+from typing import Callable
 
 import numpy as np
 import torch
@@ -308,7 +309,7 @@ class NodeFormerConv(nn.Module):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         num_heads (int): Number of parallel heads.
-        kernel_transformation (func, optional): The kernel
+        kernel_transformation (Callable, optional): The kernel
             transformation function.
             (default: :func:`softmax_kernel_transformation`)
         projection_matrix_type (str, optional): The type of projection matrix
@@ -320,18 +321,18 @@ class NodeFormerConv(nn.Module):
         nb_gumbel_sample (int, optional): The number of Gumbel samples.
             (default: 10).
         rb_order (int, optional): The order of relational bias.
-            (default: 0).
+            (default: 0)
         rb_trans (str, optional): The type of transformation.
             relational bias ('sigmoid' or 'identity') (default: 'sigmoid').
-        use_edge_loss (bool, optional): Whether to use edge loss
-            (default: True).
+        use_edge_loss (bool, optional): Whether to use edge loss.
+            (default: True)
     """
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
         num_heads: int,
-        kernel_transformation=softmax_kernel_transformation,
+        kernel_transformation: Callable = softmax_kernel_transformation,
         projection_matrix_type: str = 'a',
         nb_random_features: int = 10,
         use_gumbel: bool = True,
@@ -444,7 +445,9 @@ class NodeFormer(nn.Module):
             (default: `4`)
         dropout (float): Dropout rate.
             (default: `0.0`)
-        kernel_transformation=softmax_kernel_transformation,
+        kernel_transformation (Callable, optional): The kernel
+            transformation function.
+            (default: :func:`softmax_kernel_transformation`)
         nb_random_features (int): Number of random features.
             (default: `30`)
         use_bn (bool): Whether to use batch normalization.
@@ -462,7 +465,7 @@ class NodeFormer(nn.Module):
         rb_order (int): Order of relational bias.
             (default: `0`)
         rb_trans (str): Type of relational bias transformation.
-            (default: `'sigmoid'`)
+            (default: `sigmoid`)
         use_edge_loss (bool): Whether to use edge loss.
             (default: `True`)
         tau (float): Temperature parameter for Gumbel softmax.
@@ -476,7 +479,7 @@ class NodeFormer(nn.Module):
         num_layers: int = 3,
         num_heads: int = 4,
         dropout: float = 0.0,
-        kernel_transformation=softmax_kernel_transformation,
+        kernel_transformation: Callable = softmax_kernel_transformation,
         nb_random_features: int = 30,
         use_bn: bool = True,
         use_gumbel: bool = True,
@@ -498,14 +501,18 @@ class NodeFormer(nn.Module):
         self.bns.append(nn.LayerNorm(hidden_channels))
         for _ in range(num_layers):
             self.convs.append(
-                NodeFormerConv(hidden_channels, hidden_channels,
-                               num_heads=num_heads,
-                               kernel_transformation=kernel_transformation,
-                               nb_random_features=nb_random_features,
-                               use_gumbel=use_gumbel,
-                               nb_gumbel_sample=nb_gumbel_sample,
-                               rb_order=rb_order, rb_trans=rb_trans,
-                               use_edge_loss=use_edge_loss))
+                NodeFormerConv(
+                    hidden_channels,
+                    hidden_channels,
+                    num_heads=num_heads,
+                    kernel_transformation=kernel_transformation,
+                    nb_random_features=nb_random_features,
+                    use_gumbel=use_gumbel,
+                    nb_gumbel_sample=nb_gumbel_sample,
+                    rb_order=rb_order,
+                    rb_trans=rb_trans,
+                    use_edge_loss=use_edge_loss,
+                ))
             self.bns.append(nn.LayerNorm(hidden_channels))
 
         if use_jk:
