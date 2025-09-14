@@ -108,28 +108,28 @@ def softmax_kernel_transformation(data, is_query, projection_matrix=None,
 
 
 def numerator(qs, ks, vs):
-    kvs = torch.einsum("nbhm,nbhd->bhmd", ks,
-                       vs)  # kvs refers to U_k in the paper
+    # kvs refers to U_k in the paper
+    kvs = torch.einsum("nbhm,nbhd->bhmd", ks, vs)
     return torch.einsum("nbhm,bhmd->nbhd", qs, kvs)
 
 
 def denominator(qs, ks):
     all_ones = torch.ones([ks.shape[0]]).to(qs.device)
-    ks_sum = torch.einsum("nbhm,n->bhm", ks,
-                          all_ones)  # ks_sum refers to O_k in the paper
+    # ks_sum refers to O_k in the paper
+    ks_sum = torch.einsum("nbhm,n->bhm", ks, all_ones)
     return torch.einsum("nbhm,bhm->nbh", qs, ks_sum)
 
 
 def numerator_gumbel(qs, ks, vs):
-    kvs = torch.einsum("nbhkm,nbhd->bhkmd", ks,
-                       vs)  # kvs refers to U_k in the paper
+    # kvs refers to U_k in the paper
+    kvs = torch.einsum("nbhkm,nbhd->bhkmd", ks, vs)
     return torch.einsum("nbhm,bhkmd->nbhkd", qs, kvs)
 
 
 def denominator_gumbel(qs, ks):
     all_ones = torch.ones([ks.shape[0]]).to(qs.device)
-    ks_sum = torch.einsum("nbhkm,n->bhkm", ks,
-                          all_ones)  # ks_sum refers to O_k in the paper
+    # ks_sum refers to O_k in the paper
+    ks_sum = torch.einsum("nbhkm,n->bhkm", ks, all_ones)
     return torch.einsum("nbhm,bhkm->nbhk", qs, ks_sum)
 
 
@@ -276,11 +276,7 @@ def add_conv_relational_bias(x, edge_index, b, trans='sigmoid'):
         value = b_i * d_norm_in * d_norm_out  # [E]
 
         out = torch.zeros(B, N, D, device=x.device, dtype=x.dtype)
-        out.index_add_(
-            1,
-            col,
-            x[:, row, i, :] * value.view(1, -1, 1)  # :fire: 关键修正：扩展到 [B, E, D]
-        )
+        out.index_add_(1, col, x[:, row, i, :] * value.view(1, -1, 1))
 
         conv_output.append(out)
 
@@ -301,15 +297,49 @@ def adj_mul(adj_i, adj, N):
 
 
 class NodeFormerConv(nn.Module):
-    r"""One layer of NodeFormer that attentive aggregates all nodes
-    over a latent graph.
-    Return: node embeddings for next layer, edge loss at this layer.
+    r"""One layer of NodeFormer model from the
+    `"NodeFormer: A Scalable Graph Structure Learning
+    Transformer for Node Classification"
+    <https://arxiv.org/pdf/2306.08385>`_ paper.
+    that attentive aggregates all nodes over a latent graph.
+    Predicted node labels, a list of edge losses at every layer.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        num_heads (int): Number of parallel heads.
+        kernel_transformation (func, optional): The kernel
+            transformation function.
+            (default: :func:`softmax_kernel_transformation`)
+        projection_matrix_type (str, optional): The type of projection matrix
+            to use ('a' or 'b') (default: 'a').
+        nb_random_features (int, optional): The number of random features.
+            (default: 10).
+        use_gumbel (bool, optional): Whether to use Gumbel sampling
+            (default: True).
+        nb_gumbel_sample (int, optional): The number of Gumbel samples.
+            (default: 10).
+        rb_order (int, optional): The order of relational bias.
+            (default: 0).
+        rb_trans (str, optional): The type of transformation.
+            relational bias ('sigmoid' or 'identity') (default: 'sigmoid').
+        use_edge_loss (bool, optional): Whether to use edge loss
+            (default: True).
     """
-    def __init__(self, in_channels, out_channels, num_heads,
-                 kernel_transformation=softmax_kernel_transformation,
-                 projection_matrix_type='a', nb_random_features=10,
-                 use_gumbel=True, nb_gumbel_sample=10, rb_order=0,
-                 rb_trans='sigmoid', use_edge_loss=True):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_heads: int,
+        kernel_transformation=softmax_kernel_transformation,
+        projection_matrix_type: str = 'a',
+        nb_random_features: int = 10,
+        use_gumbel: bool = True,
+        nb_gumbel_sample: int = 10,
+        rb_order: int = 0,
+        rb_trans: str = 'sigmoid',
+        use_edge_loss: bool = True,
+    ):
         super().__init__()
         self.Wk = nn.Linear(in_channels, out_channels * num_heads)
         self.Wq = nn.Linear(in_channels, out_channels * num_heads)
@@ -360,16 +390,21 @@ class NodeFormerConv(nn.Module):
         # on input edges, requires O(N) or O(N + E)
         # only using Gumbel noise for training
         if self.use_gumbel and self.training:
-            z_next, weight = kernelized_gumbel_softmax(
-                query, key, value, self.kernel_transformation,
-                projection_matrix, adjs[0], self.nb_gumbel_sample, tau,
-                self.use_edge_loss)
+            result = kernelized_gumbel_softmax(query, key, value,
+                                               self.kernel_transformation,
+                                               projection_matrix, adjs[0],
+                                               self.nb_gumbel_sample, tau,
+                                               self.use_edge_loss)
         else:
-            z_next, weight = kernelized_softmax(query, key, value,
-                                                self.kernel_transformation,
-                                                projection_matrix, adjs[0],
-                                                tau, self.use_edge_loss)
+            result = kernelized_softmax(query, key, value,
+                                        self.kernel_transformation,
+                                        projection_matrix, adjs[0], tau,
+                                        self.use_edge_loss)
 
+        if self.use_edge_loss:
+            z_next, weight = result
+        else:
+            z_next = result
         # compute update by relational bias of input adjacency, requires O(E)
         for i in range(self.rb_order):
             z_next += add_conv_relational_bias(value, adjs[i], self.b[i],
@@ -403,27 +438,56 @@ class NodeFormer(nn.Module):
         in_channels (int): Input channels.
         hidden_channels (int): Hidden channels.
         out_channels (int): Output channels.
+        num_layers (int): Number of layers.
+            (default: `3`)
+        num_heads (int): Number of heads.
+            (default: `4`)
+        dropout (float): Dropout rate.
+            (default: `0.0`)
+        kernel_transformation=softmax_kernel_transformation,
+        nb_random_features (int): Number of random features.
+            (default: `30`)
+        use_bn (bool): Whether to use batch normalization.
+            (default: `True`)
+        use_gumbel (bool): Whether to use Gumbel softmax.
+            (default: `True`)
+        use_residual (bool): Whether to use residual connection.
+            (default: `True`)
+        use_act (bool): Whether to use activation function.
+            (default: `False`)
+        use_jk (bool): Whether to use JK aggregation.
+            (default: `False`)
+        nb_gumbel_sample (int): Number of Gumbel samples.
+            (default: `10`)
+        rb_order (int): Order of relational bias.
+            (default: `0`)
+        rb_trans (str): Type of relational bias transformation.
+            (default: `'sigmoid'`)
+        use_edge_loss (bool): Whether to use edge loss.
+            (default: `True`)
+        tau (float): Temperature parameter for Gumbel softmax.
+            (default: `0.25`)
     """
     def __init__(
         self,
-        in_channels,
-        hidden_channels,
-        out_channels,
-        num_layers=3,
-        num_heads=4,
-        dropout=0.0,
+        in_channels: int,
+        hidden_channels: int,
+        out_channels: int,
+        num_layers: int = 3,
+        num_heads: int = 4,
+        dropout: float = 0.0,
         kernel_transformation=softmax_kernel_transformation,
-        nb_random_features=30,
-        use_bn=True,
-        use_gumbel=True,
-        use_residual=True,
-        use_act=False,
-        use_jk=False,
-        nb_gumbel_sample=10,
-        rb_order=0,
-        rb_trans='sigmoid',
-        use_edge_loss=True,
-        tau=0.25,
+        nb_random_features: int = 30,
+        use_bn: bool = True,
+        use_gumbel: bool = True,
+        use_residual: bool = True,
+        use_act: bool = False,
+        use_jk: bool = False,
+        nb_gumbel_sample: int = 10,
+        rb_order: int = 0,
+        rb_trans: str = 'sigmoid',
+        use_edge_loss: bool = True,
+        tau: float = 0.25,
     ):
         super().__init__()
 
