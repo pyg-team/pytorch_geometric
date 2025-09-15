@@ -19,9 +19,11 @@ See examples/llm/txt2kg_rag.py for e2e pipeline in PyG including:
 """
 import torch
 
+
 def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
                          num_epochs: int):
     """Decay learning rate with half-cycle cosine after warmup.
+
     Args:
         param_group (dict): Parameter group.
         LR (float): Learning rate.
@@ -40,6 +42,7 @@ def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
                            (num_epochs - warmup_epochs)))
     param_group['lr'] = lr
     return lr
+
 
 def save_params_dict(model, save_path):
     """Saves a model's parameters, excluding non-trainable weights.
