@@ -49,9 +49,11 @@ class PositionalEncoding(torch.nn.Module):
         self.base_freq = base_freq
         self.granularity = granularity
 
+        # Compute on CPU to avoid MPS missing op for logspace; we will move to
+        # the input device on demand in forward.
         frequency = torch.logspace(0, 1, out_channels // 2, base_freq,
-                                   device=device)
-        self.register_buffer('frequency', frequency)
+                                   device='cpu')
+        self.register_buffer('frequency', frequency, persistent=False)
 
         self.reset_parameters()
 
@@ -61,7 +63,9 @@ class PositionalEncoding(torch.nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """"""  # noqa: D419
         x = x / self.granularity if self.granularity != 1.0 else x
-        out = x.view(-1, 1) * self.frequency.view(1, -1)
+        freq = self.frequency if self.frequency.device == x.device else \
+            self.frequency.to(x.device)
+        out = x.view(-1, 1) * freq.view(1, -1)
         return torch.cat([torch.sin(out), torch.cos(out)], dim=-1)
 
     def __repr__(self) -> str:
