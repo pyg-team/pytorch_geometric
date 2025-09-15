@@ -1,11 +1,11 @@
-"""This example shows how to call the G-retriever model
+"""This example provides helper functions for using the G-retriever model
 (https://arxiv.org/abs/2402.07630) in PyG.
 
 Requirements:
 `pip install datasets transformers pcst_fast sentencepiece accelerate`
 
 
-Example blog showing 2x accuracy over LLM on real medical data (integration with Neo4j Graph DB):
+Example blog showing 2x accuracy over agentic graphRAG on real medical data (integration with Neo4j Graph DB):
 https://developer.nvidia.com/blog/boosting-qa-accuracy-with-graphrag-using-pyg-and-graph-databases/
 https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
 
@@ -19,6 +19,27 @@ See examples/llm/txt2kg_rag.py for e2e pipeline in PyG including:
 """
 import torch
 
+def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
+                         num_epochs: int):
+    """Decay learning rate with half-cycle cosine after warmup.
+    Args:
+        param_group (dict): Parameter group.
+        LR (float): Learning rate.
+        epoch (int): current epoch
+        num_epochs (int): total epochs
+    Returns:
+        float: Adjusted learning rate.
+    """
+    min_lr = 5e-6
+    warmup_epochs = 1
+    if epoch < warmup_epochs:
+        lr = LR
+    else:
+        lr = min_lr + (LR - min_lr) * 0.5 * (
+            1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
+                           (num_epochs - warmup_epochs)))
+    param_group['lr'] = lr
+    return lr
 
 def save_params_dict(model, save_path):
     """Saves a model's parameters, excluding non-trainable weights.
