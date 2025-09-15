@@ -106,5 +106,3 @@ def inference_step(model, batch, model_save_name="gnn+llm",
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.edge_attr, batch.desc,
                                max_out_tokens=max_out_tokens)
-
-
