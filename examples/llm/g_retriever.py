@@ -5,8 +5,10 @@ Requirements:
 `pip install datasets transformers pcst_fast sentencepiece accelerate`
 
 
-Example blog showing 2x accuracy over agentic graphRAG on real medical data (integration with Neo4j Graph DB):
+Example blog showing 2x accuracy over agentic graphRAG on real medical data
+(integration with Neo4j Graph DB):
 https://developer.nvidia.com/blog/boosting-qa-accuracy-with-graphrag-using-pyg-and-graph-databases/
+
 https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
 
 See examples/llm/txt2kg_rag.py for e2e pipeline in PyG including:
@@ -17,8 +19,9 @@ See examples/llm/txt2kg_rag.py for e2e pipeline in PyG including:
 - LLM Judge Eval
 
 """
+import math
 import torch
-
+from torch import Tensor
 
 def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
                          num_epochs: int):
