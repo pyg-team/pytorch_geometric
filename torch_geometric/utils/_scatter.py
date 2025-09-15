@@ -85,8 +85,7 @@ def scatter(
         # On MPS, certain scatter reductions are not yet fully supported.
         if src.device.type == 'mps':
             raise NotImplementedError(
-                "'scatter' with min/max reduction not supported for MPS device"
-            )
+                "'scatter' with reduction not supported for the MPS device")
         if (not torch_geometric.typing.WITH_TORCH_SCATTER or is_compiling()
                 or is_in_onnx_export() or not src.is_cuda
                 or not src.requires_grad):
