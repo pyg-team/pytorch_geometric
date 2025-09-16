@@ -5,14 +5,6 @@ from typing import Callable, Optional
 
 import numpy as np
 import torch
-import yaml
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import (
-    MinMaxScaler,
-    OneHotEncoder,
-    QuantileTransformer,
-    StandardScaler,
-)
 
 from torch_geometric.data import (
     Data,
@@ -25,6 +17,7 @@ from torch_geometric.utils import subgraph
 
 
 def _load_yaml(path: str) -> dict:
+    import yaml
     with open(path) as f:
         return yaml.safe_load(f)
 
@@ -195,6 +188,13 @@ class GraphLandDataset(InMemoryDataset):
           - True
           - regression
     """
+    from sklearn.impute import SimpleImputer
+    from sklearn.preprocessing import (
+        MinMaxScaler,
+        OneHotEncoder,
+        QuantileTransformer,
+        StandardScaler,
+    )
     _url = 'https://zenodo.org/records/16895532'
     _transforms = {
         'standard_scaler':
@@ -225,6 +225,7 @@ class GraphLandDataset(InMemoryDataset):
             handle_unknown='ignore',
         ),
     }
+    _imputer = SimpleImputer
 
     def __init__(
         self,
@@ -419,7 +420,7 @@ class GraphLandDataset(InMemoryDataset):
                 transform = self._transforms[self._num_transform]()
                 transform.fit(num_features)
 
-            num_features = SimpleImputer(
+            num_features = self._imputer(
                 missing_values=np.nan, strategy=self._num_imputation,
                 copy=False).fit_transform(num_features)
 
@@ -433,7 +434,7 @@ class GraphLandDataset(InMemoryDataset):
                 transform = self._transforms[self._frac_transform]()
                 transform.fit(frac_features)
 
-            frac_features = SimpleImputer(
+            frac_features = self._imputer(
                 missing_values=np.nan, strategy=self._frac_imputation,
                 copy=False).fit_transform(frac_features)
 
@@ -515,7 +516,7 @@ class GraphLandDataset(InMemoryDataset):
                 transform = self._transforms[self._num_transform]()
                 transform.fit(num_features[transform_mask])
 
-            imputer = SimpleImputer(missing_values=np.nan,
+            imputer = self._imputer(missing_values=np.nan,
                                     strategy=self._num_imputation, copy=False)
             imputer.fit(num_features[transform_mask])
             num_features = imputer.transform(num_features)
@@ -530,7 +531,7 @@ class GraphLandDataset(InMemoryDataset):
                 transform = self._transforms[self._frac_transform]()
                 transform.fit(frac_features[transform_mask])
 
-            imputer = SimpleImputer(missing_values=np.nan,
+            imputer = self._imputer(missing_values=np.nan,
                                     strategy=self._frac_imputation, copy=False)
             imputer.fit(frac_features[transform_mask])
             frac_features = imputer.transform(frac_features)
