@@ -83,7 +83,7 @@ class GRetriever(torch.nn.Module):
                                 mlp_out_channels * mlp_out_tokens),
                 torch.nn.Unflatten(-1, (mlp_out_tokens, mlp_out_channels)),
             ).to(self.llm.device)
-
+        self.str = "dummy change to run CI"
         self.seq_length_stats = []
 
     def encode(
