@@ -5,7 +5,6 @@ from typing import Callable, Optional
 
 import numpy as np
 import torch
-import yaml
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import (
     MinMaxScaler,
@@ -25,6 +24,7 @@ from torch_geometric.utils import subgraph
 
 
 def _load_yaml(path: str) -> dict:
+    import yaml
     with open(path) as f:
         return yaml.safe_load(f)
 
