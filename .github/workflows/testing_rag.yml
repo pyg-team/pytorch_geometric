@@ -29,10 +29,7 @@ jobs:
         with:
           files: |
             torch_geometric/datasets/web_qsp_dataset.py
-            torch_geometric/nn/nlp/**
-            torch_geometric/nn/models/g_retriever.py
-            torch_geometric/loader/rag_loader.py
-            torch_geometric/utils/rag/**
+            torch_geometric/llm/**
       - name: Setup packages
         if: steps.changed-files-specific-rag.outputs.any_changed == 'true'
         uses: ./.github/actions/setup
