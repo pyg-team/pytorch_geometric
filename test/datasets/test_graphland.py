@@ -1,12 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.testing import withPackage, onlyOnline
 from torch_geometric.datasets import GraphLandDataset
+from torch_geometric.testing import onlyOnline, withPackage
 
 
 @onlyOnline
-@withPackage('pandas', 'sklearn')
+@withPackage('pandas', 'sklearn', 'yaml')
 @pytest.mark.parametrize('name', [
     'hm-categories',
     'pokec-regions',
@@ -35,31 +35,21 @@ def test_transductive_graphland(name: str):
     data = dataset[0]
     assert data.num_nodes == data.x.shape[0] == data.y.shape[0]
 
-    assert not (
-        data.train_mask &
-        data.val_mask &
-        data.test_mask
-    ).any().item()
+    assert not (data.train_mask & data.val_mask & data.test_mask).any().item()
 
     labeled_mask = data.train_mask | data.val_mask | data.test_mask
     assert not torch.isnan(data.y[labeled_mask]).any().item()
     assert not torch.isnan(data.x).any().item()
 
-    assert not (
-        data.x_numerical_mask &
-        data.x_fraction_mask &
-        data.x_categorical_mask
-    ).any().item()
+    assert not (data.x_numerical_mask & data.x_fraction_mask
+                & data.x_categorical_mask).any().item()
 
-    assert (
-        data.x_numerical_mask |
-        data.x_fraction_mask |
-        data.x_categorical_mask
-    ).all().item()
+    assert (data.x_numerical_mask | data.x_fraction_mask
+            | data.x_categorical_mask).all().item()
 
 
 @onlyOnline
-@withPackage('pandas', 'sklearn')
+@withPackage('pandas', 'sklearn', 'yaml')
 @pytest.mark.parametrize('name', [
     'hm-categories',
     'pokec-regions',
