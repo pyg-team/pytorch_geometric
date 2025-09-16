@@ -53,7 +53,7 @@ class LinkPredMetricData:
 
         # Flatten both prediction and ground-truth indices, and determine
         # overlaps afterwards via `torch.searchsorted`.
-        max_index = max(  # type: ignore
+        max_index = max(
             self.pred_index_mat.max()
             if self.pred_index_mat.numel() > 0 else 0,
             self.edge_label_index[1].max()
@@ -820,8 +820,9 @@ class LinkPredPersonalization(_LinkPredMetric):
             right = pred[col.cpu()].to(device)
 
             # Use offset to work around applying `isin` along a specific dim:
-            i = max(left.max(), right.max()) + 1  # type: ignore
-            i = torch.arange(0, i * row.size(0), i, device=device).view(-1, 1)
+            i = max(left.max(), right.max()) + 1
+            i = torch.arange(0, i * row.size(0), i,
+                             device=device).view(-1, 1)  # type: ignore
             isin = torch.isin(left + i, right + i)
 
             # Compute personalization via average inverse cosine similarity:
