@@ -1,19 +1,20 @@
 import os
 import os.path as osp
-import yaml
 from functools import partial
 from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd
 import torch
+import yaml
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import (
-    OneHotEncoder,
     MinMaxScaler,
+    OneHotEncoder,
     QuantileTransformer,
     StandardScaler,
 )
+
 from torch_geometric.data import (
     Data,
     InMemoryDataset,
@@ -25,7 +26,7 @@ from torch_geometric.utils import subgraph
 
 
 def _load_yaml(path: str) -> dict:
-    with open(path, 'r') as f:
+    with open(path) as f:
         return yaml.safe_load(f)
 
 
@@ -197,23 +198,28 @@ class GraphLandDataset(InMemoryDataset):
     """
     _url = 'https://zenodo.org/records/16895532'
     _transforms = {
-        'standard_scaler': partial(StandardScaler, copy=False),
-        'min_max_scaler': partial(MinMaxScaler, clip=False, copy=False),
-        'quantile_transform_normal': partial(
+        'standard_scaler':
+        partial(StandardScaler, copy=False),
+        'min_max_scaler':
+        partial(MinMaxScaler, clip=False, copy=False),
+        'quantile_transform_normal':
+        partial(
             QuantileTransformer,
             output_distribution='normal',
             subsample=None,
             random_state=0,
             copy=False,
         ),
-        'quantile_transform_uniform': partial(
+        'quantile_transform_uniform':
+        partial(
             QuantileTransformer,
             output_distribution='uniform',
             subsample=None,
             random_state=0,
             copy=False,
         ),
-        'one_hot_encoding': partial(
+        'one_hot_encoding':
+        partial(
             OneHotEncoder,
             drop='if_binary',
             sparse_output=False,
@@ -226,15 +232,15 @@ class GraphLandDataset(InMemoryDataset):
         root: str,
         name: str,
         split: str,
-        numerical_features_transform: Optional[str] =
-        'quantile_transform_normal',
+        numerical_features_transform: Optional[
+            str] = 'quantile_transform_normal',
         fraction_features_transform: Optional[str] = None,
         categorical_features_transform: Optional[str] = 'one_hot_encoding',
         regression_targets_transform: Optional[str] = 'standard_scaler',
-        numerical_features_nan_imputation_strategy: Optional[str] =
-        'most_frequent',
-        fraction_features_nan_imputation_strategy: Optional[str] =
-        'most_frequent',
+        numerical_features_nan_imputation_strategy: Optional[
+            str] = 'most_frequent',
+        fraction_features_nan_imputation_strategy: Optional[
+            str] = 'most_frequent',
         to_undirected: bool = False,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
@@ -265,10 +271,8 @@ class GraphLandDataset(InMemoryDataset):
                 'city-roads-M',
                 'city-roads-L',
                 'web-trafic',
-            ], (
-                'Temporal split is not available for city-reviews, '
-                'city-roads-M, city-roads-L, web-trafic.'
-            )
+            ], ('Temporal split is not available for city-reviews, '
+                'city-roads-M, city-roads-L, web-trafic.')
 
         if numerical_features_transform is not None:
             assert numerical_features_transform in [
@@ -276,10 +280,8 @@ class GraphLandDataset(InMemoryDataset):
                 'min_max_scaler',
                 'quantile_transform_normal',
                 'quantile_transform_uniform',
-            ], (
-                'Unsupported numerical features transform: '
-                f'{numerical_features_transform}'
-            )
+            ], ('Unsupported numerical features transform: '
+                f'{numerical_features_transform}')
 
         if fraction_features_transform is not None:
             assert fraction_features_transform in [
@@ -287,25 +289,19 @@ class GraphLandDataset(InMemoryDataset):
                 'min_max_scaler',
                 'quantile_transform_normal',
                 'quantile_transform_uniform',
-            ], (
-                'Unsupported fraction features transform: '
-                f'{fraction_features_transform}'
-            )
+            ], ('Unsupported fraction features transform: '
+                f'{fraction_features_transform}')
 
         if categorical_features_transform is not None:
             assert categorical_features_transform == 'one_hot_encoding', (
                 'Unsupported categorical features transform: '
-                f'{categorical_features_transform}'
-            )
+                f'{categorical_features_transform}')
 
         if regression_targets_transform is not None:
             assert regression_targets_transform in [
-                'standard_scaler',
-                'min_max_scaler'
-            ], (
-                'Unsupported regression targets transform:'
-                f'{regression_targets_transform}'
-            )
+                'standard_scaler', 'min_max_scaler'
+            ], ('Unsupported regression targets transform:'
+                f'{regression_targets_transform}')
 
         self.name = name
         self.split = split
@@ -317,12 +313,8 @@ class GraphLandDataset(InMemoryDataset):
         self._frac_imputation = fraction_features_nan_imputation_strategy
         self._to_undirected = to_undirected
 
-        super().__init__(
-            root,
-            transform,
-            pre_transform,
-            force_reload=force_reload
-        )
+        super().__init__(root, transform, pre_transform,
+                         force_reload=force_reload)
         self.load(self.processed_paths[0])
 
     @property
@@ -411,10 +403,8 @@ class GraphLandDataset(InMemoryDataset):
         # >>> process targets
         targets = raw_data['targets']
         labeled_mask = ~np.isnan(targets)
-        if (
-            raw_data['info']['task'] == 'regression' and
-            self._reg_transform is not None
-        ):
+        if (raw_data['info']['task'] == 'regression'
+                and self._reg_transform is not None):
             targets = targets.reshape(-1, 1)
             transform = self._transforms[self._reg_transform]()
             transform.fit(targets[raw_data['masks']['train']])
@@ -429,10 +419,8 @@ class GraphLandDataset(InMemoryDataset):
                 transform.fit(num_features)
 
             num_features = SimpleImputer(
-                missing_values=np.nan,
-                strategy=self._num_imputation,
-                copy=False
-            ).fit_transform(num_features)
+                missing_values=np.nan, strategy=self._num_imputation,
+                copy=False).fit_transform(num_features)
 
             if self._num_transform is not None:
                 num_features = transform.transform(num_features)
@@ -445,10 +433,8 @@ class GraphLandDataset(InMemoryDataset):
                 transform.fit(frac_features)
 
             frac_features = SimpleImputer(
-                missing_values=np.nan,
-                strategy=self._frac_imputation,
-                copy=False
-            ).fit_transform(frac_features)
+                missing_values=np.nan, strategy=self._frac_imputation,
+                copy=False).fit_transform(frac_features)
 
             if self._frac_transform is not None:
                 frac_features = transform.transform(frac_features)
@@ -456,10 +442,8 @@ class GraphLandDataset(InMemoryDataset):
         # >>> process categorical features
         cat_features = raw_data['cat_features']
         if cat_features.size > 0 and self._cat_transform is not None:
-            cat_features = (
-                self._transforms[self._cat_transform]()
-                .fit_transform(cat_features)
-            )
+            cat_features = (self._transforms[self._cat_transform]
+                            ().fit_transform(cat_features))
 
         # >>> concatenate features and make features mask
         features = np.concatenate(
@@ -468,15 +452,15 @@ class GraphLandDataset(InMemoryDataset):
         )
         features = torch.tensor(features, dtype=torch.float)
 
-        num_mask = np.zeros(shape=(features.shape[1],), dtype=bool)
+        num_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
         num_mask[:num_features.shape[1]] = True
         num_mask = torch.tensor(num_mask, dtype=torch.bool)
 
-        frac_mask = np.zeros(shape=(features.shape[1],), dtype=bool)
+        frac_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
         frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
         frac_mask = torch.tensor(frac_mask, dtype=torch.bool)
 
-        cat_mask = np.zeros(shape=(features.shape[1],), dtype=bool)
+        cat_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
         cat_mask[-cat_features.shape[1]:] = True
         cat_mask = torch.tensor(cat_mask, dtype=torch.bool)
 
@@ -515,10 +499,8 @@ class GraphLandDataset(InMemoryDataset):
         # >>> process targets
         targets = raw_data['targets']
         labeled_mask = ~np.isnan(targets)
-        if (
-            raw_data['info']['task'] == 'regression' and
-            self._reg_transform is not None
-        ):
+        if (raw_data['info']['task'] == 'regression'
+                and self._reg_transform is not None):
             targets = targets.reshape(-1, 1)
             transform = self._transforms[self._reg_transform]()
             transform.fit(targets[transform_mask])
@@ -532,11 +514,8 @@ class GraphLandDataset(InMemoryDataset):
                 transform = self._transforms[self._num_transform]()
                 transform.fit(num_features[transform_mask])
 
-            imputer = SimpleImputer(
-                missing_values=np.nan,
-                strategy=self._num_imputation,
-                copy=False
-            )
+            imputer = SimpleImputer(missing_values=np.nan,
+                                    strategy=self._num_imputation, copy=False)
             imputer.fit(num_features[transform_mask])
             num_features = imputer.transform(num_features)
 
@@ -550,11 +529,8 @@ class GraphLandDataset(InMemoryDataset):
                 transform = self._transforms[self._frac_transform]()
                 transform.fit(frac_features[transform_mask])
 
-            imputer = SimpleImputer(
-                missing_values=np.nan,
-                strategy=self._frac_imputation,
-                copy=False
-            )
+            imputer = SimpleImputer(missing_values=np.nan,
+                                    strategy=self._frac_imputation, copy=False)
             imputer.fit(frac_features[transform_mask])
             frac_features = imputer.transform(frac_features)
 
@@ -575,15 +551,15 @@ class GraphLandDataset(InMemoryDataset):
         )
         features = torch.tensor(features, dtype=torch.float)
 
-        num_mask = np.zeros(shape=(features.shape[1],), dtype=bool)
+        num_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
         num_mask[:num_features.shape[1]] = True
         num_mask = torch.tensor(num_mask, dtype=torch.bool)
 
-        frac_mask = np.zeros(shape=(features.shape[1],), dtype=bool)
+        frac_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
         frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
         frac_mask = torch.tensor(frac_mask, dtype=torch.bool)
 
-        cat_mask = np.zeros(shape=(features.shape[1],), dtype=bool)
+        cat_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
         cat_mask[-cat_features.shape[1]:] = True
         cat_mask = torch.tensor(cat_mask, dtype=torch.bool)
 
@@ -618,10 +594,8 @@ class GraphLandDataset(InMemoryDataset):
         )
 
         # --- val
-        val_graph_mask = (
-            raw_data['masks']['train'] |
-            raw_data['masks']['val']
-        )
+        val_graph_mask = (raw_data['masks']['train']
+                          | raw_data['masks']['val'])
         val_graph_mask = torch.tensor(val_graph_mask, dtype=torch.bool)
 
         val_label_mask = raw_data['masks']['val'] & labeled_mask
@@ -647,11 +621,9 @@ class GraphLandDataset(InMemoryDataset):
         )
 
         # --- test
-        test_graph_mask = (
-            raw_data['masks']['train'] |
-            raw_data['masks']['val'] |
-            raw_data['masks']['test']
-        )
+        test_graph_mask = (raw_data['masks']['train']
+                           | raw_data['masks']['val']
+                           | raw_data['masks']['test'])
         test_graph_mask = torch.tensor(test_graph_mask, dtype=torch.bool)
 
         test_label_mask = raw_data['masks']['test'] & labeled_mask
@@ -679,11 +651,8 @@ class GraphLandDataset(InMemoryDataset):
         return [train_data, val_data, test_data]
 
     def process(self) -> None:
-        data = (
-            self._get_transductive_data()
-            if self.split in ['RL', 'RH', 'TH']
-            else self._get_inductive_data()
-        )
+        data = (self._get_transductive_data() if self.split
+                in ['RL', 'RH', 'TH'] else self._get_inductive_data())
         if self._to_undirected:
             transform = ToUndirected()
             for idx, d in enumerate(data):
