@@ -188,45 +188,7 @@ class GraphLandDataset(InMemoryDataset):
           - True
           - regression
     """
-    from sklearn.impute import SimpleImputer
-    from sklearn.preprocessing import (
-        MinMaxScaler,
-        OneHotEncoder,
-        QuantileTransformer,
-        StandardScaler,
-    )
     _url = 'https://zenodo.org/records/16895532'
-    _transforms = {
-        'standard_scaler':
-        partial(StandardScaler, copy=False),
-        'min_max_scaler':
-        partial(MinMaxScaler, clip=False, copy=False),
-        'quantile_transform_normal':
-        partial(
-            QuantileTransformer,
-            output_distribution='normal',
-            subsample=None,
-            random_state=0,
-            copy=False,
-        ),
-        'quantile_transform_uniform':
-        partial(
-            QuantileTransformer,
-            output_distribution='uniform',
-            subsample=None,
-            random_state=0,
-            copy=False,
-        ),
-        'one_hot_encoding':
-        partial(
-            OneHotEncoder,
-            drop='if_binary',
-            sparse_output=False,
-            handle_unknown='ignore',
-            dtype=np.float32,
-        ),
-    }
-    _imputer = SimpleImputer
 
     def __init__(
         self,
@@ -313,6 +275,45 @@ class GraphLandDataset(InMemoryDataset):
         self._num_imputation = numerical_features_nan_imputation_strategy
         self._frac_imputation = fraction_features_nan_imputation_strategy
         self._to_undirected = to_undirected
+
+        from sklearn.impute import SimpleImputer
+        from sklearn.preprocessing import (
+            MinMaxScaler,
+            OneHotEncoder,
+            QuantileTransformer,
+            StandardScaler,
+        )
+        self._transforms = {
+            'standard_scaler':
+            partial(StandardScaler, copy=False),
+            'min_max_scaler':
+            partial(MinMaxScaler, clip=False, copy=False),
+            'quantile_transform_normal':
+            partial(
+                QuantileTransformer,
+                output_distribution='normal',
+                subsample=None,
+                random_state=0,
+                copy=False,
+            ),
+            'quantile_transform_uniform':
+            partial(
+                QuantileTransformer,
+                output_distribution='uniform',
+                subsample=None,
+                random_state=0,
+                copy=False,
+            ),
+            'one_hot_encoding':
+            partial(
+                OneHotEncoder,
+                drop='if_binary',
+                sparse_output=False,
+                handle_unknown='ignore',
+                dtype=np.float32,
+            ),
+        }
+        self._imputer = SimpleImputer
 
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
