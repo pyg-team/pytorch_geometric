@@ -223,6 +223,7 @@ class GraphLandDataset(InMemoryDataset):
             drop='if_binary',
             sparse_output=False,
             handle_unknown='ignore',
+            dtype=np.float32,
         ),
     }
     _imputer = SimpleImputer
@@ -364,18 +365,22 @@ class GraphLandDataset(InMemoryDataset):
             if name not in info['fraction_features_names']
         ]
         num_features = features_df[num_features_names].values
+        num_features = num_features.astype(np.float32)
 
         cat_features_names = info['categorical_features_names']
         cat_features = features_df[cat_features_names].values
+        cat_features = cat_features.astype(np.int32)
 
         frac_features_names = info['fraction_features_names']
         frac_features = features_df[frac_features_names].values
+        frac_features = frac_features.astype(np.float32)
 
         targets_df = pd.read_csv(
             osp.join(raw_data_dir, 'targets.csv'),
             index_col=0,
         )
         targets = targets_df[info['target_name']].values
+        targets = targets.astype(np.float32)
 
         masks_df = pd.read_csv(
             osp.join(raw_data_dir, f'split_masks_{self.split[:2]}.csv'),
