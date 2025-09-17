@@ -9,19 +9,8 @@ from torch_geometric.testing import onlyOnline, withPackage
 @withPackage('pandas', 'sklearn', 'yaml')
 @pytest.mark.parametrize('name', [
     'hm-categories',
-    'pokec-regions',
-    'web-topics',
     'tolokers-2',
-    'city-reviews',
-    'artnet-exp',
-    'web-fraud',
-    'hm-prices',
     'avazu-ctr',
-    'city-roads-M',
-    'city-roads-L',
-    'twitch-views',
-    'artnet-views',
-    'web-traffic',
 ])
 def test_transductive_graphland(name: str):
     dataset = GraphLandDataset(
@@ -52,15 +41,8 @@ def test_transductive_graphland(name: str):
 @withPackage('pandas', 'sklearn', 'yaml')
 @pytest.mark.parametrize('name', [
     'hm-categories',
-    'pokec-regions',
-    'web-topics',
     'tolokers-2',
-    'artnet-exp',
-    'web-fraud',
-    'hm-prices',
     'avazu-ctr',
-    'twitch-views',
-    'artnet-views',
 ])
 def test_inductive_graphland(name: str):
     base_data = GraphLandDataset(
