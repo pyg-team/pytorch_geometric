@@ -1,10 +1,11 @@
+import gc
 import random
 import string
 from typing import List
 
 import pytest
 import torch
-import gc
+
 from torch_geometric.data import Data
 from torch_geometric.llm.large_graph_indexer import (
     EDGE_PID,
