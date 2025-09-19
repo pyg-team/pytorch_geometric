@@ -1,8 +1,9 @@
+import gc
 from unittest.mock import Mock, patch
 
 import pytest
 import torch
-import gc
+
 from torch_geometric.data import FeatureStore
 from torch_geometric.llm.utils.graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.sampler import BidirectionalNeighborSampler, SamplerOutput

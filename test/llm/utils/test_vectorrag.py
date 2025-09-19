@@ -1,6 +1,8 @@
+import gc
+
 import pytest
 import torch
-import gc
+
 from torch_geometric.llm.utils.vectorrag import DocumentRetriever
 from torch_geometric.testing import onlyRAG
 

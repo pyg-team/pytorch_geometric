@@ -1,8 +1,9 @@
+import gc
 from unittest.mock import Mock, patch
 
 import pytest
 import torch
-import gc
+
 from torch_geometric.data import Data
 from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
 from torch_geometric.sampler import SamplerOutput
