@@ -1,7 +1,8 @@
+import gc
 import os
 import tempfile
 from typing import List
-import gc
+
 import torch
 
 from torch_geometric.data import Data
