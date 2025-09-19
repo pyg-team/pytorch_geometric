@@ -1,9 +1,11 @@
+import gc
 import os
 import random
 import string
-import gc
+
 import pytest
 import torch
+
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
 from torch_geometric.testing import (
