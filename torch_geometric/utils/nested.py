@@ -70,7 +70,8 @@ def from_nested_tensor(
 
     sizes = x._nested_tensor_size()
 
-    for dim, (a, b) in enumerate(zip(sizes[0, 1:], sizes.t()[1:], strict=False)):
+    for dim, (a, b) in enumerate(zip(sizes[0, 1:],
+                                     sizes.t()[1:], strict=False)):
         if not torch.equal(a.expand_as(b), b):
             raise ValueError(f"Not all nested tensors have the same size "
                              f"in dimension {dim + 1} "

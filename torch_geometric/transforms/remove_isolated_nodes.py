@@ -59,7 +59,8 @@ class RemoveIsolatedNodes(BaseTransform):
             edge_store.edge_index = torch.stack([row, col], dim=0)
 
         old_data = copy.copy(data)
-        for out, node_store in zip(data.node_stores, old_data.node_stores, strict=False):
+        for out, node_store in zip(data.node_stores, old_data.node_stores,
+                                   strict=False):
             for key, value in node_store.items():
                 if key == 'num_nodes':
                     out.num_nodes = n_id_dict[node_store._key].numel()

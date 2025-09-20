@@ -69,7 +69,9 @@ class GraphEncoder(torch.nn.Module):
         )
         edge_attr = self.edge_embed1(edge_attr[:, 0]) + self.edge_embed2(
             edge_attr[:, 1])
-        for i, (gnn, bn) in enumerate(zip(self.gnns, self.batch_norms, strict=False)):
+        for i, (gnn,
+                bn) in enumerate(zip(self.gnns, self.batch_norms,
+                                     strict=False)):
             x = gnn(x, edge_index, edge_attr)
             x = bn(x)
             if i < self.num_layers - 1:
@@ -208,7 +210,8 @@ class GITMol(torch.nn.Module):
             [x_graph, x_smiles, x_vision],
             [graph_atts, smiles_atts, vision_atts],
             [graph_targets, smiles_targets, vision_targets],
-            ['graph', 'cs_text', 'image'], strict=False,
+            ['graph', 'cs_text', 'image'],
+                strict=False,
         ):
             loss += self._calc_xtc_loss(x_embed, x_atts, x_targets, text_feat,
                                         modal)

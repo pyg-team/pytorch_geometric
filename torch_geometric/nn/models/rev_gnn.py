@@ -92,7 +92,8 @@ class InvertibleFunction(torch.autograd.Function):
             if not isinstance(inputs_inverted, tuple):
                 inputs_inverted = (inputs_inverted, )
 
-            for elem_orig, elem_inv in zip(inputs, inputs_inverted, strict=False):
+            for elem_orig, elem_inv in zip(inputs, inputs_inverted,
+                                           strict=False):
                 if torch_geometric.typing.WITH_PT20:
                     elem_orig.untyped_storage().resize_(
                         int(np.prod(elem_orig.size())) *
@@ -110,7 +111,8 @@ class InvertibleFunction(torch.autograd.Function):
                 else:
                     detached_inputs.append(element)
             detached_inputs = tuple(detached_inputs)
-            for x, req_grad in zip(detached_inputs, ctx.input_requires_grad, strict=False):
+            for x, req_grad in zip(detached_inputs, ctx.input_requires_grad,
+                                   strict=False):
                 if isinstance(x, torch.Tensor):
                     x.requires_grad = req_grad
             tmp_output = ctx.fn(*detached_inputs)
@@ -271,7 +273,8 @@ class GroupAddRev(InvertibleModule):
     def _forward(self, x: Tensor, edge_index: Adj, *args):
         channels = x.size(self.split_dim)
         xs = self._chunk(x, channels)
-        args = list(zip(*[self._chunk(arg, channels) for arg in args], strict=False))
+        args = list(
+            zip(*[self._chunk(arg, channels) for arg in args], strict=False))
         args = [[]] * self.num_groups if len(args) == 0 else args
 
         ys = []
@@ -284,7 +287,8 @@ class GroupAddRev(InvertibleModule):
     def _inverse(self, y: Tensor, edge_index: Adj, *args):
         channels = y.size(self.split_dim)
         ys = self._chunk(y, channels)
-        args = list(zip(*[self._chunk(arg, channels) for arg in args], strict=False))
+        args = list(
+            zip(*[self._chunk(arg, channels) for arg in args], strict=False))
         args = [[]] * self.num_groups if len(args) == 0 else args
 
         xs = []

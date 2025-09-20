@@ -136,7 +136,8 @@ class CaptumHeteroModel(CaptumModel):
 
         if self.mask_type.with_edge:
             edge_mask_tensors = [mask.squeeze(0) for mask in edge_mask_tensors]
-            edge_mask_dict = dict(zip(self.edge_types, edge_mask_tensors, strict=False))
+            edge_mask_dict = dict(
+                zip(self.edge_types, edge_mask_tensors, strict=False))
         else:
             edge_mask_dict = None
         return x_dict, edge_index_dict, edge_mask_dict
@@ -288,8 +289,10 @@ def captum_output_to_dicts(
         edge_attr_dict = dict(zip(edge_types, captum_attrs, strict=False))
     elif mask_type == MaskLevelType.node_and_edge:
         assert len(edge_types) + len(node_types) == len(captum_attrs)
-        x_attr_dict = dict(zip(node_types, captum_attrs[:len(node_types)], strict=False))
-        edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):], strict=False))
+        x_attr_dict = dict(
+            zip(node_types, captum_attrs[:len(node_types)], strict=False))
+        edge_attr_dict = dict(
+            zip(edge_types, captum_attrs[len(node_types):], strict=False))
     return x_attr_dict, edge_attr_dict
 
 

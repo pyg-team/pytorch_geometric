@@ -157,7 +157,8 @@ class TGNMemory(torch.nn.Module):
                           raw_msg: Tensor, msg_store: TGNMessageStoreType):
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
-        for i, idx in zip(n_id.tolist(), perm.split(count.tolist()), strict=False):
+        for i, idx in zip(n_id.tolist(), perm.split(count.tolist()),
+                          strict=False):
             msg_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
     def _compute_msg(self, n_id: Tensor, msg_store: TGNMessageStoreType,

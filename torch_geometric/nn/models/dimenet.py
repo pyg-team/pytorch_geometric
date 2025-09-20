@@ -715,7 +715,8 @@ class DimeNet(torch.nn.Module):
 
         # Interaction blocks.
         for interaction_block, output_block in zip(self.interaction_blocks,
-                                                   self.output_blocks[1:], strict=False):
+                                                   self.output_blocks[1:],
+                                                   strict=False):
             x = interaction_block(x, rbf, sbf, idx_kj, idx_ji)
             P = P + output_block(x, rbf, i, num_nodes=pos.size(0))
 

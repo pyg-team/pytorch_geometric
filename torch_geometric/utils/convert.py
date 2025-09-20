@@ -342,7 +342,8 @@ def to_networkit(
         edge_index = edge_index[:, mask]
         edge_weight = edge_weight[mask]
 
-    for (u, v), w in zip(edge_index.t().tolist(), edge_weight.tolist(), strict=False):
+    for (u, v), w in zip(edge_index.t().tolist(), edge_weight.tolist(),
+                         strict=False):
         g.addEdge(u, v, w)
 
     return g

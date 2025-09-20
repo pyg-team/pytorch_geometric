@@ -65,7 +65,8 @@ if __name__ == '__main__':
             dst_path_list,
             node_ranks,
             visible_devices,
-            python_bins, strict=False,
+            python_bins,
+            strict=False,
     ):
         trans = paramiko.Transport((ip, port))
         trans.connect(username=username, password=passwd_dict[ip + username])

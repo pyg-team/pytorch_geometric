@@ -229,7 +229,8 @@ class MLP(torch.nn.Module):
 
         # If `plain_last=True`, then `len(norms) = len(lins) -1, thus skipping
         # the execution of the last layer inside the for-loop.
-        for i, (lin, norm) in enumerate(zip(self.lins, self.norms, strict=False)):
+        for i, (lin,
+                norm) in enumerate(zip(self.lins, self.norms, strict=False)):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)

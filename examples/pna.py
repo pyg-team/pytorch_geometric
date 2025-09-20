@@ -60,7 +60,8 @@ class Net(torch.nn.Module):
         x = self.node_emb(x.squeeze())
         edge_attr = self.edge_emb(edge_attr)
 
-        for conv, batch_norm in zip(self.convs, self.batch_norms, strict=False):
+        for conv, batch_norm in zip(self.convs, self.batch_norms,
+                                    strict=False):
             x = F.relu(batch_norm(conv(x, edge_index, edge_attr)))
 
         x = global_add_pool(x, batch)

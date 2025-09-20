@@ -247,7 +247,8 @@ class HeteroLinear(torch.nn.Module):
 
     def forward_naive(self, x: Tensor, type_ptr: Tensor) -> Tensor:
         out = x.new_empty(x.size(0), self.out_channels)
-        for i, (start, end) in enumerate(zip(type_ptr[:-1], type_ptr[1:], strict=False)):
+        for i, (start, end) in enumerate(
+                zip(type_ptr[:-1], type_ptr[1:], strict=False)):
             out[start:end] = x[start:end] @ self.weight[i]
         return out
 

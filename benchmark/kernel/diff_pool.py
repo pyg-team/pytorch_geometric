@@ -52,8 +52,8 @@ class DiffPool(torch.nn.Module):
     def reset_parameters(self):
         self.embed_block1.reset_parameters()
         self.pool_block1.reset_parameters()
-        for embed_block, pool_block in zip(self.embed_blocks,
-                                           self.pool_blocks, strict=False):
+        for embed_block, pool_block in zip(self.embed_blocks, self.pool_blocks,
+                                           strict=False):
             embed_block.reset_parameters()
             pool_block.reset_parameters()
         self.jump.reset_parameters()

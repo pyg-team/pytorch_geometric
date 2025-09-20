@@ -216,7 +216,8 @@ class Sequential(torch.nn.Module):
         """"""  # noqa: D419
         value_dict = {
             name: arg
-            for name, arg in zip(self.signature.param_dict.keys(), args, strict=False)
+            for name, arg in zip(self.signature.param_dict.keys(), args,
+                                 strict=False)
         }
         for key, arg in kwargs.items():
             if key in value_dict:

@@ -81,7 +81,8 @@ def test_database_schema(tmp_path, Database):
     out1 = db.get(0)
     out2, out3 = db.multi_get([1, 2])
 
-    for out, data in zip([out1, out2, out3], [data1, data2, data3], strict=False):
+    for out, data in zip([out1, out2, out3], [data1, data2, data3],
+                         strict=False):
         assert out[0] == data[0]
         if math.isnan(data[1]):
             assert math.isnan(out[1])
@@ -138,7 +139,8 @@ def test_database_schema(tmp_path, Database):
     out1 = db.get(0)
     out2, out3 = db.multi_get([1, 2])
 
-    for out, data in zip([out1, out2, out3], [data1, data2, data3], strict=False):
+    for out, data in zip([out1, out2, out3], [data1, data2, data3],
+                         strict=False):
         assert out['int'] == data['int']
         assert out['float'] == data['float']
         assert out['str'] == data['str']
@@ -170,7 +172,8 @@ def test_index(tmp_path, Database):
     out1 = db.get(0)
     out2, out3 = db.multi_get([1, 2])
 
-    for out, index in zip([out1, out2, out3], [index1, index2, index3], strict=False):
+    for out, index in zip([out1, out2, out3], [index1, index2, index3],
+                          strict=False):
         assert index.equal(out)
         assert index.dtype == out.dtype
         assert index.dim_size == out.dim_size

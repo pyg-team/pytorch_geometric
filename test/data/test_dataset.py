@@ -164,7 +164,8 @@ def test_edge_index(tmp_path):
 
     dataset = MyTestDataset([data1, data2])
     assert len(dataset) == 2
-    for data, edge_index in zip(dataset, [edge_index1, edge_index2], strict=False):
+    for data, edge_index in zip(dataset, [edge_index1, edge_index2],
+                                strict=False):
         assert isinstance(data.edge_index, EdgeIndex)
         assert data.edge_index.equal(edge_index)
         assert data.edge_index.sparse_size() == edge_index.sparse_size()
@@ -173,7 +174,8 @@ def test_edge_index(tmp_path):
 
     dataset = MyStoredTestDataset(tmp_path, [data1, data2])
     assert len(dataset) == 2
-    for data, edge_index in zip(dataset, [edge_index1, edge_index2], strict=False):
+    for data, edge_index in zip(dataset, [edge_index1, edge_index2],
+                                strict=False):
         assert isinstance(data.edge_index, EdgeIndex)
         assert data.edge_index.equal(edge_index)
         assert data.edge_index.sparse_size() == edge_index.sparse_size()

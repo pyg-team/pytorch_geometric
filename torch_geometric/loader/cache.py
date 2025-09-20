@@ -11,7 +11,8 @@ def to_device(inputs: Any, device: Optional[torch.device] = None) -> Any:
     elif isinstance(inputs, Mapping):
         return {key: to_device(value, device) for key, value in inputs.items()}
     elif isinstance(inputs, tuple) and hasattr(inputs, '_fields'):
-        return type(inputs)(*(to_device(s, device) for s in zip(*inputs, strict=False)))
+        return type(inputs)(*(to_device(s, device)
+                              for s in zip(*inputs, strict=False)))
     elif isinstance(inputs, Sequence) and not isinstance(inputs, str):
         return [to_device(s, device) for s in zip(*inputs, strict=False)]
 
