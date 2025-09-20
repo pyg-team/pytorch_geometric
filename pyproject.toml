@@ -88,10 +88,11 @@ full = [
     "h5py",
     "matplotlib",
     "networkx",
-    "numba",
+    "numba<0.60.0",
     "opt_einsum",
     "pandas",
-    "pgmpy",
+    # See https://github.com/pgmpy/pgmpy/issues/2360.
+    # "pgmpy",
     "pynndescent",
     "pytorch-memlab",
     "rdflib",
