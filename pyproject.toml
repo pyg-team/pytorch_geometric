@@ -88,7 +88,7 @@ full = [
     "h5py",
     "matplotlib",
     "networkx",
-    "numba<0.60.0",
+    "numba",
     "opt_einsum",
     "pandas",
     "pgmpy",
