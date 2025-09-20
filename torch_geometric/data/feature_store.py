@@ -65,6 +65,30 @@ class TensorAttr(CastMixin):
 
     # Convenience methods #####################################################
 
+    def __eq__(self, obj: object) -> bool:  # type: ignore[override]
+        r"""Safely compares two :class:`TensorAttr` objects.
+        Handles tensor/ndarray/slice comparisons without triggering ambiguous
+        boolean value errors.
+        """
+        if not isinstance(obj, TensorAttr):
+            return False
+
+        def _equal(a: Any, b: Any) -> bool:
+            # Handle torch.Tensor
+            if isinstance(a, torch.Tensor) and isinstance(b, torch.Tensor):
+                return torch.equal(a, b)
+            # Handle numpy.ndarray
+            if isinstance(a, np.ndarray) and isinstance(b, np.ndarray):
+                return bool(np.array_equal(a, b))
+            # Handle slice objects
+            if isinstance(a, slice) and isinstance(b, slice):
+                return (a.start, a.stop, a.step) == (b.start, b.stop, b.step)
+            return a == b
+
+        return (_equal(self.group_name, obj.group_name)
+                and _equal(self.attr_name, obj.attr_name)
+                and _equal(self.index, obj.index))
+
     def is_set(self, key: str) -> bool:
         r"""Whether an attribute is set in :obj:`TensorAttr`."""
         assert key in self.__dataclass_fields__
