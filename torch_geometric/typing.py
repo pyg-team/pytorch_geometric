@@ -93,7 +93,7 @@ except Exception as e:
     WITH_CUDA_HASH_MAP = False
 
 if WITH_CPU_HASH_MAP:
-    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
+    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap  # type: ignore[name-defined]  # noqa: E501
 else:
 
     class CPUHashMap:  # type: ignore
@@ -105,7 +105,7 @@ else:
 
 
 if WITH_CUDA_HASH_MAP:
-    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
+    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap  # type: ignore[name-defined]  # noqa: E501
 else:
 
     class CUDAHashMap:  # type: ignore
