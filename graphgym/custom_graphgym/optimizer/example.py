@@ -13,7 +13,7 @@ def adagrad_optimizer(params: Iterator[Parameter], base_lr: float,
     return Adagrad(params, lr=base_lr, weight_decay=weight_decay)
 
 
-@register.register_scheduler('pleateau')
+@register.register_scheduler('plateau')
 def plateau_scheduler(optimizer: Optimizer, patience: int,
                       lr_decay: float) -> ReduceLROnPlateau:
     return ReduceLROnPlateau(optimizer, patience=patience, factor=lr_decay)
