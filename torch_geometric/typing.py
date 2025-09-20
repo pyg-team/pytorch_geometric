@@ -65,12 +65,12 @@ try:
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
     try:
-        torch.classes.pyg.CPUHashMap  # type: ignore[name-defined]  # noqa: B018,E501
+        torch.classes.pyg.CPUHashMap  # noqa: B018
         WITH_CPU_HASH_MAP = True
     except Exception:
         WITH_CPU_HASH_MAP = False
     try:
-        torch.classes.pyg.CUDAHashMap  # type: ignore[name-defined]  # noqa: B018,E501
+        torch.classes.pyg.CUDAHashMap  # noqa: B018
         WITH_CUDA_HASH_MAP = True
     except Exception:
         WITH_CUDA_HASH_MAP = False
