@@ -121,7 +121,7 @@ class InfectionDataset(InMemoryDataset):
                              f"(got {min(max_path_length)})")
 
         data_list: List[Explanation] = []
-        for N, L in zip(num_infected_nodes, max_path_length):
+        for N, L in zip(num_infected_nodes, max_path_length, strict=False):
             data_list.append(self.get_graph(N, L))
 
         self.data, self.slices = self.collate(data_list)

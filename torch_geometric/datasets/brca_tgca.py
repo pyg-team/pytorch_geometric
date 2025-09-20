@@ -97,7 +97,7 @@ class BrcaTcga(InMemoryDataset):
         edge_index = fs.torch_load(self.raw_paths[2])
 
         data_list = []
-        for x, y in zip(graph_feat, graph_label):
+        for x, y in zip(graph_feat, graph_label, strict=False):
             data = Data(x=x.view(-1, 1), edge_index=edge_index, y=y)
 
             if self.pre_filter is not None and not self.pre_filter(data):

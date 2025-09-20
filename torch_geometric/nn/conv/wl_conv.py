@@ -60,7 +60,7 @@ class WLConv(torch.nn.Module):
         deg = degree(col, x.size(0), dtype=torch.long).tolist()
 
         out = []
-        for node, neighbors in zip(x.tolist(), x[row].split(deg)):
+        for node, neighbors in zip(x.tolist(), x[row].split(deg), strict=False):
             idx = hash(tuple([node] + neighbors.sort()[0].tolist()))
             if idx not in self.hashmap:
                 self.hashmap[idx] = len(self.hashmap)

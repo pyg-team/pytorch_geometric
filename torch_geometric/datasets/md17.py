@@ -410,7 +410,7 @@ class MD17(InMemoryDataset):
                 os.unlink(path)
 
     def process(self) -> None:
-        it = zip(self.raw_paths, self.processed_paths)
+        it = zip(self.raw_paths, self.processed_paths, strict=False)
         for raw_path, processed_path in it:
             raw_data = np.load(raw_path)
 

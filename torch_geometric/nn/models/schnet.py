@@ -232,7 +232,7 @@ class SchNet(torch.nn.Module):
         net.embedding.weight = state.representation.embedding.weight
 
         for int1, int2 in zip(state.representation.interactions,
-                              net.interactions):
+                              net.interactions, strict=False):
             int2.mlp[0].weight = int1.filter_network[0].weight
             int2.mlp[0].bias = int1.filter_network[0].bias
             int2.mlp[2].weight = int1.filter_network[1].weight

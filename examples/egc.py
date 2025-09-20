@@ -70,7 +70,7 @@ class Net(torch.nn.Module):
 
         x = self.encoder(x)
 
-        for conv, norm in zip(self.convs, self.norms):
+        for conv, norm in zip(self.convs, self.norms, strict=False):
             h = conv(x, adj_t)
             h = norm(h)
             h = h.relu_()

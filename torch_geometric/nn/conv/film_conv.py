@@ -109,7 +109,7 @@ class FiLMConv(MessagePassing):
 
     def reset_parameters(self):
         super().reset_parameters()
-        for lin, film in zip(self.lins, self.films):
+        for lin, film in zip(self.lins, self.films, strict=False):
             lin.reset_parameters()
             reset(film)
         self.lin_skip.reset_parameters()
@@ -136,7 +136,7 @@ class FiLMConv(MessagePassing):
             out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
                                        beta=beta, gamma=gamma)
         else:
-            for i, (lin, film) in enumerate(zip(self.lins, self.films)):
+            for i, (lin, film) in enumerate(zip(self.lins, self.films, strict=False)):
                 beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
                 if isinstance(edge_index, SparseTensor):
                     _edge_type = edge_index.storage.value()

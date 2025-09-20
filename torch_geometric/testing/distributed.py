@@ -69,14 +69,14 @@ def assert_run_mproc(
         mp_context.Process(
             target=ps_std_capture,
             args=[p.target, q, world_size] + list(p.args),
-        ) for p, q in zip(pargs, queues)
+        ) for p, q in zip(pargs, queues, strict=False)
     ]
     results = []
 
-    for p, _ in zip(procs, queues):
+    for p, _ in zip(procs, queues, strict=False):
         p.start()
 
-    for p, q in zip(procs, queues):
+    for p, q in zip(procs, queues, strict=False):
         p.join()
         stdout, stderr = q.get(timeout=timeout)
         results.append((p, stdout, stderr))

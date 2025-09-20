@@ -37,7 +37,7 @@ class FiLM(torch.nn.Module):
             self.norms.append(BatchNorm1d(hidden_channels))
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        for conv, norm in zip(self.convs, self.norms):
+        for conv, norm in zip(self.convs, self.norms, strict=False):
             x = norm(conv(x, edge_index))
             x = F.dropout(x, p=self.dropout, training=self.training)
         x = self.last_conv(x, edge_index)

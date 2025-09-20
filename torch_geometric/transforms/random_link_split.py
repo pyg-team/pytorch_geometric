@@ -171,7 +171,7 @@ class RandomLinkSplit(BaseTransform):
 
         assert isinstance(rev_edge_types, list)
         for item in zip(stores, train_stores, val_stores, test_stores,
-                        rev_edge_types):
+                        rev_edge_types, strict=False):
             store, train_store, val_store, test_store, rev_edge_type = item
 
             is_undirected = self.is_undirected

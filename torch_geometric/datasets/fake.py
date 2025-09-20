@@ -192,7 +192,7 @@ class FakeHeteroDataset(InMemoryDataset):
     def generate_data(self) -> HeteroData:
         data = HeteroData()
 
-        iterator = zip(self.node_types, self.num_channels)
+        iterator = zip(self.node_types, self.num_channels, strict=False)
         for i, (node_type, num_channels) in enumerate(iterator):
             num_nodes = get_num_nodes(self.avg_num_nodes, self.avg_degree)
 

@@ -31,7 +31,7 @@ def test_get_embeddings():
 
     embeddings = get_embeddings(model, x, edge_index)
     assert len(embeddings) == 2
-    for expected, out in zip(expected_embeddings, embeddings):
+    for expected, out in zip(expected_embeddings, embeddings, strict=False):
         assert torch.allclose(expected, out)
 
 

@@ -76,7 +76,7 @@ class IndexToMask(BaseTransform):
             else:
                 sizes = [None] * len(attrs)
 
-            for attr, size in zip(attrs, sizes):
+            for attr, size in zip(attrs, sizes, strict=False):
                 if 'edge_index' in attr:
                     continue
                 if attr not in store:

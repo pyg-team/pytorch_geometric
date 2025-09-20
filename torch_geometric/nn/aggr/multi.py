@@ -70,7 +70,7 @@ class MultiAggregation(Aggregation):
 
         self.aggrs = torch.nn.ModuleList([
             aggregation_resolver(aggr, **aggr_kwargs)
-            for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs)
+            for aggr, aggr_kwargs in zip(aggrs, aggrs_kwargs, strict=False)
         ])
 
         # Divide the set into fusable and non-fusable aggregations:
@@ -161,7 +161,7 @@ class MultiAggregation(Aggregation):
         outs: List[Tensor] = [x] * len(self.aggrs)  # Fill with dummy tensors.
 
         fused_outs = self.fused_aggr(x, index, ptr, dim_size, dim)
-        for i, out in zip(self.fused_out_index, fused_outs):
+        for i, out in zip(self.fused_out_index, fused_outs, strict=False):
             outs[i] = out
 
         for i, aggr in enumerate(self.aggrs):

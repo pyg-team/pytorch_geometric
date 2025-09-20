@@ -95,6 +95,6 @@ class FB15k_237(InMemoryDataset):
             data = Data(edge_index=edge_index, edge_type=edge_type)
             data_list.append(data)
 
-        for data, path in zip(data_list, self.processed_paths):
+        for data, path in zip(data_list, self.processed_paths, strict=False):
             data.num_nodes = len(node_dict)
             self.save([data], path)

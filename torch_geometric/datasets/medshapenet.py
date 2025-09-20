@@ -119,7 +119,7 @@ class MedShapeNet(InMemoryDataset):
             'ToothFairy': 7
         }
 
-        for dataset, path in zip([subset], self.processed_paths):
+        for dataset, path in zip([subset], self.processed_paths, strict=False):
             data_list = []
             for item in dataset:
                 class_name = item.split("/")[0]

@@ -73,7 +73,7 @@ def benchmark(
     # Zero-copy `args` for each function (if necessary):
     args_list = [args] * len(funcs) if not isinstance(args, list) else args
 
-    iterator = zip(funcs, args_list, func_names)
+    iterator = zip(funcs, args_list, func_names, strict=False)
     if progress_bar:
         from tqdm import tqdm
         iterator = tqdm(iterator, total=len(funcs))

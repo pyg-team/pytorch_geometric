@@ -170,7 +170,7 @@ def _collate(
             if incs.dim() > 1 or int(incs[-1]) != 0:
                 values = [
                     value + inc.to(value.device)
-                    for value, inc in zip(values, incs)
+                    for value, inc in zip(values, incs, strict=False)
                 ]
         else:
             incs = None
@@ -324,7 +324,7 @@ def get_incs(key, values: List[Any], data_list: List[BaseData],
              stores: List[BaseStorage]) -> Tensor:
     repeats = [
         data.__inc__(key, value, store)
-        for value, data, store in zip(values, data_list, stores)
+        for value, data, store in zip(values, data_list, stores, strict=False)
     ]
     if isinstance(repeats[0], Tensor):
         repeats = torch.stack(repeats, dim=0)

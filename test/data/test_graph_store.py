@@ -59,7 +59,7 @@ def test_graph_store_conversion():
     row_dict, col_dict, perm_dict = graph_store.coo()
     assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
     for row, col, perm in zip(row_dict.values(), col_dict.values(),
-                              perm_dict.values()):
+                              perm_dict.values(), strict=False):
         assert torch.equal(row.sort()[0], coo[0].sort()[0])
         assert torch.equal(col.sort()[0], coo[1].sort()[0])
         assert perm is None
@@ -67,14 +67,14 @@ def test_graph_store_conversion():
     # Convert to CSR:
     row_dict, col_dict, perm_dict = graph_store.csr()
     assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
-    for row, col in zip(row_dict.values(), col_dict.values()):
+    for row, col in zip(row_dict.values(), col_dict.values(), strict=False):
         assert torch.equal(row, csr[0])
         assert torch.equal(col.sort()[0], csr[1].sort()[0])
 
     # Convert to CSC:
     row_dict, col_dict, perm_dict = graph_store.csc()
     assert len(row_dict) == len(col_dict) == len(perm_dict) == 3
-    for row, col in zip(row_dict.values(), col_dict.values()):
+    for row, col in zip(row_dict.values(), col_dict.values(), strict=False):
         assert torch.equal(row.sort()[0], csc[0].sort()[0])
         assert torch.equal(col, csc[1])
 

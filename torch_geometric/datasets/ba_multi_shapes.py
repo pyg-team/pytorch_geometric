@@ -87,7 +87,7 @@ class BAMultiShapesDataset(InMemoryDataset):
             adjs, xs, ys = pickle.load(f)
 
         data_list: List[Data] = []
-        for adj, x, y in zip(adjs, xs, ys):
+        for adj, x, y in zip(adjs, xs, ys, strict=False):
             edge_index = torch.from_numpy(adj).nonzero().t()
             x = torch.from_numpy(np.array(x)).to(torch.float)
 

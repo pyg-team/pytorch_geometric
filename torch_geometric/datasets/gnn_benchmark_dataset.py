@@ -201,7 +201,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
         ys = fs.torch_load(self.raw_paths[1]).tolist()
 
         data_list = []
-        for adj, y in zip(adjs, ys):
+        for adj, y in zip(adjs, ys, strict=False):
             row, col = torch.from_numpy(adj.row), torch.from_numpy(adj.col)
             edge_index = torch.stack([row, col], dim=0).to(torch.long)
             edge_index, _ = remove_self_loops(edge_index)

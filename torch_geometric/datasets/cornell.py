@@ -119,7 +119,7 @@ class CornellTemporalHyperGraphDataset(InMemoryDataset):
     def process(self) -> None:
         import pandas as pd
 
-        for raw_path, path in zip(self.raw_paths, self.processed_paths):
+        for raw_path, path in zip(self.raw_paths, self.processed_paths, strict=False):
             df = pd.read_csv(raw_path)
 
             data_list = []

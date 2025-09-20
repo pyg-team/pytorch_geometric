@@ -38,7 +38,7 @@ class UniMP(torch.nn.Module):
 
     def forward(self, x, y, edge_index, label_mask):
         x = self.label_emb(x, y, label_mask)
-        for conv, norm in zip(self.convs, self.norms):
+        for conv, norm in zip(self.convs, self.norms, strict=False):
             x = norm(conv(x, edge_index)).relu()
         return self.convs[-1](x, edge_index)
 

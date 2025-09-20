@@ -68,7 +68,7 @@ class OMDB(InMemoryDataset):
         bandgaps = np.loadtxt(osp.join(self.raw_dir, 'bandgaps.csv'))
 
         data_list = []
-        for material, bandgap in zip(materials, bandgaps):
+        for material, bandgap in zip(materials, bandgaps, strict=False):
             pos = torch.from_numpy(material.get_positions()).to(torch.float)
             z = torch.from_numpy(material.get_atomic_numbers()).to(torch.int64)
             y = torch.tensor([float(bandgap)])

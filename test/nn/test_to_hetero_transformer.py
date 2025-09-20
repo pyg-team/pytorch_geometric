@@ -92,7 +92,7 @@ class Net5(torch.nn.Module):
             self.convs.append(SAGEConv(16, 16))
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        for lin, conv in zip(self.lins, self.convs):
+        for lin, conv in zip(self.lins, self.convs, strict=False):
             x = (conv(x, edge_index) + lin(x))
         return x
 

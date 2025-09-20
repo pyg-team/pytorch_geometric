@@ -94,7 +94,7 @@ class PCQM4Mv2(OnDiskDataset):
         df = pd.read_csv(self.raw_paths[0])
 
         data_list: List[Data] = []
-        iterator = enumerate(zip(df['smiles'], df['homolumogap']))
+        iterator = enumerate(zip(df['smiles'], df['homolumogap'], strict=False))
         for i, (smiles, y) in tqdm(iterator, total=len(df)):
             data = self.from_smiles(smiles)
             data.y = y

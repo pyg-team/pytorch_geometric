@@ -58,7 +58,7 @@ class ConfigMixin:
             if 'kwargs' in param_names:
                 param_names.remove('kwargs')
 
-            for name, arg in zip(param_names, args):
+            for name, arg in zip(param_names, args, strict=False):
                 kwargs[name] = arg
 
         for key in field_names:

@@ -17,7 +17,7 @@ class ResNetPotential(torch.nn.Module):
         self.layers = torch.nn.ModuleList([
             torch.nn.Sequential(torch.nn.Linear(in_size, out_size),
                                 torch.nn.LayerNorm(out_size), torch.nn.Tanh())
-            for in_size, out_size in zip(sizes[:-2], sizes[1:-1])
+            for in_size, out_size in zip(sizes[:-2], sizes[1:-1], strict=False)
         ])
         self.layers.append(torch.nn.Linear(sizes[-2], sizes[-1]))
 
@@ -34,7 +34,7 @@ class ResNetPotential(torch.nn.Module):
             inp = torch.cat([x, y[index]], dim=1)
 
         h = inp
-        for layer, res in zip(self.layers, self.res_trans):
+        for layer, res in zip(self.layers, self.res_trans, strict=False):
             h = layer(h)
             h = res(inp) + h
 

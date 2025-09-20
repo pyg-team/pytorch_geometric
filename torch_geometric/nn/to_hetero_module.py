@@ -68,7 +68,7 @@ class ToHeteroLinear(torch.nn.Module):
         size = torch.tensor(sizes, device=x.device)
         type_vec = type_vec.repeat_interleave(size)
         outs = self.hetero_module(x, type_vec).split(sizes)
-        return {key: out for key, out in zip(self.types, outs)}
+        return {key: out for key, out in zip(self.types, outs, strict=False)}
 
     def forward(
         self,
@@ -131,17 +131,17 @@ class ToHeteroMessagePassing(torch.nn.Module):
         ptr = cumsum(node_sizes)
 
         xs = x.split(node_sizes.tolist())
-        x_dict = {node_type: x for node_type, x in zip(self.node_types, xs)}
+        x_dict = {node_type: x for node_type, x in zip(self.node_types, xs, strict=False)}
 
         # TODO Consider out-sourcing to its own function.
         edge_indices = edge_index.clone().split(edge_sizes.tolist(), dim=1)
-        for (src, _, dst), index in zip(self.edge_types, edge_indices):
+        for (src, _, dst), index in zip(self.edge_types, edge_indices, strict=False):
             index[0] -= ptr[self.node_type_to_index[src]]
             index[1] -= ptr[self.node_type_to_index[dst]]
 
         edge_index_dict = {
             edge_type: edge_index
-            for edge_type, edge_index in zip(self.edge_types, edge_indices)
+            for edge_type, edge_index in zip(self.edge_types, edge_indices, strict=False)
         }
 
         out_dict = self.hetero_module(x_dict, edge_index_dict)

@@ -202,7 +202,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         baselines, self.gates, full_biases = [], torch.nn.ModuleList(), []
 
-        for v_dim, m_dim, o_dim in zip(i_dim, j_dim, h_dim):
+        for v_dim, m_dim, o_dim in zip(i_dim, j_dim, h_dim, strict=False):
             self.transform, self.layer_norm = [], []
             input_dims = [v_dim, m_dim, v_dim]
             for _, input_dim in enumerate(input_dims):

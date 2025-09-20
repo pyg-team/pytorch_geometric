@@ -92,7 +92,7 @@ class ToSparseTensor(BaseTransform):
                 sort_by_row=False,
             )
 
-            for key, value in zip(keys, values):
+            for key, value in zip(keys, values, strict=False):
                 store[key] = value
 
             layout = self.layout

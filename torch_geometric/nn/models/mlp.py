@@ -149,7 +149,7 @@ class MLP(torch.nn.Module):
                 f"the number of layers specified ({len(channel_list)-1})")
 
         self.lins = torch.nn.ModuleList()
-        iterator = zip(channel_list[:-1], channel_list[1:], bias)
+        iterator = zip(channel_list[:-1], channel_list[1:], bias, strict=False)
         for in_channels, out_channels, _bias in iterator:
             self.lins.append(Linear(in_channels, out_channels, bias=_bias))
 
@@ -229,7 +229,7 @@ class MLP(torch.nn.Module):
 
         # If `plain_last=True`, then `len(norms) = len(lins) -1, thus skipping
         # the execution of the last layer inside the for-loop.
-        for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
+        for i, (lin, norm) in enumerate(zip(self.lins, self.norms, strict=False)):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)

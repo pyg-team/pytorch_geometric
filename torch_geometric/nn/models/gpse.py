@@ -972,7 +972,7 @@ def precompute_GPSE(model: GPSE, dataset: Dataset, use_vn: bool = True,
         # end indices are ready to use
         batch_ptr = batch_ptr.to('cpu', non_blocking=False)
 
-        for start, end in zip(batch_ptr[:-1], batch_ptr[1:]):
+        for start, end in zip(batch_ptr[:-1], batch_ptr[1:], strict=False):
             data = dataset.get(curr_idx)
             if use_vn:
                 end = end - 1

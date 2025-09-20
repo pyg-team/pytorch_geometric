@@ -499,7 +499,7 @@ def group_edge_placeholder(
                 "argument in your forward header.")
 
         outputs = []
-        for value, (src_type, _, dst_type) in zip(inputs, type2id):
+        for value, (src_type, _, dst_type) in zip(inputs, type2id, strict=False):
             value = value.clone()
             value[0, :] += offset_dict[src_type]
             value[1, :] += offset_dict[dst_type]
@@ -518,7 +518,7 @@ def group_edge_placeholder(
         # unified `edge_index` representation in order to avoid conflicts
         # induced by re-shuffling the data.
         rows, cols = [], []
-        for value, (src_type, _, dst_type) in zip(inputs, type2id):
+        for value, (src_type, _, dst_type) in zip(inputs, type2id, strict=False):
             col, row, value = value.coo()
             assert value is None
             rows.append(row + offset_dict[src_type])
@@ -546,7 +546,7 @@ def split_output(
     cumsums = list(offset_dict.values()) + [output.size(-2)]
     sizes = [cumsums[i + 1] - cumsums[i] for i in range(len(offset_dict))]
     outputs = output.split(sizes, dim=-2)
-    return {key: output for key, output in zip(offset_dict, outputs)}
+    return {key: output for key, output in zip(offset_dict, outputs, strict=False)}
 
 
 ###############################################################################

@@ -101,7 +101,7 @@ class S3DIS(InMemoryDataset):
 
         test_area = f'Area_{self.test_area}'
         train_data_list, test_data_list = [], []
-        for i, (x, y) in enumerate(zip(xs, ys)):
+        for i, (x, y) in enumerate(zip(xs, ys, strict=False)):
             data = Data(pos=x[:, :3], x=x[:, 3:], y=y)
 
             if self.pre_filter is not None and not self.pre_filter(data):

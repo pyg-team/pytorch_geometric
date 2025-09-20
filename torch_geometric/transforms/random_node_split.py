@@ -78,7 +78,7 @@ class RandomNodeSplit(BaseTransform):
                 continue
 
             train_masks, val_masks, test_masks = zip(
-                *[self._split(store) for _ in range(self.num_splits)])
+                *[self._split(store) for _ in range(self.num_splits)], strict=False)
 
             store.train_mask = torch.stack(train_masks, dim=-1).squeeze(-1)
             store.val_mask = torch.stack(val_masks, dim=-1).squeeze(-1)

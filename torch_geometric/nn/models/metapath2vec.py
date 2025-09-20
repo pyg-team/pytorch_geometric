@@ -82,7 +82,7 @@ class MetaPath2Vec(torch.nn.Module):
             self.col_dict[keys] = col
             self.rowcount_dict[keys] = rowptr[1:] - rowptr[:-1]
 
-        for edge_type1, edge_type2 in zip(metapath[:-1], metapath[1:]):
+        for edge_type1, edge_type2 in zip(metapath[:-1], metapath[1:], strict=False):
             if edge_type1[-1] != edge_type2[0]:
                 raise ValueError(
                     "Found invalid metapath. Ensure that the destination node "

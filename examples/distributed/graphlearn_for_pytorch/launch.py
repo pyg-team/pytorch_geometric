@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     dataset_path = '../../../data/'
     passwd_dict = {}
-    for username, ip in zip(username_list, ip_list):
+    for username, ip in zip(username_list, ip_list, strict=False):
         passwd_dict[ip + username] = click.prompt(
             f'Password for {username}@{ip}', hide_input=True)
     for username, ip, port, dst, noderk, device, pythonbin in zip(
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             dst_path_list,
             node_ranks,
             visible_devices,
-            python_bins,
+            python_bins, strict=False,
     ):
         trans = paramiko.Transport((ip, port))
         trans.connect(username=username, password=passwd_dict[ip + username])

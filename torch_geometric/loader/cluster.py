@@ -319,13 +319,13 @@ class ClusterLoader(torch.utils.data.DataLoader):
                 cat_dim = self.cluster_data.data.__cat_dim__(key, value)
                 out[key] = torch.cat([
                     narrow(out[key], cat_dim, s, e - s)
-                    for s, e in zip(node_start, node_end)
+                    for s, e in zip(node_start, node_end, strict=False)
                 ], dim=cat_dim)
             elif self.cluster_data.data.is_edge_attr(key):
                 cat_dim = self.cluster_data.data.__cat_dim__(key, value)
                 value = torch.cat([
                     narrow(out[key], cat_dim, s, e - s)
-                    for s, e in zip(edge_start, edge_end)
+                    for s, e in zip(edge_start, edge_end, strict=False)
                 ], dim=cat_dim)
                 out[key] = select(value, edge_mask, dim=cat_dim)
 

@@ -661,7 +661,7 @@ def get_features_for_triplets_groups(
 
         last_node_idx, last_edge_idx = 0, 0
         for (nkeys, ekeys, eidx) in zip(node_key_batch, edge_key_batch,
-                                        edge_index_batch):
+                                        edge_index_batch, strict=False):
             nlen, elen = len(nkeys), len(ekeys)
             x = torch.Tensor(node_feats[last_node_idx:last_node_idx + nlen])
             last_node_idx += len(nkeys)
@@ -701,7 +701,7 @@ def get_features_for_triplets_groups(
     node_key_batches = batched(node_keys, ideal_batch_size)
     edge_key_batches = batched(edge_keys, ideal_batch_size)
     edge_index_batches = batched(edge_index, ideal_batch_size)
-    batches = zip(node_key_batches, edge_key_batches, edge_index_batches)
+    batches = zip(node_key_batches, edge_key_batches, edge_index_batches, strict=False)
 
     with mpp.ThreadPool() as pool:
         result = pool.map(_fetch_feature_batch, batches)

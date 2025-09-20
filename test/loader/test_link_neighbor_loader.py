@@ -343,7 +343,7 @@ def test_custom_hetero_link_neighbor_loader():
 
     assert str(loader1) == str(loader2)
 
-    for (batch1, batch2) in zip(loader1, loader2):
+    for (batch1, batch2) in zip(loader1, loader2, strict=False):
         # Mapped indices of neighbors may be differently sorted:
         assert torch.allclose(batch1['paper'].x.sort()[0],
                               batch2['paper'].x.sort()[0])

@@ -87,7 +87,7 @@ class GraphSAGE(torch.nn.Module):
     def forward(self, x, edge_index):
         x = F.dropout(x, p=self.dropout, training=self.training)
         xs = [x]
-        for conv, norm in zip(self.convs, self.norms):
+        for conv, norm in zip(self.convs, self.norms, strict=False):
             x = conv(x, edge_index)
             x = norm(x)
             x = x.relu()

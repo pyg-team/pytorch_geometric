@@ -456,7 +456,7 @@ def test_custom_neighbor_loader():
     assert str(loader1) == str(loader2)
     assert len(loader1) == len(loader2)
 
-    for batch1, batch2 in zip(loader1, loader2):
+    for batch1, batch2 in zip(loader1, loader2, strict=False):
         assert len(batch1) == len(batch2)
         assert batch1.num_nodes == batch2.num_nodes
         assert batch1.num_edges == batch2.num_edges
@@ -531,7 +531,7 @@ def test_custom_hetero_neighbor_loader():
     assert str(loader1) == str(loader2)
     assert len(loader1) == len(loader2)
 
-    for batch1, batch2 in zip(loader1, loader2):
+    for batch1, batch2 in zip(loader1, loader2, strict=False):
         # `loader2` explicitly adds `num_nodes` to the batch:
         assert len(batch1) + 1 == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
@@ -636,7 +636,7 @@ def test_temporal_custom_neighbor_loader_on_karate(get_dataset):
         batch_size=128,
     )
 
-    for batch1, batch2 in zip(loader1, loader2):
+    for batch1, batch2 in zip(loader1, loader2, strict=False):
         assert torch.equal(batch1['v'].time, batch2['v'].time)
 
 

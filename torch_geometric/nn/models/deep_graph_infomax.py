@@ -56,7 +56,7 @@ class DeepGraphInfomax(torch.nn.Module):
         cor = cor if isinstance(cor, tuple) else (cor, )
         cor_args = cor[:len(args)]
         cor_kwargs = copy.copy(kwargs)
-        for key, value in zip(kwargs.keys(), cor[len(args):]):
+        for key, value in zip(kwargs.keys(), cor[len(args):], strict=False):
             cor_kwargs[key] = value
 
         neg_z = self.encoder(*cor_args, **cor_kwargs)

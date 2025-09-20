@@ -297,7 +297,7 @@ if __name__ == '__main__':
         ]
 
     def sequential(xs: List[Tensor], weights: List[Tensor]) -> List[Tensor]:
-        return [x @ weight for x, weight in zip(xs, weights)]
+        return [x @ weight for x, weight in zip(xs, weights, strict=False)]
 
     def nested(xs: List[Tensor], weights: List[Tensor]) -> List[Tensor]:
         x = torch.nested.nested_tensor(xs)

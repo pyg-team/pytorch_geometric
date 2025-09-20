@@ -35,7 +35,7 @@ class Encoder(torch.nn.Module):
         ])
 
     def forward(self, x, edge_index, batch_size):
-        for conv, act in zip(self.convs, self.activations):
+        for conv, act in zip(self.convs, self.activations, strict=False):
             x = conv(x, edge_index)
             x = act(x)
         return x[:batch_size]

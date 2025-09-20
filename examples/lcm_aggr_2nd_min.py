@@ -83,7 +83,7 @@ class BitwiseEmbedding(torch.nn.Module):
             [torch.nn.Embedding(2, emb_dim) for _ in range(args.num_bits)])
 
     def forward(self, x: Tensor) -> Tensor:
-        xs = [emb(b) for emb, b in zip(self.embs, x.t())]
+        xs = [emb(b) for emb, b in zip(self.embs, x.t(), strict=False)]
         return torch.stack(xs, dim=0).sum(0)
 
 

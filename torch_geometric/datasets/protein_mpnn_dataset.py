@@ -230,7 +230,7 @@ class ProteinMPNNDataset(InMemoryDataset):
         # find candidate assemblies which contain chid chain
         asmb_candidates = {
             a
-            for a, b in zip(asmb_ids, asmb_chains) if chid in b.split(',')
+            for a, b in zip(asmb_ids, asmb_chains, strict=False) if chid in b.split(',')
         }
 
         # if the chains is missing is missing from all the assemblies
@@ -290,7 +290,7 @@ class ProteinMPNNDataset(InMemoryDataset):
         seqid = meta['tm'][chids == chid][0, :, 1]
         homo = {
             ch_j
-            for seqid_j, ch_j in zip(seqid, chids) if seqid_j > self.homo
+            for seqid_j, ch_j in zip(seqid, chids, strict=False) if seqid_j > self.homo
         }
         # stack all chains in the assembly together
         seq: str = ''

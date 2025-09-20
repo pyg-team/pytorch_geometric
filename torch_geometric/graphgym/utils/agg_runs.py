@@ -71,7 +71,7 @@ def name_to_dict(run):
         keys.append(key)
         vals.append(string_to_python(val))
     vals.append(cols[-1])
-    return dict(zip(keys, vals))
+    return dict(zip(keys, vals, strict=False))
 
 
 def rm_keys(dict, keys):

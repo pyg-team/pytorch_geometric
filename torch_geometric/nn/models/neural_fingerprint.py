@@ -61,7 +61,7 @@ class NeuralFingerprint(torch.nn.Module):
     ) -> Tensor:
         """"""  # noqa: D419
         outs = []
-        for conv, lin in zip(self.convs, self.lins):
+        for conv, lin in zip(self.convs, self.lins, strict=False):
             x = conv(x, edge_index).sigmoid()
             y = lin(x).softmax(dim=-1)
             outs.append(global_add_pool(y, batch, batch_size))

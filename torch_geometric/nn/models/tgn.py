@@ -157,13 +157,13 @@ class TGNMemory(torch.nn.Module):
                           raw_msg: Tensor, msg_store: TGNMessageStoreType):
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
-        for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
+        for i, idx in zip(n_id.tolist(), perm.split(count.tolist()), strict=False):
             msg_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
     def _compute_msg(self, n_id: Tensor, msg_store: TGNMessageStoreType,
                      msg_module: Callable):
         data = [msg_store[i] for i in n_id.tolist()]
-        src, dst, t, raw_msg = list(zip(*data))
+        src, dst, t, raw_msg = list(zip(*data, strict=False))
         src = torch.cat(src, dim=0).to(self.device)
         dst = torch.cat(dst, dim=0).to(self.device)
         t = torch.cat(t, dim=0).to(self.device)

@@ -247,7 +247,7 @@ class HeteroLinear(torch.nn.Module):
 
     def forward_naive(self, x: Tensor, type_ptr: Tensor) -> Tensor:
         out = x.new_empty(x.size(0), self.out_channels)
-        for i, (start, end) in enumerate(zip(type_ptr[:-1], type_ptr[1:])):
+        for i, (start, end) in enumerate(zip(type_ptr[:-1], type_ptr[1:], strict=False)):
             out[start:end] = x[start:end] @ self.weight[i]
         return out
 
@@ -444,7 +444,7 @@ class HeteroDictLinear(torch.nn.Module):
                     biases.append(lin.bias)
             biases = None if biases[0] is None else biases
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
-            for key, out in zip(x_dict.keys(), outs):
+            for key, out in zip(x_dict.keys(), outs, strict=False):
                 if key in x_dict:
                     out_dict[key] = out
         else:
