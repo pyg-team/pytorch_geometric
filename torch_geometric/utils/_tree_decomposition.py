@@ -130,7 +130,7 @@ def tree_decomposition(
             atom2cliques[atom].append(c)
 
     if len(edges) > 0:
-        edge_index_T, weight = zip(*edges.items(), strict=False)
+        edge_index_T, weight = zip(*edges.items())
         edge_index = torch.tensor(edge_index_T).t()
         inv_weight = 100 - torch.tensor(weight)
         graph = to_scipy_sparse_matrix(edge_index, inv_weight, len(cliques))

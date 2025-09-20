@@ -93,7 +93,7 @@ def is_undirected(  # noqa: F811
         return False
 
     assert isinstance(edge_attrs1, list) and isinstance(edge_attrs2, list)
-    for edge_attr1, edge_attr2 in zip(edge_attrs1, edge_attrs2, strict=False):
+    for edge_attr1, edge_attr2 in zip(edge_attrs1, edge_attrs2):
         if not torch.equal(edge_attr1, edge_attr2):
             return False
 

@@ -422,7 +422,7 @@ def topk_ppr_matrix(
     def sparsify(neighbors: List[np.ndarray], weights: List[np.ndarray],
                  topk: int):
         new_neighbors = []
-        for n, w in zip(neighbors, weights, strict=False):
+        for n, w in zip(neighbors, weights):
             idx_topk = np.argsort(w)[-topk:]
             new_neighbor = n[idx_topk]
             new_neighbors.append(new_neighbor)
@@ -431,7 +431,7 @@ def topk_ppr_matrix(
 
     neighbors = sparsify(neighbors, weights, topk)
     neighbors = [
-        np.union1d(nei, pr) for nei, pr in zip(neighbors, output_node_indices, strict=False)
+        np.union1d(nei, pr) for nei, pr in zip(neighbors, output_node_indices)
     ]
 
     _, out_degree = torch.unique(edge_index[0], sorted=True,
@@ -538,7 +538,7 @@ class IBMBBaseLoader(torch.utils.data.DataLoader):
         if len(data_list) == 1 and isinstance(data_list[0], Data):
             return data_list[0]
 
-        out, aux = zip(*data_list, strict=False)
+        out, aux = zip(*data_list)
         out = np.concatenate(out)
         aux = np.unique(np.concatenate(aux))
         mask = torch.from_numpy(np.isin(aux, out))

@@ -361,7 +361,7 @@ def test_copy_hetero_data():
     out = copy.copy(data)
     assert id(data) != id(out)
     assert len(data.stores) == len(out.stores)
-    for store1, store2 in zip(data.stores, out.stores, strict=False):
+    for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
         assert id(out) == id(store2._parent())
@@ -373,7 +373,7 @@ def test_copy_hetero_data():
     out = copy.deepcopy(data)
     assert id(data) != id(out)
     assert len(data.stores) == len(out.stores)
-    for store1, store2 in zip(data.stores, out.stores, strict=False):
+    for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
     assert id(out) == id(out['paper']._parent())
     assert out['paper']._key == 'paper'

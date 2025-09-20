@@ -148,7 +148,7 @@ def test_large_graph_index():
             and _graphs_are_same(
                 ground_truth.edge_index, new_method.edge_index)
 
-    for dsets in zip(naive_graph_ds, large_graph_ds, strict=False):
+    for dsets in zip(naive_graph_ds, large_graph_ds):
         assert results_are_close_enough(*dsets)
 
 

@@ -34,7 +34,7 @@ class Net(torch.nn.Module):
 
     def forward(self, xs):
         hs = []
-        for x, lin in zip(xs, self.lins, strict=False):
+        for x, lin in zip(xs, self.lins):
             h = lin(x).relu()
             h = F.dropout(h, p=0.5, training=self.training)
             hs.append(h)

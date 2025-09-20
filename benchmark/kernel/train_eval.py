@@ -23,7 +23,7 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
 
     val_losses, accs, durations = [], [], []
     for fold, (train_idx, test_idx,
-               val_idx) in enumerate(zip(*k_fold(dataset, folds), strict=False)):
+               val_idx) in enumerate(zip(*k_fold(dataset, folds))):
 
         train_dataset = dataset[train_idx]
         test_dataset = dataset[test_idx]

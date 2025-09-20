@@ -104,7 +104,7 @@ class NodePropertySplit(BaseTransform):
         pagerank_values = torch.tensor(list(A.pagerank(G).values()))
 
         num_nodes = G.number_of_nodes()
-        personalization = dict(zip(range(num_nodes), [0.0] * num_nodes, strict=False))
+        personalization = dict(zip(range(num_nodes), [0.0] * num_nodes))
         personalization[int(pagerank_values.argmax())] = 1.0
 
         property_values = torch.tensor(
@@ -145,7 +145,7 @@ class NodePropertySplit(BaseTransform):
         ]
 
         split_masks = {}
-        for name, node_split in zip(names, node_splits, strict=False):
+        for name, node_split in zip(names, node_splits):
             split_mask = torch.zeros(num_nodes, dtype=torch.bool)
             split_mask[node_split] = True
             split_masks[name] = split_mask

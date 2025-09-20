@@ -132,7 +132,7 @@ class AttentiveFP(torch.nn.Module):
         self.lin1.reset_parameters()
         self.gate_conv.reset_parameters()
         self.gru.reset_parameters()
-        for conv, gru in zip(self.atom_convs, self.atom_grus, strict=False):
+        for conv, gru in zip(self.atom_convs, self.atom_grus):
             conv.reset_parameters()
             gru.reset_parameters()
         self.mol_conv.reset_parameters()
@@ -149,7 +149,7 @@ class AttentiveFP(torch.nn.Module):
         h = F.dropout(h, p=self.dropout, training=self.training)
         x = self.gru(h, x).relu_()
 
-        for conv, gru in zip(self.atom_convs, self.atom_grus, strict=False):
+        for conv, gru in zip(self.atom_convs, self.atom_grus):
             h = conv(x, edge_index)
             h = F.elu(h)
             h = F.dropout(h, p=self.dropout, training=self.training)

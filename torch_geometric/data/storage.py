@@ -687,7 +687,7 @@ class EdgeStorage(BaseStorage):
             edge_feats = [self[edge_attr] for edge_attr in edge_attrs]
             self.edge_index, edge_feats = sort_edge_index(
                 self.edge_index, edge_feats, sort_by_row=sort_by_row)
-            for key, edge_feat in zip(edge_attrs, edge_feats, strict=False):
+            for key, edge_feat in zip(edge_attrs, edge_feats):
                 self[key] = edge_feat
         return self
 

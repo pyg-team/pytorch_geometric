@@ -45,7 +45,7 @@ class GIN(torch.nn.Module):
         self.lin2 = Linear(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, batch):
-        for conv, batch_norm in zip(self.convs, self.batch_norms, strict=False):
+        for conv, batch_norm in zip(self.convs, self.batch_norms):
             x = F.relu(batch_norm(conv(x, edge_index)))
         x = global_add_pool(x, batch)
         x = F.relu(self.batch_norm1(self.lin1(x)))

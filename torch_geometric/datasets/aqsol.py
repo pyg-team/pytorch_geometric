@@ -100,7 +100,7 @@ class AQSOL(InMemoryDataset):
         os.unlink(path)
 
     def process(self) -> None:
-        for raw_path, path in zip(self.raw_paths, self.processed_paths, strict=False):
+        for raw_path, path in zip(self.raw_paths, self.processed_paths):
             with open(raw_path, 'rb') as f:
                 graphs = pickle.load(f)
 

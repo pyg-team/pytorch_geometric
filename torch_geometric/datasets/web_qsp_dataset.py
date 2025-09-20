@@ -165,7 +165,7 @@ class KGQABaseDataset(InMemoryDataset):
         zipped = zip(
             self.required_splits,
             raw_splits,  # noqa
-            self.processed_paths, strict=False,
+            self.processed_paths,
         )
         for split_name, dataset, path in zipped:
             print(f"Processing {split_name} split...")

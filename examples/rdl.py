@@ -274,7 +274,7 @@ class HeteroGraphSAGE(torch.nn.Module):
         Returns:
             Updated node features after message passing
         """
-        for _, (conv, norm_dict) in enumerate(zip(self.convs, self.norms, strict=False)):
+        for _, (conv, norm_dict) in enumerate(zip(self.convs, self.norms)):
             x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: norm_dict[key](x) for key, x in x_dict.items()}
             x_dict = {key: x.relu() for key, x in x_dict.items()}

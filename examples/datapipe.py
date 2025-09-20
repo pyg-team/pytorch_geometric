@@ -35,7 +35,7 @@ def molecule_datapipe() -> IterDataPipe:
     datapipe = FileOpener([path], mode="rt")
     # Convert CSV rows into dictionaries, skipping the header row
     datapipe = datapipe.map(lambda file: (
-        dict(zip(["smiles", "activity", "HIV_active"], row, strict=False))
+        dict(zip(["smiles", "activity", "HIV_active"], row))
         for i, row in enumerate(csv.reader(file[1])) if i > 0 and row))
 
     datapipe = IterableWrapper(chain.from_iterable(datapipe))

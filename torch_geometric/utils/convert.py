@@ -228,7 +228,7 @@ def from_networkx(
 
     G = G.to_directed() if not nx.is_directed(G) else G
 
-    mapping = dict(zip(G.nodes(), range(G.number_of_nodes()), strict=False))
+    mapping = dict(zip(G.nodes(), range(G.number_of_nodes())))
     edge_index = torch.empty((2, G.number_of_edges()), dtype=torch.long)
     for i, (src, dst) in enumerate(G.edges()):
         edge_index[0, i] = mapping[src]
@@ -342,7 +342,7 @@ def to_networkit(
         edge_index = edge_index[:, mask]
         edge_weight = edge_weight[mask]
 
-    for (u, v), w in zip(edge_index.t().tolist(), edge_weight.tolist(), strict=False):
+    for (u, v), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
         g.addEdge(u, v, w)
 
     return g

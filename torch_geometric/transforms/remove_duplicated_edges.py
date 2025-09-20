@@ -51,7 +51,7 @@ class RemoveDuplicatedEdges(BaseTransform):
                 reduce=self.reduce,
             )
 
-            for key, edge_attr in zip(keys, edge_attrs, strict=False):
+            for key, edge_attr in zip(keys, edge_attrs):
                 store[key] = edge_attr
 
         return data

@@ -127,7 +127,7 @@ def check_retrieval_recall(subg: Data, ground_truth: Data):
 @nvtxit()
 def _run_eval():
     for subg, gt in zip((query_loader.query(q) for q in questions),
-                        ground_truth_graphs, strict=False):
+                        ground_truth_graphs):
         print(check_retrieval_accuracy(subg, gt, num_edges),
               check_retrieval_precision(subg, gt),
               check_retrieval_recall(subg, gt))

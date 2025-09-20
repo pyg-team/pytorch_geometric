@@ -299,7 +299,7 @@ def test_copy_data():
     assert id(data) != id(out)
     assert id(data._store) != id(out._store)
     assert len(data.stores) == len(out.stores)
-    for store1, store2 in zip(data.stores, out.stores, strict=False):
+    for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
         assert id(out) == id(store2._parent())
@@ -309,7 +309,7 @@ def test_copy_data():
     assert id(data) != id(out)
     assert id(data._store) != id(out._store)
     assert len(data.stores) == len(out.stores)
-    for store1, store2 in zip(data.stores, out.stores, strict=False):
+    for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent())
         assert id(out) == id(store2._parent())

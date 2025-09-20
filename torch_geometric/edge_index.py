@@ -90,7 +90,7 @@ def maybe_add(
 
     assert len(value) == len(other)
     return tuple(v + alpha * o if v is not None and o is not None else None
-                 for v, o in zip(value, other, strict=False))
+                 for v, o in zip(value, other))
 
 
 def maybe_sub(
@@ -105,7 +105,7 @@ def maybe_sub(
 
     assert len(value) == len(other)
     return tuple(v - alpha * o if v is not None and o is not None else None
-                 for v, o in zip(value, other, strict=False))
+                 for v, o in zip(value, other))
 
 
 def assert_valid_dtype(tensor: Tensor) -> None:

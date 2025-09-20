@@ -187,7 +187,7 @@ class Entities(InMemoryDataset):
         train_labels_df = pd.read_csv(train_file, sep='\t')
         train_indices, train_labels = [], []
         for nod, lab in zip(train_labels_df[nodes_header].values,
-                            train_labels_df[label_header].values, strict=False):
+                            train_labels_df[label_header].values):
             train_indices.append(nodes_dict[nod])
             train_labels.append(labels_dict[lab])
 
@@ -197,7 +197,7 @@ class Entities(InMemoryDataset):
         test_labels_df = pd.read_csv(test_file, sep='\t')
         test_indices, test_labels = [], []
         for nod, lab in zip(test_labels_df[nodes_header].values,
-                            test_labels_df[label_header].values, strict=False):
+                            test_labels_df[label_header].values):
             test_indices.append(nodes_dict[nod])
             test_labels.append(labels_dict[lab])
 

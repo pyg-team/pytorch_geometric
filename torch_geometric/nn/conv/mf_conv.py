@@ -101,7 +101,7 @@ class MFConv(MessagePassing):
         h = self.propagate(edge_index, x=x, size=size)
 
         out = h.new_empty(list(h.size())[:-1] + [self.out_channels])
-        for i, (lin_l, lin_r) in enumerate(zip(self.lins_l, self.lins_r, strict=False)):
+        for i, (lin_l, lin_r) in enumerate(zip(self.lins_l, self.lins_r)):
             idx = (deg == i).nonzero().view(-1)
             r = lin_l(h.index_select(self.node_dim, idx))
 

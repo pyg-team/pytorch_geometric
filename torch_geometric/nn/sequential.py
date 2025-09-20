@@ -216,7 +216,7 @@ class Sequential(torch.nn.Module):
         """"""  # noqa: D419
         value_dict = {
             name: arg
-            for name, arg in zip(self.signature.param_dict.keys(), args, strict=False)
+            for name, arg in zip(self.signature.param_dict.keys(), args)
         }
         for key, arg in kwargs.items():
             if key in value_dict:
@@ -230,7 +230,7 @@ class Sequential(torch.nn.Module):
             if len(child.return_names) == 1:
                 value_dict[child.return_names[0]] = outs
             else:
-                for name, out in zip(child.return_names, outs, strict=False):
+                for name, out in zip(child.return_names, outs):
                     value_dict[name] = out
 
         return outs

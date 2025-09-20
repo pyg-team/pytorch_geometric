@@ -34,7 +34,7 @@ def test_pickle(tmp_path):
     assert out.num_nodes == data_list[0].num_nodes
 
     out_list = dataset.multi_get([1, 2, 3])
-    for out, data in zip(out_list, data_list[1:], strict=False):
+    for out, data in zip(out_list, data_list[1:]):
         assert torch.equal(out.x, data.x)
         assert torch.equal(out.edge_index, data.edge_index)
         assert out.num_nodes == data.num_nodes
@@ -103,7 +103,7 @@ def test_custom_schema(tmp_path):
 
     out_list = dataset.multi_get([1, 2, 3])
     assert dataset.deserialize_count == 4
-    for out, data in zip(out_list, data_list[1:], strict=False):
+    for out, data in zip(out_list, data_list[1:]):
         assert torch.equal(out.x, data.x)
         assert torch.equal(out.edge_index, data.edge_index)
         assert out.num_nodes == data.num_nodes

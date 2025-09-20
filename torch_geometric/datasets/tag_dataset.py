@@ -324,7 +324,7 @@ class TAGDataset(InMemoryDataset):
                                  "for tokenizing all text")
             _text = [
                 f'{raw_txt} Explanation: {exp_txt}'
-                for raw_txt, exp_txt in zip(self.text, self.llm_explanation, strict=False)
+                for raw_txt, exp_txt in zip(self.text, self.llm_explanation)
             ]
 
         data_len = 0

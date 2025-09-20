@@ -29,7 +29,7 @@ def separate(
     data = cls().stores_as(batch)
 
     # Iterate over each storage object and recursively separate its attributes:
-    for batch_store, data_store in zip(batch.stores, data.stores, strict=False):
+    for batch_store, data_store in zip(batch.stores, data.stores):
         key = batch_store._key
         if key is not None:  # Heterogeneous:
             attrs = slice_dict[key].keys()

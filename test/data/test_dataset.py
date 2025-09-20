@@ -131,7 +131,7 @@ def test_index(tmp_path):
 
     dataset = MyTestDataset([data1, data2])
     assert len(dataset) == 2
-    for data, index in zip(dataset, [index1, index2], strict=False):
+    for data, index in zip(dataset, [index1, index2]):
         assert isinstance(data.batch, Index)
         assert data.batch.equal(index)
         assert data.batch.dim_size == index.dim_size
@@ -139,7 +139,7 @@ def test_index(tmp_path):
 
     dataset = MyStoredTestDataset(tmp_path, [data1, data2])
     assert len(dataset) == 2
-    for data, index in zip(dataset, [index1, index2], strict=False):
+    for data, index in zip(dataset, [index1, index2]):
         assert isinstance(data.batch, Index)
         assert data.batch.equal(index)
         assert data.batch.dim_size == index.dim_size
@@ -164,7 +164,7 @@ def test_edge_index(tmp_path):
 
     dataset = MyTestDataset([data1, data2])
     assert len(dataset) == 2
-    for data, edge_index in zip(dataset, [edge_index1, edge_index2], strict=False):
+    for data, edge_index in zip(dataset, [edge_index1, edge_index2]):
         assert isinstance(data.edge_index, EdgeIndex)
         assert data.edge_index.equal(edge_index)
         assert data.edge_index.sparse_size() == edge_index.sparse_size()
@@ -173,7 +173,7 @@ def test_edge_index(tmp_path):
 
     dataset = MyStoredTestDataset(tmp_path, [data1, data2])
     assert len(dataset) == 2
-    for data, edge_index in zip(dataset, [edge_index1, edge_index2], strict=False):
+    for data, edge_index in zip(dataset, [edge_index1, edge_index2]):
         assert isinstance(data.edge_index, EdgeIndex)
         assert data.edge_index.equal(edge_index)
         assert data.edge_index.sparse_size() == edge_index.sparse_size()
@@ -217,7 +217,7 @@ def test_in_memory_dataset_copy():
     assert id(copied_dataset) != id(dataset)
 
     assert len(copied_dataset) == len(dataset) == 4
-    for copied_data, data in zip(copied_dataset, dataset, strict=False):
+    for copied_data, data in zip(copied_dataset, dataset):
         assert torch.equal(copied_data.x, data.x)
 
     copied_dataset = dataset.copy([1, 2])

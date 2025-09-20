@@ -63,7 +63,7 @@ def shuffle_node(
     ptr = cumsum(num_nodes)
     perm = torch.cat([
         torch.randperm(n, device=x.device) + offset
-        for offset, n in zip(ptr[:-1], num_nodes, strict=False)
+        for offset, n in zip(ptr[:-1], num_nodes)
     ])
     return x[perm], perm
 

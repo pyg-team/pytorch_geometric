@@ -177,7 +177,7 @@ class Database(ABC):
     ) -> None:
         if isinstance(indices, Tensor):
             indices = indices.tolist()
-        for index, data in zip(indices, data_list, strict=False):
+        for index, data in zip(indices, data_list):
             self.insert(index, data)
 
     @abstractmethod
@@ -308,7 +308,7 @@ class SQLiteDatabase(Database):
         # to the corresponding SQL schema:
         sql_schema = ',\n'.join([
             f'  {col_name} {self._to_sql_type(type_info)}' for col_name,
-            type_info in zip(self._col_names, self.schema.values(), strict=False)
+            type_info in zip(self._col_names, self.schema.values())
         ])
         query = (f'CREATE TABLE IF NOT EXISTS {self.name} (\n'
                  f'  id INTEGER PRIMARY KEY,\n'
@@ -356,7 +356,7 @@ class SQLiteDatabase(Database):
             indices = indices.tolist()
 
         data_list = [(index, *self._serialize(data))
-                     for index, data in zip(indices, data_list, strict=False)]
+                     for index, data in zip(indices, data_list)]
 
         query = (f'INSERT INTO {self.name} '
                  f'(id, {self._joined_col_names}) '
@@ -392,7 +392,7 @@ class SQLiteDatabase(Database):
         self.cursor.execute(query)
 
         query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
-        self.cursor.executemany(query, zip(indices, range(len(indices)), strict=False))
+        self.cursor.executemany(query, zip(indices, range(len(indices))))
         self.connection.commit()
 
         query = f'SELECT * FROM {join_table_name}'

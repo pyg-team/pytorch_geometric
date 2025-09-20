@@ -107,7 +107,7 @@ class BaseData:
         All values needs to have matching shapes at non-concat dimensions.
         """
         out = copy.copy(self)
-        for store, other_store in zip(out.stores, data.stores, strict=False):
+        for store, other_store in zip(out.stores, data.stores):
             store.concat(other_store)
         return out
 

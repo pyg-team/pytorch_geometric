@@ -28,7 +28,7 @@ def test_node_property_split(property_name):
             'id_test_mask',
             'ood_val_mask',
             'ood_test_mask',
-    ], ratios, strict=False):
+    ], ratios):
         assert data[name].dtype == torch.bool
         assert data[name].size() == (100, )
         assert int(data[name].sum()) == 100 * ratio

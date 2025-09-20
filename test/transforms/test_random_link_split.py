@@ -320,7 +320,7 @@ def test_random_link_split_on_dataset(get_dataset):
         add_negative_train_samples=False,
     )
 
-    train_dataset, val_dataset, test_dataset = zip(*dataset, strict=False)
+    train_dataset, val_dataset, test_dataset = zip(*dataset)
     assert len(train_dataset) == len(dataset)
     assert len(val_dataset) == len(dataset)
     assert len(test_dataset) == len(dataset)

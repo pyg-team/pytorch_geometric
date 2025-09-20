@@ -379,7 +379,7 @@ class FeatureStore(ABC):
         if convert_type:
             tensors = [
                 self._to_type(attr, tensor)
-                for attr, tensor in zip(attrs, tensors, strict=False)
+                for attr, tensor in zip(attrs, tensors)
             ]
         return tensors
 

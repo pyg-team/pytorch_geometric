@@ -42,7 +42,7 @@ class DMGI(torch.nn.Module):
 
     def forward(self, x, edge_indices):
         pos_hs, neg_hs, summaries = [], [], []
-        for conv, edge_index in zip(self.convs, edge_indices, strict=False):
+        for conv, edge_index in zip(self.convs, edge_indices):
             pos_h = F.dropout(x, p=0.5, training=self.training)
             pos_h = conv(pos_h, edge_index).relu()
             pos_hs.append(pos_h)
@@ -58,7 +58,7 @@ class DMGI(torch.nn.Module):
 
     def loss(self, pos_hs, neg_hs, summaries):
         loss = 0.
-        for pos_h, neg_h, s in zip(pos_hs, neg_hs, summaries, strict=False):
+        for pos_h, neg_h, s in zip(pos_hs, neg_hs, summaries):
             s = s.expand_as(pos_h)
             loss += -torch.log(self.M(pos_h, s).sigmoid() + 1e-15).mean()
             loss += -torch.log(1 - self.M(neg_h, s).sigmoid() + 1e-15).mean()

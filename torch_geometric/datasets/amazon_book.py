@@ -58,13 +58,13 @@ class AmazonBook(InMemoryDataset):
 
         # Process number of nodes for each node type:
         node_types = ['user', 'book']
-        for path, node_type in zip(self.raw_paths, node_types, strict=False):
+        for path, node_type in zip(self.raw_paths, node_types):
             df = pd.read_csv(path, sep=' ', header=0)
             data[node_type].num_nodes = len(df)
 
         # Process edge information for training and testing:
         attr_names = ['edge_index', 'edge_label_index']
-        for path, attr_name in zip(self.raw_paths[2:], attr_names, strict=False):
+        for path, attr_name in zip(self.raw_paths[2:], attr_names):
             rows, cols = [], []
             with open(path) as f:
                 lines = f.readlines()

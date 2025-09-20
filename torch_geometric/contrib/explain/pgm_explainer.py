@@ -333,9 +333,9 @@ class PGMExplainer(ExplainerAlgorithm):
             1: "B"
         })  # Trick to use chi_square test on first two data columns
         index_original_to_subgraph = dict(
-            zip(neighbors, list(data_pgm.columns), strict=False))
+            zip(neighbors, list(data_pgm.columns)))
         index_subgraph_to_original = dict(
-            zip(list(data_pgm.columns), neighbors, strict=False))
+            zip(list(data_pgm.columns), neighbors))
         p_values = []
 
         dependent_neighbors = []

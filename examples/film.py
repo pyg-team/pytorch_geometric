@@ -35,7 +35,7 @@ class Net(torch.nn.Module):
             self.norms.append(BatchNorm1d(hidden_channels))
 
     def forward(self, x, edge_index):
-        for conv, norm in zip(self.convs[:-1], self.norms, strict=False):
+        for conv, norm in zip(self.convs[:-1], self.norms):
             x = norm(conv(x, edge_index))
             x = F.dropout(x, p=self.dropout, training=self.training)
         x = self.convs[-1](x, edge_index)

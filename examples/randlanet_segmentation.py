@@ -173,7 +173,7 @@ def test(loader):
 
         sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
         for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
-                                    data.category.tolist(), strict=False):
+                                    data.category.tolist()):
             category = list(ShapeNet.seg_classes.keys())[category]
             part = ShapeNet.seg_classes[category]
             part = torch.tensor(part, device=device)

@@ -73,7 +73,7 @@ class ToUndirected(BaseTransform):
                 store.edge_index, values = to_undirected(
                     store.edge_index, values, reduce=self.reduce)
 
-                for key, value in zip(keys, values, strict=False):
+                for key, value in zip(keys, values):
                     store[key] = value
 
         return data

@@ -569,7 +569,7 @@ def from_config(func):
         if cfg is not None:
             cfg = dict(cfg) if isinstance(cfg, Iterable) else asdict(cfg)
 
-            iterator = zip(arg_names[len(args):], has_defaults[len(args):], strict=False)
+            iterator = zip(arg_names[len(args):], has_defaults[len(args):])
             for arg_name, has_default in iterator:
                 if arg_name in kwargs:
                     continue
