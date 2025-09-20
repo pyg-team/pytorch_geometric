@@ -1,6 +1,6 @@
 # Distributed Training with PyG
 
-**[`torch_geometric.distributed`](https://github.com/pyg-team/pytorch_geometric/tree/master/torch_geometric/distributed)** implements a scalable solution for distributed GNN training, built exclusively upon PyTorch and PyG.
+**[`torch_geometric.distributed`](https://github.com/pyg-team/pytorch_geometric/tree/master/torch_geometric/distributed)** (deprecated) implements a scalable solution for distributed GNN training, built exclusively upon PyTorch and PyG.
 
 Current application can be deployed on a cluster of arbitrary size using multiple CPUs.
 PyG native GPU application is under development and will be released soon.
