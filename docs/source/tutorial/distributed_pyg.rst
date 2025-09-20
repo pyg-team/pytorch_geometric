@@ -1,6 +1,10 @@
 Distributed Training in PyG
 ===========================
 
+.. warning::
+    ``torch_geometric.distributed`` has been deprecated and will no longer be maintained.
+    For distributed training with cuGraph, refer to `cuGraph examples <https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
+
 .. figure:: ../_figures/intel_kumo.png
    :width: 400px
 

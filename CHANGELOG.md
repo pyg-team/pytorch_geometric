@@ -87,6 +87,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
+- Deprecated `torch_geometric.distributed` ([#10411](https://github.com/pyg-team/pytorch_geometric/pull/10411))
+
 ### Fixed
 
 - Fixed conversion to/from `cuGraph` graph objects by ensuring `cudf` column names are correctly specified ([#10343](https://github.com/pyg-team/pytorch_geometric/pull/10343))
