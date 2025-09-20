@@ -10,7 +10,7 @@ authors=[
 ]
 description="Graph Neural Network Library for PyTorch"
 readme="README.md"
-requires-python=">=3.9"
+requires-python=">=3.10"
 keywords=[
     "deep-learning",
     "pytorch",
@@ -23,7 +23,6 @@ license-files = ["LICENSE"]
 classifiers=[
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -92,7 +91,8 @@ full = [
     "numba<0.60.0",
     "opt_einsum",
     "pandas",
-    "pgmpy",
+    # See https://github.com/pgmpy/pgmpy/issues/2360.
+    # "pgmpy",
     "pynndescent",
     "pytorch-memlab",
     "rdflib",
@@ -156,7 +156,7 @@ skip = [".gitignore", "__init__.py"]
 src = ["torch_geometric"]
 line-length = 80
 indent-width = 4
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = [
@@ -164,6 +164,7 @@ select = [
     "D",  # pydocstyle
 ]
 ignore = [
+    "B905",  # TODO Don't ignore "zip with strict=False"
     "D100",  # TODO Don't ignore "Missing docstring in public module"
     "D101",  # TODO Don't ignore "Missing docstring in public class"
     "D102",  # TODO Don't ignore "Missing docstring in public method"
