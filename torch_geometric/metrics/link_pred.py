@@ -820,10 +820,10 @@ class LinkPredPersonalization(_LinkPredMetric):
             right = pred[col.cpu()].to(device)
 
             # Use offset to work around applying `isin` along a specific dim:
-            i = max(left.max(), right.max()) + 1
-            i = torch.arange(0, i * row.size(0), i,
-                             device=device).view(-1, 1)  # type: ignore
-            isin = torch.isin(left + i, right + i)
+            i = max(int(left.max()), int(right.max())) + 1
+            idx = torch.arange(0, i * row.size(0), i, device=device)
+            idx = idx.view(-1, 1)
+            isin = torch.isin(left + idx, right + idx)
 
             # Compute personalization via average inverse cosine similarity:
             cos = isin.sum(dim=-1) / pred.size(1)
