@@ -204,6 +204,8 @@ filterwarnings = [
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
     "error::DeprecationWarning",
+    # TODO(rishipuri98): Remove usage of `torch_geometric.distributed` from `torch_geometric.llm`
+    "ignore:.*torch_geometric.distributed.*:DeprecationWarning",
 ]
 markers = [
     "rag: mark test as RAG test",
