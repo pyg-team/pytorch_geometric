@@ -6,7 +6,6 @@ from typing import Any, Optional, Union
 import torch.distributed
 import torch.multiprocessing as mp
 
-from torch_geometric.deprecation import deprecated
 from torch_geometric.distributed import DistNeighborSampler
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.rpc import (
@@ -17,18 +16,8 @@ from torch_geometric.distributed.rpc import (
 from torch_geometric.loader.base import DataLoaderIterator
 
 
-@deprecated("Use 'cuGraph' instead.\
-    See https://github.com/rapidsai/\
-    cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples")
 class DistLoader:
     r"""A base class for creating distributed data loading routines.
-
-    Deprecated, use 'cuGraph' instead for scaling
-    with single or multiple gpus.
-    See `'cuGraph' examples repo
-    <https://github.com/rapidsai/cugraph-gnn/
-    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
     Args:
         current_ctx (DistContext): Distributed context info of the current

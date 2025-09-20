@@ -1,26 +1,14 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from torch_geometric.deprecation import deprecated
-
 
 class DistRole(Enum):
     WORKER = 1
 
 
 @dataclass
-@deprecated("Use 'cuGraph' instead.\
-    See https://github.com/rapidsai/\
-    cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples")
 class DistContext:
-    r"""Context information of the current process.
-    Deprecated, use 'cuGraph' instead for scaling
-    with single or multiple gpus.
-    See `'cuGraph' examples repo
-    <https://github.com/rapidsai/cugraph-gnn/
-    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
-    """
+    r"""Context information of the current process."""
     rank: int
     global_rank: int
     world_size: int

@@ -6,27 +6,13 @@ from typing import Callable, Optional
 
 import torch
 
-from torch_geometric.deprecation import deprecated
-
 # Based on graphlearn-for-pytorch repository python/distributed/event_loop.py
 # https://github.com/alibaba/graphlearn-for-pytorch/blob/main/graphlearn_torch/
 # LICENSE: Apache v2
 
 
-@deprecated("Use 'cuGraph' instead.\
-    See https://github.com/rapidsai/\
-    cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples")
 def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
-    r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future.
-
-    Deprecated, use 'cuGraph' instead for scaling
-    with single or multiple gpus.
-    See `'cuGraph' examples repo
-    <https://github.com/rapidsai/cugraph-gnn/
-    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
-
-    """
+    r"""Convert a :class:`torch.futures.Future` to a :obj:`asyncio` future."""
     loop = asyncio.get_event_loop()
     asyncio_future = loop.create_future()
 
@@ -43,18 +29,8 @@ def to_asyncio_future(future: torch.futures.Future) -> asyncio.futures.Future:
     return asyncio_future
 
 
-@deprecated("Use 'cuGraph' instead.\
-    See https://github.com/rapidsai/\
-    cugraph-gnn/tree/main/python/\
-    cugraph-pyg/cugraph_pyg/examples")
 class ConcurrentEventLoop:
     r"""Concurrent event loop context.
-
-    Deprecated, use 'cuGraph' instead for scaling
-    with single or multiple gpus.
-    See `'cuGraph' examples repo
-    <https://github.com/rapidsai/cugraph-gnn/
-    tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
     Args:
         concurrency: max processing concurrency.
