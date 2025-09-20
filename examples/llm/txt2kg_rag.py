@@ -738,8 +738,7 @@ def test(model, test_loader, args):
             test_batch.desc = ""
         preds = (inference_step(model, test_batch,
                                 max_out_tokens=max_chars_in_train_answer / 2))
-        for question, pred, label in zip(raw_qs, preds, test_batch.label,
-                                         strict=False):
+        for question, pred, label in zip(raw_qs, preds, test_batch.label, strict=False):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
         scores.append(eval(question, pred, label))

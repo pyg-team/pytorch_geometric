@@ -307,9 +307,8 @@ class SQLiteDatabase(Database):
         # Create the table (if it does not exist) by mapping the Python schema
         # to the corresponding SQL schema:
         sql_schema = ',\n'.join([
-            f'  {col_name} {self._to_sql_type(type_info)}'
-            for col_name, type_info in zip(self._col_names,
-                                           self.schema.values(), strict=False)
+            f'  {col_name} {self._to_sql_type(type_info)}' for col_name,
+            type_info in zip(self._col_names, self.schema.values(), strict=False)
         ])
         query = (f'CREATE TABLE IF NOT EXISTS {self.name} (\n'
                  f'  id INTEGER PRIMARY KEY,\n'
@@ -393,8 +392,7 @@ class SQLiteDatabase(Database):
         self.cursor.execute(query)
 
         query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
-        self.cursor.executemany(
-            query, zip(indices, range(len(indices)), strict=False))
+        self.cursor.executemany(query, zip(indices, range(len(indices)), strict=False))
         self.connection.commit()
 
         query = f'SELECT * FROM {join_table_name}'

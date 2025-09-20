@@ -180,8 +180,7 @@ class GEDDataset(InMemoryDataset):
 
         ids, Ns = [], []
         # Iterating over paths for raw and processed data (train + test):
-        for r_path, p_path in zip(self.raw_paths, self.processed_paths,
-                                  strict=False):
+        for r_path, p_path in zip(self.raw_paths, self.processed_paths, strict=False):
             # Find the paths of all raw graphs:
             names = glob.glob(osp.join(r_path, '*.gexf'))
             # Get sorted graph IDs given filename: 123.gexf -> 123

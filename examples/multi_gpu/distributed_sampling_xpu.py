@@ -65,8 +65,7 @@ class GAT(torch.nn.Module):
         self.skips.append(Lin(hidden_channels * heads, out_channels))
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        for i, (conv,
-                skip) in enumerate(zip(self.convs, self.skips, strict=False)):
+        for i, (conv, skip) in enumerate(zip(self.convs, self.skips, strict=False)):
             x = conv(x, edge_index) + skip(x)
             if i != self.num_layers - 1:
                 x = F.elu(x)

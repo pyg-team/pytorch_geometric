@@ -205,8 +205,7 @@ class HeteroLayerNorm(torch.nn.Module):
             # (especially the `type_vec` code path)
             if type_ptr is not None:
                 h = torch.empty_like(out)
-                for i, (s, e) in enumerate(
-                        zip(type_ptr[:-1], type_ptr[1:], strict=False)):
+                for i, (s, e) in enumerate(zip(type_ptr[:-1], type_ptr[1:], strict=False)):
                     h[s:e] = out[s:e] * self.weight[i] + self.bias[i]
                 out = h
             else:

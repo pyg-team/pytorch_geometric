@@ -80,9 +80,7 @@ class ZipLoader(torch.utils.data.DataLoader):
         outs: Tuple[Any, ...],
     ) -> Tuple[Union[Data, HeteroData], ...]:
         loaders = self.loaders
-        return tuple(
-            loader.filter_fn(v)
-            for loader, v in zip(loaders, outs, strict=False))
+        return tuple(loader.filter_fn(v) for loader, v in zip(loaders, outs, strict=False))
 
     def _get_iterator(self) -> Iterator:
         if self.filter_per_worker:

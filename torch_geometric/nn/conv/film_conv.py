@@ -136,9 +136,7 @@ class FiLMConv(MessagePassing):
             out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
                                        beta=beta, gamma=gamma)
         else:
-            for i, (lin,
-                    film) in enumerate(zip(self.lins, self.films,
-                                           strict=False)):
+            for i, (lin, film) in enumerate(zip(self.lins, self.films, strict=False)):
                 beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
                 if isinstance(edge_index, SparseTensor):
                     _edge_type = edge_index.storage.value()

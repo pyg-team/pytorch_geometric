@@ -226,8 +226,7 @@ class BasicGNN(torch.nn.Module):
 
         xs: List[Tensor] = []
         assert len(self.convs) == len(self.norms)
-        for i, (conv,
-                norm) in enumerate(zip(self.convs, self.norms, strict=False)):
+        for i, (conv, norm) in enumerate(zip(self.convs, self.norms, strict=False)):
             if (not torch.jit.is_scripting()
                     and num_sampled_nodes_per_hop is not None):
                 x, edge_index, value = self._trim(

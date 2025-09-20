@@ -38,8 +38,7 @@ class Net(torch.nn.Module):
         self.convs.append(SAGEConv(hidden_channels, out_channels))
 
     def forward(self, x, edge_index):
-        for conv, batch_norm in zip(self.convs[:-1], self.batch_norms,
-                                    strict=False):
+        for conv, batch_norm in zip(self.convs[:-1], self.batch_norms, strict=False):
             x = conv(x, edge_index)
             x = batch_norm(x)
             x = F.relu(x)

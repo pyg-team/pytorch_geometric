@@ -290,8 +290,7 @@ class NeighborSampler(BaseSampler):
                     time_tensors = feature_store.multi_get_tensor(time_attrs)
                     time = {
                         attr.group_name: time_tensor
-                        for attr, time_tensor in zip(time_attrs, time_tensors,
-                                                     strict=False)
+                        for attr, time_tensor in zip(time_attrs, time_tensors, strict=False)
                     }
 
                     group_names = [attr.group_name for attr in time_attrs]
@@ -738,8 +737,7 @@ class BidirectionalNeighborSampler(NeighborSampler):
                 current_seed_batch = torch.arange(len(current_seed))
                 seen_seed_set = {
                     (int(node), int(batch))
-                    for node, batch in zip(current_seed, current_seed_batch,
-                                           strict=False)
+                    for node, batch in zip(current_seed, current_seed_batch, strict=False)
                 }
 
             iter_results = []
@@ -765,16 +763,15 @@ class BidirectionalNeighborSampler(NeighborSampler):
                     iter_result.seed_node = seed[iter_seed_global_batch]
 
                     keep_mask = torch.tensor([
-                        (int(node), int(batch))
-                        not in seen_seed_set for node, batch in zip(
-                            iter_result.node, iter_seed_global_batch,
-                            strict=False)
+                        (int(node), int(batch)) not in seen_seed_set
+                        for node, batch in zip(iter_result.node,
+                                               iter_seed_global_batch, strict=False)
                     ])
-                    next_seed = [
-                        (int(node), int(batch)) for node, batch in zip(
-                            iter_result.node[keep_mask],
-                            iter_seed_global_batch[keep_mask], strict=False)
-                    ] if keep_mask.any() else []
+                    next_seed = [(int(node), int(batch))
+                                 for node, batch in zip(
+                                     iter_result.node[keep_mask],
+                                     iter_seed_global_batch[keep_mask], strict=False)
+                                 ] if keep_mask.any() else []
                     current_seed, current_seed_batch = torch.tensor(
                         next_seed).reshape(-1, 2).transpose(0, 1).contiguous()
                 else:

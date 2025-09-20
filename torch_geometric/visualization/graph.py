@@ -86,8 +86,7 @@ def _visualize_graph_via_graphviz(
     for node in edge_index.view(-1).unique().tolist():
         g.node(str(node) if node_labels is None else node_labels[node])
 
-    for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist(),
-                             strict=False):
+    for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist(), strict=False):
         hex_color = hex(255 - round(255 * w))[2:]
         hex_color = f'{hex_color}0' if len(hex_color) == 1 else hex_color
         if node_labels is not None:
@@ -119,8 +118,7 @@ def _visualize_graph_via_networkx(
     for node in edge_index.view(-1).unique().tolist():
         g.add_node(node if node_labels is None else node_labels[node])
 
-    for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist(),
-                             strict=False):
+    for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist(), strict=False):
         if node_labels is not None:
             src = node_labels[src]
             dst = node_labels[dst]
@@ -324,8 +322,8 @@ def _visualize_hetero_graph_via_networkx(
                 remaining_nodes[dst_type]))
         }
 
-        for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist(),
-                                 strict=False):
+        for (src, dst), w in zip(edge_index.t().tolist(),
+                                 edge_weight.tolist(), strict=False):
             # Remap node indices
             new_src = src_mapping[src] + src_offset
             new_dst = dst_mapping[dst] + dst_offset

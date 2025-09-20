@@ -201,8 +201,7 @@ class GNNFF(torch.nn.Module):
         edge_emb = self.edge_emb(dist)
 
         # Message passing blocks:
-        for node_block, edge_block in zip(self.node_blocks, self.edge_blocks,
-                                          strict=False):
+        for node_block, edge_block in zip(self.node_blocks, self.edge_blocks, strict=False):
             node_emb = node_block(node_emb, edge_emb, i)
             edge_emb = edge_block(node_emb, edge_emb, i, j, idx_i, idx_j,
                                   idx_k, idx_ji, idx_kj)

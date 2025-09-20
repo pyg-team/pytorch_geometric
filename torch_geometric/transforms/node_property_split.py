@@ -104,8 +104,7 @@ class NodePropertySplit(BaseTransform):
         pagerank_values = torch.tensor(list(A.pagerank(G).values()))
 
         num_nodes = G.number_of_nodes()
-        personalization = dict(
-            zip(range(num_nodes), [0.0] * num_nodes, strict=False))
+        personalization = dict(zip(range(num_nodes), [0.0] * num_nodes, strict=False))
         personalization[int(pagerank_values.argmax())] = 1.0
 
         property_values = torch.tensor(

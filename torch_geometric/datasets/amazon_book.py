@@ -64,8 +64,7 @@ class AmazonBook(InMemoryDataset):
 
         # Process edge information for training and testing:
         attr_names = ['edge_index', 'edge_label_index']
-        for path, attr_name in zip(self.raw_paths[2:], attr_names,
-                                   strict=False):
+        for path, attr_name in zip(self.raw_paths[2:], attr_names, strict=False):
             rows, cols = [], []
             with open(path) as f:
                 lines = f.readlines()

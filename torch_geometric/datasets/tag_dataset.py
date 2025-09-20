@@ -323,8 +323,8 @@ class TAGDataset(InMemoryDataset):
                 raise ValueError("The TAGDataset need text and llm explanation"
                                  "for tokenizing all text")
             _text = [
-                f'{raw_txt} Explanation: {exp_txt}' for raw_txt, exp_txt in
-                zip(self.text, self.llm_explanation, strict=False)
+                f'{raw_txt} Explanation: {exp_txt}'
+                for raw_txt, exp_txt in zip(self.text, self.llm_explanation, strict=False)
             ]
 
         data_len = 0

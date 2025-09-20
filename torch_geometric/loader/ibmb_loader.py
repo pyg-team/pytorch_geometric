@@ -431,8 +431,7 @@ def topk_ppr_matrix(
 
     neighbors = sparsify(neighbors, weights, topk)
     neighbors = [
-        np.union1d(nei, pr)
-        for nei, pr in zip(neighbors, output_node_indices, strict=False)
+        np.union1d(nei, pr) for nei, pr in zip(neighbors, output_node_indices, strict=False)
     ]
 
     _, out_degree = torch.unique(edge_index[0], sorted=True,

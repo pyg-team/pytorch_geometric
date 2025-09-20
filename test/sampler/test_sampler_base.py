@@ -328,8 +328,7 @@ def test_homogeneous_sampler_output_global_fields():
     assert torch.equal(output.global_col, output_bidirectional.global_orig_col)
 
     # Make sure reverse mapping is correct
-    for local_value, global_value in zip(local_values, global_values,
-                                         strict=False):
+    for local_value, global_value in zip(local_values, global_values, strict=False):
         assert torch.equal(global_to_local_node_idx(output.node, global_value),
                            local_value)
 

@@ -257,10 +257,7 @@ def _layer_trace(
     )
 
     # get the output aligned
-    max_lens = [
-        max(map(len, col))
-        for col in zip(*([heading] + format_lines), strict=False)
-    ]
+    max_lens = [max(map(len, col)) for col in zip(*([heading] + format_lines), strict=False)]
 
     # not all columns should be displayed, specify kept indexes
     keep_indexes = [0, 1, 2, 9]

@@ -701,8 +701,7 @@ def get_features_for_triplets_groups(
     node_key_batches = batched(node_keys, ideal_batch_size)
     edge_key_batches = batched(edge_keys, ideal_batch_size)
     edge_index_batches = batched(edge_index, ideal_batch_size)
-    batches = zip(node_key_batches, edge_key_batches, edge_index_batches,
-                  strict=False)
+    batches = zip(node_key_batches, edge_key_batches, edge_index_batches, strict=False)
 
     with mpp.ThreadPool() as pool:
         result = pool.map(_fetch_feature_batch, batches)
