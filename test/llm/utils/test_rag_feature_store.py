@@ -1,3 +1,4 @@
+import gc
 from unittest.mock import Mock, patch
 
 import pytest
@@ -27,6 +28,8 @@ class TestKNNRAGFeatureStore:
         with pytest.raises(ValueError, match="Required config parameter"):
             store = KNNRAGFeatureStore()
             store.config = {}
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def create_feature_store(self):
         """Create a FeatureStore with mocked dependencies."""
@@ -53,7 +56,7 @@ class TestKNNRAGFeatureStore:
 
         expected_indices = torch.tensor([0, 3, 7, 2, 9])
 
-        with patch('torch_geometric.utils.rag.feature_store.batch_knn'
+        with patch('torch_geometric.llm.utils.feature_store.batch_knn'
                    ) as mock_batch_knn:
             # Mock batch_knn to return an iterator
             def mock_generator():
@@ -76,6 +79,8 @@ class TestKNNRAGFeatureStore:
             # Verify results
             assert torch.equal(result, expected_indices)
             assert torch.equal(query_enc, mock_query_enc)
+        gc.collect()
+        torch.cuda.empty_cache()
 
     @onlyRAG
     def test_retrieve_seed_nodes_multiple_queries(self):
@@ -91,7 +96,7 @@ class TestKNNRAGFeatureStore:
             torch.tensor([0, 3, 7, 2, 9])
         ]
 
-        with patch('torch_geometric.utils.rag.feature_store.batch_knn'
+        with patch('torch_geometric.llm.utils.feature_store.batch_knn'
                    ) as mock_batch_knn:
 
             def mock_generator():
@@ -110,6 +115,8 @@ class TestKNNRAGFeatureStore:
                 result, query_enc = out_dict[query]
                 assert torch.equal(result, expected_indices[i])
                 assert torch.equal(query_enc, mock_query_enc[i])
+        gc.collect()
+        torch.cuda.empty_cache()
 
     @pytest.mark.parametrize("induced", [True, False])
     def test_load_subgraph_valid_sample(self, induced):
@@ -137,3 +144,5 @@ class TestKNNRAGFeatureStore:
         if induced:
             assert torch.equal(result.node_idx, sample.node)
             assert torch.equal(result.edge_idx, sample.edge)
+        gc.collect()
+        torch.cuda.empty_cache()

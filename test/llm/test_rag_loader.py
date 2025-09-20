@@ -1,3 +1,4 @@
+import gc
 import os
 from typing import Any, Dict
 from unittest.mock import Mock
@@ -104,6 +105,8 @@ class TestRAGQueryLoader:
         assert loader.augment_query is False
         assert loader.subgraph_filter is None
         assert loader.config == self.sample_config
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_initialization_with_all_params(self):
         """Test initialization with all parameters."""
@@ -122,6 +125,8 @@ class TestRAGQueryLoader:
         assert loader.augment_query is True
         assert loader.subgraph_filter == mock_subgraph_filter
         assert loader.config == self.sample_config
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_bad_config(self):
         """Test bad config initialization."""
@@ -129,6 +134,8 @@ class TestRAGQueryLoader:
             RAGQueryLoader(self.graph_data)
         with pytest.raises(ValueError):
             RAGQueryLoader(self.graph_data, config={'d': 'foobar'})
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_config_propagation(self):
         """Test that config is propagated during initialization."""
@@ -136,6 +143,8 @@ class TestRAGQueryLoader:
 
         assert loader.feature_store.config == self.sample_config
         assert loader.graph_store.config == self.sample_config
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_basic_query_without_vector_retriever(self):
         """Test basic query functionality without vector retriever."""
@@ -152,6 +161,8 @@ class TestRAGQueryLoader:
         assert hasattr(result, 'num_nodes')
         assert hasattr(result, 'x')
         assert hasattr(result, 'edge_index')
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_query_with_vector_retriever(self):
         """Test query functionality with vector retriever."""
@@ -173,6 +184,8 @@ class TestRAGQueryLoader:
         # Verify result has text_context
         assert hasattr(result, 'text_context')
         assert result.text_context == ["retrieved doc 1", "retrieved doc 2"]
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_query_with_subgraph_filter(self):
         """Test query functionality with subgraph filter."""
@@ -198,6 +211,8 @@ class TestRAGQueryLoader:
         assert result == mock_filter_result
         assert hasattr(result, 'filtered')
         assert result.filtered is True
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
 @onlyRAG
@@ -251,3 +266,5 @@ def test_rag_loader_integration(tmp_path):
     expected_edge_attr = encoder_model.encode(["in_continent"] * 5).cpu()
     assert torch.allclose(result.x, expected_x, atol=1e-6)
     assert torch.allclose(result.edge_attr, expected_edge_attr, atol=1e-6)
+    gc.collect()
+    torch.cuda.empty_cache()

@@ -1,3 +1,4 @@
+import gc
 import random
 import string
 from typing import List
@@ -65,6 +66,8 @@ def test_basic_collate():
     for node in (indexer_0._nodes.keys() | indexer_1._nodes.keys()):
         assert big_indexer.node_attr[NODE_PID][
             big_indexer._nodes[node]] == node
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 def test_large_graph_index():
@@ -150,6 +153,8 @@ def test_large_graph_index():
 
     for dsets in zip(naive_graph_ds, large_graph_ds):
         assert results_are_close_enough(*dsets)
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 def test_save_load(tmp_path):
@@ -172,3 +177,5 @@ def test_save_load(tmp_path):
 
     indexer.save(str(tmp_path))
     assert indexer == LargeGraphIndexer.from_disk(str(tmp_path))
+    gc.collect()
+    torch.cuda.empty_cache()

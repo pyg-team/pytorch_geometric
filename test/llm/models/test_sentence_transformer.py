@@ -1,4 +1,7 @@
+import gc
+
 import pytest
+import torch
 
 from torch_geometric.llm.models import SentenceTransformer
 from torch_geometric.testing import onlyRAG, withCUDA, withPackage
@@ -33,3 +36,5 @@ def test_sentence_transformer(batch_size, pooling_strategy, device):
     out = model.encode([], batch_size=batch_size)
     assert out.device == device
     assert out.size() == (0, 128)
+    gc.collect()
+    torch.cuda.empty_cache()

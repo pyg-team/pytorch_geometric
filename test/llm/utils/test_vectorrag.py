@@ -1,3 +1,5 @@
+import gc
+
 import pytest
 import torch
 
@@ -42,6 +44,8 @@ def test_save_load(sample_documents, sample_model, tmp_path):
                           loaded_retriever.embedded_docs)
     assert retriever.k_for_docs == loaded_retriever.k_for_docs
     assert retriever.model == loaded_retriever.model
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 @onlyRAG
@@ -51,3 +55,5 @@ def test_query(sample_documents, sample_model):
     query = "What is the first test document?"
     retrieved_docs = retriever.query(query)
     assert retrieved_docs == [sample_documents[0]]
+    gc.collect()
+    torch.cuda.empty_cache()

@@ -1,3 +1,4 @@
+import gc
 from unittest.mock import Mock, patch
 
 import pytest
@@ -58,6 +59,8 @@ def test_sample_subgraph_with_valid_tensor_input():
         # Verify sample_from_nodes was called with correct input
         mock_sampler.sample_from_nodes.assert_called_once()
         assert result == expected_output
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 def test_bad_config():
@@ -65,3 +68,5 @@ def test_bad_config():
     with pytest.raises(ValueError, match="Required config parameter"):
         store = NeighborSamplingRAGGraphStore()
         store.config = {}
+    gc.collect()
+    torch.cuda.empty_cache()

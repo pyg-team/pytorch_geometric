@@ -1,3 +1,4 @@
+import gc
 import os
 import tempfile
 from typing import List
@@ -40,6 +41,8 @@ class TestCreateGraphFromTriples:
                                ('Alice', 'leads', 'Carol'),
                                ('Carol', 'works with', 'Dave')]
         self.mock_embedding_model = MockEmbeddingModel(embed_dim=32)
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_create_graph_basic_functionality(self):
         """Test basic functionality of create_graph_from_triples."""
@@ -61,6 +64,8 @@ class TestCreateGraphFromTriples:
 
         expected_edge_index = torch.tensor([[0, 0, 2], [1, 2, 3]])
         assert torch.allclose(result.edge_index, expected_edge_index)
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_create_graph_empty_triples(self):
         """Test create_graph_from_triples with empty triples list."""
@@ -73,6 +78,8 @@ class TestCreateGraphFromTriples:
         assert isinstance(result, Data)
         assert result.num_nodes == 0
         assert result.num_edges == 0
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
 class TestCreateRemoteBackendFromGraphData:
@@ -88,6 +95,8 @@ class TestCreateRemoteBackendFromGraphData:
         self.sample_graph_data = create_graph_from_triples(
             triples=self.sample_triples,
             embedding_model=self.mock_embedding_model)
+        gc.collect()
+        torch.cuda.empty_cache()
 
     def test_create_backend_data_load(self):
         """Test that data integrity is preserved in backend creation."""
@@ -113,3 +122,5 @@ class TestCreateRemoteBackendFromGraphData:
                                   self.sample_graph_data.edge_index)
             assert torch.allclose(loaded_data.edge_attr,
                                   self.sample_graph_data.edge_attr)
+        gc.collect()
+        torch.cuda.empty_cache()
