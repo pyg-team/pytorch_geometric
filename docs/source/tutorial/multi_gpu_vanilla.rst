@@ -1,6 +1,8 @@
 Multi-GPU Training in Pure PyTorch
 ==================================
-Note that this method is deprecated in liue of CuGraph, the recommended multi-gpu method. See `CuGraph Examples Repo <https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
+
+.. note::
+    For multi-GPU training with cuGraph, refer to `cuGraph examples<https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
 
 
 For many large scale, real-world datasets, it may be necessary to scale-up training across multiple GPUs.
