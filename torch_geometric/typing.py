@@ -3,16 +3,11 @@ import os
 import sys
 import typing
 import warnings
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, TypeAlias, Union
 
 import numpy as np
 import torch
 from torch import Tensor
-
-try:
-    from typing import TypeAlias  # type: ignore
-except ImportError:
-    from typing_extensions import TypeAlias
 
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
@@ -70,12 +65,12 @@ try:
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
     try:
-        torch.classes.pyg.CPUHashMap  # noqa: B018
+        torch.classes.pyg.CPUHashMap  # noqa: B018 type: ignore[name-defined]
         WITH_CPU_HASH_MAP = True
     except Exception:
         WITH_CPU_HASH_MAP = False
     try:
-        torch.classes.pyg.CUDAHashMap  # noqa: B018
+        torch.classes.pyg.CUDAHashMap  # noqa: B018 type: ignore[name-defined]
         WITH_CUDA_HASH_MAP = True
     except Exception:
         WITH_CUDA_HASH_MAP = False
