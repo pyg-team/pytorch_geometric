@@ -163,6 +163,7 @@ select = [
     "D",  # pydocstyle
 ]
 ignore = [
+    "B905",  # TODO Don't ignore "zip with strict=False"
     "D100",  # TODO Don't ignore "Missing docstring in public module"
     "D101",  # TODO Don't ignore "Missing docstring in public class"
     "D102",  # TODO Don't ignore "Missing docstring in public method"
