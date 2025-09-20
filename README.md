@@ -5,18 +5,18 @@
 ______________________________________________________________________
 
 <div align="center">
-  
-  [![PyPI Version][pypi-image]][pypi-url]
-  [![PyPI Download][pypi-download-image]][pypi-download-url]
-  [![Slack][slack-image]][slack-url]
-  [![Contributing][contributing-image]][contributing-url]
 
-  **[Documentation](https://pytorch-geometric.readthedocs.io)** |
-  **[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** |
-  **[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** |
-  **[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** |
-  **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** |
-  **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+[![PyPI Version][pypi-image]][pypi-url]
+[![PyPI Download][pypi-download-image]][pypi-download-url]
+[![Slack][slack-image]][slack-url]
+[![Contributing][contributing-image]][contributing-url]
+
+**[Documentation](https://pytorch-geometric.readthedocs.io)** |
+**[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** |
+**[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** |
+**[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** |
+**[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** |
+**[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
 
 </div>
 
@@ -468,16 +468,9 @@ We are motivated to constantly make PyG even better.
 
 [contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&color=4B26A4
 [contributing-url]: https://github.com/pyg-team/pytorch_geometric/blob/master/.github/CONTRIBUTING.md
-
-[docs-image]: https://readthedocs.org/projects/pytorch-geometric/badge/?version=latest
-[docs-url]: https://pytorch-geometric.readthedocs.io/en/latest
-[linting-image]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml/badge.svg
-[linting-url]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml
-[pypi-image]: https://img.shields.io/pypi/pyversions/torch-geometric?color=4B26A4
-[pypi-url]: https://pypi.python.org/pypi/torch-geometric
 [pypi-download-image]: https://img.shields.io/pypi/dm/torch_geometric?color=4B26A4
 [pypi-download-url]: https://pepy.tech/projects/torch_geometric
+[pypi-image]: https://img.shields.io/pypi/pyversions/torch-geometric?color=4B26A4
+[pypi-url]: https://pypi.python.org/pypi/torch-geometric
 [slack-image]: https://img.shields.io/badge/slack-join-white.svg?logo=slack&color=4B26A4
 [slack-url]: https://data.pyg.org/slack.html
-[testing-image]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/testing.yml/badge.svg
-[testing-url]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/testing.yml
