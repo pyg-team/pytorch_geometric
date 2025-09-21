@@ -248,7 +248,8 @@ class TransformerConv(MessagePassing):
             else:
                 out = out + x_r
 
-        if return_attention_weights:
+        if isinstance(return_attention_weights,
+                      bool) and return_attention_weights:
             assert alpha is not None
             if isinstance(edge_index, Tensor):
                 return out, (edge_index, alpha)

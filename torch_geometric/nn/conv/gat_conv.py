@@ -376,7 +376,8 @@ class GATConv(MessagePassing):
         if self.bias is not None:
             out = out + self.bias
 
-        if return_attention_weights:
+        if isinstance(return_attention_weights,
+                      bool) and return_attention_weights:
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
                     # TODO TorchScript requires to return a tuple
