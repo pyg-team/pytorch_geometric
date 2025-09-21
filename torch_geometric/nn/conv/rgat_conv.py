@@ -340,10 +340,13 @@ class RGATConv(MessagePassing):
                 (default: :obj:`None`)
             size ((int, int), optional): The shape of the adjacency matrix.
                 (default: :obj:`None`)
-            return_attention_weights (bool, optional): If set to :obj:`True`,
-                will additionally return the tuple
-                :obj:`(edge_index, attention_weights)`, holding the computed
-                attention weights for each edge. (default: :obj:`None`)
+            return_attention_weights (bool, optional):
+                Will additionally return the tuple
+                :obj:`(edge_index, attention_weights)` whenever it is set to
+                a value, regardless of its actual value
+                (might be `True` or `False`), holding the computed attention
+                weights for each edge.
+                (default: :obj:`None`)
         """
         # propagate_type: (x: Tensor, edge_type: OptTensor,
         #                  edge_attr: OptTensor)
@@ -354,8 +357,7 @@ class RGATConv(MessagePassing):
         assert alpha is not None
         self._alpha = None
 
-        if isinstance(return_attention_weights,
-                      bool) and return_attention_weights:
+        if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
                     # TODO TorchScript requires to return a tuple

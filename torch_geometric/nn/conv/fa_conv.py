@@ -163,10 +163,13 @@ class FAConv(MessagePassing):
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             edge_weight (torch.Tensor, optional): The edge weights.
                 (default: :obj:`None`)
-            return_attention_weights (bool, optional): If set to :obj:`True`,
-                will additionally return the tuple
-                :obj:`(edge_index, attention_weights)`, holding the computed
-                attention weights for each edge. (default: :obj:`None`)
+            return_attention_weights (bool, optional):
+                Will additionally return the tuple
+                :obj:`(edge_index, attention_weights)` whenever it is set to
+                a value, regardless of its actual value
+                (might be `True` or `False`), holding the computed attention
+                weights for each edge.
+                (default: :obj:`None`)
         """
         if self.normalize:
             if isinstance(edge_index, Tensor):
@@ -213,8 +216,7 @@ class FAConv(MessagePassing):
         if self.eps != 0.0:
             out = out + self.eps * x_0
 
-        if isinstance(return_attention_weights,
-                      bool) and return_attention_weights:
+        if isinstance(return_attention_weights, bool):
             assert alpha is not None
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
