@@ -210,8 +210,6 @@ filterwarnings = [
     "ignore:.*torch_geometric.distributed.*:DeprecationWarning",
     # Ignore due to pytorch-lightning using a deprecated pkg_resources API:
     "ignore:.*Deprecated call to `pkg_resources.declare_namespace.*:DeprecationWarning",
-    # Ignore due to PyTorch 2.3 using a deprecated importlib API:
-    "ignore:.*method is deprecated.*:DeprecationWarning",
 ]
 markers = [
     "rag: mark test as RAG test",

@@ -28,7 +28,7 @@ class MySAGEConv(torch.nn.Module):
 @withDevice
 @onlyLinux
 @onlyFullTest
-@withPackage('torch>2.0.0')
+@withPackage('torch>2.0.0', 'torch!=2.3.0', 'torch!=2.3.1')
 def test_dynamic_torch_compile(device):
     conv = MySAGEConv(64, 64).to(device)
     conv = torch.compile(conv, dynamic=True)
