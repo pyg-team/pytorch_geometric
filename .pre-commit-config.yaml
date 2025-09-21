@@ -19,13 +19,6 @@ repos:
         name: Remove trailing whitespaces
       - id: check-toml
         name: Check toml
-      - id: check-yaml
-        name: Check yaml
-        exclude: |
-          (?x)^(
-              conda/pytorch-geometric/meta.yaml|
-              conda/pyg/meta.yaml
-          )$
 
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.37.1

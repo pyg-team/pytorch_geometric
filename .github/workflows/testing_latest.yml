@@ -41,7 +41,6 @@ jobs:
         with:
           files: |
             benchmark/**
-            conda/**
             docker/**
             docs/**
             examples/**

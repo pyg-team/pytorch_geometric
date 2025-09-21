@@ -29,7 +29,6 @@ jobs:
         with:
           files: |
             benchmark/**
-            conda/**
             docker/**
             examples/**
             graphgym/**
