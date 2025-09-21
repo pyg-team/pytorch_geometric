@@ -207,6 +207,8 @@ filterwarnings = [
     "error::DeprecationWarning",
     # TODO(rishipuri98): Remove usage of `torch_geometric.distributed` from `torch_geometric.llm`
     "ignore:.*torch_geometric.distributed.*:DeprecationWarning",
+    # Ignore due to pytorch-lightning using deprecated pkg_resources API:
+    "ignore:Deprecated call to `pkg_resources.declare_namespace('google')`:DeprecationWarning",
 ]
 markers = [
     "rag: mark test as RAG test",
