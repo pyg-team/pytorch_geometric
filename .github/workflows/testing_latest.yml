@@ -22,9 +22,9 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-14]
         include:
           - os: ubuntu-latest
-            python-version: '3.9'
+            python-version: '3.10'
           - os: windows-latest
-            python-version: '3.9'
+            python-version: '3.10'
           - os: macos-14
             python-version: '3.10'
 
@@ -37,7 +37,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v47
         with:
           files: |
             benchmark/**
@@ -55,7 +55,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install main package
+      - name: Install main package (Windows)
         if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Windows' }}
         run: |
           uv pip install -e ".[test]"

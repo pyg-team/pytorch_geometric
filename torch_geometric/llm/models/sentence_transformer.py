@@ -15,6 +15,13 @@ class PoolingStrategy(Enum):
 
 
 class SentenceTransformer(torch.nn.Module):
+    r"""A wrapper around a Sentence-Transformer from HuggingFace.
+
+    Args:
+        model_name (str): The HuggingFace model name, *e.g.*, :obj:`"BERT"`.
+        pooling_strategy (str, optional): The pooling strategy to use
+            for generating node embeddings. (default: :obj:`"mean"`)
+    """
     def __init__(
         self,
         model_name: str,

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed `ogbn_train_cugraph` example for distributed cuGraph ([#10439](https://github.com/pyg-team/pytorch_geometric/pull/10439))
 - Added `safe_onnx_export` function with workarounds for `onnx_ir.serde.SerdeError` issues in ONNX export ([#10422](https://github.com/pyg-team/pytorch_geometric/pull/10422))
 - Fixed importing PyTorch Lightning in `torch_geometric.graphgym` and `torch_geometric.data.lightning` when using `lightning` instead of `pytorch-lightning` ([#10404](https://github.com/pyg-team/pytorch_geometric/pull/10404), [#10417](https://github.com/pyg-team/pytorch_geometric/pull/10417)))
 - Fixed `detach()` warnings in example scripts involving tensor conversions ([#10357](https://github.com/pyg-team/pytorch_geometric/pull/10357))
@@ -15,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Added `EGTConv` layer and example ([#8280](https://github.com/pyg-team/pytorch_geometric/pull/8280))
+- Added llm generated explanations to `TAGDataset` ([#9918](https://github.com/pyg-team/pytorch_geometric/pull/9918))
 - Added `torch_geometric.llm` and its examples ([#10436](https://github.com/pyg-team/pytorch_geometric/pull/10436))
 - Added support for negative weights in `sparse_cross_entropy` ([#10432](https://github.com/pyg-team/pytorch_geometric/pull/10432))
 - Added `connected_components()` method to `Data` and `HeterData` ([#10388](https://github.com/pyg-team/pytorch_geometric/pull/10388))
@@ -86,6 +88,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
+- Deprecated `torch_geometric.distributed` ([#10411](https://github.com/pyg-team/pytorch_geometric/pull/10411))
+
 ### Fixed
 
 - Fixed conversion to/from `cuGraph` graph objects by ensuring `cudf` column names are correctly specified ([#10343](https://github.com/pyg-team/pytorch_geometric/pull/10343))
@@ -98,6 +102,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
+- Dropped support for Python 3.9 ([#10461](https://github.com/pyg-team/pytorch_geometric/pull/10461))
 - Dropped support for PyTorch 1.12 ([#10248](https://github.com/pyg-team/pytorch_geometric/pull/10248))
 - Dropped support for PyTorch 1.11 ([#10247](https://github.com/pyg-team/pytorch_geometric/pull/10247))
 

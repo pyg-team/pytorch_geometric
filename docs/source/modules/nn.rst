@@ -157,6 +157,20 @@ Finally, we added full support for customization of aggregations into the :class
      {{ name }}
    {% endfor %}
 
+Attention
+---------
+
+.. currentmodule:: torch_geometric.nn.attention
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/nn.rst
+
+   {% for name in torch_geometric.nn.attention.classes %}
+     {{ name }}
+   {% endfor %}
+
 Normalization Layers
 --------------------
 
@@ -226,17 +240,7 @@ KGE Models
 Encodings
 ---------
 
-.. automodule:: torch_geometric.nn.encoding
-   :members:
-   :undoc-members:
-   :exclude-members: training
-
-NLP
----------
-
-.. automodule:: torch_geometric.nn.nlp
-   :members:
-   :undoc-members:
+.. currentmodule:: torch_geometric.nn.encoding
 
 Functional
 ----------
