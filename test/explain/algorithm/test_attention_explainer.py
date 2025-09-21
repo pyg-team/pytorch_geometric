@@ -1,6 +1,9 @@
+import os
+
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.explain import (
     AttentionExplainer,
     Explainer,
@@ -216,6 +219,10 @@ def test_attention_explainer_supports(explanation_type, node_mask_type):
         )
 
 
+@pytest.mark.skipif(
+    os.name == 'nt' and torch_geometric.typing.WITH_PT24,
+    reason="Unknown heap corruption issue on Windows with PyTorch 2.4",
+)
 def test_attention_explainer_attentive_fp(check_explanation):
     model = AttentiveFP(3, 16, 1, edge_dim=5, num_layers=2, num_timesteps=2)
 
