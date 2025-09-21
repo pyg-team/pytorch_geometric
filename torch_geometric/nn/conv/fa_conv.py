@@ -213,7 +213,7 @@ class FAConv(MessagePassing):
         if self.eps != 0.0:
             out = out + self.eps * x_0
 
-        if isinstance(return_attention_weights, bool):
+        if return_attention_weights:
             assert alpha is not None
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
