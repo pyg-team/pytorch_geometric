@@ -5,7 +5,7 @@ from torch_geometric.testing import withPackage
 from torch_geometric.utils import to_undirected
 
 
-@withPackage('numba')  # For ppr calculation
+@withPackage('numba', 'torch>=2.0.0')  # For ppr calculation
 def test_lpformer():
     model = LPFormer(16, 32, num_gnn_layers=2, num_transformer_layers=1)
     assert str(
