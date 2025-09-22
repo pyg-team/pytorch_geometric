@@ -81,8 +81,9 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
                 num_edges = data.num_edges
                 # Check if adding a single graph will cause the mini-batch to
                 # more nodes/edges than the maximums given.
-                if (current_num_nodes + num_nodes > self.max_num_nodes) or (
-                        current_num_edges + num_edges > self.max_num_edges):
+                if (current_num_nodes + num_nodes
+                        > self.max_num_nodes) or (current_num_edges + num_edges
+                                                  > self.max_num_edges):
 
                     if current_num_nodes == 0 or current_num_edges == 0:
                         if self.skip_too_big:
