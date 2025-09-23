@@ -136,13 +136,14 @@ class LLM(torch.nn.Module):
         else:
             self.sys_prompt = ""
         if 'max_memory' not in kwargs:  # Pure CPU:
-            warnings.warn("LLM is being used on CPU, which may be slow.\
+            warnings.warn(
+                "LLM is being used on CPU, which may be slow.\
                           This decision was made by a rough hueristic that\
                           assumes your GPU set up does not have enough GPU RAM. \
                           This is done to avoid GPU OOM errors. If you think this \
                           is a mistake, please initialize your LLM with the n_gpus \
                           param to dictate how many gpus to use for the LLM.",
-                          stacklevel=2)
+                stacklevel=2)
             self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:
