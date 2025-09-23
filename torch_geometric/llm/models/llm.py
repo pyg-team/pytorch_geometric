@@ -144,8 +144,7 @@ class LLM(torch.nn.Module):
                           If you think this is a mistake,\
                           please initialize your LLM with the n_gpus\
                           param to dictate how many gpus to\
-                          use for the LLM.",
-                stacklevel=2)
+                          use for the LLM.", stacklevel=2)
             self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:
