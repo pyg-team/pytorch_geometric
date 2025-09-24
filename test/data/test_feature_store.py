@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+import numpy as np
 import pytest
 import torch
 
@@ -29,7 +30,7 @@ def test_feature_store():
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])
     attr = TensorAttr(group_name, attr_name, index)
-    assert TensorAttr(group_name).update(attr) == attr
+    assert TensorAttr(group_name).update(attr).equal(attr)
 
     # Normal API:
     store.put_tensor(tensor, attr)
@@ -107,3 +108,46 @@ def test_feature_store_override():
     assert torch.equal(store[attr_name][index], tensor)
     assert torch.equal(store[attr_name][:], tensor)
     assert torch.equal(store[attr_name, :], tensor)
+
+
+def test_tensor_attr_equal():
+    """Test TensorAttr.equal method for robust equality comparisons."""
+    # Test basic equality
+    attr1 = TensorAttr('group1', 'feat', torch.tensor([0, 1, 2]))
+    attr2 = TensorAttr('group1', 'feat', torch.tensor([0, 1, 2]))
+    attr3 = TensorAttr('group1', 'feat', torch.tensor([0, 1, 3]))
+
+    assert attr1.equal(attr2)
+    assert not attr1.equal(attr3)
+
+    # Test with numpy arrays
+    attr4 = TensorAttr('group1', 'feat', np.array([0, 1, 2]))
+    attr5 = TensorAttr('group1', 'feat', np.array([0, 1, 2]))
+    attr6 = TensorAttr('group1', 'feat', np.array([0, 1, 3]))
+
+    assert attr4.equal(attr5)
+    assert not attr4.equal(attr6)
+
+    # Test with slice objects
+    attr7 = TensorAttr('group1', 'feat', slice(0, 5, 2))
+    attr8 = TensorAttr('group1', 'feat', slice(0, 5, 2))
+    attr9 = TensorAttr('group1', 'feat', slice(0, 5, 1))
+
+    assert attr7.equal(attr8)
+    assert not attr7.equal(attr9)
+
+    # Test mixed types
+    assert not attr1.equal(attr4)  # torch tensor vs numpy array
+    assert not attr1.equal(attr7)  # torch tensor vs slice
+
+    # Test non-TensorAttr objects
+    assert not attr1.equal("not a TensorAttr")
+    assert not attr1.equal(None)
+
+    # Test different group names
+    attr10 = TensorAttr('group2', 'feat', torch.tensor([0, 1, 2]))
+    assert not attr1.equal(attr10)
+
+    # Test different attr names
+    attr11 = TensorAttr('group1', 'other_feat', torch.tensor([0, 1, 2]))
+    assert not attr1.equal(attr11)

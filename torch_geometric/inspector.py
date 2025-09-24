@@ -431,11 +431,11 @@ def eval_type(value: Any, _globals: Dict[str, Any]) -> Type:
     if isinstance(value, str):
         value = typing.ForwardRef(value)
     # Python 3.13 deprecates calling `_eval_type` without `type_params`.
-    # Prefer the new signature and gracefully fall back for older versions.
-    try:  # Python >= 3.13
+    # Use version check to avoid try-except overhead.
+    if sys.version_info >= (3, 13):
         return typing._eval_type(value, _globals, None,
                                  type_params=())  # type: ignore[attr-defined]
-    except TypeError:  # Python < 3.13
+    else:
         return typing._eval_type(value, _globals, None)  # type: ignore
 
 
