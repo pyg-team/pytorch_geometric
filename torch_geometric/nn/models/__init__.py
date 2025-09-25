@@ -31,6 +31,7 @@ from .neural_fingerprint import NeuralFingerprint
 from .visnet import ViSNet
 from .lpformer import LPFormer
 from .sgformer import SGFormer
+from .egt import EGT
 
 from .polynormer import Polynormer
 # Deprecated:
@@ -86,4 +87,5 @@ __all__ = classes = [
     'SGFormer',
     'Polynormer',
     'ARLinkPredictor',
+    'EGT',
 ]
