@@ -238,12 +238,13 @@ class HGTConv(MessagePassing):
             edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel,
             num_nodes=k.size(0))
 
-        _, edge_time_diff = construct_bipartite_edge_index(
-            edge_index_dict, src_offset, dst_offset,
-            edge_attr_dict=edge_time_diff_dict, num_nodes=k.size(0))
+        temporal_features = None
+        if self.use_RTE:
+            _, edge_time_diff = construct_bipartite_edge_index(
+                edge_index_dict, src_offset, dst_offset,
+                edge_attr_dict=edge_time_diff_dict, num_nodes=k.size(0))
 
-        temporal_features = self.rte(edge_time_diff).view(
-            -1, H, D) if self.use_RTE else None
+            temporal_features = self.rte(edge_time_diff).view(-1, H, D)
 
         out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
                              temporal_features=temporal_features)
