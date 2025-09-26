@@ -1,4 +1,5 @@
 import math
+import warnings
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
@@ -7,6 +8,7 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import HeteroDictLinear, HeteroLinear
+from torch_geometric.nn.encoding import PositionalEncoding
 from torch_geometric.nn.inits import ones
 from torch_geometric.nn.parameter_dict import ParameterDict
 from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
@@ -37,6 +39,9 @@ class HGTConv(MessagePassing):
             information.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
+        use_RTE (bool, optional): If set to :obj:`True`, the layer uses
+            Relative Temporal Encoding (RTE).
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -46,6 +51,7 @@ class HGTConv(MessagePassing):
         out_channels: int,
         metadata: Metadata,
         heads: int = 1,
+        use_RTE: bool = False,
         **kwargs,
     ):
         super().__init__(aggr='add', node_dim=0, **kwargs)
@@ -60,6 +66,7 @@ class HGTConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
+        self.use_RTE = use_RTE
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.edge_types_map = {
@@ -92,6 +99,9 @@ class HGTConv(MessagePassing):
         for edge_type in self.edge_types:
             edge_type = '__'.join(edge_type)
             self.p_rel[edge_type] = Parameter(torch.empty(1, heads))
+
+        if self.use_RTE:
+            self.rte = PositionalEncoding(self.out_channels)
 
         self.reset_parameters()
 
@@ -153,10 +163,35 @@ class HGTConv(MessagePassing):
 
         return k, v, offset
 
+    def _validate_inputs(
+        self,
+        edge_index_dict: Dict[EdgeType, Adj],
+        edge_time_diff_dict: Optional[Dict[EdgeType, Tensor]],
+    ) -> None:
+        """Helper function to validate inputs for temporal encoding."""
+        if not self.use_RTE and edge_time_diff_dict is not None:
+            warnings.warn(
+                "'use_RTE' is False, but 'edge_time_diff_dict' was provided. "
+                "The temporal data will be ignored.", stacklevel=2)
+            return
+
+        if self.use_RTE:
+            if edge_time_diff_dict is None:
+                raise ValueError(
+                    "RTE enabled, but no 'edge_time_diff_dict' was provided.")
+
+            for edge_type in edge_index_dict.keys():
+                if edge_type not in edge_time_diff_dict:
+                    raise ValueError(
+                        "RTE enabled, but 'time_diff' missing for edge type: "
+                        f"{edge_type}. "
+                        "All edge types must have a time_diff attribute.")
+
     def forward(
         self,
         x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Dict[EdgeType, Adj]  # Support both.
+        edge_index_dict: Dict[EdgeType, Adj],  # Support both.
+        edge_time_diff_dict: Optional[Dict[EdgeType, Tensor]] = None,
     ) -> Dict[NodeType, Optional[Tensor]]:
         r"""Runs the forward pass of the module.
 
@@ -168,12 +203,19 @@ class HGTConv(MessagePassing):
                 individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
                 :class:`torch_sparse.SparseTensor`.
+            edge_time_diff_dict (Dict[EdgeType, torch.Tensor], optional):
+                A dictionary holding time differences (∆T) for each
+                individual edge type. Each entry must be a 1D
+                :class:`torch.Tensor` of shape :obj:`[num_edges]`. It must be
+                provided if :obj:`use_RTE=True`. (default: :obj:`None`)
 
         :rtype: :obj:`Dict[str, Optional[torch.Tensor]]` - The output node
             embeddings for each node type.
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
+        self._validate_inputs(edge_index_dict, edge_time_diff_dict)
+
         F = self.out_channels
         H = self.heads
         D = F // H
@@ -196,7 +238,15 @@ class HGTConv(MessagePassing):
             edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel,
             num_nodes=k.size(0))
 
-        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr)
+        _, edge_time_diff = construct_bipartite_edge_index(
+            edge_index_dict, src_offset, dst_offset,
+            edge_attr_dict=edge_time_diff_dict, num_nodes=k.size(0))
+
+        temporal_features = self.rte(edge_time_diff).view(
+            -1, H, D) if self.use_RTE else None
+
+        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
+                             temporal_features=temporal_features)
 
         # Reconstruct output node embeddings dict:
         for node_type, start_offset in dst_offset.items():
@@ -224,7 +274,11 @@ class HGTConv(MessagePassing):
 
     def message(self, k_j: Tensor, q_i: Tensor, v_j: Tensor, edge_attr: Tensor,
                 index: Tensor, ptr: Optional[Tensor],
+                temporal_features: Optional[Tensor],
                 size_i: Optional[int]) -> Tensor:
+        if temporal_features is not None:
+            k_j = k_j + temporal_features
+            v_j = v_j + temporal_features
         alpha = (q_i * k_j).sum(dim=-1) * edge_attr
         alpha = alpha / math.sqrt(q_i.size(-1))
         alpha = softmax(alpha, index, ptr, size_i)
