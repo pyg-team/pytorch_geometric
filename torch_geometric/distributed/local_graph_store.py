@@ -94,7 +94,7 @@ class LocalGraphStore(GraphStore):
         num_nodes: int,
         is_sorted: bool = False,
     ) -> 'LocalGraphStore':
-        r"""Creates a local graph store from a homogeneous or heterogenous
+        r"""Creates a local graph store from a homogeneous or heterogeneous
         :pyg:`PyG` graph.
 
         Args:
