@@ -37,4 +37,5 @@ jobs:
       - name: Run tests
         timeout-minutes: 10
         run: |
-          PYTORCH_TEST_WITH_SLOW=1 RAG_TEST=1 uv run --no-project pytest -m rag  --cov --cov-report=xml -v
+          ulimit -c 0
+          PYTORCH_TEST_WITH_SLOW=1 RAG_TEST=1 uv run --no-project pytest -m rag  --cov --cov-report=xml -v --tb=short
