@@ -37,9 +37,28 @@ jobs:
       - name: Run tests
         timeout-minutes: 10
         run: |
+          set +e  # Don't exit on first failure
           ulimit -c 0
-          RAG_TEST=1 uv run --no-project pytest -m rag --collect-only -q | grep "::" | while read test; do
+          export TOKENIZERS_PARALLELISM=false
+          export RAG_TEST=1
+          export PYTORCH_TEST_WITH_SLOW=1
+          
+          # Collect test names into a file
+          uv run --no-project pytest -m rag --collect-only -q > test_list.txt 2>&1
+          
+          # Filter for test node IDs and run them
+          grep "::" test_list.txt | while IFS= read -r test; do
+            echo "========================================="
             echo "Running: $test"
-            RAG_TEST=1 uv run --no-project pytest -m rag "$test" -v || echo "FAILED: $test"
+            echo "========================================="
+            uv run --no-project pytest -m rag "$test" -v
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
+              echo "✓ PASSED: $test"
+            else
+              echo "✗ FAILED with exit code $exit_code: $test"
+            fi
+            echo ""
           done
-        shell: bash
+          
+          echo "All tests completed"
