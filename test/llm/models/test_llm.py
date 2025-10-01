@@ -14,11 +14,11 @@ def test_llm() -> None:
     answer = ["yes!"]
 
     model = LLM(
-        model_name='HuggingFaceTB/SmolLM-360M',
+        model_name='Qwen/Qwen3-0.6B',
         num_params=1,
         dtype=torch.float16,
     )
-    assert str(model) == 'LLM(HuggingFaceTB/SmolLM-360M)'
+    assert str(model) == 'LLM(Qwen/Qwen3-0.6B)'
 
     loss = model(question, answer)
     assert isinstance(loss, Tensor)
@@ -28,5 +28,3 @@ def test_llm() -> None:
     pred = model.inference(question)
     assert len(pred) == 1
     del model
-    gc.collect()
-    torch.cuda.empty_cache()
