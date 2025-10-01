@@ -36,7 +36,6 @@ jobs:
 
       - name: Run tests
         timeout-minutes: 10
-        shell: bash
         run: |
           set +e  # Don't exit on first failure
           ulimit -c 0
@@ -63,3 +62,5 @@ jobs:
           done
 
           echo "All tests completed"
+        shell: bash
+
