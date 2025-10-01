@@ -1,6 +1,7 @@
 import argparse
 import gc
 import json
+import multiprocessing as mp
 import os
 import random
 import re
@@ -9,7 +10,6 @@ from datetime import datetime
 from glob import glob
 from itertools import chain
 from pathlib import Path
-import multiprocessing as mp
 
 import yaml
 
@@ -444,7 +444,8 @@ def process_qa_chunk(chunk_data):
 
     # Load graph and feature stores with unique path for each GPU
     from torch_geometric.utils.rag.backend_utils import (
-        create_remote_backend_from_graph_data, )
+        create_remote_backend_from_graph_data,
+    )
     backend_path = f"backend_gpu_{gpu_id}"
     fs, gs = create_remote_backend_from_graph_data(
         graph_data=graph_data, path=backend_path,
