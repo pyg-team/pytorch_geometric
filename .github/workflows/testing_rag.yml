@@ -37,7 +37,7 @@ jobs:
       - name: Run tests
         timeout-minutes: 10
         run: |
-          RAG_TEST=1 uv run --no-project pytest test/torch_geometric/llm -m rag  --cov --cov-report=xml -v
-          RAG_TEST=1 uv run --no-project pytest test/torch_geometric/datasets -m rag  --cov --cov-report=xml -v
+          RAG_TEST=1 uv run --no-project pytest test/llm -m rag  --cov --cov-report=xml -v
+          RAG_TEST=1 uv run --no-project pytest test/datasets -m rag  --cov --cov-report=xml -v
 
         shell: bash
