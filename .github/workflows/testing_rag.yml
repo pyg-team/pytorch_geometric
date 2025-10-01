@@ -43,4 +43,3 @@ jobs:
             RAG_TEST=1 uv run --no-project pytest -m rag "$test" -v || echo "FAILED: $test"
           done
         shell: bash
-
