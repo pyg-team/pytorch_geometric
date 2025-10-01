@@ -11,7 +11,7 @@ from torch_geometric.testing import onlyRAG, withPackage
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever() -> None:
     llm = LLM(
-        model_name='HuggingFaceTB/SmolLM-360M',
+        model_name='Qwen/Qwen3-0.6B',
         num_params=1,
         dtype=torch.float16,
     )
@@ -30,7 +30,7 @@ def test_g_retriever() -> None:
         gnn=gnn,
     )
     assert str(model) == ('GRetriever(\n'
-                          '  llm=LLM(HuggingFaceTB/SmolLM-360M),\n'
+                          '  llm=LLM(Qwen/Qwen3-0.6B),\n'
                           '  gnn=GAT(1024, 1024, num_layers=2),\n'
                           ')')
 
@@ -104,5 +104,3 @@ def test_g_retriever_many_tokens() -> None:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
     del model
-    gc.collect()
-    torch.cuda.empty_cache()
