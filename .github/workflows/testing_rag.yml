@@ -43,10 +43,10 @@ jobs:
           export TOKENIZERS_PARALLELISM=false
           export RAG_TEST=1
           export PYTORCH_TEST_WITH_SLOW=1
-          
+
           # Collect test names into a file
           uv run --no-project pytest -m rag --collect-only -q > test_list.txt 2>&1
-          
+
           # Filter for test node IDs and run them
           grep "::" test_list.txt | while IFS= read -r test; do
             echo "========================================="
@@ -61,5 +61,5 @@ jobs:
             fi
             echo ""
           done
-          
+
           echo "All tests completed"
