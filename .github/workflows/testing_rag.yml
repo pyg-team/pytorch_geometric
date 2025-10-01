@@ -41,7 +41,6 @@ jobs:
           export TOKENIZERS_PARALLELISM=false
           export RAG_TEST=1
           export PYTORCH_TEST_WITH_SLOW=1
-
           # Get list of tests
           uv run --no-project pytest -m rag --collect-only -q | grep "::" | while read test; do
             echo "Running: $test"
