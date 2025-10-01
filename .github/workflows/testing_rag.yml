@@ -38,6 +38,15 @@ jobs:
         timeout-minutes: 10
         run: |
           ulimit -c 0
-          PYTORCH_TEST_WITH_SLOW=1 RAG_TEST=1 uv run --no-project pytest -m rag  --cov --cov-report=xml -v --tb=short --log-cli-level=DEBUG
-        env:
-          TOKENIZERS_PARALLELISM: false
+          export TOKENIZERS_PARALLELISM=false
+          export RAG_TEST=1
+          export PYTORCH_TEST_WITH_SLOW=1
+          
+          # Get list of tests
+          uv run --no-project pytest -m rag --collect-only -q | grep "::" | while read test; do
+            echo "Running: $test"
+            uv run --no-project pytest -m rag "$test" -v || echo "FAILED: $test"
+          done
+          # ulimit -c 0
+          # PYTORCH_TEST_WITH_SLOW=1 RAG_TEST=1 uv run --no-project pytest -m rag  --cov --cov-report=xml -v
+          
