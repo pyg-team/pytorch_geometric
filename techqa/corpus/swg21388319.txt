@@ -1,6 +1,0 @@
-Title: IBM Where can we change the path location of the filesys.ini? - United States
-
-Text:
- 
-
-Technote (FAQ) Question Now in 8.2 and greater, in analyst you were able to change the location path of the filesys.ini in tools>options, but now it's greyed out. Answer In 8.2 and greater, to change the location path of the filesys.ini you need to go into the contributor admin console>tools>update filesys.ini options and make your change there. Cross Reference information Segment Product Component Platform Version Edition Business Intelligence & Financial Performance Management Cognos Planning Analyst Windows 8.2, 8.3, 8.4

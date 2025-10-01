@@ -1,9 +1,0 @@
-Title: IBM Finding the Certification file on Data Power Appliance - United States
-
-Text:
- TECHNOTE (FAQ)
-
-QUESTION
- If Data Power appliance does not use the default certification, how can the user find the certificate that the Data Power appliance used ? 
-
-ANSWER
