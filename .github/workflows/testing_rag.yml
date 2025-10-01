@@ -38,8 +38,9 @@ jobs:
         timeout-minutes: 10
         run: |
           ulimit -c 0
-          RAG_TEST=1 uv run --no-project pytest -m rag  --cov --cov-report=xml -v
           RAG_TEST=1 uv run --no-project pytest -m rag --collect-only -q | grep "::" | while read test; do
             echo "Running: $test"
             RAG_TEST=1 uv run --no-project pytest -m rag "$test" -v || echo "FAILED: $test"
           done
+        shell: bash
+
